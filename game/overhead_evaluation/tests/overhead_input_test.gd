@@ -74,5 +74,5 @@ func _press(runner: GdUnitSceneRunner, demo: Control, title: String) -> void:
 
 func _visible_bounds(node: Node) -> void:
 	if node is Control and node.is_visible_in_tree():
-		assert_bool(node.get_viewport_rect().grow(1).encloses(node.get_global_rect())).override_failure_message("Visible evaluation control fits render: " + str(node.get_path())).is_true()
+		assert_bool(node.get_viewport_rect().grow(1).encloses(node.get_global_rect())).override_failure_message("Visible evaluation control fits render: %s; bounds %s; viewport %s" % [node.get_path(), node.get_global_rect(), node.get_viewport_rect()]).is_true()
 	for child in node.get_children(): _visible_bounds(child)

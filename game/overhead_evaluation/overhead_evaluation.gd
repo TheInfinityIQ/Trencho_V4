@@ -27,7 +27,7 @@ func _ready() -> void:
 	for side in ["left", "right", "top", "bottom"]: margin.add_theme_constant_override("margin_" + side, 24)
 	add_child(margin)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 14)
+	layout.add_theme_constant_override("separation", 12)
 	margin.add_child(layout)
 	_label(layout, "D01 / 2D overhead evaluation", 26)
 	_label(layout, "Authored reference sample · full 4,000 × 6,000 m extent · same identities, physical dimensions and supplies at every zoom", 15)
