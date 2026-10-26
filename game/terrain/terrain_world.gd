@@ -286,21 +286,21 @@ func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzz
 
 func cover(person: Vector2, attacker: Vector2, movement_class: int = 0, exposed_deck: bool = false, impact: Variant = null) -> Dictionary:
 	var result := {"hit": 1.0, "blast": 1.0, "source": "Exposed", "blast_source": "Exposed", "valid": [], "blast_valid": [], "blast_eligibility": "No natural blast benefit", "blast_status": "Defined", "impact": impact}
-	if movement_class != 0 or exposed_deck: return result
+	if movement_class != 0: return result
 	var place := _cover_place(person)
 	if not place.ok:
 		result.blast_eligibility = place.reason
 		return result
 	var tile := cell(Vector2i(floor(person.x), floor(person.y)))
 	var overlay: Dictionary = tile.get("overlay", {})
-	if overlay.get("complete", false) and overlay.get("kind", "") in ["road", "causeway", "crossing"] and 0 in overlay.get("classes", []): return result
+	var natural_exposed: bool = exposed_deck or tile.terrain == "TR02" or (overlay.get("complete", false) and overlay.get("kind", "") in ["road", "causeway", "crossing"] and 0 in overlay.get("classes", []))
 	var natural: Dictionary = Catalog.SURFACES[tile.terrain]
 	# Rocky terrain needs a declared actual directional shield; proximity is insufficient.
-	if tile.terrain != "TR07" and tile.terrain != "TR02":
+	if not natural_exposed and tile.terrain != "TR07":
 		result.hit = natural.hit
 		result.source = tile.terrain
 		result.valid.append(tile.terrain)
-	if tile.terrain == "TR06":
+	if not natural_exposed and tile.terrain == "TR06":
 		result.blast = 0.5
 		result.blast_source = "TR06"
 		result.blast_valid.append("TR06")
@@ -313,6 +313,7 @@ func cover(person: Vector2, attacker: Vector2, movement_class: int = 0, exposed_
 			if result.blast == 1.0: result.blast_eligibility = "Invalid shield geometry"
 			continue
 		if not shield.area.has_point(person): continue
+		if natural_exposed and shield.kind == "rock": continue
 		var benefit: Dictionary = {"hit": 0.5, "blast": 0.5} if shield.kind == "rock" else Catalog.STRUCTURES[shield.kind]
 		if attacker.is_finite() and attacker.distance_to(person) > EPS:
 			var line_from := Vector3(attacker.x, attacker.y, ground(attacker) + 1.5)

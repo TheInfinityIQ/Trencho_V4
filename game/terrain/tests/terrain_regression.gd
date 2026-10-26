@@ -26,6 +26,7 @@ func _initialize() -> void:
 	_run("drone crops/canopy/smoke and independent muzzle", _drone)
 	_run("strongest valid directional cover and vehicle exclusion", _cover)
 	_run("declared natural blast classes and independent impact eligibility", _natural_blast)
+	_run("completed exposed support preserves independently valid structures", _overlay_structure_cover)
 	_run("detached inspection preserves authoritative movement", _detached)
 	_run("rotated hull sweep and directional ray integration", _rotated)
 	print("G08 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
@@ -353,6 +354,48 @@ func _detached() -> void:
 	view.motion.parts.clear()
 	s.advance(1)
 	_near(s.entity.position.x, 20, "Returned snapshots cannot change actual movement")
+
+
+func _overlay_structure_cover() -> void:
+	var person := Vector2(30, 20)
+	var front := Vector2(10, 20)
+	var rear := Vector2(50, 20)
+	var impact := Vector3(10, 20, 0)
+	var shield := {"id": "sandbags", "kind": "S02", "area": Rect2(29, 19, 2, 2), "rect": Rect2(28, 19, 0.5, 2), "bottom": 0.0, "top": 2.0}
+	for kind in ["road", "causeway", "crossing"]:
+		var world := World.new()
+		world.paint(Rect2i(29, 19, 2, 2), "TR09" if kind == "causeway" else "TR06", {"overlay": {"kind": kind, "complete": true, "classes": [0]}})
+		var value: Dictionary = world.cover(person, front, 0, false, impact)
+		_check(value.hit == 1.0 and value.blast == 1.0, "Completed exposed support suppresses underlying natural benefits only: " + kind)
+		world.shields.append(shield.duplicate(true))
+		value = world.cover(person, front, 0, false, impact)
+		_check(value.hit == 0.65 and value.source == "sandbags" and value.valid.has("sandbags"), "Real sandbags remain valid on completed exposed support: " + kind)
+		value = world.cover(person, rear, 0, false, Vector3(50, 20, 0))
+		_check(value.hit == 1.0 and value.blast == 1.0, "Wrong-side structure grants no cover on exposed support")
+		world.shields[0].kind = "S03"
+		value = world.cover(person, front, 0, false, impact)
+		_check(value.hit == 0.25 and value.blast == 0.25, "Actual strongest structure provides its own direct/blast benefit")
+		value = world.cover(person, front, 0, false, Vector3(50, 20, 0))
+		_check(value.hit == 0.25 and value.blast == 1.0, "Independent rear impact gains neither front structure nor underlying forest")
+		world.shields.append(shield.duplicate(true))
+		value = world.cover(person, front, 0, false, impact)
+		_check(value.hit == 0.25 and value.blast == 0.25, "Exposed support does not stack multiple valid structures")
+		_check(world.cover(person, front, 1, false, impact).hit == 1.0 and world.cover(person, front, 2, false, impact).blast == 1.0, "Vehicle exclusions survive constructed cover")
+		world.shields.clear()
+		var rock := shield.duplicate(true)
+		rock.kind = "rock"
+		world.shields.append(rock)
+		value = world.cover(person, front, 0, false, impact)
+		_check(value.hit == 1.0 and value.blast == 1.0, "Exposed surface still excludes natural rock benefit")
+	var world := World.new()
+	world.shields.append(shield.duplicate(true))
+	world.paint(Rect2i(29, 19, 2, 2), "TR02")
+	_near(world.cover(person, front, 0, false, impact).hit, 0.65, "Baseline TR02 road retains sandbags")
+	world.paint(Rect2i(29, 19, 2, 2), "TR01", {"overlay": {"kind": "road", "complete": true, "classes": [0]}})
+	_check(world.support(Vector2i(30, 20), 0).surface == "TR02", "At-grade completed road resolves to same actual surface")
+	_near(world.cover(person, front, 0, false, impact).hit, 0.65, "Exact review reproduction: at-grade road overlay also retains sandbags")
+	world.shields.clear()
+	_near(world.cover(person, front, 0, false, impact).hit, 1.0, "At-grade completed road without actual shield is exposed")
 
 
 func _rotated() -> void:
