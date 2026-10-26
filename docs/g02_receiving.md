@@ -1,6 +1,6 @@
 # G02 procurement and receiving
 
-Scope: [issue #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0; GDD sections 3–5, 8, 10.2 and the dated section 23.3 admission clarification. Implementation follows [the pre-implementation plan and review correction](g02_receiving_plan.md). This is a bounded rear-economy review fixture built on accepted G01, with native interaction verification still pending.
+Scope: [issue #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0; GDD sections 3–5, 8, 10.2 and the dated section 23.3 admission clarification. Implementation follows [the pre-implementation plan and review correction](g02_receiving_plan.md). This is a bounded rear-economy review fixture built on accepted G01. Native A04/A58 interactions passed at 960×540; the complete normal-size display check remains open.
 
 ## Behavior and authority
 
@@ -36,15 +36,32 @@ Steam Godot `4.7.2.stable.steam.ed1daf0bf`, Windows, using `./tools/check.ps1` w
 | Retained G01 regression | 14 cases, 624 checks, zero failures |
 | G02 domain regression | 16 cases, 842 checks, zero failures |
 | Engine-driven interface signals and geometry | 190 checks, zero failures; 960×540 physical window / 1280×720 logical viewport |
-| Native input/readability and A04/A58 walkthrough | **Pending: Windows desktop access blocker** |
+| Native A04/A58, passenger cadence, quote/refund and safe interruption at 960×540 | Pass; [session observations and retained captures](evidence/g02/README.md) |
+| Complete 1280×720 native display check | **Open: portrait desktop clips the requested window; subsequent input targeting failed** |
 
 The domain tests cover catalogue prices, mixed/split quotes, atomic invalid/unaffordable/over-capacity purchases, cancellation at 4.999 versus dispatch at 5 seconds, eleven-versus-twelve freight commitments, independent two-vehicle personnel admission, population reservation, A04/A58 model recovery, partial storage, safe duty interruption, physical clearance, time partitioning and fixed-seed mixed operations. The added cadence cases check before/at every passenger exit and F08 arrival, full walking time, aboard/walking/unavailable identities, per-person reservation conversion, parallel vehicles and independent clearance. They reproduce the draft review's timing defect on the earlier simultaneous-exit implementation. Arrival guards refuse passengers still aboard, repeated admission and supplier-driver recruitment. G01 accounting remains exercised unchanged alongside the new cases.
 
 The interface test invokes actual control signals and inspects resulting state and visible-control bounds across populated tabs, cancellation, recovery and split quotes. It also checks distinct aboard/walking labels, exit versus F08 arrival counts and staggered reservation conversion through the visible clock buttons. It caught and corrected a wrapped quantity-label layout overflow. It does not send OS input, inspect rendered readability or prove native gameplay. Local logs and the generated interface summary are under ignored `.artifacts/`; CI runs the same command.
 
-The interactive Godot process started with Compatibility/OpenGL without engine errors, but native window activation failed, followed by `GetCursorPos failed: Access is denied. (0x80070005)` and a black window capture. Input attempts stopped; the human was asked about desktop availability. Do not infer a successful native walkthrough from launching the process or the engine checks. The Game Designer authorized a draft PR for parallel review; issue #10 and A04/A58 native acceptance remain open until the missing verification is supplied or an explicit later design/human decision changes that requirement.
+After the human confirmed desktop availability, native Windows input and readable captures worked for the 960×540 walkthrough on code revision `17081be0f0822d7de459854caf1dd91725228cc5`. The observed results are recorded below and in the evidence notes. No runtime changes were needed. Re-running the repository check passed import, all 1,656 regression/interface checks and headless startup. An initial restricted run could not write Godot's existing user/settings folders; the authorized retry with those folders accessible passed. Both interactive OpenGL logs contained only startup information, without engine/script errors.
 
-## Pending native walkthrough
+The 1280×720 launch extended beyond the current portrait desktop. Maximizing showed a complete letterboxed Terminal, but subsequent input could not be routed reliably to the target window; attempts stopped after refreshing the target. This does not establish the full normal-size tab/readability check. PR #51 stays draft and issue #10 remains open for the remaining display verification and Game Designer acceptance.
+
+### Native observations at 960×540
+
+| Scenario | Observed result |
+| --- | --- |
+| A04 blocked goods | At t=70, freight was berthed with 100 kg aboard, zero carried/deposited/free, zero workers and no local stock. |
+| Passenger cadence, ordered at t=70 | At t=163, the first identity was walking and the rest remained aboard; zero player people and eight incoming places. At t=173, four actual people were available at F08 and four remained incoming/walking. At t=183, all eight were player people, incoming places were zero and personnel admission had cleared. Both supplier drivers retained supplier ownership and Strategic Crew duty. |
+| Approach release | Assigning four real people reserved 100 kg and showed Approach. Releasing immediately returned assignments/reservations to zero and people to Available. Reassignment restored the same real worker flow. |
+| Carry and safe handoff | At t=243, four workers were carrying, the material table showed 100 carried and zero free. Release retained Rear Labour/Carry with pending Available; repeating release did not change counts. At t=253, all 100 kg were deposited/free, freight admission cleared, reservations/assignments were zero, and the former workers were Available at Receiving. |
+| A58 full queue | Fixture setup showed t=63, eleven freight commitments, one berth plus waiting vehicles, zero workers, eleven kg aboard and zero local stock. Delivery details identified missing actual Receiving unloaders. A twelfth purchase was refused with requisition unchanged at 2,647. |
+| A58 recovery | An eight-person order succeeded despite full freight admission. After two +60 steps, all eight had arrived and personnel admission cleared. Assigning four actual people, then +300 and +60, ended at t=543 with eleven kg deposited/free and zero unfinished freight. Crew rows remained supplier-owned; player people remained exactly eight. |
+| Split quote and atomic refusal | 5,001 kg M01 displayed two trucks: 5,000 kg for 10,020 and 1 kg for 22, total 10,042. Refusal preserved 2,500 requisition, zero spend and zero freight/stock. |
+| Refund/dispatch | A 100 kg purchase reduced requisition to 2,280. Immediate cancel restored 2,500 and recorded one 220 refund; repeat cancel was refused without another refund. A second purchase followed by five +1 steps became Incoming at t=5; cancel was refused, retaining 2,310 requisition (including 30 income), 220 cumulative refund and one freight admission. |
+| Controls/readability | Terminal, Deliveries and People & labour tabs, quantity entry, selection, delivery-detail scrolling, people-table scrolling, status feedback and clock/assignment buttons were usable. At 960×540 some long material names shorten; material codes and numeric columns remain readable. |
+
+## Repeatable native walkthrough
 
 Run F5 after desktop access is available. Time advances only through the buttons; it does not elapse while reading the fixture.
 
@@ -53,8 +70,8 @@ Run F5 after desktop access is available. Time advances only through the buttons
 3. **Quote/refund:** Reset; enter 5,001 kg and inspect both priced trucks in the quote scroll area before an unaffordable purchase refusal. Reset quantity to 100, purchase, cancel the selected delivery before advancing time and repeat cancel: only one refund. Buy again, advance five +1-second steps and confirm cancellation is refused after dispatch. Check tab selection, scroll areas, feedback and readability at normal size and 960×540.
 4. **Interruption:** After A04's +60-second carry observation, release Receiving duty. Inspect pending Available assignments while stock is carried, then +10 seconds for safe deposit and completed reassignment. Repeat release during an approach in a fresh run to confirm source/output space returns while cargo stays aboard.
 
-Partial storage, exact sub-second boundaries, population saturation and two simultaneous personnel services have engine regression evidence; a fixture-level native extension is still needed to observe those cases directly. No native screenshots are supplied as passing evidence.
+Partial storage, exact sub-second boundaries, population saturation and two simultaneous personnel services have engine regression evidence; a fixture-level native extension is still needed to observe those cases directly. The retained screenshots cover gate arrival and the portrait desktop fit only. The other rows above are observations from the native session, without independently retained per-step screenshots; see the evidence notes for that limitation.
 
 ## Integration limits
 
-General staffing/hauling is G03; production G04; additional facilities G05; courses/instructor recovery G06; strategic emergency contracts and dispatch G12; card selection/bundles G31; persistence G32. World movement/traffic and production presentation remain their own scopes. This fixture does not claim those systems, full D03 capacity integration, a complete playable engagement, or native A04/A58 acceptance.
+General staffing/hauling is G03; production G04; additional facilities G05; courses/instructor recovery G06; strategic emergency contracts and dispatch G12; card selection/bundles G31; persistence G32. World movement/traffic and production presentation remain their own scopes. This fixture does not claim those systems, full D03 capacity integration, a complete playable engagement, or final Game Designer acceptance.
