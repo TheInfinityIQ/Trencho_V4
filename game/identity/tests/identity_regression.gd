@@ -15,6 +15,7 @@ func _initialize() -> void:
 	_run_case("A01 safe handoff has one active duty", _safe_handoff)
 	_run_case("interruption preserves duty and freight", _cancel_handoff)
 	_run_case("active carry cannot be stolen or overfilled", _carry_protection)
+	_run_case("reload cannot consume a carry pending safe duty handoff", _carry_reload_guard)
 	_run_case("A02 reservations, delivery, cancellation and retry", _reservations)
 	_run_case("mismatched and foreign claims leave state unchanged", _invalid_claims)
 	_run_case("partial demand never invents stock", _partial_demand)
@@ -113,6 +114,29 @@ func _carry_protection() -> void:
 	_rejected(ledger, func() -> Dictionary: return ledger.finish_carry("worker-01", "supplier-truck"), "INVALID_SAFE_STORAGE")
 	_success(ledger.finish_carry("worker-01", "rear-store"))
 	_check(ledger.audit().is_empty(), "Carry lifecycle reconciles")
+
+
+func _carry_reload_guard() -> void:
+	# Both partial and complete reloads must preserve freight committed to a job.
+	for reload_quantity in [1, 10]:
+		var f := _fresh()
+		var ledger := f.ledger
+		_success(ledger.unload_rounds("rifle-11"))
+		var depot_portion := ledger.transfer_stock("rounds-01", 10, "rear-store")
+		_success(depot_portion)
+		_success(ledger.request_assignment("person-02", Records.Assignment.REAR_LABOUR, "haul"))
+		_success(ledger.begin_carry("person-02", depot_portion.entity_id, 10))
+		var carrying_id: String = ledger.inspect_entity("person-02").carrying_stock_id
+		_success(ledger.request_assignment("person-02", Records.Assignment.TRAINING, "course"))
+		_rejected(ledger, func() -> Dictionary: return ledger.load_rounds("rifle-11", carrying_id, reload_quantity), "STOCK_COMMITTED")
+		var carried := ledger.inspect_entity(carrying_id)
+		_check(carried.quantity == 10 and carried.holder_id == "person-02", "Rejected reload preserves the full physically carried portion")
+		_check(ledger.loaded_rounds("rifle-11") == 0 and ledger.total_stock("E02 Round") == 60, "Rejected reload preserves loaded/loose quantities without moving rounds")
+		_check(ledger.audit().is_empty(), "Rejected reload leaves a healthy active-carry pointer")
+		_success(ledger.finish_carry("person-02", "rear-store"))
+		var person := ledger.inspect_entity("person-02")
+		_check(person.assignment == "Training" and person.pending_assignment == "None" and person.carrying_stock_id.is_empty(), "Safe deposit still completes the requested exclusive duty handoff")
+		_check(ledger.total_stock("E02 Round") == 60 and ledger.audit().is_empty(), "Post-handoff physical ammunition and accounting still reconcile")
 
 
 func _reservations() -> void:

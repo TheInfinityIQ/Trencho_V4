@@ -234,6 +234,8 @@ func load_rounds(weapon_id: String, source_id: String, quantity: int) -> Diction
 		return _reject("WRONG_AMMUNITION", "The weapon and matching loose ammunition must exist.")
 	if source.holder_id != weapon.holder_id or source.owner != weapon.owner:
 		return _reject("AMMUNITION_NOT_CARRIED", "Reload from loose ammunition owned and physically held alongside this weapon.")
+	if _is_active_carry(source_id):
+		return _reject("STOCK_COMMITTED", "Finish the active carry through safe deposit before reloading from this stock.")
 	if quantity <= 0 or quantity > available(source_id):
 		return _reject("INSUFFICIENT_AVAILABLE", "Not enough unreserved loose rounds for this whole-count reload.")
 	if quantity > weapon.loaded_capacity - loaded_rounds(weapon_id):
