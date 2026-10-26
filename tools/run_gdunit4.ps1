@@ -24,7 +24,9 @@ $test = if ($Suite -eq 'Input') { 'receiving_input_test.gd' } else { 'receiving_
 $engineArguments = @('--path', $projectRoot, '--log-file', (Join-Path $reportRoot 'engine.log'))
 if ($Suite -eq 'Domain') { $engineArguments += '--headless' }
 else { $engineArguments += @('--rendering-method', 'gl_compatibility', '--resolution', '1280x720') }
-$engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-a', "res://game/procurement/tests/gdunit/$test", '-rd', $reportRoot, '-rc', '1')
+# GdUnit4's report parser rebases POSIX absolute paths; use its supported resource URI.
+$reportUri = "res://.artifacts/gdunit4/$ReportName"
+$engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-a', "res://game/procurement/tests/gdunit/$test", '-rd', $reportUri, '-rc', '1')
 if ($Suite -eq 'Domain') { $engineArguments += '--ignoreHeadlessMode' }
 & $engine @engineArguments | Out-Host
 $engineExit = $LASTEXITCODE
