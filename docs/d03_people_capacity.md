@@ -168,7 +168,7 @@ A corpse remains real mass at its actual holder. R/M living-person release does 
 
 | Domain / event | Check / release event and identity | Blocked / once-only outcome |
 | --- | --- | --- |
-| Rear production admission | Accept order only if R_v+R_p<8; R_p+1. Legal parking/collection needed for admission; unfinished cancellation releases unfulfilled claim under existing material rules. | No deletion/refund of a real completed hull. Travelling hull frees parking without freeing R_v. |
+| Rear production admission | Accept order only if R_v+R_p<8; R_p+1. Immediately before the completed vehicle's actual physical creation/admission at a legal output/collection position, recheck its existing order claim and destination. That same event converts R_p−1,R_v+1 for the one hull, preserving R_v+R_p. | No lawful output: wait with the claim held and no new hull. Repeated completion/collection changes neither count nor creates another hull; later parking movement also changes neither. Unfinished cancellation releases only the unfulfilled claim under existing material rules; an actual admitted hull cannot be cancelled away. Its destruction releases live R_v once, not stale R_p. Travelling hull frees parking without freeing R_v. |
 | Enemy finished-package purchase / actual HQ arrival | Check N<3 and60s purchase cadence; all new I/V_i before debit. Lease A–F/J–M also checks L<3 and reserves L. At actual HQ arrival N−1, not I or L. | Arrival neither unloads people/goods nor ends active lease. G/H/I use military24, not lease3. |
 | Enemy lease return / terminal service loss | L retained through blocked offload and safe physical return. Release after real service exit, or terminal loss with no living driver awaiting return. | Destroyed hull/live driver keeps L; dead driver/live empty hull needs real removal/return/destruction. Never manufacture exempt drivers by instant re-purchase. |
 | Player emergency / supplier domains | E1 distinct from enemy N3/L3 and supplier P_f11/P_p2. Emergency external driver/hull has no owned rear/military or member admission; actual manifest people/cargo do. | E persists through survivor rescue/return. Suppliers/instructor use their own adopted admission and clearance lifetimes, not a universal3 pool. |
@@ -270,7 +270,20 @@ Already handed-over military members/hulls cannot use this procedure to return t
 
 ### 9.8 Hull production, instructors and service lifetime
 
-Rear fleet: R_v7,R_p1=8 after accepting one new production admission; another order is refused. Unfinished cancellation→7/0 once under existing production/material rules. A real finished hull awaiting lawful collection cannot be cancelled out of existence. At R_v8 an outgoing Fleet Transfer still blocks a ninth order until actual HQ handoff or destruction; physical parking and owned-fleet slots are separate. Military V23,V_i1=24 refuses another hull; actual HQ handoff gives24/0 once, or the lawful pre-HQ rear receipt/withdrawal in9.7 gives23/0. Hull destruction releases its own claims, not surviving people's claims.
+Rear production reference, clarified in the [focused Game Designer review](https://github.com/TheInfinityIQ/Trencho_V4/pull/53#issuecomment-6415874589): seven existing live owned hulls and one accepted order claim give R_v7,R_p1=8. Use stable new hull ID H8 and its existing order; immediately before actual physical creation/admission recheck that claim and the actual legal output/collection destination. Work completion alone does not create a hull at an invalid destination.
+
+| Production event | R_v | R_p | H8 live / physical record | Expected outcome |
+| --- | --- | --- | --- | --- |
+| Order accepted, before completed-hull admission |7|1|No new hull|Total8; another order refused |
+| Output/collection destination blocked |7|1|No new hull|Completion/admission waits; original claim held |
+| Valid claim and destination; one actual physical creation/admission |8|0|One H8 live|R_p−1,R_v+1 at the same event; total stays8 |
+| Repeat completion/admission |8|0|Same one H8|No second hull or conversion |
+| Actual collection/parking movement; repeat collection |8|0|Same H8 at its actual new position|Neither fleet count nor production claim changes |
+| Attempt ninth order |8|0|Same one H8|Reject before another claim; no change |
+| H8 actually destroyed |7|0|Same H8 record now Destroyed/wreck|Release its live R_v once, not R_p |
+| Replay H8 destruction |7|0|Same loss/physical record|No second release |
+
+Separate unfinished-cancellation branch from7/1: release only the unfulfilled order claim→7/0 once under existing production/material rules, with no H8 created. After legal physical admission, cancellation cannot remove the real H8. At R_v8 an outgoing Fleet Transfer still blocks a ninth order until actual HQ handoff or destruction; physical parking and owned-fleet slots are separate. Military V23,V_i1=24 refuses another hull; actual HQ handoff gives24/0 once, or the lawful pre-HQ rear receipt/withdrawal in9.7 gives23/0. Hull destruction releases its own claims, not surviving people's claims.
 
 Instructor reference: P_f11,P_p2,R_o104,R_i16=120 from two standard pending8-person orders; no basic-trained rear person remains and J0. Instructor purchase is refused before debit: no P_p room (and no rear room), J stays0. Valid early cancellation of one standard order→P_p1,R_i8, rear112. Instructor purchase claims P_p+1,R_i+1,J1: P_p2,rear113; no third vehicle. Actual instructor F08 receipt→R_o105,R_i8,J0 with P_p2 still held through vehicle clearance; the new P01 also removes the eligibility shortage. Clearance→P_p1. Replayed receipt/clearance cannot add a second instructor or free another order. P_f11 stays independent throughout.
 
@@ -299,7 +312,7 @@ Recorded 26 October 2026 on the documentation branch based on main `23f142ab797d
 
 | Actual check | Result / scope |
 | --- | --- |
-| Independent reference arithmetic and declared identity snapshots | 69 assertions in 14 groups, zero failures. Recomputed initial 112/47/5, W1–W4, mode/receipt/death boundaries, local receiving/care, roster 216, body mass/physical blockage, separate hull withdrawal, production/fleet limits, instructor sharing, service lifetimes and original exemptions. |
+| Independent reference arithmetic and declared identity snapshots | 76 assertions in 14 groups, zero failures. Recomputed initial 112/47/5, W1–W4, mode/receipt/death boundaries, local receiving/care, roster 216, body mass/physical blockage, separate hull withdrawal, production claim-to-live-hull conversion including blocked/repeated admission, fleet limits, instructor sharing, service lifetimes and original exemptions. |
 | Authority comparison | Adopted sections 1–7 preserved against the retrieved Game Designer decision; supplemental matrix/fixtures do not replace its choices. No remaining concrete contradictory reference outcome found. |
 | Documentation links | 19 local links and 2 local heading anchors resolve. |
 | Scope/baseline | Pre-amendment GDD compared unchanged with main; no competing 23.3; no runtime diff. G02 worktree clean and unchanged at `17081be0f0822d7de459854caf1dd91725228cc5`. |
