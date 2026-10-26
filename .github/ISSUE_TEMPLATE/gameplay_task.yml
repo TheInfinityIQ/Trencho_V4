@@ -1,0 +1,35 @@
+name: Gameplay delivery task
+description: Specify observable gameplay behaviour against the canonical design.
+title: "[System ID] Behaviour to deliver"
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Player-visible outcome
+      description: State the behaviour and its purpose. Link the milestone or parent issue.
+    validations:
+      required: true
+  - type: textarea
+    id: authority
+    attributes:
+      label: Design authority and scope
+      description: Link the GDD version and sections; list entities, state transitions and exclusions. Separate proposed balance from agreed scope.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and evidence
+      description: List concrete setup/action/expected result, acceptance IDs, required inspection and blocking reasons. Separate this patch from later integration.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and decisions
+      description: Link prerequisites and open design gates. Also use native blocked-by and parent/sub-issue relationships.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Describe relevant regression checks, Godot interaction evidence and any remaining uncertainty. Follow AGENTS.md.
