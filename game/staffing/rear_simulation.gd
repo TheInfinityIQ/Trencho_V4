@@ -78,7 +78,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 		r.order = _next()
 	r.target = count
 	r.priority = priority
-	var pending_allowed := maxi(0, count - _assigned(id))
+	var pending_allowed := maxi(0, count - _retaining(id))
 	for person_id in actors:
 		var p: Dictionary = ledger.inspect_entity(person_id)
 		if p.pending_assignment != "None" and p.pending_duty == id:
@@ -188,9 +188,7 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 			var count: int = stock.quantity if disallowed else mini(stock.quantity, int(ceil(excess / stock.mass)))
 			var destination := _nearest_storage(stock.position, type, minf(25.0, count * stock.mass), id)
 			if destination.is_empty(): destination = "depot" if id != "depot" else "receiving"
-			if not _has_relocation(id, type):
-				var demand := request_haul(id, destination, type, count)
-				_job(demand.id).relocation = true
+			_reconcile_relocation(id, destination, type, count)
 			excess = maxf(0.0, excess - count * stock.mass)
 	_settle()
 	return _result(true, "Storage edited without deleting or moving any contents.")
@@ -248,7 +246,14 @@ func _rebalance() -> void:
 		var p: Dictionary = ledger.inspect_entity(id)
 		if _eligible(p, "Available") and p.pending_assignment == "None":
 			pool.append(id)
-	var quotas: Dictionary = {}
+	var pending: Dictionary = {}
+	# A pending handoff occupies its destination target vacancy even though
+	# the person still physically serves the old duty until safe completion.
+	for id in actors:
+		var person: Dictionary = ledger.inspect_entity(id)
+		if person.pending_assignment != "None" and requests.has(person.pending_duty):
+			pending[person.pending_duty] = int(pending.get(person.pending_duty, 0)) + 1
+	var quotas: Dictionary = pending.duplicate()
 	var planned: Dictionary = {}
 	var remaining: Array = pool.duplicate()
 	while not remaining.is_empty():
@@ -266,7 +271,7 @@ func _rebalance() -> void:
 		quotas[best.id] = int(quotas.get(best.id, 0)) + 1
 	# Preserve present/reporting incumbents wherever possible. Pending carries
 	# remain their old duty and cannot be counted as a second destination worker.
-	var keep: Dictionary = {}
+	var keep: Dictionary = pending.duplicate()
 	var free: Array = []
 	for id in pool:
 		var duty: String = ledger.inspect_entity(id).duty_id
@@ -341,7 +346,7 @@ func _report(a: Dictionary) -> void:
 	if p.duty_id.is_empty():
 		a.phase = "Available"
 		return
-	var destination: Vector2 = ledger.inspect_entity(requests[p.duty_id].place).position
+	var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else ledger.inspect_entity(requests[p.duty_id].place).position
 	_move(a, "Reporting", Layout.path(p.position, destination), 1.5)
 
 
@@ -573,11 +578,31 @@ func _stock_at(holder: String) -> Array:
 	return ledger.snapshot().entities.filter(func(e: Dictionary) -> bool: return e.kind == "STOCK" and e.owner == PLAYER and e.holder_id == holder and e.quantity > 0)
 
 
-func _has_relocation(source: String, type: String) -> bool:
+func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> void:
+	var existing: Dictionary = {}
 	for job in jobs:
 		if job.get("relocation", false) and not job.cancelled and job.source == source and job.type == type and job.delivered < job.requested:
-			return true
-	return false
+			existing = job
+			break
+	var carried: int = 0
+	var other_promised: int = 0
+	for actor in actors.values():
+		var load: Dictionary = actor.load
+		if load.is_empty() or load.source != source or load.type != type:
+			continue
+		if not existing.is_empty() and load.job == existing.id:
+			if not load.carried.is_empty(): carried += load.count
+		elif load.carried.is_empty():
+			other_promised += load.count
+	# Physical source contents already include unpicked claims, but exclude
+	# freight carried away. Extend total demand, never add that same claim twice.
+	var needed := maxi(0, physical_needed - other_promised)
+	if existing.is_empty():
+		if needed == 0: return
+		var demand := request_haul(source, destination, type, needed)
+		_job(demand.id).relocation = true
+	else:
+		existing.requested = maxi(existing.requested, existing.delivered + carried + needed)
 
 
 func snapshot() -> Dictionary:
@@ -585,9 +610,10 @@ func snapshot() -> Dictionary:
 	for r in requests.values():
 		var assigned := _assigned(r.id)
 		var present := _present(r.id)
+		var pending := _pending_in(r.id)
 		staffing.append({"id": r.id, "target": r.target, "positions": r.positions,
-			"assigned": assigned, "present": present, "reporting_or_active": assigned - present,
-			"shortage": maxi(0, r.target - assigned), "priority": PRIORITIES[r.priority], "requested_at": r.created})
+			"assigned": assigned, "pending_in": pending, "present": present, "reporting_or_active": assigned - present,
+			"shortage": maxi(0, r.target - _retaining(r.id) - pending), "priority": PRIORITIES[r.priority], "requested_at": r.created})
 	var people: Array[Dictionary] = []
 	for entity in ledger.snapshot().entities:
 		if entity.kind != "PERSON": continue
@@ -658,6 +684,7 @@ func audit() -> Array[String]:
 			failures.append("Demand overfilled: " + job.id)
 	for r in requests.values():
 		if _assigned(r.id) > int(r.positions): failures.append("Too many actual staff positions: " + r.id)
+		if _retaining(r.id) + _pending_in(r.id) > int(r.positions): failures.append("Overbooked pending staff positions: " + r.id)
 	if not is_equal_approx(yard.fuel + yard.burned, 40.0) or yard.fuel < 0.0:
 		failures.append("Yard fuel conservation")
 	return failures
@@ -674,6 +701,22 @@ func _committed(duty: String) -> int:
 	var count := _assigned(duty)
 	for id in actors:
 		if ledger.inspect_entity(id).pending_duty == duty: count += 1
+	return count
+
+
+func _pending_in(duty: String) -> int:
+	var count: int = 0
+	for id in actors:
+		var p: Dictionary = ledger.inspect_entity(id)
+		if p.pending_assignment != "None" and p.pending_duty == duty: count += 1
+	return count
+
+
+func _retaining(duty: String) -> int:
+	var count: int = 0
+	for id in actors:
+		var p: Dictionary = ledger.inspect_entity(id)
+		if p.duty_id == duty and (p.pending_assignment == "None" or p.pending_duty == duty): count += 1
 	return count
 
 

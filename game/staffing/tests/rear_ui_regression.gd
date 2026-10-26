@@ -66,6 +66,11 @@ func _run() -> void:
 	_layout("Moving driver pending")
 	_press("+60s")
 	_check(_demo.simulation.yard.driver == "" and _demo.simulation.yard.occupied[1] == "yard-t01", "Actual parking and exit occur before duty release")
+	_press("Yard target 1")
+	_press("+2s")
+	_press("+1s")
+	_check(_demo.simulation.yard.state == "Ready" and _demo.simulation.ledger.inspect_entity("driver-01").holder_id == "yard-t01", "Yard UI can report and re-enter the actual current parked hull")
+	_check(_demo.get("_yard").text.contains("Ready"), "Yard inspection refreshes after parked re-entry")
 	_check(_demo.simulation.audit().is_empty(), "UI flows preserve physical invariants")
 	root.size = Vector2i(960, 540)
 	for index in range(5):

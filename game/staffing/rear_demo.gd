@@ -91,7 +91,7 @@ func _build_staff(page: VBoxContainer) -> void:
 	_button(controls, "Apply target", func() -> Dictionary: return simulation.set_target(_duty.get_item_text(_duty.selected), int(_target.value), _priority.selected))
 	_button(controls, "Hauling target 1", func() -> Dictionary: return simulation.set_target("hauling", 1))
 	_button(controls, "Release haulers", func() -> Dictionary: return simulation.set_target("hauling", 0))
-	_staff = _tree(page, ["Duty", "Target / positions", "Assigned", "Present", "Travel / active", "Shortage", "Priority"])
+	_staff = _tree(page, ["Duty", "Target / positions", "Actual / pending in", "Present", "Travel / active", "Shortage", "Priority"])
 	_readiness = _label(page, "", 16)
 	_readiness.custom_minimum_size.y = 65
 
@@ -194,7 +194,7 @@ func _update(message: String = "") -> void:
 	if not message.is_empty(): _feedback.text = message
 	_clear(_staff)
 	for row in view.staffing:
-		_row(_staff, [row.id, "%d / %d" % [row.target, row.positions], row.assigned, row.present, row.reporting_or_active, row.shortage, row.priority])
+		_row(_staff, [row.id, "%d / %d" % [row.target, row.positions], "%d / %d" % [row.assigned, row.pending_in], row.present, row.reporting_or_active, row.shortage, row.priority])
 	var gate: Dictionary = view.workshop
 	_readiness.text = "R01 local-input gate: %s\n%s · operators present %d · %s\nWork 0 · consumed 0 · output 0 · full A05 continuation remains G04" % [gate.status, gate.reference, gate.operators_present, "Hauling shortage: assign General Hauling" if gate.hauling_shortage else "Inputs become usable only after deposit"]
 	_clear(_people)
