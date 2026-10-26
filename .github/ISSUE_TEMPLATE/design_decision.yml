@@ -1,0 +1,19 @@
+name: Design decision
+description: Resolve a concrete ambiguity before dependent acceptance closes.
+title: "[Design] Decision required"
+labels: ["type:design-gate", "owner:game-designer"]
+body:
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision and consequence
+      description: State the ambiguous rule, affected entities, design source and dependent work. Identify independent work that can continue.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Options and closure evidence
+      description: Give concrete options or a recommendation, supporting observations and repeatable acceptance examples. Do not silently choose gameplay defaults.
+    validations:
+      required: true
