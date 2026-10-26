@@ -1,6 +1,6 @@
 # G08 terrain, movement and sight fixture
 
-Scope: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9, 12, 14 and 23.1; [implementation plan](g08_terrain_plan.md). Built from accepted main `eb251eb83b90bbdc895ae917f9933655aaf794fb`. G03's unmerged staffing runtime is absent and its separate worktree/evidence remain preserved. This is a draft foundation with engine evidence and a native verification gap.
+Scope: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9, 12, 14 and 23.1; [implementation plan](g08_terrain_plan.md). Built from accepted main `eb251eb83b90bbdc895ae917f9933655aaf794fb`, with accepted documentation merge `37b11683f9fccf569ca2f0f39dc0523da2844aee` subsequently integrated. G03's unmerged staffing runtime is absent and its separate worktree/evidence remain preserved. This is a draft foundation with engine evidence and a native verification gap.
 
 ## What runs
 
