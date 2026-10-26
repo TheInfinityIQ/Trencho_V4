@@ -37,15 +37,52 @@ func add_carrier(id: String, holder_id: String, owner: String, controller: Strin
 	return _ok("Carrier registered.", id)
 
 
-func add_person(id: String, holder_id: String, owner: String) -> Dictionary:
-	if not _free_id(id) or not _is_place(holder_id) or owner.is_empty():
-		return _reject("INVALID_ENTITY", "A person needs a unique ID, owner and physical place.")
+func add_person(id: String, holder_id: String, owner: String,
+		initial_assignment: int = Records.Assignment.AVAILABLE,
+		basic_training: bool = false, qualification: String = "None") -> Dictionary:
+	if not _free_id(id) or not _is_person_holder(holder_id) or owner.is_empty():
+		return _reject("INVALID_ENTITY", "A person needs a unique ID, owner and physical place or carrier.")
+	if initial_assignment not in [Records.Assignment.AVAILABLE, Records.Assignment.PASSENGER, Records.Assignment.STRATEGIC_CREW]:
+		return _reject("INVALID_INITIAL_DUTY", "Initialize available people, arriving passengers or external service crew only.")
+	if qualification not in ["None", "P02", "P03", "P04", "P05", "P06", "P07", "P08"] or (qualification != "None" and not basic_training):
+		return _reject("INVALID_QUALIFICATION", "A specialist's initial scenario data must include completed basic training.")
 	var person := Records.Person.new()
 	_fill_entity(person, id, Records.Kind.PERSON, "P00", owner, owner, holder_id, "Untrained person")
 	person.unit_mass_kg = 80.0
-	person.state = "Available"
+	person.assignment = initial_assignment as Records.Assignment
+	person.state = Records.ASSIGNMENT_NAMES[initial_assignment]
+	person.basic_training = basic_training
+	person.qualification = qualification
+	person.design_type = qualification if qualification != "None" else ("P01" if basic_training else "P00")
 	_entities[id] = person
 	return _ok("Person registered.", id)
+
+
+func move_entity(id: String, place_id: String, world_position: Vector2) -> Dictionary:
+	# Timed movement activities own eligibility and travel. This updates the
+	# authoritative physical endpoint, with carried goods following their holder.
+	if not _entities.has(id) or _entities[id].kind not in [Records.Kind.PERSON, Records.Kind.CARRIER]:
+		return _reject("INVALID_MOVING_ENTITY", "Only a physical person or carrier can move through this boundary.")
+	if not _is_place(place_id) or not world_position.is_finite():
+		return _reject("INVALID_DESTINATION", "Movement needs an existing place and finite world position.")
+	var entity := _entities[id]
+	entity.holder_id = place_id
+	entity.position = world_position - _world_position(place_id)
+	return _ok("Physical position updated by the timed activity.", id)
+
+
+func complete_person_arrival(id: String, place_id: String, owner: String) -> Dictionary:
+	var person := _person(id)
+	if person == null or person.assignment != Records.Assignment.PASSENGER or owner.is_empty():
+		return _reject("NOT_ARRIVING_PASSENGER", "Only an arriving passenger can complete this receiving boundary.")
+	if not _is_place(person.holder_id) or not _is_place(place_id) or not _colocated(id, place_id):
+		return _reject("NOT_DISEMBARKED", "The person must finish their own movement to the personnel arrival point.")
+	person.holder_id = place_id
+	person.position = Vector2.ZERO
+	person.owner = owner
+	person.controller = owner
+	_set_assignment(person, Records.Assignment.AVAILABLE, "")
+	return _ok("The same disembarked person is now available in the receiving owner's rear.", id)
 
 
 func add_stock(id: String, type: String, quantity: int, mass_kg: float,
@@ -105,7 +142,7 @@ func cancel_assignment_request(person_id: String) -> Dictionary:
 	return _ok("Pending request cancelled; current duty and carried goods are unchanged.", person_id)
 
 
-func begin_carry(person_id: String, stock_id: String, quantity: int) -> Dictionary:
+func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: String = "") -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.assignment != Records.Assignment.REAR_LABOUR:
 		return _reject("NOT_LABOUR", "A rear labour assignment is required for this carry fixture.")
@@ -114,7 +151,7 @@ func begin_carry(person_id: String, stock_id: String, quantity: int) -> Dictiona
 	var stock := _stock(stock_id)
 	if stock != null and stock.unit_mass_kg * quantity > 25.0:
 		return _reject("CARRY_TOO_HEAVY", "An ordinary carry is limited to 25 kg of one item type (GDD section 4).")
-	var result := transfer_stock(stock_id, quantity, person_id)
+	var result := transfer_stock(stock_id, quantity, person_id, claim_id)
 	if result.ok:
 		person.carrying_stock_id = result.entity_id
 	return result
@@ -350,6 +387,22 @@ func total_stock(type: String) -> int:
 	return total
 
 
+func loose_stock_mass_at(holder_id: String) -> float:
+	var total: float = 0.0
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.holder_id == holder_id:
+			total += entity.quantity * entity.unit_mass_kg
+	return total
+
+
+func available_stock_at(holder_id: String, type: String) -> int:
+	var total: int = 0
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.holder_id == holder_id and entity.design_type == type:
+			total += available(entity.id)
+	return total
+
+
 func audit() -> Array[String]:
 	var failures: Array[String] = []
 	for entity in _entities.values():
@@ -487,6 +540,10 @@ func _free_id(id: String) -> bool:
 
 func _is_place(id: String) -> bool:
 	return _entities.has(id) and _entities[id].kind == Records.Kind.PLACE
+
+
+func _is_person_holder(id: String) -> bool:
+	return _entities.has(id) and _entities[id].kind in [Records.Kind.PLACE, Records.Kind.CARRIER]
 
 
 func _can_hold_stock(id: String) -> bool:

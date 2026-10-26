@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="PackedScene" path="res://game/identity/identity_demo.tscn" id="1_identity"]
+[ext_resource type="PackedScene" path="res://game/procurement/receiving_demo.tscn" id="1_receiving"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -10,5 +10,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IdentityDemo" parent="." instance=ExtResource("1_identity")]
+[node name="ReceivingDemo" parent="." instance=ExtResource("1_receiving")]
 layout_mode = 1

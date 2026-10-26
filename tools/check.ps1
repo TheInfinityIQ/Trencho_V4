@@ -45,4 +45,6 @@ function Invoke-GodotCheck {
 
 Invoke-GodotCheck -Name 'import' -EngineArguments @('--editor', '--import')
 Invoke-GodotCheck -Name 'identity-regression' -EngineArguments @('--script', 'res://game/identity/tests/identity_regression.gd')
+Invoke-GodotCheck -Name 'receiving-regression' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_regression.gd')
+Invoke-GodotCheck -Name 'receiving-ui' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_ui_regression.gd')
 Invoke-GodotCheck -Name 'startup' -EngineArguments @('--quit-after', '3')

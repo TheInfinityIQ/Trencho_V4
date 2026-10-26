@@ -29,3 +29,7 @@ Folder structure, renderer defaults, check implementation, and deferral of infra
 ## G01 implementation follow-up
 
 The initial title placeholder is superseded by the bounded [identity/accounting fixture](g01_identity.md). It uses a scene-owned typed ledger, detached inspections and event-driven review UI, plus a dependency-free headless regression runner. Canvas scaling keeps its review controls usable in smaller windows. These choices apply to G01 evidence; D01 still owns the production presentation/platform/performance decision. See the G01 document for interruption, accounting and future persistence obligations.
+
+## G02 implementation follow-up
+
+The entry scene now opens the bounded [procurement/receiving fixture](g02_receiving.md). A scene-owned service advances a chronological event clock through dispatch, arrival, walking, handling and physical vehicle clearance. It uses G01 identities and source claims; destination storage and delivery admissions have separate lifetimes. Explicit time buttons make boundary cases reproducible without per-frame polling. The predefined metre positions and access paths demonstrate local continuity; they do not implement world pathfinding, traffic, production presentation or D03 capacity policy. Interface signal/layout checks supplement domain regressions, with native interaction evidence tracked separately.
