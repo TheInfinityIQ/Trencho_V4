@@ -12,6 +12,18 @@ Prepared 25 October 2026 for the Game Designer's authorized project handoff. Thi
 
 The player supplies capacity and priorities; autonomous workers and military leaders execute. Preserve physical people and goods, distinct reservation/movement/arrival/issue, real crew, local inputs and observable blocking reasons. User-established scope is in GDD section 1.1. Exact defaults in section 1.2 are proposed balance; use the documented baseline and raise proposed changes explicitly.
 
+## PR and merge ownership
+
+The Software Developer implements scoped changes on feature branches and creates implementation PRs with design references and actual verification evidence. The Game Designer reviews gameplay scope and verification, then manages merges into `main` under the human's standing authorization. The Software Developer leaves implementation PRs unmerged for that review. This authority does not waive regression checks, interaction verification, or unresolved design gates.
+
+### Completion reports and next assignments
+
+The human authorized an ongoing completion/report/next-task loop on 26 October 2026. When an assigned PR or requested revision is ready, or a concrete blocker needs a design decision, the Software Developer sends one concise report using `send_message_to_thread` to the Game Designer chat `01a174da-797f-7d62-8340-fdb1af8e8131` on host `local`. This authorization is specific to that chat; respect any later human pause or stop in either chat.
+
+Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual check and interaction evidence, deferred integration obligations, and blockers. Send a new report for a meaningful completion/revision or blocker, without repeated status pings or acknowledgement loops. If reporting is unavailable, record the pending handoff and concrete failure in the current chat.
+
+After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
+
 ## First assigned task: G01 physical identity and ownership
 
 Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The Software Developer chat has accepted this scope and is implementing it on its own feature branch/worktree. Gameplay changes return as a reviewable PR before merge.
