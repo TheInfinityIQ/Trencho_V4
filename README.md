@@ -28,6 +28,7 @@ From the repository root in PowerShell 7:
 Alternatively, put the matching executable on PATH as `godot` and run `./tools/check.ps1`.
 The check verifies the engine version, imports the project, runs G01/G02 and G08 regressions plus G02/G08 interface wiring/layout checks, and starts the main scene headlessly.
 Logs are written to `.artifacts/`. CI runs the same check on Linux to catch path casing issues.
+The [GdUnit4 pilot and testing guide](docs/testing.md) documents the pinned MIT dependency, domain checks, required display-backed SceneRunner CI step and failure controls. The default headless command explicitly excludes scene-input evidence; use `-SceneInput` with a display for the full set.
 The suites check identity, exclusive duties, physical transfers, ammunition conservation, purchases, arrival, unloading, capacity, cancellation and recovery. Engine-driven interface signals and geometry checks do not establish native input, readability or full-game correctness. See [G01 behavior and evidence](docs/g01_identity.md) and [G02 behavior and verification](docs/g02_receiving.md) for evidence and scope limits.
 
 ## Repository map

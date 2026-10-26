@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$GodotPath = 'godot'
+    [string]$GodotPath = 'godot',
+    [switch]$SceneInput
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,10 +44,19 @@ function Invoke-GodotCheck {
     Write-Host "$Name passed."
 }
 
+& (Join-Path $PSScriptRoot 'setup_gdunit4.ps1')
 Invoke-GodotCheck -Name 'import' -EngineArguments @('--editor', '--import')
 Invoke-GodotCheck -Name 'identity-regression' -EngineArguments @('--script', 'res://game/identity/tests/identity_regression.gd')
 Invoke-GodotCheck -Name 'receiving-regression' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_regression.gd')
 Invoke-GodotCheck -Name 'receiving-ui' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_ui_regression.gd')
 Invoke-GodotCheck -Name 'terrain-regression' -EngineArguments @('--script', 'res://game/terrain/tests/terrain_regression.gd')
 Invoke-GodotCheck -Name 'terrain-ui' -EngineArguments @('--script', 'res://game/terrain/tests/terrain_ui_regression.gd')
+Invoke-GodotCheck -Name 'world-data-probe' -EngineArguments @('--script', 'res://game/world_probe/full_size_probe.gd')
 Invoke-GodotCheck -Name 'startup' -EngineArguments @('--quit-after', '3')
+
+& (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $engine -Suite Domain
+if ($SceneInput) {
+    & (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $engine -Suite Input
+} else {
+    Write-Host 'Scene-input pilot NOT RUN: requires a display. CI runs check.ps1 -SceneInput under Xvfb.'
+}
