@@ -5,6 +5,8 @@
 # Local tools, check output, and exported builds.
 .tools/
 .artifacts/
+# Acquired and verified by tools/setup_gdunit4.ps1; never hand-edit the dependency.
+/addons/gdUnit4/
 builds/
 
 # Local editor and operating-system state.

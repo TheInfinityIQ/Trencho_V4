@@ -29,6 +29,7 @@ Alternatively, put the matching executable on PATH as `godot` and run `./tools/c
 The check verifies the engine version, imports the project, runs G01/G02/G03 regression suites and G02/G03 interface signal/layout checks, and starts the main scene headlessly.
 Logs are written to `.artifacts/`. CI runs the same check on Linux to catch path casing issues.
 The suites check identity, exclusive duties, physical transfers, ammunition conservation, purchases/receiving, staffing/eligibility, priority/aging, local hauling, safe carry/driver handoffs and reservations/capacity. Engine-driven signals and geometry do not establish native input, readability or full-game correctness. See [G01](docs/g01_identity.md), [G02](docs/g02_receiving.md) and [G03](docs/g03_staffing.md) for evidence and limits.
+The [GdUnit4 pilot and testing guide](docs/testing.md) documents the pinned MIT dependency, domain checks, required display-backed SceneRunner CI step and failure controls. The default headless command explicitly excludes scene-input evidence; use `-SceneInput` with a display for the full set.
 
 ## Repository map
 
@@ -48,3 +49,4 @@ See [foundation decisions and sources](docs/foundation.md) and the [design brief
 
 No open-source license has been selected. Third-party content must retain its license and attribution.
 Choose Git LFS rules before introducing large binary assets; no asset pipeline is imposed yet.
+
