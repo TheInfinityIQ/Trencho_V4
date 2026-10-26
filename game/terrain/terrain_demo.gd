@@ -150,10 +150,9 @@ func _refresh() -> void:
 		_diagram.destination = view.destination
 	else:
 		var value: Dictionary = _observation
-		var protection: Dictionary = _fixture.world.cover(_fixture.target, _fixture.observer, _fixture.cover_class)
-		var blast_text: String = "pending natural-cover classification" if protection.blast == null else "×%.2f" % protection.blast
-		_summary.text = "Knowledge: %s · eye: %s · muzzle: %s\nCover hit ×%.2f / blast %s · %s" % [_knowledge, value.eye.reason, value.muzzle.reason, protection.hit, blast_text, protection.source]
-		_detail.text = "DECLARED PROBES (configuration, not hidden enemy knowledge)\nObserver %s · target %s\nRole %s · actual ground-relative eye %.2fm\n\nEYE\n%s\n\nINDEPENDENT GROUND MUZZLE\n%s\n\nDIRECTIONAL COVER\n%s\n\nGEOMETRY\n%s\n\nOverview only changes this diagnostic diagram. No contacts are discovered by zooming; unseen targets are not drawn. No weapon, drone launch, smoke delivery or damage is simulated." % [_fixture.observer, _fixture.target, _fixture.role, Catalog.ROLES[_fixture.role].eye, str(value.eye), str(value.muzzle), str(protection), str(_fixture.world.obstacles)]
+		var protection: Dictionary = _fixture.world.cover(_fixture.target, _fixture.observer, _fixture.cover_class, false, _fixture.impact)
+		_summary.text = "Knowledge: %s · eye: %s · muzzle: %s\nCover hit ×%.2f (%s) / blast ×%.2f (%s)" % [_knowledge, value.eye.reason, value.muzzle.reason, protection.hit, protection.source, protection.blast, protection.blast_source]
+		_detail.text = "DECLARED PROBES (configuration, not hidden enemy knowledge)\nObserver %s · target %s\nRole %s · actual ground-relative eye %.2fm\n\nEYE\n%s\n\nINDEPENDENT GROUND MUZZLE\n%s\n\nDECLARED BLAST IMPACT\n%s\n\nDIRECTIONAL COVER (separate direct/blast sources)\n%s\n\nGEOMETRY\n%s\n\nOverview only changes this diagnostic diagram. No contacts are discovered by zooming; unseen targets are not drawn. No weapon, drone launch, smoke delivery or damage is simulated." % [_fixture.observer, _fixture.target, _fixture.role, Catalog.ROLES[_fixture.role].eye, str(value.eye), str(value.muzzle), str(_fixture.impact), str(protection), str(_fixture.world.obstacles)]
 		_diagram.world = _fixture.world
 		_diagram.observer = _fixture.observer
 		_diagram.target = _fixture.target

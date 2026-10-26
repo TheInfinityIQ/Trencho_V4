@@ -25,6 +25,7 @@ func _initialize() -> void:
 	_run("height, trunks and buildings independently block rays", _height)
 	_run("drone crops/canopy/smoke and independent muzzle", _drone)
 	_run("strongest valid directional cover and vehicle exclusion", _cover)
+	_run("declared natural blast classes and independent impact eligibility", _natural_blast)
 	_run("detached inspection preserves authoritative movement", _detached)
 	_run("rotated hull sweep and directional ray integration", _rotated)
 	print("G08 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
@@ -276,11 +277,72 @@ func _drone() -> void:
 func _cover() -> void:
 	for values in [["Directional rock front", 0.5], ["Directional rock rear", 1.0], ["Strongest forest and sandbag", 0.5], ["Bunker physical shield", 0.25], ["Exposed crossing deck", 1.0], ["Vehicle has no forest bonus", 1.0]]:
 		var fixture := Fixtures.sight(values[0])
-		var value: Dictionary = fixture.world.cover(fixture.target, fixture.observer, fixture.cover_class)
+		var value: Dictionary = fixture.world.cover(fixture.target, fixture.observer, fixture.cover_class, false, fixture.impact)
 		_near(value.hit, values[1], values[0])
 		if values[0] == "Bunker physical shield": _near(value.blast, 0.25, "Bunker blast benefit separately inspected")
 		if values[0] == "Strongest forest and sandbag": _check(value.valid.size() == 2, "Two valid covers select strongest instead of multiplying")
-		if values[0] == "Directional rock front": _check(value.blast == null, "Unapproved heavy-natural classification remains explicit, not an invented blast rule")
+		if values[0] == "Directional rock front": _near(value.blast, 0.5, "Actual rock shields from explicit impact origin")
+
+
+func _natural_blast() -> void:
+	var person := Vector2(30, 20)
+	var attacker := Vector2(10, 20)
+	var front := Vector3(10, 20, 0)
+	var rear := Vector3(50, 20, 0)
+	for index in 13:
+		var world := World.new()
+		var surface := "TR%02d" % (index + 1)
+		world.paint(Rect2i(29, 19, 2, 2), surface, {"marked": true, "firm": true, "banks": true, "classes": [0], "depth": 0.3})
+		var value: Dictionary = world.cover(person, attacker, 0, false, front)
+		_near(value.blast, 0.5 if surface == "TR06" else 1.0, "All13 natural classes: " + surface)
+		for movement_class in [1, 2]: _near(world.cover(person, attacker, movement_class, false, front).blast, 1.0, "Vehicle hull receives no natural blast benefit")
+		_near(world.cover(person, attacker, 0, true, front).blast, 1.0, "Exposed deck suppresses natural blast protection")
+	var fixture := Fixtures.sight("Directional rock front")
+	var world: RefCounted = fixture.world
+	_near(world.cover(person, attacker, 0, false, front).blast, 0.5, "Rock on actual impact side protects")
+	var value: Dictionary = world.cover(person, attacker, 0, false, rear)
+	_near(value.hit, 0.5, "Direct attacker still shielded independently")
+	_near(value.blast, 1.0, "Rock on wrong blast side cannot protect from impact")
+	value = world.cover(person, Vector2(50, 20), 0, false, front)
+	_near(value.hit, 1.0, "Direct wrong side has no benefit")
+	_near(value.blast, 0.5, "Blast selects its actual origin independently of direct attacker")
+	for missing in [null, Vector3(NAN, 20, 0), Vector3(30, 20, 1.7)]:
+		value = world.cover(person, attacker, 0, false, missing)
+		_check(value.blast == 1.0 and value.blast_eligibility.contains("Missing"), "Absent/nonfinite/coincident impact cannot fabricate a rock shield")
+	world.shields.clear()
+	value = world.cover(person, attacker, 0, false, front)
+	_check(value.blast == 1.0 and value.blast_eligibility.contains("No shielding"), "TR07 alone is not blast cover")
+	world.shields.append({"kind": "rock", "area": Rect2(29, 19, 2, 2)})
+	value = world.cover(person, attacker, 0, false, front)
+	_check(value.blast == 1.0 and value.blast_eligibility.contains("Invalid"), "Unusable shield geometry is explicitly rejected")
+	world = Fixtures.sight("Directional rock front").world
+	world.shields[0].top = 0.1
+	_near(world.cover(person, attacker, 0, false, front).blast, 1.0, "Rock below actual blast line does not shield")
+	world = Fixtures.sight("Directional rock front").world
+	world.shields[0].area = Rect2(40, 19, 2, 2)
+	_near(world.cover(person, attacker, 0, false, front).blast, 1.0, "Person must occupy the declared shielded place")
+	world = Fixtures.sight("Strongest forest and sandbag").world
+	value = world.cover(person, attacker, 0, false, front)
+	_near(value.blast, 0.5, "Dense forest and sandbag do not stack")
+	world.shields[0].kind = "S01"
+	_near(world.cover(person, attacker, 0, false, front).blast, 0.5, "Trench0.5 and dense forest0.5 do not multiply")
+	world.shields[0].kind = "S03"
+	value = world.cover(person, attacker, 0, false, front)
+	_near(value.blast, 0.25, "Bunker beats forest blast benefit without stacking")
+	_check(value.blast_source == "declared-shield" and value.blast_valid.size() == 2, "Blast winner and valid candidates are inspectable")
+	value = world.cover(person, attacker, 0, false, rear)
+	_check(value.hit == 0.25 and value.blast == 0.5 and value.blast_source == "TR06", "Direct winner can differ from strongest valid blast benefit")
+	world.shields.clear()
+	world.obstacle("solid-trunk-at-probe", Rect2(29.8, 19.8, 0.4, 0.4), 0, 8)
+	value = world.cover(person, attacker, 0, false, front)
+	_check(value.blast == 1.0 and value.blast_eligibility.contains("occupied"), "Dense forest does not protect an impossible occupied solid position")
+	world.obstacles.clear()
+	world.paint(Rect2i(29, 19, 2, 2), "TR06", {"gradient": Vector2(2, 0)})
+	_near(world.cover(person, attacker, 0, false, front).blast, 1.0, "Invalid foot support is not valid occupied forest cover")
+	world.paint(Rect2i(29, 19, 2, 2), "TR06", {"overlay": {"kind": "crossing", "complete": true, "classes": [0]}})
+	_near(world.cover(person, attacker, 0, false, front).blast, 1.0, "Completed exposed crossing suppresses underlying denseforest protection")
+	world.paint(Rect2i(29, 19, 2, 2), "TR06", {"overlay": {"kind": "crossing", "complete": false, "classes": [0]}})
+	_near(world.cover(person, attacker, 0, false, front).blast, 0.5, "Unbuilt overlay does not erase actual forest cover")
 
 
 func _detached() -> void:

@@ -50,6 +50,7 @@ func _run() -> void:
 		_check(_demo.get("_observation") == before and _demo.get("_knowledge") == knowledge and _demo.get("_fixture").observer == observer, "Overview never changes range, actual observer or knowledge: " + selector.get_item_text(index))
 		_check(_demo.get("_diagram").visible_target == before.visible, "Diagram never draws unseen target")
 		_check(str(_demo.get("_detail").text).contains("INDEPENDENT GROUND MUZZLE"), "Current eye/muzzle cause inspection")
+		_check(str(_demo.get("_detail").text).contains("DECLARED BLAST IMPACT") and str(_demo.get("_detail").text).contains("blast_eligibility") and not str(_demo.get("_summary").text).contains("pending"), "Current explicit blast origin and cover eligibility replace pending classification")
 	root.size = Vector2i(960, 540)
 	await _settle()
 	_layout("960x540 sight")

@@ -284,9 +284,13 @@ func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzz
 	return {"visible": eye.clear, "eye": eye, "muzzle": firing, "role": role, "weapon_range": weapon_range, "firing_line_clear": firing.clear}
 
 
-func cover(person: Vector2, attacker: Vector2, movement_class: int = 0, exposed_deck: bool = false) -> Dictionary:
-	var result := {"hit": 1.0, "blast": 1.0, "source": "Exposed", "valid": []}
+func cover(person: Vector2, attacker: Vector2, movement_class: int = 0, exposed_deck: bool = false, impact: Variant = null) -> Dictionary:
+	var result := {"hit": 1.0, "blast": 1.0, "source": "Exposed", "blast_source": "Exposed", "valid": [], "blast_valid": [], "blast_eligibility": "No natural blast benefit", "blast_status": "Defined", "impact": impact}
 	if movement_class != 0 or exposed_deck: return result
+	var place := _cover_place(person)
+	if not place.ok:
+		result.blast_eligibility = place.reason
+		return result
 	var tile := cell(Vector2i(floor(person.x), floor(person.y)))
 	var overlay: Dictionary = tile.get("overlay", {})
 	if overlay.get("complete", false) and overlay.get("kind", "") in ["road", "causeway", "crossing"] and 0 in overlay.get("classes", []): return result
@@ -294,21 +298,54 @@ func cover(person: Vector2, attacker: Vector2, movement_class: int = 0, exposed_
 	# Rocky terrain needs a declared actual directional shield; proximity is insufficient.
 	if tile.terrain != "TR07" and tile.terrain != "TR02":
 		result.hit = natural.hit
-		# GDD names heavy natural blast cover but has no class column. Do not
-		# infer that classification from a direct-hit threshold while review waits.
-		result.blast = null if natural.hit < 1.0 else 1.0
 		result.source = tile.terrain
 		result.valid.append(tile.terrain)
+	if tile.terrain == "TR06":
+		result.blast = 0.5
+		result.blast_source = "TR06"
+		result.blast_valid.append("TR06")
+		result.blast_eligibility = "Occupied valid dense-forest cover"
+	var target := Vector3(person.x, person.y, ground(person) + 1.7)
+	var impact_valid: bool = impact is Vector3 and impact.is_finite() and impact.distance_to(target) > EPS
+	if tile.terrain == "TR07": result.blast_eligibility = "No shielding rock for impact" if impact_valid else "Missing usable impact origin"
 	for shield in shields:
+		if not _shield_usable(shield):
+			if result.blast == 1.0: result.blast_eligibility = "Invalid shield geometry"
+			continue
 		if not shield.area.has_point(person): continue
-		var line_from := Vector3(attacker.x, attacker.y, ground(attacker) + 1.5)
-		var line_to := Vector3(person.x, person.y, ground(person) + 1.7)
-		if _volume_interval(line_from, line_to, shield).x < 0: continue
-		var benefit: Dictionary = {"hit": 0.5, "blast": null} if shield.kind == "rock" else Catalog.STRUCTURES[shield.kind]
-		result.valid.append(shield.id)
-		if benefit.hit < result.hit:
-			result.hit = benefit.hit
-			result.source = shield.id
-			result.blast = benefit.blast
-	result.blast_status = "Pending natural-cover classification" if result.blast == null else "Defined"
+		var benefit: Dictionary = {"hit": 0.5, "blast": 0.5} if shield.kind == "rock" else Catalog.STRUCTURES[shield.kind]
+		if attacker.is_finite() and attacker.distance_to(person) > EPS:
+			var line_from := Vector3(attacker.x, attacker.y, ground(attacker) + 1.5)
+			if _volume_interval(line_from, target, shield).x >= 0:
+				result.valid.append(shield.id)
+				if benefit.hit < result.hit:
+					result.hit = benefit.hit
+					result.source = shield.id
+		if impact_valid and _volume_interval(impact, target, shield).x >= 0:
+			result.blast_valid.append(shield.id)
+			if benefit.blast < result.blast:
+				result.blast = benefit.blast
+				result.blast_source = shield.id
+				result.blast_eligibility = "Actual shielding from impact origin"
 	return result
+
+
+func _shield_usable(shield: Dictionary) -> bool:
+	if not shield.get("area") is Rect2 or not shield.get("rect") is Rect2: return false
+	if not shield.area.has_area() or not shield.rect.has_area(): return false
+	if not (shield.get("bottom") is float or shield.get("bottom") is int) or not (shield.get("top") is float or shield.get("top") is int): return false
+	return is_finite(shield.bottom) and is_finite(shield.top) and shield.top > shield.bottom and (shield.get("kind") == "rock" or Catalog.STRUCTURES.has(shield.get("kind"))) and not str(shield.get("id", "")).is_empty()
+
+
+func _cover_place(person: Vector2) -> Dictionary:
+	# The declared person probe has the same 0.6m footprint as the lane fixture.
+	if not person.is_finite(): return _blocked("Invalid occupied cover position")
+	var body := {"facing": 0.0, "size": Vector2(0.6, 0.6)}
+	for point in footprint(body, person):
+		if point.x < bounds.position.x or point.y < bounds.position.y or point.x > bounds.end.x or point.y > bounds.end.y: return _blocked("Cover position outside declared world")
+	for item in obstacles:
+		if item.solid and _overlap_interval(body, person, person, item.rect).x >= 0: return _blocked("Cover position occupied by solid " + item.id)
+	for y in range(int(floor(person.y - 0.3)), int(ceil(person.y + 0.3))):
+		for x in range(int(floor(person.x - 0.3)), int(ceil(person.x + 0.3))):
+			if not support(Vector2i(x, y), 0).ok: return _blocked("Cover position lacks physical foot support")
+	return {"ok": true}

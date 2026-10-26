@@ -60,7 +60,10 @@ static func lane(spec: Dictionary) -> RefCounted:
 
 
 static func sight_cases() -> Array[String]:
-	return ["Ordinary at 220m", "Ordinary beyond 220m", "Mixed foliage just below budget", "Mixed foliage reaches 100", "Ridge blocks ground eye", "Drone sees beyond ridge; ground muzzle blocked", "Low crops block ground", "Drone ignores low crops", "Drone target under dense canopy", "Opaque tree trunk", "Opaque building", "Opaque smoke / ground", "Opaque smoke / drone", "Eye clears low ridge; rifle muzzle blocked", "Elevated target", "Directional rock front", "Directional rock rear", "Strongest forest and sandbag", "Bunker physical shield", "Exposed crossing deck", "Vehicle has no forest bonus"]
+	var cases: Array[String] = ["Ordinary at 220m", "Ordinary beyond 220m", "Mixed foliage just below budget", "Mixed foliage reaches 100", "Ridge blocks ground eye", "Drone sees beyond ridge; ground muzzle blocked", "Low crops block ground", "Drone ignores low crops", "Drone target under dense canopy", "Opaque tree trunk", "Opaque building", "Opaque smoke / ground", "Opaque smoke / drone", "Eye clears low ridge; rifle muzzle blocked", "Elevated target", "Directional rock front", "Directional rock rear", "Strongest forest and sandbag", "Bunker physical shield", "Exposed crossing deck", "Vehicle has no forest bonus"]
+	for surface in Catalog.SURFACES: cases.append("Natural blast " + surface)
+	cases.append_array(["Rock without shield", "Rock missing impact", "Forest occupied by trunk", "Bunker direct front / blast rear"])
+	return cases
 
 
 static func sight(name: String) -> Dictionary:
@@ -70,6 +73,9 @@ static func sight(name: String) -> Dictionary:
 	var role := "ordinary"
 	var muzzle := 1.5
 	var cover_class := 0
+	if name.begins_with("Natural blast "):
+		target = Vector2(30, 20)
+		world.paint(Rect2i(29, 19, 2, 2), name.trim_prefix("Natural blast "), {"marked": true, "firm": true, "banks": true, "classes": [0], "depth": 0.3})
 	match name:
 		"Ordinary at 220m": target.x = 230
 		"Ordinary beyond 220m": target.x = 230.001
@@ -96,12 +102,12 @@ static func sight(name: String) -> Dictionary:
 			target.x = 110
 			world.paint(Rect2i(20, 19, 1, 2), "TR01", {"height": 1.65})
 		"Elevated target": world.paint(Rect2i(210, 19, 2, 2), "TR01", {"height": 15.0})
-		"Directional rock front", "Directional rock rear":
+		"Directional rock front", "Directional rock rear", "Rock without shield", "Rock missing impact":
 			target = Vector2(30, 20)
-			observer = Vector2(10 if name.ends_with("front") else 50, 20)
+			observer = Vector2(50 if name.ends_with("rear") else 10, 20)
 			world.paint(Rect2i(29, 19, 2, 2), "TR07")
-			world.shields.append({"id": "rock-shield", "kind": "rock", "area": Rect2(29, 19, 2, 2), "rect": Rect2(28, 19, 0.5, 2), "bottom": 0.0, "top": 2.0})
-		"Strongest forest and sandbag", "Bunker physical shield":
+			if name != "Rock without shield": world.shields.append({"id": "rock-shield", "kind": "rock", "area": Rect2(29, 19, 2, 2), "rect": Rect2(28, 19, 0.5, 2), "bottom": 0.0, "top": 2.0})
+		"Strongest forest and sandbag", "Bunker physical shield", "Bunker direct front / blast rear":
 			target = Vector2(30, 20)
 			world.paint(Rect2i(29, 19, 2, 2), "TR06", {"vegetation_height": 18.0})
 			world.shields.append({"id": "declared-shield", "kind": "S03" if name.begins_with("Bunker") else "S02", "area": Rect2(29, 19, 2, 2), "rect": Rect2(28, 19, 0.5, 2), "bottom": 0.0, "top": 2.0})
@@ -109,4 +115,11 @@ static func sight(name: String) -> Dictionary:
 		"Vehicle has no forest bonus":
 			world.paint(Rect2i(209, 19, 3, 2), "TR06", {"vegetation_height": 18.0})
 			cover_class = 2
-	return {"world": world, "observer": observer, "target": target, "role": role, "muzzle": muzzle, "weapon_range": 220.0, "cover_class": cover_class}
+		"Forest occupied by trunk":
+			target = Vector2(30, 20)
+			world.paint(Rect2i(29, 19, 2, 2), "TR06")
+			world.obstacle("occupied-tree-trunk", Rect2(29.8, 19.8, 0.4, 0.4), 0, 8)
+	var impact: Variant = Vector3(observer.x, observer.y, world.ground(observer))
+	if name == "Rock missing impact": impact = null
+	if name == "Bunker direct front / blast rear": impact = Vector3(50, 20, 0)
+	return {"world": world, "observer": observer, "target": target, "role": role, "muzzle": muzzle, "weapon_range": 220.0, "cover_class": cover_class, "impact": impact}
