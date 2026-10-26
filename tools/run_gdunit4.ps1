@@ -23,7 +23,10 @@ if (Test-Path -LiteralPath $xmlPath) { Remove-Item -LiteralPath $xmlPath }
 $test = if ($Suite -eq 'Input') { 'receiving_input_test.gd' } else { 'receiving_domain_test.gd' }
 $engineArguments = @('--path', $projectRoot, '--log-file', (Join-Path $reportRoot 'engine.log'))
 if ($Suite -eq 'Domain') { $engineArguments += '--headless' }
-else { $engineArguments += @('--rendering-method', 'gl_compatibility', '--resolution', '1280x720') }
+else {
+    # Input behavior needs a display, but this pilot does not exercise an audio device.
+    $engineArguments += @('--rendering-method', 'gl_compatibility', '--resolution', '1280x720', '--audio-driver', 'Dummy')
+}
 # GdUnit4's report parser rebases POSIX absolute paths; use its supported resource URI.
 $reportUri = "res://.artifacts/gdunit4/$ReportName"
 $engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-a', "res://game/procurement/tests/gdunit/$test", '-rd', $reportUri, '-rc', '1')

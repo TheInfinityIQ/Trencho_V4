@@ -18,7 +18,7 @@ The default command explicitly reports **Scene-input pilot NOT RUN**. Headless G
 xvfb-run -a pwsh -NoProfile -File ./tools/check.ps1 -SceneInput -GodotPath '<Godot 4.7.2 standard executable>'
 ```
 
-CI retains all default checks and requires the additional display-backed input step. Missing display prerequisites, missing reports, skipped tests, engine errors and assertion failures fail the command. Windows display-backed execution is not verified in this pilot; no local desktop launch is needed for its domain check. No changes to the project renderer, engine version or plugin-enabled settings are required.
+CI retains all default checks and requires the additional display-backed input step. The input command selects Godot's Dummy audio driver because it does not test audio hardware. Missing display prerequisites, missing reports, skipped tests, engine errors and assertion failures fail the command. Windows display-backed execution is not verified in this pilot; no local desktop launch is needed for its domain check. No changes to the project renderer, engine version or plugin-enabled settings are required.
 
 For a focused rerun after setup/import:
 
