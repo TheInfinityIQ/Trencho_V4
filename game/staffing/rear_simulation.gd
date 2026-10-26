@@ -95,12 +95,17 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1) -> Dictionary:
 	if not stores.has(source) or not stores.has(destination) or source == destination or type.is_empty() or count <= 0 or priority < 0 or priority > 3:
 		return _result(false, "Hauling needs distinct actual stores, one type, positive count and priority.")
+	var result := _queue_haul(source, destination, type, count, priority)
+	_settle()
+	return result
+
+
+func _queue_haul(source: String, destination: String, type: String, count: int, priority: int, relocation: bool = false) -> Dictionary:
 	var id := "job-%04d" % _next()
 	jobs.append({"id": id, "source": source, "destination": destination, "type": type,
 		"requested": count, "delivered": 0, "priority": priority, "created": time, "order": _sequence,
 		"blocker": "", "cancelled": false, "recovery_sources": [], "selected": 0,
-		"emergency_contention_since": -1.0})
-	_settle()
+		"emergency_contention_since": -1.0, "relocation": relocation, "constraint_active": relocation})
 	return {"ok": true, "message": "Demand recorded; no physical stock moved.", "id": id}
 
 
@@ -175,6 +180,13 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 			a.blocked_since = -1.0
 		elif a.phase in ["Approach", "Pickup"] and not _valid_destination(a.load.destination, a.load.type, a.load.mass, a.id):
 			_release_load(a)
+	_settle()
+	return _result(true, "Storage edited without deleting or moving any contents.")
+
+
+func _reconcile_store(id: String) -> bool:
+	var changed := false
+	var needed_types: Array = []
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
 	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
 	var contents: Dictionary = {}
@@ -185,13 +197,16 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 		var stock: Dictionary = contents[type]
 		var disallowed: bool = not stores[id].filter.is_empty() and type not in stores[id].filter
 		if disallowed or excess > EPS:
+			needed_types.append(type)
 			var count: int = stock.quantity if disallowed else mini(stock.quantity, int(ceil(excess / stock.mass)))
 			var destination := _nearest_storage(stock.position, type, minf(25.0, count * stock.mass), id)
 			if destination.is_empty(): destination = "depot" if id != "depot" else "receiving"
-			_reconcile_relocation(id, destination, type, count)
+			changed = _reconcile_relocation(id, destination, type, count) or changed
 			excess = maxf(0.0, excess - count * stock.mass)
-	_settle()
-	return _result(true, "Storage edited without deleting or moving any contents.")
+	for job in jobs:
+		if job.relocation and job.source == id and job.type not in needed_types:
+			job.constraint_active = false
+	return changed
 
 
 func advance_time(seconds: float) -> Dictionary:
@@ -372,6 +387,10 @@ func _settle() -> void:
 				_report(a)
 				if ledger.inspect_entity(a.id).duty_id.is_empty(): _rebalance()
 				changed = true
+		# Resolve physical constraints after every promise/handling boundary,
+		# before selecting new work. No per-frame or recursive scheduling loop.
+		for id in stores.keys():
+			changed = _reconcile_store(id) or changed
 		for a in actors.values():
 			var p: Dictionary = ledger.inspect_entity(a.id)
 			if a.phase == "Idle" and p.duty_id == "hauling":
@@ -578,10 +597,10 @@ func _stock_at(holder: String) -> Array:
 	return ledger.snapshot().entities.filter(func(e: Dictionary) -> bool: return e.kind == "STOCK" and e.owner == PLAYER and e.holder_id == holder and e.quantity > 0)
 
 
-func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> void:
+func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> bool:
 	var existing: Dictionary = {}
 	for job in jobs:
-		if job.get("relocation", false) and not job.cancelled and job.source == source and job.type == type and job.delivered < job.requested:
+		if job.relocation and not job.cancelled and job.source == source and job.type == type and (job.delivered < job.requested or job.constraint_active):
 			existing = job
 			break
 	var carried: int = 0
@@ -598,11 +617,18 @@ func _reconcile_relocation(source: String, destination: String, type: String, ph
 	# freight carried away. Extend total demand, never add that same claim twice.
 	var needed := maxi(0, physical_needed - other_promised)
 	if existing.is_empty():
-		if needed == 0: return
-		var demand := request_haul(source, destination, type, needed)
-		_job(demand.id).relocation = true
+		if needed == 0: return false
+		_queue_haul(source, destination, type, needed, 1, true)
+		return true
 	else:
-		existing.requested = maxi(existing.requested, existing.delivered + carried + needed)
+		# A nominally delivered subrequest retains lineage while the source
+		# constraint still relies on another outgoing promise. Only physical
+		# compliance ends that constraint, so withdrawn promises cannot reset age.
+		existing.constraint_active = true
+		var requested: int = maxi(existing.requested, existing.delivered + carried + needed)
+		var changed: bool = requested != existing.requested
+		existing.requested = requested
+		return changed
 
 
 func snapshot() -> Dictionary:
