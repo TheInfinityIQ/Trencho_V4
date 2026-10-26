@@ -14,6 +14,8 @@ The player supplies capacity and priorities; autonomous workers and military lea
 
 ## First assigned task: G01 physical identity and ownership
 
+Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The Software Developer chat has accepted this scope and is implementing it on its own feature branch/worktree. Gameplay changes return as a reviewable PR before merge.
+
 State a short plan and acceptance criteria before substantive implementation. Deliver a focused, reviewable first patch proving these behaviours from GDD sections 3-4:
 
 - A person has one visible identity, physical holding/location and exclusive assignment. Moving from rear work to training ends the former duty after any required safe handoff; the same person cannot contribute to both.
@@ -33,6 +35,7 @@ After G01, G02 procurement/receiving and G03 staffing/hauling are independently 
 - D03 needs the reviewed cross-lifecycle people/capacity matrix before related G12/G15 acceptance closes.
 - M3 verifies contested objective play, income, retreat and resupply. Full HQ-outcome evidence begins at M5; existing assault capability rules remain mandatory.
 - G04/G31, G01/G16 and G07/G23 have staged acceptance under GDD section 23. Retain the complete final A09, A03 and A13 cases, respectively.
+- G08/G19 and G13/G20 likewise separate rule fixtures from later constructed-causeway and bridge integration. The issue backlog names each early proof and its later owner; final integrated cases are never waived.
 - G11 requires four validated full-size family fallbacks, not a reduced test map or one fallback for all families.
 
 Surface design contradictions, missing acceptance or costly choices to the Game Designer while continuing independent work. Resolve reversible engineering details independently. Do not turn uncertain design rules into hidden implementation defaults.

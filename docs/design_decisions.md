@@ -10,6 +10,7 @@ Recorded 25 October 2026. Authority: Game Designer's project-planning update. Ga
 | Separate G04 recipe evidence from G31 card-unlock integration. | A09's complete tank-card bundle scenario remains required under G31; G04 need not wait for its own dependent issue. |
 | Separate G01 accounting evidence from G16 casualty integration. | A03's complete incapacitation, dropped functional weapon and recovery scenario remains required under G16. |
 | Separate G07 hull/crew evidence from G23 firing integration. | A13's complete main-fire/ammunition scenario remains required under G23. G07 retains legal transfer, real station assignment and combat-deployment crew requirements. |
+| Separate G08 terrain fixtures from G19 destroyed-causeway integration, and G13 load fixtures from G20 engineer-built crossings. | A14 and A23 retain their complete later integration evidence. Early world and transport milestones need not depend cyclically on later engineering. |
 | G11 supplies four full-size family fallbacks. | River Valley, Lake District, Highland Passes and Farmland and Towns each need a validated 4,000 by 6,000 metre fallback satisfying the same mandatory tests as candidates. |
 
 An issue closing on foundation evidence does not waive later integration. Keep each deferred final scenario linked to the issues that establish its prerequisites and the issue that supplies its complete behaviour. Milestone evidence must demonstrate the relevant interactions.

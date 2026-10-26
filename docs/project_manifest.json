@@ -1,0 +1,1026 @@
+{
+  "design_version": "0.2 with project-planning amendment 0.2.1 (2026-10-25)",
+  "project_url": "https://github.com/users/TheInfinityIQ/projects/3",
+  "milestones": {
+    "M0": {
+      "number": 1,
+      "id": 18920038,
+      "node_id": "MI_kwDOVXUTfc4BILJm",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/1",
+      "title": "M0 \u2014 Rear economy and people"
+    },
+    "M1": {
+      "number": 2,
+      "id": 18920040,
+      "node_id": "MI_kwDOVXUTfc4BILJo",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/2",
+      "title": "M1 \u2014 Full procedural world"
+    },
+    "M2": {
+      "number": 3,
+      "id": 18920041,
+      "node_id": "MI_kwDOVXUTfc4BILJp",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/3",
+      "title": "M2 \u2014 Operational transport"
+    },
+    "M3": {
+      "number": 4,
+      "id": 18920042,
+      "node_id": "MI_kwDOVXUTfc4BILJq",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/4",
+      "title": "M3 \u2014 Autonomous infantry engagement"
+    },
+    "M4": {
+      "number": 5,
+      "id": 18920044,
+      "node_id": "MI_kwDOVXUTfc4BILJs",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/5",
+      "title": "M4 \u2014 Engineering control of routes"
+    },
+    "M5": {
+      "number": 6,
+      "id": 18920045,
+      "node_id": "MI_kwDOVXUTfc4BILJt",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/6",
+      "title": "M5 \u2014 Full vehicle combat"
+    },
+    "M6": {
+      "number": 7,
+      "id": 18920046,
+      "node_id": "MI_kwDOVXUTfc4BILJu",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/7",
+      "title": "M6 \u2014 Supporting capabilities"
+    },
+    "M7": {
+      "number": 8,
+      "id": 18920047,
+      "node_id": "MI_kwDOVXUTfc4BILJv",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/8",
+      "title": "M7 \u2014 Full run and persistence"
+    }
+  },
+  "issues": {
+    "M0": {
+      "number": 1,
+      "id": 6031262620,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33DnA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/1",
+      "title": "[M0] Rear economy and people \u2014 playable milestone",
+      "milestone": "M0",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M1": {
+      "number": 2,
+      "id": 6031262916,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33ExA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/2",
+      "title": "[M1] Full procedural world \u2014 playable milestone",
+      "milestone": "M1",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M2": {
+      "number": 3,
+      "id": 6031263247,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33GDw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/3",
+      "title": "[M2] Operational transport \u2014 playable milestone",
+      "milestone": "M2",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M0",
+        "M1"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M3": {
+      "number": 4,
+      "id": 6031263525,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33HJQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/4",
+      "title": "[M3] Autonomous infantry engagement \u2014 playable milestone",
+      "milestone": "M3",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M2",
+        "G29a"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M4": {
+      "number": 5,
+      "id": 6031263846,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33IZg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/5",
+      "title": "[M4] Engineering control of routes \u2014 playable milestone",
+      "milestone": "M4",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M3",
+        "G26a"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M5": {
+      "number": 6,
+      "id": 6031264181,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33JtQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/6",
+      "title": "[M5] Full vehicle combat \u2014 playable milestone",
+      "milestone": "M5",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M4",
+        "G26b",
+        "G29b"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M6": {
+      "number": 7,
+      "id": 6031264409,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33KmQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/7",
+      "title": "[M6] Supporting capabilities \u2014 playable milestone",
+      "milestone": "M6",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M5"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "M7": {
+      "number": 8,
+      "id": 6031264737,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33L4Q",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/8",
+      "title": "[M7] Full run and persistence \u2014 playable milestone",
+      "milestone": "M7",
+      "type": "epic",
+      "owner": "game-designer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "M6"
+      ],
+      "parent": null,
+      "acceptance_ids": []
+    },
+    "G01": {
+      "number": 9,
+      "id": 6031265044,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33NFA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/9",
+      "title": "[G01] Physical identity and ownership",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "in-progress",
+      "dependencies": [],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A01",
+        "A02",
+        "A03"
+      ]
+    },
+    "G02": {
+      "number": 10,
+      "id": 6031265350,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33ORg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/10",
+      "title": "[G02] Procurement and receiving",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G01"
+      ],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A04",
+        "A58"
+      ]
+    },
+    "G03": {
+      "number": 11,
+      "id": 6031265655,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33Pdw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/11",
+      "title": "[G03] Rear staffing and hauling",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G01"
+      ],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A05",
+        "A06"
+      ]
+    },
+    "G04": {
+      "number": 12,
+      "id": 6031265951,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33Qnw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/12",
+      "title": "[G04] Recipes and essential material chains",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G02",
+        "G03"
+      ],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A07",
+        "A08",
+        "A09"
+      ]
+    },
+    "G05": {
+      "number": 13,
+      "id": 6031266306,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33SAg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/13",
+      "title": "[G05] Rear construction and placement",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G03",
+        "G04"
+      ],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A10",
+        "A59"
+      ]
+    },
+    "G06": {
+      "number": 14,
+      "id": 6031266641,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33TUQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/14",
+      "title": "[G06] Basic and specialist courses",
+      "milestone": "M0",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G03"
+      ],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A11"
+      ]
+    },
+    "G07": {
+      "number": 15,
+      "id": 6031266922,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33Uag",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/15",
+      "title": "[G07] Vehicle assembly and crew stations",
+      "milestone": "M2",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G04",
+        "G06"
+      ],
+      "parent": "M2",
+      "acceptance_ids": [
+        "A12",
+        "A13"
+      ]
+    },
+    "G08": {
+      "number": 16,
+      "id": 6031267184,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33VcA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/16",
+      "title": "[G08] Terrain movement and sight contract",
+      "milestone": "M1",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "ready",
+      "dependencies": [],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A14",
+        "A15"
+      ]
+    },
+    "G09": {
+      "number": 17,
+      "id": 6031267448,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33WeA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/17",
+      "title": "[G09] Broad landforms and natural terrain",
+      "milestone": "M1",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G08",
+        "D01"
+      ],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A16"
+      ]
+    },
+    "G10": {
+      "number": 18,
+      "id": 6031267732,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33XlA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/18",
+      "title": "[G10] Scenario anchors and validation",
+      "milestone": "M1",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G09",
+        "D02"
+      ],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A17",
+        "A18"
+      ]
+    },
+    "G11": {
+      "number": 19,
+      "id": 6031268011,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33Yqw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/19",
+      "title": "[G11] Generation repeatability and fallback",
+      "milestone": "M1",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G10"
+      ],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A19"
+      ]
+    },
+    "G12": {
+      "number": 20,
+      "id": 6031268341,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33Z9Q",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/20",
+      "title": "[G12] Dispatch manifests and modes",
+      "milestone": "M2",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G03",
+        "G07",
+        "D03"
+      ],
+      "parent": "M2",
+      "acceptance_ids": [
+        "A20",
+        "A21",
+        "A60"
+      ]
+    },
+    "G13": {
+      "number": 21,
+      "id": 6031268637,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33bHQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/21",
+      "title": "[G13] Routes fuel and gross load",
+      "milestone": "M2",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G08",
+        "G12"
+      ],
+      "parent": "M2",
+      "acceptance_ids": [
+        "A22",
+        "A23"
+      ]
+    },
+    "G14": {
+      "number": 22,
+      "id": 6031268902,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33cJg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/22",
+      "title": "[G14] HQ unloading and actual issue",
+      "milestone": "M2",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G13"
+      ],
+      "parent": "M2",
+      "acceptance_ids": [
+        "A24"
+      ]
+    },
+    "G15": {
+      "number": 23,
+      "id": 6031269163,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33dKw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/23",
+      "title": "[G15] Military organization",
+      "milestone": "M3",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G06",
+        "G14",
+        "D03"
+      ],
+      "parent": "M3",
+      "acceptance_ids": [
+        "A25"
+      ]
+    },
+    "G16": {
+      "number": 24,
+      "id": 6031269436,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33ePA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/24",
+      "title": "[G16] Combat wounds and morale",
+      "milestone": "M3",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G08",
+        "G15"
+      ],
+      "parent": "M3",
+      "acceptance_ids": [
+        "A03",
+        "A26",
+        "A27"
+      ]
+    },
+    "G17": {
+      "number": 25,
+      "id": 6031269748,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33fdA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/25",
+      "title": "[G17] Hierarchical orders and information",
+      "milestone": "M3",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G15",
+        "G16"
+      ],
+      "parent": "M3",
+      "acceptance_ids": [
+        "A28",
+        "A29"
+      ]
+    },
+    "G18": {
+      "number": 26,
+      "id": 6031270012,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33gfA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/26",
+      "title": "[G18] Objectives and income",
+      "milestone": "M3",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G17"
+      ],
+      "parent": "M3",
+      "acceptance_ids": [
+        "A30"
+      ]
+    },
+    "G19": {
+      "number": 27,
+      "id": 6031270332,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33hvA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/27",
+      "title": "[G19] Field structures and roads",
+      "milestone": "M4",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G04",
+        "G17"
+      ],
+      "parent": "M4",
+      "acceptance_ids": [
+        "A14",
+        "A31",
+        "A32"
+      ]
+    },
+    "G20": {
+      "number": 28,
+      "id": 6031270651,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33i-w",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/28",
+      "title": "[G20] Bridge construction and traversal",
+      "milestone": "M4",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G13",
+        "G19"
+      ],
+      "parent": "M4",
+      "acceptance_ids": [
+        "A23",
+        "A33",
+        "A34"
+      ]
+    },
+    "G21": {
+      "number": 29,
+      "id": 6031270946,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33kIg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/29",
+      "title": "[G21] Bridge repair upgrade and demolition",
+      "milestone": "M4",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G20"
+      ],
+      "parent": "M4",
+      "acceptance_ids": [
+        "A35",
+        "A36"
+      ]
+    },
+    "G22": {
+      "number": 30,
+      "id": 6031271208,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33lKA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/30",
+      "title": "[G22] Mines IEDs and clearance",
+      "milestone": "M4",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G16",
+        "G19"
+      ],
+      "parent": "M4",
+      "acceptance_ids": [
+        "A37",
+        "A38"
+      ]
+    },
+    "G23": {
+      "number": 31,
+      "id": 6031271487,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33mPw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/31",
+      "title": "[G23] Vehicle armour and weapons",
+      "milestone": "M5",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G07",
+        "G16"
+      ],
+      "parent": "M5",
+      "acceptance_ids": [
+        "A13",
+        "A24",
+        "A30",
+        "A39",
+        "A40"
+      ]
+    },
+    "G24": {
+      "number": 32,
+      "id": 6031271734,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33nNg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/32",
+      "title": "[G24] Vehicle destruction and recovery",
+      "milestone": "M5",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G20",
+        "G23"
+      ],
+      "parent": "M5",
+      "acceptance_ids": [
+        "A41",
+        "A42"
+      ]
+    },
+    "G25": {
+      "number": 33,
+      "id": 6031272035,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33oYw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/33",
+      "title": "[G25] Combined-arms transport AI",
+      "milestone": "M5",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G17",
+        "G23"
+      ],
+      "parent": "M5",
+      "acceptance_ids": [
+        "A43",
+        "A44"
+      ]
+    },
+    "G26": {
+      "number": 34,
+      "id": 6031272285,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33pXQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/34",
+      "title": "[G26] Forward supply and service teams",
+      "milestone": "M6",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G26a",
+        "G26b"
+      ],
+      "parent": "M6",
+      "acceptance_ids": [
+        "A45",
+        "A57"
+      ]
+    },
+    "G27": {
+      "number": 35,
+      "id": 6031272535,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33qVw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/35",
+      "title": "[G27] Medical evacuation and care",
+      "milestone": "M6",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G16",
+        "G26"
+      ],
+      "parent": "M6",
+      "acceptance_ids": [
+        "A27",
+        "A46"
+      ]
+    },
+    "G28": {
+      "number": 36,
+      "id": 6031272839,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33rhw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/36",
+      "title": "[G28] Indirect fire and reconnaissance",
+      "milestone": "M6",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G17",
+        "G26"
+      ],
+      "parent": "M6",
+      "acceptance_ids": [
+        "A47",
+        "A48"
+      ]
+    },
+    "G29": {
+      "number": 37,
+      "id": 6031273142,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33stg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/37",
+      "title": "[G29] Enemy package economy",
+      "milestone": "M6",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G29a",
+        "G29b",
+        "G27",
+        "G28"
+      ],
+      "parent": "M6",
+      "acceptance_ids": [
+        "A49"
+      ]
+    },
+    "G30": {
+      "number": 38,
+      "id": 6031273424,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33t0A",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/38",
+      "title": "[G30] UI explanations and large-map controls",
+      "milestone": "M7",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "backlog",
+      "dependencies": [
+        "D01"
+      ],
+      "parent": "M7",
+      "acceptance_ids": [
+        "A50"
+      ]
+    },
+    "G31": {
+      "number": 39,
+      "id": 6031273726,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33u_g",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/39",
+      "title": "[G31] Campaign and bundled access",
+      "milestone": "M7",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G04",
+        "G29"
+      ],
+      "parent": "M7",
+      "acceptance_ids": [
+        "A09",
+        "A51",
+        "A52"
+      ]
+    },
+    "G32": {
+      "number": 40,
+      "id": 6031273984,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33wAA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/40",
+      "title": "[G32] Complete save and load",
+      "milestone": "M7",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G11",
+        "G21",
+        "G22",
+        "G24",
+        "G27",
+        "G28",
+        "G31",
+        "G30"
+      ],
+      "parent": "M7",
+      "acceptance_ids": [
+        "A19",
+        "A53"
+      ]
+    },
+    "G33": {
+      "number": 41,
+      "id": 6031274304,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33xQA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/41",
+      "title": "[G33] Integrated pacing and fairness trial",
+      "milestone": "M7",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17",
+        "G18",
+        "G19",
+        "G20",
+        "G21",
+        "G22",
+        "G23",
+        "G24",
+        "G25",
+        "G26",
+        "G27",
+        "G28",
+        "G29",
+        "G30",
+        "G31",
+        "G32"
+      ],
+      "parent": "M7",
+      "acceptance_ids": [
+        "A54",
+        "A55",
+        "A56"
+      ]
+    },
+    "D01": {
+      "number": 42,
+      "id": 6031274604,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33ybA",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/42",
+      "title": "[D01] Decide presentation, platform and measurable full-map targets",
+      "milestone": "M1",
+      "type": "design-gate",
+      "owner": "game-designer",
+      "initial_status": "ready",
+      "dependencies": [],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A17",
+        "A50",
+        "A55"
+      ]
+    },
+    "D02": {
+      "number": 43,
+      "id": 6031274878,
+      "node_id": "I_kwDOVXUTfc8AAAABZ33zfg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/43",
+      "title": "[D02] Define repeatable cover-capacity fairness fixtures",
+      "milestone": "M1",
+      "type": "design-gate",
+      "owner": "game-designer",
+      "initial_status": "ready",
+      "dependencies": [],
+      "parent": "M1",
+      "acceptance_ids": [
+        "A17",
+        "A18"
+      ]
+    },
+    "D03": {
+      "number": 44,
+      "id": 6031275161,
+      "node_id": "I_kwDOVXUTfc8AAAABZ330mQ",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/44",
+      "title": "[D03] Approve people and capacity across transfer lifecycles",
+      "milestone": "M0",
+      "type": "design-gate",
+      "owner": "game-designer",
+      "initial_status": "ready",
+      "dependencies": [],
+      "parent": "M0",
+      "acceptance_ids": [
+        "A01",
+        "A04",
+        "A20",
+        "A25",
+        "A41",
+        "A45"
+      ]
+    },
+    "G26a": {
+      "number": 45,
+      "id": 6031275470,
+      "node_id": "I_kwDOVXUTfc8AAAABZ331zg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/45",
+      "title": "[G26a] Forward depot delivery and consumption forecast",
+      "milestone": "M4",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G14",
+        "G19"
+      ],
+      "parent": "G26",
+      "acceptance_ids": [
+        "A45",
+        "A57"
+      ]
+    },
+    "G26b": {
+      "number": 46,
+      "id": 6031275778,
+      "node_id": "I_kwDOVXUTfc8AAAABZ333Ag",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/46",
+      "title": "[G26b] Vehicle field service and physical replenishment",
+      "milestone": "M5",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G26a",
+        "G24"
+      ],
+      "parent": "G26",
+      "acceptance_ids": [
+        "A24",
+        "A45",
+        "A57"
+      ]
+    },
+    "G29a": {
+      "number": 47,
+      "id": 6031276062,
+      "node_id": "I_kwDOVXUTfc8AAAABZ334Hg",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/47",
+      "title": "[G29a] Opponent infantry purchases and actual delivery",
+      "milestone": "M3",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G14",
+        "G16",
+        "G18"
+      ],
+      "parent": "G29",
+      "acceptance_ids": [
+        "A49"
+      ]
+    },
+    "G29b": {
+      "number": 48,
+      "id": 6031276363,
+      "node_id": "I_kwDOVXUTfc8AAAABZ335Sw",
+      "html_url": "https://github.com/TheInfinityIQ/Trencho_V4/issues/48",
+      "title": "[G29b] Opponent vehicle packages and armour availability",
+      "milestone": "M5",
+      "type": "feature",
+      "owner": "software-developer",
+      "initial_status": "blocked",
+      "dependencies": [
+        "G29a",
+        "G23",
+        "G25"
+      ],
+      "parent": "G29",
+      "acceptance_ids": [
+        "A49"
+      ]
+    }
+  },
+  "validation": {
+    "g_ids": 33,
+    "acceptance_ids": 60,
+    "dependency_graph": "acyclic",
+    "native_parent_links": 40,
+    "native_dependency_links": 115
+  }
+}

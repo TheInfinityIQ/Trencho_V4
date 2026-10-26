@@ -6,7 +6,7 @@ Godot **4.7.2**, standard edition. A logistics management game supplying an auto
 
 Start with the [design brief](docs/design_brief.md), [Game Design Document](docs/game_design_document.md), and [developer onboarding](docs/developer_onboarding.md). The GDD contains the v0.2 baseline and the governing v0.2.1 planning amendment. [Design decisions](docs/design_decisions.md) distinguish sequencing corrections and open readiness gates from proposed balance values.
 
-Use the [GitHub project](https://github.com/users/TheInfinityIQ/projects/3), [milestones](https://github.com/TheInfinityIQ/Trencho_V4/milestones), and [issue backlog](https://github.com/TheInfinityIQ/Trencho_V4/issues) to track delivery. Each system needs observable acceptance evidence; production, delivery, unloading, and local equipment issue remain distinct steps.
+Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com/users/TheInfinityIQ/projects/3), [milestones](https://github.com/TheInfinityIQ/Trencho_V4/milestones), and [issue backlog](https://github.com/TheInfinityIQ/Trencho_V4/issues) to track delivery. Each system needs observable acceptance evidence; production, delivery, unloading, and local equipment issue remain distinct steps.
 
 ## Open and run
 

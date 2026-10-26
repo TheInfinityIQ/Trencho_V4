@@ -1148,9 +1148,13 @@ This dated amendment governs milestone sequencing, issue closure and developer r
 | G04 and A09 | G04 proves local shell-recipe inputs, consumption, work and exact output. Selecting C31 and verifying its bundled hull-and-shell recipe access is integration evidence owned by G31. This removes the G04/G31 closure cycle; the complete final A09 remains required. |
 | G01 and A03 | G01 proves identity, exclusive assignment, holdings, reservations and loaded-versus-loose ammunition accounting. Incapacitation, dropped functional gear and casualty recovery integration are completed with G16. The complete final A03 remains required. |
 | G07 and A13 | G07 proves empty hulls, real qualified people, distinct stations, legal driver-only transfer and combat-deployment crew requirements. Actual main-gun firing and ammunition interaction are completed with G23. The complete final A13 remains required. |
+| G08 and A14 | G08 proves terrain, slope, footprint and sight rules with repeatable fixtures. The live destroyed-causeway and stranded-vehicle continuation is completed with G19; M1 does not wait for M4 engineering. The complete final A14 remains required. |
+| G13 and A23 | G13 proves class and gross-load decisions against specified bridge fixtures. G20 completes traversal of bridges actually built by engineers; M2 does not wait for M4 construction. The complete final A23 remains required. |
 | G11 and M1 | Supply four authored, full-size 4,000 by 6,000 metre fallbacks: River Valley, Lake District, Highland Passes, and Farmland and Towns. Each must satisfy the selected family's geometry and the same mandatory acceptance checks as a generated candidate. One universal fallback does not close G11. |
 
 An early issue may close on its stated foundation evidence while retaining a linked later integration obligation. No deferred acceptance is waived. The issue that supplies the later behaviour owns the complete integrated scenario, with traceability to the earlier issue. Milestone closure requires its relevant integration obligations, not merely completed issue descriptions.
+
+The published backlog applies the same rule to local world round-trips (G11/A19 before full G32 persistence), remote-stock refusal (G14/A24 before live G23/G26 tank supply), wound/care fixtures (G16/A27 before G27 evacuation), capture eligibility (G18/A30 before live APC transport), and tow-load fixtures (G21/A35 before G24 live recovery). G29's early infantry delivery proves the applicable A49 economy and physical-queue rules; its armoured and full-support stages retain the remaining integrated cases. Each later issue retains the complete scenario it enables.
 
 ### 23.2 Open design gates
 
