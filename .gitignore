@@ -1,0 +1,23 @@
+# Godot generated data (keep .uid and .import sidecars in version control).
+.godot/
+*.translation
+
+# Local tools, check output, and exported builds.
+.tools/
+.artifacts/
+builds/
+
+# Local editor and operating-system state.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local secrets and signing material.
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.keystore

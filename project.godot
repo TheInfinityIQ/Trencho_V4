@@ -1,0 +1,19 @@
+; Engine configuration file. Prefer editing project settings in Godot.
+config_version=5
+
+[application]
+
+config/name="Trencho V4"
+run/main_scene="res://game/main/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.055, 0.065, 0.08, 1)

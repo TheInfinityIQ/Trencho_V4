@@ -1,0 +1,43 @@
+name: Validate Godot project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download and verify pinned Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < .godot-version)"
+          archive="Godot_v${version}-stable_linux.x86_64.zip"
+          release="https://github.com/godotengine/godot-builds/releases/download/${version}-stable"
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 "$release/$archive" --output "$archive"
+          curl --fail --location --retry 3 "$release/SHA512-SUMS.txt" --output SHA512-SUMS.txt
+          awk -v archive="$archive" '$2 == archive || $2 == "*" archive {print}' SHA512-SUMS.txt > selected-checksum.txt
+          test "$(wc -l < selected-checksum.txt)" -eq 1
+          sha512sum --check selected-checksum.txt
+          unzip -q "$archive"
+          chmod +x "Godot_v${version}-stable_linux.x86_64"
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Import and start project
+        shell: pwsh
+        run: ./tools/check.ps1 -GodotPath $env:GODOT_BIN
