@@ -1,6 +1,6 @@
 # Design brief
 
-Updated 25 October 2026. Project: Trencho V4; repository: Trencho_V4. The Game Designer directs scope. The [Game Design Document](game_design_document.md) contains the v0.2 gameplay baseline plus the governing [v0.2.1 planning amendment](game_design_document.md#23-project-planning-amendment-v021---25-october-2026). Read [AGENTS.md](../AGENTS.md) and [foundation decisions](foundation.md) for repository and engineering guidance.
+Updated 26 October 2026. Project: Trencho V4; repository: Trencho_V4. The Game Designer directs scope. The [Game Design Document](game_design_document.md) contains the v0.2 gameplay baseline plus the governing [v0.2.1 planning amendment](game_design_document.md#23-project-planning-amendment-v021---25-october-2026). Read [AGENTS.md](../AGENTS.md) and [foundation decisions](foundation.md) for repository and engineering guidance.
 
 ## Established design scope
 
@@ -27,7 +27,7 @@ Milestones progress from rear economy and people through full procedural world, 
 
 The v0.2.1 amendment corrects sequencing: M3 closes on sustained contested objectives, requisition, retreat and resupply; full HQ outcomes are tested from M5 onward without changing assault eligibility. Early foundation evidence is separated from later casualty, firing and card-unlock integration. All complete final acceptance cases remain required. Each of the four map families needs its own validated full-size fallback.
 
-Open gates are recorded in [design decisions](design_decisions.md): presentation/platform/full-map performance expectations; the exact cover-capacity fairness fixture; and a cross-lifecycle people/capacity matrix. Measured prototypes and independent foundation work may proceed. Production world presentation waits for its gate; related fairness and capacity criteria cannot close on assumptions.
+Gate status is recorded in [design decisions](design_decisions.md). D02's [cover-capacity definition](d02_cover_fairness.md) and D03's [people/capacity contract and matrix](d03_people_capacity.md) are accepted and merged in PR #52 and PR #53 respectively. G10 retains actual final-world validation, and D03's owning issues retain downstream gameplay evidence. D01 presentation/platform/full-map performance remains open. Measured prototypes and independent foundation work may proceed; production world presentation waits for its gate.
 
 ## Engineering context
 
