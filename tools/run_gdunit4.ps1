@@ -20,7 +20,9 @@ $reportRoot = Join-Path $projectRoot ".artifacts/gdunit4/$ReportName"
 New-Item -ItemType Directory -Path $reportRoot -Force | Out-Null
 $xmlPath = Join-Path $reportRoot 'report_1/results.xml'
 if (Test-Path -LiteralPath $xmlPath) { Remove-Item -LiteralPath $xmlPath }
-$test = if ($Suite -eq 'Input') { 'receiving_input_test.gd' } else { 'receiving_domain_test.gd' }
+$manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'gdunit4_tests.json') -Raw | ConvertFrom-Json
+$suites = @($manifest.$Suite)
+$expectedCases = @($suites | ForEach-Object { $_.cases })
 $engineArguments = @('--path', $projectRoot, '--log-file', (Join-Path $reportRoot 'engine.log'))
 if ($Suite -eq 'Domain') { $engineArguments += '--headless' }
 else {
@@ -29,7 +31,8 @@ else {
 }
 # GdUnit4's report parser rebases POSIX absolute paths; use its supported resource URI.
 $reportUri = "res://.artifacts/gdunit4/$ReportName"
-$engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-a', "res://game/procurement/tests/gdunit/$test", '-rd', $reportUri, '-rc', '1')
+$engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-rd', $reportUri, '-rc', '1')
+foreach ($suiteEntry in $suites) { $engineArguments += @('-a', ('res://' + $suiteEntry.path)) }
 if ($Suite -eq 'Domain') { $engineArguments += '--ignoreHeadlessMode' }
 & $engine @engineArguments | Out-Host
 $engineExit = $LASTEXITCODE
@@ -38,8 +41,12 @@ if (-not (Test-Path -LiteralPath $xmlPath)) { throw "Missing GdUnit4 JUnit repor
 [xml]$report = Get-Content -LiteralPath $xmlPath -Raw
 $cases = @($report.SelectNodes('//testcase'))
 $problems = @($report.SelectNodes('//failure|//error|//skipped'))
-if ($cases.Count -ne 1 -or $problems.Count -ne 0) { throw "GdUnit4 $Suite did not execute its one passing, unskipped pilot. See $xmlPath" }
+$actualCases = @($cases | ForEach-Object { $_.name })
+$caseMismatch = @(Compare-Object ($expectedCases | Sort-Object) ($actualCases | Sort-Object))
+if ($caseMismatch.Count -ne 0 -or $problems.Count -ne 0) {
+    throw "GdUnit4 $Suite did not execute exactly its named, passing, unskipped cases. See $xmlPath"
+}
 if (Select-String -LiteralPath (Join-Path $reportRoot 'engine.log') -Pattern '^\s*(SCRIPT ERROR:|ERROR:)') {
     throw "GdUnit4 $Suite reported engine/script errors. See $reportRoot/engine.log"
 }
-Write-Host "GdUnit4 ${Suite}: one test passed; JUnit/HTML reports at $reportRoot/report_1"
+Write-Host "GdUnit4 ${Suite}: $($cases.Count) named tests passed; JUnit/HTML reports at $reportRoot/report_1"
