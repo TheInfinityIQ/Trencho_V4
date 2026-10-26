@@ -32,6 +32,9 @@ func _initialize() -> void:
 	_run("finite parking and qualified station cannot be bypassed", _parking_guards)
 	_run("actual approach can release only its own claims", _approach)
 	_run("staffing priority stays explicit while work ages", _staff_age)
+	_run("new duty prefers eligible idle person over a busy incumbent", _idle_selection)
+	_run("Emergency warning measures actual contention, not old shortage", _contention_cause)
+	_run("access edits retain filters and blocked relocation survives", _filter_and_relocation)
 	print("G03 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -430,4 +433,52 @@ func _staff_age() -> void:
 	_check(_staff(s, "workshop").priority == "Low" and _staff(s, "workshop").shortage == 3, "Unfilled staffing request remains player-set Low after120s")
 	_check(s.effective_priority(s.jobs[0]) == 2, "Queued Low work becomes High after120s without stealing an operator")
 	_check(s.ledger.inspect_entity("p0").duty_id == "workshop", "Job aging never moves staff between pools")
+	_audit(s)
+
+
+func _idle_selection() -> void:
+	var s := Simulation.new("Empty")
+	s.add_person("untrained-busy")
+	s.set_target("workshop", 1)
+	s.advance_time(100)
+	s.add_person("trained-idle", true)
+	s.set_target("hauling", 1)
+	_check(s.ledger.inspect_entity("trained-idle").duty_id == "hauling", "New request uses an eligible idle person before taking a busy less-qualified operator")
+	_check(s.ledger.inspect_entity("untrained-busy").duty_id == "workshop", "Existing fulfilled operator duty is retained")
+	_audit(s)
+
+
+func _contention_cause() -> void:
+	var s := _empty()
+	s.ledger.add_stock("metal", "M01", 5000, 1, "depot", "army-blue")
+	s.request_haul("depot", "receiving", "M01", 1, 0)
+	s.advance_time(300)
+	_check(not s.snapshot().jobs[0].starved, "Old request without staff does not claim Emergency starvation")
+	s.request_haul("depot", "materials_input", "M01", 1000, 3)
+	s.set_target("hauling", 1)
+	_check(not s.snapshot().jobs[0].starved, "New Emergency contention does not inherit300s of missing-staff age")
+	s.advance_time(119.999)
+	_check(not s.snapshot().jobs[0].starved, "Warning waits for real120s Emergency contention")
+	s.advance_time(0.001)
+	_check(s.snapshot().jobs[0].starved, "Actual contention produces warning after120s")
+	s.set_store("receiving", false)
+	_check(not s.snapshot().jobs[0].starved, "Independent access blockage replaces the Emergency contention cause")
+	_audit(s)
+
+
+func _filter_and_relocation() -> void:
+	var s := _empty()
+	for id in s.stores.keys(): s.set_store(id, false)
+	s.ledger.add_stock("first", "M02", 15, 1, "depot", "army-blue")
+	s.ledger.add_stock("second", "M02", 25, 1, "depot", "army-blue")
+	s.set_store("depot", false, 10000, ["M01"])
+	_check(s.jobs.size() == 1 and s.jobs[0].requested == 40, "All physical portions of one filtered type retain relocation demand despite blocked storage")
+	s.set_store("depot", true)
+	_check(s.stores.depot.filter == ["M01"], "Access restoration does not silently remove the storage filter")
+	s.set_target("hauling", 1)
+	s.advance_time(10)
+	_check(s.jobs[0].delivered == 0 and s.ledger.total_stock("M02") == 40, "Blocked relocation preserves real contents")
+	s.set_store("receiving", true)
+	s.advance_time(400)
+	_check(s.jobs[0].delivered == 40 and s.ledger.available_stock_at("receiving", "M02") == 40, "Restored destination allows real relocation of every original portion")
 	_audit(s)

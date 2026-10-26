@@ -98,7 +98,8 @@ func request_haul(source: String, destination: String, type: String, count: int,
 	var id := "job-%04d" % _next()
 	jobs.append({"id": id, "source": source, "destination": destination, "type": type,
 		"requested": count, "delivered": 0, "priority": priority, "created": time, "order": _sequence,
-		"blocker": "", "cancelled": false, "recovery_sources": [], "selected": 0})
+		"blocker": "", "cancelled": false, "recovery_sources": [], "selected": 0,
+		"emergency_contention_since": -1.0})
 	_settle()
 	return {"ok": true, "message": "Demand recorded; no physical stock moved.", "id": id}
 
@@ -145,13 +146,14 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	return _result(true, "Duty requested; carrying or driving retains the old actual duty until safe handoff.")
 
 
-func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Array = []) -> Dictionary:
-	if not stores.has(id) or not is_finite(capacity):
+func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
+	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
 	stores[id].accessible = accessible
 	if capacity >= 0.0:
 		stores[id].capacity = capacity
-	stores[id].filter = filter.duplicate()
+	if filter != null:
+		stores[id].filter = filter.duplicate()
 	for a in actors.values():
 		if a.load.is_empty():
 			continue
@@ -175,14 +177,21 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Arr
 			_release_load(a)
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
 	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
+	var contents: Dictionary = {}
 	for stock in _stock_at(id):
-		if (not filter.is_empty() and stock.design_type not in filter) or excess > EPS:
-			var count: int = stock.quantity if not filter.is_empty() and stock.design_type not in filter else mini(stock.quantity, int(ceil(excess / stock.unit_mass_kg)))
-			var destination := _nearest_storage(stock.position, stock.design_type, minf(25.0, count * stock.unit_mass_kg), id)
-			if not destination.is_empty() and not _has_relocation(id, stock.design_type):
-				var demand := request_haul(id, destination, stock.design_type, count)
+		if not contents.has(stock.design_type): contents[stock.design_type] = {"quantity": 0, "mass": stock.unit_mass_kg, "position": stock.position}
+		contents[stock.design_type].quantity += stock.quantity
+	for type in contents:
+		var stock: Dictionary = contents[type]
+		var disallowed: bool = not stores[id].filter.is_empty() and type not in stores[id].filter
+		if disallowed or excess > EPS:
+			var count: int = stock.quantity if disallowed else mini(stock.quantity, int(ceil(excess / stock.mass)))
+			var destination := _nearest_storage(stock.position, type, minf(25.0, count * stock.mass), id)
+			if destination.is_empty(): destination = "depot" if id != "depot" else "receiving"
+			if not _has_relocation(id, type):
+				var demand := request_haul(id, destination, type, count)
 				_job(demand.id).relocation = true
-			excess = maxf(0.0, excess - count * stock.unit_mass_kg)
+			excess = maxf(0.0, excess - count * stock.mass)
 	_settle()
 	return _result(true, "Storage edited without deleting or moving any contents.")
 
@@ -200,6 +209,8 @@ func advance_time(seconds: float) -> Dictionary:
 			if not job.cancelled and job.delivered < job.requested and effective_priority(job) < 2:
 				var boundary: float = job.created + (floor((time - job.created) / 60.0) + 1.0) * 60.0
 				next = minf(next, boundary)
+			if job.emergency_contention_since >= 0.0 and job.emergency_contention_since + 120.0 > time + EPS:
+				next = minf(next, job.emergency_contention_since + 120.0)
 		if next <= time + EPS:
 			next = minf(target, time + EPS)
 		for a in actors.values():
@@ -315,9 +326,9 @@ func _choose_person(ids: Array, duty: String) -> String:
 		var second: Dictionary = ledger.inspect_entity(b)
 		var rank_a := (2 if first.qualification != "None" else (1 if first.basic_training else 0))
 		var rank_b := (2 if second.qualification != "None" else (1 if second.basic_training else 0))
-		if rank_a != rank_b: return rank_a < rank_b
 		if (first.duty_id == duty) != (second.duty_id == duty): return first.duty_id == duty
 		if (first.assignment == "Available") != (second.assignment == "Available"): return first.assignment == "Available"
+		if rank_a != rank_b: return rank_a < rank_b
 		return a < b)
 	return candidates[0]
 
@@ -361,6 +372,7 @@ func _settle() -> void:
 			if a.phase == "Idle" and p.duty_id == "hauling":
 				changed = _start_job(a) or changed
 		if not changed:
+			_refresh_contention()
 			return
 	push_error("Rear activity failed to settle finite immediate boundaries.")
 
@@ -595,26 +607,36 @@ func snapshot() -> Dictionary:
 		for stock in row.stocks: row.reserved_outbound += stock.reserved
 		storage.append(row)
 	var inspected_jobs: Array[Dictionary] = jobs.duplicate(true)
-	var emergency := false
-	for a in actors.values():
-		if not a.load.is_empty() and _job(a.load.job).priority == 3: emergency = true
 	for job in inspected_jobs:
 		job.age = time - job.created
 		job.effective_priority = PRIORITIES[effective_priority(job)]
 		job.in_flight = _in_flight(job.id)
-		job.starved = not job.cancelled and job.delivered + job.in_flight < job.requested and job.age >= 120.0 and emergency and job.priority != 3 and _waiting_job_viable(job)
+		job.emergency_wait_seconds = maxf(0.0, time - job.emergency_contention_since) if job.emergency_contention_since >= 0.0 else 0.0
+		job.starved = job.emergency_contention_since >= 0.0 and job.emergency_wait_seconds >= 120.0
 		if job.starved: job.blocker = "Starved by explicit Emergency work for at least 120 seconds"
 	return {"time": time, "staffing": staffing, "people": people, "stores": storage,
 		"jobs": inspected_jobs, "workshop": workshop_readiness(), "yard": yard.snapshot(),
 		"audit": audit(), "ledger": ledger.snapshot(), "events": _events.duplicate(true)}
 
 
+func _refresh_contention() -> void:
+	for job in jobs:
+		var contended: bool = not job.cancelled and job.priority != 3 and job.delivered + _in_flight(job.id) < job.requested and _waiting_job_viable(job)
+		if contended and job.emergency_contention_since < 0.0:
+			job.emergency_contention_since = time
+		elif not contended:
+			job.emergency_contention_since = -1.0
+
+
 func _waiting_job_viable(job: Dictionary) -> bool:
-	# Report Emergency contention only when some actual hauler could otherwise
-	# perform this job, accounting for their retained gear rather than active load.
+	# Count actual eligible Emergency contention, not unrelated demand age or
+	# missing staff/access/capacity. Active freight is removed only from this
+	# detached eligibility view, never from the actual personal holder.
 	for id in actors:
 		var p: Dictionary = ledger.inspect_entity(id)
-		if p.duty_id != "hauling": continue
+		var actor: Dictionary = actors[id]
+		if p.duty_id != "hauling" or actor.load.is_empty() or actor.phase == "Source blocked" or p.pending_assignment != "None" or _job(actor.load.job).priority != 3:
+			continue
 		if not p.carrying_stock_id.is_empty():
 			var freight: Dictionary = ledger.inspect_entity(p.carrying_stock_id)
 			p.contents_mass_kg -= freight.quantity * freight.unit_mass_kg

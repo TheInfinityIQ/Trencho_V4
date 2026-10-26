@@ -12,3 +12,9 @@ Assigned [G03 #11](https://github.com/TheInfinityIQ/Trencho_V4/issues/11#issueco
 6. Inspect targets/assigned/reporting/present/shortage, actual people/qualifications/pending duties, chosen jobs/age/blockers, local/reserved/inbound/outbound stock, carried quantities, parking/driver/fuel. Add focused regression cases and a small native review fixture with fresh A05/A06 worker/driver captures. Retain G01/G02 regression/review flows, run repository checks and current-head CI, publish one PR and leave merge to the Game Designer.
 
 Document state ownership, interruption/cancel and future G32 restoration obligations. Keep literal 1280×720 physical and D01 production display acceptance unclaimed. Use the approved practical visible window for native evidence. Report actual checks and any unresolved case; do not promote a fixture into full engagement acceptance.
+
+## Adopted clarification and review status
+
+The Game Designer [confirmed on 26 October 2026](https://github.com/TheInfinityIQ/Trencho_V4/issues/11#issuecomment-6418512971) that aging applies only to queued work, not player-set staffing targets. Unfilled Low staffing remains Low after 120 seconds; queued Low work becomes Normal at 60 and High at 120. Claim release/retry retains the original demand identity/age. Aging cannot confer eligibility, move people between pools or preempt a safe carry/parking handoff. The Emergency warning measures actual eligible Emergency contention rather than unrelated missing-staff, access or storage time.
+
+Implementation and engine coverage are available for draft review. Native A05 input-readiness observations are retained; A06 native approach/carry/pile/driver and final selected-detail checks remain blocked by Windows input failure. [Behavior, reproduction, evidence and limitations](g03_staffing.md) distinguish these claims. Keep G03 open and the PR draft until the remaining evidence is supplied or the Game Designer explicitly revises acceptance.
