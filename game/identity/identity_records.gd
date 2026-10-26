@@ -40,6 +40,7 @@ class Person extends Entity:
 	var carrying_stock_id: String
 	var basic_training := false
 	var qualification := "None"
+	var crew_station := ""
 	var morale: int = 60
 	var suppression: int = 0
 	var service_seconds: float = 0.0
