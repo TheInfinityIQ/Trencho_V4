@@ -30,6 +30,8 @@ func _initialize() -> void:
 	_run("aged work wins an actual competing selection", _aged_selection)
 	_run("pending release later fills an existing staffing shortage", _post_handoff_staffing)
 	_run("finite parking and qualified station cannot be bypassed", _parking_guards)
+	_run("actual approach can release only its own claims", _approach)
+	_run("staffing priority stays explicit while work ages", _staff_age)
 	print("G03 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -404,4 +406,28 @@ func _parking_guards() -> void:
 	var position: Vector2 = s.ledger.inspect_entity("yard-t01").position
 	_check(not s.yard.start_trip().ok and s.ledger.inspect_entity("yard-t01").position == position, "Occupied finite parking rejects movement without deleting the other hull")
 	_check(not s.ledger.begin_carry("driver-01", "missing-stock", 1).ok, "A seated driver cannot become a simultaneous hauler")
+	_audit(s)
+
+
+func _approach() -> void:
+	var s := Simulation.new("Approach")
+	_check(s.actors["worker-01"].phase == "Approach" and s.ledger.reserved("fixture-metal") == 25, "Worker genuinely approaches a remote source with both reservations")
+	s.advance_time(1)
+	var position: Vector2 = s.ledger.inspect_entity("worker-01").position
+	_check(position != Layout.door("depot") and position != Layout.door("receiving"), "Approach moves continuously without reaching pickup early")
+	s.set_target("hauling", 0)
+	_check(s.ledger.reserved("fixture-metal") == 0 and s._reserved_space("workshop_input") == 0, "Approach cancellation releases its own source/output claims")
+	_check(s.ledger.inspect_entity("worker-01").position == position and s.ledger.total_stock("M01") == 50, "Stopping approach neither teleports the person nor deletes goods")
+	_audit(s)
+
+
+func _staff_age() -> void:
+	var s := _empty()
+	s.set_target("workshop", 4, 0)
+	s.ledger.add_stock("metal", "M01", 5, 1, "depot", "army-blue")
+	s.request_haul("depot", "workshop_input", "M01", 1, 0)
+	s.advance_time(120)
+	_check(_staff(s, "workshop").priority == "Low" and _staff(s, "workshop").shortage == 3, "Unfilled staffing request remains player-set Low after120s")
+	_check(s.effective_priority(s.jobs[0]) == 2, "Queued Low work becomes High after120s without stealing an operator")
+	_check(s.ledger.inspect_entity("p0").duty_id == "workshop", "Job aging never moves staff between pools")
 	_audit(s)

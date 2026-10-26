@@ -46,10 +46,11 @@ func _init(fixture: String = "A05") -> void:
 	if fixture == "Driver":
 		ledger.move_entity("driver-01", "rear", Yard.START)
 		set_target("yard", 1, 2)
-	elif fixture == "Carry":
+	elif fixture in ["Carry", "Approach"]:
 		ledger.move_entity("worker-01", "rear", Layout.door("depot"))
-		ledger.add_stock("fixture-metal", "M01", 50, 1.0, "depot", PLAYER)
-		request_haul("depot", "workshop_input", "M01", 50)
+		var source := "depot" if fixture == "Carry" else "receiving"
+		ledger.add_stock("fixture-metal", "M01", 50, 1.0, source, PLAYER)
+		request_haul(source, "workshop_input", "M01", 50)
 		set_target("hauling", 1)
 	else:
 		ledger.add_stock("fixture-metal", "M01", 2, 1.0, "depot", PLAYER)

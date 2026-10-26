@@ -13,6 +13,9 @@ var _jobs: Tree
 var _stores: Tree
 var _yard: Label
 var _detail: Label
+var _people_detail: Label
+var _selected_person := "worker-01"
+var _selected_job := ""
 var _duty: OptionButton
 var _target: SpinBox
 var _priority: OptionButton
@@ -49,6 +52,8 @@ func _build() -> void:
 	for fixture in ["A05", "Carry", "Driver"]:
 		_button(scenarios, {"A05": "Reset A05 inputs", "Carry": "Reset A06 carry", "Driver": "Reset A06 driver"}[fixture], func() -> Dictionary:
 			simulation = Simulation.new(fixture)
+			_selected_person = "driver-01" if fixture == "Driver" else "worker-01"
+			_selected_job = ""
 			return {"ok": true, "message": "Fresh declared " + fixture + " fixture; no runtime teleport or manufactured people implied."})
 	for seconds in [1, 2, 10, 60, 300]:
 		_button(scenarios, "+%ds" % seconds, func() -> Dictionary: return simulation.advance_time(seconds))
@@ -98,13 +103,23 @@ func _build_people(page: VBoxContainer) -> void:
 	_button(controls, "Block F04 input", func() -> Dictionary: return simulation.set_store("workshop_input", false))
 	_button(controls, "No safe stores", _no_safe_stores)
 	_button(controls, "Restore stores", _restore_stores)
-	_people = _tree(page, ["Person", "Owner / qualification", "Actual duty", "Phase", "Position", "Load", "Pending"])
+	_people = _tree(page, ["Person", "Owner / qualification", "Actual duty", "Phase", "Position", "Planned / carried", "Pending"])
+	_people.item_selected.connect(func() -> void:
+		if not _refreshing and _people.get_selected() != null:
+			_selected_person = _people.get_selected().get_metadata(0)
+			_refresh_person())
+	_people_detail = _scroll_label(page, 65)
 	_label(page, "Reporting is not presence. Supplier/away crew are ineligible; carried freight and occupied stations keep the old actual duty until safe handoff.", 14)
 
 
 func _build_jobs(page: VBoxContainer) -> void:
 	var controls := HBoxContainer.new()
 	page.add_child(controls)
+	_button(controls, "Reset A06 approach", func() -> Dictionary:
+		simulation = Simulation.new("Approach")
+		_selected_person = "worker-01"
+		_selected_job = ""
+		return {"ok": true, "message": "Declared source at F02; worker approaches from F03 with both promises held before pickup."})
 	_button(controls, "Block depot source", func() -> Dictionary: return simulation.set_store("depot", false))
 	_button(controls, "Restore stores", _restore_stores)
 	_button(controls, "Cancel selected demand", func() -> Dictionary:
@@ -114,9 +129,9 @@ func _build_jobs(page: VBoxContainer) -> void:
 	_jobs.set_column_expand_ratio(6, 3)
 	_jobs.item_selected.connect(func() -> void:
 		var selected := _jobs.get_selected()
-		if selected != null:
-			var job: Dictionary = simulation._job(selected.get_metadata(0))
-			_detail.text = "%s · source %s → %s · %s\nAge %.3fs · %s · selected %d times\n%s" % [job.id, job.source, job.destination, job.type, simulation.time - job.created, Simulation.PRIORITIES[simulation.effective_priority(job)], job.selected, job.blocker])
+		if selected != null and not _refreshing:
+			_selected_job = selected.get_metadata(0)
+			_refresh_job())
 	_detail = _scroll_label(page, 70)
 	_label(page, "Waiting work promotes every 60s to High. Explicit Emergency stays above High; 120s starvation reports that cause. Source blockage releases its own claims after 10s.", 14)
 
@@ -184,13 +199,18 @@ func _update(message: String = "") -> void:
 	_readiness.text = "R01 local-input gate: %s\n%s · operators present %d · %s\nWork 0 · consumed 0 · output 0 · full A05 continuation remains G04" % [gate.status, gate.reference, gate.operators_present, "Hauling shortage: assign General Hauling" if gate.hauling_shortage else "Inputs become usable only after deposit"]
 	_clear(_people)
 	for p in view.people:
-		var load := "—" if p.load.is_empty() else "%d %s → %s" % [p.load.count, p.load.type, p.load.destination]
-		_row(_people, [p.id, "%s / %s" % [p.owner, p.qualification], p.duty_id if not p.duty_id.is_empty() else p.assignment, p.phase, str(p.position), load, p.pending_duty if p.pending_assignment != "None" else "None"])
+		var load := "—" if p.load.is_empty() else "%s %d %s" % ["Plan" if p.carrying_stock_id.is_empty() else "Carry", p.load.count, p.load.type]
+		var person_row := _row(_people, [p.id, "%s / %s" % [p.owner, p.qualification], p.duty_id if not p.duty_id.is_empty() else p.assignment, p.phase, str(p.position), load, p.pending_duty if p.pending_assignment != "None" else "None"])
+		person_row.set_metadata(0, p.id)
+		if p.id == _selected_person: person_row.select(0)
+	_refresh_person()
 	_clear(_jobs)
 	for job in view.jobs:
 		var row := _row(_jobs, [job.id + " / " + job.type, Simulation.PRIORITIES[job.priority] + " → " + job.effective_priority, "%.1fs" % job.age, job.requested, job.in_flight, job.delivered, "Cancelled" if job.cancelled else job.blocker])
 		row.set_metadata(0, job.id)
 		row.set_tooltip_text(6, job.blocker)
+		if job.id == _selected_job: row.select(0)
+	_refresh_job()
 	_clear(_stores)
 	for store in view.stores:
 		var by_type: Dictionary = {}
@@ -207,6 +227,29 @@ func _update(message: String = "") -> void:
 	_yard.text = "Owned T01 yard-t01 · %s\nPosition %s · facing %s · footprint 7 × 2.7m\nDriver station: %s · pending exit %s\nFinite F11 places: occupied %s · reserved %s\nDistance %.3f / %.3fm · actual tank %.4f M08 · burned %.4f\nStraight speed 12m/s; radius 10m arcs limited to 45°/s (7.854m/s).\nStation entry/exit 3s while stationary; reassignment cannot vacate a moving driver.\nActual driver inspection: %s" % [y.state, y.position, y.facing, y.driver if not y.driver.is_empty() else "Empty", y.pending_exit, y.occupied_parking, y.reserved_parking, y.distance, y.route_length, y.fuel, y.burned, str(driver)]
 	_audit.text = "Conservation / duty / reservation audit: " + ("PASS" if view.audit.is_empty() else str(view.audit))
 	_refreshing = false
+
+
+func _refresh_person() -> void:
+	var p: Dictionary = simulation.ledger.inspect_entity(_selected_person)
+	if p.is_empty():
+		_people_detail.text = "Select an actual person for current station/load details."
+		return
+	var a: Dictionary = simulation.actors.get(p.id, {})
+	_people_detail.text = "%s · %s · basic %s · qualification %s · position %s · holder %s\nActual %s / %s · phase %s · station %s · pending %s / %s\nActual carried stock %s · personal contents %.2fkg · planned/active transfer %s" % [p.id, p.owner, p.basic_training, p.qualification, p.position, p.holder_id, p.assignment, p.duty_id, a.get("phase", "External/away"), p.crew_station, p.pending_assignment, p.pending_duty, p.carrying_stock_id if not p.carrying_stock_id.is_empty() else "None", p.contents_mass_kg, str(a.get("load", {}))]
+
+
+func _refresh_job() -> void:
+	var job: Dictionary = simulation._job(_selected_job)
+	if job.is_empty():
+		_detail.text = "Select an actual job for current claims and deposited quantities."
+		return
+	var promised: int = 0
+	var carried: int = 0
+	for a in simulation.actors.values():
+		if a.load.get("job") != job.id: continue
+		if a.load.carried.is_empty(): promised += a.load.count
+		else: carried += a.load.count
+	_detail.text = "%s · source %s → %s · %s · age %.3fs · %s\nSource promised %d · actually carried %d · deposited %d / %d · selected %d times\n%s" % [job.id, job.source, job.destination, job.type, simulation.time - job.created, Simulation.PRIORITIES[simulation.effective_priority(job)], promised, carried, job.delivered, job.requested, job.selected, job.blocker]
 
 
 func _button(parent: Node, text: String, action: Callable) -> Button:
