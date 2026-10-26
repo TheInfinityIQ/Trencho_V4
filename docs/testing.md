@@ -1,6 +1,6 @@
 # Automated checks and GdUnit4 pilot
 
-Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). This integration adds two focused tests to accepted G01/G02 code; it does not migrate or remove the existing suites.
+Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). The original pilot adds two focused G01/G02 tests; the G03 extension adds two input cases below. Existing suites are retained, not mass-migrated.
 
 ## Repeatable commands
 

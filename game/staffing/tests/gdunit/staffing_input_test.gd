@@ -102,6 +102,15 @@ func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() ->
 	await _press(runner, demo, "+300s")
 	var gate: Dictionary = simulation.workshop_readiness()
 	assert_int(gate.operators_present).is_equal(2)
+	var actual_operators: Array[String] = []
+	for person in simulation.snapshot().people:
+		if person.duty_id == "workshop":
+			actual_operators.append(person.id)
+			assert_str(person.assignment).is_equal("Rear Labour")
+			assert_str(person.phase).is_equal("Idle")
+			assert_vector(person.position).is_equal(Vector2(125, 18))
+	assert_int(actual_operators.size()).is_equal(2)
+	assert_str(actual_operators[0]).is_not_equal(actual_operators[1])
 	assert_str(gate.status).is_equal("Missing Inputs")
 	assert_dict(gate.missing).is_equal({"M01": 2, "M02": 1})
 	assert_bool(gate.hauling_shortage).is_true()
