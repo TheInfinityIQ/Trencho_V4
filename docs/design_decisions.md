@@ -15,13 +15,13 @@ Recorded 25 October 2026. Authority: Game Designer's project-planning update. Ga
 
 An issue closing on foundation evidence does not waive later integration. Keep each deferred final scenario linked to the issues that establish its prerequisites and the issue that supplies its complete behaviour. Milestone evidence must demonstrate the relevant interactions.
 
-## Open decisions
+## Design gates and status
 
 | Gate | Closure evidence | Consequence until resolved |
 | --- | --- | --- |
 | D01 Presentation, platform and full-map performance | Game Designer confirms presentation and target platform/hardware and records measurable readability, interaction, generation/loading and operating expectations using measured prototype results where useful. | Measured prototypes allowed. Production world presentation is not ready. Do not assume existing renderer/window defaults settle this decision. |
-| D02 Exact cover-capacity fairness metric | Game Designer adopted [decision v0.1 and explicit reference fixtures](d02_cover_fairness.md) on 26 October 2026: all nine objectives, minimum eight places per approach, inclusive smaller-count 25-percent comparison, four outdoor parity phases plus usable declared garrisons, real approach/protection/view checks and route endpoint exemptions. D02 remains open pending canonical documentation review/merge. | G10 owns implemented final-world validation and A17/A18 after publication; mathematical fixtures alone do not pass gameplay. Other map work can proceed. |
-| D03 People and capacity across lifecycles | A reviewed matrix identifies rear-place and cap membership, reservation and release across departure, onboard waiting, disembarkation, forward replacement, wounds, recovery and loss; distinguish returning crews, incoming commitments, HQ reserve, active military and forward assigned transfers. | Identity/exclusive-duty work can proceed. G12/G15 commitment and capacity acceptance cannot close until the matrix is agreed and demonstrated. |
+| D02 Exact cover-capacity fairness metric — definition resolved | Game Designer accepted the [decision v0.1 and explicit reference fixtures](d02_cover_fairness.md) in merged PR #52 on 26 October 2026; issue #43 is closed for the definition gate. | G10 retains actual final-world validation and A17/A18. Mathematical fixtures alone do not pass gameplay. |
+| D03 People and capacity across lifecycles — documentation review | The adopted [decision v0.1, lifecycle matrix and exact reference fixtures](d03_people_capacity.md), dated 26 October 2026, govern earlier ambiguous GDD membership/admission wording: all living non-exempt military members plus incoming, independent rear/local/roster/hull/service capacities, physical blockage and once-only handoffs. D03 remains open until canonical documentation is accepted and merged. | G12/G15/G16/G23/G26/G27/G29/G32 retain implementation and complete downstream gameplay evidence; the definition does not pass G02 native acceptance or A01/A04/A20/A25/A41/A45. |
 
 These gates describe design outcomes, not software architecture. Raise concrete contradictions and measured constraints to the Game Designer. Do not introduce new gameplay rules to make a gate disappear.
 
