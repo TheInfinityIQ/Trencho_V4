@@ -12,7 +12,7 @@ Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com
 
 1. Use Godot 4.7.2 (the Steam `stable-4.7` branch is supported).
 2. Import the root `project.godot` in Godot's project manager.
-3. Press **F5** for the Terminal/Receiving review fixture. It starts with zero rear workers and explicit simulation-time controls. See [G02 behavior and verification](docs/g02_receiving.md) for the passing 960×540 native A04/A58 walkthroughs and remaining normal-size display check.
+3. Press **F5** for the Terminal/Receiving review fixture. It starts with zero rear workers and explicit simulation-time controls. See [G02 behavior and verification](docs/g02_receiving.md) for the passing 960×540 native A04/A58 walkthroughs and approved 1000×720 practical display check.
 4. To inspect G01 separately, open `game/identity/identity_demo.tscn` and press **F6** for its duty, rifle-request and ammunition scenarios.
 
 No plugins, export templates, or external packages are required to run the project.
