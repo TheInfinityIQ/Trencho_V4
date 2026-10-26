@@ -24,11 +24,13 @@ Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual che
 
 After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
 
-## Current assignment: G02 procurement and receiving
+## Current assignment: G08 terrain movement and sight
 
-G01's foundation was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50), merged at `c08cb3f86155b3a9ca7db54a3c616f4b7adb6194`. Its full A03 casualty/recovery integration remains G16. The Game Designer then assigned only [G02 #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0: use [the implementation plan](g02_receiving_plan.md), [behavior and verification record](g02_receiving.md), GDD sections 3–5, 8 and the dated section 23.3 admission clarification. G03 readiness does not authorize starting it.
+G01 and G02 were accepted in PRs #50/#51; accepted main is eb251eb83b90bbdc895ae917f9933655aaf794fb. G03 PR #54 remains a separate draft pending native verification; its runtime and worktree are preserved and excluded from this branch. Its code corrections were accepted for code review only, not final merge/native acceptance.
 
-G02's engine checks, 960×540 native behavior walkthrough and Game Designer-approved practical 1000×720 display case pass; see the verification record for actual evidence and limits. Literal 1280×720 physical display and production D01 remain unverified. PR #51 can move to review after final-head checks pass; issue #10 remains open and only the Game Designer accepts/merges it. No next feature is assigned by this status.
+The Game Designer's one active assignment is [G08 #16](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), from accepted main, using GDD9/12/14/23 and the relevant D02 physical-cover contract. See the [plan](g08_terrain_plan.md) and [behavior/verification/restore obligations](g08_terrain.md). The declared local fixture covers all13 terrain classes, physical access/footprint/slope/ford/overlay rules, actual straight-lane movement/fuel, independent eye/muzzle sight and directional strongest cover. G01/G02 review implementations remain unchanged.
+
+G08 is draft foundation evidence. Native input remains blocked by the established Windows SendInput122 failure; do not repeat unchanged attempts. After the human restored browser access, Project16 was updated and visually verified InProgress alongside11; Windows game-input availability is unchanged. A14's live destroyed-causeway and stranded/recovery continuation remains G19; final-world traversal/generation stays M1/G09–G11. D01, live G07/G13/G14/G16/G28 and G32 obligations are not passed by the diagnostic diagram. Publish one draft PR with exact head/checks/currentCI and honest native gaps, report once to the Game Designer, then wait. Do not merge or begin another feature without assignment.
 
 ## Accepted foundation scope: G01 physical identity and ownership
 

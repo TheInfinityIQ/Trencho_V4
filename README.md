@@ -12,8 +12,8 @@ Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com
 
 1. Use Godot 4.7.2 (the Steam `stable-4.7` branch is supported).
 2. Import the root `project.godot` in Godot's project manager.
-3. Press **F5** for the Terminal/Receiving review fixture. It starts with zero rear workers and explicit simulation-time controls. See [G02 behavior and verification](docs/g02_receiving.md) for the passing 960×540 native A04/A58 walkthroughs and approved 1000×720 practical display check.
-4. To inspect G01 separately, open `game/identity/identity_demo.tscn` and press **F6** for its duty, rifle-request and ammunition scenarios.
+3. Press **F5** for the draft [G08 terrain/sight fixture](docs/g08_terrain.md). Select a declared movement or sight/cover case, start a lane and advance explicit seconds, or inspect independent eye/muzzle and cover results. Native verification remains pending.
+4. The root selector retains **G02 Terminal & Receiving** and **G01 Identity & accounting**. Each selection resets its separate declared fixture. See [G02 behavior and verification](docs/g02_receiving.md) for its accepted native A04/A58 evidence; G08 does not change those feature implementations.
 
 No plugins, export templates, or external packages are required to run the project.
 
@@ -26,7 +26,7 @@ From the repository root in PowerShell 7:
 ```
 
 Alternatively, put the matching executable on PATH as `godot` and run `./tools/check.ps1`.
-The check verifies the engine version, imports the project, runs the G01 and G02 regression suites and G02 interface wiring/layout checks, and starts the main scene headlessly.
+The check verifies the engine version, imports the project, runs G01/G02 and G08 regressions plus G02/G08 interface wiring/layout checks, and starts the main scene headlessly.
 Logs are written to `.artifacts/`. CI runs the same check on Linux to catch path casing issues.
 The suites check identity, exclusive duties, physical transfers, ammunition conservation, purchases, arrival, unloading, capacity, cancellation and recovery. Engine-driven interface signals and geometry checks do not establish native input, readability or full-game correctness. See [G01 behavior and evidence](docs/g01_identity.md) and [G02 behavior and verification](docs/g02_receiving.md) for evidence and scope limits.
 
@@ -35,6 +35,7 @@ The suites check identity, exclusive duties, physical transfers, ammunition cons
 - `game/main/`: project entry scene; add feature folders under `game/` as they become necessary.
 - `game/identity/`: G01 accounting model, scripted inputs, review UI, and focused regression tests.
 - `game/procurement/`: purchase catalogue, timed supplier/Receiving simulation, review UI and focused regression tests.
+- `game/terrain/`: declared local terrain/footprint movement, independent sight/cover probes, diagnostic review and regression tests. Full-world generation/navigation remains later work.
 - `tools/`: development checks, excluded from Godot imports.
 - `docs/`: design context and engineering decisions, excluded from Godot imports.
 - `AGENTS.md`: concise instructions for AI contributors.
