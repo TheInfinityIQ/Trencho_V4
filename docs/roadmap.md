@@ -1,6 +1,6 @@
 # Delivery roadmap
 
-[GitHub project](https://github.com/users/TheInfinityIQ/projects/3) · [Milestones](https://github.com/TheInfinityIQ/Trencho_V4/milestones) · [Design](game_design_document.md) · [Developer onboarding](developer_onboarding.md)
+[GitHub project](https://github.com/users/TheInfinityIQ/projects/3) · [Milestones](https://github.com/TheInfinityIQ/Trencho_V4/milestones) · [Design](game_design_document.md) · [Developer onboarding](developer_onboarding.md) · [Team workflow](team_workflow.md)
 
 The full target includes all five vehicles, engineering and four procedural map families. Milestones sequence playable evidence; they do not remove current scope. Battlefield acceptance uses the full 4 km × 6 km world. No dates or effort estimates have been invented.
 
@@ -10,10 +10,17 @@ GDD v0.2 plus the dated v0.2.1 planning amendment governs this backlog. Gameplay
 
 ## Start here
 
-- Software Developer is executing [[G01] Physical identity and ownership](https://github.com/TheInfinityIQ/Trencho_V4/issues/9): exclusive person duties, physical holdings and competing reservations. The implementation handoff uses an isolated worktree and the published design baseline.
-- Game Designer: resolve D01, D02 and D03 with engineering recommendations. Small G08 terrain/sight fixtures are ready independently; production world presentation awaits D01.
-- Once G01 passes review, G02 acquisition and G03 staffing may proceed independently. Do not begin downstream implementation merely because it appears on the board.
-- Each substantive task starts with a short plan and observable acceptance; each PR links its issue, explains behavior and reports checks and remaining unverified interactions.
+### Status snapshot — 26 October 2026
+
+This is a dated summary, not a live task board. Check the linked [GitHub issues](https://github.com/TheInfinityIQ/Trencho_V4/issues), [pull requests](https://github.com/TheInfinityIQ/Trencho_V4/pulls), [milestones](https://github.com/TheInfinityIQ/Trencho_V4/milestones), and [project views](https://github.com/users/TheInfinityIQ/projects/3) for current status. GDD section 23 and [design decisions](design_decisions.md) govern sequencing and retained integration obligations.
+
+- [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9) / [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50) and [G02 #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10) / [PR #51](https://github.com/TheInfinityIQ/Trencho_V4/pull/51) are accepted and merged. G01's full casualty/recovery integration remains with G16; G02 does not close later intake/capacity obligations.
+- D02 #43 / [PR #52](https://github.com/TheInfinityIQ/Trencho_V4/pull/52) and D03 #44 / [PR #53](https://github.com/TheInfinityIQ/Trencho_V4/pull/53) have accepted, merged definitions. Their downstream gameplay evidence remains with the owning issues. [D01 #42](https://github.com/TheInfinityIQ/Trencho_V4/issues/42) remains open; production world presentation, platform, and full-map performance expectations are undecided.
+- [G03 #11 / PR #54](https://github.com/TheInfinityIQ/Trencho_V4/pull/54) remains draft and unmerged pending native verification. Code-correction review is not final acceptance. Its current head is c0f0c6ed2dd69ee58a8cbd09f63a653e500143bd.
+- [G08 #16 / PR #55](https://github.com/TheInfinityIQ/Trencho_V4/pull/55) remains draft. Its current head is 4627810a64a6c4931aead1abfff0dc60f1df48cf; current-head Linux CI run [40375186441](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/40375186441) passed. Natural blast-cover classification still awaits the Game Designer, and native acceptance remains pending.
+- G01/G02/G03/G08 review fixtures and reference tables are bounded evidence. They are not a playable rear-base logistics area, completion of M0, full-map proof, or proof of native gameplay. Visible rear-base orders, arrivals, assignments, hauling, and manufacture remain outstanding. Continue the recorded milestone sequence and gates without inferring a production presentation choice or a new feature assignment.
+
+For assignment, work isolation, review ownership, and reporting, see [team workflow](team_workflow.md). Every substantive task still needs a short plan, observable acceptance, issue link, actual checks, and honest limits.
 
 ## Milestone exits
 
@@ -79,7 +86,7 @@ M3 ends with contested objectives, income feedback, resupply and retreat; an HQ 
 
 - Native issue parents track milestone/feature scope; native blocked-by relationships track completion dependencies. Supply and opponent phase children have their own milestone while their parents integrate at M6.
 - Labels record type, gameplay area, relative priority, role owner and planning readiness. `owner:software-developer` identifies the executing chat role without assigning an uninvolved human account.
-- `status:ready` means no unresolved completion prerequisite; `status:blocked` means linked prerequisites remain; `status:backlog` covers umbrella or safe preparatory work; `status:in-progress` identifies active execution. Update labels and native Project Status together when work or dependencies change. G01 is in progress; G08 and the three design gates are ready.
+- `status:ready` means no unresolved completion prerequisite; `status:blocked` means linked prerequisites remain; `status:backlog` covers umbrella or safe preparatory work; `status:in-progress` identifies active execution. Update labels and native Project Status together when work or dependencies change. The dated status snapshot above records verified public issue/PR state; the GitHub labels and project are the live tracking sources.
 - Close G04 on material/recipe evidence; G31 completes C31 bundled unlock acceptance. Close G01 on identity/holding invariants; G16 completes casualty recovery. G07 establishes station readiness; G23 completes real firing. G20 repeats live bridge tests after G13 fixtures.
 - Every feature includes A50 inspection and save-relevant state review; G30 and G32 perform final cross-system audits. Four validated full-sized authored map fallbacks are required, one per family.
 - Scenarios in issues are requirements, not claims of executed gameplay tests. Close milestones only after linked behavior and integrated exit evidence have been reviewed.
