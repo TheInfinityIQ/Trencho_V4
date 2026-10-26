@@ -33,6 +33,7 @@ func test_selection_zoom_and_text_preserve_physical_samples_and_render_six_views
 			await runner.simulate_frames(3)
 			assert_dict(demo.physical_snapshot()).is_equal(physical)
 			assert_str(demo.selected_id).is_equal("sample-t02-01")
+			_visible_bounds(demo)
 			assert_str((demo.get("_inspection") as Label).text).contains("sample-t02-01")
 			if view == "6 km overview":
 				var full_map := Rect2(demo.screen_for(Vector2.ZERO), physical.extent * demo.camera().pixels_per_metre)
@@ -70,3 +71,8 @@ func _press(runner: GdUnitSceneRunner, demo: Control, title: String) -> void:
 			await runner.await_input_processed()
 			return
 	fail("Missing actual evaluation button: " + title)
+
+func _visible_bounds(node: Node) -> void:
+	if node is Control and node.is_visible_in_tree():
+		assert_bool(node.get_viewport_rect().grow(1).encloses(node.get_global_rect())).override_failure_message("Visible evaluation control fits render: " + str(node.get_path())).is_true()
+	for child in node.get_children(): _visible_bounds(child)

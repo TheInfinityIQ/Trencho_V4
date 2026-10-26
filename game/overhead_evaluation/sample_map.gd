@@ -39,7 +39,14 @@ func _draw() -> void:
 	var ridge_b: Vector2 = model.screen_for(Vector2(1045, 2984))
 	draw_line(ridge_a, ridge_b, Color("d9c590"), maxf(1, 2 * ppm))
 	if model.view_name == "Close":
-		_caption(ridge_a + Vector2(0, -14), "Ridge +12 m · slope ↑ 11.3°")
+		_caption(ridge_a + Vector2(0, -14), "Ridge +12 m · slope → 11.3°")
+		var rise_start := ridge_a + Vector2(0, 38)
+		var rise_end := ridge_b + Vector2(0, 38)
+		draw_line(rise_start, rise_end, Color("eee6c2"), 1)
+		draw_line(rise_end, rise_end + Vector2(-10, -5), Color("eee6c2"), 1)
+		draw_line(rise_end, rise_end + Vector2(-10, 5), Color("eee6c2"), 1)
+		_caption(rise_start + Vector2(0, 25), "+2 m")
+		_caption(rise_end + Vector2(-65, 25), "+12 m")
 		_caption(bridge.position + Vector2(0, -10), "Deck +8 m")
 		_caption(bridge.position + Vector2(0, bridge.size.y + 24), "Ground +2 m · 6 m below")
 	else:
@@ -58,12 +65,16 @@ func _draw() -> void:
 		if item.id == model.selected_id: draw_rect(footprint.grow(4), Color("ffe596"), false, 2)
 		var badge: Vector2 = position
 		if model.view_name != "Close": badge += Vector2(-165, -15 + 43 * index)
-		else: badge += [Vector2(-80, -90), Vector2(0, 50), Vector2(-90, 25)][index]
-		var badge_rect := Rect2(badge - Vector2(7, 14), Vector2(185, 28) * model.text_scale)
-		_badges[item.id] = badge_rect
+		else: badge += [Vector2(-80, -90), Vector2(0, 50), Vector2(-190, 40)][index]
+		var font_size := roundi(13 * model.text_scale)
+		var width: float = ThemeDB.fallback_font.get_string_size(item.name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		var label_at := badge + Vector2(10, 4)
+		if model.view_name != "Close" or index != 1:
+			label_at = badge + Vector2(-width - 12, 4)
+		_badges[item.id] = Rect2(Vector2(minf(label_at.x, badge.x - 6), badge.y - font_size), Vector2(width + 28, font_size + 12))
 		draw_line(position, badge, PALETTE[index], 1)
 		draw_circle(badge, 4, PALETTE[index])
-		_caption(badge + Vector2(10, 4), item.name, PALETTE[index])
+		_caption(label_at, item.name, PALETTE[index])
 	# Fixed screen scale bar describes metres rather than changing physical data.
 	var metres: float = 10 if model.view_name == "Close" else (100 if model.view_name == "Intermediate" else 1000)
 	var bar := Vector2(24, size.y - 30)
