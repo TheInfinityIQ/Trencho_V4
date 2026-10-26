@@ -1,0 +1,10 @@
+{
+  "name": "GdUnit4",
+  "version": "6.2.2",
+  "repository": "https://github.com/godot-gdunit-labs/gdUnit4",
+  "commit": "0127a55f4543dfc24746f6e5c7ba6f94105d51f2",
+  "archive_url": "https://codeload.github.com/godot-gdunit-labs/gdUnit4/zip/0127a55f4543dfc24746f6e5c7ba6f94105d51f2",
+  "sha256": "58a391b0c85cbbcf7aeb09b718c8173793d45ab511950cd65eec0183aabf0e50",
+  "archive_prefix": "gdUnit4-0127a55f4543dfc24746f6e5c7ba6f94105d51f2/addons/gdUnit4/",
+  "license": "MIT"
+}
