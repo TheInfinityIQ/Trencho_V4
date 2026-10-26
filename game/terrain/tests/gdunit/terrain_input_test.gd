@@ -107,15 +107,20 @@ func _choose(runner: GdUnitSceneRunner, selector: OptionButton, title: String) -
 	assert_int(wanted).override_failure_message("Existing diagnostic option: " + title).is_greater_equal(0)
 	if wanted < 0:
 		return
-	# Open the real popup by mouse; navigate its possibly scrolling items through
-	# engine key events. No select()/item_selected.emit() substitutes for input.
+	# Inspect actual popup focus while sending engine navigation actions. Opening
+	# a PopupMenu can initially leave focus at-1; selected index is not focus.
 	await _click(runner, selector.get_global_rect().get_center())
-	runner.simulate_key_pressed(KEY_HOME)
-	await runner.await_input_processed()
-	for step in range(wanted):
-		runner.simulate_key_pressed(KEY_DOWN)
+	var popup := selector.get_popup()
+	assert_bool(popup.visible).is_true()
+	for step in range(selector.item_count + 1):
+		if popup.get_focused_item() == wanted:
+			break
+		var previous: int = popup.get_focused_item()
+		runner.simulate_action_pressed("ui_down")
 		await runner.await_input_processed()
-	runner.simulate_key_pressed(KEY_ENTER)
+		assert_int(popup.get_focused_item()).override_failure_message("Popup navigation must move focus").is_not_equal(previous)
+	assert_int(popup.get_focused_item()).is_equal(wanted)
+	runner.simulate_action_pressed("ui_accept")
 	await runner.await_input_processed()
 	assert_int(selector.selected).override_failure_message("Input selected: " + title).is_equal(wanted)
 

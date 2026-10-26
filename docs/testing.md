@@ -53,7 +53,7 @@ SceneRunner input is engine integration evidence. It does not test Windows `Send
 
 ## G08 scene-input extension
 
-The input manifest requires the G02 purchase pilot and two G08 cases. Existing diagnostic OptionButtons are opened by actual SceneRunner mouse input, then their popup choices are navigated with Godot key events; action buttons use mouse press/release. All actions await input frames. Selecting a case invokes its existing declared initialization through the UI, not direct handler calls or gameplay-state edits.
+The input manifest requires the G02 purchase pilot and two G08 cases. Existing diagnostic OptionButtons are opened by actual SceneRunner mouse input, then their actual focused popup items are navigated with Godot UI-action events; action buttons use mouse press/release. All actions await input frames. Selecting a case invokes its existing declared initialization through the UI, not direct handler calls or gameplay-state edits.
 
 The movement sequence verifies a T02 wheel vehicle blocked by dense forest with unchanged position/fuel after time advances, then a T02 road traversal:10m/s base×1.5 road factor=15m/s,60m in4s,0.12 fuel. Position/fuel/time and actual inspection refresh are checked after1s and at the endpoint. The sight sequence verifies a clear eye and blocked ground rifle muzzle, then a front bunker/rear blast fixture where direct hit0.25 and dense-forest blast0.5 choose independent winners without stacking. Retained domain cases still exercise all natural blast classes and valid constructed shields on completed road overlays; no diagnostic fixture or construction permission is added for these tests.
 
