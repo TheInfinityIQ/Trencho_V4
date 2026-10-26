@@ -24,9 +24,15 @@ Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual che
 
 After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
 
-## First assigned task: G01 physical identity and ownership
+## Current assignment: G02 procurement and receiving
 
-Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The Software Developer chat has accepted this scope and is implementing it on its own feature branch/worktree. Gameplay changes return as a reviewable PR before merge.
+G01's foundation was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50), merged at `c08cb3f86155b3a9ca7db54a3c616f4b7adb6194`. Its full A03 casualty/recovery integration remains G16. The Game Designer then assigned only [G02 #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0: use [the implementation plan](g02_receiving_plan.md), [behavior and verification record](g02_receiving.md), GDD sections 3–5, 8 and the dated section 23.3 admission clarification. G03 readiness does not authorize starting it.
+
+G02's engine checks pass, while native interaction verification remains blocked by Windows access-denied input and a black window capture. The Game Designer authorized a draft PR for parallel review with that evidence explicitly pending. Keep issue #10 open and the PR draft until required interaction verification is supplied or a later deliberate human/design decision changes that requirement.
+
+## Accepted foundation scope: G01 physical identity and ownership
+
+Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The accepted implementation and evidence are recorded in [G01 behavior](g01_identity.md). Gameplay changes return as reviewable PRs before merge.
 
 State a short plan and acceptance criteria before substantive implementation. Deliver a focused, reviewable first patch proving these behaviours from GDD sections 3-4:
 

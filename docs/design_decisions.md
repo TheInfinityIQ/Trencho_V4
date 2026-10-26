@@ -15,6 +15,10 @@ Recorded 25 October 2026. Authority: Game Designer's project-planning update. Ga
 
 An issue closing on foundation evidence does not waive later integration. Keep each deferred final scenario linked to the issues that establish its prerequisites and the issue that supplies its complete behaviour. Milestone evidence must demonstrate the relevant interactions.
 
+## Procurement admission clarification — 26 October 2026
+
+The Game Designer confirmed [GDD section 23.3](game_design_document.md#233-procurement-admission-clarification---26-october-2026): G02 uses one F02 berth plus ten shared off-map waiting places, for eleven accepted unfinished freight vehicles inclusive of transit/queue/berth commitments. Personnel has two accepted unfinished vehicles inclusive of transit and disembarking. Reserve admission before debit; release it once on valid pre-dispatch cancellation or physical vehicle clearance, never merely on emptying cargo. Incoming rear population places and per-unload Receiving storage reservations remain separate. A58 verifies the blocked berth plus ten waiting trucks, zero workers and independent manpower recovery. Further F02 integration belongs to G05; D03 remains open.
+
 ## Open decisions
 
 | Gate | Closure evidence | Consequence until resolved |
