@@ -12,6 +12,7 @@ const PERSONNEL_LIMIT: int = 2
 const REAR_LIMIT: int = 120
 const STORAGE_KG: int = 5000
 const STAFF_LIMIT: int = 4
+const PASSENGER_EXIT_SECONDS: float = 1.0 # GDD 10.2, per stopped vehicle.
 const RECEIVING := Vector2(45, 25)
 const PERSONNEL := Vector2(20, 90)
 const FREIGHT_GATE := Vector2(0, 25)
@@ -240,6 +241,10 @@ func audit() -> Array[String]:
 			failures.append("Invalid vehicle admission lifecycle: " + order.id)
 		if order.people_reserved < 0 or order.people_reserved > 8:
 			failures.append("Invalid incoming people reservation: " + order.id)
+		if order.people_arrived < 0 or order.people_arrived > order.people_exited or order.people_exited > order.passenger_ids.size():
+			failures.append("Invalid passenger exit/arrival progress: " + order.id)
+		if order.kind == "Personnel" and order.state != "Cancelled" and order.people_reserved + order.people_arrived != 8:
+			failures.append("Incoming places do not reconcile with actual arrivals: " + order.id)
 	return failures
 
 
@@ -248,7 +253,7 @@ func _new_order(kind: String, cost: int, cargo: Dictionary) -> Dictionary:
 	var id := "delivery-%04d" % _order_sequence
 	var order := {"id": id, "kind": kind, "owner": PLAYER, "cost": cost,
 		"cargo": cargo.duplicate(), "unloaded": {}, "stock_ids": [], "passenger_ids": [],
-		"people_reserved": 0, "people_arrived": 0, "admission": true, "slot": -1,
+		"people_reserved": 0, "people_exited": 0, "people_arrived": 0, "admission": true, "slot": -1,
 		"state": "Ordered", "purchased_at": _time, "state_entered_at": _time,
 		"arrival_at": _time + (60.0 if kind == "Freight" else 90.0),
 		"next_at": _time + 5.0, "motion": {}}
@@ -277,6 +282,8 @@ func _pump() -> void:
 					_set_state(order, "Berthed")
 					if order.kind == "Personnel":
 						_disembark(order)
+				"Disembarking":
+					_exit_passenger(order)
 				"Departing":
 					order.motion = {}
 					order.next_at = INF
@@ -343,13 +350,22 @@ func _dispatch(order: Dictionary) -> void:
 
 func _disembark(order: Dictionary) -> void:
 	_set_state(order, "Disembarking")
+	order.next_at = _time + PASSENGER_EXIT_SECONDS
+	_event("Stopped; one passenger exit per second, independently for this vehicle", order.id)
+
+
+func _exit_passenger(order: Dictionary) -> void:
+	# Keep each passenger physically aboard until their own handling completes.
+	# Walking and population admission happen afterward, independently per person.
+	var id: String = order.passenger_ids[order.people_exited]
 	var origin: Vector2 = ledger.inspect_entity(order.id).position
 	var path: Array = [origin, Vector2(20, 96), PERSONNEL]
-	for id in order.passenger_ids:
-		_must(ledger.move_entity(id, "rear-lane", origin))
-		_walks.append({"order_id": order.id, "person_id": id, "path": path,
-			"started_at": _time, "ends_at": _time + _path_length(path) / 1.5})
-	_event("Passengers walk under their own movement; supplier driver stays aboard", order.id)
+	_must(ledger.move_entity(id, "rear-lane", origin))
+	_walks.append({"order_id": order.id, "person_id": id, "path": path,
+		"started_at": _time, "ends_at": _time + _path_length(path) / 1.5})
+	order.people_exited += 1
+	order.next_at = _time + PASSENGER_EXIT_SECONDS if order.people_exited < order.passenger_ids.size() else INF
+	_event("One passenger completed exit and starts their own walk; incoming place remains reserved", id)
 
 
 func _start_worker_job(id: String) -> bool:
@@ -465,7 +481,9 @@ func _order_blocker(order: Dictionary) -> String:
 		"Incoming": return "Supplier still travelling; local stock/people unavailable"
 		"Waiting": return "Waiting for physical berth/pull-off clearance"
 		"Berthing": return "Vehicle is physically approaching its reserved place"
-		"Disembarking": return "Passengers are walking; no unloading worker is required"
+		"Disembarking":
+			if order.people_exited < order.passenger_ids.size(): return "Passengers exit one per second from this stopped vehicle, then walk; no unloading worker is required"
+			return "All passengers exited; remaining walks to Personnel still reserve incoming places"
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
 		"Berthed":
 			if _workers.is_empty(): return "Missing actual Receiving unloaders"

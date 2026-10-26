@@ -19,6 +19,8 @@ An issue closing on foundation evidence does not waive later integration. Keep e
 
 The Game Designer confirmed [GDD section 23.3](game_design_document.md#233-procurement-admission-clarification---26-october-2026): G02 uses one F02 berth plus ten shared off-map waiting places, for eleven accepted unfinished freight vehicles inclusive of transit/queue/berth commitments. Personnel has two accepted unfinished vehicles inclusive of transit and disembarking. Reserve admission before debit; release it once on valid pre-dispatch cancellation or physical vehicle clearance, never merely on emptying cargo. Incoming rear population places and per-unload Receiving storage reservations remain separate. A58 verifies the blocked berth plus ten waiting trucks, zero workers and independent manpower recovery. Further F02 integration belongs to G05; D03 remains open.
 
+During G02 draft review the Game Designer confirmed that section 10.2's existing one-person-per-second handling rate also applies to external manpower: one completed exit per second per stopped vehicle, with seated supplier crew excluded. Passengers remain aboard until their own exit completes, then walk independently; each incoming place converts only at actual F08 arrival. Two vehicles handle concurrently on their own schedules. Admission remains occupied through the last arrival and physical vehicle clearance. This corrects simultaneous exit evidence; it introduces no new rate or general staffing scope.
+
 ## Open decisions
 
 | Gate | Closure evidence | Consequence until resolved |

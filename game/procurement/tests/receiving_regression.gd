@@ -15,6 +15,8 @@ func _initialize() -> void:
 	_run("refund window, cancellation and independent reservation reuse", _cancellation)
 	_run("eleven commitments include travel, queue and berth", _freight_admission)
 	_run("two personnel commitments include transit and clearance", _personnel_admission)
+	_run("passengers exit once per second then individually reach Personnel", _passenger_cadence)
+	_run("personnel vehicles handle passengers and clear independently", _parallel_personnel)
 	_run("incoming population is reserved before debit", _population)
 	_run("A04 workerless goods plus self-disembarking manpower", _a04)
 	_run("A58 full freight queue admits independent manpower recovery", _a58)
@@ -107,7 +109,7 @@ func _personnel_admission() -> void:
 	_reject(s, func() -> Dictionary: return s.ledger.complete_person_arrival("delivery-0001-person-01", "personnel", "army-blue"), "NOT_DISEMBARKED")
 	_reject(s, func() -> Dictionary: return s.ledger.complete_person_arrival("delivery-0001-driver", "personnel", "army-blue"), "NOT_ARRIVING_PASSENGER")
 	_reject(s, func() -> Dictionary: return s.ledger.add_person("unqualified-driver", "delivery-0001", "supplier", Records.Assignment.STRATEGIC_CREW, false, "P08"), "INVALID_QUALIFICATION")
-	_success(s.advance_time(9.5))
+	_success(s.advance_time(17.5))
 	_check(s.rear_population() == 16 and s.incoming_people() == 0, "Actual disembarked people replace their own incoming place reservations")
 	_reject(s, func() -> Dictionary: return s.ledger.complete_person_arrival("delivery-0001-person-01", "personnel", "army-blue"), "NOT_ARRIVING_PASSENGER")
 	_check(s.personnel_admitted() == 2 and _states(s, "Departing") == 2, "Empty personnel carriers still reserve their pull-off while clearing")
@@ -117,6 +119,75 @@ func _personnel_admission() -> void:
 	_success(s.buy_people())
 	_check(s.incoming_people() == 8, "New personnel delivery can use the cleared place")
 	_check(s.audit().is_empty(), "People and service-driver counts reconcile")
+
+
+func _passenger_cadence() -> void:
+	var s := Simulation.new()
+	_success(s.buy_people())
+	var stopped_at := 90.0 + 16.0 / 15.0
+	var walking_seconds := (sqrt(32.0) + 6.0) / 1.5
+	_advance_to(s, stopped_at)
+	_check(s.snapshot().walks.is_empty() and _aboard(s, "delivery-0001") == 8, "Stopping begins handling; no passenger exits instantly")
+	_reject(s, func() -> Dictionary: return s.assign_unloaders(1), "MISSING_PEOPLE")
+	for number in range(1, 9):
+		var id := "delivery-0001-person-%02d" % number
+		var exits_at := stopped_at + number
+		_advance_to(s, exits_at - 0.001)
+		_check(_aboard(s, "delivery-0001") == 9 - number and s.snapshot().walks.size() == number - 1, "No early exit before passenger %d finishes their second" % number)
+		_check(s.ledger.inspect_entity(id).holder_id == "delivery-0001", "Passenger %d stays physically aboard during exit handling" % number)
+		_advance_to(s, exits_at)
+		var person := s.ledger.inspect_entity(id)
+		_check(_aboard(s, "delivery-0001") == 8 - number and s.snapshot().walks.size() == number, "Exactly one passenger completes exit per elapsed second")
+		_check(person.holder_id == "rear-lane" and person.position.is_equal_approx(Vector2(16, 100)) and person.assignment == "Passenger" and person.owner == "supplier", "Exited passenger begins their own walk, still unavailable")
+		var walk: Dictionary = {}
+		for activity in s.snapshot().walks:
+			if activity.person_id == id:
+				walk = activity
+		_check(not walk.is_empty() and is_equal_approx(walk.started_at, exits_at) and is_equal_approx(walk.ends_at, exits_at + walking_seconds), "Each completed exit starts a distinct full-speed physical walk")
+		_check(s.rear_population() == 0 and s.incoming_people() == 8, "Exit alone does not consume an incoming place before F08 arrival")
+	_check(s.ledger.inspect_entity("delivery-0001-driver").holder_id == "delivery-0001", "Seated crew neither consume passenger seconds nor leave the carrier")
+	_reject(s, func() -> Dictionary: return s.assign_unloaders(1), "MISSING_PEOPLE")
+	for number in range(1, 9):
+		var id := "delivery-0001-person-%02d" % number
+		var arrives_at := stopped_at + number + walking_seconds
+		_advance_to(s, arrives_at - 0.001)
+		_check(s.rear_population() == number - 1 and s.incoming_people() == 9 - number, "Before each F08 arrival, that person's place remains reserved")
+		var walking := s.ledger.inspect_entity(id)
+		_check(walking.holder_id == "rear-lane" and walking.assignment == "Passenger" and walking.owner == "supplier", "Walking passenger has not become available early")
+		_advance_to(s, arrives_at)
+		var arrived := s.ledger.inspect_entity(id)
+		_check(s.rear_population() == number and s.incoming_people() == 8 - number, "Each actual F08 arrival converts exactly its own incoming reservation")
+		_check(arrived.holder_id == "personnel" and arrived.assignment == "Available" and arrived.owner == "army-blue", "The same individual becomes available at Personnel")
+		_check(s.personnel_admitted() == 1 and s.audit().is_empty(), "Arrival preserves supplier admission and accounting")
+	var clears_at := stopped_at + 8.0 + walking_seconds + 28.0 / 15.0
+	_check(_states(s, "Departing") == 1, "Departure starts only after the eighth person reaches F08")
+	_advance_to(s, clears_at - 0.001)
+	_check(s.personnel_admitted() == 1, "The empty supplier remains admitted during physical clearance")
+	_advance_to(s, clears_at)
+	_check(s.personnel_admitted() == 0 and _states(s, "Complete") == 1, "Physical clearance finally releases one admission")
+	_success(s.advance_time(5.0))
+	_check(s.personnel_admitted() == 0 and s.rear_population() == 8 and s.incoming_people() == 0 and s.audit().is_empty(), "Further time cannot duplicate people or release admission twice")
+
+
+func _parallel_personnel() -> void:
+	var s := Simulation.new()
+	_success(s.buy_people())
+	_success(s.buy_people())
+	_advance_to(s, 92.5)
+	_check(_aboard(s, "delivery-0001") == 7 and _aboard(s, "delivery-0002") == 8, "The first stopped vehicle begins its cadence without moving the second's passengers")
+	_advance_to(s, 92.6)
+	_check(_aboard(s, "delivery-0001") == 7 and _aboard(s, "delivery-0002") == 7 and s.snapshot().walks.size() == 2, "Each vehicle finishes its own first exit; handling is not one global serial queue")
+	_advance_to(s, 99.1)
+	_check(_aboard(s, "delivery-0001") == 0 and _aboard(s, "delivery-0002") == 1 and s.rear_population() == 0, "Last exits remain staggered while all exited people still walk")
+	_advance_to(s, 100.0)
+	_check(s.rear_population() == 1 and s.incoming_people() == 15 and s.snapshot().walks.size() == 15, "First F08 arrival converts one of sixteen places independently")
+	_advance_to(s, 107.0)
+	_check(s.snapshot().orders[0].people_arrived == 8 and s.snapshot().orders[1].people_arrived == 7 and s.personnel_admitted() == 2, "The first supplier starts clearing while the second's last person still walks")
+	_advance_to(s, 109.0)
+	_check(s.rear_population() == 16 and s.incoming_people() == 0 and s.personnel_admitted() == 1, "One cleared supplier releases only its own admission")
+	_check(s.snapshot().orders[0].state == "Complete" and s.snapshot().orders[1].state == "Departing", "Different exit distances retain independent clearance lifetimes")
+	_advance_to(s, 110.0)
+	_check(s.personnel_admitted() == 0 and s.audit().is_empty(), "Both independent services eventually clear without duplicate people")
 
 
 func _population() -> void:
@@ -144,7 +215,7 @@ func _a04() -> void:
 	_success(s.buy_people())
 	_success(s.advance_time(89.999))
 	_check(s.rear_population() == 0, "No recruits before the full 90-second arrival")
-	_success(s.advance_time(10.001))
+	_success(s.advance_time(20.001))
 	_check(s.rear_population() == 8 and s.incoming_people() == 0, "Eight real P00 disembark under their own movement without workers")
 	_success(s.assign_unloaders(4))
 	_check(s.receiving_kg() == 0 and s.reserved_storage_kg() == 100, "Assignments reserve capacity but do not teleport freight")
@@ -167,7 +238,7 @@ func _a58() -> void:
 	_check(s.rear_population() == 0 and s.freight_admitted() == 11, "Start A58 with zero workers and full freight admission")
 	_check(_states(s, "Berthed") == 1 and _states(s, "Waiting") == 10, "Freight is physically blocked at the single bay")
 	_success(s.buy_people())
-	_success(s.advance_time(100.0))
+	_success(s.advance_time(110.0))
 	_check(s.rear_population() == 8 and s.resource_counts("M03").available == 0, "Independent personnel access restores people while freight remains blocked")
 	_success(s.assign_unloaders(4))
 	_success(s.advance_time(1000.0))
@@ -284,6 +355,18 @@ func _mixed_operations() -> void:
 		if not result.ok:
 			_check(s.snapshot() == before, "Rejected mixed operation %d is atomic" % step)
 		_check(s.audit().is_empty(), "Mixed operation %d preserves all G01/G02 invariants" % step)
+
+
+func _advance_to(s: Simulation, time: float) -> void:
+	_success(s.advance_time(time - float(s.snapshot().time)))
+
+
+func _aboard(s: Simulation, order_id: String) -> int:
+	var count := 0
+	for person in s.ledger.snapshot().entities:
+		if person.kind == "PERSON" and person.assignment == "Passenger" and person.holder_id == order_id:
+			count += 1
+	return count
 
 
 func _seed(s: Simulation, count: int) -> void:

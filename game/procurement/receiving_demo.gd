@@ -204,6 +204,8 @@ func _refresh() -> void:
 			continue
 		var row := _people.create_item(root)
 		var phase := "External service" if person.owner == Simulation.SUPPLIER else "Available"
+		if person.assignment == "Passenger":
+			phase = "Walking to Personnel" if person.holder_id == "rear-lane" else "Passenger aboard"
 		if _view.workers.has(person.id):
 			phase = _view.workers[person.id].job.get("phase", "Waiting for freight")
 		var values: Array = [person.id, person.owner, person.assignment, phase, person.position, person.pending_assignment]
@@ -235,10 +237,10 @@ func _update_detail() -> void:
 		var entity := _simulation.ledger.inspect_entity(order.id)
 		if not entity.is_empty():
 			location = "%s at %s m; carrier owner/control %s / %s" % [entity.holder_id, entity.position, entity.owner, entity.controller]
-		_detail.text = "%s · %s · %s\nPurchased t=%.3f · dispatch t=%.3f · arrival t=%.3f · next transition %s\nCost %d · admission %s · incoming people reserved %d · disembarked %d\n%s\nCargo purchased %s · actually deposited %s\nCause: %s" % [
+		_detail.text = "%s · %s · %s\nPurchased t=%.3f · dispatch t=%.3f · arrival t=%.3f · next transition %s\nCost %d · admission %s · incoming people reserved %d · exited %d · arrived at F08 %d\n%s\nCargo purchased %s · actually deposited %s\nCause: %s" % [
 			order.id, order.kind, order.state, order.purchased_at, order.purchased_at + 5,
 			order.arrival_at, str(order.next_at), order.cost, order.admission,
-			order.people_reserved, order.people_arrived, location, str(order.cargo), str(order.unloaded), order.blocked_reason]
+			order.people_reserved, order.people_exited, order.people_arrived, location, str(order.cargo), str(order.unloaded), order.blocked_reason]
 
 
 func _tree(parent: Node, titles: Array) -> Tree:

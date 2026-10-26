@@ -27,8 +27,18 @@ func _run() -> void:
 	_press("Order 8 P00 · 120 + 20")
 	_press("+60s")
 	_check(_simulation().rear_population() == 0, "Manpower does not arrive before 90 seconds")
-	_press("+60s")
-	_check(_simulation().rear_population() == 8, "Actual people self-disembark through the UI clock controls")
+	for step in range(3):
+		_press("+10s")
+	for step in range(3):
+		_press("+1s")
+	_check(_simulation().snapshot().walks.size() == 1 and _simulation().rear_population() == 0 and _simulation().incoming_people() == 8, "At purchase +93s, only one passenger has exited and their walk has not admitted anyone")
+	_check(_person_phase("delivery-0002-person-01") == "Walking to Personnel" and _person_phase("delivery-0002-person-02") == "Passenger aboard", "Inspection distinguishes the walking individual from passengers still aboard")
+	var detail: Label = _demo.get("_detail")
+	_check(detail.text.contains("incoming people reserved 8 · exited 1 · arrived at F08 0"), "Selected delivery exposes exit progress separately from actual F08 arrivals")
+	_press("+10s")
+	_check(_simulation().rear_population() == 4 and _simulation().incoming_people() == 4, "UI clock converts individual reservations at staggered F08 arrivals")
+	_press("+10s")
+	_check(_simulation().rear_population() == 8, "All actual people eventually self-disembark through the UI clock controls")
 	_tab(2)
 	await _settle()
 	_layout("People and actual labour")
@@ -86,6 +96,14 @@ func _run() -> void:
 
 func _simulation() -> RefCounted:
 	return _demo.get("_simulation")
+
+
+func _person_phase(id: String) -> String:
+	var people: Tree = _demo.get("_people")
+	for row in people.get_root().get_children():
+		if row.get_text(0) == id:
+			return row.get_text(3)
+	return "Missing"
 
 
 func _press(text: String) -> void:
