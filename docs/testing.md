@@ -1,6 +1,6 @@
 # Automated checks and GdUnit4 pilot
 
-Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). This integration adds two focused tests to accepted G01/G02 code; it does not migrate or remove the existing suites.
+Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). The accepted pilot adds two G01/G02 tests; this extension adds two G08 input cases. Existing suites are retained, not mass-migrated.
 
 ## Repeatable commands
 
@@ -10,7 +10,7 @@ PowerShell 7, from the project root:
 ./tools/check.ps1 -GodotPath '<Godot 4.7.2 standard executable>'
 ```
 
-This checks the pinned engine, acquires/verifies GdUnit4, imports, runs all existing suites, starts the main scene headlessly and runs the GdUnit4 domain test. The existing 1,750 assertions remain: G01 624, G02 842, G02 callback/layout 190 and D01 data probe 94. The new suite reports test cases separately; assertion counts are not measures of gameplay acceptance.
+This checks the pinned engine, acquires/verifies GdUnit4, imports, runs all existing suites, starts the main scene headlessly and runs the GdUnit4 domain test. The existing 3,034 assertions remain: G01 624, G02 842, G02 callback/layout 190, G08 domain 531, G08 callback/layout 753 and D01 data probe 94. The new suite reports test cases separately; assertion counts are not measures of gameplay acceptance.
 
 The default command explicitly reports **Scene-input pilot NOT RUN**. Headless Godot cannot establish this input behavior. For the complete command on Linux, use a working X display or Xvfb with `xauth` and OpenGL software-rendering support (the pinned Ubuntu CI image supplies these):
 
@@ -29,7 +29,7 @@ For a focused rerun after setup/import:
 ./tools/prove_gdunit4_failure.ps1 -GodotPath '<godot>' -Suite Domain
 ```
 
-The failure probe temporarily changes one expected value, invokes the same runner in a child PowerShell process, requires a named JUnit assertion failure and a nonzero command exit, restores the original bytes in `finally`, then reruns the passing test. CI runs this proof for `-Suite Input`. Do not run the probe concurrently with another test run or source edit. A hard process kill can interrupt restoration; inspect the diff before committing.
+The failure probe temporarily changes one expected value, invokes the same runner in a child PowerShell process, requires a named JUnit assertion failure and a nonzero command exit, restores the original bytes in `finally`, then reruns the passing test. CI runs this proof for `-Suite Input` and for `-Suite Input -G08Movement` (expected elapsed clock deliberately changed from6 to7). `tools/gdunit4_tests.json` declares all paths and required case names; missing, extra, duplicate or skipped cases fail the runner. Do not run the probe concurrently with another test run or source edit. A hard process kill can interrupt restoration; inspect the diff before committing.
 
 `.artifacts/gdunit4/<suite>/report_1/` contains JUnit XML and HTML; its parent contains the engine log. Failure-control output also includes `command.log` and `proof.json`. CI uploads `.artifacts/` on success and failure, for seven days. A failing upload cannot turn a failed test into a pass.
 
@@ -49,4 +49,12 @@ To upgrade, select an official stable release, review its immutable source, lice
 
 Migrate small deterministic domain cases incrementally when named assertions, fixtures or reports improve diagnosis. The next useful input regression is actual delivery-row selection followed by cancellation: it would catch wrong selection, hit testing and focus that the existing emitted-signal checks bypass. Do not rewrite already meaningful suites merely to increase framework usage.
 
-SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G03/G08 are unmerged and excluded from this pilot; their remaining native gates, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
+SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G08 is an unmerged test extension with the additional cases below; G03 runtime is excluded; their remaining native gates, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
+
+## G08 scene-input extension
+
+The input manifest requires the G02 purchase pilot and two G08 cases. Existing diagnostic OptionButtons are opened by actual SceneRunner mouse input, then their popup choices are navigated with Godot key events; action buttons use mouse press/release. All actions await input frames. Selecting a case invokes its existing declared initialization through the UI, not direct handler calls or gameplay-state edits.
+
+The movement sequence verifies a T02 wheel vehicle blocked by dense forest with unchanged position/fuel after time advances, then a T02 road traversal:10m/s base×1.5 road factor=15m/s,60m in4s,0.12 fuel. Position/fuel/time and actual inspection refresh are checked after1s and at the endpoint. The sight sequence verifies a clear eye and blocked ground rifle muzzle, then a front bunker/rear blast fixture where direct hit0.25 and dense-forest blast0.5 choose independent winners without stacking. Retained domain cases still exercise all natural blast classes and valid constructed shields on completed road overlays; no diagnostic fixture or construction permission is added for these tests.
+
+The generic named-case runner was reused unchanged from PR #54 revision `1c7d56c`, with its failure-control extension adapted only to the G08 movement test. No G03 runtime or G03 test suite is imported. Linux CI supplies display-backed engine-input results; Windows local checks remain headless. Native G08 rendering/readability/OS input and full-world/integration gates remain unverified, so PR #55 stays draft.

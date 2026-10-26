@@ -1,0 +1,12 @@
+{
+  "Domain": [
+    {"path": "game/procurement/tests/gdunit/receiving_domain_test.gd", "cases": ["test_cancel_one_order_preserves_other_admission_and_physical_cargo"]}
+  ],
+  "Input": [
+    {"path": "game/procurement/tests/gdunit/receiving_input_test.gd", "cases": ["test_purchase_routes_input_and_disabled_control_cannot_commit"]},
+    {"path": "game/terrain/tests/gdunit/terrain_input_test.gd", "cases": [
+      "test_blocked_wheel_then_real_road_travel_preserves_fuel_and_inspection",
+      "test_eye_and_ground_muzzle_then_independent_direct_and_blast_cover"
+    ]}
+  ]
+}
