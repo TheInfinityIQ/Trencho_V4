@@ -28,7 +28,7 @@ After reporting, wait for the next focused assignment. Do not merge the implemen
 
 G01's foundation was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50), merged at `c08cb3f86155b3a9ca7db54a3c616f4b7adb6194`. Its full A03 casualty/recovery integration remains G16. The Game Designer then assigned only [G02 #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0: use [the implementation plan](g02_receiving_plan.md), [behavior and verification record](g02_receiving.md), GDD sections 3–5, 8 and the dated section 23.3 admission clarification. G03 readiness does not authorize starting it.
 
-G02's engine checks pass, while native interaction verification remains blocked by Windows access-denied input and a black window capture. The Game Designer authorized a draft PR for parallel review with that evidence explicitly pending. Keep issue #10 open and the PR draft until required interaction verification is supplied or a later deliberate human/design decision changes that requirement.
+G02's engine checks, 960×540 native behavior walkthrough and Game Designer-approved practical 1000×720 display case pass; see the verification record for actual evidence and limits. Literal 1280×720 physical display and production D01 remain unverified. PR #51 can move to review after final-head checks pass; issue #10 remains open and only the Game Designer accepts/merges it. No next feature is assigned by this status.
 
 ## Accepted foundation scope: G01 physical identity and ownership
 
@@ -42,15 +42,15 @@ State a short plan and acceptance criteria before substantive implementation. De
 - Loaded and loose ammunition reconcile exactly once across holders. A move or reservation does not duplicate rounds or turn an intact item into a permanently unusable object.
 - Inspection/evidence exposes identity, assignment, holder, actual/reserved/available quantities and the relevant blocking reason. Keep the demonstration understandable within the existing project and chosen reversible implementation details.
 
-G01 is foundation evidence, not an instruction to implement all downstream systems. Use the documented cases to demonstrate safe assignment and holding transitions. Full production, training, manifests, wounds and combat remain their scoped issues. Do not invent capacity rules while D03 is open. A03's complete incapacitation/dropped-weapon/recovery case is an explicit later integration obligation with G16; G01's early closure does not mark that final case passed.
+G01 is foundation evidence, not an instruction to implement all downstream systems. Use the documented cases to demonstrate safe assignment and holding transitions. Full production, training, manifests, wounds and combat remain their scoped issues. Follow the accepted D03 contract for capacity rules; its definition does not supply downstream implementation evidence. A03's complete incapacitation/dropped-weapon/recovery case is an explicit later integration obligation with G16; G01's early closure does not mark that final case passed.
 
 ## Follow-on work and gates
 
 After G01, G02 procurement/receiving and G03 staffing/hauling are independently scoped successors; G06 courses follows G03. G08 terrain movement/sight rules can proceed independently with repeatable fixtures. Full-size map requirements remain unchanged.
 
 - D01 allows measured presentation/world prototypes; production world presentation waits for the Game Designer's presentation, platform and performance decision. No 2D/3D choice is imposed here.
-- D02 needs the exact cover-capacity fairness fixture before that validator can close.
-- D03 needs the reviewed cross-lifecycle people/capacity matrix before related G12/G15 acceptance closes.
+- D02's exact cover-capacity definition was accepted in merged PR #52; G10 retains actual final-world validation and A17/A18.
+- D03's cross-lifecycle people/capacity definition was accepted in merged PR #53; G12/G15 and other owning issues retain actual gameplay acceptance.
 - M3 verifies contested objective play, income, retreat and resupply. Full HQ-outcome evidence begins at M5; existing assault capability rules remain mandatory.
 - G04/G31, G01/G16 and G07/G23 have staged acceptance under GDD section 23. Retain the complete final A09, A03 and A13 cases, respectively.
 - G08/G19 and G13/G20 likewise separate rule fixtures from later constructed-causeway and bridge integration. The issue backlog names each early proof and its later owner; final integrated cases are never waived.
