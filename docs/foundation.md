@@ -25,3 +25,7 @@ Recorded 2026-10-25. These decisions describe the current foundation and may cha
 - [Official checkout action](https://github.com/actions/checkout/tree/3d3c42e5aac5ba805825da76410c181273ba90b1): the pinned v7.0.1 source, verified against its upstream Git tag.
 
 Folder structure, renderer defaults, check implementation, and deferral of infrastructure are project judgments based on these sources, not claims that the sources prescribe this exact repository.
+
+## G01 implementation follow-up
+
+The initial title placeholder is superseded by the bounded [identity/accounting fixture](g01_identity.md). It uses a scene-owned typed ledger, detached inspections and event-driven review UI, plus a dependency-free headless regression runner. Canvas scaling keeps its review controls usable in smaller windows. These choices apply to G01 evidence; D01 still owns the production presentation/platform/performance decision. See the G01 document for interruption, accounting and future persistence obligations.

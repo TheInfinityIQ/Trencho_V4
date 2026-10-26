@@ -12,7 +12,7 @@ Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com
 
 1. Use Godot 4.7.2 (the Steam `stable-4.7` branch is supported).
 2. Import the root `project.godot` in Godot's project manager.
-3. Press **F6** for the selected scene or **F5** for the project. The initial scene displays the project title.
+3. Press **F5** for the project. The G01 review fixture opens with duty, rifle-request, and ammunition scenarios. **F6** runs only the selected scene.
 
 No plugins, export templates, or external packages are required to run the project.
 
@@ -25,13 +25,14 @@ From the repository root in PowerShell 7:
 ```
 
 Alternatively, put the matching executable on PATH as `godot` and run `./tools/check.ps1`.
-The check verifies the engine version, imports the project, and starts its main scene headlessly.
+The check verifies the engine version, imports the project, runs the G01 regression suite, and starts its main scene headlessly.
 Logs are written to `.artifacts/`. CI runs the same check on Linux to catch path casing issues.
-This is a startup smoke check; gameplay tests will accompany gameplay systems.
+The G01 suite checks identity, exclusive duties, reservations, physical transfers and ammunition conservation. Headless checks do not establish visual or full-game correctness. See [G01 behavior and evidence](docs/g01_identity.md) for reproduction steps, native interaction evidence, and scope limits.
 
 ## Repository map
 
 - `game/main/`: project entry scene; add feature folders under `game/` as they become necessary.
+- `game/identity/`: G01 accounting model, scripted inputs, review UI, and focused regression tests.
 - `tools/`: development checks, excluded from Godot imports.
 - `docs/`: design context and engineering decisions, excluded from Godot imports.
 - `AGENTS.md`: concise instructions for AI contributors.

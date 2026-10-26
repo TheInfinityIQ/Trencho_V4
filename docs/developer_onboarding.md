@@ -12,6 +12,10 @@ Prepared 25 October 2026 for the Game Designer's authorized project handoff. Thi
 
 The player supplies capacity and priorities; autonomous workers and military leaders execute. Preserve physical people and goods, distinct reservation/movement/arrival/issue, real crew, local inputs and observable blocking reasons. User-established scope is in GDD section 1.1. Exact defaults in section 1.2 are proposed balance; use the documented baseline and raise proposed changes explicitly.
 
+## PR and merge ownership
+
+The Software Developer implements scoped changes on feature branches and creates implementation PRs with design references and actual verification evidence. The Game Designer reviews gameplay scope and verification, then manages merges into `main` under the human's standing authorization. The Software Developer leaves implementation PRs unmerged for that review. This authority does not waive regression checks, interaction verification, or unresolved design gates.
+
 ## First assigned task: G01 physical identity and ownership
 
 Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The Software Developer chat has accepted this scope and is implementing it on its own feature branch/worktree. Gameplay changes return as a reviewable PR before merge.
