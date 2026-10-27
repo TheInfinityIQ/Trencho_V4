@@ -102,6 +102,78 @@ func test_shared_time_partition_matches_reporting_hauling_start_and_completion()
 	assert_array(split.audit()).is_empty()
 
 
+func _fractional_fixture(operator_count: int) -> RefCounted:
+	var rear := Rear.new("Empty")
+	for index in operator_count:
+		rear.add_person("operator-%d" % index, false, "None", "duty-workshop")
+	rear.set_target("workshop", operator_count)
+	rear.ledger.add_stock("metal-a", "M01", 1, 1, "workshop_input", rear.PLAYER)
+	rear.ledger.add_stock("metal-b", "M01", 1, 1, "workshop_input", rear.PLAYER)
+	rear.ledger.add_stock("component", "M02", 1, 1, "workshop_input", rear.PLAYER)
+	rear.production = Production.new(rear)
+	return rear
+
+
+func _assert_fractional_endpoint(operator_count: int, intervals: Array[float]) -> void:
+	var coarse := _fractional_fixture(operator_count)
+	var split := _fractional_fixture(operator_count)
+	var endpoint := 40.0 / operator_count
+	coarse.advance_time(endpoint)
+	for interval in intervals: split.advance_time(interval)
+	for rear in [coarse, split]:
+		assert_float(rear.time).is_equal_approx(endpoint, rear.EPS)
+		assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+		assert_int(rear.production.history.size()).is_equal(1)
+		assert_dict(rear.production.batch).is_empty()
+		assert_dict(rear._output_promises).is_empty()
+		if not rear.production.history.is_empty():
+			assert_float(rear.production.history[0].completed_at).is_equal_approx(endpoint, rear.EPS)
+			assert_float(rear.production.history[0].work).is_equal(Production.REQUIRED_WORK)
+			assert_array(rear.production.history[0].receipt).is_equal([
+				{"id": "metal-a", "type": "M01", "count": 1},
+				{"id": "metal-b", "type": "M01", "count": 1},
+				{"id": "component", "type": "M02", "count": 1}])
+		assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 2, "M02": 1})
+		var completed: Dictionary = rear.ledger.snapshot()
+		rear.advance_time(0)
+		rear.advance_time(0)
+		assert_dict(rear.ledger.snapshot()).is_equal(completed)
+		assert_array(rear.audit()).is_empty()
+
+
+func test_one_operator_fractional_exact_endpoint_matches_coarse_completion() -> void:
+	_assert_fractional_endpoint(1, [0.125, 12.375, 7.5, 19.999, 0.001])
+
+
+func test_two_operator_fractional_exact_endpoint_matches_coarse_completion() -> void:
+	_assert_fractional_endpoint(2, [0.125, 2.375, 7.5, 9.999, 0.001])
+
+
+func test_completion_keeps_meaningfully_partial_work_and_respects_interruption() -> void:
+	for operator_count in [1, 2, 4]:
+		var rear := _fractional_fixture(operator_count)
+		var remaining_seconds: float = 10.0 * rear.EPS
+		rear.advance_time(40.0 / operator_count - remaining_seconds)
+		assert_int(rear.ledger.total_stock("E01")).is_zero()
+		assert_float(rear.production.batch.work).is_equal_approx(40.0 - remaining_seconds * operator_count, 0.000000001)
+		var partial: Dictionary = rear.production.batch.duplicate(true)
+		rear.production.set_paused(true)
+		rear.advance_time(100)
+		assert_dict(rear.production.batch).is_equal(partial)
+		rear.set_target("workshop", 0)
+		rear.production.set_paused(false)
+		rear.advance_time(100)
+		assert_dict(rear.production.batch).is_equal(partial)
+		assert_int(rear.ledger.total_stock("E01")).is_zero()
+		assert_float(rear._reserved_space("workshop_output")).is_equal(4.0)
+		rear.set_target("workshop", operator_count)
+		rear.advance_time(remaining_seconds)
+		assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+		assert_int(rear.production.history.size()).is_equal(1)
+		assert_dict(rear._output_promises).is_empty()
+		assert_array(rear.audit()).is_empty()
+
+
 func test_pause_staff_and_access_loss_retain_consumed_work_and_promise() -> void:
 	var rear := _local()
 	rear.advance_time(5)

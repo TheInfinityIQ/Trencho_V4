@@ -64,7 +64,14 @@ func next_boundary() -> float:
 
 func advance_work(seconds: float) -> void:
 	# Called before G03 advances physical people to the next shared event boundary.
-	if _can_work(): batch.work = minf(REQUIRED_WORK, float(batch.work) + seconds * operators().size())
+	if not _can_work(): return
+	var rate := operators().size()
+	batch.work = minf(REQUIRED_WORK, float(batch.work) + seconds * rate)
+	# Match the rear clock's time tolerance only at completion, not on each
+	# partial increment. Fractional partitions can otherwise leave 40 - 1ulp.
+	var rear: RefCounted = _rear_ref.get_ref()
+	if (REQUIRED_WORK - float(batch.work)) / rate <= rear.EPS:
+		batch.work = REQUIRED_WORK
 
 
 func settle() -> bool:

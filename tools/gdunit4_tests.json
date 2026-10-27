@@ -14,7 +14,10 @@
         "test_pause_staff_and_access_loss_retain_consumed_work_and_promise",
         "test_output_edits_are_atomic_and_inbound_hauling_cannot_steal_promise",
         "test_cancellation_loses_only_consumed_inputs_and_never_erases_finished_output",
-        "test_fully_worked_component_waits_for_legal_physical_completion"
+        "test_fully_worked_component_waits_for_legal_physical_completion",
+        "test_one_operator_fractional_exact_endpoint_matches_coarse_completion",
+        "test_two_operator_fractional_exact_endpoint_matches_coarse_completion",
+        "test_completion_keeps_meaningfully_partial_work_and_respects_interruption"
       ],
       "path": "game/production/tests/r01_domain_test.gd"
     }
