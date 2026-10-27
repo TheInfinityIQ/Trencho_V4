@@ -35,6 +35,24 @@
         "test_individual_weapon_counts_only_when_functional_unloaded_unissued_and_stored"
       ],
       "path": "game/production/tests/r01_target_domain_test.gd"
+    },
+    {
+      "path": "game/production/tests/r02_domain_test.gd",
+      "cases": [
+        "test_exact_local_r02_consumption_work_yield_and_mass_complete_once",
+        "test_foreign_remote_carried_and_other_reserved_inputs_cannot_start",
+        "test_complete_output_capacity_and_filter_edits_protect_independent_claims",
+        "test_reserved_200_target150_starts_one_full100_yield_for_available220",
+        "test_zero_target_partial_edits_and_interruptions_keep_consumed_batch",
+        "test_cancel_and_earned_blocked_completion_preserve_other_owners_and_goods",
+        "test_e02_loaded_foreign_cargo_person_pile_and_ineligible_holders_are_excluded",
+        "test_real_e02_claim_carry_and_deposit_convert_coverage_once",
+        "test_e02_invalid_destination_reroute_cancel_and_pile_recovery_keep_physical_goods",
+        "test_simultaneous_facilities_keep_people_inputs_forecasts_and_promises_exclusive",
+        "test_two_facility_coarse_and_fractional_time_match_independent_completion",
+        "test_r02_fractional_endpoint_and_meaningful_partial_work_keep_clock_tolerance",
+        "test_r01_and_r02_targets_never_count_each_others_stock_or_forecasts"
+      ]
     }
   ],
   "Input": [
@@ -70,6 +88,12 @@
         "test_eye_and_ground_muzzle_then_independent_direct_and_blast_cover"
       ],
       "path": "game/terrain/tests/gdunit/terrain_input_test.gd"
+    },
+    {
+      "cases": [
+        "test_normal_launch_r02_hauls_starts_retains_work_and_finishes_whole_yield"
+      ],
+      "path": "game/production/tests/r02_input_test.gd"
     }
   ]
 }

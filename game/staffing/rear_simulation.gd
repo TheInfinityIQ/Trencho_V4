@@ -19,6 +19,7 @@ var jobs: Array[Dictionary] = []
 var _sequence: int = 0
 var _events: Array[Dictionary] = []
 var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fixtures staged.
+var munitions_production: RefCounted # Optional fixed R02/F05 owner on this same clock.
 var _output_promises: Dictionary = {}
 
 
@@ -217,6 +218,14 @@ func _reconcile_store(id: String) -> bool:
 	return changed
 
 
+func _production_activities() -> Array[RefCounted]:
+	# Two explicit released facilities, not an all-recipe scheduler.
+	var activities: Array[RefCounted] = []
+	if production != null: activities.append(production)
+	if munitions_production != null: activities.append(munitions_production)
+	return activities
+
+
 func advance_time(seconds: float) -> Dictionary:
 	if not is_finite(seconds) or seconds < 0.0:
 		return _result(false, "Time must be finite and nonnegative.")
@@ -224,7 +233,7 @@ func advance_time(seconds: float) -> Dictionary:
 	_settle()
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
-		if production != null: next = minf(next, production.next_boundary())
+		for activity in _production_activities(): next = minf(next, activity.next_boundary())
 		for a in actors.values():
 			next = minf(next, a.deadline)
 		for job in jobs:
@@ -235,7 +244,7 @@ func advance_time(seconds: float) -> Dictionary:
 				next = minf(next, job.emergency_contention_since + 120.0)
 		if next <= time + EPS:
 			next = minf(target, time + EPS)
-		if production != null: production.advance_work(next - time)
+		for activity in _production_activities(): activity.advance_work(next - time)
 		for a in actors.values():
 			if not a.motion.is_empty():
 				var distance: float = (next - a.motion.started) * a.motion.speed
@@ -244,7 +253,7 @@ func advance_time(seconds: float) -> Dictionary:
 		ledger.advance_time(next - time)
 		time = next
 		_settle()
-	return _result(true, "Shared rear time advanced; R01 prerequisites still govern operator work." if production != null else "Only elapsed reporting, handling, walking and yard movement completed.")
+	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
 
 
 func effective_priority(job: Dictionary) -> int:
@@ -411,7 +420,7 @@ func _settle() -> void:
 			var p: Dictionary = ledger.inspect_entity(a.id)
 			if a.phase == "Idle" and p.duty_id == "hauling":
 				changed = _start_job(a) or changed
-		if production != null: changed = production.settle() or changed
+		for activity in _production_activities(): changed = activity.settle() or changed
 		if not changed:
 			_refresh_contention()
 			return

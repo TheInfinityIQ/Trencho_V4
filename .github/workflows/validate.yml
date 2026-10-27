@@ -16,7 +16,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     env:
       EVALUATION_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
@@ -52,6 +52,9 @@ jobs:
       - name: Prove R01 completed-work regression fails and restores
         shell: pwsh
         run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -G04Work
+      - name: Prove R02 fixed yield regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R02Yield
       - name: Prove failing input assertion fails and restore passing test
         shell: bash
         run: |
