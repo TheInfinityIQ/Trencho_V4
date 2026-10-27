@@ -20,6 +20,21 @@
         "test_completion_keeps_meaningfully_partial_work_and_respects_interruption"
       ],
       "path": "game/production/tests/r01_domain_test.gd"
+    },
+    {
+      "cases": [
+        "test_zero_equal_target_and_active_forecast_prevent_duplicate_consumption",
+        "test_target_and_mode_edits_keep_partial_receipt_promise_and_explicit_cancel_owner",
+        "test_reserved_stock_200_minus_80_requires_thirty_real_r01_batches",
+        "test_foreign_cargo_issued_pile_and_ineligible_deposits_are_excluded",
+        "test_actual_internal_reservation_pickup_deposit_conserves_coverage_once",
+        "test_invalid_unpicked_claim_and_ineligible_source_remove_only_their_coverage",
+        "test_target_mode_fractional_shared_time_matches_coarse_multiple_batches",
+        "test_invalid_destination_replaces_coverage_with_one_valid_current_reroute",
+        "test_pile_and_cancelled_carry_exclude_forecast_until_real_eligible_deposit",
+        "test_individual_weapon_counts_only_when_functional_unloaded_unissued_and_stored"
+      ],
+      "path": "game/production/tests/r01_target_domain_test.gd"
     }
   ],
   "Input": [
@@ -45,7 +60,8 @@
     {
       "path": "game/production/tests/r01_input_test.gd",
       "cases": [
-        "test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_protected_work"
+        "test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_protected_work",
+        "test_normal_launch_stock_target_keeps_active_work_and_finishes_without_restart"
       ]
     },
     {
