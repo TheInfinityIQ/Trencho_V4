@@ -1,12 +1,13 @@
 extends RefCounted
-## Shared lifecycle for the two fixed released activities, R01/F04 and R02/F05.
+## Shared lifecycle for the three fixed released activities: R01, R02 and R26.
 
-const REQUIRED_WORK := 40.0
 const RECIPES := {
-	"R01": {"inputs": {"M01": 2, "M02": 1}, "output_type": "E01", "output_count": 1, "unit_mass": 4.0,
+	"R01": {"work": 40.0, "inputs": {"M01": 2, "M02": 1}, "output_type": "E01", "output_count": 1, "unit_mass": 4.0,
 		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
-	"R02": {"inputs": {"M01": 1, "M03": 1}, "output_type": "E02", "output_count": 100, "unit_mass": 0.02,
+	"R02": {"work": 40.0, "inputs": {"M01": 1, "M03": 1}, "output_type": "E02", "output_count": 100, "unit_mass": 0.02,
 		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
+	"R26": {"work": 100.0, "inputs": {"M01": 30, "M04": 70}, "output_type": "M11", "output_count": 100, "unit_mass": 1.0,
+		"duty": "materials", "facility": "F13", "input_store": "materials_input", "output_store": "materials_output"},
 }
 var _spec: Dictionary
 var _recipe: String
@@ -21,7 +22,7 @@ var _sequence := 0
 
 
 func _init(rear: RefCounted, recipe: String) -> void:
-	assert(recipe in RECIPES, "Only the fixed released R01 and R02 activities are supported.")
+	assert(recipe in RECIPES, "Only the fixed released R01, R02 and R26 activities are supported.")
 	_recipe = recipe
 	_spec = RECIPES[recipe]
 	_rear_ref = weakref(rear) # Rear owns this activity; do not retain a reference cycle.
@@ -147,20 +148,20 @@ func _can_work() -> bool:
 
 func next_boundary() -> float:
 	var rear: RefCounted = _rear_ref.get_ref()
-	if not _can_work() or batch.work >= REQUIRED_WORK: return INF
-	return rear.time + (REQUIRED_WORK - float(batch.work)) / operators().size()
+	if not _can_work() or batch.work >= _spec.work: return INF
+	return rear.time + (_spec.work - float(batch.work)) / operators().size()
 
 
 func advance_work(seconds: float) -> void:
 	# Called before G03 advances physical people to the next shared event boundary.
 	if not _can_work(): return
 	var rate := operators().size()
-	batch.work = minf(REQUIRED_WORK, float(batch.work) + seconds * rate)
+	batch.work = minf(_spec.work, float(batch.work) + seconds * rate)
 	# Match the rear clock's time tolerance only at completion, not on each
-	# partial increment. Fractional partitions can otherwise leave 40 - 1ulp.
+	# partial increment. Fractional partitions can otherwise leave work one ULP short.
 	var rear: RefCounted = _rear_ref.get_ref()
-	if (REQUIRED_WORK - float(batch.work)) / rate <= rear.EPS:
-		batch.work = REQUIRED_WORK
+	if (_spec.work - float(batch.work)) / rate <= rear.EPS:
+		batch.work = _spec.work
 
 
 func settle() -> bool:
@@ -168,7 +169,7 @@ func settle() -> bool:
 	if not batch.is_empty():
 		# All operator work is already earned. Physical completion needs no extra
 		# work credit, but still obeys facility pause/access and its valid promise.
-		if batch.work < REQUIRED_WORK or not enabled or paused or not _access() or not rear.output_space_valid(batch.id): return false
+		if batch.work < _spec.work or not enabled or paused or not _access() or not rear.output_space_valid(batch.id): return false
 		var result: Dictionary = rear.ledger.add_stock(batch.output_id, _spec.output_type, _spec.output_count, _spec.unit_mass, _spec.output_store, rear.PLAYER)
 		if not result.ok: return false # Keep complete work/promise; no duplicate or overflow fallback.
 		rear.release_output_space(batch.id)
@@ -186,7 +187,7 @@ func settle() -> bool:
 		rear.release_output_space(id)
 		return false
 	_sequence += 1
-	batch = {"id": id, "recipe": _recipe, "work": 0.0, "required_work": REQUIRED_WORK,
+	batch = {"id": id, "recipe": _recipe, "work": 0.0, "required_work": _spec.work,
 		"started_at": rear.time, "receipt": consumption.receipt, "output_id": id + "-" + _spec.output_type, "state": "Active"}
 	return true
 
@@ -229,11 +230,11 @@ func snapshot() -> Dictionary:
 	elif batch.is_empty() and not rear._valid_destination(_spec.output_store, _spec.output_type, (_spec.output_count * _spec.unit_mass)): status = "Output Full"
 	elif batch.is_empty() and not _missing().is_empty(): status = "Missing Inputs"
 	elif operators().is_empty(): status = "Missing Labour"
-	elif not batch.is_empty() and batch.work >= REQUIRED_WORK: status = "Completion blocked — work retained"
+	elif not batch.is_empty() and batch.work >= _spec.work: status = "Completion blocked — work retained"
 	return {"recipe": _recipe, "duty": _spec.duty, "facility": _spec.facility, "inputs": _spec.inputs.duplicate(),
 		"input_store": _spec.input_store, "output_store": _spec.output_store, "output_type": _spec.output_type, "output_count": _spec.output_count, "unit_mass": _spec.unit_mass, "mode": mode, "stock_target": stock_target, "coverage": stock_coverage(), "enabled": enabled, "paused": paused, "status": status,
 		"operators": operators(), "target": rear.requests[_spec.duty].target, "missing_local": _missing(), "local_inputs": _local_inputs(),
 		"batch": batch.duplicate(true), "history": history.duplicate(true),
 		"output_promise": rear._output_promises.get(batch.get("id", ""), {}).duplicate(true),
 		"physical_output": physical_output,
-		"required_work": REQUIRED_WORK, "haul_shortage": rear._assigned("hauling") == 0 and not _missing().is_empty()}
+		"required_work": _spec.work, "haul_shortage": rear._assigned("hauling") == 0 and not _missing().is_empty()}

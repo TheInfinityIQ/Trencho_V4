@@ -1,5 +1,5 @@
 extends Control
-## Review controls shared only by the fixed released R01 and R02 scenes.
+## Review controls shared only by the fixed released R01, R02 and R26 scenes.
 
 const Rear = preload("res://game/staffing/rear_simulation.gd")
 const Production = preload("res://game/production/r01_production.gd")
@@ -39,7 +39,8 @@ func _ready() -> void:
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 6)
 	margin.add_child(layout)
-	_label(layout, "G04 / %s — real %s production" % [spec.recipe, "workshop" if spec.recipe == "R01" else "munitions"], 24)
+	var title: String = {"R01": "workshop", "R02": "munitions", "R26": "building-material"}[spec.recipe]
+	_label(layout, "G04 / %s — real %s production" % [spec.recipe, title], 24)
 	_label(layout, "%s continuous / stock target · shared G03 people, hauling, ledger and clock · bounded review" % spec.recipe, 14)
 	var targets := HBoxContainer.new()
 	layout.add_child(targets)
@@ -60,7 +61,8 @@ func _ready() -> void:
 	targets.add_child(_target_count)
 	var staffing := HBoxContainer.new()
 	layout.add_child(staffing)
-	_button(staffing, "Operators 2", func() -> Dictionary: return simulation.set_target(spec.duty, 2))
+	for count in ([4, 8] if spec.recipe == "R26" else [2]):
+		_button(staffing, "Operators %d" % count, func() -> Dictionary: return simulation.set_target(spec.duty, count))
 	_button(staffing, "Release operators", func() -> Dictionary: return simulation.set_target(spec.duty, 0))
 	_button(staffing, "Hauling 1", func() -> Dictionary: return simulation.set_target("hauling", 1))
 	_button(staffing, "Release haulers", func() -> Dictionary: return simulation.set_target("hauling", 0))
@@ -69,12 +71,12 @@ func _ready() -> void:
 	_button(controls, "Pause " + spec.recipe, func() -> Dictionary: return production.set_paused(true))
 	_button(controls, "Resume " + spec.recipe, func() -> Dictionary: return production.resume())
 	_button(controls, "Cancel batch", func() -> Dictionary: return production.cancel())
-	for seconds in [1, 2, 10, 20, 300]:
+	for seconds in ([1, 2, 5, 10, 20, 300] if spec.recipe == "R26" else [1, 2, 10, 20, 300]):
 		_button(controls, "+%ds" % seconds, func() -> Dictionary: return simulation.advance_time(seconds))
 	var space := HBoxContainer.new()
 	layout.add_child(space)
 	_button(space, "Block output", func() -> Dictionary: return simulation.set_store(spec.output_store, false))
-	_button(space, "Restore output", func() -> Dictionary: return simulation.set_store(spec.output_store, true, 1000, []))
+	_button(space, "Restore output", func() -> Dictionary: return simulation.set_store(spec.output_store, true, simulation.Layout.STORES[spec.output_store][1], []))
 	_button(space, "Try %d kg" % (spec.output_count * spec.unit_mass - 1), func() -> Dictionary: return simulation.set_store(spec.output_store, true, spec.output_count * spec.unit_mass - 1))
 	_button(space, "Reject %s filter" % spec.output_type, func() -> Dictionary: return simulation.set_store(spec.output_store, true, -1, ["M01"]))
 	_feedback = _label(layout, _initial_stock_note(), 14)
@@ -118,15 +120,20 @@ func _refresh() -> void:
 	var receipt: Array[String] = []
 	for portion in displayed.get("receipt", []): receipt.append("%d %s" % [portion.count, portion.type])
 	_status.text = "t=%.3fs · %s / %s · %s\nOperators present %d / target %d · IDs %s · hauling shortage %s" % [simulation.time, view.recipe, view.facility, view.status, view.operators.size(), view.target, str(view.operators), view.haul_shortage]
+	if view.recipe == "R26":
+		# Eight operator IDs remain in the person inspection; keep the summary
+		# within two lines so the small-window inspection still has useful space.
+		_status.text = "t=%.3fs · R26 / F13 · %s\nOrdinary operators present %d / target %d · hauling shortage %s" % [simulation.time, view.status, view.operators.size(), view.target, view.haul_shortage]
 	var coverage: Dictionary = view.coverage
 	_target.text = "%s · %s minimum %d · Available A=%d + planned C=%d = %d" % [view.mode, view.output_type, view.stock_target, coverage.available, coverage.planned, coverage.projected]
-	_work.text = "Batch %s / %s · work %.3f / 40 operator-seconds\nPromised output %.1f kg · consumed at start: %s" % [displayed.get("id", "None"), displayed.get("state", "Not started"), displayed.get("work", 0.0), view.output_promise.get("mass", 0.0), ", ".join(receipt) if not receipt.is_empty() else "None"]
+	_work.text = "Batch %s / %s · work %.3f / %.0f operator-seconds\nPromised output %.1f kg · consumed at start: %s" % [displayed.get("id", "None"), displayed.get("state", "Not started"), displayed.get("work", 0.0), view.required_work, view.output_promise.get("mass", 0.0), ", ".join(receipt) if not receipt.is_empty() else "None"]
 	var local: Array[String] = []
 	var depot: Array[String] = []
 	for type in view.inputs:
 		local.append("%s=%d / %d" % [type, view.local_inputs[type], view.inputs[type]])
 		depot.append("%s=%d" % [type, simulation.ledger.available_stock_at("depot", type)])
-	_physical.text = "Local inputs %s · depot %s\nPhysical %s output: %d %s / %.1f kg · output capacity %.1f kg · completed batches %d\nConservation / duty audit: %s" % [", ".join(local), ", ".join(depot), view.facility, view.physical_output, "empty E01" if view.recipe == "R01" else "loose E02", simulation.ledger.loose_stock_mass_at(view.output_store), simulation.stores[view.output_store].capacity, production.history.filter(func(b: Dictionary) -> bool: return b.state == "Completed").size(), "PASS" if simulation.audit().is_empty() else str(simulation.audit())]
+	var output_name: String = {"R01": "empty E01", "R02": "loose E02", "R26": "M11"}[view.recipe]
+	_physical.text = "Local inputs %s · depot %s\nPhysical %s output: %d %s / %.1f kg · output capacity %.1f kg · completed batches %d\nConservation / duty audit: %s" % [", ".join(local), ", ".join(depot), view.facility, view.physical_output, output_name, simulation.ledger.loose_stock_mass_at(view.output_store), simulation.stores[view.output_store].capacity, production.history.filter(func(b: Dictionary) -> bool: return b.state == "Completed").size(), "PASS" if simulation.audit().is_empty() else str(simulation.audit())]
 	var lines: Array[String] = []
 	lines.append("%s eligible deposited %d / reserved %d · internal inbound %d (carried %d) · active batch forecast %d" % [view.output_type, coverage.eligible_physical, coverage.eligible_reserved, coverage.internal_relocation, coverage.internal_carried, coverage.batch_forecast])
 	for person in simulation.snapshot().people:
