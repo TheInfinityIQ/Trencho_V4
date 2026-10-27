@@ -177,7 +177,7 @@ func _haul_panel(box: VBoxContainer) -> void:
 func _production_panel(box: VBoxContainer) -> void:
 	facility = _option(box, "Facility", ["workshop", "munitions", "materials"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production())
-	recipe = _option(box, "F05 recipe (shell access requires a later scenario)", ["R02", "R27", "R32 (locked)", "R33 (locked)"])
+	recipe = _option(box, "F05 recipe (shell recipes locked)", ["R02", "R27", "R32 (locked)", "R33 (locked)"])
 	recipe.set_item_disabled(2, true)
 	recipe.set_item_disabled(3, true)
 	_button(box, "Select F05 recipe", _change_recipe)
@@ -253,8 +253,9 @@ func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callab
 	ids.clear()
 	for entry in entries:
 		ids.append(entry.id)
-		list.add_item(make_text.call(entry))
-		list.set_item_tooltip(ids.size() - 1, str(entry))
+		var summary: String = make_text.call(entry)
+		list.add_item(summary)
+		list.set_item_tooltip(ids.size() - 1, summary)
 		if entry.id == selected: list.select(ids.size() - 1)
 
 func _refresh() -> void:

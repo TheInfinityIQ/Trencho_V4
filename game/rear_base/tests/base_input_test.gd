@@ -83,7 +83,7 @@ func test_normal_entry_purchases_receives_hauls_produces_and_retains_base_with_s
 	await runner.simulate_frames(3)
 	await _tab(runner, demo, 1)
 	var scroll: ScrollContainer = demo.get("tabs").get_child(1)
-	runner.set_mouse_position(scroll.get_global_rect().get_center())
+	runner.set_mouse_position(scroll.global_position + Vector2(8, 10))
 	await runner.await_input_processed()
 	for i in 15:
 		runner.simulate_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN)
@@ -161,6 +161,8 @@ func _click(runner: GdUnitSceneRunner, point: Vector2) -> void:
 
 func _capture(runner: GdUnitSceneRunner, main: Control, demo: Control, name: String) -> void:
 	demo.call("_refresh")
+	runner.set_mouse_position(main.size - Vector2(8, 8))
+	await runner.await_input_processed()
 	await runner.simulate_frames(3)
 	_bounds(main)
 	await RenderingServer.frame_post_draw
