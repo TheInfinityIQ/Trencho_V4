@@ -64,3 +64,7 @@ The [connected rear base](connected_rear_base.md) makes the existing rear the ow
 ## Non-heavy catalogue - 27 October 2026
 
 The [catalogue](production_catalogue.md) now justifies reusing F05's confirmed-selection lifecycle for explicit F04/F05/F09 owners. Their own copied access, per-recipe records and consumed-batch tokens remain separate, with F13 fixed and all four on the accepted rear clock. Seventeen additional fixed specifications use the same atomic local consumption, full output promise and work rules. An explicit new-session action constructs essential or expanded access with no granted goods. Menus group hauling outputs rather than expanding common headers; ingredient totals bound confirmation text while retaining complete receipts.
+
+## Heavy output boundary -27October2026
+
+The [heavy foundation](heavy_production.md) adds ledger-owned rear-hull admissions and physical carrier/heavy-object identities, with canonical properties supplied by production. Small output lifecycle hooks preserve the accepted fixed work/consumption path while F10 owns slot-based bay/parking promises. Shared selection retains confirmation and recipe histories. Finished objects keep a latched occupied bay; G07/G12 must later integrate actual clearance, with no generic stock move or cancellation substitute. Explicit finite parking coordinates validate footprint/claim legality without claiming route/driver integration.

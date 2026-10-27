@@ -38,3 +38,5 @@ Current integration (27 October 2026) retains accepted G03 as the default and ad
 The [connected rear-base integration](connected_rear_base.md) now becomes normal entry under the 27 October Designer assignment. It joins the accepted purchasing, receiving, exclusive staffing, hauling and existing production in one live prebuilt overhead scenario. Earlier review-entry descriptions above remain historical; all diagnostics stay reachable. Full construction, starting-scenario, world/military and M0 acceptance remain separate.
 
 The [non-heavy catalogue](production_catalogue.md) adds the remaining seventeen fixed recipes to that live base, with essential-only normal entry and explicit expanded-access new sessions. This completes the non-heavy recipe catalogue, not heavy production, actual cards, construction or full G04/M0.
+
+The [heavy manufacturing foundation](heavy_production.md) adds the six F10 recipes, real rear-fleet order admissions and one occupied output bay to the connected base. All29 catalogue rows exist; actual produced-hull driving/parking and field-gun collection remain G07/G12, and fullG04 acceptance is assessed against its staged criteria.

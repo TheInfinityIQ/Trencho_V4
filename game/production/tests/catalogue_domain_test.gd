@@ -64,10 +64,11 @@ func test_all_23_specs_match_independent_canonical_gdd_rows_and_equipment_masses
 		assert_str(spec.facility).is_equal({"Workshop": "F04", "Munitions Workshop": "F05", "Support Workshop": "F09", "Building Materials Plant": "F13"}[row.get_string(5)])
 		count += 1
 	assert_int(count).is_equal(23)
-	assert_int(Fixed.RECIPES.size()).is_equal(23)
+	assert_int(Fixed.RECIPES.values().filter(func(spec: Dictionary) -> bool: return not spec.get("heavy",false)).size()).is_equal(23)
 
 func test_every_recipe_completes_only_full_operator_work_into_exact_unissued_physical_output_once() -> void:
 	for id in Fixed.RECIPES:
+		if Fixed.RECIPES[id].get("heavy",false): continue
 		var f := _component(id)
 		_seed(f)
 		f.rear.advance_time(0)
@@ -200,6 +201,7 @@ func test_four_facilities_share_clock_with_disjoint_actual_operators_and_recover
 		_seed({"rear":base.rear,"spec":Fixed.RECIPES[ids[index]]})
 	base.rear.advance_time(10)
 	for owner in base.rear._production_activities():
+		if owner == base.rear.heavy_production: continue
 		assert_float(owner.batch.work).is_equal(30.0)
 		for id in owner.operators():
 			assert_array(used).not_contains(id)
@@ -214,7 +216,8 @@ func test_four_facilities_share_clock_with_disjoint_actual_operators_and_recover
 	base.rear.reassign_person(base.rear.production.operators()[0], "support")
 	assert_int(base.rear.production.operators().size()).is_equal(2)
 	base.rear.advance_time(150)
-	for owner in base.rear._production_activities(): assert_int(owner.history.size()).is_equal(1)
+	for owner in base.rear._production_activities():
+		if owner == base.rear.heavy_production: continue assert_int(owner.history.size()).is_equal(1)
 	assert_array(base.audit()).is_empty()
 
 func test_connected_raw_purchases_make_multiple_workshop_support_outputs_and_real_explosive_fed_bombs() -> void:

@@ -5,6 +5,7 @@ const Layout = preload("res://game/staffing/rear_layout.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const START := Vector2(180, 140)
 const FINISH := Vector2(170, 140)
+const PARKING_POSITIONS: Array[Vector2] = [START, FINISH, Vector2(190,140), Vector2(180,147)]
 const ROAD_SPEED := 12.0
 const TURN_RADIUS := 10.0
 const TURN_SPEED := TURN_RADIUS * PI / 4.0 # T01 hull turns at most 45 degrees/s.
@@ -30,7 +31,7 @@ func _init(shared_ledger: RefCounted) -> void:
 	ledger.add_place("yard-lane", "Clear eight-metre yard lane and turn area", Vector2.ZERO)
 	ledger.add_place("yard-start", "F11 occupied parking place 1", START)
 	ledger.add_place("yard-finish", "F11 parking place 2", FINISH)
-	ledger.add_carrier("yard-t01", "yard-start", "army-blue", "army-blue", "T01")
+	ledger.add_carrier("yard-t01", "yard-start", "army-blue", "army-blue", "T01", "Rear")
 	ledger.move_entity("yard-t01", "yard-lane", START)
 
 

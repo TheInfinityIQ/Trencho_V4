@@ -140,9 +140,28 @@
         "test_connected_raw_purchases_make_multiple_workshop_support_outputs_and_real_explosive_fed_bombs",
         "test_mixed_finished_types_and_reserved_goods_do_not_satisfy_another_selected_output_minimum"
       ]
+    },
+    {
+      "path": "game/production/tests/heavy_domain_test.gd",
+      "cases": [
+        "test_six_recipe_rows_and_five_empty_hull_catalogues_match_canonical_gdd",
+        "test_all_six_reserve_before_inputs_and_complete_exact_work_into_one_retained_empty_object",
+        "test_seven_live_one_accepted_admission_waits_at_earned_work_then_converts_to_eight_once",
+        "test_full_rear_fleet_refuses_unaccepted_request_atomically_but_field_gun_needs_no_fleet_slot",
+        "test_waiting_order_cancellation_releases_only_own_promises_and_confirmed_consumed_change_keeps_loss",
+        "test_real_staff_local_inputs_pause_access_and_parking_edits_preserve_promises_and_work",
+        "test_every_heavy_ingredient_missing_reserved_foreign_remote_or_carried_blocks_atomic_start",
+        "test_default_access_initial_yard_and_external_services_do_not_grant_or_consume_player_fleet"
+      ]
     }
   ],
   "Input": [
+    {
+      "path": "game/production/tests/heavy_input_test.gd",
+      "cases": [
+        "test_purchased_transport_admission_empty_hull_occupied_next_order_and_retained_nonheavy_work"
+      ]
+    },
     {
       "path": "game/production/tests/catalogue_input_test.gd",
       "cases": [
