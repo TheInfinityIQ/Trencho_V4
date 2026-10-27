@@ -89,6 +89,7 @@ func test_expanded_session_nine_purchased_resources_multi_output_chain_and_actua
 	assert_array(base.audit()).is_empty()
 	window.size = Vector2i(960,640)
 	window.content_scale_size = window.size
+	await runner.simulate_frames(3)
 	await _tab(runner,demo,3)
 	await _choose(runner,demo.get("facility"),3)
 	await _expose(demo.get("production_status"))
@@ -141,6 +142,7 @@ func test_purchased_workshop_and_support_pending_changes_decline_confirm_and_ret
 	await _press(runner,main,"Pause / resume facility")
 	window.size=Vector2i(960,640)
 	window.content_scale_size=window.size
+	await runner.simulate_frames(3)
 	await _recipe(runner,main,demo,3,"R17",5)
 	assert_bool(demo.get("confirmation").visible).is_true()
 	await _capture(runner,main,demo,"small_support_consumed_loss_confirmation")
