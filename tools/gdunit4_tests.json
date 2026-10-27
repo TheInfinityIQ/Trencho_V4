@@ -123,7 +123,8 @@
         "test_unloader_carry_handoff_retains_exclusive_old_duty_until_safe_deposit",
         "test_receiving_space_and_output_access_blocks_are_actionable_and_recoverable",
         "test_shared_clock_partition_and_access_boundary_preserved",
-        "test_receiving_inbound_promises_bound_two_unloaders_and_refuse_unsafe_store_edits"
+        "test_receiving_inbound_promises_bound_two_unloaders_and_refuse_unsafe_store_edits",
+        "test_finished_unloader_release_rebalances_outstanding_staff_targets"
       ]
     }
   ],

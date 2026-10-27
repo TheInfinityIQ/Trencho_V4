@@ -97,12 +97,13 @@ func test_unloader_carry_handoff_retains_exclusive_old_duty_until_safe_deposit()
 			if not base.rear.ledger.inspect_entity(worker).carrying_stock_id.is_empty(): id = worker
 		if not id.is_empty(): break
 	assert_str(id).is_not_empty()
-	assert_bool(base.rear.reassign_person(id, "workshop").ok).is_true()
+	assert_bool(base.rear.set_target("receiving", 0).ok).is_true()
 	var p: Dictionary = base.rear.ledger.inspect_entity(id)
 	assert_str(p.duty_id).is_equal("receiving")
-	assert_str(p.pending_duty).is_equal("workshop")
+	assert_str(p.pending_assignment).is_equal("Available")
 	assert_array(base.rear.production.operators()).not_contains(id)
 	base.rear.advance_time(100)
+	base.rear.set_target("workshop", 1)
 	p = base.rear.ledger.inspect_entity(id)
 	assert_str(p.duty_id).is_equal("workshop")
 	assert_str(p.carrying_stock_id).is_empty()
@@ -166,4 +167,27 @@ func test_receiving_inbound_promises_bound_two_unloaders_and_refuse_unsafe_store
 	base.rear.advance_time(300)
 	assert_int(base.rear.ledger.available_stock_at("depot", "M01")).is_equal(50)
 	assert_int(base.receiving.reserved_storage_kg()).is_zero()
+	assert_array(base.audit()).is_empty()
+
+func test_finished_unloader_release_rebalances_outstanding_staff_targets() -> void:
+	var base := Base.new()
+	base.receiving.buy_resources({"M01": 100})
+	for duty in ["receiving", "workshop", "munitions"]: base.rear.set_target(duty, 4)
+	base.rear.advance_time(64)
+	var carried: int = 0
+	for step in 200:
+		base.rear.advance_time(0.25)
+		carried = 0
+		for id in base.receiving._workers:
+			if not base.rear.ledger.inspect_entity(id).carrying_stock_id.is_empty(): carried += 1
+		if carried == 4: break
+	assert_int(carried).is_equal(4)
+	assert_int(base.receiving.reserved_storage_kg()).is_equal(100)
+	base.rear.set_target("receiving", 0)
+	base.rear.set_target("hauling", 4)
+	base.rear.advance_time(100)
+	assert_int(base.rear._assigned("receiving")).is_zero()
+	assert_int(base.rear._assigned("workshop")).is_equal(4)
+	assert_int(base.rear._assigned("munitions")).is_equal(4)
+	assert_int(base.rear._assigned("hauling")).is_equal(4)
 	assert_array(base.audit()).is_empty()

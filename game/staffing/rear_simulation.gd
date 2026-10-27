@@ -444,6 +444,7 @@ func _settle() -> void:
 
 func _sync_receiving_people() -> void:
 	var added := false
+	var released := false
 	for p in ledger.snapshot().entities:
 		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
 			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
@@ -451,7 +452,8 @@ func _sync_receiving_people() -> void:
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
 			_report(a)
-	if added: _rebalance()
+			released = true
+	if added or released: _rebalance()
 
 
 func _sync_receiving_staff() -> void:
