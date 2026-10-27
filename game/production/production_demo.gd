@@ -27,7 +27,7 @@ func _ready() -> void:
 	for side in ["left", "right", "top", "bottom"]: margin.add_theme_constant_override("margin_" + side, 14)
 	add_child(margin)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 8)
+	layout.add_theme_constant_override("separation", 6)
 	margin.add_child(layout)
 	_label(layout, "G04 / R01 — real workshop production", 24)
 	_label(layout, "R01 continuous / stock target · shared G03 people, hauling, ledger and clock · bounded review", 14)
@@ -35,7 +35,8 @@ func _ready() -> void:
 	layout.add_child(targets)
 	_button(targets, "Continuous", func() -> Dictionary: return production.set_mode("Continuous"))
 	_button(targets, "Stock target", func() -> Dictionary: return production.set_mode("Stock target"))
-	_label(targets, "E01 minimum", 14)
+	var target_prompt := _label(targets, "E01 minimum", 14)
+	target_prompt.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_target_count = SpinBox.new()
 	_target_count.min_value = 0
 	_target_count.max_value = 1000000
