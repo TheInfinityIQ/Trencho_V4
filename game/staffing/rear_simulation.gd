@@ -159,6 +159,12 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
 	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
+	if receiving != null and id == "receiving":
+		var edited_capacity: float = stores[id].capacity if capacity < 0 else capacity
+		if edited_capacity + EPS < ledger.loose_stock_mass_at(id) + _reserved_space(id):
+			return _result(false, "Edit refused: Receiving must retain its physical goods and complete inbound promises.")
+		if receiving.reserved_storage_kg() > 0 and (not accessible or (filter != null and not filter.is_empty())):
+			return _result(false, "Edit refused: unloaders retain promised Receiving access/type until safe deposit; wait for handling to finish.")
 	for claim in _output_promises.values():
 		if claim.store != id: continue
 		var edited_capacity: float = stores[id].capacity if capacity < 0 else capacity

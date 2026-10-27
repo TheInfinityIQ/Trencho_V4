@@ -238,6 +238,12 @@ func _result(result: Dictionary) -> void:
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
 	_selected_kind = kind
 	_selected_id = id
+	if kind == "building":
+		var store_id := id if simulation.rear.stores.has(id) else id + "_input"
+		var index: int = simulation.rear.stores.keys().find(store_id)
+		if index >= 0:
+			store.select(index)
+			_load_store()
 	if open_panel: tabs.current_tab = 4
 	_refresh()
 
@@ -258,7 +264,7 @@ func _refresh() -> void:
 	_fill(orders, _order_ids, view.receiving.orders, func(o: Dictionary) -> String: return o.id + " " + o.state + " | " + o.blocked_reason)
 	var actual_people: Array = view.rear.people.filter(func(p: Dictionary) -> bool: return p.owner == "army-blue")
 	_fill(people, _person_ids, actual_people, func(p: Dictionary) -> String: return p.id + " | " + (p.duty_id if not p.duty_id.is_empty() else p.assignment) + " | " + p.phase)
-	_fill(jobs, _job_ids, view.rear.jobs, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, j.blocker])
+	_fill(jobs, _job_ids, view.rear.jobs, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 	var lines: Array[String] = []
 	for activity in [view.production, view.munitions, view.materials]:
 		lines.append("%s %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d; promised %.1f kg" % [activity.facility, activity.recipe, activity.status, str(activity.local_inputs), str(activity.missing_local), activity.batch.get("work", 0.0), activity.required_work, activity.physical_output, activity.output_promise.get("mass", 0.0)])
