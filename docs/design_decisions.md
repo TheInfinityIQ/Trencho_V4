@@ -34,3 +34,13 @@ These gates describe design outcomes, not software architecture. Raise concrete 
 ## Baseline status
 
 User-established scope and proposed numerical defaults remain distinct under GDD sections 1.1 and 1.2. v0.2.1 corrects project sequencing and records unresolved gates; it does not validate balance, change combat eligibility or claim any acceptance scenario has run. Further numerical or gameplay revisions must identify the changed rule, reason, affected scenarios and required revalidation.
+
+## Production-boundary decision — 26 October 2026
+
+The [Game Designer decision on G04 issue 12](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6432972072) is recorded as governing [GDD23.6](game_design_document.md#236-production-targets-output-promises-and-heavy-output-staging---26-october-2026). This replaces the three open questions in the [G04 plan](g04_production_plan.md#resolved-production-boundaries-and-linked-continuations); it is a contract decision, not implementation evidence or runtime release.
+
+- Stock targets use eligible deposited, uncommitted rear stock A separately from otherwise uncommitted active-batch and valid internal-relocation coverage C. Internal source reservation/pickup/deposit changes A→C→A once. A+C admits complete batches with overshoot, never supplies remote ingredients or makes promises/carries usable goods.
+- Capacity/filter edits cannot invalidate an active output promise; refuse the whole edit with its claim owner. Access loss pauses work without losing consumed inputs/progress/promise. Invalid physical completion waits with no goods; legal completion creates once.
+- G04 proves actual heavy manufacture/admission/blocked occupied bays; G07 clears those same manufactured hulls using real people/fuel/parking; G12 completes real heavy collection/manifests and G13 route/fuel travel. Complete later cases remain required. Accepted D03 rear 8 admission always applies to rear-owned manufactured hulls; planned military destination is no bypass, and accepted Fleet Transfer adds military admission while retaining rear admission until actual HQ handoff/destruction.
+
+The GDD6.1 sentence allowing a rear-or-planned-military slot was reconciled to D03. The [equipment-wording correction](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6432988178) confirms catalogue equipment remains unchanged: hulls include listed integral gun/mount mechanisms, without loose spare weapons, crew, passengers, fuel or ammunition. The section 23.6 table and G04 plan retain observable counterexamples and linked later acceptance owners. G03 foundation is accepted in PR #54; G04 production, full A05/M0, G08 and outstanding D01/Windows verification are not passed by this document.
