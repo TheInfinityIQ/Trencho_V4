@@ -24,7 +24,7 @@ Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual che
 
 After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
 
-## Current assignment: G03 staffing and hauling
+## Historical starting assignment: G03 staffing and hauling
 
 G01 was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50); its full A03 casualty/recovery integration remains G16. G02 was accepted in [PR #51](https://github.com/TheInfinityIQ/Trencho_V4/pull/51), merged at `eb251eb83b90bbdc895ae917f9933655aaf794fb`, closing issue #10 for its bounded procurement/receiving scope. Its native practical display case does not settle literal 1280×720 physical display or production D01.
 

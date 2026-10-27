@@ -1,6 +1,6 @@
 # G08 terrain, movement and sight fixture
 
-Scope: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9, 12, 14 and 23.1; [implementation plan](g08_terrain_plan.md). Built from accepted main `eb251eb83b90bbdc895ae917f9933655aaf794fb`, with accepted documentation merge `37b11683f9fccf569ca2f0f39dc0523da2844aee` subsequently integrated. G03's unmerged staffing runtime is absent and its separate worktree/evidence remain preserved. This is a draft foundation with engine evidence and a native verification gap.
+Scope: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9, 12, 14 and 23.1; [implementation plan](g08_terrain_plan.md). Original implementation (historical): built from accepted main `eb251eb83b90bbdc895ae917f9933655aaf794fb`, with accepted documentation merge `37b11683f9fccf569ca2f0f39dc0523da2844aee` subsequently integrated. G03's unmerged staffing runtime is absent and its separate worktree/evidence remain preserved. This is a draft foundation with engine evidence and a native verification gap.
 
 ## What runs
 
@@ -34,7 +34,7 @@ Direct-hit and blast benefits select their own strongest physically valid source
 
 G32 must save actual terrain/props/support state and the authoritative entity/knowledge owners together, not regenerate them from a case name or reroll a world. Preserve pose/facing/footprint, fuel and consumed totals, endpoint and current interval/time, world revision and contact provenance. After restore validate physical support and references before continuing; do not refund burned fuel, reset travelled distance, duplicate movement, snap to an endpoint or infer enemy knowledge from the camera. Required future round trips include mid-interval, immediately before/after fuel exhaustion, stopped/cancelled motion, changed support before revalidation and eye-clear/muzzle-blocked observations. Full persistence remains G32; live causeway loss, recovery/towing, repair not curing terrain stranding and health/crew/stock integration remain their owning issues.
 
-## Verification — 26 October 2026
+## Historical verification — 26 October 2026
 
 `./tools/check.ps1 -GodotPath '<Steam Godot 4.7.2 executable>'` passes import, headless startup and the following checks. Current-head CI is reported on the PR, separate from local execution.
 
@@ -63,7 +63,7 @@ The Game Designer reproduced an error at `6e1af3ded76f0991f922d580073db14fdcf668
 
 Accepted numbers and scope come from the local canonical GDD, the linked assignment and [D02 contract](d02_cover_fairness.md); no external source overrides those design values. The bounded analytical model, local ownership and conservative boundary convention are engineering choices for inspectable foundations, not performance or production architecture claims. The review uses event-driven [Godot signals](https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html) and a diagnostic Control with cached drawing refreshed on changes through [queue_redraw](https://docs.godotengine.org/en/stable/tutorials/2d/custom_drawing_in_2d.html). There is no per-frame simulation polling or node per metre tile.
 
-## Display-backed automated verification extension
+## Historical display-backed automated verification extension
 
 Accepted main `d3e2d69` and reviewed G08 `a44f9da` are integrated through normal history in a new isolated checkout. Original G08/G03 checkouts and stopped sessions remain untouched; terrain, movement, sight, cover and fixture runtime code is unchanged. [Two focused SceneRunner cases](../game/terrain/tests/gdunit/terrain_input_test.gd) operate the existing selectors/actions with engine input rather than emitted signals. Movement refusal preserves actual position/fuel; road timing/pose/fuel and current inspection are independently checked. Eye and muzzle remain separate, and front direct/rear impact cover chooses independently valid winners. Existing domain regressions retain the approved natural blast rules and corrected road-overlay/actual-structure shield behavior.
 
@@ -76,3 +76,5 @@ The original implementation/verification record above is historical. Accepted ma
 [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) records the Designer's G08-specific foundation path. The two existing SceneRunner tests now export eight actual CI viewport images plus matching JSON: forest_wheel_refused, road_after_one_second, road_stopped_after_further_time, eye_visible_muzzle_blocked, mixed_100_unseen_after_overview, bunker_front_forest_rear, cover_details_scrolled_small and ford_0351_refused_small. Normal captures are 1000x720; the last two small-layout cases use 960x540. Selection, actions, Overview and inspection scrolling use actual engine input. Static sight metadata explicitly identifies a declared probe without a simulation clock.
 
 The [testing guide](testing.md#g08-scene-input-extension) documents the retained named suites and deliberate G08 wrong-expectation failure/restoration. Exact submitted head, check results, public CI, artifact checksum and visual review status belong to PR #55. Earlier G03/PR54 draft descriptions and pre-merge Windows-only wording above describe their original dates, not current status or authorization to retry native input. Windows OS input/readability remain unverified D01/M0 obligations. No full-map, production presentation, live combat, G19 recovery or full-game acceptance follows from these fixtures. PR #55 remains draft for Designer review.
+
+Local integrated headless validation (27 October 2026): import/startup passed; retained G01 624, G02 842, G02 UI190, G03 798, G03 UI414 and D01 probe94, plus G08 domain531 and UI777, all zero failures (4,270 assertions total). The G08 UI count changed from753 because the accepted main selector includes G03/R01 and uses wrapped controls. All eleven accepted GdUnit4 Domain cases passed. This command explicitly did not run display input; current-head CI and downloaded visual evidence are reported separately on PR #55.

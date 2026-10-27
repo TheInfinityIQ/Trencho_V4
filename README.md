@@ -12,7 +12,7 @@ Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com
 
 1. Use Godot 4.7.2 (the Steam `stable-4.7` branch is supported).
 2. Import the root `project.godot` in Godot's project manager.
-3. Press **F5** for the G03 staffing/hauling draft fixture. Use its explicit time buttons and A05-input/A06-carry/driver scenarios. [G03 behavior and verification](docs/g03_staffing.md) records the implemented scope and missing native A06 evidence; the full A05 production continuation remains G04.
+3. Press **F5** for the G03 staffing/hauling foundation fixture. Use its explicit time buttons and A05-input/A06-carry/driver scenarios. [G03 behavior and verification](docs/g03_staffing.md) records the accepted foundation scope and unverified Windows input/readability; the full A05 production continuation remains G04.
 4. The top review buttons open the retained G02 Procurement and G01 Identity fixtures, each with its own declared state/clock. Switching review resets that fixture. They also run individually with **F6** from their scene files.
 
 No plugins, export templates, or external packages are required to run the project.

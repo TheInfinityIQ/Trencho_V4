@@ -1,6 +1,6 @@
 # G08 terrain and sight plan
 
-Authority: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9/12/14/23 and relevant D02 reference geometry. Base: accepted main eb251eb83b90bbdc895ae917f9933655aaf794fb. G03's unmerged runtime is excluded and preserved in its own worktree.
+Original plan (historical; revised assignment below). Authority: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9/12/14/23 and relevant D02 reference geometry. Base: accepted main eb251eb83b90bbdc895ae917f9933655aaf794fb. G03's unmerged runtime is excluded and preserved in its own worktree.
 
 1. Add a feature-owned catalogue and explicit local metre-cell world, physical obstacle/overlay/cover volumes, and straight-lane movement with actual footprint clearance, chronological position/distance/fuel and interruption. Keep height/slope separate from surface. Use analytical overlap intervals, so a narrow obstacle cannot be skipped by a time step.
 2. Add range/height/solid/vegetation sight probes with independent eye/muzzle rays and directional strongest-cover inspection. A fixture's declared eye/foliage/obstacle dimensions are data, not production art or new combat statistics.
