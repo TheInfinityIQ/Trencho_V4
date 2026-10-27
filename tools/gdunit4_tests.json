@@ -70,6 +70,29 @@
         "test_three_facilities_have_different_work_and_exclusive_people_promises_and_targets",
         "test_three_owner_coarse_fractional_time_and_r26_partial_tolerance_match"
       ]
+    },
+    {
+      "path": "game/production/tests/r27_domain_test.gd",
+      "cases": [
+        "test_exact_r27_local_inputs_40work_one_physical_m06_and_two_four_operators",
+        "test_either_missing_foreign_remote_person_carrier_or_reserved_input_refuses_whole_batch",
+        "test_real_hauling_last_carried_powder_is_not_local_until_actual_deposit",
+        "test_whole_one_kg_promise_capacity_filter_and_other_claims_remain_atomic",
+        "test_r27_target_mode_pause_absent_staff_access_and_cancel_retain_owned_work",
+        "test_fully_worked_blocked_r27_finishes_once_without_another_work_charge",
+        "test_decline_or_dismiss_recipe_change_preserves_exact_batch_receipt_and_promise",
+        "test_confirm_partial_change_loses_consumed_inputs_resets_new_work_and_repeats_once",
+        "test_confirm_earned_blocked_change_cancels_only_identified_batch_without_output",
+        "test_unstarted_change_is_free_and_switch_back_retains_modes_targets_history_and_stock",
+        "test_stale_confirmation_cannot_cancel_new_batch_and_fresh_confirmation_is_required",
+        "test_completed_or_superseded_pending_confirmation_never_applies_to_other_state",
+        "test_m06_target_eligibility_and_other_use_claim_yield_one_whole_unit",
+        "test_actual_m06_relocation_claim_carry_deposit_reroute_and_cancel_count_once",
+        "test_m06_pile_recovery_is_neither_usable_stock_nor_valid_inbound_until_deposit",
+        "test_inactive_recipe_never_works_or_contributes_other_output_forecast",
+        "test_exclusive_f05_switch_and_independent_r01_r26_share_fractional_time_without_double_work",
+        "test_r27_fractional_endpoint_preserves_meaningfully_partial_work_across_pause"
+      ]
     }
   ],
   "Input": [
@@ -117,6 +140,12 @@
         "test_normal_launch_r26_multitrip_inputs_retained100work_and_physical_m11"
       ],
       "path": "game/production/tests/r26_input_test.gd"
+    },
+    {
+      "path": "game/production/tests/r27_input_test.gd",
+      "cases": [
+        "test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06"
+      ]
     }
   ]
 }

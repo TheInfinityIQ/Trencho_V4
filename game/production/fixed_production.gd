@@ -1,5 +1,5 @@
 extends RefCounted
-## Shared lifecycle for the three fixed released activities: R01, R02 and R26.
+## Shared lifecycle for the released recipes; F05 owns its exclusive R02/R27 selection.
 
 const RECIPES := {
 	"R01": {"work": 40.0, "inputs": {"M01": 2, "M02": 1}, "output_type": "E01", "output_count": 1, "unit_mass": 4.0,
@@ -8,6 +8,8 @@ const RECIPES := {
 		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
 	"R26": {"work": 100.0, "inputs": {"M01": 30, "M04": 70}, "output_type": "M11", "output_count": 100, "unit_mass": 1.0,
 		"duty": "materials", "facility": "F13", "input_store": "materials_input", "output_store": "materials_output"},
+	"R27": {"work": 40.0, "inputs": {"M03": 10, "M01": 2}, "output_type": "M06", "output_count": 1, "unit_mass": 1.0,
+		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
 }
 var _spec: Dictionary
 var _recipe: String
@@ -22,7 +24,7 @@ var _sequence := 0
 
 
 func _init(rear: RefCounted, recipe: String) -> void:
-	assert(recipe in RECIPES, "Only the fixed released R01, R02 and R26 activities are supported.")
+	assert(recipe in RECIPES, "Only the four explicitly released recipes are supported.")
 	_recipe = recipe
 	_spec = RECIPES[recipe]
 	_rear_ref = weakref(rear) # Rear owns this activity; do not retain a reference cycle.
