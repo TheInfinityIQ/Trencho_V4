@@ -73,3 +73,7 @@ Run from the repository root in PowerShell 7:
 Use `./tools/check.ps1` when `godot` is on PATH. Follow AGENTS.md for focused behaviour verification in Godot; a headless startup alone does not demonstrate gameplay or inspection correctness.
 
 Return a reviewable change with its behaviour, purpose, regression results, checks run, visible demonstration evidence and any unverified interactions. Include UID/import sidecars when applicable; exclude generated caches. Do not discard unrelated work, change the approved design silently or mark downstream scenarios complete based only on document calculations.
+
+## Current scoped handoff - 27 October 2026
+
+The G03 starting assignment above is historical: G03 foundation was accepted in PR #54, and PR #64 supplies only the first continuous R01 production slice. Neither closes full G04/A05/M0. The current assignment is [G08 final evidence/integration](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6442653786) in existing draft PR #55, retaining accepted G03/R01 and all framework checks. Follow [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) and the [G08 record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026). Finish exact-head checks, eight rendered image/state pairs and negative controls, then report once to the Game Designer and wait. Native testing remains stopped; Windows input/readability remain D01/M0 obligations. This handoff grants no next recipe or downstream feature scope.

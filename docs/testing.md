@@ -49,7 +49,7 @@ To upgrade, select an official stable release, review its immutable source, lice
 
 Migrate small deterministic domain cases incrementally when named assertions, fixtures or reports improve diagnosis. The next useful input regression is actual delivery-row selection followed by cancellation: it would catch wrong selection, hit testing and focus that the existing emitted-signal checks bypass. Do not rewrite already meaningful suites merely to increase framework usage.
 
-SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G03 is a draft integration with the additional input cases below; G08 is excluded; their remaining native gates, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
+SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G03 foundation was accepted under GDD23.5; G08 has the separately assigned foundation path under GDD23.7 below. Remaining Windows obligations, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
 
 ## G03 scene-input extension
 
@@ -57,10 +57,18 @@ The input manifest requires three cases: the retained G02 purchase pilot plus G0
 
 The driver case rejects movement before the three-second P08 station entry, observes an actual 12m first-second move/fuel burn and shared driver/hull location, verifies repeated release preserves one pending assignment while moving, checks physical parking separately from the three-second exit, then re-enters the current parked hull while retaining distance/fuel/parking. Occupied destination parking refuses a second trip. The staged A05 case retains two actual operators with Missing Inputs before hauling; exact 2 M01 and 1 M02 then arrive physically, selected-job/person details refresh, promises clear and work/consumption/output stay zero. No production recipe executes.
 
-Windows checks remain headless domain/callback/layout evidence; display-backed behavior is verified in Linux CI at the PR's actual submitted revision. These regressions do not resume a stopped native session or replace missing desktop/render/readability evidence. PR #54 remains draft pending those gates.
+Windows checks remain headless domain/callback/layout evidence; display-backed behavior is verified in Linux CI at the PR's actual submitted revision. These regressions do not resume a stopped native session or replace missing desktop/render/readability evidence. PR #54 was subsequently accepted under GDD23.5; Windows obligations remain open.
 
 ## G03 rendered foundation evidence
 
 The G03 input cases also export `.artifacts/g03-rendered/*.png` and matching JSON after actual rendered frames. CI sets EVALUATION_HEAD to the submitted PR head. For a local display-backed run set that variable to the exact checked-out commit first. The12 checkpoints and metadata are listed in [G03 evidence](g03_staffing.md#revised-foundation-evidence-path--26-october-2026). The same Input manifest retains accepted D01 rendering and the G02 pilot; no required named case is dropped. Failure-control runs restore original test bytes and rerun the complete healthy suite before the final artifacts are uploaded.
 
 Inspect the actual images together with their matching state/selection/revision records. These are Linux CI viewport renders, not Windows native screenshots; GDD23.5 records the Designer's revised foundation verification path and outstanding Windows obligations.
+
+## G08 scene-input extension
+
+The current manifest retains all eleven accepted Domain cases and all five accepted Input cases, adding the two existing G08 Input cases: `test_blocked_wheel_then_real_road_travel_preserves_fuel_and_inspection` and `test_eye_and_ground_muzzle_then_independent_direct_and_blast_cover` (seven Input cases total). The default headless command also runs the G08 domain and callback/layout regressions; display input and rendering still require Linux CI's virtual display.
+
+The G08 cases export eight PNG/JSON pairs to `.artifacts/g08-rendered/`, after rendered frames. JSON records EVALUATION_HEAD, engine, image dimensions, raw-pixel SHA-256, selected fixture, actual numeric state, inspection text, Overview and scroll position. Movement metadata includes actual clock/pose/fuel; sight metadata explicitly labels static declared probes. See [G08's current evidence record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026) for checkpoints and [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) for the separate Designer-authorized foundation path.
+
+CI retains every accepted failure control and adds `./tools/prove_gdunit4_failure.ps1 -GodotPath '<godot>' -Suite Input -G08Movement` under Xvfb. This temporarily changes the full-road clock expectation from6 to7, requires the named G08 assertion to fail, restores source bytes and reruns the full healthy Input suite. Artifact images must be downloaded, checksum-verified and visually reviewed alongside their matching current-head metadata. Windows OS input/readability and full gameplay remain unverified; no native retry is authorized by this extension.

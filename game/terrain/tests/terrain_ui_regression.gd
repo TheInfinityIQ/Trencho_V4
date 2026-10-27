@@ -19,6 +19,7 @@ func _run() -> void:
 	root.add_child(_main)
 	await _settle()
 	_main.call("_show_review", "G08 Terrain & sight")
+	await _settle()
 	_demo = _main.get("_host").get_child(0)
 	_layout("Initial movement")
 	_check(_demo.get("_lane").entity.type == "person", "Default case is labelled declared person")
