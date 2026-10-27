@@ -126,9 +126,30 @@
         "test_receiving_inbound_promises_bound_two_unloaders_and_refuse_unsafe_store_edits",
         "test_finished_unloader_release_rebalances_outstanding_staff_targets"
       ]
+    },
+    {
+      "path": "game/production/tests/catalogue_domain_test.gd",
+      "cases": [
+        "test_all_23_specs_match_independent_canonical_gdd_rows_and_equipment_masses",
+        "test_every_recipe_completes_only_full_operator_work_into_exact_unissued_physical_output_once",
+        "test_each_added_ingredient_missing_reserved_foreign_remote_personal_and_carried_cannot_start",
+        "test_default_essential_and_copied_expanded_access_do_not_grant_any_goods_or_live_unlocks",
+        "test_all_added_recipes_need_whole_output_space_and_finish_active_work_after_target_lowering",
+        "test_confirmed_selection_pause_history_unique_ids_and_stale_tokens_for_each_facility",
+        "test_four_facilities_share_clock_with_disjoint_actual_operators_and_recover_from_interruption",
+        "test_connected_raw_purchases_make_multiple_workshop_support_outputs_and_real_explosive_fed_bombs",
+        "test_mixed_finished_types_and_reserved_goods_do_not_satisfy_another_selected_output_minimum"
+      ]
     }
   ],
   "Input": [
+    {
+      "path": "game/production/tests/catalogue_input_test.gd",
+      "cases": [
+        "test_expanded_session_nine_purchased_resources_multi_output_chain_and_actual_explosives_feed",
+        "test_purchased_workshop_and_support_pending_changes_decline_confirm_and_retain_consumed_loss"
+      ]
+    },
     {
       "path": "game/rear_base/tests/base_input_test.gd",
       "cases": [

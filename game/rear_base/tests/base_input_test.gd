@@ -49,7 +49,7 @@ func test_normal_entry_purchases_receives_hauls_produces_and_retains_base_with_s
 	assert_int(base.rear.actors.size()).is_equal(20)
 	await _choose(runner, demo.get("facility"), 1)
 	await _choose(runner, demo.get("recipe"), 1)
-	await _press(runner, main, "Select F05 recipe")
+	await _press(runner, main, "Select recipe")
 	await _number(runner, demo.get("stock_target"), 1)
 	await _press(runner, main, "Apply production order")
 	await _press(runner, main, "1x")
