@@ -21,6 +21,12 @@ The Game Designer confirmed [GDD section 23.3](game_design_document.md#233-procu
 
 During G02 draft review the Game Designer confirmed that section 10.2's existing one-person-per-second handling rate also applies to external manpower: one completed exit per second per stopped vehicle, with seated supplier crew excluded. Passengers remain aboard until their own exit completes, then walk independently; each incoming place converts only at actual F08 arrival. Two vehicles handle concurrently on their own schedules. Admission remains occupied through the last arrival and physical vehicle clearance. This corrects simultaneous exit evidence; it introduces no new rate or general staffing scope.
 
+## Natural blast-cover clarification — 26 October 2026
+
+The [Game Designer decision](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6424028116) resolved the missing heavy-natural classification in [GDD14.1](game_design_document.md#141-terrain-catalogue), clarifying the existing GDD6.2 blast rule. TR06 dense forest gives blast injury multiplier0.5 to a dismounted person actually occupying valid cover. TR07 requires a real rock shielding that person from the incoming impact origin; missing impact/shield geometry or wrong-side proximity gives no benefit and reports missing/invalid eligibility. TR01–TR05 and TR08–TR13, including light forest, swamp and rubble, give natural blast multiplier1. Vehicles and exposed completed roads/bridge decks receive no infantry natural protection.
+
+Choose the strongest physically valid benefit independently for the damage being evaluated; never stack cover. Direct-hit terrain values and existing trench0.5, bunker0.25 and actual town-garrison0.5 blast benefits are unchanged. This records a proposed balance baseline, not measured realism. G08 exposes declared cover/impact inspection and regression evidence; live blast damage, impact resolution, garrisons and structures remain their owning issues. Native verification, D01 and all staged integration gates remain unchanged.
+
 ## Design gates and status
 
 | Gate | Closure evidence | Consequence until resolved |

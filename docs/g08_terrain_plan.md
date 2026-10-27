@@ -1,0 +1,15 @@
+# G08 terrain and sight plan
+
+Original plan (historical; revised assignment below). Authority: [G08 #16 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6423282888), GDD 9/12/14/23 and relevant D02 reference geometry. Base: accepted main eb251eb83b90bbdc895ae917f9933655aaf794fb. G03's unmerged runtime is excluded and preserved in its own worktree.
+
+1. Add a feature-owned catalogue and explicit local metre-cell world, physical obstacle/overlay/cover volumes, and straight-lane movement with actual footprint clearance, chronological position/distance/fuel and interruption. Keep height/slope separate from surface. Use analytical overlap intervals, so a narrow obstacle cannot be skipped by a time step.
+2. Add range/height/solid/vegetation sight probes with independent eye/muzzle rays and directional strongest-cover inspection. A fixture's declared eye/foliage/obstacle dimensions are data, not production art or new combat statistics.
+3. Expose repeatable movement/sight/cover cases and current measurements in a small interactive review scene; retain G01/G02 selectors. Add meaningful boundary/composition and signal/layout regression coverage, repository checks and current-head CI.
+
+Acceptance: all 13 catalogue surfaces; slope 10/15/25/40 and just above; ford depth/class/firm-bottom/banks; whole-footprint trunk/boulder/building/edge clearance; completed compatible support footprint only; road factor once; actual elapsed movement/distance/fuel and cancellation/fuel exhaustion; ordinary 220m and role ranges; mixed budget100 threshold, ridge, crops, dense canopy, opaque smoke, eye versus muzzle and overview knowledge invariance; directional cover/no stacking/no vehicle terrain bonus. Static initialized entities do not create crew, health/combat or a starting engagement.
+
+Native interaction is blocked by the previously established SendInput122 failure. No unchanged native retry is authorized. Engine tests are not native visual evidence. Deliver one draft PR with exact limits; do not claim complete A14/live causeway recovery (G19), full-map traversal/generation (G09–G11), bridge production/load integration (G13), drone gameplay (G28), combat, D02 fairness validation or G32 restoration. D01 remains open; this review diagram does not choose production 2D/3D.
+
+## Revised integration assignment - 27 October 2026
+
+The original base and Windows-only pre-merge plan above are historical. The [Designer decision](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6442653786) directs normal-history integration of reviewed G08 fa0dc65 with accepted main ed7ba8d, preserving accepted G03/R01/framework coverage. [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) requires current-head domain/input checks, eight focused rendered checkpoints with matching metadata, a meaningful G08 negative control and Designer visual review before a foundation merge decision. Native testing remains stopped and Windows input/readability remain unverified D01/M0 obligations. No new runtime algorithms, fixtures or downstream scope are assigned.

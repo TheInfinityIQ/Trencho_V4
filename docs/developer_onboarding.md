@@ -24,7 +24,7 @@ Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual che
 
 After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
 
-## Current assignment: G03 staffing and hauling
+## Historical starting assignment: G03 staffing and hauling
 
 G01 was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50); its full A03 casualty/recovery integration remains G16. G02 was accepted in [PR #51](https://github.com/TheInfinityIQ/Trencho_V4/pull/51), merged at `eb251eb83b90bbdc895ae917f9933655aaf794fb`, closing issue #10 for its bounded procurement/receiving scope. Its native practical display case does not settle literal 1280×720 physical display or production D01.
 
@@ -73,3 +73,7 @@ Run from the repository root in PowerShell 7:
 Use `./tools/check.ps1` when `godot` is on PATH. Follow AGENTS.md for focused behaviour verification in Godot; a headless startup alone does not demonstrate gameplay or inspection correctness.
 
 Return a reviewable change with its behaviour, purpose, regression results, checks run, visible demonstration evidence and any unverified interactions. Include UID/import sidecars when applicable; exclude generated caches. Do not discard unrelated work, change the approved design silently or mark downstream scenarios complete based only on document calculations.
+
+## Current scoped handoff - 27 October 2026
+
+The G03 starting assignment above is historical: G03 foundation was accepted in PR #54, and PR #64 supplies only the first continuous R01 production slice. Neither closes full G04/A05/M0. The current assignment is [G08 final evidence/integration](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6442653786) in existing draft PR #55, retaining accepted G03/R01 and all framework checks. Follow [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) and the [G08 record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026). Finish exact-head checks, eight rendered image/state pairs and negative controls, then report once to the Game Designer and wait. Native testing remains stopped; Windows input/readability remain D01/M0 obligations. This handoff grants no next recipe or downstream feature scope.

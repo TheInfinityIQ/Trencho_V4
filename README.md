@@ -12,7 +12,7 @@ Use the [delivery roadmap](docs/roadmap.md), [GitHub project](https://github.com
 
 1. Use Godot 4.7.2 (the Steam `stable-4.7` branch is supported).
 2. Import the root `project.godot` in Godot's project manager.
-3. Press **F5** for the G03 staffing/hauling draft fixture. Use its explicit time buttons and A05-input/A06-carry/driver scenarios. [G03 behavior and verification](docs/g03_staffing.md) records the implemented scope and missing native A06 evidence; the full A05 production continuation remains G04.
+3. Press **F5** for the G03 staffing/hauling foundation fixture. Use its explicit time buttons and A05-input/A06-carry/driver scenarios. [G03 behavior and verification](docs/g03_staffing.md) records the accepted foundation scope and unverified Windows input/readability; the full A05 production continuation remains G04.
 4. The top review buttons open the retained G02 Procurement and G01 Identity fixtures, each with its own declared state/clock. Switching review resets that fixture. They also run individually with **F6** from their scene files.
 
 No plugins, export templates, or external packages are required to run the project.
@@ -53,3 +53,5 @@ Choose Git LFS rules before introducing large binary assets; no asset pipeline i
 Optional [D01 overhead evaluation](docs/d01_overhead_evaluation.md) has a separate scene and reproducible Godot-rendered CI images. It does not change the main review fixture or select production presentation.
 
 The reachable **G04 R01 Production** review implements the [first continuous R01 slice](docs/g04_r01.md) over real G03 staffing/hauling. Other recipes, stock targets, heavy output and complete G04/M0 remain later work.
+
+The reachable **G08 Terrain & sight** review retains the [bounded terrain/movement/sight fixture](docs/g08_terrain.md), alongside accepted G03 and first R01. GDD23.7 governs its separate foundation evidence path; eight current-head CI renders and matching state records require Designer review. Windows OS input/readability remain unverified. Checks retain G01/G02/G03/R01/D01 and add G08 domain/layout plus the two focused display-backed G08 cases.
