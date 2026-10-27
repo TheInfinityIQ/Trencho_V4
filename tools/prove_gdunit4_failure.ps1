@@ -2,7 +2,8 @@
 param(
     [string]$GodotPath = 'godot',
     [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain',
-    [switch]$G03Driver
+    [switch]$G03Driver,
+    [switch]$G04Work
 )
 
 $ErrorActionPreference = 'Stop'
@@ -13,6 +14,7 @@ $original = [IO.File]::ReadAllBytes($testPath)
 $text = [Text.Encoding]::UTF8.GetString($original)
 $healthy = if ($Suite -eq 'Domain') { 'is_equal(1860.0)' } else { 'is_equal(100)' }
 $broken = if ($Suite -eq 'Domain') { 'is_equal(1861.0)' } else { 'is_equal(101)' }
+$wrongValue = if ($Suite -eq 'Domain') { '1861.0' } else { '101' }
 if ($G03Driver) {
     if ($Suite -ne 'Input') { throw 'G03Driver requires the display-backed Input suite.' }
     $testPath = Join-Path $projectRoot 'game/staffing/tests/gdunit/staffing_input_test.gd'
@@ -20,9 +22,20 @@ if ($G03Driver) {
     $text = [Text.Encoding]::UTF8.GetString($original)
     $healthy = 'is_equal(40.0)'
     $broken = 'is_equal(39.0)'
+    $wrongValue = '39.0'
+}
+if ($G04Work) {
+    if ($Suite -ne 'Domain' -or $G03Driver) { throw 'G04Work requires only the Domain suite.' }
+    $testPath = Join-Path $projectRoot 'game/production/tests/r01_domain_test.gd'
+    $original = [IO.File]::ReadAllBytes($testPath)
+    $text = [Text.Encoding]::UTF8.GetString($original)
+    $healthy = 'assert_float(rear.production.history[0].work).is_equal(40.0)'
+    $broken = 'assert_float(rear.production.history[0].work).is_equal(41.0)'
+    $wrongValue = '41.0'
 }
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
 $reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
+if ($G04Work) { $reportName = 'failure-control-g04-work' }
 $outputRoot = Join-Path $projectRoot ".artifacts/gdunit4/$reportName"
 New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {
@@ -35,7 +48,7 @@ try {
     if (-not (Test-Path -LiteralPath $xmlPath)) { throw 'Failure control produced no fresh JUnit evidence.' }
     [xml]$report = Get-Content -LiteralPath $xmlPath -Raw
     $failures = @($report.SelectNodes('//testcase/failure'))
-    if ($failures.Count -ne 1 -or -not $failures[0].InnerText.Contains($broken.Substring(9).TrimEnd(')'))) {
+    if ($failures.Count -ne 1 -or -not $failures[0].InnerText.Contains($wrongValue)) {
         throw "Failure control did not fail at its deliberately altered expected value. See $xmlPath"
     }
     @{ suite=$Suite; command_exit=$commandExit; deliberately_changed=$healthy; wrong_expectation=$broken; assertion_failures=$failures.Count } |

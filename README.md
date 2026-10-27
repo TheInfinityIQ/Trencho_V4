@@ -51,3 +51,5 @@ No open-source license has been selected. Third-party content must retain its li
 Choose Git LFS rules before introducing large binary assets; no asset pipeline is imposed yet.
 
 Optional [D01 overhead evaluation](docs/d01_overhead_evaluation.md) has a separate scene and reproducible Godot-rendered CI images. It does not change the main review fixture or select production presentation.
+
+The reachable **G04 R01 Production** review implements the [first continuous R01 slice](docs/g04_r01.md) over real G03 staffing/hauling. Other recipes, stock targets, heavy output and complete G04/M0 remain later work.

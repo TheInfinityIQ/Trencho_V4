@@ -1,0 +1,211 @@
+extends GdUnitTestSuite
+
+const Rear = preload("res://game/staffing/rear_simulation.gd")
+const Production = preload("res://game/production/r01_production.gd")
+
+
+func _local(metal: int = 2, components: int = 1) -> RefCounted:
+	var rear := Rear.new("Empty")
+	rear.add_person("operator-1", false, "None", "duty-workshop")
+	rear.add_person("operator-2", false, "None", "duty-workshop")
+	rear.set_target("workshop", 2)
+	if metal > 0: rear.ledger.add_stock("local-metal", "M01", metal, 1.0, "workshop_input", rear.PLAYER)
+	if components > 0: rear.ledger.add_stock("local-components", "M02", components, 1.0, "workshop_input", rear.PLAYER)
+	rear.production = Production.new(rear)
+	return rear
+
+
+func test_complete_local_batch_is_atomic_and_reserved_foreign_remote_goods_are_not_inputs() -> void:
+	var rear := _local(2, 0)
+	rear.ledger.add_stock("foreign-components", "M02", 1, 1.0, "workshop_input", "supplier")
+	rear.ledger.add_stock("remote-components", "M02", 1, 1.0, "depot", rear.PLAYER)
+	var before: Dictionary = rear.ledger.snapshot()
+	assert_bool(rear.ledger.consume_local_batch("workshop_input", rear.PLAYER, Production.INPUTS, "invalid whole batch").ok).is_false()
+	assert_dict(rear.ledger.snapshot()).is_equal(before)
+	rear.advance_time(0)
+	assert_dict(rear.ledger.snapshot()).is_equal(before)
+	assert_dict(rear.production.batch).is_empty()
+	assert_dict(rear._output_promises).is_empty()
+	rear.ledger.add_stock("own-components", "M02", 1, 1.0, "workshop_input", rear.PLAYER)
+	rear.ledger.request_stock("other-use", "local-metal", 1, "shipment", "unavailable", rear.PLAYER)
+	before = rear.ledger.snapshot()
+	rear.advance_time(0)
+	assert_dict(rear.ledger.snapshot()).is_equal(before)
+	rear.ledger.release_claim("other-use")
+	rear.set_store("workshop_output", true, 3)
+	before = rear.ledger.snapshot()
+	rear.advance_time(0)
+	assert_dict(rear.ledger.snapshot()).is_equal(before)
+	assert_str(rear.production.snapshot().status).is_equal("Output Full")
+	rear.set_store("workshop_output", true, 4)
+	assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 2, "M02": 1})
+	assert_int(rear.ledger.inspect_entity("foreign-components").quantity).is_equal(1)
+	assert_int(rear.ledger.inspect_entity("remote-components").quantity).is_equal(1)
+	assert_float(rear._reserved_space("workshop_output")).is_equal(4.0)
+	assert_array(rear.audit()).is_empty()
+
+
+func test_real_haul_and_reporting_never_earn_work_before_atomic_start() -> void:
+	var rear := Rear.new()
+	rear.production = Production.new(rear)
+	rear.advance_time(300)
+	assert_int(rear.production.operators().size()).is_equal(2)
+	assert_str(rear.production.snapshot().status).is_equal("Missing Inputs")
+	assert_dict(rear.production.batch).is_empty()
+	assert_dict(rear.ledger.snapshot().consumed).is_empty()
+	rear.set_target("hauling", 1)
+	var saw_carry := false
+	for second in 300:
+		if not rear.production.batch.is_empty(): break
+		for actor in rear.actors.values():
+			if actor.phase in ["Carry", "Drop"]: saw_carry = true
+		assert_dict(rear.ledger.snapshot().consumed).is_empty()
+		rear.advance_time(1)
+	assert_bool(saw_carry).is_true()
+	assert_bool(rear.production.batch.is_empty()).is_false()
+	var started: float = rear.production.batch.started_at
+	# The last one-second advance may include a fraction after actual deposit.
+	assert_float(rear.production.batch.work).is_equal_approx((rear.time - started) * 2, 0.000001)
+	assert_float(started).is_greater(300.0)
+	rear.advance_time(started + 20 - rear.time)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_float(rear.production.history[0].completed_at).is_equal_approx(started + 20, 0.000001)
+	assert_float(rear.production.history[0].work).is_equal(40.0)
+	assert_float(rear.ledger.loose_stock_mass_at("workshop_output")).is_equal(4.0)
+	assert_int(rear.ledger.total_stock("E02")).is_zero()
+	assert_dict(rear._output_promises).is_empty()
+	var ledger_before: Dictionary = rear.ledger.snapshot()
+	rear.advance_time(0)
+	rear.advance_time(0)
+	assert_dict(rear.ledger.snapshot()).is_equal(ledger_before)
+	assert_str(rear.production.snapshot().status).is_equal("Missing Inputs")
+	assert_array(rear.audit()).is_empty()
+
+
+func test_shared_time_partition_matches_reporting_hauling_start_and_completion() -> void:
+	var coarse := Rear.new()
+	var split := Rear.new()
+	for rear in [coarse, split]:
+		rear.production = Production.new(rear)
+		rear.set_target("hauling", 1)
+	coarse.advance_time(500)
+	for interval in [0.1, 0.9, 5.0, 11.0, 33.0, 50.0, 100.0, 300.0]: split.advance_time(interval)
+	assert_float(split.time).is_equal(coarse.time)
+	assert_dict(split.ledger.snapshot().consumed).is_equal(coarse.ledger.snapshot().consumed)
+	assert_int(split.ledger.total_stock("E01")).is_equal(1)
+	assert_dict(split.production.batch).is_equal(coarse.production.batch)
+	assert_float(split.production.history[0].started_at).is_equal_approx(coarse.production.history[0].started_at, 0.000001)
+	assert_float(split.production.history[0].completed_at).is_equal_approx(coarse.production.history[0].completed_at, 0.000001)
+	for id in split.actors:
+		assert_vector(split.ledger.inspect_entity(id).position).is_equal_approx(coarse.ledger.inspect_entity(id).position, Vector2(0.000001, 0.000001))
+	assert_array(coarse.audit()).is_empty()
+	assert_array(split.audit()).is_empty()
+
+
+func test_pause_staff_and_access_loss_retain_consumed_work_and_promise() -> void:
+	var rear := _local()
+	rear.advance_time(5)
+	assert_float(rear.production.batch.work).is_equal(10.0)
+	var id: String = rear.production.batch.id
+	var receipt: Array = rear.production.batch.receipt.duplicate(true)
+	rear.production.set_paused(true)
+	rear.advance_time(100)
+	assert_float(rear.production.batch.work).is_equal(10.0)
+	rear.production.set_paused(false)
+	rear.set_target("workshop", 0)
+	rear.advance_time(100)
+	assert_float(rear.production.batch.work).is_equal(10.0)
+	assert_str(rear.production.snapshot().status).is_equal("Missing Labour")
+	rear.set_target("workshop", 2)
+	rear.set_store("workshop_output", false)
+	rear.advance_time(100)
+	assert_float(rear.production.batch.work).is_equal(10.0)
+	assert_str(rear.production.batch.id).is_equal(id)
+	assert_array(rear.production.batch.receipt).is_equal(receipt)
+	assert_float(rear._reserved_space("workshop_output")).is_equal(4.0)
+	rear.set_store("workshop_output", true)
+	rear.advance_time(15)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 2, "M02": 1})
+	assert_array(rear.audit()).is_empty()
+
+
+func test_output_edits_are_atomic_and_inbound_hauling_cannot_steal_promise() -> void:
+	var rear := _local()
+	rear.ledger.add_stock("existing-timber", "M04", 996, 1, "workshop_output", rear.PLAYER)
+	rear.advance_time(0)
+	var before: Dictionary = rear.stores.duplicate(true)
+	assert_bool(rear.set_store("workshop_output", false, 999, ["M01"]).ok).is_false()
+	assert_dict(rear.stores).is_equal(before)
+	assert_bool(rear.set_store("workshop_output", true, -1, ["M01"]).ok).is_false()
+	assert_dict(rear.stores).is_equal(before)
+	assert_int(rear.ledger.inspect_entity("existing-timber").quantity).is_equal(996)
+	assert_bool(rear.set_store("workshop_output", true, -1, ["E01"]).ok).is_true()
+	assert_int(rear.ledger.inspect_entity("existing-timber").quantity).is_equal(996)
+	assert_bool(rear.jobs.any(func(job: Dictionary) -> bool: return job.relocation and job.type == "M04")).is_true()
+	rear.advance_time(20)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_int(rear.ledger.inspect_entity("existing-timber").quantity).is_equal(996)
+	# A different live fixture: 4kg output + 1kg inbound leave no sixth kg.
+	rear = _local()
+	rear.set_store("workshop_output", true, 5)
+	rear.ledger.add_stock("depot-fuel", "M08", 2, 1, "depot", rear.PLAYER)
+	rear.add_person("hauler", false, "None", "duty-depot")
+	rear.set_target("hauling", 1)
+	rear.request_haul("depot", "workshop_output", "M08", 2)
+	assert_float(rear._reserved_space("workshop_output")).is_equal(5.0)
+	assert_int(rear.ledger.inspect_entity("depot-fuel").reserved).is_equal(1)
+	before = rear.stores.duplicate(true)
+	assert_bool(rear.set_store("workshop_output", false, 4).ok).is_false()
+	assert_dict(rear.stores).is_equal(before)
+	assert_float(rear._free_space("workshop_output")).is_zero()
+	assert_array(rear.audit()).is_empty()
+
+
+func test_cancellation_loses_only_consumed_inputs_and_never_erases_finished_output() -> void:
+	var rear := _local()
+	var before: Dictionary = rear.ledger.snapshot()
+	rear.production.cancel()
+	rear.production.cancel()
+	assert_dict(rear.ledger.snapshot()).is_equal(before)
+	rear.production.resume()
+	rear.advance_time(5)
+	rear.production.cancel()
+	var cancelled: Dictionary = rear.production.snapshot()
+	rear.production.cancel()
+	rear.advance_time(100)
+	assert_dict(rear.production.snapshot()).is_equal(cancelled)
+	assert_int(rear.ledger.total_stock("E01")).is_zero()
+	assert_dict(rear._output_promises).is_empty()
+	assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 2, "M02": 1})
+	rear.ledger.add_stock("new-metal", "M01", 4, 1, "workshop_input", rear.PLAYER)
+	rear.ledger.add_stock("new-components", "M02", 2, 1, "workshop_input", rear.PLAYER)
+	rear.production.resume()
+	rear.advance_time(20)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	# Continuous next batch is already consumed, but cancellation retains the finished rifle.
+	assert_bool(rear.production.batch.is_empty()).is_false()
+	rear.production.cancel()
+	rear.production.cancel()
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 6, "M02": 3})
+	assert_array(rear.audit()).is_empty()
+
+
+func test_fully_worked_component_waits_for_legal_physical_completion() -> void:
+	var rear := _local()
+	rear.advance_time(0)
+	# Isolate the completion boundary: work accrues with actual local operators,
+	# then access invalidates before settle; no UI or full-clock evidence inferred.
+	rear.production.advance_work(20)
+	rear.set_store("workshop_output", false)
+	assert_float(rear.production.batch.work).is_equal(40.0)
+	assert_int(rear.ledger.total_stock("E01")).is_zero()
+	assert_float(rear._reserved_space("workshop_output")).is_equal(4.0)
+	rear.advance_time(100)
+	assert_int(rear.ledger.total_stock("E01")).is_zero()
+	rear.set_store("workshop_output", true)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	rear.advance_time(0)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_dict(rear._output_promises).is_empty()

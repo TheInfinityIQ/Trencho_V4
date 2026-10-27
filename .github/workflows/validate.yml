@@ -49,6 +49,9 @@ jobs:
           set -euo pipefail
           command -v xvfb-run
           xvfb-run -a pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Input
+      - name: Prove R01 completed-work regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -G04Work
       - name: Prove failing input assertion fails and restore passing test
         shell: bash
         run: |
