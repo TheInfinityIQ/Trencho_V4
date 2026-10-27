@@ -173,6 +173,14 @@ func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() ->
 	assert_str((demo.get("_people_detail") as Label).text).contains("phase Idle")
 	_render_window(Vector2i(960, 540))
 	await _capture(runner, demo, "a05_selected_person_small")
+	var detail_scroll := (demo.get("_people_detail") as Label).get_parent() as ScrollContainer
+	var before_scroll := detail_scroll.scroll_vertical
+	runner.set_mouse_position(detail_scroll.get_global_rect().get_center())
+	await runner.await_input_processed()
+	runner.simulate_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN)
+	await runner.await_input_processed()
+	assert_int(detail_scroll.scroll_vertical).is_greater(before_scroll)
+	await _capture(runner, demo, "a05_selected_person_small_scrolled")
 	assert_array(simulation.audit()).is_empty()
 	assert_str((demo.get("_audit") as Label).text).contains("PASS")
 	_restore_window(previous_window)
@@ -209,6 +217,8 @@ func _capture(runner: GdUnitSceneRunner, demo: Control, checkpoint: String) -> v
 	for field in ["_summary", "_feedback", "_readiness", "_yard", "_detail", "_people_detail", "_audit"]:
 		var label := demo.get(field) as Label
 		details[field] = {"visible": label.is_visible_in_tree(), "text": label.text}
+		if label.get_parent() is ScrollContainer:
+			details[field].scroll_y_px = (label.get_parent() as ScrollContainer).scroll_vertical
 	var simulation: RefCounted = demo.get("simulation")
 	var metadata := {"kind": "Godot Linux CI render; Windows native input/readability unverified",
 		"revision": OS.get_environment("EVALUATION_HEAD"), "engine": Engine.get_version_info().string,
