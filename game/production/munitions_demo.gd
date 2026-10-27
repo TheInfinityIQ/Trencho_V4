@@ -17,3 +17,33 @@ func _make_production() -> void:
 
 func _initial_stock_note() -> String:
 	return "Declared R02 setup: 1 M01 + 1 M03 at depot, four ordinary people. Assign operators and real hauling; no refills."
+
+
+var _recipe_dialog: ConfirmationDialog
+var _confirmation_token := -1
+
+
+func _add_recipe_controls(parent: Node) -> void:
+	_recipe_dialog = ConfirmationDialog.new()
+	_recipe_dialog.min_size = Vector2i(640, 240)
+	_recipe_dialog.title = "Change F05 recipe?"
+	_recipe_dialog.ok_button_text = "Confirm change"
+	_recipe_dialog.cancel_button_text = "Keep current recipe"
+	_recipe_dialog.dialog_autowrap = true
+	_recipe_dialog.confirmed.connect(func() -> void:
+		var result: Dictionary = production.confirm_recipe(_confirmation_token)
+		_feedback.text = result.message
+		_refresh())
+	_recipe_dialog.canceled.connect(func() -> void:
+		var result: Dictionary = production.decline_recipe(_confirmation_token)
+		_feedback.text = result.message
+		_refresh())
+	add_child(_recipe_dialog)
+	for recipe in Munitions.CHOICES:
+		_button(parent, "Select " + recipe, func() -> Dictionary:
+			var result: Dictionary = production.request_recipe(recipe)
+			if result.get("confirmation_required", false):
+				_confirmation_token = result.token
+				_recipe_dialog.dialog_text = result.message
+				_recipe_dialog.popup_centered(Vector2i(640, 240))
+			return result)

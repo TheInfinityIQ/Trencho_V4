@@ -19,7 +19,7 @@ var jobs: Array[Dictionary] = []
 var _sequence: int = 0
 var _events: Array[Dictionary] = []
 var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fixtures staged.
-var munitions_production: RefCounted # Optional fixed R02/F05 owner on this same clock.
+var munitions_production: RefCounted # Optional exclusive R02/R27 F05 owner on this same clock.
 var materials_production: RefCounted # Optional fixed R26/F13 owner on this same clock.
 var _output_promises: Dictionary = {}
 

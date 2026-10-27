@@ -59,3 +59,5 @@ The reachable **G04 R01 Production** review implements [continuous and stock-tar
 **G04 R26 Materials** adds [Building Materials manufacture at declared working F13](docs/g04_r26.md):30 local M01 +70 M04,100 operator-work,100 M11/100kg, with real multi-trip hauling and ordinary operators. Construction and the full starting-scenario lifecycle remain later work.
 
 The reachable **G08 Terrain & sight** review retains the [bounded terrain/movement/sight fixture](docs/g08_terrain.md), alongside accepted G03 and first R01. GDD23.7 governs its separate foundation evidence path; eight current-head CI renders and matching state records require Designer review. Windows OS input/readability remain unverified. Checks retain G01/G02/G03/R01/D01 and add G08 domain/layout plus the two focused display-backed G08 cases.
+
+**G04 R27 Explosives** adds [one physical M06 from ten local M03 and two M01](docs/g04_r27.md), with 40 operator-work and exclusive R02/R27 selection at the same F05. Active recipe changes require confirmation of consumed-input loss; real finished stock and per-recipe choices/history survive. This is a bounded review, not later shell/mine integration.
