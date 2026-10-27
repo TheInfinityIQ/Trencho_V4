@@ -22,6 +22,7 @@ var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fix
 var munitions_production: RefCounted # Optional exclusive R02/R27 F05 owner on this same clock.
 var materials_production: RefCounted # Optional fixed R26/F13 owner on this same clock.
 var _output_promises: Dictionary = {}
+var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
 
 func _init(fixture: String = "A05") -> void:
@@ -150,7 +151,7 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 		return result
 	if not p.crew_station.is_empty():
 		yard.request_exit()
-	elif a.phase not in ["Carry", "Drop"]:
+	elif a.phase not in ["Carry", "Drop"] and ledger.inspect_entity(id).carrying_stock_id.is_empty():
 		_report(a)
 	return _result(true, "Duty requested; carrying or driving retains the old actual duty until safe handoff.")
 
@@ -158,6 +159,12 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
 	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
+	if receiving != null and id == "receiving":
+		var edited_capacity: float = stores[id].capacity if capacity < 0 else capacity
+		if edited_capacity + EPS < ledger.loose_stock_mass_at(id) + _reserved_space(id):
+			return _result(false, "Edit refused: Receiving must retain its physical goods and complete inbound promises.")
+		if receiving.reserved_storage_kg() > 0 and (not accessible or (filter != null and not filter.is_empty())):
+			return _result(false, "Edit refused: unloaders retain promised Receiving access/type until safe deposit; wait for handling to finish.")
 	for claim in _output_promises.values():
 		if claim.store != id: continue
 		var edited_capacity: float = stores[id].capacity if capacity < 0 else capacity
@@ -235,6 +242,7 @@ func advance_time(seconds: float) -> Dictionary:
 	_settle()
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
+		if receiving != null: next = minf(next, receiving.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
 		for a in actors.values():
 			next = minf(next, a.deadline)
@@ -254,6 +262,7 @@ func advance_time(seconds: float) -> Dictionary:
 		yard.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
+		if receiving != null: receiving.advance_clock_to(next)
 		_settle()
 	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
 
@@ -404,6 +413,9 @@ func _move(a: Dictionary, phase: String, points: Array, speed: float) -> void:
 
 
 func _settle() -> void:
+	if receiving != null:
+		receiving._pump()
+		_sync_receiving_people()
 	for _iteration in 1000:
 		var changed: bool = yard.complete_due()
 		for a in actors.values():
@@ -422,11 +434,37 @@ func _settle() -> void:
 			var p: Dictionary = ledger.inspect_entity(a.id)
 			if a.phase == "Idle" and p.duty_id == "hauling":
 				changed = _start_job(a) or changed
+		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
 		if not changed:
 			_refresh_contention()
 			return
 	push_error("Rear activity failed to settle finite immediate boundaries.")
+
+
+func _sync_receiving_people() -> void:
+	var added := false
+	var released := false
+	for p in ledger.snapshot().entities:
+		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
+			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
+			added = true
+	for a in actors.values():
+		if a.phase == "Unloading" and not receiving._workers.has(a.id):
+			_report(a)
+			# Match hauling: a released Available person fills outstanding targets;
+			# a specific requested destination retains its direct handoff.
+			released = released or ledger.inspect_entity(a.id).duty_id.is_empty()
+	if added or released: _rebalance()
+
+
+func _sync_receiving_staff() -> void:
+	for a in actors.values():
+		var p: Dictionary = ledger.inspect_entity(a.id)
+		if p.duty_id == "receiving" and p.pending_assignment == "None" and a.phase == "Idle":
+			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
+			a.phase = "Unloading"
+	receiving._pump()
 
 
 func _finish_phase(a: Dictionary) -> void:
@@ -541,7 +579,7 @@ func _in_flight(job_id: String) -> int:
 
 
 func _reserved_space(destination: String, except_person: String = "", include_output: bool = true) -> float:
-	var total: float = 0.0
+	var total: float = receiving.reserved_storage_kg() if receiving != null and destination == "receiving" else 0.0
 	for a in actors.values():
 		if a.id != except_person and a.load.get("destination") == destination:
 			total += a.load.mass
@@ -799,7 +837,7 @@ func _retaining(duty: String) -> int:
 func _present(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty and actors[id].phase == "Idle": count += 1
+		if ledger.inspect_entity(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
 	return count
 
 

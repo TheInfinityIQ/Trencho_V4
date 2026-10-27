@@ -20,6 +20,11 @@ const FREIGHT_BERTH := Vector2(35, 25)
 const FREIGHT_EXIT := Vector2(-12, 25)
 
 var ledger := Ledger.new()
+var receiving_position := RECEIVING
+var personnel_position := PERSONNEL
+var route: Callable
+# Optional shared-store contract: returns currently legal free kilograms.
+var receiving_room: Callable
 var _time: float = 0.0
 var _money: float = 2500.0
 var _income: float = 0.0
@@ -33,9 +38,15 @@ var _walks: Array[Dictionary] = []
 var _events: Array[Dictionary] = []
 
 
-func _init() -> void:
-	_must(ledger.add_place("receiving", "F02 Receiving storage (5000 kg)", RECEIVING))
-	_must(ledger.add_place("personnel", "F08 Personnel arrival point", PERSONNEL))
+func _init(shared_ledger: RefCounted = null) -> void:
+	if shared_ledger != null:
+		ledger = shared_ledger
+	if ledger.inspect_entity("receiving").is_empty():
+		_must(ledger.add_place("receiving", "F02 Receiving storage (5000 kg)", RECEIVING))
+	if ledger.inspect_entity("personnel").is_empty():
+		_must(ledger.add_place("personnel", "F08 Personnel arrival point", PERSONNEL))
+	receiving_position = ledger.inspect_entity("receiving").position
+	personnel_position = ledger.inspect_entity("personnel").position
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
@@ -135,23 +146,37 @@ func advance_time(seconds: float) -> Dictionary:
 	var target := _time + seconds
 	_pump()
 	while _time < target:
-		var next := target
-		for order in _orders:
-			if order.next_at > _time:
-				next = minf(next, order.next_at)
-		for walk in _walks:
-			next = minf(next, walk.ends_at)
-		for worker in _workers.values():
-			if not worker.job.is_empty():
-				next = minf(next, worker.job.ends_at)
-		var delta := next - _time
-		_must(ledger.advance_time(delta))
-		_income += delta * 6.0
-		_money += delta * 6.0
-		_time = next
-		_move_activities()
+		var next := minf(target, next_boundary())
+		_must(ledger.advance_time(next - _time))
+		advance_clock_to(next)
 		_pump()
 	return _ok("Simulation advanced; only elapsed physical activities complete.")
+
+
+func next_boundary() -> float:
+	var boundary := INF
+	for order in _orders:
+		if order.next_at > _time: boundary = minf(boundary, order.next_at)
+	for walk in _walks: boundary = minf(boundary, walk.ends_at)
+	for worker in _workers.values():
+		if not worker.job.is_empty(): boundary = minf(boundary, worker.job.ends_at)
+	return boundary
+
+
+func advance_clock_to(next: float) -> void:
+	# The integrated rear advances its ledger once and calls this at each joint boundary.
+	var delta := next - _time
+	_income += delta * 6.0
+	_money += delta * 6.0
+	_time = next
+	_move_activities()
+
+
+func free_receiving_kg() -> int:
+	var physical_room := STORAGE_KG - receiving_kg() - reserved_storage_kg()
+	if receiving_room.is_valid():
+		return mini(physical_room, maxi(0, int(receiving_room.call()) - reserved_storage_kg()))
+	return physical_room
 
 
 func freight_admitted() -> int:
@@ -359,7 +384,7 @@ func _exit_passenger(order: Dictionary) -> void:
 	# Walking and population admission happen afterward, independently per person.
 	var id: String = order.passenger_ids[order.people_exited]
 	var origin: Vector2 = ledger.inspect_entity(order.id).position
-	var path: Array = [origin, Vector2(20, 96), PERSONNEL]
+	var path: Array = _worker_path(origin, personnel_position) if route.is_valid() else [origin, Vector2(20, 96), PERSONNEL]
 	_must(ledger.move_entity(id, "rear-lane", origin))
 	_walks.append({"order_id": order.id, "person_id": id, "path": path,
 		"started_at": _time, "ends_at": _time + _path_length(path) / 1.5})
@@ -369,7 +394,7 @@ func _exit_passenger(order: Dictionary) -> void:
 
 
 func _start_worker_job(id: String) -> bool:
-	var room := STORAGE_KG - receiving_kg() - reserved_storage_kg()
+	var room := free_receiving_kg()
 	if room <= 0:
 		return false
 	for order in _orders:
@@ -405,7 +430,7 @@ func _finish_worker_phase(id: String) -> void:
 		"Pickup":
 			_must(ledger.begin_carry(id, job.source_id, job.quantity, job.claim_id))
 			job.phase = "Carry"
-			job.path = [FREIGHT_BERTH, RECEIVING]
+			job.path = _worker_path(FREIGHT_BERTH, receiving_position) if route.is_valid() else [FREIGHT_BERTH, RECEIVING]
 			job.started_at = _time
 			job.ends_at = _time + _path_length(job.path) / 1.2
 		"Carry":
@@ -425,7 +450,7 @@ func _finish_worker_phase(id: String) -> void:
 func _sync_workers() -> void:
 	for id in _workers.keys():
 		var person := ledger.inspect_entity(id)
-		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id == "Receiving"
+		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in ["Receiving", "receiving"]
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
 			continue # G01 retains the old duty until the carried freight is deposited.
@@ -487,7 +512,7 @@ func _order_blocker(order: Dictionary) -> String:
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
 		"Berthed":
 			if _workers.is_empty(): return "Missing actual Receiving unloaders"
-			if receiving_kg() + reserved_storage_kg() >= STORAGE_KG: return "Receiving storage full or reserved; remainder stays aboard"
+			if free_receiving_kg() <= 0: return "Receiving storage full or reserved; remainder stays aboard"
 			return "Unloaders must approach, pick up, carry and deposit real freight"
 		"Cancelled": return "Cancelled and refunded once"
 		_: return "Complete; supplier service remains external"
@@ -530,6 +555,7 @@ func _speed(order: Dictionary) -> float:
 
 
 func _worker_path(origin: Vector2, destination: Vector2) -> Array:
+	if route.is_valid(): return route.call(origin, destination)
 	if origin.y > 31.0:
 		return [origin, Vector2(32, origin.y), Vector2(32, destination.y), destination]
 	return [origin, destination]

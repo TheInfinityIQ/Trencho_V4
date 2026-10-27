@@ -2,7 +2,8 @@
 param(
     [string]$GodotPath = 'godot',
     [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain',
-    [string]$ReportName = ''
+    [string]$ReportName = '',
+    [string]$CaseName = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -23,6 +24,14 @@ if (Test-Path -LiteralPath $xmlPath) { Remove-Item -LiteralPath $xmlPath }
 $manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'gdunit4_tests.json') -Raw | ConvertFrom-Json
 $suites = @($manifest.$Suite)
 $expectedCases = @($suites | ForEach-Object { $_.cases })
+$ignoredCases = @()
+if ($CaseName) {
+    $matches = @($suites | Where-Object { $_.cases -ccontains $CaseName })
+    if ($matches.Count -ne 1) { throw 'CaseName must identify exactly one case in the selected manifest suite.' }
+    $suites = $matches
+    $ignoredCases = @($suites[0].cases | Where-Object { $_ -cne $CaseName })
+    $expectedCases = @($CaseName)
+}
 $engineArguments = @('--path', $projectRoot, '--log-file', (Join-Path $reportRoot 'engine.log'))
 if ($Suite -eq 'Domain') { $engineArguments += '--headless' }
 else {
@@ -33,6 +42,10 @@ else {
 $reportUri = "res://.artifacts/gdunit4/$ReportName"
 $engineArguments += @('--script', 'res://addons/gdUnit4/bin/GdUnitCmdTool.gd', '-rd', $reportUri, '-rc', '1')
 foreach ($suiteEntry in $suites) { $engineArguments += @('-a', ('res://' + $suiteEntry.path)) }
+# Pinned GdUnit4 6.2.2 supports exact exclusions as path:test-name (-i).
+# Scan only the selected suite, exclude its other manifest cases, and verify
+# the resulting JUnit names. An unexpected discovered case still fails validation.
+foreach ($ignored in $ignoredCases) { $engineArguments += @('-i', ($suites[0].path + ':' + $ignored)) }
 if ($Suite -eq 'Domain') { $engineArguments += '--ignoreHeadlessMode' }
 & $engine @engineArguments | Out-Host
 $engineExit = $LASTEXITCODE
@@ -42,6 +55,14 @@ if (-not (Test-Path -LiteralPath $xmlPath)) { throw "Missing GdUnit4 JUnit repor
 $cases = @($report.SelectNodes('//testcase'))
 $problems = @($report.SelectNodes('//failure|//error|//skipped'))
 $actualCases = @($cases | ForEach-Object { $_.name })
+$statistics = @($report.SelectNodes('//testsuite'))
+foreach ($statisticsEntry in $statistics) {
+    foreach ($attribute in @('flaky', 'orphans', 'skipped', 'errors', 'failures')) {
+        if ($statisticsEntry.HasAttribute($attribute) -and [int]$statisticsEntry.GetAttribute($attribute) -ne 0) {
+            throw "GdUnit4 $Suite reported nonzero $attribute. See $xmlPath"
+        }
+    }
+}
 $caseMismatch = @(Compare-Object ($expectedCases | Sort-Object) ($actualCases | Sort-Object))
 if ($caseMismatch.Count -ne 0 -or $problems.Count -ne 0) {
     throw "GdUnit4 $Suite did not execute exactly its named, passing, unskipped cases. See $xmlPath"

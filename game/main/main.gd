@@ -14,6 +14,8 @@ const REVIEWS: Dictionary = {
 	"G01 Identity": preload("res://game/identity/identity_demo.tscn"),
 }
 var _host: Control
+var _base: Control
+const Base = preload("res://game/rear_base/base_demo.tscn")
 
 
 func _ready() -> void:
@@ -22,22 +24,36 @@ func _ready() -> void:
 	add_child(layout)
 	var controls := HFlowContainer.new()
 	layout.add_child(controls)
+	var home := Button.new()
+	home.text = "Rear base"
+	home.tooltip_text = "Return to the same live base. Diagnostics reset their own fixtures; base time pauses while away."
+	home.pressed.connect(_show_base)
+	controls.add_child(home)
 	for title in REVIEWS:
 		var button := Button.new()
 		button.text = title
 		button.pressed.connect(func() -> void: _show_review(title))
 		controls.add_child(button)
-	var note := Label.new()
-	note.text = "Switching review resets its declared fixture."
-	controls.add_child(note)
 	_host = Control.new()
 	_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_host)
-	_show_review("G03 Staffing & hauling")
+	_show_base()
 
 
 func _show_review(title: String) -> void:
 	for child in _host.get_children():
 		_host.remove_child(child)
-		child.queue_free()
+		if child != _base: child.queue_free()
 	_host.add_child(REVIEWS[title].instantiate())
+
+
+func _show_base() -> void:
+	for child in _host.get_children():
+		_host.remove_child(child)
+		if child != _base: child.queue_free()
+	if not is_instance_valid(_base): _base = Base.instantiate()
+	_host.add_child(_base)
+
+
+func _exit_tree() -> void:
+	if is_instance_valid(_base) and not _base.is_inside_tree(): _base.queue_free()

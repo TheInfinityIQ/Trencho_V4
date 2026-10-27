@@ -113,9 +113,28 @@
         "test_shell_fractional_endpoints_do_not_round_meaningful_partial_work_across_pause",
         "test_r27_active_forecast_and_raw_powder_never_supply_shell_ingredients"
       ]
+    },
+    {
+      "path": "game/rear_base/tests/base_domain_test.gd",
+      "cases": [
+        "test_declared_start_shared_identity_prices_and_pause_rate",
+        "test_purchase_real_arrival_zero_unloader_blocks_then_all_four_outputs_and_eight_same_people",
+        "test_incoming_and_personally_carried_material_never_become_local_inputs",
+        "test_unloader_carry_handoff_retains_exclusive_old_duty_until_safe_deposit",
+        "test_receiving_space_and_output_access_blocks_are_actionable_and_recoverable",
+        "test_shared_clock_partition_and_access_boundary_preserved",
+        "test_receiving_inbound_promises_bound_two_unloaders_and_refuse_unsafe_store_edits",
+        "test_finished_unloader_release_rebalances_outstanding_staff_targets"
+      ]
     }
   ],
   "Input": [
+    {
+      "path": "game/rear_base/tests/base_input_test.gd",
+      "cases": [
+        "test_normal_entry_purchases_receives_hauls_produces_and_retains_base_with_small_window_controls"
+      ]
+    },
     {
       "path": "game/procurement/tests/gdunit/receiving_input_test.gd",
       "cases": [
