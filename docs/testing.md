@@ -80,3 +80,7 @@ The R01 target extension adds ten named domain cases and one normal-launch actua
 ## Fixed R02 checks
 
 The [R02 record](g04_r02.md) adds13 Domain cases and one actual normal-launch Input case, requiring34 Domain /9 Input in total without removing any accepted case. Five image/state pairs under `.artifacts/g04-r02/` accompany missing-local, actual-start, retained-work, physical100-round/target-satisfied and small-window wheel-scrolled states. A fifth required failure proof, `-Suite Domain -R02Yield`, changes100→101 and restores the healthy Domain suite. The four existing controls and all retained render groups remain required. The same pinned dependency/engine and commands apply; Windows headless checks do not establish display input or native acceptance.
+
+## Fixed R26 checks
+
+The [R26 record](g04_r26.md) adds12 Domain cases and one normal-launch Input flow, retaining every accepted case for46 Domain /10 Input. Six image/state pairs under `.artifacts/g04-r26/` cover missing-local, partial multi-trip delivery, full-material start, retained partial100-work progress, physical100 M11/target satisfied and small-window wheel inspection. `-Suite Domain -R26Work` changes completed work100→101, fails once and restores the healthy Domain suite; all five earlier controls remain. Exact-head source/log/state/image checks, downloaded checksum verification and personal inspection of new/changed renders precede the Designer handoff. Full G04/A08/M0 and Windows native evidence remain outstanding.

@@ -2,6 +2,7 @@ extends "res://game/production/fixed_production.gd"
 ## Fixed F05 activity: one whole 100-round R02 batch, never loaded ammunition.
 
 const INPUTS := RECIPES.R02.inputs
+const REQUIRED_WORK := 40.0
 const OUTPUT_MASS := 2.0
 
 

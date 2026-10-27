@@ -4,6 +4,8 @@ Prepared 26 October 2026 for [G04 #12](https://github.com/TheInfinityIQ/Trencho_
 
 Release update,27 October2026: the first R01 slice and its stock-target extension are accepted. The next [explicit release](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6444110624) adds only fixed R02/F05, recorded in [R02 behavior/evidence](g04_r02.md). Historical first-slice gating below describes the original sequence; the remaining recipes, full acceptance matrix and playable M0 are still unreleased/incomplete.
 
+Subsequent release: R02 is accepted in PR66. The [R26/F13 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6445100683) releases only Building Materials manufacture, the production portion of A08, documented in [R26 behavior/evidence](g04_r26.md). Its declared pre-existing working F13 does not implement or waive G05 construction/protected-starter behavior.
+
 ## Authority and dependency boundary
 
 Use the canonical [recipe catalogue and batch rules, GDD 6.3](game_design_document.md#63-recipe-catalogue), [facilities, GDD 8.1](game_design_document.md#81-facilities), [actual staffing/handling, GDD 8.2](game_design_document.md#82-staffing-and-jobs), [conservation, GDD 4](game_design_document.md#4-units-accounting-and-conservation), and [GDD 23 staging](game_design_document.md#231-milestone-and-acceptance-sequencing). GDD 5.3 supplies always-active recipes, 6.1 equipment mass/empty output rules, 19.2 access bundles, and 22.3 retired identifiers. Accepted [G01](g01_identity.md), [G02](g02_receiving.md) and [D03](d03_people_capacity.md) govern identities, real arrivals and independent people/fleet/physical capacity claims.

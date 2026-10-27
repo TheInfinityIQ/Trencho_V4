@@ -53,6 +53,23 @@
         "test_r02_fractional_endpoint_and_meaningful_partial_work_keep_clock_tolerance",
         "test_r01_and_r02_targets_never_count_each_others_stock_or_forecasts"
       ]
+    },
+    {
+      "path": "game/production/tests/r26_domain_test.gd",
+      "cases": [
+        "test_r26_exact_inputs_100work_mass_and_four_eight_ordinary_operators",
+        "test_30metal_69timber_and_actual_carried_last_unit_cannot_start_before_drop",
+        "test_foreign_remote_and_reserved_ingredients_fail_without_partial_consumption",
+        "test_real_five_trip_delivery_respects_25kg_and_never_earns_work_in_transit",
+        "test_100kg_promise_and_invalidating_edits_preserve_all_independent_owners",
+        "test_target_overshoot_200minus80_makes_one100_batch_and_preserves_claim",
+        "test_zero_target_partial_mode_staff_access_and_cancel_keep_consumed_owner_state",
+        "test_fully_worked_r26_waits_for_legal_completion_without_new_staff_work",
+        "test_actual_m11_claim_carry_deposit_reroute_and_cancel_count_once",
+        "test_ineligible_m11_holders_claims_and_pile_recovery_supply_no_usable_stock",
+        "test_three_facilities_have_different_work_and_exclusive_people_promises_and_targets",
+        "test_three_owner_coarse_fractional_time_and_r26_partial_tolerance_match"
+      ]
     }
   ],
   "Input": [
@@ -94,6 +111,12 @@
         "test_normal_launch_r02_hauls_starts_retains_work_and_finishes_whole_yield"
       ],
       "path": "game/production/tests/r02_input_test.gd"
+    },
+    {
+      "cases": [
+        "test_normal_launch_r26_multitrip_inputs_retained100work_and_physical_m11"
+      ],
+      "path": "game/production/tests/r26_input_test.gd"
     }
   ]
 }

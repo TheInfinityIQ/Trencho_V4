@@ -55,6 +55,9 @@ jobs:
       - name: Prove R02 fixed yield regression fails and restores
         shell: pwsh
         run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R02Yield
+      - name: Prove R26 required work regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R26Work
       - name: Prove failing input assertion fails and restore passing test
         shell: bash
         run: |

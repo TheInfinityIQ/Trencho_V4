@@ -56,4 +56,6 @@ The reachable **G04 R01 Production** review implements [continuous and stock-tar
 
 **G04 R02 Munitions** adds the [fixed F05 rifle-round recipe](docs/g04_r02.md): actual local1 M01 +1 M03,40 operator-work,100 loose E02/2kg, Continuous or stock target. Both fixed owners share the existing rear clock/ledger when attached together; separate review selections initialize separate declared setups.
 
+**G04 R26 Materials** adds [Building Materials manufacture at declared working F13](docs/g04_r26.md):30 local M01 +70 M04,100 operator-work,100 M11/100kg, with real multi-trip hauling and ordinary operators. Construction and the full starting-scenario lifecycle remain later work.
+
 The reachable **G08 Terrain & sight** review retains the [bounded terrain/movement/sight fixture](docs/g08_terrain.md), alongside accepted G03 and first R01. GDD23.7 governs its separate foundation evidence path; eight current-head CI renders and matching state records require Designer review. Windows OS input/readability remain unverified. Checks retain G01/G02/G03/R01/D01 and add G08 domain/layout plus the two focused display-backed G08 cases.

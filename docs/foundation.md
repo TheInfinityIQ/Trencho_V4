@@ -45,3 +45,5 @@ The feature-local [G08 terrain/movement/sight diagnostics](g08_terrain.md) retai
 ## Fixed R01/R02 production reuse - 27 October 2026
 
 The [R02 release](g04_r02.md) justifies extracting the accepted R01 lifecycle and review controls for two fixed specifications. The rear explicitly owns optional R01/F04 and R02/F05 activities on its common clock; ledger holders, real staffing/haul jobs and space promises remain authoritative. No dynamic recipe switching, all-recipe scheduler, new inventory or global lifetime is introduced. Separate batch prefixes preserve independent ownership. Retained R01/domain/input checks and focused simultaneous-facility regressions verify the extraction; production presentation and full G04/M0 remain unaccepted.
+
+The subsequent [R26 release](g04_r26.md) adds a third explicit owner and makes required operator-work a fixed recipe value (40/40/100). Existing facilities, clock, people and capacity accounting remain authoritative. Different-duration simultaneous-facility, fractional-time and multi-trip hauling evidence verifies this narrow extension; it introduces no construction system or general recipe switching.
