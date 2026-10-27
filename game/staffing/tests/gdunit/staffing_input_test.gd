@@ -3,6 +3,7 @@ extends GdUnitTestSuite
 
 
 func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
+	var previous_window := _render_window(Vector2i(1000, 720))
 	var runner := scene_runner("res://game/staffing/rear_demo.tscn")
 	var demo := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -25,6 +26,7 @@ func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
 	assert_str(yard.state).is_equal("Ready")
 	assert_str(_person(simulation, "driver-01").crew_station).is_equal("Driver")
 	assert_str(_person(simulation, "driver-01").holder_id).is_equal("yard-t01")
+	await _capture(runner, demo, "driver_seated")
 	await _press(runner, demo, "Drive to reserved parking")
 	assert_array(yard.reserved).is_equal(["", "yard-t01", "", ""])
 	assert_array(yard.occupied).is_equal(["", "", "", ""])
@@ -41,6 +43,12 @@ func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
 	await _press(runner, demo, "Release yard driver")
 	assert_dict(simulation.snapshot()).is_equal(pending)
 	assert_str((demo.get("_yard") as Label).text).contains("pending exit true")
+	await _capture(runner, demo, "driver_moving_pending_yard")
+	await _tab(runner, demo, "People")
+	assert_str((demo.get("_people_detail") as Label).text).contains("station Driver")
+	assert_str((demo.get("_people_detail") as Label).text).contains("pending Available")
+	await _capture(runner, demo, "driver_moving_pending_person")
+	await _tab(runner, demo, "Yard")
 	await _press(runner, demo, "+10s")
 	assert_str(yard.state).is_equal("Moving to reserved parking")
 	assert_str(_person(simulation, "driver-01").crew_station).is_equal("Driver")
@@ -55,6 +63,7 @@ func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
 	assert_str(_person(simulation, "driver-01").pending_assignment).is_equal("Available")
 	assert_array(yard.occupied).is_equal(["", "yard-t01", "", ""])
 	assert_array(yard.reserved).is_equal(["", "", "", ""])
+	await _capture(runner, demo, "driver_parked_exiting")
 	await _press(runner, demo, "+2s")
 	assert_str(yard.state).is_equal("Leaving station")
 	await _press(runner, demo, "+1s")
@@ -68,6 +77,7 @@ func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
 	assert_float(yard.distance).is_equal_approx(route_metres, 0.00001)
 	assert_float(yard.burned).is_equal_approx(route_metres * 0.002, 0.000001)
 	assert_float(yard.fuel).is_equal_approx(40.0 - route_metres * 0.002, 0.000001)
+	await _capture(runner, demo, "driver_exit_complete")
 	var parked: Dictionary = yard.snapshot()
 	await _press(runner, demo, "Drive to reserved parking")
 	assert_dict(yard.snapshot()).is_equal(parked)
@@ -88,12 +98,15 @@ func test_driver_cannot_leave_moving_hull_and_reenters_actual_parking() -> void:
 	await _press(runner, demo, "Drive to reserved parking")
 	assert_dict(simulation.snapshot()).is_equal(before)
 	assert_str((demo.get("_feedback") as Label).text).contains("parking place is occupied/reserved")
+	await _capture(runner, demo, "driver_reentered_same_hull")
 	assert_str(_person(simulation, "supplier-driver").owner).is_equal("supplier")
 	assert_array(simulation.audit()).is_empty()
 	assert_str((demo.get("_audit") as Label).text).contains("PASS")
+	_restore_window(previous_window)
 
 
 func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() -> void:
+	var previous_window := _render_window(Vector2i(1000, 720))
 	var runner := scene_runner("res://game/staffing/rear_demo.tscn")
 	var demo := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -118,10 +131,12 @@ func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() ->
 	assert_int(simulation.ledger.available_stock_at("depot", "M02")).is_equal(1)
 	assert_int(simulation.ledger.available_stock_at("workshop_input", "M01")).is_zero()
 	assert_str((demo.get("_readiness") as Label).text).contains("operators present 2")
+	await _capture(runner, demo, "a05_missing_inputs")
 	await _tab(runner, demo, "Jobs")
 	var jobs := demo.get("_jobs") as Tree
 	await _click(runner, jobs.get_global_transform() * jobs.get_item_area_rect(jobs.get_root().get_first_child()).get_center())
 	assert_str((demo.get("_detail") as Label).text).contains("deposited 0 / 2")
+	await _capture(runner, demo, "a05_selected_job_before")
 	await _tab(runner, demo, "Staffing & inputs")
 	await _press(runner, demo, "Hauling target 1")
 	# Reservation is not stock: report from Personnel to the depot is still required.
@@ -142,9 +157,11 @@ func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() ->
 	assert_int(simulation.ledger.total_stock("M01")).is_equal(2)
 	assert_int(simulation.ledger.total_stock("M02")).is_equal(1)
 	assert_str((demo.get("_readiness") as Label).text).contains("Work 0 · consumed 0 · output 0")
+	await _capture(runner, demo, "a05_local_inputs_ready")
 	await _tab(runner, demo, "Jobs")
 	# The same selected job detail must refresh after time/actions without reselection.
 	assert_str((demo.get("_detail") as Label).text).contains("Source promised 0 · actually carried 0 · deposited 2 / 2")
+	await _capture(runner, demo, "a05_selected_job_after")
 	for job in simulation.snapshot().jobs:
 		assert_int(job.in_flight).is_zero()
 		assert_int(job.delivered).is_equal(job.requested)
@@ -154,8 +171,73 @@ func test_a05_actual_labour_and_haul_unlock_local_inputs_without_production() ->
 	assert_str((demo.get("_people_detail") as Label).text).contains("worker-01")
 	assert_str((demo.get("_people_detail") as Label).text).contains("Actual Rear Labour / workshop")
 	assert_str((demo.get("_people_detail") as Label).text).contains("phase Idle")
+	_render_window(Vector2i(960, 540))
+	await _capture(runner, demo, "a05_selected_person_small")
 	assert_array(simulation.audit()).is_empty()
 	assert_str((demo.get("_audit") as Label).text).contains("PASS")
+	_restore_window(previous_window)
+
+
+func _render_window(dimensions: Vector2i) -> Dictionary:
+	var window := get_tree().root
+	var previous := {"size": window.size, "content": window.content_scale_size}
+	window.size = dimensions
+	window.content_scale_size = dimensions
+	return previous
+
+
+func _restore_window(previous: Dictionary) -> void:
+	get_tree().root.size = previous.size
+	get_tree().root.content_scale_size = previous.content
+
+
+func _capture(runner: GdUnitSceneRunner, demo: Control, checkpoint: String) -> void:
+	# Same rendered-frame export as accepted D01; actions above remain real input.
+	await runner.simulate_frames(3)
+	_visible_bounds(demo)
+	await RenderingServer.frame_post_draw
+	var rendered: Image = demo.get_viewport().get_texture().get_image()
+	assert_vector(rendered.get_size()).is_equal(get_tree().root.size)
+	var output := "res://.artifacts/g03-rendered"
+	assert_int(DirAccess.make_dir_recursive_absolute(output)).is_equal(OK)
+	assert_int(rendered.save_png(output + "/" + checkpoint + ".png")).is_equal(OK)
+	var digest := HashingContext.new()
+	digest.start(HashingContext.HASH_SHA256)
+	digest.update(rendered.get_data())
+	var tabs := demo.find_children("*", "TabContainer", true, false)[0] as TabContainer
+	var details: Dictionary = {}
+	for field in ["_summary", "_feedback", "_readiness", "_yard", "_detail", "_people_detail", "_audit"]:
+		var label := demo.get(field) as Label
+		details[field] = {"visible": label.is_visible_in_tree(), "text": label.text}
+	var simulation: RefCounted = demo.get("simulation")
+	var metadata := {"kind": "Godot Linux CI render; Windows native input/readability unverified",
+		"revision": OS.get_environment("EVALUATION_HEAD"), "engine": Engine.get_version_info().string,
+		"checkpoint": checkpoint, "image": checkpoint + ".png", "pixel_sha256": digest.finish().hex_encode(),
+		"viewport_px": [rendered.get_width(), rendered.get_height()], "tab": tabs.get_current_tab_control().name,
+		"selected_person": demo.get("_selected_person"), "selected_job": demo.get("_selected_job"),
+		"inspection": details, "state": _json_value(simulation.snapshot())}
+	var file := FileAccess.open(output + "/" + checkpoint + ".json", FileAccess.WRITE)
+	assert_object(file).is_not_null()
+	if file != null: file.store_string(JSON.stringify(metadata, "\t") + "\n")
+
+
+func _json_value(value: Variant) -> Variant:
+	if value is Vector2 or value is Vector2i: return [value.x, value.y]
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key in value: result[str(key)] = _json_value(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item in value: result.append(_json_value(item))
+		return result
+	return value
+
+
+func _visible_bounds(node: Node, in_scroll: bool = false) -> void:
+	if node is Control and node.is_visible_in_tree() and not in_scroll:
+		assert_bool(node.get_viewport_rect().grow(1).encloses(node.get_global_rect())).override_failure_message("Rendered control fits viewport: " + str(node.get_path())).is_true()
+	for child in node.get_children(): _visible_bounds(child, in_scroll or node is ScrollContainer)
 
 
 func _person(simulation: RefCounted, id: String) -> Dictionary:
