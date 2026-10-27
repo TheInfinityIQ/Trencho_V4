@@ -1,10 +1,52 @@
 {
   "Domain": [
-    {"path": "game/procurement/tests/gdunit/receiving_domain_test.gd", "cases": ["test_cancel_one_order_preserves_other_admission_and_physical_cargo"]}
+    {
+      "path": "game/procurement/tests/gdunit/receiving_domain_test.gd",
+      "cases": [
+        "test_cancel_one_order_preserves_other_admission_and_physical_cargo"
+      ]
+    },
+    {
+      "cases": [
+        "test_complete_local_batch_is_atomic_and_reserved_foreign_remote_goods_are_not_inputs",
+        "test_real_haul_and_reporting_never_earn_work_before_atomic_start",
+        "test_shared_time_partition_matches_reporting_hauling_start_and_completion",
+        "test_pause_staff_and_access_loss_retain_consumed_work_and_promise",
+        "test_output_edits_are_atomic_and_inbound_hauling_cannot_steal_promise",
+        "test_cancellation_loses_only_consumed_inputs_and_never_erases_finished_output",
+        "test_fully_worked_component_waits_for_legal_physical_completion",
+        "test_one_operator_fractional_exact_endpoint_matches_coarse_completion",
+        "test_two_operator_fractional_exact_endpoint_matches_coarse_completion",
+        "test_completion_keeps_meaningfully_partial_work_and_respects_interruption"
+      ],
+      "path": "game/production/tests/r01_domain_test.gd"
+    }
   ],
   "Input": [
-    {"path": "game/procurement/tests/gdunit/receiving_input_test.gd", "cases": ["test_purchase_routes_input_and_disabled_control_cannot_commit"]},
-    {"path": "game/staffing/tests/gdunit/staffing_input_test.gd", "cases": ["test_driver_cannot_leave_moving_hull_and_reenters_actual_parking", "test_a05_actual_labour_and_haul_unlock_local_inputs_without_production"]},
-    {"path": "game/overhead_evaluation/tests/overhead_input_test.gd", "cases": ["test_selection_zoom_and_text_preserve_physical_samples_and_render_six_views"]}
+    {
+      "path": "game/procurement/tests/gdunit/receiving_input_test.gd",
+      "cases": [
+        "test_purchase_routes_input_and_disabled_control_cannot_commit"
+      ]
+    },
+    {
+      "path": "game/staffing/tests/gdunit/staffing_input_test.gd",
+      "cases": [
+        "test_driver_cannot_leave_moving_hull_and_reenters_actual_parking",
+        "test_a05_actual_labour_and_haul_unlock_local_inputs_without_production"
+      ]
+    },
+    {
+      "path": "game/overhead_evaluation/tests/overhead_input_test.gd",
+      "cases": [
+        "test_selection_zoom_and_text_preserve_physical_samples_and_render_six_views"
+      ]
+    },
+    {
+      "path": "game/production/tests/r01_input_test.gd",
+      "cases": [
+        "test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_protected_work"
+      ]
+    }
   ]
 }

@@ -1,6 +1,6 @@
 # G04 production implementation and acceptance plan
 
-Prepared 26 October 2026 for [G04 #12](https://github.com/TheInfinityIQ/Trencho_V4/issues/12), M0. **Documentation-only preparation, updated by the 26 October production-contract decision. G03 foundation is accepted; G04 implementation remains unreleased pending explicit Designer assignment after contract review.** This plan does not implement or pass production, A05, A07–A09 or a milestone.
+Prepared 26 October 2026 for [G04 #12](https://github.com/TheInfinityIQ/Trencho_V4/issues/12), M0. **Documentation-only preparation, updated by the 26 October production-contract decision. G03 foundation is accepted; The Designer has released only the [first continuous R01 slice](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6433106301); its [implementation/evidence record](g04_r01.md) is separate from this eventual full plan.** This plan does not implement or pass production, A05, A07–A09 or a milestone.
 
 ## Authority and dependency boundary
 
@@ -64,6 +64,6 @@ G32 must eventually persist production state together with ledger, staffing/hand
 
 ## Release and verification
 
-G03 foundation is accepted and these semantics are resolved; before runtime work, obtain the Designer's explicit first R01 slice assignment after contract review. After implementation, add meaningful focused regression coverage for the matrix and run `./tools/check.ps1` with pinned Godot 4.7.2, retaining accepted G01/G02/G03 checks and current-head CI. Independently verify changed interactions in Godot, including the real A05 hauling-to-production continuation; headless signals/startup are not native or visual proof. Existing Windows SendInput 122 has no changed condition, so this planning task makes no native retry.
+G03 foundation and these semantics are accepted; only the linked first R01 slice is released. Broader implementation still requires a separate Designer assignment. After implementation, add meaningful focused regression coverage for the matrix and run `./tools/check.ps1` with pinned Godot 4.7.2, retaining accepted G01/G02/G03 checks and current-head CI. Independently verify changed interactions in Godot, including the real A05 hauling-to-production continuation; headless signals/startup are not native or visual proof. Existing Windows SendInput 122 has no changed condition, so this planning task makes no native retry.
 
 This documentation update reconciles only the GDD amendment, dated decision record and this plan, with sources/links/diff/whitespace and current-head CI checks. It does not add runtime, architecture frameworks, tests or catalogue numerical changes; it must not close issue #12, G03/G04 native obligations, full A09/G31 or M0. A readable review table alone is not the outstanding playable logistics area.

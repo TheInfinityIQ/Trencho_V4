@@ -18,6 +18,8 @@ var actors: Dictionary = {}
 var jobs: Array[Dictionary] = []
 var _sequence: int = 0
 var _events: Array[Dictionary] = []
+var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fixtures staged.
+var _output_promises: Dictionary = {}
 
 
 func _init(fixture: String = "A05") -> void:
@@ -154,6 +156,12 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
 	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
+	for claim in _output_promises.values():
+		if claim.store != id: continue
+		var edited_capacity: float = stores[id].capacity if capacity < 0 else capacity
+		var edited_filter: Array = stores[id].filter if filter == null else filter
+		if edited_capacity + EPS < ledger.loose_stock_mass_at(id) + _reserved_space(id) or (not edited_filter.is_empty() and claim.type not in edited_filter):
+			return _result(false, "Edit refused: active output promise " + claim.id + " requires its complete capacity/type; no part of the edit applied.")
 	stores[id].accessible = accessible
 	if capacity >= 0.0:
 		stores[id].capacity = capacity
@@ -216,6 +224,7 @@ func advance_time(seconds: float) -> Dictionary:
 	_settle()
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
+		if production != null: next = minf(next, production.next_boundary())
 		for a in actors.values():
 			next = minf(next, a.deadline)
 		for job in jobs:
@@ -226,6 +235,7 @@ func advance_time(seconds: float) -> Dictionary:
 				next = minf(next, job.emergency_contention_since + 120.0)
 		if next <= time + EPS:
 			next = minf(target, time + EPS)
+		if production != null: production.advance_work(next - time)
 		for a in actors.values():
 			if not a.motion.is_empty():
 				var distance: float = (next - a.motion.started) * a.motion.speed
@@ -234,7 +244,7 @@ func advance_time(seconds: float) -> Dictionary:
 		ledger.advance_time(next - time)
 		time = next
 		_settle()
-	return _result(true, "Only elapsed reporting, handling, walking and yard movement completed.")
+	return _result(true, "Shared rear time advanced; R01 prerequisites still govern operator work." if production != null else "Only elapsed reporting, handling, walking and yard movement completed.")
 
 
 func effective_priority(job: Dictionary) -> int:
@@ -242,6 +252,12 @@ func effective_priority(job: Dictionary) -> int:
 
 
 func workshop_readiness() -> Dictionary:
+	if production != null:
+		var view: Dictionary = production.snapshot()
+		return {"reference": "R01 physical production", "status": view.status, "missing": view.missing_local,
+			"operators_present": view.operators.size(), "hauling_shortage": view.haul_shortage,
+			"work": view.batch.get("work", 0.0), "consumed": ledger.snapshot().consumed,
+			"output": view.physical_output, "complete_A05_passed": false}
 	var missing: Dictionary = {}
 	for type in {"M01": 2, "M02": 1}:
 		var short: int = {"M01": 2, "M02": 1}[type] - ledger.available_stock_at("workshop_input", type)
@@ -395,6 +411,7 @@ func _settle() -> void:
 			var p: Dictionary = ledger.inspect_entity(a.id)
 			if a.phase == "Idle" and p.duty_id == "hauling":
 				changed = _start_job(a) or changed
+		if production != null: changed = production.settle() or changed
 		if not changed:
 			_refresh_contention()
 			return
@@ -512,12 +529,33 @@ func _in_flight(job_id: String) -> int:
 	return count
 
 
-func _reserved_space(destination: String, except_person: String = "") -> float:
+func _reserved_space(destination: String, except_person: String = "", include_output: bool = true) -> float:
 	var total: float = 0.0
 	for a in actors.values():
 		if a.id != except_person and a.load.get("destination") == destination:
 			total += a.load.mass
+	if include_output:
+		for claim in _output_promises.values():
+			if claim.store == destination: total += claim.mass
 	return total
+
+
+func reserve_output_space(id: String, destination: String, type: String, mass: float) -> Dictionary:
+	if id.is_empty() or _output_promises.has(id) or not is_finite(mass) or mass <= 0 or not _valid_destination(destination, type, mass):
+		return _result(false, "Output Full: complete valid output capacity must be free before consumption.")
+	_output_promises[id] = {"id": id, "store": destination, "type": type, "mass": mass}
+	return _result(true, "Full output capacity promised to " + id)
+
+
+func release_output_space(id: String) -> void:
+	_output_promises.erase(id)
+
+
+func output_space_valid(id: String) -> bool:
+	if not _output_promises.has(id): return false
+	var claim: Dictionary = _output_promises[id]
+	var store: Dictionary = stores[claim.store]
+	return store.accessible and (store.filter.is_empty() or claim.type in store.filter) and ledger.loose_stock_mass_at(claim.store) + _reserved_space(claim.store) <= float(store.capacity) + EPS
 
 
 func _free_space(id: String, except_person: String = "") -> float:
@@ -652,7 +690,8 @@ func snapshot() -> Dictionary:
 		var row: Dictionary = store.duplicate(true)
 		row.position = ledger.inspect_entity(store.id).position
 		row.physical_kg = ledger.loose_stock_mass_at(store.id)
-		row.reserved_inbound_kg = _reserved_space(store.id)
+		row.reserved_inbound_kg = _reserved_space(store.id, "", false)
+		row.reserved_output_kg = _reserved_space(store.id) - row.reserved_inbound_kg
 		row.free_kg = _free_space(store.id)
 		row.stocks = _stock_at(store.id)
 		row.reserved_outbound = 0

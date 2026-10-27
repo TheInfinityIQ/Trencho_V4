@@ -336,6 +336,29 @@ func record_consumption(source_id: String, quantity: int, reason: String) -> Dic
 	return _remove_stock(source_id, quantity, reason, false)
 
 
+func consume_local_batch(holder: String, owner: String, ingredients: Dictionary, reason: String) -> Dictionary:
+	# Validate the entire local input plan before any accounting mutation.
+	if not _is_place(holder) or owner.is_empty() or ingredients.is_empty() or reason.strip_edges().is_empty():
+		return _reject("INVALID_BATCH", "A physical local holder, owner, ingredients and receipt reason are required.")
+	var receipt: Array[Dictionary] = []
+	for type in ingredients:
+		if not ingredients[type] is int or ingredients[type] <= 0:
+			return _reject("INVALID_BATCH", "Ingredients must be positive whole counts.")
+		var remaining: int = ingredients[type]
+		for entity in _entities.values():
+			if entity.kind != Records.Kind.STOCK or entity.holder_id != holder or entity.owner != owner or entity.design_type != type:
+				continue
+			var count := mini(remaining, available(entity.id))
+			if count > 0: receipt.append({"id": entity.id, "type": type, "count": count})
+			remaining -= count
+			if remaining == 0: break
+		if remaining > 0:
+			return _reject("MISSING_LOCAL_INPUTS", "The complete owned unreserved batch must be physically local.")
+	for portion in receipt:
+		_remove_stock(portion.id, portion.count, reason, false)
+	return {"ok": true, "code": "OK", "message": "Complete local batch consumed once.", "receipt": receipt}
+
+
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
 	return _remove_stock(source_id, quantity, reason, true)
 
