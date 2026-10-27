@@ -46,4 +46,5 @@ func _add_recipe_controls(parent: Node) -> void:
 				_confirmation_token = result.token
 				_recipe_dialog.dialog_text = result.message
 				_recipe_dialog.popup_centered(Vector2i(640, 240))
+				return {"ok": true, "message": "Recipe change awaiting explicit confirmation; no change applied."}
 			return result)

@@ -54,6 +54,14 @@ func test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06
 	assert_str(dialog.dialog_text).contains("finished goods remain")
 	assert_dict(activity.batch).is_equal(old)
 	await _capture(runner, main, demo, "r27_change_pending_confirmation")
+	window.size = Vector2i(960, 640)
+	window.content_scale_size = window.size
+	await runner.simulate_frames(4)
+	assert_float(((demo.get("_people") as Label).get_parent() as ScrollContainer).size.y).is_greater_equal(48)
+	await _capture(runner, main, demo, "r27_small_pending_confirmation")
+	window.size = Vector2i(1000, 720)
+	window.content_scale_size = window.size
+	await runner.simulate_frames(4)
 	await _press(runner, dialog, "Keep current recipe")
 	assert_bool(dialog.visible).is_false()
 	assert_str(activity.snapshot().recipe).is_equal("R02")
