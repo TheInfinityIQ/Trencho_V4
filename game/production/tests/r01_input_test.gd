@@ -68,7 +68,7 @@ func test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_pro
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer
 	runner.set_mouse_position(scroll.get_global_rect().get_center())
 	await runner.await_input_processed()
-	for notch in 16:
+	for notch in 100:
 		if scroll.scroll_vertical >= scroll.get_v_scroll_bar().max_value - scroll.get_v_scroll_bar().page - 1: break
 		runner.simulate_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN)
 		await runner.await_input_processed()

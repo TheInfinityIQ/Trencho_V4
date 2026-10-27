@@ -71,14 +71,14 @@ func _ready() -> void:
 	_status = _label(layout, "", 18)
 	_target = _label(layout, "", 14)
 	_work = _label(layout, "", 16)
-	_physical = _label(layout, "", 16)
+	_physical = _label(layout, "", 14)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	layout.add_child(scroll)
 	_people = _label(scroll, "", 14)
 	_people.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_label(layout, "Pause/access/staff loss preserves active work. Cancel loses consumed inputs, keeps finished rifles and stops continuous requests. Windows input/readability remain unverified.", 13)
+	_label(layout, "Consumed work survives pause/access/staff loss. Cancel keeps finished goods. Windows native testing unverified.", 13)
 	_refresh()
 
 
@@ -109,10 +109,11 @@ func _refresh() -> void:
 	for portion in displayed.get("receipt", []): receipt.append("%d %s" % [portion.count, portion.type])
 	_status.text = "t=%.3fs · R01 / F04 · %s\nOperators present %d / target %d · IDs %s · hauling shortage %s" % [simulation.time, view.status, view.operators.size(), view.target, str(view.operators), view.haul_shortage]
 	var coverage: Dictionary = view.coverage
-	_target.text = "%s · E01 minimum %d · Available A=%d + planned C=%d = %d\nEligible deposited %d / reserved %d · internal inbound %d (carried %d) · active batch forecast %d" % [view.mode, view.stock_target, coverage.available, coverage.planned, coverage.projected, coverage.eligible_physical, coverage.eligible_reserved, coverage.internal_relocation, coverage.internal_carried, coverage.batch_forecast]
+	_target.text = "%s · E01 minimum %d · Available A=%d + planned C=%d = %d" % [view.mode, view.stock_target, coverage.available, coverage.planned, coverage.projected]
 	_work.text = "Batch %s / %s · work %.3f / 40 operator-seconds\nPromised output %.1f kg · consumed at start: %s" % [displayed.get("id", "None"), displayed.get("state", "Not started"), displayed.get("work", 0.0), view.output_promise.get("mass", 0.0), ", ".join(receipt) if not receipt.is_empty() else "None"]
 	_physical.text = "Local inputs M01=%d / 2, M02=%d / 1 · depot M01=%d, M02=%d\nPhysical F04 output: %d empty E01 / %.1f kg · output capacity %.1f kg · completed batches %d\nConservation / duty audit: %s" % [view.local_inputs.M01, view.local_inputs.M02, simulation.ledger.available_stock_at("depot", "M01"), simulation.ledger.available_stock_at("depot", "M02"), view.physical_output, simulation.ledger.loose_stock_mass_at("workshop_output"), simulation.stores.workshop_output.capacity, production.history.filter(func(b: Dictionary) -> bool: return b.state == "Completed").size(), "PASS" if simulation.audit().is_empty() else str(simulation.audit())]
 	var lines: Array[String] = []
+	lines.append("E01 eligible deposited %d / reserved %d · internal inbound %d (carried %d) · active batch forecast %d" % [coverage.eligible_physical, coverage.eligible_reserved, coverage.internal_relocation, coverage.internal_carried, coverage.batch_forecast])
 	for person in simulation.snapshot().people:
 		lines.append("%s · %s / %s · %s · position %s · carry %s · pending %s" % [person.id, person.assignment, person.duty_id, person.phase, person.position, person.carrying_stock_id, person.pending_assignment])
 	for job in simulation.snapshot().jobs:
