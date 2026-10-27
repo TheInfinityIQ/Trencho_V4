@@ -217,7 +217,8 @@ func test_four_facilities_share_clock_with_disjoint_actual_operators_and_recover
 	assert_int(base.rear.production.operators().size()).is_equal(2)
 	base.rear.advance_time(150)
 	for owner in base.rear._production_activities():
-		if owner == base.rear.heavy_production: continue assert_int(owner.history.size()).is_equal(1)
+		if owner == base.rear.heavy_production: continue
+		assert_int(owner.history.size()).is_equal(1)
 	assert_array(base.audit()).is_empty()
 
 func test_connected_raw_purchases_make_multiple_workshop_support_outputs_and_real_explosive_fed_bombs() -> void:
