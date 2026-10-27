@@ -14,6 +14,40 @@ const RECIPES := {
 		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
 	"R33": {"work": 100.0, "inputs": {"M01": 30, "M06": 20}, "output_type": "E26", "output_count": 100, "unit_mass": 0.5,
 		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
+	"R03": {"work": 15.0, "inputs": {"M01": 1}, "output_type": "E03", "output_count": 1, "unit_mass": 1.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R04": {"work": 35.0, "inputs": {"M01": 3, "M05": 2}, "output_type": "E04", "output_count": 1, "unit_mass": 5.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R05": {"work": 90.0, "inputs": {"M01": 5, "M02": 3}, "output_type": "E05", "output_count": 1, "unit_mass": 9.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R06": {"work": 120.0, "inputs": {"M01": 8, "M02": 3}, "output_type": "E06", "output_count": 1, "unit_mass": 18.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R08": {"work": 45.0, "inputs": {"M01": 3, "M02": 3}, "output_type": "E08", "output_count": 1, "unit_mass": 6.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R19": {"work": 75.0, "inputs": {"M01": 3, "M02": 3}, "output_type": "E19", "output_count": 1, "unit_mass": 5.0,
+		"duty": "workshop", "facility": "F04", "input_store": "workshop_input", "output_store": "workshop_output"},
+	"R07": {"work": 80.0, "inputs": {"M01": 10, "M06": 10}, "output_type": "E07", "output_count": 10, "unit_mass": 2.0,
+		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
+	"R14": {"work": 140.0, "inputs": {"M01": 30, "M06": 20}, "output_type": "E14", "output_count": 10, "unit_mass": 5.0,
+		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
+	"R24": {"work": 70.0, "inputs": {"M01": 8, "M03": 4, "M05": 2}, "output_type": "E24", "output_count": 10, "unit_mass": 2.0,
+		"duty": "munitions", "facility": "F05", "input_store": "munitions_input", "output_store": "munitions_output"},
+	"R11": {"work": 40.0, "inputs": {"M02": 2, "M05": 2}, "output_type": "E11", "output_count": 1, "unit_mass": 4.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R12": {"work": 50.0, "inputs": {"M05": 4, "M09": 6}, "output_type": "E12", "output_count": 10, "unit_mass": 1.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R15": {"work": 100.0, "inputs": {"M02": 2, "M07": 3}, "output_type": "E15", "output_count": 1, "unit_mass": 5.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R16": {"work": 70.0, "inputs": {"M02": 2, "M07": 2}, "output_type": "E16", "output_count": 1, "unit_mass": 4.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R17": {"work": 40.0, "inputs": {"M10": 5}, "output_type": "E17", "output_count": 5, "unit_mass": 1.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R18": {"work": 50.0, "inputs": {"M02": 1, "M07": 2}, "output_type": "E18", "output_count": 1, "unit_mass": 3.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R20": {"work": 25.0, "inputs": {"M02": 1}, "output_type": "E20", "output_count": 1, "unit_mass": 1.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R21": {"work": 25.0, "inputs": {"M01": 2, "M05": 2}, "output_type": "E21", "output_count": 1, "unit_mass": 4.0,
+		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
 }
 var _spec: Dictionary
 var _recipe: String
@@ -28,7 +62,7 @@ var _sequence := 0
 
 
 func _init(rear: RefCounted, recipe: String) -> void:
-	assert(recipe in RECIPES, "Only the six explicitly released recipes are supported.")
+	assert(recipe in RECIPES, "Only the released non-heavy recipes are supported.")
 	_recipe = recipe
 	_spec = RECIPES[recipe]
 	_rear_ref = weakref(rear) # Rear owns this activity; do not retain a reference cycle.

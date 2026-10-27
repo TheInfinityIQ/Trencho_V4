@@ -29,6 +29,9 @@ var capacity: SpinBox
 var accessible: CheckBox
 var confirmation: ConfirmationDialog
 var _pending_token: int = -1
+var _pending_activity: RefCounted
+var scenario: OptionButton
+var declaration: Label
 var _selected_kind := "building"
 var _selected_id := "terminal"
 var _refresh_elapsed := 0.0
@@ -46,7 +49,7 @@ func _ready() -> void:
 		_button(clock, ["Pause", "1x", "2x"][value], func() -> void: _result(simulation.set_speed(value)))
 	_button(clock, "Fit base", func() -> void: base_map.reset_camera())
 	status = _label(clock, "")
-	var declaration := _label(layout, "Prebuilt integration scenario: 12 ordinary people, 2500 requisition, no starting recipe goods. Construction/training/world remain separate.")
+	declaration = _label(layout, "Essential session | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods.")
 	declaration.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var split := HBoxContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -69,8 +72,8 @@ func _ready() -> void:
 	confirmation = ConfirmationDialog.new()
 	confirmation.title = "Cancel consumed batch?"
 	confirmation.min_size = Vector2i(620, 230)
-	confirmation.confirmed.connect(func() -> void: _result(simulation.rear.munitions_production.confirm_recipe(_pending_token)); _load_production())
-	confirmation.canceled.connect(func() -> void: _result(simulation.rear.munitions_production.decline_recipe(_pending_token)); _load_production())
+	confirmation.confirmed.connect(func() -> void: _result(_pending_activity.confirm_recipe(_pending_token)); _load_production())
+	confirmation.canceled.connect(func() -> void: _result(_pending_activity.decline_recipe(_pending_token)); _load_production())
 	add_child(confirmation)
 	_load_production()
 	_load_store()
@@ -136,7 +139,7 @@ func _list(parent: Node, height: float = 120) -> ItemList:
 
 func _orders_panel(box: VBoxContainer) -> void:
 	_label(box, "Purchase kilograms (plus 20 per vehicle)")
-	for code in ["M01", "M02", "M03", "M04"]:
+	for code in Catalog.MATERIALS:
 		cart[code] = _spin(box, code + " " + Catalog.MATERIALS[code].name + " @" + str(Catalog.MATERIALS[code].price), 55000)
 	_button(box, "Buy resources", func() -> void:
 		var request := {}
@@ -149,15 +152,35 @@ func _orders_panel(box: VBoxContainer) -> void:
 	_button(box, "Cancel selected undispatched order", func() -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 
+	_label(box, "New session resets the base; inspection never does.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded non-heavy catalogue"])
+	_button(box, "Start new session", _start_session)
+
+func _start_session() -> void:
+	simulation = Simulation.new(scenario.selected == 1)
+	base_map.simulation = simulation
+	base_map.reset_camera()
+	_pending_activity = null
+	_pending_token = -1
+	for spin in cart.values(): spin.value = 0
+	for spin in targets.values(): spin.value = 0
+	facility.select(0)
+	_selected_kind = "building"
+	_selected_id = "terminal"
+	_load_production()
+	_load_store()
+	declaration.text = ("Expanded non-heavy catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
+	_result({"ok": true, "message": "New paused session. Recipe access was declared at creation; actual cards remain separate."})
+
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
-	for duty in ["receiving", "hauling", "workshop", "munitions", "materials"]:
+	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support"]:
 		var spin := _spin(box, duty.capitalize(), simulation.rear.requests[duty].positions)
 		targets[duty] = spin
 		spin.value_changed.connect(func(value: float) -> void: _result(simulation.rear.set_target(duty, int(value))))
 	people = _list(box, 150)
 	people.item_selected.connect(func(index: int) -> void: _select("entity", _person_ids[index], false))
-	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials"])
+	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials", "support"])
 	_button(box, "Reassign selected person", func() -> void:
 		if not people.get_selected_items().is_empty(): _result(simulation.rear.reassign_person(_person_ids[people.get_selected_items()[0]], person_duty.get_item_text(person_duty.selected))))
 
@@ -166,7 +189,10 @@ func _haul_panel(box: VBoxContainer) -> void:
 	source = _option(box, "Source", simulation.rear.stores.keys())
 	destination = _option(box, "Destination", simulation.rear.stores.keys())
 	destination.select(1)
-	goods_type = _option(box, "Goods", ["M01", "M02", "M03", "M04", "M06", "M11", "E01", "E02", "E25", "E26"])
+	var category := _option(box, "Goods category", ["Materials", "Workshop output", "Munitions output", "Support output"])
+	goods_type = _option(box, "Goods", [])
+	category.item_selected.connect(_load_haul_goods)
+	_load_haul_goods(0)
 	haul_count = _spin(box, "Units", 10000, 1)
 	_button(box, "Order haul", func() -> void: _result(simulation.rear.request_haul(source.get_item_text(source.selected), destination.get_item_text(destination.selected), goods_type.get_item_text(goods_type.selected), int(haul_count.value))))
 	jobs = _list(box, 140)
@@ -174,13 +200,20 @@ func _haul_panel(box: VBoxContainer) -> void:
 	_button(box, "Cancel selected haul", func() -> void:
 		if not jobs.get_selected_items().is_empty(): _result(simulation.rear.cancel_job(_job_ids[jobs.get_selected_items()[0]])))
 
+func _load_haul_goods(category: int) -> void:
+	goods_type.clear()
+	if category == 0:
+		for id in ["M01", "M02", "M03", "M04", "M06", "M11", "M05", "M07", "M08", "M09", "M10"]: goods_type.add_item(id)
+	else:
+		var duty: String = ["", "workshop", "munitions", "support"][category]
+		for spec in simulation.rear.production.RECIPES.values():
+			if spec.duty == duty: goods_type.add_item(spec.output_type)
+
 func _production_panel(box: VBoxContainer) -> void:
-	facility = _option(box, "Facility", ["workshop", "munitions", "materials"])
+	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production())
-	recipe = _option(box, "F05 recipe (shell recipes locked)", ["R02", "R27", "R32 (locked)", "R33 (locked)"])
-	recipe.set_item_disabled(2, true)
-	recipe.set_item_disabled(3, true)
-	_button(box, "Select F05 recipe", _change_recipe)
+	recipe = _option(box, "Recipe / declared session access", [])
+	_button(box, "Select recipe", _change_recipe)
 	mode = _option(box, "Production mode", ["Stock target", "Continuous"])
 	stock_target = _spin(box, "Minimum output units", 10000)
 	_button(box, "Apply production order", func() -> void:
@@ -209,13 +242,22 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
 
 func _activity() -> RefCounted:
-	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production][facility.selected]
+	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production][facility.selected]
 
 func _load_production() -> void:
 	var activity := _activity()
 	mode.select(0 if activity.mode == "Stock target" else 1)
 	stock_target.value = activity.stock_target
-	recipe.select(1 if simulation.rear.munitions_production.snapshot().recipe == "R27" else 0)
+	var view: Dictionary = activity.snapshot()
+	var choices: Array = view.get("recipe_choices", [view.recipe])
+	recipe.clear()
+	for id in choices:
+		var spec: Dictionary = activity.RECIPES[id]
+		var allowed: bool = activity.recipe_accessible(id) if activity.has_method("recipe_accessible") else true
+		recipe.add_item(id + " / " + spec.output_type + ("" if allowed else " (locked)"))
+		recipe.set_item_metadata(recipe.item_count - 1, id)
+		recipe.set_item_disabled(recipe.item_count - 1, not allowed)
+		if id == view.recipe: recipe.select(recipe.item_count - 1)
 
 func _load_store() -> void:
 	var entry: Dictionary = simulation.rear.stores[store.get_item_text(store.selected)]
@@ -223,8 +265,13 @@ func _load_store() -> void:
 	accessible.button_pressed = entry.accessible
 
 func _change_recipe() -> void:
-	var result: Dictionary = simulation.rear.munitions_production.request_recipe(["R02", "R27", "R32", "R33"][recipe.selected])
+	var activity := _activity()
+	if not activity.has_method("request_recipe"):
+		_result({"ok": true, "message": "R26 is the fixed Materials recipe."})
+		return
+	var result: Dictionary = activity.request_recipe(recipe.get_item_metadata(recipe.selected))
 	if result.get("confirmation_required", false):
+		_pending_activity = activity
 		_pending_token = result.token
 		confirmation.dialog_text = result.message
 		confirmation.popup_centered()
@@ -267,8 +314,8 @@ func _refresh() -> void:
 	_fill(people, _person_ids, actual_people, func(p: Dictionary) -> String: return p.id + " | " + (p.duty_id if not p.duty_id.is_empty() else p.assignment) + " | " + p.phase)
 	_fill(jobs, _job_ids, view.rear.jobs, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 	var lines: Array[String] = []
-	for activity in [view.production, view.munitions, view.materials]:
-		lines.append("%s %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d; promised %.1f kg" % [activity.facility, activity.recipe, activity.status, str(activity.local_inputs), str(activity.missing_local), activity.batch.get("work", 0.0), activity.required_work, activity.physical_output, activity.output_promise.get("mass", 0.0)])
+	for activity in [view.production, view.munitions, view.materials, view.support]:
+		lines.append("%s %s -> %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d; promised %.1f kg" % [activity.facility, activity.recipe, activity.output_type, activity.status, str(activity.local_inputs), str(activity.missing_local), activity.batch.get("work", 0.0), activity.required_work, activity.physical_output, activity.output_promise.get("mass", 0.0)])
 	production_status.text = "\n\n".join(lines)
 	var info := _selected_kind + ": " + _selected_id + "\n"
 	match _selected_kind:

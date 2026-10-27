@@ -21,6 +21,7 @@ var _events: Array[Dictionary] = []
 var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fixtures staged.
 var munitions_production: RefCounted # Optional exclusive R02/R27 F05 owner on this same clock.
 var materials_production: RefCounted # Optional fixed R26/F13 owner on this same clock.
+var support_production: RefCounted # Explicit F09 owner; null in retained diagnostics.
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -227,11 +228,12 @@ func _reconcile_store(id: String) -> bool:
 
 
 func _production_activities() -> Array[RefCounted]:
-	# Three explicit released facilities, not an all-recipe scheduler.
+	# Explicit facility owners; one selected batch per facility.
 	var activities: Array[RefCounted] = []
 	if production != null: activities.append(production)
 	if munitions_production != null: activities.append(munitions_production)
 	if materials_production != null: activities.append(materials_production)
+	if support_production != null: activities.append(support_production)
 	return activities
 
 

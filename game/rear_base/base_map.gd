@@ -91,6 +91,13 @@ func _draw() -> void:
 		if not entity.carrying_stock_id.is_empty(): draw_rect(Rect2(point + Vector2(4, -5), Vector2(6, 6)), Color("ffd37c"))
 		if entity.id == selection: draw_arc(point, 8, 0, TAU, 20, Color.WHITE, 2)
 	var ledger: RefCounted = simulation.rear.ledger
-	draw_string(font, Vector2(12, size.y - 50), "Physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01"), ledger.total_stock("E02"), ledger.total_stock("M11"), ledger.total_stock("M06")], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+	if simulation.expanded_catalogue:
+		var totals: Array[String] = []
+		for activity in simulation.rear._production_activities():
+			var type: String = activity._spec.output_type
+			totals.append("%s %s: %d" % [activity._spec.facility, type, ledger.total_stock(type)])
+		draw_string(font, Vector2(12, size.y - 50), "Physical outputs | " + " | ".join(totals), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+	else:
+		draw_string(font, Vector2(12, size.y - 50), "Physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01"), ledger.total_stock("E02"), ledger.total_stock("M11"), ledger.total_stock("M06")], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	draw_string(font, Vector2(12, size.y - 32), "240 x 180 m | green people / gold freight / orange vehicles", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	draw_string(font, Vector2(12, size.y - 14), "Click to inspect | wheel zoom | middle-drag pan | Fit base", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)

@@ -59,3 +59,8 @@ The [R32/R33 assignment](g04_shell_chain.md) extends the same F05 owner with two
 ## Connected rear-base integration - 27 October 2026
 
 The [connected rear base](connected_rear_base.md) makes the existing rear the owner of one ledger and joint event boundaries, injecting that ledger into procurement. Explicit receiving hooks add passenger adoption, exclusive unloading and shared inbound capacity to existing staffing/production. The map transforms authoritative positions, and scene-owned panels retain state without an autoload or additional inventory. Removing the base from the tree for a diagnostic pauses its clock; reattaching reuses the same instance. Simple shapes and local geometry implement this assignment without resolving D01 world presentation or G05 construction. Focused named negative controls replace repeated full-suite mutations under the human verification override while full normal suites remain.
+
+
+## Non-heavy catalogue - 27 October 2026
+
+The [catalogue](production_catalogue.md) now justifies reusing F05's confirmed-selection lifecycle for explicit F04/F05/F09 owners. Their own copied access, per-recipe records and consumed-batch tokens remain separate, with F13 fixed and all four on the accepted rear clock. Seventeen additional fixed specifications use the same atomic local consumption, full output promise and work rules. An explicit new-session action constructs essential or expanded access with no granted goods. Menus group hauling outputs rather than expanding common headers; ingredient totals bound confirmation text while retaining complete receipts.
