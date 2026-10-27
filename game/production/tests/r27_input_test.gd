@@ -106,7 +106,7 @@ func test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06
 	assert_float(activity.history[0].work).is_equal(40.0)
 	assert_int(activity.stock_coverage().available).is_equal(1)
 	assert_int(activity.stock_coverage().planned).is_zero()
-	assert_str(activity.snapshot().status).is_equal("Target satisfied â€” no new batch")
+	assert_str(activity.snapshot().status).is_equal("Target satisfied — no new batch")
 	assert_dict(activity.batch).is_empty()
 	assert_dict(rear._output_promises).is_empty()
 	assert_array(rear.audit()).is_empty()
