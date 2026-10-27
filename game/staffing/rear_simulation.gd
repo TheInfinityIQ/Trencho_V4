@@ -452,7 +452,9 @@ func _sync_receiving_people() -> void:
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
 			_report(a)
-			released = true
+			# Match hauling: a released Available person fills outstanding targets;
+			# a specific requested destination retains its direct handoff.
+			released = released or ledger.inspect_entity(a.id).duty_id.is_empty()
 	if added or released: _rebalance()
 
 

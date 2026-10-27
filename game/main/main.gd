@@ -26,6 +26,7 @@ func _ready() -> void:
 	layout.add_child(controls)
 	var home := Button.new()
 	home.text = "Rear base"
+	home.tooltip_text = "Return to the same live base. Diagnostics reset their own fixtures; base time pauses while away."
 	home.pressed.connect(_show_base)
 	controls.add_child(home)
 	for title in REVIEWS:
@@ -33,9 +34,6 @@ func _ready() -> void:
 		button.text = title
 		button.pressed.connect(func() -> void: _show_review(title))
 		controls.add_child(button)
-	var note := Label.new()
-	note.text = "Diagnostics reset their fixtures; rear base is retained and pauses while away."
-	controls.add_child(note)
 	_host = Control.new()
 	_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_host)

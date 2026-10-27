@@ -127,10 +127,15 @@ func _number(runner: GdUnitSceneRunner, spin: SpinBox, number: int) -> void:
 func _choose(runner: GdUnitSceneRunner, option: OptionButton, index: int) -> void:
 	await _expose(option)
 	await _click(runner, option.get_global_rect().get_center())
-	await runner.simulate_key_pressed(KEY_HOME)
-	for i in index: await runner.simulate_key_pressed(KEY_DOWN)
-	await runner.simulate_key_pressed(KEY_ENTER)
-	await runner.await_input_processed()
+	await runner.simulate_frames(2)
+	var popup := option.get_popup()
+	assert_bool(popup.visible).is_true()
+	assert_bool(popup.is_embedded()).is_true()
+	# Target the real embedded menu row. All these menus have uniform rows,
+	# no separators; panel margins are smaller than half a row.
+	var point := Vector2(popup.position) + Vector2(popup.size.x * 0.5, (index + 0.5) * popup.size.y / popup.item_count)
+	await _click(runner, point)
+
 	assert_int(option.selected).is_equal(index)
 
 func _tab(runner: GdUnitSceneRunner, demo: Control, index: int) -> void:

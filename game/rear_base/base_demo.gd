@@ -62,9 +62,9 @@ func _ready() -> void:
 	_orders_panel(_panel("Orders"))
 	_staff_panel(_panel("Staff"))
 	_haul_panel(_panel("Haul"))
-	_production_panel(_panel("Production"))
-	_inspect_panel(_panel("Inspect"))
-	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Production.")
+	_production_panel(_panel("Work"))
+	_inspect_panel(_panel("Info"))
+	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
 	confirmation.title = "Cancel consumed batch?"
