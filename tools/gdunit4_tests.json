@@ -1,21 +1,10 @@
 {
   "Domain": [
-    {
-      "path": "game/procurement/tests/gdunit/receiving_domain_test.gd",
-      "cases": ["test_cancel_one_order_preserves_other_admission_and_physical_cargo"]
-    }
+    {"path": "game/procurement/tests/gdunit/receiving_domain_test.gd", "cases": ["test_cancel_one_order_preserves_other_admission_and_physical_cargo"]}
   ],
   "Input": [
-    {
-      "path": "game/procurement/tests/gdunit/receiving_input_test.gd",
-      "cases": ["test_purchase_routes_input_and_disabled_control_cannot_commit"]
-    },
-    {
-      "path": "game/staffing/tests/gdunit/staffing_input_test.gd",
-      "cases": [
-        "test_driver_cannot_leave_moving_hull_and_reenters_actual_parking",
-        "test_a05_actual_labour_and_haul_unlock_local_inputs_without_production"
-      ]
-    }
+    {"path": "game/procurement/tests/gdunit/receiving_input_test.gd", "cases": ["test_purchase_routes_input_and_disabled_control_cannot_commit"]},
+    {"path": "game/staffing/tests/gdunit/staffing_input_test.gd", "cases": ["test_driver_cannot_leave_moving_hull_and_reenters_actual_parking", "test_a05_actual_labour_and_haul_unlock_local_inputs_without_production"]},
+    {"path": "game/overhead_evaluation/tests/overhead_input_test.gd", "cases": ["test_selection_zoom_and_text_preserve_physical_samples_and_render_six_views"]}
   ]
 }

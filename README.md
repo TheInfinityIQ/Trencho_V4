@@ -50,3 +50,4 @@ See [foundation decisions and sources](docs/foundation.md) and the [design brief
 No open-source license has been selected. Third-party content must retain its license and attribution.
 Choose Git LFS rules before introducing large binary assets; no asset pipeline is imposed yet.
 
+Optional [D01 overhead evaluation](docs/d01_overhead_evaluation.md) has a separate scene and reproducible Godot-rendered CI images. It does not change the main review fixture or select production presentation.
