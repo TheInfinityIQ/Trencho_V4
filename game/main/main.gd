@@ -7,6 +7,8 @@ const REVIEWS: Dictionary = {
 	"G04 R02 Munitions": preload("res://game/production/munitions_demo.tscn"),
 	"G04 R27 Explosives": preload("res://game/production/explosives_demo.tscn"),
 	"G04 R26 Materials": preload("res://game/production/materials_demo.tscn"),
+	"G04 R32 Chain": preload("res://game/production/r32_chain_demo.tscn"),
+	"G04 R33 Chain": preload("res://game/production/r33_chain_demo.tscn"),
 	"G08 Terrain & sight": preload("res://game/terrain/terrain_demo.tscn"),
 	"G02 Procurement": preload("res://game/procurement/receiving_demo.tscn"),
 	"G01 Identity": preload("res://game/identity/identity_demo.tscn"),

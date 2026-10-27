@@ -16,7 +16,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     env:
       EVALUATION_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
@@ -61,6 +61,9 @@ jobs:
       - name: Prove R27 physical explosives yield fails and restores
         shell: pwsh
         run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R27Yield
+      - name: Prove manufactured explosives to shell result fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -ShellChain
       - name: Prove failing input assertion fails and restore passing test
         shell: bash
         run: |

@@ -39,12 +39,19 @@ func _add_recipe_controls(parent: Node) -> void:
 		_feedback.text = result.message
 		_refresh())
 	add_child(_recipe_dialog)
-	for recipe in Munitions.CHOICES:
-		_button(parent, "Select " + recipe, func() -> Dictionary:
-			var result: Dictionary = production.request_recipe(recipe)
-			if result.get("confirmation_required", false):
-				_confirmation_token = result.token
-				_recipe_dialog.dialog_text = result.message
-				_recipe_dialog.popup_centered(Vector2i(640, 240))
-				return {"ok": true, "message": "Recipe change awaiting explicit confirmation; no change applied."}
-			return result)
+	for recipe in ["R02", "R27"]: _recipe_button(parent, recipe)
+
+
+func _add_storage_controls(parent: Node) -> void:
+	for recipe in ["R32", "R33"]: _recipe_button(parent, recipe)
+
+
+func _recipe_button(parent: Node, recipe: String) -> void:
+	_button(parent, "Select " + recipe, func() -> Dictionary:
+		var result: Dictionary = production.request_recipe(recipe)
+		if result.get("confirmation_required", false):
+			_confirmation_token = result.token
+			_recipe_dialog.dialog_text = result.message
+			_recipe_dialog.popup_centered(Vector2i(640, 240))
+			return {"ok": true, "message": "Recipe change awaiting explicit confirmation; no change applied."}
+		return result)
