@@ -1,5 +1,5 @@
 extends Control
-## Review controls shared by the four explicitly released recipes.
+## Review controls shared by the six explicitly released recipes.
 
 const Rear = preload("res://game/staffing/rear_simulation.gd")
 const Production = preload("res://game/production/r01_production.gd")
@@ -78,10 +78,11 @@ func _ready() -> void:
 	_pause_button = _button(controls, "Pause " + spec.recipe, func() -> Dictionary: return production.set_paused(true))
 	_resume_button = _button(controls, "Resume " + spec.recipe, func() -> Dictionary: return production.resume())
 	_button(controls, "Cancel batch", func() -> Dictionary: return production.cancel())
-	for seconds in ([1, 2, 5, 10, 20, 300] if spec.recipe == "R26" else [1, 2, 10, 20, 300]):
+	for seconds in ([1, 2, 5, 10, 20, 300] if spec.recipe == "R26" or spec.facility == "F05" else [1, 2, 10, 20, 300]):
 		_button(controls, "+%ds" % seconds, func() -> Dictionary: return simulation.advance_time(seconds))
 	var space := HBoxContainer.new()
 	layout.add_child(space)
+	_add_storage_controls(space)
 	_button(space, "Block output", func() -> Dictionary: return simulation.set_store(spec.output_store, false))
 	_button(space, "Restore output", func() -> Dictionary: return simulation.set_store(spec.output_store, true, simulation.Layout.STORES[spec.output_store][1], []))
 	_capacity_button = _button(space, "", func() -> Dictionary:
@@ -101,6 +102,10 @@ func _ready() -> void:
 	_people.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_label(layout, "Consumed work survives pause/access/staff loss. Cancel keeps finished goods. Windows native testing unverified.", 13)
 	_refresh()
+
+
+func _add_storage_controls(_parent: Node) -> void:
+	pass
 
 
 func _add_recipe_controls(_parent: Node) -> void:
@@ -129,7 +134,7 @@ func _label(parent: Node, text: String, font_size: int) -> Label:
 
 func _refresh() -> void:
 	var view: Dictionary = production.snapshot()
-	var title: String = {"R01": "workshop", "R02": "munitions", "R26": "building-material", "R27": "explosives"}[view.recipe]
+	var title: String = {"R01": "workshop", "R02": "munitions", "R26": "building-material", "R27": "explosives", "R32": "tank-shell", "R33": "autocannon-round"}[view.recipe]
 	_title.text = "G04 / %s — real %s production" % [view.recipe, title]
 	_subtitle.text = "%s continuous / stock target · shared G03 people, hauling, ledger and clock · bounded review" % view.recipe
 	_target_prompt.text = view.output_type + " minimum"
@@ -143,7 +148,7 @@ func _refresh() -> void:
 	var receipt: Array[String] = []
 	for portion in displayed.get("receipt", []): receipt.append("%d %s" % [portion.count, portion.type])
 	_status.text = "t=%.3fs · %s / %s · %s\nOperators present %d / target %d · IDs %s · hauling shortage %s" % [simulation.time, view.recipe, view.facility, view.status, view.operators.size(), view.target, str(view.operators), view.haul_shortage]
-	if view.recipe in ["R26", "R27"]:
+	if view.recipe in ["R26", "R27", "R32", "R33"]:
 		# Operator IDs remain in the person inspection; keep the summary
 		# within two lines so the small-window inspection still has useful space.
 		_status.text = "t=%.3fs · %s / %s · %s\nOrdinary operators present %d / target %d · hauling shortage %s" % [simulation.time, view.recipe, view.facility, view.status, view.operators.size(), view.target, view.haul_shortage]
@@ -155,16 +160,16 @@ func _refresh() -> void:
 	for type in view.inputs:
 		local.append("%s=%d / %d" % [type, view.local_inputs[type], view.inputs[type]])
 		depot.append("%s=%d" % [type, simulation.ledger.available_stock_at("depot", type)])
-	var output_name: String = {"R01": "empty E01", "R02": "loose E02", "R26": "M11", "R27": "M06"}[view.recipe]
+	var output_name: String = {"R01": "empty E01", "R02": "loose E02", "R26": "M11", "R27": "M06", "R32": "E25", "R33": "E26"}[view.recipe]
 	_physical.text = "Local inputs %s · depot %s\nPhysical %s output: %d %s / %.1f kg · output capacity %.1f kg · completed batches %d\nConservation / duty audit: %s" % [", ".join(local), ", ".join(depot), view.facility, view.physical_output, output_name, simulation.ledger.loose_stock_mass_at(view.output_store), simulation.stores[view.output_store].capacity, production.history.filter(func(b: Dictionary) -> bool: return b.state == "Completed").size(), "PASS" if simulation.audit().is_empty() else str(simulation.audit())]
 	if view.facility == "F05":
 		_physical.text = "Local inputs %s · depot %s\nPhysical F05: selected %d %s · total bay %.1f / %.1f kg · completed %s batches %d\nConservation / duty audit: %s" % [", ".join(local), ", ".join(depot), view.physical_output, output_name, simulation.ledger.loose_stock_mass_at(view.output_store), simulation.stores[view.output_store].capacity, view.recipe, production.history.filter(func(b: Dictionary) -> bool: return b.state == "Completed").size(), "PASS" if simulation.audit().is_empty() else str(simulation.audit())]
 	var lines: Array[String] = []
 	if view.facility == "F05":
-		lines.append("F05 selected " + view.recipe + "; one active recipe only. Both output types share physical bay capacity.")
+		lines.append("F05 selected " + view.recipe + "; one active recipe. Shared bay; declared shell access: " + str(view.declared_shell_access))
 		for recipe in view.recipe_choices:
 			var record: Dictionary = view.recipe_records[recipe]
-			lines.append("%s · %s · minimum %d · active %s · completed/cancelled history: %s" % [recipe, record.mode, record.stock_target, record.active, str(record.history)])
+			lines.append("%s · %s · minimum %d · active %s · completed/cancelled history: %s" % [recipe, record.mode, record.stock_target, record.active, str(record.history.map(func(b: Dictionary) -> String: return "%s %s %.0f/%.0f" % [b.id, b.state, b.work, b.required_work]))])
 	lines.append("%s eligible deposited %d / reserved %d · internal inbound %d (carried %d) · active batch forecast %d" % [view.output_type, coverage.eligible_physical, coverage.eligible_reserved, coverage.internal_relocation, coverage.internal_carried, coverage.batch_forecast])
 	for person in simulation.snapshot().people:
 		lines.append("%s · %s / %s · %s · position %s · carry %s · pending %s" % [person.id, person.assignment, person.duty_id, person.phase, person.position, person.carrying_stock_id, person.pending_assignment])

@@ -7,13 +7,14 @@ param(
     [switch]$G08Movement,
     [switch]$R02Yield,
     [switch]$R26Work,
-    [switch]$R27Yield
+    [switch]$R27Yield,
+    [switch]$ShellChain
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $name = $Suite.ToLowerInvariant()
-if (@(@($G03Driver, $G04Work, $G08Movement, $R02Yield, $R26Work, $R27Yield) | Where-Object { $_ }).Count -gt 1) { throw 'Choose only one focused failure control.' }
+if (@(@($G03Driver, $G04Work, $G08Movement, $R02Yield, $R26Work, $R27Yield, $ShellChain) | Where-Object { $_ }).Count -gt 1) { throw 'Choose only one focused failure control.' }
 $testPath = Join-Path $projectRoot "game/procurement/tests/gdunit/receiving_${name}_test.gd"
 $original = [IO.File]::ReadAllBytes($testPath)
 $text = [Text.Encoding]::UTF8.GetString($original)
@@ -74,6 +75,15 @@ if ($R27Yield) {
     $broken = 'assert_int(completed_yield).is_equal(2)'
     $wrongValue = '2'
 }
+if ($ShellChain) {
+    if ($Suite -ne 'Domain') { throw 'ShellChain requires the Domain suite.' }
+    $testPath = Join-Path $projectRoot 'game/production/tests/shell_chain_domain_test.gd'
+    $original = [IO.File]::ReadAllBytes($testPath)
+    $text = [Text.Encoding]::UTF8.GetString($original)
+    $healthy = 'assert_int(physical_shells).is_equal(10)'
+    $broken = 'assert_int(physical_shells).is_equal(11)'
+    $wrongValue = '11'
+}
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
 $reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
 if ($G04Work) { $reportName = 'failure-control-g04-work' }
@@ -81,6 +91,7 @@ if ($G08Movement) { $reportName = 'failure-control-g08-movement' }
 if ($R02Yield) { $reportName = 'failure-control-r02-yield' }
 if ($R26Work) { $reportName = 'failure-control-r26-work' }
 if ($R27Yield) { $reportName = 'failure-control-r27-yield' }
+if ($ShellChain) { $reportName = 'failure-control-shell-chain' }
 $outputRoot = Join-Path $projectRoot ".artifacts/gdunit4/$reportName"
 New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {

@@ -1,17 +1,30 @@
 extends "res://game/production/fixed_production.gd"
-## One F05 owner: R02 by default, or R27 after a validated explicit selection.
+## One F05 owner: R02 by default, or one explicitly released/accessible alternative.
 
 const INPUTS := RECIPES.R02.inputs # Retain the accepted R02 public defaults.
 const REQUIRED_WORK := 40.0
 const OUTPUT_MASS := 2.0
-const CHOICES: Array[String] = ["R02", "R27"]
+const CHOICES: Array[String] = ["R02", "R27", "R32", "R33"]
+var _declared_access: Array[String] = [] # Fixed at construction; not a card/unlock service.
 var _saved: Dictionary = {}
 var _pending: Dictionary = {}
 var _request_sequence := 0
 
 
-func _init(rear: RefCounted) -> void:
+func _init(rear: RefCounted, declared_access: Array[String] = []) -> void:
+	for recipe in declared_access:
+		assert(recipe in ["R32", "R33"], "Only declared shell access is supported.")
+	_declared_access.assign(declared_access)
 	super(rear, "R02")
+
+
+func recipe_accessible(recipe: String) -> bool:
+	return recipe in ["R02", "R27"] or recipe in _declared_access
+
+
+func _access() -> bool:
+	return recipe_accessible(_recipe) and super._access()
+
 
 
 func _record() -> Dictionary:
@@ -25,7 +38,9 @@ func _default_record() -> Dictionary:
 
 func request_recipe(recipe: String) -> Dictionary:
 	if recipe not in CHOICES:
-		return {"ok": false, "message": "F05 only releases R02 rounds and R27 explosives."}
+		return {"ok": false, "message": "F05 only releases R02, R27, R32 and R33."}
+	if not recipe_accessible(recipe):
+		return {"ok": false, "message": recipe + " access absent in this declared fixture; no selection or goods changed. G31 cards remain separate."}
 	if recipe == _recipe:
 		return {"ok": true, "message": recipe + " is already selected; nothing changed."}
 	if batch.is_empty():
@@ -79,6 +94,7 @@ func _select(recipe: String) -> Dictionary:
 
 func snapshot() -> Dictionary:
 	var view := super.snapshot()
+	view.declared_shell_access = _declared_access.duplicate()
 	view.selected_recipe = _recipe
 	view.recipe_choices = CHOICES.duplicate()
 	view.pending_recipe_change = _pending.duplicate(true)

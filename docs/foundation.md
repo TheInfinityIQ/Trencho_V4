@@ -51,3 +51,7 @@ The subsequent [R26 release](g04_r26.md) adds a third explicit owner and makes r
 ## Exclusive F05 R02/R27 selection - 27 October 2026
 
 The [R27 release](g04_r27.md) justifies a single selectable F05 owner over the existing fixed lifecycle. Only R02/R27 alternate, with R02 the default; the rear still owns three facility activities. Token/recipe/batch revalidation makes consumed-batch cancellation explicit and stale-safe. Per-recipe mode/target/history/identity records survive selection, while physical goods, exclusive people, hauling and promises remain with existing owners. No all-recipe scheduler or second inventory is introduced. Actual embedded confirmation/decline/dismissal input and focused stale/fractional/exclusive-work regressions accompany the bounded review.
+
+## Declared-access shell chains - 27 October 2026
+
+The [R32/R33 assignment](g04_shell_chain.md) extends the same F05 owner with two choices guarded by access declared at construction. No live card/unlock service is introduced. Real R27 output is hauled through existing ledger portion lineage to the input holder before consumption. Compact history summaries keep the larger history inspectable without changing authoritative receipts or identities. Existing explicit facility owners, common clock, exclusive people and output promises remain.
