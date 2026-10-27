@@ -4,12 +4,14 @@ param(
     [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain',
     [switch]$G03Driver,
     [switch]$G04Work,
-    [switch]$G08Movement
+    [switch]$G08Movement,
+    [switch]$R02Yield
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $name = $Suite.ToLowerInvariant()
+if (@(@($G03Driver, $G04Work, $G08Movement, $R02Yield) | Where-Object { $_ }).Count -gt 1) { throw 'Choose only one focused failure control.' }
 $testPath = Join-Path $projectRoot "game/procurement/tests/gdunit/receiving_${name}_test.gd"
 $original = [IO.File]::ReadAllBytes($testPath)
 $text = [Text.Encoding]::UTF8.GetString($original)
@@ -43,10 +45,20 @@ if ($G08Movement) {
     $broken = 'is_equal(7.0)'
     $wrongValue = '7.0'
 }
+if ($R02Yield) {
+    if ($Suite -ne 'Domain') { throw 'R02Yield requires the Domain suite.' }
+    $testPath = Join-Path $projectRoot 'game/production/tests/r02_domain_test.gd'
+    $original = [IO.File]::ReadAllBytes($testPath)
+    $text = [Text.Encoding]::UTF8.GetString($original)
+    $healthy = 'assert_int(completed_yield).is_equal(100)'
+    $broken = 'assert_int(completed_yield).is_equal(101)'
+    $wrongValue = '101'
+}
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
 $reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
 if ($G04Work) { $reportName = 'failure-control-g04-work' }
 if ($G08Movement) { $reportName = 'failure-control-g08-movement' }
+if ($R02Yield) { $reportName = 'failure-control-r02-yield' }
 $outputRoot = Join-Path $projectRoot ".artifacts/gdunit4/$reportName"
 New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {
