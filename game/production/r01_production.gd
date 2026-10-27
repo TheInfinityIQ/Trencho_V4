@@ -1,5 +1,5 @@
 extends RefCounted
-## One F04 continuous R01 owner over G03's real ledger, workers, space and clock.
+## One F04 R01 owner over G03's real ledger, workers, space and clock.
 
 const INPUTS := {"M01": 2, "M02": 1}
 const REQUIRED_WORK := 40.0
@@ -7,6 +7,8 @@ const OUTPUT_MASS := 4.0
 var _rear_ref: WeakRef
 var enabled := true
 var paused := false
+var mode := "Continuous"
+var stock_target := 0
 var batch: Dictionary = {}
 var history: Array[Dictionary] = []
 var _sequence := 0
@@ -51,6 +53,84 @@ func _access() -> bool:
 	return rear.stores.workshop_input.accessible and rear.stores.workshop_output.accessible
 
 
+func set_mode(value: String) -> Dictionary:
+	if value not in ["Continuous", "Stock target"]:
+		return {"ok": false, "message": "Choose Continuous or Stock target."}
+	mode = value
+	var rear: RefCounted = _rear_ref.get_ref()
+	rear._settle()
+	return {"ok": true, "message": "Mode updated; active consumed work and its output promise are retained."}
+
+
+func set_stock_target(value: int) -> Dictionary:
+	if value < 0:
+		return {"ok": false, "message": "E01 target must be a nonnegative whole count."}
+	stock_target = value
+	var rear: RefCounted = _rear_ref.get_ref()
+	rear._settle()
+	return {"ok": true, "message": "E01 minimum updated; no goods created or active batch cancelled."}
+
+
+func _eligible_store(id: String) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if not rear.stores.has(id): return false
+	var store: Dictionary = rear.stores[id]
+	return not store.pile and store.accessible and (store.filter.is_empty() or "E01" in store.filter) and rear.ledger.inspect_entity(id).get("kind") == "PLACE"
+
+
+func stock_coverage() -> Dictionary:
+	# A detached query, never a second inventory. Each reserved/carry portion is
+	# identified by the existing actor, matching ledger claim and actual holder.
+	var rear: RefCounted = _rear_ref.get_ref()
+	var available := 0
+	var physical := 0
+	var reserved := 0
+	var relocation := 0
+	var carried := 0
+	var stocks: Array[Dictionary] = []
+	var portions: Array[Dictionary] = []
+	var excluded: Array[Dictionary] = []
+	for stock in rear.ledger.snapshot().entities:
+		if stock.kind not in ["STOCK", "WEAPON"] or stock.design_type != "E01" or stock.quantity <= 0: continue
+		var usable: bool = stock.kind == "STOCK" or (stock.functional and stock.loaded_rounds == 0)
+		if usable and stock.owner == rear.PLAYER and _eligible_store(stock.holder_id):
+			var committed: int = rear.ledger.reserved(stock.id)
+			available += maxi(0, stock.quantity - committed)
+			physical += stock.quantity
+			reserved += committed
+			stocks.append({"id": stock.id, "kind": stock.kind, "holder": stock.holder_id, "physical": stock.quantity, "reserved": committed, "available": maxi(0, stock.quantity - committed)})
+		else:
+			excluded.append({"id": stock.id, "holder": stock.holder_id, "quantity": stock.quantity, "reason": "Foreign, issued/loaded/broken/cargo/pile or inaccessible/type-ineligible storage"})
+	for actor in rear.actors.values():
+		var load: Dictionary = actor.load
+		if load.is_empty() or load.type != "E01" or not _eligible_store(load.source) or not _eligible_store(load.destination): continue
+		var job: Dictionary = rear._job(load.job)
+		if job.is_empty() or job.cancelled or job.type != "E01" or not rear._valid_destination(load.destination, "E01", load.mass, actor.id): continue
+		var count := 0
+		if load.carried.is_empty():
+			var claim: Dictionary = rear.ledger.inspect_claim(load.claim)
+			var stock: Dictionary = rear.ledger.inspect_entity(load.stock)
+			if not claim.is_empty() and not claim.cancelled and claim.claimant == actor.id and claim.purpose == job.id and claim.source_id == stock.get("id") and stock.get("kind") == "STOCK" and stock.get("design_type") == "E01" and stock.get("holder_id") == load.source and stock.get("owner") == rear.PLAYER:
+				count = mini(load.count, claim.reserved)
+		else:
+			var stock: Dictionary = rear.ledger.inspect_entity(load.carried)
+			var person: Dictionary = rear.ledger.inspect_entity(actor.id)
+			if stock.get("kind") == "STOCK" and stock.get("design_type") == "E01" and stock.get("owner") == rear.PLAYER and stock.get("holder_id") == actor.id and person.carrying_stock_id == stock.id:
+				count = mini(load.count, stock.quantity)
+				carried += count
+		if count > 0:
+			relocation += count
+			portions.append({"job": job.id, "person": actor.id, "source": load.source, "destination": load.destination, "claim": load.get("claim", ""), "carried_stock": load.carried, "count": count})
+	var forecast := 1 if not batch.is_empty() and rear.output_space_valid(batch.id) else 0
+	return {"available": available, "planned": relocation + forecast, "projected": available + relocation + forecast,
+		"eligible_physical": physical, "eligible_reserved": reserved, "internal_relocation": relocation, "internal_carried": carried,
+		"batch_forecast": forecast, "batch_id": batch.get("id", ""), "stocks": stocks, "relocations": portions, "excluded": excluded}
+
+
+func _target_satisfied() -> bool:
+	return mode == "Stock target" and stock_coverage().projected >= stock_target
+
+
 func _can_work() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	return not batch.is_empty() and enabled and not paused and _access() and rear.output_space_valid(batch.id) and not operators().is_empty()
@@ -88,7 +168,7 @@ func settle() -> bool:
 		history.append(batch.duplicate(true))
 		batch = {}
 		return true
-	if not enabled or paused or not _access() or operators().is_empty() or not _missing().is_empty(): return false
+	if not enabled or paused or _target_satisfied() or not _access() or operators().is_empty() or not _missing().is_empty(): return false
 	var id := "r01-batch-%04d" % (_sequence + 1)
 	if not rear.ledger.inspect_entity(id + "-E01").is_empty(): return false
 	if not rear.reserve_output_space(id, "workshop_output", "E01", OUTPUT_MASS).ok: return false
@@ -136,11 +216,12 @@ func snapshot() -> Dictionary:
 	elif paused: status = "Paused"
 	elif not _access(): status = "Access blocked — work paused"
 	elif not batch.is_empty() and not rear.output_space_valid(batch.id): status = "Output blocked — promise/work retained"
+	elif batch.is_empty() and _target_satisfied(): status = "Target satisfied — no new batch"
 	elif batch.is_empty() and not rear._valid_destination("workshop_output", "E01", OUTPUT_MASS): status = "Output Full"
 	elif batch.is_empty() and not _missing().is_empty(): status = "Missing Inputs"
 	elif operators().is_empty(): status = "Missing Labour"
 	elif not batch.is_empty() and batch.work >= REQUIRED_WORK: status = "Completion blocked — work retained"
-	return {"recipe": "R01", "mode": "Continuous only", "enabled": enabled, "paused": paused, "status": status,
+	return {"recipe": "R01", "mode": mode, "stock_target": stock_target, "coverage": stock_coverage(), "enabled": enabled, "paused": paused, "status": status,
 		"operators": operators(), "target": rear.requests.workshop.target, "missing_local": _missing(), "local_inputs": _local_inputs(),
 		"batch": batch.duplicate(true), "history": history.duplicate(true),
 		"output_promise": rear._output_promises.get(batch.get("id", ""), {}).duplicate(true),
