@@ -204,6 +204,8 @@ func test_fully_worked_component_waits_for_legal_physical_completion() -> void:
 	assert_float(rear._reserved_space("workshop_output")).is_equal(4.0)
 	rear.advance_time(100)
 	assert_int(rear.ledger.total_stock("E01")).is_zero()
+	rear.set_target("workshop", 0)
+	assert_int(rear.production.operators().size()).is_zero()
 	rear.set_store("workshop_output", true)
 	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
 	rear.advance_time(0)

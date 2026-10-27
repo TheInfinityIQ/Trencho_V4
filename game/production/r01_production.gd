@@ -70,7 +70,9 @@ func advance_work(seconds: float) -> void:
 func settle() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if not batch.is_empty():
-		if batch.work < REQUIRED_WORK or not _can_work(): return false
+		# All operator work is already earned. Physical completion needs no extra
+		# work credit, but still obeys facility pause/access and its valid promise.
+		if batch.work < REQUIRED_WORK or not enabled or paused or not _access() or not rear.output_space_valid(batch.id): return false
 		var result: Dictionary = rear.ledger.add_stock(batch.output_id, "E01", 1, OUTPUT_MASS, "workshop_output", rear.PLAYER)
 		if not result.ok: return false # Keep complete work/promise; no duplicate or overflow fallback.
 		rear.release_output_space(batch.id)

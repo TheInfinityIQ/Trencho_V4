@@ -244,7 +244,7 @@ func advance_time(seconds: float) -> Dictionary:
 		ledger.advance_time(next - time)
 		time = next
 		_settle()
-	return _result(true, "Only elapsed reporting, handling, walking and yard movement completed.")
+	return _result(true, "Shared rear time advanced; R01 prerequisites still govern operator work." if production != null else "Only elapsed reporting, handling, walking and yard movement completed.")
 
 
 func effective_priority(job: Dictionary) -> int:

@@ -64,6 +64,15 @@ func test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_pro
 	assert_array(rear.audit()).is_empty()
 	window.size = Vector2i(960, 640)
 	window.content_scale_size = window.size
+	await runner.simulate_frames(3)
+	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer
+	runner.set_mouse_position(scroll.get_global_rect().get_center())
+	await runner.await_input_processed()
+	for notch in 4:
+		runner.simulate_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN)
+		await runner.await_input_processed()
+	assert_int(scroll.scroll_vertical).is_greater(0)
+	assert_float(float(scroll.scroll_vertical)).is_equal_approx(scroll.get_v_scroll_bar().max_value - scroll.get_v_scroll_bar().page, 1.0)
 	await _capture(runner, main, demo, "finished_stock_after_cancel_small")
 	window.size = previous.size
 	window.content_scale_size = previous.content
@@ -96,6 +105,7 @@ func _capture(runner: GdUnitSceneRunner, main: Control, demo: Control, checkpoin
 	var inspection: Dictionary = {}
 	for field in ["_status", "_work", "_physical", "_people", "_feedback"]:
 		inspection[field] = (demo.get(field) as Label).text
+	inspection.people_jobs_scroll_y_px = ((demo.get("_people") as Label).get_parent() as ScrollContainer).scroll_vertical
 	var metadata := {"kind": "Godot Linux CI render, not Windows native evidence",
 		"revision": OS.get_environment("EVALUATION_HEAD"), "engine": Engine.get_version_info().string,
 		"image": checkpoint + ".png", "checkpoint": checkpoint,
