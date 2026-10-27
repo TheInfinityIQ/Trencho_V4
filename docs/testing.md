@@ -1,6 +1,6 @@
 # Automated checks and GdUnit4 pilot
 
-Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). This integration adds two focused tests to accepted G01/G02 code; it does not migrate or remove the existing suites.
+Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). The original pilot adds two focused G01/G02 tests; the G03 extension adds two input cases below. Existing suites are retained, not mass-migrated.
 
 ## Repeatable commands
 
@@ -10,7 +10,7 @@ PowerShell 7, from the project root:
 ./tools/check.ps1 -GodotPath '<Godot 4.7.2 standard executable>'
 ```
 
-This checks the pinned engine, acquires/verifies GdUnit4, imports, runs all existing suites, starts the main scene headlessly and runs the GdUnit4 domain test. The existing 1,750 assertions remain: G01 624, G02 842, G02 callback/layout 190 and D01 data probe 94. The new suite reports test cases separately; assertion counts are not measures of gameplay acceptance.
+This checks the pinned engine, acquires/verifies GdUnit4, imports, runs all existing suites, starts the main scene headlessly and runs the GdUnit4 domain test. The existing 2,962 assertions remain: G01 624, G02 842, G02 callback/layout 190, G03 domain 798, G03 callback/layout 414 and D01 data probe 94. The new suite reports test cases separately; assertion counts are not measures of gameplay acceptance.
 
 The default command explicitly reports **Scene-input pilot NOT RUN**. Headless Godot cannot establish this input behavior. For the complete command on Linux, use a working X display or Xvfb with `xauth` and OpenGL software-rendering support (the pinned Ubuntu CI image supplies these):
 
@@ -29,7 +29,7 @@ For a focused rerun after setup/import:
 ./tools/prove_gdunit4_failure.ps1 -GodotPath '<godot>' -Suite Domain
 ```
 
-The failure probe temporarily changes one expected value, invokes the same runner in a child PowerShell process, requires a named JUnit assertion failure and a nonzero command exit, restores the original bytes in `finally`, then reruns the passing test. CI runs this proof for `-Suite Input`. Do not run the probe concurrently with another test run or source edit. A hard process kill can interrupt restoration; inspect the diff before committing.
+The failure probe temporarily changes one expected value, invokes the same runner in a child PowerShell process, requires a named JUnit assertion failure and a nonzero command exit, restores the original bytes in `finally`, then reruns the passing test. CI runs this proof for `-Suite Input` and for `-Suite Input -G03Driver` (a deliberately incorrect initial driver-fuel expectation). `tools/gdunit4_tests.json` declares all required paths and test names; the runner rejects missing, extra, duplicated or skipped cases rather than assuming a single passing test is sufficient. Do not run the probe concurrently with another test run or source edit. A hard process kill can interrupt restoration; inspect the diff before committing.
 
 `.artifacts/gdunit4/<suite>/report_1/` contains JUnit XML and HTML; its parent contains the engine log. Failure-control output also includes `command.log` and `proof.json`. CI uploads `.artifacts/` on success and failure, for seven days. A failing upload cannot turn a failed test into a pass.
 
@@ -49,4 +49,18 @@ To upgrade, select an official stable release, review its immutable source, lice
 
 Migrate small deterministic domain cases incrementally when named assertions, fixtures or reports improve diagnosis. The next useful input regression is actual delivery-row selection followed by cancellation: it would catch wrong selection, hit testing and focus that the existing emitted-signal checks bypass. Do not rewrite already meaningful suites merely to increase framework usage.
 
-SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G03/G08 are unmerged and excluded from this pilot; their remaining native gates, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
+SceneRunner input is engine integration evidence. It does not test Windows `SendInput`, OS pointer targeting, actual screen readability, rendering correctness, full-game usability or performance. G03 is a draft integration with the additional input cases below; G08 is excluded; their remaining native gates, G04 production continuation, G32 persistence and D01 production presentation remain separate. Developers own testing; routine QA is not delegated to the human designer.
+
+## G03 scene-input extension
+
+The input manifest requires three cases: the retained G02 purchase pilot plus G03 driver and staged A05. The G03 tests drive actual reset/tab/time/assignment/release and row-selection controls through SceneRunner mouse input and await frame processing. Reads of simulation snapshots and current inspection labels supply assertions; no action is implemented by signal emission, handler calls or direct gameplay-state changes.
+
+The driver case rejects movement before the three-second P08 station entry, observes an actual 12m first-second move/fuel burn and shared driver/hull location, verifies repeated release preserves one pending assignment while moving, checks physical parking separately from the three-second exit, then re-enters the current parked hull while retaining distance/fuel/parking. Occupied destination parking refuses a second trip. The staged A05 case retains two actual operators with Missing Inputs before hauling; exact 2 M01 and 1 M02 then arrive physically, selected-job/person details refresh, promises clear and work/consumption/output stay zero. No production recipe executes.
+
+Windows checks remain headless domain/callback/layout evidence; display-backed behavior is verified in Linux CI at the PR's actual submitted revision. These regressions do not resume a stopped native session or replace missing desktop/render/readability evidence. PR #54 remains draft pending those gates.
+
+## G03 rendered foundation evidence
+
+The G03 input cases also export `.artifacts/g03-rendered/*.png` and matching JSON after actual rendered frames. CI sets EVALUATION_HEAD to the submitted PR head. For a local display-backed run set that variable to the exact checked-out commit first. The12 checkpoints and metadata are listed in [G03 evidence](g03_staffing.md#revised-foundation-evidence-path--26-october-2026). The same Input manifest retains accepted D01 rendering and the G02 pilot; no required named case is dropped. Failure-control runs restore original test bytes and rerun the complete healthy suite before the final artifacts are uploaded.
+
+Inspect the actual images together with their matching state/selection/revision records. These are Linux CI viewport renders, not Windows native screenshots; GDD23.5 records the Designer's revised foundation verification path and outstanding Windows obligations.

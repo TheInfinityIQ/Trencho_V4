@@ -24,11 +24,13 @@ Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual che
 
 After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
 
-## Current assignment: G02 procurement and receiving
+## Current assignment: G03 staffing and hauling
 
-G01's foundation was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50), merged at `c08cb3f86155b3a9ca7db54a3c616f4b7adb6194`. Its full A03 casualty/recovery integration remains G16. The Game Designer then assigned only [G02 #10](https://github.com/TheInfinityIQ/Trencho_V4/issues/10), M0: use [the implementation plan](g02_receiving_plan.md), [behavior and verification record](g02_receiving.md), GDD sections 3–5, 8 and the dated section 23.3 admission clarification. G03 readiness does not authorize starting it.
+G01 was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50); its full A03 casualty/recovery integration remains G16. G02 was accepted in [PR #51](https://github.com/TheInfinityIQ/Trencho_V4/pull/51), merged at `eb251eb83b90bbdc895ae917f9933655aaf794fb`, closing issue #10 for its bounded procurement/receiving scope. Its native practical display case does not settle literal 1280×720 physical display or production D01.
 
-G02's engine checks, 960×540 native behavior walkthrough and Game Designer-approved practical 1000×720 display case pass; see the verification record for actual evidence and limits. Literal 1280×720 physical display and production D01 remain unverified. PR #51 can move to review after final-head checks pass; issue #10 remains open and only the Game Designer accepts/merges it. No next feature is assigned by this status.
+The Game Designer assigned only [G03 #11](https://github.com/TheInfinityIQ/Trencho_V4/issues/11#issuecomment-6417729799), M0, from that merged main. Read the [G03 plan](g03_staffing_plan.md), [behavior/verification record](g03_staffing.md), GDD 3/4/7/8, applicable T01 yard rules in 9, declared initialization in 20, A05/A06 in 22, section 23 and D03. Implement real staffing, local hauling and safe worker/P08 handoffs. G03 proves A05 local-input readiness; G04 owns complete recipe/consumption/output continuation. Staffing priorities remain player-set; queued work alone ages under the dated clarification.
+
+G03 engine checks and earlier native A05 observations are recorded, but A06 native approach/carry/pile/driver and final selected-detail checks remain blocked by Windows input failure. Keep its review PR draft and issue #11 open until required evidence is supplied or an explicit design decision changes acceptance. Do not start G04/G08 or another feature without assignment. Only the Game Designer merges/closes the implementation.
 
 ## Accepted foundation scope: G01 physical identity and ownership
 

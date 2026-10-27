@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$GodotPath = 'godot',
-    [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain'
+    [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain',
+    [switch]$G03Driver
 )
 
 $ErrorActionPreference = 'Stop'
@@ -12,8 +13,16 @@ $original = [IO.File]::ReadAllBytes($testPath)
 $text = [Text.Encoding]::UTF8.GetString($original)
 $healthy = if ($Suite -eq 'Domain') { 'is_equal(1860.0)' } else { 'is_equal(100)' }
 $broken = if ($Suite -eq 'Domain') { 'is_equal(1861.0)' } else { 'is_equal(101)' }
+if ($G03Driver) {
+    if ($Suite -ne 'Input') { throw 'G03Driver requires the display-backed Input suite.' }
+    $testPath = Join-Path $projectRoot 'game/staffing/tests/gdunit/staffing_input_test.gd'
+    $original = [IO.File]::ReadAllBytes($testPath)
+    $text = [Text.Encoding]::UTF8.GetString($original)
+    $healthy = 'is_equal(40.0)'
+    $broken = 'is_equal(39.0)'
+}
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
-$reportName = "failure-control-$name"
+$reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
 $outputRoot = Join-Path $projectRoot ".artifacts/gdunit4/$reportName"
 New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {

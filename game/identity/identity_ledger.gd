@@ -29,10 +29,11 @@ func add_place(id: String, description: String, position: Vector2) -> Dictionary
 	return _ok("Place registered.", id)
 
 
-func add_carrier(id: String, holder_id: String, owner: String, controller: String) -> Dictionary:
+func add_carrier(id: String, holder_id: String, owner: String, controller: String,
+		design_type: String = "Carrier fixture") -> Dictionary:
 	if not _free_id(id) or not _is_place(holder_id) or owner.is_empty():
 		return _reject("INVALID_ENTITY", "A carrier needs a unique ID, owner and physical place.")
-	_new_entity(id, Records.Kind.CARRIER, "Carrier fixture", owner, controller, holder_id,
+	_new_entity(id, Records.Kind.CARRIER, design_type, owner, controller, holder_id,
 		"Supplier-owned carrier; not a third combat faction.")
 	return _ok("Carrier registered.", id)
 
@@ -66,6 +67,8 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 	if not _is_place(place_id) or not world_position.is_finite():
 		return _reject("INVALID_DESTINATION", "Movement needs an existing place and finite world position.")
 	var entity := _entities[id]
+	if entity is Records.Person and not entity.crew_station.is_empty():
+		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
 	return _ok("Physical position updated by the timed activity.", id)
@@ -123,11 +126,11 @@ func request_assignment(person_id: String, assignment: int, duty_id: String) -> 
 		return _reject("MISSING_DUTY", "An assigned person needs a named duty.")
 	if person.pending_assignment != -1:
 		return _reject("HANDOFF_PENDING", "Cancel or complete the existing pending duty handoff first.")
-	if not person.carrying_stock_id.is_empty():
+	if not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty():
 		person.pending_assignment = assignment
 		person.pending_duty = duty_id
-		_event("Duty requested; waiting for safe deposit", person_id)
-		return _ok("Duty requested. Finish the carry or deposit it into valid safe storage first.", person_id)
+		_event("Duty requested; waiting for safe carry/station handoff", person_id)
+		return _ok("Duty requested. Finish safe deposit or park and vacate the driver station first.", person_id)
 	_set_assignment(person, assignment, duty_id)
 	return _ok("Exclusive duty changed.", person_id)
 
@@ -146,15 +149,48 @@ func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: S
 	var person := _person(person_id)
 	if person == null or person.assignment != Records.Assignment.REAR_LABOUR:
 		return _reject("NOT_LABOUR", "A rear labour assignment is required for this carry fixture.")
-	if not person.carrying_stock_id.is_empty() or person.pending_assignment != -1:
+	if not person.carrying_stock_id.is_empty() or person.pending_assignment != -1 or not person.crew_station.is_empty():
 		return _reject("PERSON_BUSY", "Finish the existing carry or pending handoff first.")
 	var stock := _stock(stock_id)
-	if stock != null and stock.unit_mass_kg * quantity > 25.0:
+	if stock != null and stock.unit_mass_kg * quantity + _contents_mass(person.id) > 25.0:
 		return _reject("CARRY_TOO_HEAVY", "An ordinary carry is limited to 25 kg of one item type (GDD section 4).")
 	var result := transfer_stock(stock_id, quantity, person_id, claim_id)
 	if result.ok:
 		person.carrying_stock_id = result.entity_id
 	return result
+
+
+func complete_driver_entry(person_id: String, carrier_id: String) -> Dictionary:
+	# The yard activity establishes stationary three-second handling first.
+	var person := _person(person_id)
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if person == null or carrier == null or carrier.kind != Records.Kind.CARRIER:
+		return _reject("INVALID_STATION", "A real person and carrier are required.")
+	if person.qualification != "P08" or not person.basic_training or person.owner != carrier.owner:
+		return _reject("INELIGIBLE_DRIVER", "An owned hull requires its own qualified P08, never a supplier driver.")
+	if person.assignment != Records.Assignment.REAR_LABOUR or person.duty_id != "yard" or person.pending_assignment != -1 or not person.carrying_stock_id.is_empty():
+		return _reject("PERSON_BUSY", "The driver must report exclusively to this yard duty.")
+	if not person.crew_station.is_empty() or not _colocated(person_id, carrier_id):
+		return _reject("NOT_COLOCATED", "Finish reporting to the stationary hull before station entry.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == carrier_id and other.crew_station == "Driver":
+			return _reject("STATION_OCCUPIED", "The one T01 driver station is occupied.")
+	person.holder_id = carrier_id
+	person.position = Vector2.ZERO
+	person.crew_station = "Driver"
+	return _ok("The same qualified person physically occupies the driver station.", person_id)
+
+
+func complete_driver_exit(person_id: String, place_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.crew_station != "Driver" or not _is_place(place_id) or not _colocated(person_id, place_id):
+		return _reject("INVALID_STATION_EXIT", "Park at the real exit place and finish stationary handling first.")
+	person.holder_id = place_id
+	person.position = Vector2.ZERO
+	person.crew_station = ""
+	if person.pending_assignment != -1:
+		_set_assignment(person, person.pending_assignment, person.pending_duty)
+	return _ok("Driver station vacated at the actual parking place; safe duty handoff completed.", person_id)
 
 
 func finish_carry(person_id: String, safe_place_id: String) -> Dictionary:
@@ -337,12 +373,13 @@ func inspect_entity(id: String) -> Dictionary:
 		result.pending_assignment = "None" if person.pending_assignment == -1 else Records.ASSIGNMENT_NAMES[person.pending_assignment]
 		result.pending_duty = person.pending_duty
 		result.carrying_stock_id = person.carrying_stock_id
-		result.blocked_reason = "Finish carry or deposit into safe storage" if person.pending_assignment != -1 else ""
+		result.blocked_reason = ("Park and finish stationary driver exit" if not person.crew_station.is_empty() else "Finish carry or deposit into safe storage") if person.pending_assignment != -1 else ""
 		result.health = person.health
 		result.morale = person.morale
 		result.suppression = person.suppression
 		result.basic_training = person.basic_training
 		result.qualification = person.qualification
+		result.crew_station = person.crew_station
 		result.service_seconds = person.service_seconds
 		result.leader_appointment = person.leader_appointment
 	if entity.kind == Records.Kind.WEAPON:
@@ -418,6 +455,9 @@ func audit() -> Array[String]:
 			var carried := _stock(entity.carrying_stock_id)
 			if carried == null or carried.holder_id != entity.id or carried.quantity <= 0:
 				failures.append("Broken active carry: " + entity.id)
+		if entity is Records.Person and not entity.crew_station.is_empty():
+			if entity.qualification != "P08" or entity.assignment != Records.Assignment.REAR_LABOUR or not entity.carrying_stock_id.is_empty() or _entities[entity.holder_id].kind != Records.Kind.CARRIER:
+				failures.append("Invalid occupied driver station: " + entity.id)
 	for type in _created:
 		if _created[type] != total_stock(type) + _consumed.get(type, 0) + _lost.get(type, 0):
 			failures.append("Conservation failed: " + type)
