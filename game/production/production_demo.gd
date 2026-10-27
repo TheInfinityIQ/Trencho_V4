@@ -147,6 +147,12 @@ func _refresh() -> void:
 	if displayed.is_empty() and not view.history.is_empty(): displayed = view.history.back()
 	var receipt: Array[String] = []
 	for portion in displayed.get("receipt", []): receipt.append("%d %s" % [portion.count, portion.type])
+	if view.facility == "F05" and receipt.size() > 4:
+		var totals: Dictionary = {}
+		for portion in displayed.receipt: totals[portion.type] = int(totals.get(portion.type, 0)) + portion.count
+		receipt.clear()
+		for type in totals: receipt.append("%d %s" % [totals[type], type])
+
 	_status.text = "t=%.3fs · %s / %s · %s\nOperators present %d / target %d · IDs %s · hauling shortage %s" % [simulation.time, view.recipe, view.facility, view.status, view.operators.size(), view.target, str(view.operators), view.haul_shortage]
 	if view.recipe in ["R26", "R27", "R32", "R33"]:
 		# Operator IDs remain in the person inspection; keep the summary

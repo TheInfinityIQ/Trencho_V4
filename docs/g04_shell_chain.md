@@ -25,7 +25,7 @@ Select the permitted shell recipe, Operators 4 and advance 300 seconds: present 
 
 After actual deposit, a shell batch consumes its full metal/explosive receipt once and promises 120 or 50 kg. Partial work can be retained across a declined recipe change and blocked access. Complete remaining work to deposit ten E25 or a hundred E26. Exact combined chain consumption is 140 M01/200 M03/20 M06 for R32, or 70 M01/200 M03/20 M06 for R33, with zero free initial explosives or duplicate shell outputs. Production and hauling use elapsed event boundaries and exclusive people, not fixture resets or teleportation. No later loading, delivery or firing is inferred.
 
-F05 inspection shows selected recipe, local/depot inputs, work requirement/progress, receipt/promise, selected output count/mass through unit values, total shared bay, A/C/target and both retained and inactive recipe records. History rows use compact batch ID/state/work summaries, while complete receipts/history remain in detached state evidence. Controls fit normal 1000 x 720 and small 960 x 640; details remain scrollable.
+F05 inspection shows selected recipe, local/depot inputs, work requirement/progress, receipt/promise, selected output count/mass through unit values, total shared bay, A/C/target and both retained and inactive recipe records. History rows use compact batch ID/state/work summaries. Large F05 receipts show exact consumed totals by type in the summary; every original portion/origin and full history remains in detached state evidence. Controls fit normal 1000 x 720 and small 960 x 640; details remain scrollable.
 
 ## Verification
 
