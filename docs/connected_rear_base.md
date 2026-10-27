@@ -1,0 +1,24 @@
+# Connected rear-base integration
+
+Scope: [Designer assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6454565796), from accepted main `1d935bb`. Related #12 and #1; full G04/M0 remain open.
+
+Normal launch now opens a 240 by 180 metre overhead rear with the accepted G03 footprints and entrances. The declared prebuilt integration scenario has twelve ordinary available people, 2500 requisition, no starting recipe materials or outputs, and essential R01/R02/R26/R27 access. The existing parked G03 T01 is retained as an inert yard diagnostic asset. Construction, final starting scenario, training, military AI, battlefield and saving/loading are separate obligations. Persistence here means the same live scene and simulation survive panel/selection changes and visits to diagnostics; restarting the game starts the declared scenario again.
+
+## Play the connected loop
+
+- Orders buys M01 Metal, M02 Components, M03 Gunpowder and M04 Timber at the retained catalogue prices, with the existing per-vehicle transport charge. Eight people cost 140 including transport. Select an order to inspect or cancel it during its undispatched five-second window.
+- Staff count targets allocate the same people between Receiving, Hauling, Workshop, Munitions and Materials. They report to actual entrances. A requested reassignment cannot interrupt a physical carry: old duty remains actual until safe deposit. Incoming people join this same pool after their individual disembarking/walk; supplier drivers remain external.
+- Haul records source, destination, type and unit demand. Goods can move Receiving to Depot and then the appropriate facility input. Requests may wait for delivery; reservations and personal freight cannot feed recipes. Select a job to inspect its blocker or cancel outstanding demand.
+- Production controls the existing R01 workshop, exclusive R02/R27 munitions owner and R26 materials owner. Set an output minimum or Continuous, enable/pause/resume, and stop/cancel explicitly. F05 recipe switching retains its consumed-input confirmation and per-recipe state. R32/R33 are retained in controlled diagnostics and remain locked in this essential-access scenario.
+- Inspect shows selected buildings, people, vehicles, jobs and orders. Store access/capacity controls expose and recover physical input/output blocks. Receiving edits retain its occupied/reserved capacity.
+- Pause stops time. 1x/2x use the same event clock and requisition income. Wheel zoom, middle-drag pan and Fit base navigate the map. Gold freight markers follow actual stock/holders; people and delivery vehicles use authoritative ledger positions. Tabs and lists remain usable through scrolling at 960 by 640.
+
+A useful first order is 35 Metal, 1 Components, 11 Gunpowder and 70 Timber. Set Receiving 2, Hauling 4, Workshop 2, Munitions 2 and Materials 2. Haul supplies into the relevant local inputs (optionally through Depot). Minimums of 1 rifle, 100 rounds and 100 building materials complete one batch each; afterward select R27 and minimum 1 explosive. No output is granted by this recipe example.
+
+## Ownership and verification
+
+The base owns one G03 rear and gives G02 that rear's existing ledger. G02 exposes chronological service boundaries; the rear advances its ledger once and accounts for procurement movement/income at every joint boundary alongside staffing, hauling and production. New passengers are adopted as actors by identity, not recreated. Receiving inbound reservations participate in the same store free-space accounting as hauling and production promises. Weak references avoid an ownership cycle in the shared-store callback. Existing isolated diagnostics keep their original construction paths.
+
+Six domain regressions cover declared state/rates, the complete purchased-goods chain and eight retained arrivals, unavailable incoming/carried ingredients, safe unloader handoff, storage/output recovery and coarse/fine clock equivalence. A focused SceneRunner case uses real engine pointer/keyboard input for purchase fields, targets, haul orders, production choices, pause/rate, map selection/zoom and small-window scrolling. Controlled elapsed time uses the public simulation tick, avoiding long wall-clock waits. Four useful CI captures show blocked arrival, four physical outputs and small-window controls. Linux engine input/render evidence does not establish Windows native or full D01 acceptance.
+
+The normal full check and Input suite remain mandatory. The eight existing failure controls now select their one exact manifest case using pinned GdUnit4's documented-in-source `-i path:test-name` exclusion support, validate the exact resulting JUnit name, and verify original source SHA256 restoration in `finally`. Default execution still checks every manifest case. No new per-recipe failure controls or exhaustive repeated proof packet are introduced.

@@ -84,6 +84,17 @@ if ($ShellChain) {
     $broken = 'assert_int(physical_shells).is_equal(11)'
     $wrongValue = '11'
 }
+# The exact mutation belongs to one named regression. Keep the full default
+# normal suites, but do not replay all suites for each deliberate failure.
+$caseName = if ($Suite -eq 'Domain') { 'test_cancel_one_order_preserves_other_admission_and_physical_cargo' } else { 'test_purchase_routes_input_and_disabled_control_cannot_commit' }
+if ($G03Driver) { $caseName = 'test_driver_cannot_leave_moving_hull_and_reenters_actual_parking' }
+if ($G04Work) { $caseName = 'test_real_haul_and_reporting_never_earn_work_before_atomic_start' }
+if ($G08Movement) { $caseName = 'test_blocked_wheel_then_real_road_travel_preserves_fuel_and_inspection' }
+if ($R02Yield) { $caseName = 'test_exact_local_r02_consumption_work_yield_and_mass_complete_once' }
+if ($R26Work) { $caseName = 'test_r26_exact_inputs_100work_mass_and_four_eight_ordinary_operators' }
+if ($R27Yield) { $caseName = 'test_exact_r27_local_inputs_40work_one_physical_m06_and_two_four_operators' }
+if ($ShellChain) { $caseName = 'test_raw_depot_twenty_r27_completions_actual_m06_handling_then_ten_r32_shells' }
+$originalHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($original))
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
 $reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
 if ($G04Work) { $reportName = 'failure-control-g04-work' }
@@ -97,21 +108,27 @@ New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {
     [IO.File]::WriteAllText($testPath, $text.Replace($healthy, $broken), [Text.UTF8Encoding]::new($false))
     # A child PowerShell process tests the same nonzero boundary used by CI.
-    & (Join-Path $PSHOME 'pwsh') -NoProfile -File (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $GodotPath -Suite $Suite -ReportName $reportName *> (Join-Path $outputRoot 'command.log')
+    & (Join-Path $PSHOME 'pwsh') -NoProfile -File (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $GodotPath -Suite $Suite -CaseName $caseName -ReportName $reportName *> (Join-Path $outputRoot 'command.log')
     $commandExit = $LASTEXITCODE
     if ($commandExit -eq 0) { throw 'Deliberately broken assertion incorrectly passed the command.' }
     $xmlPath = Join-Path $outputRoot 'report_1/results.xml'
     if (-not (Test-Path -LiteralPath $xmlPath)) { throw 'Failure control produced no fresh JUnit evidence.' }
     [xml]$report = Get-Content -LiteralPath $xmlPath -Raw
+    $cases = @($report.SelectNodes('//testcase'))
+    if ($cases.Count -ne 1 -or $cases[0].name -cne $caseName -or @($report.SelectNodes('//error|//skipped')).Count -ne 0) {
+        throw 'Failure control did not run its one exact named case without unrelated errors/skips.'
+    }
     $failures = @($report.SelectNodes('//testcase/failure'))
     if ($failures.Count -ne 1 -or -not $failures[0].InnerText.Contains($wrongValue)) {
         throw "Failure control did not fail at its deliberately altered expected value. See $xmlPath"
     }
-    @{ suite=$Suite; command_exit=$commandExit; deliberately_changed=$healthy; wrong_expectation=$broken; assertion_failures=$failures.Count } |
+    @{ case=$caseName; source_sha256=$originalHash; suite=$Suite; command_exit=$commandExit; deliberately_changed=$healthy; wrong_expectation=$broken; assertion_failures=$failures.Count } |
         ConvertTo-Json | Set-Content -LiteralPath (Join-Path $outputRoot 'proof.json')
     Write-Host "Deliberately failing $Suite assertion correctly failed with command exit $commandExit."
 } finally {
     [IO.File]::WriteAllBytes($testPath, $original)
+    $restoredHash = (Get-FileHash -LiteralPath $testPath -Algorithm SHA256).Hash
+    if ($restoredHash -cne $originalHash) { throw 'Failure control did not restore the original source bytes.' }
 }
 # Prove restoration using the same command, not a second version of the test.
-& (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $GodotPath -Suite $Suite -ReportName "restored-$name"
+& (Join-Path $PSScriptRoot 'run_gdunit4.ps1') -GodotPath $GodotPath -Suite $Suite -CaseName $caseName -ReportName "restored-$reportName"

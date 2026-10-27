@@ -55,3 +55,7 @@ The [R27 release](g04_r27.md) justifies a single selectable F05 owner over the e
 ## Declared-access shell chains - 27 October 2026
 
 The [R32/R33 assignment](g04_shell_chain.md) extends the same F05 owner with two choices guarded by access declared at construction. No live card/unlock service is introduced. Real R27 output is hauled through existing ledger portion lineage to the input holder before consumption. Compact history summaries keep the larger history inspectable without changing authoritative receipts or identities. Existing explicit facility owners, common clock, exclusive people and output promises remain.
+
+## Connected rear-base integration - 27 October 2026
+
+The [connected rear base](connected_rear_base.md) makes the existing rear the owner of one ledger and joint event boundaries, injecting that ledger into procurement. Explicit receiving hooks add passenger adoption, exclusive unloading and shared inbound capacity to existing staffing/production. The map transforms authoritative positions, and scene-owned panels retain state without an autoload or additional inventory. Removing the base from the tree for a diagnostic pauses its clock; reattaching reuses the same instance. Simple shapes and local geometry implement this assignment without resolving D01 world presentation or G05 construction. Focused named negative controls replace repeated full-suite mutations under the human verification override while full normal suites remain.
