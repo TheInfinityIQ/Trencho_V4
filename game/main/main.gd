@@ -4,6 +4,7 @@ extends Control
 const REVIEWS: Dictionary = {
 	"G03 Staffing & hauling": preload("res://game/staffing/rear_demo.tscn"),
 	"G04 R01 Production": preload("res://game/production/production_demo.tscn"),
+	"G08 Terrain & sight": preload("res://game/terrain/terrain_demo.tscn"),
 	"G02 Procurement": preload("res://game/procurement/receiving_demo.tscn"),
 	"G01 Identity": preload("res://game/identity/identity_demo.tscn"),
 }
@@ -14,7 +15,7 @@ func _ready() -> void:
 	var layout := VBoxContainer.new()
 	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layout)
-	var controls := HBoxContainer.new()
+	var controls := HFlowContainer.new()
 	layout.add_child(controls)
 	for title in REVIEWS:
 		var button := Button.new()

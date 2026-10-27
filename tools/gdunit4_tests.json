@@ -47,6 +47,13 @@
       "cases": [
         "test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_protected_work"
       ]
+    },
+    {
+      "cases": [
+        "test_blocked_wheel_then_real_road_travel_preserves_fuel_and_inspection",
+        "test_eye_and_ground_muzzle_then_independent_direct_and_blast_cover"
+      ],
+      "path": "game/terrain/tests/gdunit/terrain_input_test.gd"
     }
   ]
 }

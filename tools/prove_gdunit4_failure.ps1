@@ -3,7 +3,8 @@ param(
     [string]$GodotPath = 'godot',
     [ValidateSet('Domain', 'Input')][string]$Suite = 'Domain',
     [switch]$G03Driver,
-    [switch]$G04Work
+    [switch]$G04Work,
+    [switch]$G08Movement
 )
 
 $ErrorActionPreference = 'Stop'
@@ -33,9 +34,19 @@ if ($G04Work) {
     $broken = 'assert_float(rear.production.history[0].work).is_equal(41.0)'
     $wrongValue = '41.0'
 }
+if ($G08Movement) {
+    if ($Suite -ne 'Input' -or $G03Driver -or $G04Work) { throw 'G08Movement requires only the display-backed Input suite.' }
+    $testPath = Join-Path $projectRoot 'game/terrain/tests/gdunit/terrain_input_test.gd'
+    $original = [IO.File]::ReadAllBytes($testPath)
+    $text = [Text.Encoding]::UTF8.GetString($original)
+    $healthy = 'is_equal(6.0)'
+    $broken = 'is_equal(7.0)'
+    $wrongValue = '7.0'
+}
 if ([regex]::Matches($text, [regex]::Escape($healthy)).Count -ne 1) { throw 'Failure probe assertion is no longer unique; update this probe.' }
 $reportName = if ($G03Driver) { 'failure-control-g03-driver' } else { "failure-control-$name" }
 if ($G04Work) { $reportName = 'failure-control-g04-work' }
+if ($G08Movement) { $reportName = 'failure-control-g08-movement' }
 $outputRoot = Join-Path $projectRoot ".artifacts/gdunit4/$reportName"
 New-Item -ItemType Directory -Path $outputRoot -Force | Out-Null
 try {
