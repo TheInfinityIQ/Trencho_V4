@@ -169,12 +169,12 @@ func clearance_reason() -> String:
 	if bay_occupant.is_empty(): return ""
 	var rear: RefCounted = _rear_ref.get_ref()
 	var object: Dictionary = rear.ledger.inspect_entity(bay_occupant)
-	if object.design_type == "E13": return "Occupied bay: awaiting two loaders / 20-second field-gun collection (G12)."
+	if object.design_type == "E13": return "Awaiting field-gun collection: two loaders / 20 seconds."
 	var driver := false
 	for id in object.get("crew",[]):
 		var person: Dictionary = rear.ledger.inspect_entity(id)
 		if person.qualification == "P08" and person.crew_station == "Driver" and person.health > 0: driver = true
-	return "Occupied bay: " + ("Awaiting Qualified Driver; " if not driver else "") + ("Fuel Empty; " if object.get("fuel",0.0) <= 0.0 else "") + "actual boarding/refuelling/physical clearance belongs to G07."
+	return "Occupied bay: " + ("Awaiting Qualified Driver; " if not driver else "") + ("Fuel Empty; " if object.get("fuel",0.0) <= 0.0 else "") + "same hull remains in F10 until actual clearance."
 
 func snapshot() -> Dictionary:
 	var view := super.snapshot()
@@ -183,9 +183,15 @@ func snapshot() -> Dictionary:
 	view.orders = _orders.duplicate(true)
 	view.fleet = rear.ledger.rear_fleet_status(rear.PLAYER)
 	view.bay = {"slots":1,"accessible":bay_accessible,"occupant":bay_occupant,"physical":rear.ledger.inspect_entity(bay_occupant),"promised_by":_order.get("id",""),"parking_accessible":parking_accessible,"clearance":clearance_reason()}
+	var slot: int = _order.get("parking_slot",-1)
+	if not bay_occupant.is_empty():
+		for record in _orders:
+			if record.get("output_id","") == bay_occupant: slot = record.parking_slot
+	view.bay.parking_slot = slot
+	view.bay.parking_position = rear.yard.PARKING_POSITIONS[slot] if slot >= 0 else rear.ledger.inspect_entity(BAY).position
 	view.output_promise = {} if _order.is_empty() else {"id":_order.id,"store":BAY,"slots":1,"mass":_spec.unit_mass}
 	view.physical_output = 1 if not bay_occupant.is_empty() and rear.ledger.inspect_entity(bay_occupant).design_type == _spec.output_type else 0
-	if not bay_occupant.is_empty(): view.status = clearance_reason()
+	if not bay_occupant.is_empty(): view.status = "Output bay occupied — actual clearance required"
 	elif not enabled: view.status = "No Recipe — stopped"
 	elif not recipe_accessible(_recipe): view.status = "Recipe access absent"
 	elif _order.is_empty() and _target_satisfied(): view.status = "Target satisfied — no accepted heavy order"

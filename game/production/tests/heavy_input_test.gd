@@ -20,6 +20,7 @@ func test_purchased_transport_admission_empty_hull_occupied_next_order_and_retai
 	assert_str(heavy.snapshot().order.state).is_equal("Accepted")
 	assert_int(heavy.snapshot().fleet.live).is_equal(1)
 	assert_int(heavy.snapshot().fleet.reserved).is_equal(1)
+	assert_str((demo.get("heavy_status") as Label).text).contains("F11 place 2")
 	assert_dict(base.rear.ledger.snapshot().consumed).is_empty()
 	await _expose(demo.get("heavy_status"))
 	await _capture(runner,main,demo,"accepted_order_before_materials")

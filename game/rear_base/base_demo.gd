@@ -239,7 +239,7 @@ func _production_panel(box: VBoxContainer) -> void:
 	parking_access.text = "Parking route accessible"
 	heavy_controls.add_child(parking_access)
 	_button(heavy_controls,"Apply heavy access",func() -> void: _result(simulation.rear.heavy_production.set_access(bay_access.button_pressed,parking_access.button_pressed)))
-	parking_destination = _option(heavy_controls,"Accepted order parking destination",["F11 place 1","F11 place 2","F11 place 3","F11 place 4"])
+	parking_destination = _option(heavy_controls,"Requested parking destination",["F11 place 1","F11 place 2","F11 place 3","F11 place 4"])
 	_button(heavy_controls,"Change promised parking",func() -> void: _result(simulation.rear.heavy_production.set_parking_destination(parking_destination.selected)))
 	heavy_status = _label(heavy_controls,"")
 	heavy_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -342,6 +342,9 @@ func _refresh() -> void:
 	production_status.text = "\n\n".join(lines)
 	var heavy: Dictionary = view.heavy
 	heavy_status.text = "%s -> %s: %s\nRear fleet: %d live + %d reserved / 8\nBay: %s\nOrder: %s; work %.1f/%.0f\n%s" % [heavy.recipe,heavy.output_type,heavy.status,heavy.fleet.live,heavy.fleet.reserved,heavy.bay.occupant if not heavy.bay.occupant.is_empty() else ("one accepted promise" if not heavy.order.is_empty() else "empty"),heavy.order.get("id","unaccepted"),heavy.batch.get("work",0.0),heavy.required_work,heavy.bay.clearance]
+	if heavy.bay.parking_slot >= 0:
+		heavy_status.text += "\nReserved destination: F11 place %d %s" % [heavy.bay.parking_slot+1,str(heavy.bay.parking_position)]
+	else: heavy_status.text += "\nDestination: F10 heavy collection bay"
 	if not heavy.bay.physical.is_empty():
 		var object: Dictionary = heavy.bay.physical
 		heavy_status.text += "\n%s: %.0f kg; fuel %.0f; %d crew, %d passengers; no ammunition" % [object.design_type,object.unit_mass_kg,object.get("fuel",0.0),object.get("crew",[]).size(),object.get("passengers",[]).size()]
