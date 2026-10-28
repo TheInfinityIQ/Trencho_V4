@@ -45,10 +45,18 @@ func test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_
 	await _elapsed(runner,main,base,60)
 	assert_int(base.rear.training.snapshot().counts.Active).is_equal(6)
 	assert_int(base.rear.training.snapshot().counts.Paused).is_equal(6)
+	var paused_work: Array[float] = []
 	for index in 12:
 		var row: Dictionary=base.rear.training.rows[index+1]
 		if index<6: assert_float(row.work).is_greater(0)
-		else: assert_float(row.work).is_zero()
+		else:
+			assert_str(row.state).is_equal("Paused")
+			paused_work.append(row.work)
+	# Earlier arrivals may work before older students report. Once all are
+	# present, the newest six retain that work without earning more under one instructor.
+	await _elapsed(runner,main,base,10)
+	for index in 6:
+		assert_float(base.rear.training.rows[index+7].work).is_equal(paused_work[index])
 	await _capture(runner,main,demo,"a11_twelve_students_one_instructor_six_paused")
 	await _number(runner,demo.get("instructor_count"),2)
 	await _elapsed(runner,main,base,10)
@@ -82,8 +90,9 @@ func test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_
 	var list: ItemList = demo.get("training_rows")
 	await _expose(list)
 	await _click(runner,list.global_position+Vector2(20,12))
-	await runner.simulate_key_pressed(KEY_END)
+	for index in 13: await runner.simulate_key_pressed(KEY_DOWN)
 	await runner.await_input_processed()
+	assert_array(Array(list.get_selected_items())).is_equal([13])
 	assert_str(demo.get("_selected_id")).is_equal(base.rear.training.rows[13].id)
 	await _expose(demo.get("training_status"))
 	await _capture(runner,main,demo,"small_same_p08_completed_training_retained")
