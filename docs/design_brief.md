@@ -40,3 +40,5 @@ The [connected rear-base integration](connected_rear_base.md) now becomes normal
 The [non-heavy catalogue](production_catalogue.md) adds the remaining seventeen fixed recipes to that live base, with essential-only normal entry and explicit expanded-access new sessions. This completes the non-heavy recipe catalogue, not heavy production, actual cards, construction or full G04/M0.
 
 The [heavy manufacturing foundation](heavy_production.md) adds the six F10 recipes, real rear-fleet order admissions and one occupied output bay to the connected base. All29 catalogue rows exist; actual produced-hull driving/parking and field-gun collection remain G07/G12, and fullG04 acceptance is assessed against its staged criteria.
+
+The [connected F06 training](training_courses.md) adds basic/all seven specialist courses and the paid physical recovery-instructor arrival to the same base. Normal12ordinary/2500/no-goods initialization remains, with real training needed for the next G07 produced-hull continuation.

@@ -153,9 +153,29 @@
         "test_every_heavy_ingredient_missing_reserved_foreign_remote_or_carried_blocks_atomic_start",
         "test_default_access_initial_yard_and_external_services_do_not_grant_or_consume_player_fleet"
       ]
+    },
+    {
+      "path": "game/training/tests/training_domain_test.gd",
+      "cases": [
+        "test_canonical_durations_prerequisites_and_access_use_declared_recipe_not_selected_recipe",
+        "test_all_eight_courses_take_exact_elapsed_time_after_actual_reporting_and_grant_no_gear_or_body",
+        "test_a11_twelve_students_one_instructor_progress_six_pause_newest_then_two_cover_all",
+        "test_access_instructor_loss_and_partitioned_time_preserve_elapsed_progress",
+        "test_withdrawal_basic_retention_single_specialist_and_queued_course_do_not_replace_completed_qualification",
+        "test_carry_to_student_safe_handoff_and_withdraw_pending_request_preserve_person_and_freight",
+        "test_recovery_one_pending_shared_personnel_and_population_reservations_are_atomic",
+        "test_normal_zero_unloader_recovery_basic_and_p08_keep_same_identity_no_goods_or_bay_clearance",
+        "test_carrying_instructor_reports_only_after_safe_deposit_and_students_wait_without_labour_overlap"
+      ]
     }
   ],
   "Input": [
+    {
+      "path": "game/training/tests/training_input_test.gd",
+      "cases": [
+        "test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_small_training_panel"
+      ]
+    },
     {
       "path": "game/production/tests/heavy_input_test.gd",
       "cases": [

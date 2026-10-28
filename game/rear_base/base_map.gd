@@ -99,6 +99,11 @@ func _draw() -> void:
 		draw_string(font, Vector2(12, size.y - 50), "Physical outputs | " + " | ".join(totals), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	else:
 		draw_string(font, Vector2(12, size.y - 50), "Physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01"), ledger.total_stock("E02"), ledger.total_stock("M11"), ledger.total_stock("M06")], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+	var training: RefCounted = simulation.rear.training
+	for row in training.rows:
+		if row.seat >= 0:
+			var at: Vector2 = map_point(training.student_position(row.person_id))
+			draw_circle(at,5,Color("84a2e5") if row.state == "Active" else Color("f3c477"),false,1.0)
 	var heavy: RefCounted = simulation.rear.heavy_production
 	var fleet: Dictionary = ledger.rear_fleet_status("army-blue")
 	var bay: String = "occupied " + ledger.inspect_entity(heavy.bay_occupant).get("design_type", "") if not heavy.bay_occupant.is_empty() else ("order accepted" if not heavy._order.is_empty() else "empty")

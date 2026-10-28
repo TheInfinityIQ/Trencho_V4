@@ -92,6 +92,32 @@ func buy_people() -> Dictionary:
 	return _ok("Eight people ordered. Their own disembarking needs no unloading labour.", [order.id])
 
 
+func recovery_instructor_offer() -> Dictionary:
+	for person in ledger.snapshot().entities:
+		if person.kind == "PERSON" and person.owner == PLAYER and person.basic_training and person.health > 0 and Rect2(0,0,240,180).has_point(person.position):
+			return {"available":false,"message":"A basic-trained person remains in the rear; assign an actual instructor."}
+	for order in _orders:
+		if order.get("recovery_instructor",false) and order.state != "Cancelled" and order.people_arrived < 1:
+			return {"available":false,"message":"One recovery instructor is already pending; wait for physical Personnel receipt."}
+	return {"available":true,"message":"Recovery P01: 100 requisition +20 transport, one population place, 90-second arrival plus physical handling."}
+
+
+func buy_recovery_instructor() -> Dictionary:
+	var offer := recovery_instructor_offer()
+	if not offer.available: return _reject("RECOVERY_UNAVAILABLE",offer.message)
+	if personnel_admitted() >= PERSONNEL_LIMIT: return _reject("PERSONNEL_QUEUE_FULL","Both shared personnel vehicle admissions are occupied/reserved.")
+	if rear_population() + incoming_people() + 1 > REAR_LIMIT: return _reject("REAR_CAPACITY_FULL","One incoming instructor needs a reserved rear population place.")
+	if _money < 120: return _reject("INSUFFICIENT_MONEY","Recovery instructor costs100 plus20 transport.")
+	var order := _new_order("Personnel",120,{})
+	order.recovery_instructor = true
+	order.expected_people = 1
+	order.people_reserved = 1
+	_money -= 120.0
+	_spent += 120
+	_event("Recovery P01 purchased; one pending/personnel vehicle/rear population place reserved",order.id)
+	return _ok("Recovery instructor purchased. Same person must disembark and reach Personnel; no unloading worker required.",[order.id])
+
+
 func cancel_order(id: String) -> Dictionary:
 	var order := _find_order(id)
 	if order.is_empty() or order.state != "Ordered" or _time >= float(order.purchased_at) + 5.0:
@@ -248,7 +274,7 @@ func snapshot() -> Dictionary:
 	return {"time": _time, "money": _money, "income": _income, "spent": _spent, "refunds": _refunds,
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
 		"order_sequence": _order_sequence, "job_sequence": _job_sequence,
-		"events": _events.duplicate(true), "ledger": ledger.snapshot()}
+		"events": _events.duplicate(true), "ledger": ledger.snapshot(), "recovery_offer":recovery_instructor_offer()}
 
 
 func audit() -> Array[String]:
@@ -261,15 +287,19 @@ func audit() -> Array[String]:
 		failures.append("Receiving storage overbooked")
 	if not is_equal_approx(_money, 2500.0 + _income - _spent + _refunds):
 		failures.append("Money does not reconcile")
+	var pending_recovery := 0
 	for order in _orders:
+		if order.recovery_instructor and order.state != "Cancelled" and order.people_arrived < 1: pending_recovery += 1
+		if order.recovery_instructor and order.expected_people != 1: failures.append("Recovery arrival must reserve one person")
 		if order.admission != (order.state not in ["Cancelled", "Complete"]):
 			failures.append("Invalid vehicle admission lifecycle: " + order.id)
 		if order.people_reserved < 0 or order.people_reserved > 8:
 			failures.append("Invalid incoming people reservation: " + order.id)
 		if order.people_arrived < 0 or order.people_arrived > order.people_exited or order.people_exited > order.passenger_ids.size():
 			failures.append("Invalid passenger exit/arrival progress: " + order.id)
-		if order.kind == "Personnel" and order.state != "Cancelled" and order.people_reserved + order.people_arrived != 8:
+		if order.kind == "Personnel" and order.state != "Cancelled" and order.people_reserved + order.people_arrived != order.expected_people:
 			failures.append("Incoming places do not reconcile with actual arrivals: " + order.id)
+	if pending_recovery > 1: failures.append("Multiple pending recovery instructors")
 	return failures
 
 
@@ -278,7 +308,7 @@ func _new_order(kind: String, cost: int, cargo: Dictionary) -> Dictionary:
 	var id := "delivery-%04d" % _order_sequence
 	var order := {"id": id, "kind": kind, "owner": PLAYER, "cost": cost,
 		"cargo": cargo.duplicate(), "unloaded": {}, "stock_ids": [], "passenger_ids": [],
-		"people_reserved": 0, "people_exited": 0, "people_arrived": 0, "admission": true, "slot": -1,
+		"expected_people":8,"recovery_instructor":false,"people_reserved": 0, "people_exited": 0, "people_arrived": 0, "admission": true, "slot": -1,
 		"state": "Ordered", "purchased_at": _time, "state_entered_at": _time,
 		"arrival_at": _time + (60.0 if kind == "Freight" else 90.0),
 		"next_at": _time + 5.0, "motion": {}}
@@ -326,7 +356,7 @@ func _pump() -> void:
 				order.people_reserved -= 1
 				order.people_arrived += 1
 				_walks.erase(walk)
-				_event("Same P00 disembarked; incoming place becomes one physical rear person", walk.person_id)
+				_event("Same arriving person disembarked; incoming place becomes one physical rear person", walk.person_id)
 				again = true
 		for id in _workers.keys():
 			var job: Dictionary = _workers[id].job
@@ -342,7 +372,7 @@ func _pump() -> void:
 			if order.state == "Berthed" and _freight_finished(order):
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
-			if order.state == "Disembarking" and order.people_arrived == 8:
+			if order.state == "Disembarking" and order.people_arrived == order.expected_people:
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
 		for id in _workers:
@@ -360,9 +390,9 @@ func _dispatch(order: Dictionary) -> void:
 			_must(ledger.add_stock(stock_id, code, order.cargo[code], 1.0, order.id, PLAYER))
 			order.stock_ids.append(stock_id)
 	else:
-		for index in range(8):
+		for index in range(order.expected_people):
 			var person_id := "%s-person-%02d" % [order.id, index + 1]
-			_must(ledger.add_person(person_id, order.id, SUPPLIER, Records.Assignment.PASSENGER))
+			_must(ledger.add_person(person_id, order.id, SUPPLIER, Records.Assignment.PASSENGER, order.recovery_instructor))
 			order.passenger_ids.append(person_id)
 	var gate := _gate(order)
 	var origin := gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)

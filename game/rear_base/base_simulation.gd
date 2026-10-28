@@ -6,6 +6,7 @@ const R01 = preload("res://game/production/r01_production.gd")
 const R02 = preload("res://game/production/r02_production.gd")
 const R26 = preload("res://game/production/r26_production.gd")
 const Support = preload("res://game/production/support_production.gd")
+const Training = preload("res://game/training/training_service.gd")
 const Heavy = preload("res://game/production/heavy_production.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
 var rear := Rear.new("Empty")
@@ -42,6 +43,13 @@ func _init(expanded: bool = false) -> void:
 	if expanded: heavy_access.assign(Heavy.CHOICES)
 	rear.heavy_production = Heavy.new(rear,heavy_access)
 	rear.materials_production = R26.new(rear)
+	var owner_ref: WeakRef = weakref(rear)
+	var access: Callable = func(id: String) -> bool:
+		var owner: RefCounted = owner_ref.get_ref()
+		for activity in [owner.production,owner.munitions_production,owner.support_production,owner.heavy_production]:
+			if activity.recipe_accessible(id): return true
+		return id == "R26"
+	rear.training = Training.new(rear,access)
 	# Begin idle; the player sets staff, material orders and production targets.
 	for activity in rear._production_activities(): activity.set_mode("Stock target")
 	rear.advance_time(0)
@@ -58,7 +66,7 @@ func snapshot() -> Dictionary:
 	return {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),
 		"materials": rear.materials_production.snapshot(), "support": rear.support_production.snapshot(),
-		"heavy":rear.heavy_production.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()

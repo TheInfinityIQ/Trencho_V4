@@ -189,6 +189,23 @@ func add_weapon(id: String, type: String, mass_kg: float, holder_id: String,
 	return _ok("Empty weapon created once.", id)
 
 
+func complete_training(person_id: String, course: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.TRAINING or person.duty_id != "students" or person.pending_assignment != -1 or not person.carrying_stock_id.is_empty():
+		return _reject("NOT_ACTUAL_STUDENT","Only the same actual student may receive completed training.")
+	if course == "P01":
+		if person.basic_training: return _reject("ALREADY_TRAINED","Basic training already completed; no duplicate qualification granted.")
+		person.basic_training = true
+		person.design_type = "P01"
+	elif course in ["P02","P03","P04","P05","P06","P07","P08"]:
+		if not person.basic_training or person.qualification != "None": return _reject("INELIGIBLE_SPECIALIST","Completed basic and one unused specialist qualification slot are required.")
+		person.qualification = course
+		person.design_type = course
+	else: return _reject("INVALID_COURSE","Choose a canonical basic/specialist course.")
+	_event("Completed " + course + " on the same person without equipment grants",person_id)
+	return _ok("Completed qualification retained on the same person.",person_id)
+
+
 func request_assignment(person_id: String, assignment: int, duty_id: String) -> Dictionary:
 	var person := _person(person_id)
 	# G01 exercises rear duty boundaries only. Military, wounds and recovery belong
