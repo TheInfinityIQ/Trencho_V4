@@ -29,10 +29,12 @@ func _parking_valid() -> bool:
 	var slot: int = _order.parking_slot
 	return parking_accessible and _slot_legal(slot) and rear.yard.occupied[slot].is_empty() and rear.yard.reserved[slot] == _order.id
 
-func _slot_legal(slot: int) -> bool:
+func _slot_legal(slot: int, hull_type: String = "") -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if slot < 0 or slot >= rear.yard.PARKING_POSITIONS.size(): return false
-	var size: Vector2 = Specs.TYPES[_spec.output_type].footprint
+	var proposed_type: String = _spec.output_type if hull_type.is_empty() else hull_type
+	if not Specs.TYPES.has(proposed_type): return false
+	var size: Vector2 = Specs.TYPES[proposed_type].footprint
 	var box := Rect2(rear.yard.PARKING_POSITIONS[slot] - size / 2.0,size)
 	var park: Array = rear.Layout.FACILITIES.park
 	if not Rect2(park[1]-park[2]/2.0,park[2]).encloses(box): return false
@@ -106,6 +108,7 @@ func _create_output() -> Dictionary:
 	if not result.ok: return result
 	bay_occupant = batch.output_id
 	if _order.parking_slot >= 0: rear.yard.reserved[_order.parking_slot] = bay_occupant
+	if _order.parking_slot >= 0 and rear.vehicles != null: rear.vehicles.register_output(bay_occupant,_order.parking_slot)
 	_order.state = "Completed"
 	_order.output_id = bay_occupant
 	_order.completed_at = rear.time
@@ -170,6 +173,10 @@ func clearance_reason() -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var object: Dictionary = rear.ledger.inspect_entity(bay_occupant)
 	if object.design_type == "E13": return "Awaiting field-gun collection: two loaders / 20 seconds."
+	if rear.vehicles != null and rear.vehicles.vehicles.has(bay_occupant):
+		var state: String = rear.vehicles.vehicles[bay_occupant].state
+		if state == "Moving to F11": return "F10 bay committed until this hull physically reaches its promised F11 place."
+		if state == "Stopped on lane": return "Parking route inaccessible; same hull stopped on lane with F10 bay and F11 claim retained."
 	var driver := false
 	for id in object.get("crew",[]):
 		var person: Dictionary = rear.ledger.inspect_entity(id)

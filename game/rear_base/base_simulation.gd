@@ -8,6 +8,7 @@ const R26 = preload("res://game/production/r26_production.gd")
 const Support = preload("res://game/production/support_production.gd")
 const Training = preload("res://game/training/training_service.gd")
 const Heavy = preload("res://game/production/heavy_production.gd")
+const Vehicles = preload("res://game/vehicles/vehicle_activity.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
 var rear := Rear.new("Empty")
 var receiving: RefCounted
@@ -28,6 +29,7 @@ func _init(expanded: bool = false) -> void:
 		# Exclude receiving's own reservations here; G02 subtracts them exactly once.
 		return maxf(0, store.capacity - owner.ledger.loose_stock_mass_at("receiving") - owner._reserved_space("receiving") + owner.receiving.reserved_storage_kg())
 	rear.receiving = receiving
+	rear.vehicles = Vehicles.new(rear)
 	for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
 	var workshop_access: Array[String] = []
 	var munitions_access: Array[String] = []
@@ -66,7 +68,8 @@ func snapshot() -> Dictionary:
 	return {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),
 		"materials": rear.materials_production.snapshot(), "support": rear.support_production.snapshot(),
-		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
+		"vehicles":rear.vehicles.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()

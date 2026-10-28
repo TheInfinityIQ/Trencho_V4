@@ -252,6 +252,12 @@
         "test_normal_launch_r32_raw_explosives_haul_access_guard_and_physical_tank_shells",
         "test_normal_launch_r33_raw_explosives_haul_and_physical_autocannon_rounds"
       ]
+    },
+    {
+      "path": "game/vehicles/tests/vehicle_input_test.gd",
+      "cases": [
+        "test_normal_rear_vehicle_controls_report_refuel_drive_same_produced_hull_and_fit_small_view"
+      ]
     }
   ]
 }
