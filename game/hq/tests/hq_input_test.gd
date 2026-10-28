@@ -2,7 +2,42 @@ extends GdUnitTestSuite
 const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 
+func test_normal_player_dispatch_shows_automatic_hq_issue_without_manual_commands() -> void:
+	var diagnostic_before := OS.get_environment("TRENCHO_HQ_DIAGNOSTICS")
+	OS.set_environment("TRENCHO_HQ_DIAGNOSTICS","")
+	var runner := scene_runner("res://game/main/main.tscn")
+	var main := runner.scene() as Control
+	await runner.simulate_frames(3)
+	var demo: Control = main.get("_host").get_child(0)
+	var base := Base.new(true)
+	demo.set("simulation",base)
+	demo.get("base_map").set("simulation",base)
+	assert_bool(base.rear.ledger.add_person("hq-auto-ui","hq-reserve",base.rear.PLAYER,Records.Assignment.HQ_RESERVE,true).ok).is_true()
+	base.rear.dispatch.hq_reserve["hq-auto-ui"] = "Occupied"
+	base.rear.dispatch.military_people["hq-auto-ui"] = "hq-ui-receipt"
+	assert_bool(base.rear.ledger.add_weapon("hq-auto-ui-rifle","E01",4.0,"hq-stock",base.rear.PLAYER,"E02",30).ok).is_true()
+	assert_bool(base.rear.ledger.add_stock("hq-auto-ui-rounds","E02",30,0.02,"hq-stock",base.rear.PLAYER).ok).is_true()
+	base.rear.advance_time(0)
+	demo.call("_refresh")
+	assert_int((demo.get("tabs") as TabContainer).get_tab_count()).is_equal(8)
+	assert_object(demo.get("hq_person")).is_null()
+	var bar: TabBar = demo.get("tabs").get_tab_bar()
+	bar.ensure_tab_visible(7)
+	await runner.simulate_frames(2)
+	await _click(runner,bar.global_position+bar.get_tab_rect(7).get_center())
+	assert_int((demo.get("tabs") as TabContainer).current_tab).is_equal(7)
+	assert_str((demo.get("dispatch_status") as Label).text).contains("HQ command")
+	assert_str((demo.get("dispatch_status") as Label).text).contains("reserved")
+	base.rear.advance_time(40)
+	demo.call("_refresh")
+	assert_str(base.rear.ledger.inspect_entity("hq-auto-ui-rifle").holder_id).is_equal("hq-auto-ui")
+	assert_int(base.rear.hq._held_rounds(base.rear,"hq-auto-ui")).is_equal(30)
+	assert_array(base.audit()).is_empty()
+	OS.set_environment("TRENCHO_HQ_DIAGNOSTICS",diagnostic_before)
+
 func test_hq_issue_panel_click_reserves_then_physically_issues_same_person() -> void:
+	var diagnostic_before := OS.get_environment("TRENCHO_HQ_DIAGNOSTICS")
+	OS.set_environment("TRENCHO_HQ_DIAGNOSTICS","1")
 	var window := get_tree().root
 	var previous := {"size":window.size,"content":window.content_scale_size}
 	window.size = Vector2i(1280,720)
@@ -47,6 +82,7 @@ func test_hq_issue_panel_click_reserves_then_physically_issues_same_person() -> 
 	assert_int(image.save_png("res://.artifacts/hq/issue_small.png")).is_equal(OK)
 	window.size = previous.size
 	window.content_scale_size = previous.content
+	OS.set_environment("TRENCHO_HQ_DIAGNOSTICS",diagnostic_before)
 
 func _press(runner: GdUnitSceneRunner, root: Control, label: String) -> void:
 	var matches: Array[Button] = []

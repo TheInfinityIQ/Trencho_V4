@@ -9,6 +9,8 @@ var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var weapon_promises: Dictionary = {}
 var _sequence := 0
+var auto_status := "Waiting for physically unloaded HQ stock and eligible recipients."
+const HULL_TARGETS := {"T03":{"E02":900},"T04":{"E26":180},"T05":{"E25":30,"E02":900}}
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -29,7 +31,7 @@ func request_person_weapon(person_id: String, weapon_id: String) -> Dictionary:
 	var weapon: Dictionary = rear.ledger.inspect_entity(weapon_id)
 	if not _person_ready(person): return _fail("Only an actual HQ Reserve person may collect equipment at HQ.")
 	if _target_busy(person_id): return _fail("This person already has a physical issue job.")
-	if weapon.is_empty() or weapon.kind != "WEAPON" or weapon.holder_id != "hq-stock" or weapon.owner != rear.PLAYER or weapon.state == "Damaged" or weapon_promises.has(weapon_id): return _fail("Select one unpromised intact weapon physically unloaded at HQ stock.")
+	if weapon.is_empty() or weapon.kind != "WEAPON" or weapon.holder_id != "hq-stock" or weapon.owner != rear.PLAYER or not weapon.functional or weapon_promises.has(weapon_id): return _fail("Select one unpromised intact weapon physically unloaded at HQ stock.")
 	if person.contents_mass_kg+weapon.unit_mass_kg+weapon.contents_mass_kg > 25.0+EPS: return _fail("Intact weapon and retained rounds exceed this person's 25 kg load.")
 	_sequence += 1
 	var id := "hq-issue-%04d" % _sequence
@@ -150,7 +152,83 @@ func settle() -> bool:
 		elif row.state == "Blocked Carry" and _vehicle_ready(rear.ledger.inspect_entity(row.target)):
 			_finish_drop(row)
 			changed = row.state != "Blocked Carry" or changed
+	changed = _auto_request() or changed
 	return changed
+
+func _auto_request() -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	for row in jobs.values():
+		if row.get("automatic",false) and row.state not in ["Complete","Cancelled"]:
+			auto_status = "HQ command handling %s for %s: %s" % [row.kind,row.target,row.blocker]
+			return false
+	if rear.dispatch.military_hulls.is_empty() and rear.dispatch.hq_reserve.is_empty():
+		auto_status = "Waiting for an admitted HQ recipient; incoming people and hulls are not eligible yet."
+		return false
+	var available: Dictionary = snapshot().available
+	var first_shortage := ""
+	var hull_ids: Array = rear.dispatch.military_hulls.keys()
+	hull_ids.sort()
+	for id in hull_ids:
+		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		if not _vehicle_ready(hull) or _target_busy(id): continue
+		for type in HULL_TARGETS.get(hull.design_type,{}):
+			var needed: int = int(HULL_TARGETS[hull.design_type][type])-int(hull.ammunition.get(type,0))
+			var quantity: int = mini(needed,int(available.get(type,0)))
+			if quantity > 0 and _auto_accept(request_vehicle_ammo(id,type,quantity)):
+				auto_status = "HQ command assigned %d unloaded %s to same stopped %s rack." % [quantity,type,id]
+				return true
+			if needed > 0 and quantity == 0 and first_shortage.is_empty(): first_shortage = "Need %d unloaded %s at HQ for stopped %s rack." % [needed,type,id]
+		var fuel_units: int = mini(int(available.get("M08",0)),int(floorf(float(hull.vehicle_spec.tank_capacity)-float(hull.fuel)+EPS)))
+		if fuel_units > 0 and _auto_accept(request_vehicle_fuel(id,fuel_units)):
+			auto_status = "HQ command assigned %d unloaded M08 to same stopped %s tank." % [fuel_units,id]
+			return true
+		if fuel_units == 0 and float(hull.fuel)+1.0 <= float(hull.vehicle_spec.tank_capacity)+EPS and first_shortage.is_empty(): first_shortage = "Need unloaded M08 at HQ for stopped %s tank." % id
+	var people_ids: Array = rear.dispatch.hq_reserve.keys()
+	people_ids.sort()
+	# Finish a named person's minimum ammunition before promising the next rifle.
+	for id in people_ids:
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if not _auto_person_ready(rear,id,person) or _target_busy(id) or not _held_weapon(rear,id,"E01"): continue
+		var needed: int = 30-_held_rounds(rear,id)
+		if needed > 0 and int(available.get("E02",0)) >= needed and _auto_accept(request_person_stock(id,"E02",needed)):
+			auto_status = "HQ command assigned %d matching unloaded E02 to %s." % [needed,id]
+			return true
+		if needed > int(available.get("E02",0)) and first_shortage.is_empty(): first_shortage = "Need %d more unloaded E02 at HQ for %s's minimum rifle load." % [needed-int(available.get("E02",0)),id]
+	for id in people_ids:
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if not _auto_person_ready(rear,id,person) or _target_busy(id) or _held_weapon(rear,id,"E01"): continue
+		if int(available.get("E02",0)) < 30-_held_rounds(rear,id): continue
+		for weapon in rear.ledger.snapshot().entities:
+			if weapon.kind == "WEAPON" and weapon.design_type == "E01" and weapon.holder_id == "hq-stock" and weapon.owner == rear.PLAYER and not weapon_promises.has(weapon.id):
+				if _auto_accept(request_person_weapon(id,weapon.id)):
+					auto_status = "HQ command assigned same unloaded %s to eligible reserve %s." % [weapon.id,id]
+					return true
+		if first_shortage.is_empty(): first_shortage = "Need one intact unloaded E01 at HQ for trained generic reserve %s." % id
+	auto_status = first_shortage if not first_shortage.is_empty() else "Waiting for eligible stopped military hull or trained generic HQ Reserve person and matching unloaded HQ stock."
+	return false
+
+func _auto_accept(result: Dictionary) -> bool:
+	if not result.ok: return false
+	jobs[result.id].automatic = true
+	return true
+
+func _auto_person_ready(rear: RefCounted, id: String, person: Dictionary) -> bool:
+	return rear.dispatch.military_people.has(id) and rear.dispatch.hq_reserve.get(id,"") == "Occupied" and _person_ready(person) and person.basic_training and person.qualification == "None"
+
+func _held_weapon(rear: RefCounted, person_id: String, type: String) -> bool:
+	for entity in rear.ledger.snapshot().entities:
+		if entity.kind == "WEAPON" and entity.design_type == type and entity.holder_id == person_id: return true
+	return false
+
+func _held_rounds(rear: RefCounted, person_id: String) -> int:
+	var count := 0
+	for entity in rear.ledger.snapshot().entities:
+		if entity.kind != "STOCK" or entity.design_type != "E02" or entity.quantity <= 0: continue
+		if entity.holder_id == person_id: count += entity.quantity
+		else:
+			var holder: Dictionary = rear.ledger.inspect_entity(entity.holder_id)
+			if holder.get("kind","") == "WEAPON" and holder.holder_id == person_id: count += entity.quantity
+	return count
 
 func _finish_step(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -291,13 +369,19 @@ func snapshot() -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var available: Dictionary = {}
 	var reserved: Dictionary = {}
+	var weapons_available: Dictionary = {}
+	var weapons_promised: Dictionary = {}
 	for stock in rear.ledger.snapshot().entities:
-		if stock.kind != "STOCK" or stock.holder_id != "hq-stock" or stock.quantity <= 0: continue
-		available[stock.design_type] = int(available.get(stock.design_type,0))+int(stock.available)
-		reserved[stock.design_type] = int(reserved.get(stock.design_type,0))+int(stock.reserved)
+		if stock.holder_id != "hq-stock" or stock.quantity <= 0: continue
+		if stock.kind == "STOCK":
+			available[stock.design_type] = int(available.get(stock.design_type,0))+int(stock.available)
+			reserved[stock.design_type] = int(reserved.get(stock.design_type,0))+int(stock.reserved)
+		elif stock.kind == "WEAPON":
+			var bucket: Dictionary = weapons_promised if weapon_promises.has(stock.id) else weapons_available
+			bucket[stock.design_type] = int(bucket.get(stock.design_type,0))+1
 	var rows: Array[Dictionary] = []
 	for row in jobs.values(): rows.append(row.duplicate(true))
-	return {"rows":rows,"available":available,"reserved":reserved,"occupied_stock_kg":rear.ledger.inspect_entity("hq-stock").contents_mass_kg,"stock_limit_kg":rear.dispatch.HQ_STOCK_KG}
+	return {"rows":rows,"available":available,"reserved":reserved,"weapons_available":weapons_available,"weapons_promised":weapons_promised,"occupied_stock_kg":rear.ledger.inspect_entity("hq-stock").contents_mass_kg,"stock_limit_kg":rear.dispatch.HQ_STOCK_KG,"auto_status":auto_status}
 
 func audit() -> Array[String]:
 	var errors: Array[String] = []

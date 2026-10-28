@@ -113,7 +113,7 @@ func _ready() -> void:
 	_training_panel(_panel("Train"))
 	_vehicles_panel(_panel("Vehicles"))
 	_dispatch_panel(_panel("Dispatch"))
-	_hq_panel(_panel("HQ Issue"))
+	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
@@ -415,7 +415,7 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 	dispatch_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func _hq_panel(box: VBoxContainer) -> void:
-	_label(box,"Issue only unloaded goods at HQ. A named handler and the recipient complete timed local work.")
+	_label(box,"Development diagnostics: manually exercise local HQ handoffs. Normal HQ command selects recipients automatically.")
 	hq_person = _option(box,"Same person in HQ Reserve",[])
 	hq_hull = _option(box,"Same stopped military hull at HQ berth",[])
 	hq_type = _option(box,"Unreserved unloaded stock type",[])
@@ -449,6 +449,7 @@ func _refresh_hq_option(option: OptionButton, entries: Array[Dictionary]) -> voi
 	if option.selected < 0 and option.item_count > 0: option.select(0)
 
 func _refresh_hq(view: Dictionary) -> void:
+	if hq_person == null: return
 	var people: Array[Dictionary] = []
 	var hulls: Array[Dictionary] = []
 	var weapons: Array[Dictionary] = []
@@ -467,7 +468,7 @@ func _refresh_hq(view: Dictionary) -> void:
 	_refresh_hq_option(hq_type,types)
 	_refresh_hq_option(hq_weapon,weapons)
 	_fill(hq_rows,hq_ids,view.hq.rows,func(row: Dictionary) -> String: return "%s | %s %s | %d/%d | %s | %s" % [row.id,row.kind,row.target,row.issued,row.requested,row.state,row.blocker])
-	hq_status.text = "HQ stock %.1f/%.0f kg | available %s | reserved %s\nActual issue changes holdings only when local handoff finishes. Remote delivery and transfer are separate work." % [view.hq.occupied_stock_kg,view.hq.stock_limit_kg,str(view.hq.available),str(view.hq.reserved)]
+	hq_status.text = "HQ stock %.1f/%.0f kg | available %s | reserved %s | intact weapons %s | promised weapons %s\nActual issue changes holdings only when local handoff finishes. Remote delivery and transfer are separate work." % [view.hq.occupied_stock_kg,view.hq.stock_limit_kg,str(view.hq.available),str(view.hq.reserved),str(view.hq.weapons_available),str(view.hq.weapons_promised)]
 
 func _dispatch_profile() -> Dictionary:
 	var profile := {"surface":dispatch_surface.get_item_text(dispatch_surface.selected).get_slice(" ",0),"corridor_width":dispatch_clearance.value}
@@ -626,7 +627,10 @@ func _refresh_dispatch(view: Dictionary) -> void:
 	_refresh_dispatch_choices(view)
 	_fill(dispatch_rows,dispatch_ids,view.dispatch.rows,func(row: Dictionary) -> String: return "%s | %s | %s %s | %s" % [row.id,row.mode,row.hull,row.state,row.blocker])
 	if dispatch_rows.get_selected_items().is_empty() and dispatch_rows.item_count > 0: dispatch_rows.select(dispatch_rows.item_count-1)
-	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg]
+	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg\nHQ local available %s | reserved %s" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg,str(view.hq.available),str(view.hq.reserved)]
+	dispatch_status.text += "\nHQ intact weapons %s | promised %s\nHQ command: %s" % [str(view.hq.weapons_available),str(view.hq.weapons_promised),str(view.hq.auto_status)]
+	for job in view.hq.rows:
+		if job.state not in ["Complete","Cancelled"]: dispatch_status.text += "\nHQ %s %s: %d/%d %s | %s" % [job.kind,job.target,job.issued,job.requested,job.state,job.blocker]
 	if dispatch_rows.get_selected_items().is_empty(): return
 	var id: String = dispatch_ids[dispatch_rows.get_selected_items()[0]]
 	for row in view.dispatch.rows:

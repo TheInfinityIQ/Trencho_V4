@@ -1,6 +1,7 @@
 extends SceneTree
 const Base = preload("res://game/rear_base/base_simulation.gd")
 const Specs = preload("res://game/production/vehicle_specs.gd")
+const Fixed = preload("res://game/production/fixed_production.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 var failures := 0
 var checks := 0
@@ -9,6 +10,8 @@ func _initialize() -> void:
 	_test_a24_and_local_handoff()
 	_test_person_and_cancellation()
 	_test_carried_cancel_returns_to_hq()
+	_test_automatic_hq_command()
+	_test_real_dispatch_receipt_auto_issue()
 	print("G14 HQ regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -103,3 +106,71 @@ func _test_carried_cancel_returns_to_hq() -> void:
 	_expect(rear.hq.jobs[job.id].state == "Cancelled" and rear.hq.snapshot().available.E25 == 3,"carried shells returned to HQ stock, claim released")
 	_expect(rear.ledger.inspect_entity(tank).ammunition.get("E25",0) == 0,"cancelled carry never refills tank")
 	_expect(base.audit().is_empty(),"cancelled actual carry remains conserved: "+str(base.audit()))
+
+func _test_automatic_hq_command() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	var tank := _tank(base)
+	_expect(ledger.move_entity(tank,"hq-berth",Vector2(1640,91)).ok,"admitted same T05 stops at HQ")
+	rear.dispatch.military_hulls[tank] = "g14-receipt"
+	_expect(ledger.add_stock("g14-auto-shells","E25",3,10.0,"hq-stock",rear.PLAYER).ok,"HQ has three actual shells")
+	_expect(ledger.add_stock("g14-auto-fuel","M08",5,1.0,"hq-stock",rear.PLAYER).ok,"HQ has five actual fuel units")
+	_expect(ledger.add_person("g14-auto-trained","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true).ok,"trained generic military reserve")
+	_expect(ledger.add_person("g14-auto-untrained","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,false).ok,"untrained reserve must not receive a generic rifle package")
+	rear.dispatch.hq_reserve["g14-auto-trained"] = "Occupied"
+	rear.dispatch.hq_reserve["g14-auto-untrained"] = "Occupied"
+	rear.dispatch.military_people["g14-auto-trained"] = "g14-receipt"
+	rear.dispatch.military_people["g14-auto-untrained"] = "g14-receipt"
+	_expect(ledger.add_weapon("g14-auto-rifle","E01",4.0,"hq-stock",rear.PLAYER,"E02",30).ok,"one unloaded rifle")
+	_expect(ledger.add_stock("g14-auto-rounds","E02",930,0.02,"hq-stock",rear.PLAYER).ok,"hull target plus thirty unloaded matching personal rounds")
+	rear.advance_time(0)
+	_expect(ledger.inspect_entity(tank).ammunition.get("E25",0) == 0 and ledger.inspect_entity(tank).fuel == 0.0,"automatic HQ choice first reserves, never instantly fills")
+	_expect(rear.hq.jobs.values()[0].automatic and rear.hq.jobs.values()[0].kind == "Vehicle Ammo","command prioritizes admitted stopped hull matching rack")
+	rear.advance_time(60)
+	_expect(ledger.inspect_entity(tank).ammunition.E25 == 3 and ledger.inspect_entity(tank).fuel == 5.0,"automatic hull rounds/fuel use real timed local carries")
+	_expect(ledger.inspect_entity("g14-auto-rifle").holder_id == "g14-auto-trained","HQ command selects eligible trained generic recipient automatically: "+str(rear.hq.snapshot().rows)+" / "+str(rear.hq.auto_status))
+	_expect(rear.hq._held_rounds(rear,"g14-auto-trained") == 30,"same recipient receives minimum thirty compatible rounds: "+str(rear.hq.snapshot().rows))
+	_expect(ledger.inspect_entity("g14-auto-untrained").contents_mass_kg == 0.0,"untrained person receives no unsolicited package")
+	_expect(rear.hq.snapshot().reserved.get("E25",0) == 0 and rear.hq.snapshot().reserved.get("E02",0) == 0,"all automatic promises resolve against physical stock")
+	_expect(base.audit().is_empty(),"automatic HQ issue conserves identities and quantities: "+str(base.audit()))
+
+func _test_real_dispatch_receipt_auto_issue() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var heavy: RefCounted = rear.heavy_production
+	heavy.request_recipe("R28")
+	heavy.set_mode("Continuous")
+	_expect(heavy.accept_order().ok,"real T02 production accepted")
+	for type in Fixed.RECIPES.R28.inputs:
+		rear.ledger.add_stock("g14-real-input-"+type,type,Fixed.RECIPES.R28.inputs[type],1.0,"vehicle_input",rear.PLAYER)
+	rear.set_target("vehicle_works",8)
+	rear.advance_time(1000)
+	var hull: String = heavy.bay_occupant
+	_expect(not hull.is_empty(),"real T02 output exists at F10")
+	if hull.is_empty(): return
+	rear.add_person("g14-real-driver",true,"P08")
+	_expect(rear.vehicles.assign_station(hull,"g14-real-driver","Driver").ok,"qualified real driver assigned")
+	rear.advance_time(160)
+	rear.ledger.add_stock("g14-real-fuel","M08",12,1.0,"depot",rear.PLAYER)
+	_expect(rear.vehicles.request_refuel(hull,"base-person-11",12).ok,"real T02 receives rear fuel")
+	rear.advance_time(200)
+	_expect(rear.vehicles.start_drive(hull).ok,"real T02 drives to F11")
+	rear.advance_time(100)
+	rear.add_person("g14-real-recruit",true)
+	rear.ledger.add_weapon("g14-real-rifle","E01",4.0,"dispatch",rear.PLAYER,"E02",30)
+	rear.ledger.add_stock("g14-real-rounds","E02",30,0.02,"dispatch",rear.PLAYER)
+	rear.set_target("dispatch",2)
+	rear.advance_time(160)
+	var manifest: Dictionary = rear.dispatch.accept(hull,"Strategic Delivery",["g14-real-recruit"],{"E01":1,"E02":30})
+	_expect(manifest.ok,"real trained recruit and matching rifle/rounds committed")
+	if not manifest.ok: return
+	rear.advance_time(650)
+	_expect(rear.dispatch.manifests[manifest.id].state == "Loaded Waiting Dispatch","real manifest finishes loading")
+	_expect(rear.dispatch.depart(manifest.id).ok,"real T02 departs on measured route")
+	rear.advance_time(850)
+	_expect(rear.dispatch.manifests[manifest.id].state == "Complete","same T02 unloads and returns")
+	_expect(rear.ledger.inspect_entity("g14-real-recruit").assignment == "HQ Reserve","real recruit joins HQ Reserve after exit/walk")
+	_expect(rear.ledger.inspect_entity("g14-real-rifle").holder_id == "g14-real-recruit","HQ command automatically issued same unloaded rifle after receipt")
+	_expect(rear.hq._held_rounds(rear,"g14-real-recruit") == 30,"HQ command issued same thirty rounds after actual unload")
+	_expect(base.audit().is_empty(),"G12/G13 arrival to G14 actual issue conserves identities: "+str(base.audit()))
