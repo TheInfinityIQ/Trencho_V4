@@ -25,6 +25,7 @@ var support_production: RefCounted # Explicit F09 owner; null in retained diagno
 var heavy_production: RefCounted # One F10 heavy bay/admission owner.
 var training: RefCounted # Optional F06 elapsed-time courses; separate from operator-work.
 var vehicles: RefCounted # Optional G07 handling on this same clock and actor pool.
+var dispatch: RefCounted # Optional G12 manifests on the same identities and event clock.
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -49,7 +50,7 @@ func _init(fixture: String = "A05") -> void:
 		add_person("worker-%02d" % i)
 	add_person("instructor-01", true)
 	add_person("driver-01", true, "P08")
-	ledger.add_person("away-crew", "away", PLAYER, Records.Assignment.STRATEGIC_CREW, true, "P08")
+	ledger.add_person("away-crew", "away", PLAYER, Records.Assignment.STRATEGIC_CREW, true, "P08", "Held Home")
 	ledger.add_carrier("supplier-hull", "rear", "supplier", "supplier")
 	ledger.add_person("supplier-driver", "supplier-hull", "supplier", Records.Assignment.STRATEGIC_CREW, true, "P08")
 	if fixture == "Driver":
@@ -257,6 +258,7 @@ func advance_time(seconds: float) -> Dictionary:
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
+		if dispatch != null: next = minf(next,dispatch.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -278,6 +280,7 @@ func advance_time(seconds: float) -> Dictionary:
 				ledger.move_entity(a.id, "rear", Layout.position(a.motion.path, distance))
 		yard.advance_to(next)
 		if vehicles != null: vehicles.advance_to(next)
+		if dispatch != null: dispatch.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -449,6 +452,7 @@ func _settle() -> void:
 	for _iteration in 1000:
 		var changed: bool = yard.complete_due()
 		if vehicles != null: changed = vehicles.settle() or changed
+		if dispatch != null: changed = dispatch.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)

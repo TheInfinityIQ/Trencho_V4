@@ -403,6 +403,7 @@ func audit() -> Array[String]:
 	var errors: Array[String] = []
 	for id in vehicles:
 		var row: Dictionary = vehicles[id]
+		if rear.ledger.inspect_entity(id).get("fleet_domain","") == "Military": continue # G12 actual HQ receipt ends rear ownership.
 		if row.state == "In F10" and rear.heavy_production.bay_occupant != id: errors.append("Produced hull lost F10 occupancy: " + id)
 		if row.state in ["Moving to F11","Stopped on lane"] and rear.heavy_production.bay_occupant != id: errors.append("F10 promise released before physical clearance: " + id)
 		if row.state == "Parked" and rear.yard.occupied[row.slot] != id: errors.append("Produced hull lost F11 occupancy: " + id)

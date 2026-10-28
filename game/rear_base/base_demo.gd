@@ -3,6 +3,7 @@ extends Control
 const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
+const Fixed = preload("res://game/production/fixed_production.gd")
 var simulation := Simulation.new()
 var base_map: Control
 var tabs: TabContainer
@@ -43,6 +44,17 @@ var vehicle_person: OptionButton
 var vehicle_station: OptionButton
 var vehicle_fuel_units: SpinBox
 var vehicle_status: Label
+var dispatch_hull: OptionButton
+var dispatch_mode: OptionButton
+var dispatch_people: ItemList
+var dispatch_person_ids: Array[String] = []
+var dispatch_gun: OptionButton
+var dispatch_cargo_type: OptionButton
+var dispatch_cargo_count: SpinBox
+var dispatch_draft: Dictionary = {}
+var dispatch_rows: ItemList
+var dispatch_ids: Array[String] = []
+var dispatch_status: Label
 var _pending_token: int = -1
 var heavy_controls: VBoxContainer
 var heavy_status: Label
@@ -89,6 +101,7 @@ func _ready() -> void:
 	_inspect_panel(_panel("Info"))
 	_training_panel(_panel("Train"))
 	_vehicles_panel(_panel("Vehicles"))
+	_dispatch_panel(_panel("Dispatch"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
@@ -203,7 +216,7 @@ func _start_session() -> void:
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
-	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works", "training"]:
+	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works", "dispatch", "training"]:
 		var spin := _spin(box, duty.capitalize(), simulation.rear.requests[duty].positions)
 		targets[duty] = spin
 		spin.value_changed.connect(func(value: float) -> void: _result(simulation.rear.set_target(duty, int(value))))
@@ -331,6 +344,51 @@ func _vehicles_panel(box: VBoxContainer) -> void:
 	vehicle_status = _label(box,"")
 	vehicle_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
+func _dispatch_panel(box: VBoxContainer) -> void:
+	_label(box,"G12 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew, Fleet permanently transfers them at HQ.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dispatch_hull = _option(box,"Same F10-produced parked hull",[])
+	dispatch_mode = _option(box,"Mode",["Strategic Delivery","Fleet Transfer"])
+	_label(box,"Select named rear passengers (Ctrl-click for multiple). They remain separate from crew.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dispatch_people = _list(box,105)
+	dispatch_people.select_mode = ItemList.SELECT_MULTI
+	dispatch_gun = _option(box,"Same packed E13 at F10",["No field gun"])
+	var types: Array = ["E01","E02"]
+	for type in Fixed.RECIPES.values():
+		if type.output_type not in types and type.output_type != "E13": types.append(type.output_type)
+	for index in range(1,12):
+		var code := "M%02d" % index
+		if code not in types: types.append(code)
+	dispatch_cargo_type = _option(box,"Cargo type (real stock or intact weapon)",types)
+	dispatch_cargo_count = _spin(box,"Whole cargo units to add",5000,1)
+	_button(box,"Add requested cargo line",func() -> void:
+		var type := dispatch_cargo_type.get_item_text(dispatch_cargo_type.selected)
+		dispatch_draft[type] = int(dispatch_draft.get(type,0)) + int(dispatch_cargo_count.value)
+		_refresh())
+	_button(box,"Clear requested cargo lines",func() -> void: dispatch_draft.clear(); _refresh())
+	_button(box,"Accept named manifest and claims",func() -> void:
+		if dispatch_hull.selected < 0: _result({"ok":false,"message":"Select an actual parked produced hull."}); return
+		var passengers: Array = []
+		for index in dispatch_people.get_selected_items(): passengers.append(dispatch_person_ids[index])
+		var guns: Array = []
+		if dispatch_gun.selected > 0: guns.append(dispatch_gun.get_item_metadata(dispatch_gun.selected))
+		_result(simulation.rear.dispatch.accept(dispatch_hull.get_item_metadata(dispatch_hull.selected),dispatch_mode.get_item_text(dispatch_mode.selected),passengers,dispatch_draft,guns))
+		_refresh())
+	_label(box,"Accepted manifests | requested, reserved, staged, onboard, arrived and unloaded use the same physical IDs.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dispatch_rows = _list(box,110)
+	dispatch_rows.item_selected.connect(func(_index: int) -> void: _refresh())
+	_button(box,"Depart complete selected manifest",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.depart(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
+	_button(box,"Change selected manifest mode before departure",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.change_mode(dispatch_ids[dispatch_rows.get_selected_items()[0]],dispatch_mode.get_item_text(dispatch_mode.selected))))
+	_button(box,"Add same F10 field gun to selected manifest",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty() and dispatch_gun.selected > 0: _result(simulation.rear.dispatch.add_field_gun(dispatch_ids[dispatch_rows.get_selected_items()[0]],dispatch_gun.get_item_metadata(dispatch_gun.selected))))
+	_button(box,"Cancel selected predeparture manifest",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.cancel(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
+	_button(box,"Request safe return before HQ receipt",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.request_safe_return(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
+	dispatch_status = _label(box,"")
+	dispatch_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
 func _vehicle_id() -> String:
 	return vehicle_ids[vehicle_rows.get_selected_items()[0]] if not vehicle_rows.get_selected_items().is_empty() else ""
 
@@ -440,9 +498,61 @@ func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callab
 		list.set_item_tooltip(ids.size() - 1, summary)
 		if entry.id == selected: list.select(ids.size() - 1)
 
+func _refresh_dispatch_choices(view: Dictionary) -> void:
+	var chosen_hull: String = str(dispatch_hull.get_item_metadata(dispatch_hull.selected)) if dispatch_hull.selected >= 0 else ""
+	var hull_ids: Array[String] = []
+	for row in view.vehicles.rows:
+		if row.state == "Parked": hull_ids.append(row.id)
+	var same_hulls: bool = dispatch_hull.item_count == hull_ids.size()
+	if same_hulls:
+		for index in hull_ids.size():
+			if dispatch_hull.get_item_metadata(index) != hull_ids[index]: same_hulls = false; break
+	if not same_hulls:
+		dispatch_hull.clear()
+		for id in hull_ids:
+			dispatch_hull.add_item(id+" / "+simulation.rear.ledger.inspect_entity(id).design_type)
+			dispatch_hull.set_item_metadata(dispatch_hull.item_count-1,id)
+			if id == chosen_hull: dispatch_hull.select(dispatch_hull.item_count-1)
+		if dispatch_hull.selected < 0 and dispatch_hull.item_count > 0: dispatch_hull.select(0)
+	var gun: String = view.heavy.bay.occupant
+	if gun.is_empty() or simulation.rear.ledger.inspect_entity(gun).design_type != "E13": gun = ""
+	var chosen_gun: String = str(dispatch_gun.get_item_metadata(dispatch_gun.selected)) if dispatch_gun.selected > 0 else ""
+	if dispatch_gun.item_count != (2 if not gun.is_empty() else 1) or (not gun.is_empty() and dispatch_gun.get_item_metadata(1) != gun):
+		dispatch_gun.clear()
+		dispatch_gun.add_item("No field gun")
+		if not gun.is_empty():
+			dispatch_gun.add_item(gun+" at F10")
+			dispatch_gun.set_item_metadata(1,gun)
+			if chosen_gun == gun: dispatch_gun.select(1)
+	var ids: Array[String] = []
+	for p in view.rear.people:
+		if p.owner == "army-blue" and p.rear_place == "Occupied" and p.crew_station.is_empty() and simulation.rear.actors.has(p.id): ids.append(p.id)
+	if ids != dispatch_person_ids:
+		var selected: Array[String] = []
+		for index in dispatch_people.get_selected_items(): selected.append(dispatch_person_ids[index])
+		dispatch_people.clear()
+		dispatch_person_ids = ids
+		for index in ids.size():
+			var p: Dictionary = simulation.rear.ledger.inspect_entity(ids[index])
+			dispatch_people.add_item("%s %s | %s at %s" % [p.id,p.design_type,p.assignment,str(p.position)])
+			if ids[index] in selected: dispatch_people.select(index,false)
+
+func _refresh_dispatch(view: Dictionary) -> void:
+	_refresh_dispatch_choices(view)
+	_fill(dispatch_rows,dispatch_ids,view.dispatch.rows,func(row: Dictionary) -> String: return "%s | %s | %s %s | %s" % [row.id,row.mode,row.hull,row.state,row.blocker])
+	if dispatch_rows.get_selected_items().is_empty() and dispatch_rows.item_count > 0: dispatch_rows.select(dispatch_rows.item_count-1)
+	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg]
+	if dispatch_rows.get_selected_items().is_empty(): return
+	var id: String = dispatch_ids[dispatch_rows.get_selected_items()[0]]
+	for row in view.dispatch.rows:
+		if row.id != id: continue
+		dispatch_status.text += "\n%s %s | same %s at %s | fuel %.2f | driver %s | crew %s\nPassengers %s | guns %s | payload %.1f/%.1f kg; seats %d/%d\nRequested %s\nCommitted %s\nStaged %s\nOnboard %s\nArrived %s\nUnloaded %s\nHandling %s; route %.1f/%.1f m\nBlocked: %s" % [row.id,row.state,row.hull,str(row.hull_physical.position),row.hull_physical.fuel,row.driver,str(row.crew),str(row.passengers),str(row.guns),row.payload_used,row.hull_physical.vehicle_spec.payload,row.seats_used,row.hull_physical.vehicle_spec.passenger_seats,str(row.requested),str(row.committed),str(row.staged),str(row.onboard),str(row.arrived),str(row.unloaded),str(row.task.get("phase","idle")),row.distance,row.route_length,row.blocker]
+		break
+
 func _refresh() -> void:
 	if orders == null: return
 	var view: Dictionary = simulation.snapshot()
+	_refresh_dispatch(view)
 	var offer: Dictionary = view.receiving.recovery_offer
 	recovery_button.visible = offer.available
 	recovery_status.text = offer.message

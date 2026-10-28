@@ -25,6 +25,7 @@ var personnel_position := PERSONNEL
 var route: Callable
 # Optional shared-store contract: returns currently legal free kilograms.
 var receiving_room: Callable
+var external_rear_reservations: Callable # G12 safety-return places held before lawful re-entry.
 var _time: float = 0.0
 var _money: float = 2500.0
 var _income: float = 0.0
@@ -80,7 +81,7 @@ func buy_resources(cart: Dictionary) -> Dictionary:
 func buy_people() -> Dictionary:
 	if personnel_admitted() >= PERSONNEL_LIMIT:
 		return _reject("PERSONNEL_QUEUE_FULL", "Both personnel vehicle commitments are occupied, including en-route/disembarking/clearing services.")
-	if rear_population() + incoming_people() + 8 > REAR_LIMIT:
+	if rear_population() + incoming_people() + _outside_rear_places() + 8 > REAR_LIMIT:
 		return _reject("REAR_CAPACITY_FULL", "Eight incoming people need reserved places within the 120-place rear population limit.")
 	if _money < 140:
 		return _reject("INSUFFICIENT_MONEY", "Eight P00 cost 120 requisition plus the 20 transport fee.")
@@ -106,7 +107,7 @@ func buy_recovery_instructor() -> Dictionary:
 	var offer := recovery_instructor_offer()
 	if not offer.available: return _reject("RECOVERY_UNAVAILABLE",offer.message)
 	if personnel_admitted() >= PERSONNEL_LIMIT: return _reject("PERSONNEL_QUEUE_FULL","Both shared personnel vehicle admissions are occupied/reserved.")
-	if rear_population() + incoming_people() + 1 > REAR_LIMIT: return _reject("REAR_CAPACITY_FULL","One incoming instructor needs a reserved rear population place.")
+	if rear_population() + incoming_people() + _outside_rear_places() + 1 > REAR_LIMIT: return _reject("REAR_CAPACITY_FULL","One incoming instructor needs a reserved rear population place.")
 	if _money < 120: return _reject("INSUFFICIENT_MONEY","Recovery instructor costs100 plus20 transport.")
 	var order := _new_order("Personnel",120,{})
 	order.recovery_instructor = true
@@ -219,13 +220,16 @@ func incoming_people() -> int:
 		count += order.people_reserved
 	return count
 
+func _outside_rear_places() -> int:
+	return int(external_rear_reservations.call()) if external_rear_reservations.is_valid() else 0
+
 
 func rear_population() -> int:
 	# This bounded simulation owns rear people only. Forward/strategic membership
 	# is deliberately not inferred; the shared-world policy remains D03.
 	var count: int = 0
 	for entity in ledger.snapshot().entities:
-		if entity.kind == "PERSON" and entity.owner == PLAYER:
+		if entity.kind == "PERSON" and entity.owner == PLAYER and entity.get("rear_place","None") in ["Occupied","Held Home"]:
 			count += 1
 	return count
 
@@ -281,7 +285,7 @@ func audit() -> Array[String]:
 	var failures := ledger.audit()
 	if freight_admitted() > FREIGHT_LIMIT or personnel_admitted() > PERSONNEL_LIMIT:
 		failures.append("Vehicle admission overbooked")
-	if rear_population() + incoming_people() > REAR_LIMIT:
+	if rear_population() + incoming_people() + _outside_rear_places() > REAR_LIMIT:
 		failures.append("Rear population overbooked")
 	if receiving_kg() + reserved_storage_kg() > STORAGE_KG:
 		failures.append("Receiving storage overbooked")
