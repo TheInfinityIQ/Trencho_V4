@@ -37,10 +37,12 @@ class Entity extends RefCounted:
 
 class Person extends Entity:
 	var assignment: Assignment = Assignment.AVAILABLE
+	var rear_place := "None" # Occupied, Held Home, or None; one place per identity.
 	var duty_id: String
 	var pending_assignment: int = -1
 	var pending_duty: String
 	var carrying_stock_id: String
+	var carrying_weapon_id: String
 	var basic_training := false
 	var qualification := "None"
 	var crew_station := ""

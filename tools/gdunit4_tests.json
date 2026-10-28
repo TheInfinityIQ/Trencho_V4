@@ -171,6 +171,12 @@
   ],
   "Input": [
     {
+      "path": "game/dispatch/tests/dispatch_input_test.gd",
+      "cases": [
+        "test_normal_dispatch_accept_reject_depart_and_small_panel"
+      ]
+    },
+    {
       "path": "game/training/tests/training_input_test.gd",
       "cases": [
         "test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_small_training_panel"
