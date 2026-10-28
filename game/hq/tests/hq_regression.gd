@@ -37,6 +37,7 @@ func _test_a24_and_local_handoff() -> void:
 	var tank := _tank(base)
 	_expect(ledger.add_stock("g14-shells","E25",10,10.0,"hq-stock",rear.PLAYER).ok,"ten unloaded shells at HQ stock")
 	_expect(ledger.add_stock("g14-arrived-shell","E25",1,10.0,"hq-berth",rear.PLAYER).ok,"one arrived shell still awaits HQ unload")
+	_expect(ledger.add_stock("g14-foreign-shell","E25",2,10.0,"hq-stock","foreign-army").ok,"foreign stock can occupy physical HQ mass without becoming owned issue stock")
 	_expect(rear.hq.snapshot().available.E25 == 10,"arrived but not unloaded shell is excluded from usable local stock")
 	_expect(ledger.add_stock("g14-fuel","M08",12,1.0,"hq-stock",rear.PLAYER).ok,"unloaded fuel at HQ stock")
 	_expect(not rear.hq.request_vehicle_ammo(tank,"E25",2).ok,"A24 remote T05 cannot request HQ rack issue")

@@ -372,7 +372,7 @@ func snapshot() -> Dictionary:
 	var weapons_available: Dictionary = {}
 	var weapons_promised: Dictionary = {}
 	for stock in rear.ledger.snapshot().entities:
-		if stock.holder_id != "hq-stock" or stock.quantity <= 0: continue
+		if stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or stock.quantity <= 0: continue
 		if stock.kind == "STOCK":
 			available[stock.design_type] = int(available.get(stock.design_type,0))+int(stock.available)
 			reserved[stock.design_type] = int(reserved.get(stock.design_type,0))+int(stock.reserved)
