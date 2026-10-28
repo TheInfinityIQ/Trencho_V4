@@ -35,9 +35,9 @@ func _test_a24_and_local_handoff() -> void:
 	var rear: RefCounted = base.rear
 	var ledger: RefCounted = rear.ledger
 	var tank := _tank(base)
-	_expect(ledger.add_stock("g14-shells","E25",10,10.0,"hq-stock",rear.PLAYER).ok,"ten unloaded shells at HQ stock")
-	_expect(ledger.add_stock("g14-arrived-shell","E25",1,10.0,"hq-berth",rear.PLAYER).ok,"one arrived shell still awaits HQ unload")
-	_expect(ledger.add_stock("g14-foreign-shell","E25",2,10.0,"hq-stock","foreign-army").ok,"foreign stock can occupy physical HQ mass without becoming owned issue stock")
+	_expect(ledger.add_stock("g14-shells","E25",10,12.0,"hq-stock",rear.PLAYER).ok,"ten unloaded shells at HQ stock")
+	_expect(ledger.add_stock("g14-arrived-shell","E25",1,12.0,"hq-berth",rear.PLAYER).ok,"one arrived shell still awaits HQ unload")
+	_expect(ledger.add_stock("g14-foreign-shell","E25",2,12.0,"hq-stock","foreign-army").ok,"foreign stock can occupy physical HQ mass without becoming owned issue stock")
 	_expect(rear.hq.snapshot().available.E25 == 10,"arrived but not unloaded shell is excluded from usable local stock")
 	_expect(ledger.add_stock("g14-fuel","M08",12,1.0,"hq-stock",rear.PLAYER).ok,"unloaded fuel at HQ stock")
 	_expect(not rear.hq.request_vehicle_ammo(tank,"E25",2).ok,"A24 remote T05 cannot request HQ rack issue")
@@ -97,7 +97,7 @@ func _test_carried_cancel_returns_to_hq() -> void:
 	var rear: RefCounted = base.rear
 	var tank := _tank(base)
 	_expect(rear.ledger.move_entity(tank,"hq-berth",Vector2(1640,91)).ok,"same military tank locally parked")
-	_expect(rear.ledger.add_stock("g14-cancel-shells","E25",3,10.0,"hq-stock",rear.PLAYER).ok,"three unloaded shells")
+	_expect(rear.ledger.add_stock("g14-cancel-shells","E25",3,12.0,"hq-stock",rear.PLAYER).ok,"three unloaded shells")
 	var job: Dictionary = rear.hq.request_vehicle_ammo(tank,"E25",2)
 	_expect(job.ok,"two local shells reserved")
 	rear.advance_time(2)
@@ -115,7 +115,7 @@ func _test_automatic_hq_command() -> void:
 	var tank := _tank(base)
 	_expect(ledger.move_entity(tank,"hq-berth",Vector2(1640,91)).ok,"admitted same T05 stops at HQ")
 	rear.dispatch.military_hulls[tank] = "g14-receipt"
-	_expect(ledger.add_stock("g14-auto-shells","E25",3,10.0,"hq-stock",rear.PLAYER).ok,"HQ has three actual shells")
+	_expect(ledger.add_stock("g14-auto-shells","E25",3,12.0,"hq-stock",rear.PLAYER).ok,"HQ has three actual shells")
 	_expect(ledger.add_stock("g14-auto-fuel","M08",5,1.0,"hq-stock",rear.PLAYER).ok,"HQ has five actual fuel units")
 	_expect(ledger.add_person("g14-auto-trained","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true).ok,"trained generic military reserve")
 	_expect(ledger.add_person("g14-auto-untrained","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,false).ok,"untrained reserve must not receive a generic rifle package")
