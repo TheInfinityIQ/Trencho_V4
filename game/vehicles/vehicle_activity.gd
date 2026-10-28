@@ -367,13 +367,18 @@ func settle() -> bool:
 	return changed
 
 func readiness(id: String) -> Dictionary:
-	var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(id)
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(id)
 	if hull.is_empty(): return {}
 	var missing: Array[String] = []
+	var ready_stations: Dictionary = {}
 	for station in hull.vehicle_spec.stations:
-		if not hull.crew_by_station.has(station): missing.append(station)
-	var driver: bool = hull.crew_by_station.has("Driver")
-	var fire_stations: bool = hull.crew_by_station.has("Gunner") and (hull.design_type != "T05" or hull.crew_by_station.has("Loader"))
+		var person: Dictionary = rear.ledger.inspect_entity(hull.crew_by_station.get(station,""))
+		var ready: bool = not person.is_empty() and person.holder_id == id and person.crew_station == station and eligible(person,crew_duty(id,station))
+		ready_stations[station] = ready
+		if not ready: missing.append(station)
+	var driver: bool = ready_stations.get("Driver",false)
+	var fire_stations: bool = ready_stations.get("Gunner",false) and (hull.design_type != "T05" or ready_stations.get("Loader",false))
 	var ammo_type: String = {"T03":"E02","T04":"E26","T05":"E25"}.get(hull.design_type,"")
 	var ammo: int = int(hull.ammunition.get(ammo_type,0)) if not ammo_type.is_empty() else 0
 	return {"driver":driver,"transfer_crew_eligible":driver,"motion_ready":driver and hull.fuel > 0.0,

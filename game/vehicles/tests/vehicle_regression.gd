@@ -95,6 +95,25 @@ func _test_station_readiness() -> void:
 	rear.advance_time(160)
 	_expect(service.readiness(id).combat_crew_ready and not service.readiness(id).combat_ready,"four real crew but no ammo")
 	_expect(rear.ledger.inspect_entity(id).crew_by_station.size() == 4,"four distinct identities occupy four stations")
+	rear.ledger.add_stock("readiness-fuel","M08",5,1.0,"depot",rear.PLAYER)
+	_expect(service.request_refuel(id,"base-person-11",5).ok,"readiness fixture starts physical fueling")
+	rear.advance_time(200)
+	_expect(service.readiness(id).motion_ready,"healthy actual driver and retained fuel permit motion readiness")
+	rear.ledger._entities["tank-crew-0"].health = 0
+	var unfit_driver: Dictionary = service.readiness(id)
+	_expect(rear.ledger.inspect_entity(id).crew_by_station.has("Driver") and not service.assign_station(id,"tank-crew-3","Driver").ok,"unfit driver still physically occupies station")
+	_expect(not unfit_driver.driver and not unfit_driver.transfer_crew_eligible and not unfit_driver.motion_ready and not unfit_driver.combat_crew_ready and "Driver" in unfit_driver.missing_stations,"incapacitated driver grants no readiness")
+	_expect(not service.start_drive(id).ok,"incapacitated driver cannot clear F10")
+	rear.ledger._entities["tank-crew-0"].health = 100
+	rear.ledger._entities["tank-crew-1"].health = 0
+	var unfit_gunner: Dictionary = service.readiness(id)
+	_expect(unfit_gunner.transfer_crew_eligible and not unfit_gunner.main_fire_stations_ready and not unfit_gunner.combat_crew_ready and "Gunner" in unfit_gunner.missing_stations,"incapacitated gunner removes fire and combat readiness, not driver transfer")
+	rear.ledger._entities["tank-crew-1"].health = 100
+	rear.ledger._entities["tank-crew-2"].qualification = "None"
+	var unqualified_loader: Dictionary = service.readiness(id)
+	_expect(not unqualified_loader.main_fire_stations_ready and not unqualified_loader.combat_crew_ready and "Loader" in unqualified_loader.missing_stations,"unqualified occupied loader grants no readiness")
+	rear.ledger._entities["tank-crew-2"].qualification = "P08"
+	_expect(service.readiness(id).combat_crew_ready and service.readiness(id).motion_ready,"restored actual crew restores readiness")
 	_expect(rear.reassign_person("tank-crew-3","Available").ok,"commander requests extraction")
 	_expect(rear.ledger.inspect_entity("tank-crew-3").crew_station == "Commander","extraction does not instantly empty station")
 	rear.advance_time(3)
