@@ -28,6 +28,15 @@ var store: OptionButton
 var capacity: SpinBox
 var accessible: CheckBox
 var confirmation: ConfirmationDialog
+var training_course: OptionButton
+var training_count: SpinBox
+var training_rows: ItemList
+var training_status: Label
+var training_ids: Array[String] = []
+var instructor_count: SpinBox
+var training_access: CheckBox
+var recovery_button: Button
+var recovery_status: Label
 var _pending_token: int = -1
 var heavy_controls: VBoxContainer
 var heavy_status: Label
@@ -66,12 +75,14 @@ func _ready() -> void:
 	split.add_child(base_map)
 	tabs = TabContainer.new()
 	tabs.custom_minimum_size.x = 350
+	tabs.get_tab_bar().add_theme_font_size_override("font_size",14)
 	split.add_child(tabs)
 	_orders_panel(_panel("Orders"))
 	_staff_panel(_panel("Staff"))
 	_haul_panel(_panel("Haul"))
 	_production_panel(_panel("Work"))
 	_inspect_panel(_panel("Info"))
+	_training_panel(_panel("Train"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
@@ -152,6 +163,9 @@ func _orders_panel(box: VBoxContainer) -> void:
 			if cart[code].value > 0: request[code] = int(cart[code].value)
 		_result(simulation.receiving.buy_resources(request)))
 	_button(box, "Buy 8 people (140)", func() -> void: _result(simulation.receiving.buy_people()))
+	recovery_button = _button(box,"Buy recovery instructor (120)",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
+	recovery_status = _label(box,"")
+	recovery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	orders = _list(box, 150)
 	orders.item_selected.connect(func(index: int) -> void: _select("order", _order_ids[index], false))
 	_button(box, "Cancel selected undispatched order", func() -> void:
@@ -169,6 +183,9 @@ func _start_session() -> void:
 	_pending_token = -1
 	for spin in cart.values(): spin.value = 0
 	for spin in targets.values(): spin.value = 0
+	instructor_count.set_value_no_signal(0)
+	training_access.set_pressed_no_signal(true)
+	_load_courses()
 	facility.select(0)
 	_selected_kind = "building"
 	_selected_id = "terminal"
@@ -179,13 +196,13 @@ func _start_session() -> void:
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
-	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works"]:
+	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works", "training"]:
 		var spin := _spin(box, duty.capitalize(), simulation.rear.requests[duty].positions)
 		targets[duty] = spin
 		spin.value_changed.connect(func(value: float) -> void: _result(simulation.rear.set_target(duty, int(value))))
 	people = _list(box, 150)
 	people.item_selected.connect(func(index: int) -> void: _select("entity", _person_ids[index], false))
-	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works"])
+	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works", "training"])
 	_button(box, "Reassign selected person", func() -> void:
 		if not people.get_selected_items().is_empty(): _result(simulation.rear.reassign_person(_person_ids[people.get_selected_items()[0]], person_duty.get_item_text(person_duty.selected))))
 
@@ -215,7 +232,7 @@ func _load_haul_goods(category: int) -> void:
 			if spec.duty == duty: goods_type.add_item(spec.output_type)
 
 func _production_panel(box: VBoxContainer) -> void:
-	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
+	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works", "training"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production())
 	recipe = _option(box, "Recipe / declared session access", [])
 	_button(box, "Select recipe", _change_recipe)
@@ -260,6 +277,41 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		if id == "receiving" and capacity.value < simulation.receiving.receiving_kg() + simulation.rear._reserved_space(id):
 			_result({"ok": false, "message": "Receiving capacity must retain deposited goods and all promised inbound loads."})
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
+
+func _training_panel(box: VBoxContainer) -> void:
+	_label(box,"F06: two instructors, twelve students").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	instructor_count = _spin(box,"Instructor target",2)
+	instructor_count.value_changed.connect(func(value: float) -> void:
+		targets.training.set_value_no_signal(value)
+		_result(simulation.rear.set_target("training",int(value))))
+	targets.training.value_changed.connect(func(value: float) -> void: instructor_count.set_value_no_signal(value))
+	training_course = _option(box,"Course / declared recipe access",[])
+	training_count = _spin(box,"Requested students",12,1)
+	_button(box,"Request course",func() -> void: _result(simulation.rear.training.request_course(training_course.get_item_metadata(training_course.selected),int(training_count.value))))
+	training_rows = _list(box,150)
+	training_rows.item_selected.connect(func(index: int) -> void:
+		_selected_kind = "course"
+		_selected_id = training_ids[index]
+		_refresh())
+	_button(box,"Withdraw selected course",func() -> void:
+		if not training_rows.get_selected_items().is_empty(): _result(simulation.rear.training.withdraw(training_ids[training_rows.get_selected_items()[0]])))
+	training_access = CheckBox.new()
+	training_access.text = "Training facility accessible"
+	training_access.button_pressed = true
+	box.add_child(training_access)
+	training_access.toggled.connect(func(value: bool) -> void: _result(simulation.rear.training.set_access(value)))
+	training_status = _label(box,"")
+	training_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_load_courses()
+
+func _load_courses() -> void:
+	training_course.clear()
+	for id in simulation.rear.training.COURSES:
+		var spec: Dictionary = simulation.rear.training.COURSES[id]
+		var allowed: bool = simulation.rear.training.course_accessible(id)
+		training_course.add_item(id + " " + spec.name + ("" if allowed else " (locked)"))
+		training_course.set_item_metadata(training_course.item_count-1,id)
+		training_course.set_item_disabled(training_course.item_count-1,not allowed)
 
 func _activity() -> RefCounted:
 	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production, simulation.rear.heavy_production][facility.selected]
@@ -331,6 +383,19 @@ func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callab
 func _refresh() -> void:
 	if orders == null: return
 	var view: Dictionary = simulation.snapshot()
+	var offer: Dictionary = view.receiving.recovery_offer
+	recovery_button.visible = offer.available
+	recovery_status.text = offer.message
+	var training: Dictionary = view.training
+	_fill(training_rows,training_ids,training.rows,func(row: Dictionary) -> String: return "%s %s %s | %s %.1f/%.0fs" % [row.id,row.course,row.person_id,row.state,row.work,row.required])
+	training_status.text = "Instructors %d/%d requested; coverage %d students\nStudent places %d/12 | active %d, paused %d, reporting %d, queued %d\n" % [training.instructors.size(),training.instructor_target,training.coverage,training.reserved_student_places,training.counts.Active,training.counts.Paused,training.counts.Reporting,training.counts.Queued]
+	if training.instructors.is_empty(): training_status.text += "Missing actual instructor: purchase recovery P01 if none remain, then assign and wait for reporting.\n"
+	for row in training.rows:
+		if row.id == _selected_id:
+			training_status.text += "%s / %s: %s\nElapsed %.1f/%.0f seconds; %s" % [row.course,row.person_id,row.state,row.work,row.required,row.reason]
+			if not row.person_id.is_empty():
+				var person: Dictionary = simulation.rear.ledger.inspect_entity(row.person_id)
+				training_status.text += "\nBasic completed: %s; specialist: %s\nActual position %s; duty %s" % [str(person.basic_training),person.qualification,str(person.position),person.duty_id if not person.duty_id.is_empty() else person.assignment]
 	status.text = "  %.1fs | %.0f req | %d rear + %d incoming" % [simulation.rear.time, view.receiving.money, simulation.receiving.rear_population(), simulation.receiving.incoming_people()]
 	_fill(orders, _order_ids, view.receiving.orders, func(o: Dictionary) -> String: return o.id + " " + o.state + " | " + o.blocked_reason)
 	var actual_people: Array = view.rear.people.filter(func(p: Dictionary) -> bool: return p.owner == "army-blue")
@@ -353,15 +418,19 @@ func _refresh() -> void:
 		"entity":
 			var p: Dictionary = simulation.rear.ledger.inspect_entity(_selected_id)
 			info += "Owner: %s\nHolder: %s\nPosition: %s\nDuty: %s; pending: %s\nCarry: %s\n%s" % [p.get("owner", ""), p.get("holder_id", ""), str(p.get("position", "")), p.get("duty_id", "External supplier service"), p.get("pending_duty", ""), p.get("carrying_stock_id", ""), p.get("blocked_reason", "")]
+			if p.get("kind") == "PERSON": info += "\nBasic completed: %s; specialist: %s" % [str(p.basic_training),p.qualification]
 		"building":
 			if simulation.rear.requests.has(_selected_id):
 				var r: Dictionary = simulation.rear.requests[_selected_id]
 				info += "Staff target %d / %d positions; actual %d.\n" % [r.target, r.positions, simulation.rear._assigned(_selected_id)]
 			if _selected_id == "vehicle_works": info += heavy_status.text + "\n"
+			if _selected_id == "training": info += training_status.text + "\n"
 			for row in view.rear.stores:
 				if row.id == _selected_id or row.id.begins_with(_selected_id + "_"):
 					info += "%s: %.1f kg, free %.1f, inbound %.1f, output promise %.1f\n" % [row.id, row.physical_kg, row.free_kg, row.reserved_inbound_kg, row.reserved_output_kg]
 					for stock in row.stocks: info += "%s %d (reserved %d)\n" % [stock.design_type, stock.quantity, stock.reserved]
+		"course":
+			info += training_status.text
 		"job":
 			for job in view.rear.jobs:
 				if job.id == _selected_id: info += "%s -> %s: %s %d/%d; in flight %d\n%s" % [job.source, job.destination, job.type, job.delivered, job.requested, job.in_flight, job.blocker]

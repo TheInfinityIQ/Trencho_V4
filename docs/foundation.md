@@ -68,3 +68,7 @@ The [catalogue](production_catalogue.md) now justifies reusing F05's confirmed-s
 ## Heavy output boundary -27October2026
 
 The [heavy foundation](heavy_production.md) adds ledger-owned rear-hull admissions and physical carrier/heavy-object identities, with canonical properties supplied by production. Small output lifecycle hooks preserve the accepted fixed work/consumption path while F10 owns slot-based bay/parking promises. Shared selection retains confirmation and recipe histories. Finished objects keep a latched occupied bay; G07/G12 must later integrate actual clearance, with no generic stock move or cancellation substitute. Explicit finite parking coordinates validate footprint/claim legality without claiming route/driver integration.
+
+## Connected F06 training -27October2026
+
+The [training service](training_courses.md) owns elapsed course progress/physical seat reservations and consumes actual instructor coverage on the existing rear event clock. Ledger Training assignments exclude students from industrial rebalancing, while safe carries and instructor staffing reuse existing rules. Qualification completion updates the same person and grants no gear. The recovery purchase reuses the shared personnel route/admissions with a one-person cohort; normal eight-person procurement retains its path and prices. Declared recipe availability supplies course access independently of selected production.

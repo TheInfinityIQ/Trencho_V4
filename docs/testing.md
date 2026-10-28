@@ -114,3 +114,7 @@ The [catalogue scope and checks](production_catalogue.md) add nine focused Domai
 ## Heavy manufacturing checks -27October2026
 
 The [heavy scope](heavy_production.md) adds8focused Domain cases and1actual-input flow, retaining96/16 for104Domain/17Input. The original23non-heavy cases explicitly retain their non-heavy scope; new cases cover all6heavy recipe rows and real physical outputs. The critical7live/1reserved invalid-destination case retains earned work and converts to8/0 exactly once. Three representative normal/small render/state pairs are exported to `.artifacts/heavy-production/`. Use named affected cases during iteration, full normal checks on the stable head, and the same8existing focused negative controls. No new per-recipe proof or all-image packet is required.
+
+## Connected training checks -27October2026
+
+[Training checks](training_courses.md) add9focused Domain cases and1normal-entry actual-input flow, retaining104/17 for113Domain/18Input. Cases cover eight courses/access/reporting, coverage/newest pauses, safe carries, same-person qualifications/withdrawal and shared recovery purchase claims. Four representative PNG/JSON pairs are written to `.artifacts/training-courses/`. Full normal checks/current CI and the same8existing focused negative/restored controls remain; no per-course proof packet or routine broad rerun is added.
