@@ -90,7 +90,9 @@ func test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_
 	var list: ItemList = demo.get("training_rows")
 	await _expose(list)
 	await _click(runner,list.global_position+Vector2(20,12))
-	for index in 13: await runner.simulate_key_pressed(KEY_DOWN)
+	for index in 13:
+		runner.simulate_action_pressed("ui_down")
+		await runner.await_input_processed()
 	await runner.await_input_processed()
 	assert_array(Array(list.get_selected_items())).is_equal([13])
 	assert_str(demo.get("_selected_id")).is_equal(base.rear.training.rows[13].id)
