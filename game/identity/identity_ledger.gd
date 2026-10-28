@@ -12,6 +12,8 @@ var _lost: Dictionary[String, int] = {}
 var _sequence: int = 0
 var _time: float = 0.0
 var _rear_hull_promises: Dictionary = {}
+var _fuel_loaded: float = 0.0
+var _fuel_burned: float = 0.0
 const REAR_FLEET_LIMIT := 8
 var _events: Array[Dictionary] = []
 
@@ -283,6 +285,72 @@ func complete_driver_exit(person_id: String, place_id: String) -> Dictionary:
 	return _ok("Driver station vacated at the actual parking place; safe duty handoff completed.", person_id)
 
 
+func complete_vehicle_station_entry(person_id: String, carrier_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if person == null or carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.vehicle_spec.is_empty() or station not in carrier.vehicle_spec.stations:
+		return _reject("INVALID_STATION", "Choose a real manufactured hull and one of its distinct stations.")
+	var qualified: bool = person.qualification == "P08" or (carrier.design_type == "T03" and station == "Gunner" and person.qualification == "P04")
+	if not qualified or person.owner != carrier.owner or person.health <= 0:
+		return _reject("UNQUALIFIED_STATION", "This station needs its actual qualified living person.")
+	if person.assignment != Records.Assignment.REAR_LABOUR or person.duty_id != "crew:%s:%s" % [carrier_id, station] or person.pending_assignment != -1 or not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty() or not _colocated(person_id, carrier_id):
+		return _reject("PERSON_BUSY", "Finish exclusive reporting and stationary entry at this hull.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == carrier_id and other.crew_station == station:
+			return _reject("STATION_OCCUPIED", "This physical station is already occupied.")
+	person.holder_id = carrier_id
+	person.position = Vector2.ZERO
+	person.crew_station = station
+	_event("Qualified person entered distinct vehicle station", person_id)
+	return _ok("Same person occupies the real station.", person_id)
+
+
+func complete_vehicle_station_exit(person_id: String, carrier_id: String) -> Dictionary:
+	var person := _person(person_id)
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if person == null or carrier == null or person.holder_id != carrier_id or person.crew_station.is_empty():
+		return _reject("INVALID_STATION_EXIT", "Only an actual stopped-hull occupant can leave this station.")
+	var position := _world_position(carrier_id)
+	person.holder_id = "rear"
+	person.position = position
+	person.crew_station = ""
+	if person.pending_assignment != -1:
+		_set_assignment(person, person.pending_assignment, person.pending_duty)
+	_event("Vehicle station physically vacated", person_id)
+	return _ok("Station vacated by the same person at the parked hull.", person_id)
+
+
+func load_vehicle_fuel(person_id: String, carrier_id: String) -> Dictionary:
+	var person := _person(person_id)
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if person == null or carrier == null or carrier.vehicle_spec.is_empty() or person.carrying_stock_id.is_empty() or not _colocated(person_id, carrier_id):
+		return _reject("INVALID_REFUEL", "A real local fuel carry must reach this stopped hull.")
+	var stock := _stock(person.carrying_stock_id)
+	if stock == null or stock.design_type != "M08" or stock.holder_id != person_id or stock.quantity <= 0 or carrier.owner != person.owner:
+		return _reject("INVALID_FUEL", "Only owned whole M08 units physically carried by this worker can enter the tank.")
+	if float(stock.quantity) > float(carrier.vehicle_spec.tank_capacity) - carrier.fuel + 0.000001:
+		return _reject("TANK_FULL", "Whole fuel units exceed the tank's remaining capacity.")
+	carrier.fuel += float(stock.quantity)
+	_fuel_loaded += float(stock.quantity)
+	stock.quantity = 0
+	stock.state = "Transferred to tank"
+	stock.state_entered_at = _time
+	person.carrying_stock_id = ""
+	if person.pending_assignment != -1:
+		_set_assignment(person, person.pending_assignment, person.pending_duty)
+	_event("Whole local M08 moved from worker carry into this hull tank", carrier_id)
+	return _ok("Whole purchased fuel units entered the same hull tank once.", carrier_id)
+
+
+func burn_vehicle_fuel(carrier_id: String, amount: float) -> Dictionary:
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if carrier == null or carrier.vehicle_spec.is_empty() or not is_finite(amount) or amount < 0.0 or amount > carrier.fuel + 0.000001:
+		return _reject("FUEL_EMPTY", "Travel cannot burn more fuel than this tank contains.")
+	carrier.fuel = maxf(0.0, carrier.fuel - amount)
+	_fuel_burned += amount
+	return _ok("Actual fractional travel fuel burned.", carrier_id)
+
+
 func finish_carry(person_id: String, safe_place_id: String) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.carrying_stock_id.is_empty():
@@ -484,12 +552,16 @@ func inspect_entity(id: String) -> Dictionary:
 			result.fuel = entity.fuel
 			result.health = entity.health
 			result.crew = []
+			result.crew_by_station = {}
 			result.passengers = []
 			result.ammunition = {}
 			for child in _entities.values():
 				if child.holder_id != id: continue
 				if child is Records.Person:
-					result.crew.append(child.id) if not child.crew_station.is_empty() else result.passengers.append(child.id)
+					if not child.crew_station.is_empty():
+						result.crew.append(child.id)
+						result.crew_by_station[child.crew_station] = child.id
+					else: result.passengers.append(child.id)
 				if child.kind == Records.Kind.STOCK and entity.vehicle_spec.rack_capacity.has(child.design_type):
 					result.ammunition[child.design_type] = int(result.ammunition.get(child.design_type, 0)) + child.quantity
 	if entity.kind == Records.Kind.STOCK:
@@ -545,7 +617,8 @@ func snapshot() -> Dictionary:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
 		"created": _created.duplicate(), "consumed": _consumed.duplicate(),
-		"lost": _lost.duplicate(), "rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
+		"lost": _lost.duplicate(), "fuel_loaded":_fuel_loaded,"fuel_burned":_fuel_burned,
+		"rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
 func total_stock(type: String) -> int:
@@ -574,6 +647,8 @@ func available_stock_at(holder_id: String, type: String) -> int:
 
 func audit() -> Array[String]:
 	var failures: Array[String] = []
+	var tank_total := 0.0
+	var occupied_stations: Dictionary = {}
 	var owners: Array[String] = []
 	for claim in _rear_hull_promises.values():
 		if claim.owner not in owners: owners.append(claim.owner)
@@ -595,11 +670,22 @@ func audit() -> Array[String]:
 			var carried := _stock(entity.carrying_stock_id)
 			if carried == null or carried.holder_id != entity.id or carried.quantity <= 0:
 				failures.append("Broken active carry: " + entity.id)
+		if entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
+			tank_total += entity.fuel
+			if entity.fuel < -0.000001 or entity.fuel > float(entity.vehicle_spec.tank_capacity) + 0.000001: failures.append("Invalid vehicle tank: " + entity.id)
 		if entity is Records.Person and not entity.crew_station.is_empty():
-			if entity.qualification != "P08" or entity.assignment != Records.Assignment.REAR_LABOUR or not entity.carrying_stock_id.is_empty() or _entities[entity.holder_id].kind != Records.Kind.CARRIER:
-				failures.append("Invalid occupied driver station: " + entity.id)
+			var hull: Records.Entity = _entities.get(entity.holder_id)
+			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment == Records.Assignment.REAR_LABOUR and entity.carrying_stock_id.is_empty()
+			if valid and not hull.vehicle_spec.is_empty():
+				valid = entity.crew_station in hull.vehicle_spec.stations and (entity.qualification == "P08" or (hull.design_type == "T03" and entity.crew_station == "Gunner" and entity.qualification == "P04"))
+			else: valid = valid and entity.crew_station == "Driver" and entity.qualification == "P08"
+			if not valid: failures.append("Invalid occupied vehicle station: " + entity.id)
+			var key: String = entity.holder_id + ":" + entity.crew_station
+			if occupied_stations.has(key): failures.append("Double-filled station: " + key)
+			occupied_stations[key] = entity.id
+	if not is_equal_approx(tank_total + _fuel_burned, _fuel_loaded): failures.append("Manufactured vehicle fuel conservation")
 	for type in _created:
-		if _created[type] != total_stock(type) + _consumed.get(type, 0) + _lost.get(type, 0):
+		if not is_equal_approx(float(_created[type]), float(total_stock(type) + _consumed.get(type, 0) + _lost.get(type, 0)) + (_fuel_loaded if type == "M08" else 0.0)):
 			failures.append("Conservation failed: " + type)
 	for claim in _claims.values():
 		if claim.reserved < 0 or claim.fulfilled < 0 or claim.reserved + claim.fulfilled > claim.requested:

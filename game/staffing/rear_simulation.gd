@@ -24,6 +24,7 @@ var materials_production: RefCounted # Optional fixed R26/F13 owner on this same
 var support_production: RefCounted # Explicit F09 owner; null in retained diagnostics.
 var heavy_production: RefCounted # One F10 heavy bay/admission owner.
 var training: RefCounted # Optional F06 elapsed-time courses; separate from operator-work.
+var vehicles: RefCounted # Optional G07 handling on this same clock and actor pool.
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -151,11 +152,17 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 		_release_load(a)
 	if a.phase == "Yard" and yard.state == "Entering station":
 		yard.cancel_entry(id)
+	if vehicles != null and vehicles.fuel_jobs.has(id) and destination != "fuel:" + vehicles.fuel_jobs[id].hull:
+		vehicles.cancel_unpicked_fuel(id)
+	if a.phase == "Vehicle Board":
+		a.deadline = INF
 	var result: Dictionary = ledger.request_assignment(id, assignment, duty)
 	if not result.ok:
 		return result
+	if vehicles != null and p.duty_id.begins_with("crew:") and p.crew_station.is_empty() and requests.has(p.duty_id): requests[p.duty_id].target = 0
 	if not p.crew_station.is_empty():
-		yard.request_exit()
+		if vehicles != null and vehicles.vehicles.has(p.holder_id): vehicles.request_exit(id)
+		else: yard.request_exit()
 	elif a.phase not in ["Carry", "Drop"] and ledger.inspect_entity(id).carrying_stock_id.is_empty():
 		_report(a)
 	return _result(true, "Duty requested; carrying or driving retains the old actual duty until safe handoff.")
@@ -249,6 +256,7 @@ func advance_time(seconds: float) -> Dictionary:
 	_settle()
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
+		if vehicles != null: next = minf(next,vehicles.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -269,6 +277,7 @@ func advance_time(seconds: float) -> Dictionary:
 				var distance: float = (next - a.motion.started) * a.motion.speed
 				ledger.move_entity(a.id, "rear", Layout.position(a.motion.path, distance))
 		yard.advance_to(next)
+		if vehicles != null: vehicles.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -304,7 +313,7 @@ func _rebalance() -> void:
 	var pool: Array = []
 	for id in actors:
 		var p: Dictionary = ledger.inspect_entity(id)
-		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None":
+		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:"):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
@@ -319,6 +328,7 @@ func _rebalance() -> void:
 	while not remaining.is_empty():
 		var best: Dictionary = {}
 		for r in requests.values():
+			if r.get("manual",false): continue
 			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id):
 				continue
 			if best.is_empty() or _staff_before(r, best, quotas):
@@ -371,6 +381,8 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 		return false
 	if not Rect2(0, 0, 240, 180).has_point(p.position):
 		return false
+	if requests.has(duty) and requests[duty].get("manual",false):
+		return vehicles != null and vehicles.eligible(p,duty)
 	if duty == "yard":
 		return p.basic_training and p.qualification == "P08"
 	if duty == "training":
@@ -406,8 +418,17 @@ func _report(a: Dictionary) -> void:
 	if p.duty_id.is_empty():
 		a.phase = "Available"
 		return
-	var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
-	_move(a, "Reporting", Layout.path(p.position, destination), 1.5)
+	var path: Array = []
+	if vehicles != null and requests[p.duty_id].get("manual",false):
+		path = vehicles.report_path(a.id,p.duty_id)
+	else:
+		var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
+		if heavy_production != null and heavy_production.bay_occupant != "" and p.position.is_equal_approx(ledger.inspect_entity(heavy_production.bay_occupant).position):
+			path = [p.position,Layout.door("vehicle_works")]
+			var outward: Array = Layout.path(Layout.door("vehicle_works"),destination)
+			if not outward.is_empty(): path.append_array(outward.slice(1))
+		else: path = Layout.path(p.position,destination)
+	_move(a, "Reporting", path, 1.5)
 
 
 func _move(a: Dictionary, phase: String, points: Array, speed: float) -> void:
@@ -427,6 +448,7 @@ func _settle() -> void:
 		_sync_receiving_people()
 	for _iteration in 1000:
 		var changed: bool = yard.complete_due()
+		if vehicles != null: changed = vehicles.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)
@@ -487,8 +509,33 @@ func _finish_phase(a: Dictionary) -> void:
 			if ledger.inspect_entity(a.id).duty_id == "yard":
 				var result: Dictionary = yard.board(a.id)
 				a.phase = "Yard" if result.ok else "Yard blocked"
+			elif vehicles != null and ledger.inspect_entity(a.id).duty_id.begins_with("crew:"):
+				var result: Dictionary = vehicles.begin_board(a.id)
+				if not result.ok: a.phase = "Vehicle Blocked"
+			elif vehicles != null and ledger.inspect_entity(a.id).duty_id.begins_with("fuel:"):
+				vehicles.begin_fuel_pickup(a.id)
 			else:
 				a.phase = "Idle"
+		"Vehicle Board":
+			var result: Dictionary = vehicles.complete_board(a.id)
+			a.phase = "Vehicle Station" if result.ok else "Vehicle Blocked"
+		"Vehicle Exit":
+			var result: Dictionary = vehicles.complete_exit(a.id)
+			if result.ok:
+				_report(a)
+				if ledger.inspect_entity(a.id).duty_id.is_empty(): _rebalance()
+			else: a.phase = "Vehicle Station"
+		"Vehicle Fuel Pickup":
+			var result: Dictionary = vehicles.complete_fuel_pickup(a.id)
+			if not result.ok: a.phase = "Vehicle Fuel Blocked"
+		"Vehicle Fuel Carry":
+			vehicles.begin_fuel_deposit(a.id)
+		"Vehicle Fuel Deposit":
+			var result: Dictionary = vehicles.complete_fuel_deposit(a.id)
+			if result.ok:
+				if ledger.inspect_entity(a.id).duty_id.begins_with("fuel:"): reassign_person(a.id,"Available")
+				else: _report(a)
+			else: a.phase = "Vehicle Fuel Blocked"
 		"Approach":
 			a.phase = "Pickup"
 			a.deadline = time + 2.0
@@ -797,6 +844,7 @@ func _waiting_job_viable(job: Dictionary) -> bool:
 func audit() -> Array[String]:
 	var failures: Array[String] = ledger.audit()
 	if heavy_production != null: failures.append_array(heavy_production.audit())
+	if vehicles != null: failures.append_array(vehicles.audit())
 	if training != null: failures.append_array(training.audit())
 	for a in actors.values():
 		var p: Dictionary = ledger.inspect_entity(a.id)

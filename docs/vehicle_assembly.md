@@ -1,0 +1,18 @@
+# G07 manufactured hulls, crew and rear clearance
+
+[Issue 15](https://github.com/TheInfinityIQ/Trencho_V4/issues/15) continues the accepted G04 F10 bay and G06 F06 courses. GDD 9.1–9.3 and 23.1/23.6 govern; this is the rear preparation and station foundation. G12 owns manifests, military admission and actual HQ handoff, and G23 owns firing and ammunition interaction.
+
+## Connected ownership
+
+- F10 heavy production creates each T01–T05 once in the shared identity ledger. It retains one physical bay occupant and the same accepted F11 parking claim. The G07 vehicle activity registers that **same hull ID** when F10 completes; no initialized yard fixture enters this path.
+- The existing rear actor pool reports real people to named `crew:<hull>:<station>` duties. The ledger commits a qualified, exclusive station after three stopped seconds. T03's gunner accepts P04 or P08; all other stations require P08. A pending assignment cannot displace a person, carried goods or a seated occupant. Extraction needs three stopped seconds; a moving occupant waits in the same station.
+- An actual rear worker reserves unclaimed M08 from an accessible local store, walks to that stack, spends two seconds picking up at most 25 whole units, carries them to the stopped hull, and spends two seconds depositing into its tank. The ledger removes that carried loose quantity once, records cumulative tank loading and fractional travel burn, and audits both stock and tank conservation. Pending refuel carries count against tank space. Source access loss before pickup retains its own claim; access restoration resumes without a fuel grant.
+- The produced hull drives along a sampled, footprint-clear F10–F11 lane to its own promised place. Wheeled turns use catalogue minimum radii and speeds no faster than catalogue turn rates; T05 stops for its two tracked pivots. Travel changes the same ledger position and burns fractional fuel by travelled metres. The bay remains committed until arrival, when the F11 reservation becomes occupancy exactly once. Parking does not release rear fleet membership. The retained G03 starting yard T01 is separate and still uses its original route.
+
+## Visible decisions and limits
+
+The Vehicles panel shows produced hull IDs, actual positions, tank contents, named station occupants, missing stations, fuel carries and separate driver-only transfer, motion, combat-crew, firing-station and matching-ammunition indicators. A healthy P08 driver alone meets the Fleet Transfer **crew** requirement; local movement also requires real fuel and a clear promised park. A T05 gunner and loader give main-fire station readiness; an empty rack remains unavailable. These indicators do not issue a manifest, depart for HQ, or fire a weapon.
+
+The bounded rear uses its accepted 240 by 180 metre layout and existing F11 four-place fixture. A parking destination can remain accepted but physically blocked at drive time; the occupant and claim stay in F10, with an actionable reason. Full-world roads, terrain, HQ access and route reserve planning remain with G12/G13 and later systems. G32 must persist each ledger hull, person/station, tank and consumed fuel, F10 occupant, F11 claim/occupancy, pending fuel carry, route progress and shared event clock, then resume paused without replaying a completion or release.
+
+Verification: `game/vehicles/tests/vehicle_regression.gd` exercises all five exact recipes, paid F06-to-P08 and purchased/received/hauled T01 flow, station readiness, access and safe interruption boundaries. SceneRunner input exercises the normal Vehicles controls and representative normal/small views in Linux virtual-display CI. Windows native input remains unverified under the existing platform gate.
