@@ -4,9 +4,11 @@ const Layout = preload("res://game/staffing/rear_layout.gd")
 const Specs = preload("res://game/production/vehicle_specs.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
+const Routes = preload("res://game/routes/route_planner.gd")
 const EPS := 0.000001
 const HQ_STOCK_KG := 20000.0
 const HQ_RESERVE_LIMIT := 96
+const CROSSING_CENTER := Vector2(740.0,91.0)
 const MILITARY_PEOPLE_LIMIT := 384
 const MILITARY_HULL_LIMIT := 24
 const REAR_PEOPLE_LIMIT := 120
@@ -88,7 +90,7 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 	if mode == "Fleet Transfer" and military_hulls.size() + incoming_hulls.size() >= MILITARY_HULL_LIMIT: return _fail("Military 24 incoming hull admission is full.")
 	_sequence += 1
 	var id := "manifest-%04d" % _sequence
-	var row := {"id":id,"hull":hull_id,"mode":mode,"state":"Requested","passengers":passengers.duplicate(),"cargo":cargo.duplicate(true),"guns":guns.duplicate(),"stock_items":[],"weapon_items":[],"driver":crew.Driver,"crew":crew.duplicate(),"task":{},"route":[],"route_length":0.0,"distance":0.0,"last_time":rear.time,"travel_speed":0.0,"travel_burn":0.0,"arrived":{},"unloaded":{},"blocker":"","departed":false,"hq_berth":false,"cancel_released":false,"home_slot":int(rear.vehicles.vehicles[hull_id].slot)}
+	var row := {"id":id,"hull":hull_id,"mode":mode,"state":"Requested","passengers":passengers.duplicate(),"cargo":cargo.duplicate(true),"guns":guns.duplicate(),"stock_items":[],"weapon_items":[],"driver":crew.Driver,"crew":crew.duplicate(),"task":{},"route":[],"route_length":0.0,"distance":0.0,"last_time":rear.time,"travel_speed":0.0,"travel_burn":0.0,"arrived":{},"unloaded":{},"blocker":"","departed":false,"hq_berth":false,"cancel_released":false,"home_slot":int(rear.vehicles.vehicles[hull_id].slot),"route_profile":{},"route_plan":{}}
 	manifests[id] = row
 	for person_id in passengers: passenger_promises[person_id] = id
 	for person_id in entrant_ids: incoming_people[person_id] = id
@@ -156,19 +158,47 @@ func _begin_hull_approach(row: Dictionary) -> void:
 		return
 	row.state = "Staging"
 	_start_route(row,route,"Approaching Dispatch")
+	if row.state != "Approaching Dispatch": return
 	rear.vehicles.vehicles[row.hull].state = "Dispatch Approach"
 	rear.yard.occupied[row.home_slot] = ""
 	rear.yard.reserved[row.home_slot] = row.hull # Hold an actual predeparture/cancel return place.
 
 func _start_route(row: Dictionary, points: Array, state: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
+	var corridor: bool = state == "Transit" or (state == "Returning" and row.get("return_phase","") == "Outside") or (state == "Safety Returning" and row.get("return_phase","") == "Outside")
+	var profile: Dictionary = row.route_profile.duplicate(true) if corridor else {}
+	profile = _crossing_profile(profile,points)
+	profile.strict_turns = false if state == "Safety Returning" else (bool(profile.get("strict_turns",true)) if corridor else false)
+	var measured: Dictionary = Routes.plan(rear.ledger,row.hull,points,profile)
+	if not measured.ok:
+		row.blocker = measured.reason
+		row.state = "Route Blocked"
+		return
 	row.route = points
-	row.route_length = Layout.length(points)
+	row.route_length = measured.distance
 	row.distance = 0.0
 	row.last_time = _advancing_at if _advancing_at >= 0.0 else rear.time
-	row.travel_speed = rear.vehicles._road_speed(rear.ledger.inspect_entity(row.hull).design_type)
+	row.route_started = row.last_time
+	row.route_deadline = row.route_started + measured.seconds
+	row.travel_speed = measured.distance/measured.seconds
+	row.route_plan = measured
 	row.travel_burn = 0.0
 	row.state = state
+
+func _crossing_profile(profile: Dictionary, points: Array) -> Dictionary:
+	var effective: Dictionary = profile.duplicate(true)
+	if str(effective.get("bridge","")).is_empty(): return effective
+	var distance := 0.0
+	for index in range(1,points.size()):
+		var start: Vector2 = points[index-1]
+		var finish: Vector2 = points[index]
+		if absf(start.y-CROSSING_CENTER.y) <= EPS and absf(finish.y-CROSSING_CENTER.y) <= EPS and minf(start.x,finish.x) <= CROSSING_CENTER.x and maxf(start.x,finish.x) >= CROSSING_CENTER.x:
+			effective.bridge_at_m = distance+start.distance_to(CROSSING_CENTER)
+			return effective
+		distance += start.distance_to(finish)
+	effective.erase("bridge")
+	effective.erase("bridge_at_m")
+	return effective
 
 func _fail(message: String) -> Dictionary:
 	return {"ok":false,"message":message}
@@ -177,7 +207,8 @@ func next_boundary() -> float:
 	var next := INF
 	for row in manifests.values():
 		if row.state in ["Approaching Dispatch","Departed","Transit","Docking HQ","Returning","Safety Returning"]:
-			next = minf(next,float(row.last_time) + (float(row.route_length)-float(row.distance))/float(row.travel_speed))
+			next = minf(next,float(row.route_deadline))
+		if row.state == "Safety Stop": next = minf(next,float(row.stop_deadline))
 		if not row.task.is_empty(): next = minf(next,float(row.task.deadline))
 	return next
 
@@ -185,21 +216,29 @@ func advance_to(next_time: float) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	_advancing_at = next_time
 	for row in manifests.values():
+		if row.state == "Safety Stop" and next_time + EPS >= float(row.stop_deadline):
+			var fallback: Dictionary = request_safe_return(row.id)
+			if not fallback.ok:
+				row.state = "Stranded"
+				row.blocker = "10-second safety hold ended; " + fallback.message + " Same hull and contents remain stopped."
 		if row.state in ["Approaching Dispatch","Departed","Transit","Docking HQ","Returning","Safety Returning"]:
-			var travelled: float = minf(float(row.route_length)-float(row.distance),maxf(0.0,next_time-float(row.last_time))*float(row.travel_speed))
-			if travelled > EPS:
+			var progress: Dictionary = _route_progress(row,maxf(0.0,next_time-float(row.route_started)))
+			var moved: float = float(progress.distance)-float(row.distance)
+			if moved > EPS:
 				var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-				var fuel: float = travelled / 1000.0 * rear.vehicles._fuel_rate(hull.design_type)
+				var fuel: float = maxf(0.0,float(progress.fuel)-float(row.travel_burn))
 				if fuel > hull.fuel + EPS:
-					travelled = hull.fuel / rear.vehicles._fuel_rate(hull.design_type) * 1000.0
+					var fraction: float = hull.fuel/fuel
+					moved *= fraction
 					fuel = hull.fuel
 					row.blocker = "Fuel Empty; same hull stopped with its actual contents and claims."
+					row.state = "Fuel Empty"
 				rear.ledger.burn_vehicle_fuel(row.hull,fuel)
 				row.travel_burn += fuel
-				row.distance += travelled
+				row.distance += moved
 				rear.ledger.move_entity(row.hull,"rear",Layout.position(row.route,row.distance))
 			row.last_time = next_time
-			if row.distance + EPS >= row.route_length: _finish_route(row)
+			if row.state != "Fuel Empty" and row.distance + EPS >= row.route_length: _finish_route(row)
 		if row.task.is_empty(): continue
 		var task: Dictionary = row.task
 		if not task.route.is_empty():
@@ -209,6 +248,19 @@ func advance_to(next_time: float) -> void:
 			if task.phase in ["Gun Carry","Gun Return Carry"]: rear.ledger.move_field_gun(task.gun,"rear",position)
 		if task.deadline <= next_time + EPS: _finish_task(row)
 	_advancing_at = -1.0
+
+func _route_progress(row: Dictionary, elapsed: float) -> Dictionary:
+	var distance := 0.0
+	var fuel := 0.0
+	var remaining: float = minf(elapsed,float(row.route_plan.seconds))
+	for part in row.route_plan.parts:
+		var used: float = minf(remaining,float(part.seconds))
+		if used <= 0.0: break
+		var fraction: float = used/float(part.seconds)
+		distance += float(part.distance)*fraction
+		fuel += float(part.fuel)*fraction
+		remaining -= used
+	return {"distance":distance,"fuel":fuel}
 
 func _finish_route(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -556,6 +608,59 @@ func _finish_task(row: Dictionary) -> void:
 	_clear_task(row)
 	if phase == "Passenger Board" and result.ok: rear.actors[worker].phase = "Passenger Seated"
 
+func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var row: Dictionary = manifests.get(id,{})
+	if row.is_empty(): return _fail("Select an accepted physical manifest.")
+	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
+	var profile: Dictionary = candidate if not candidate.is_empty() else row.route_profile
+	var rear_exit: Vector2 = rear.ledger.inspect_entity("rear-exit").position
+	var segments: Array[Dictionary] = []
+	var road_start: Vector2 = hull.position
+	if hull.holder_id != "dispatch-berth":
+		var approach: Array = Layout.path(hull.position,Layout.door("dispatch"))
+		if approach.is_empty(): return _fail("No physical route from this hull to F07 dispatch.")
+		var approach_plan: Dictionary = Routes.plan(rear.ledger,row.hull,approach,{"strict_turns":false})
+		if not approach_plan.ok: return _fail(approach_plan.reason)
+		segments.append(approach_plan)
+		road_start = Layout.door("dispatch")
+	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,[road_start,rear_exit],{"strict_turns":false})
+	if not outward_rear.ok: return _fail(outward_rear.reason)
+	segments.append(outward_rear)
+	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,HQ_QUEUE],_crossing_profile(profile,[rear_exit,ENTRY,HQ_QUEUE]))
+	if not outward.ok: return _fail(outward.reason)
+	segments.append(outward)
+	var dock: Dictionary = Routes.plan(rear.ledger,row.hull,[HQ_QUEUE,HQ])
+	if not dock.ok: return _fail(dock.reason)
+	segments.append(dock)
+	if row.mode == "Strategic Delivery":
+		var back: Dictionary = Routes.plan(rear.ledger,row.hull,[HQ,ENTRY,rear_exit],_crossing_profile(profile,[HQ,ENTRY,rear_exit]))
+		if not back.ok: return _fail(back.reason)
+		segments.append(back)
+		var home: Array = Layout.path(rear_exit,rear.yard.PARKING_POSITIONS[row.home_slot])
+		if home.is_empty(): return _fail("No physical rear route to the same F11 home slot.")
+		var home_plan: Dictionary = Routes.plan(rear.ledger,row.hull,home,{"strict_turns":false})
+		if not home_plan.ok: return _fail(home_plan.reason)
+		segments.append(home_plan)
+	var distance := 0.0
+	var seconds := 0.0
+	var fuel := 0.0
+	for segment in segments:
+		distance += float(segment.distance)
+		seconds += float(segment.seconds)
+		fuel += float(segment.fuel)
+	var required: float = fuel*1.25
+	return {"ok":true,"message":"Measured route and physical gross load.","distance":distance,"seconds":seconds,"fuel":fuel,"required_fuel":required,"tank_fuel":hull.fuel,"gross_kg":Routes.gross_kg(rear.ledger,row.hull),"profile":profile.duplicate(true),"segments":segments,"fuel_ok":hull.fuel+EPS >= required}
+
+func set_route_profile(id: String, profile: Dictionary) -> Dictionary:
+	var row: Dictionary = manifests.get(id,{})
+	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Route edits require an accepted predeparture manifest.")
+	var preview: Dictionary = route_preview(id,profile)
+	if not preview.ok: return preview
+	row.route_profile = profile.duplicate(true)
+	row.full_route_plan = preview
+	return {"ok":true,"message":"Actual route profile selected: %.1f m, %.2f fuel needed with 25 percent reserve; %.2f in same tank." % [preview.distance,preview.required_fuel,preview.tank_fuel]}
+
 func depart(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
@@ -580,11 +685,10 @@ func depart(id: String) -> Dictionary:
 		if have != int(row.cargo[type]): return _fail("Partial dispatch is disabled: %s requested %d, onboard %d." % [type,int(row.cargo[type]),have])
 	for person_id in row.passengers:
 		if rear.ledger.inspect_entity(person_id).holder_id != row.hull: return _fail("A named passenger has not actually boarded: " + person_id)
-	var outbound := Layout.door("dispatch").distance_to(rear.ledger.inspect_entity("rear-exit").position) + 1000.0 + 400.0
-	var return_leg := 0.0
-	if row.mode == "Strategic Delivery": return_leg = 400.0 + 1000.0 + rear.ledger.inspect_entity("rear-exit").position.distance_to(rear.yard.PARKING_POSITIONS[row.home_slot])
-	var needed: float = (outbound+return_leg)/1000.0*rear.vehicles._fuel_rate(hull.design_type)*1.25
-	if hull.fuel + EPS < needed: return _fail("Fuel Empty or insufficient for this mode's real safe road/HQ leg and 25 percent reserve: %.2f needed, %.2f aboard." % [needed,hull.fuel])
+	var plan: Dictionary = route_preview(id)
+	if not plan.ok: return plan
+	row.full_route_plan = plan
+	if hull.fuel + EPS < plan.required_fuel: return _fail("Fuel Empty or insufficient for destination and next resupply with 25 percent reserve: %.2f needed over %.1f m, %.2f physically in tank; a reserved M08 carry is not tank fuel." % [plan.required_fuel,plan.distance,hull.fuel])
 	if row.mode == "Fleet Transfer" and not incoming_hulls.has(row.hull): return _fail("Incoming military hull 24 claim is missing.")
 	if _rear_ref.get_ref().receiving.rear_population() + _rear_ref.get_ref().receiving.incoming_people() > REAR_PEOPLE_LIMIT: return _fail("Rear 120 occupancy is invalid; departure cannot mask overbooking.")
 	row.departed = true
@@ -663,7 +767,7 @@ func _schedule_hq(row: Dictionary) -> bool:
 func request_safe_return(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.state not in ["Transit","Waiting HQ Berth","Docking HQ"] or row.get("hq_started",false): return _fail("Only the same outbound hull before HQ receipt can request a safety return.")
+	if row.is_empty() or row.state not in ["Transit","Waiting HQ Berth","Docking HQ","Safety Stop","Stranded"] or row.get("hq_started",false): return _fail("Only the same outbound hull before HQ receipt can request a safety return.")
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var needing: Array[String] = []
 	for person_id in row.passengers:
@@ -672,18 +776,58 @@ func request_safe_return(id: String) -> Dictionary:
 		for person_id in row.crew.values():
 			if rear.ledger.inspect_entity(person_id).rear_place == "None": needing.append(person_id)
 	if rear.receiving.rear_population() + rear.receiving.incoming_people() + return_places.size() + needing.size() > REAR_PEOPLE_LIMIT: return _fail("Rear 120 is full; same hull waits outside with every person and military claim intact.")
-	var route: Array = [hull.position,ENTRY,rear.ledger.inspect_entity("rear-exit").position]
+	var route: Array = [hull.position,rear.ledger.inspect_entity("rear-exit").position]
 	var home_route: Array = Layout.path(rear.ledger.inspect_entity("rear-exit").position,Layout.door("dispatch"))
 	if home_route.is_empty(): return _fail("No safe physical rear re-entry route; actual hull and admissions stay outside.")
 	var needed_fuel: float = (Layout.length(route)+Layout.length(home_route)+Layout.length(Layout.path(Layout.door("dispatch"),rear.yard.PARKING_POSITIONS[row.home_slot])))/1000.0*rear.vehicles._fuel_rate(hull.design_type)*1.25
+	var return_profile: Dictionary = row.route_profile.duplicate(true)
+	return_profile.erase("known_mine")
+	return_profile.erase("observed_hostile")
+	return_profile.strict_turns = false
+	return_profile.allow_partial_bridge = true
+	var outside_plan: Dictionary = Routes.plan(rear.ledger,row.hull,route,_crossing_profile(return_profile,route))
+	if not outside_plan.ok: return _fail(outside_plan.reason)
+	var rear_plan: Dictionary = Routes.plan(rear.ledger,row.hull,home_route,{"strict_turns":false})
+	if not rear_plan.ok: return _fail(rear_plan.reason)
+	var park_plan: Dictionary = Routes.plan(rear.ledger,row.hull,Layout.path(Layout.door("dispatch"),rear.yard.PARKING_POSITIONS[row.home_slot]),{"strict_turns":false})
+	if not park_plan.ok: return _fail(park_plan.reason)
+	needed_fuel = (float(outside_plan.fuel)+float(rear_plan.fuel)+float(park_plan.fuel))*1.25
 	if hull.fuel + EPS < needed_fuel: return _fail("Fuel Empty or insufficient for real safety return plus 25 percent reserve; same hull waits outside.")
 	for person_id in needing: return_places[person_id] = id
 	row.hq_berth = false
 	row.safety_return = true
 	row.return_phase = "Outside"
 	row.arrived = {}
+	row.route_profile = return_profile
 	_start_route(row,route,"Safety Returning")
 	return {"ok":true,"message":"Safety return reserved real rear places; same occupied hull is moving home. No trip refund or early military release."}
+
+func report_route_hazard(id: String, reason: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var row: Dictionary = manifests.get(id,{})
+	if row.is_empty() or row.state != "Transit" or reason.is_empty(): return _fail("A named observed route hazard can stop only the same outbound hull before HQ.")
+	row.state = "Safety Stop"
+	row.stop_deadline = rear.time + 10.0
+	row.blocker = reason + "; same hull stopped at its latest actual safe position for up to 10 seconds."
+	return {"ok":true,"message":row.blocker}
+
+func clear_route_hazard(id: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var row: Dictionary = manifests.get(id,{})
+	if row.is_empty() or row.state != "Safety Stop" or rear.time > float(row.stop_deadline) + EPS: return _fail("Only a live safety hold may resume before its ten-second deadline.")
+	var elapsed := 0.0
+	var left: float = row.distance
+	for part in row.route_plan.parts:
+		var used: float = minf(left,float(part.distance))
+		elapsed += used/float(part.speed)
+		left -= used
+		if left <= EPS: break
+	row.blocker = ""
+	row.route_started = rear.time-elapsed
+	row.route_deadline = row.route_started+float(row.route_plan.seconds)
+	row.last_time = rear.time
+	row.state = "Transit"
+	return {"ok":true,"message":"Cleared known hazard; same hull resumes measured remaining route from its actual stop."}
 
 func cancel(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -726,6 +870,7 @@ func change_mode(id: String, mode: String) -> Dictionary:
 		incoming_hulls.erase(row.hull)
 		for person_id in row.crew.values(): incoming_people.erase(person_id)
 	row.mode = mode
+	row.erase("full_route_plan")
 	return {"ok":true,"message":"Mode and only its own crew/hull admissions changed atomically before departure."}
 
 func add_field_gun(id: String, gun_id: String) -> Dictionary:
@@ -741,6 +886,7 @@ func add_field_gun(id: String, gun_id: String) -> Dictionary:
 	if gun.is_empty() or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.holder_id != "heavy-bay" or rear.heavy_production.bay_occupant != gun_id or weapon_promises.has(gun_id): return _fail("Select the same uncommitted E13 currently occupying F10.")
 	row.guns.append(gun_id)
 	weapon_promises[gun_id] = id
+	row.erase("full_route_plan")
 	row.state = "Staging"
 	rear._settle()
 	return {"ok":true,"message":"Second actual field gun promised; two loaders must collect it before departure."}

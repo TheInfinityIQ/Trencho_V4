@@ -55,6 +55,9 @@ var dispatch_draft: Dictionary = {}
 var dispatch_rows: ItemList
 var dispatch_ids: Array[String] = []
 var dispatch_status: Label
+var dispatch_surface: OptionButton
+var dispatch_bridge: OptionButton
+var dispatch_clearance: SpinBox
 var _pending_token: int = -1
 var heavy_controls: VBoxContainer
 var heavy_status: Label
@@ -345,9 +348,12 @@ func _vehicles_panel(box: VBoxContainer) -> void:
 	vehicle_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func _dispatch_panel(box: VBoxContainer) -> void:
-	_label(box,"G12 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew, Fleet permanently transfers them at HQ.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"G12/G13 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew, Fleet permanently transfers them at HQ. Preview the full route against tank fuel before departure.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dispatch_hull = _option(box,"Same F10-produced parked hull",[])
 	dispatch_mode = _option(box,"Mode",["Strategic Delivery","Fleet Transfer"])
+	dispatch_surface = _option(box,"Route surface",["TR02 Road","TR03 Farm","TR07 Rocky","TR10 Ford","TR11 Deep water"])
+	dispatch_bridge = _option(box,"Specified crossing fixture",["No bridge","B02 Light road bridge","B03 Heavy road bridge"])
+	dispatch_clearance = _spin(box,"Route clear width (metres)",30,8)
 	_label(box,"Select named rear passengers (Ctrl-click for multiple). They remain separate from crew.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dispatch_people = _list(box,105)
 	dispatch_people.select_mode = ItemList.SELECT_MULTI
@@ -378,6 +384,12 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 	dispatch_rows.item_selected.connect(func(_index: int) -> void: _refresh())
 	_button(box,"Depart complete selected manifest",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.depart(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
+	_button(box,"Preview measured route and gross load",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty():
+			var plan: Dictionary = simulation.rear.dispatch.route_preview(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())
+			_result({"ok":plan.ok,"message":("%.1f m, %.1f s, %.2f travel fuel, %.2f required with reserve, %.2f in tank, gross %.1f kg" % [plan.distance,plan.seconds,plan.fuel,plan.required_fuel,plan.tank_fuel,plan.gross_kg]) if plan.ok else plan.message}))
+	_button(box,"Apply measured route before departure",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.set_route_profile(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())))
 	_button(box,"Change selected manifest mode before departure",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.change_mode(dispatch_ids[dispatch_rows.get_selected_items()[0]],dispatch_mode.get_item_text(dispatch_mode.selected))))
 	_button(box,"Add same F10 field gun to selected manifest",func() -> void:
@@ -386,8 +398,17 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.cancel(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
 	_button(box,"Request safe return before HQ receipt",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.request_safe_return(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
+	_button(box,"Report observed unsafe forward route",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.report_route_hazard(dispatch_ids[dispatch_rows.get_selected_items()[0]],"Observed unsafe forward road")))
+	_button(box,"Clear observed route hazard",func() -> void:
+		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.clear_route_hazard(dispatch_ids[dispatch_rows.get_selected_items()[0]])))
 	dispatch_status = _label(box,"")
 	dispatch_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func _dispatch_profile() -> Dictionary:
+	var profile := {"surface":dispatch_surface.get_item_text(dispatch_surface.selected).get_slice(" ",0),"corridor_width":dispatch_clearance.value}
+	if dispatch_bridge.selected > 0: profile.bridge = dispatch_bridge.get_item_text(dispatch_bridge.selected).get_slice(" ",0)
+	return profile
 
 func _vehicle_id() -> String:
 	return vehicle_ids[vehicle_rows.get_selected_items()[0]] if not vehicle_rows.get_selected_items().is_empty() else ""
@@ -547,6 +568,8 @@ func _refresh_dispatch(view: Dictionary) -> void:
 	for row in view.dispatch.rows:
 		if row.id != id: continue
 		dispatch_status.text += "\n%s %s | same %s at %s | fuel %.2f | driver %s | crew %s\nPassengers %s | guns %s | payload %.1f/%.1f kg; seats %d/%d\nRequested %s\nCommitted %s\nStaged %s\nOnboard %s\nArrived %s\nUnloaded %s\nHandling %s; route %.1f/%.1f m\nBlocked: %s" % [row.id,row.state,row.hull,str(row.hull_physical.position),row.hull_physical.fuel,row.driver,str(row.crew),str(row.passengers),str(row.guns),row.payload_used,row.hull_physical.vehicle_spec.payload,row.seats_used,row.hull_physical.vehicle_spec.passenger_seats,str(row.requested),str(row.committed),str(row.staged),str(row.onboard),str(row.arrived),str(row.unloaded),str(row.task.get("phase","idle")),row.distance,row.route_length,row.blocker]
+		var planned: Dictionary = row.get("full_route_plan",{})
+		if planned.get("ok",false): dispatch_status.text += "\nG13 last plan %.1f m / %.1f s; fuel %.2f + 25%% = %.2f needed; gross %.1f kg; %s" % [planned.distance,planned.seconds,planned.fuel,planned.required_fuel,planned.gross_kg,str(planned.profile)]
 		break
 
 func _refresh() -> void:
