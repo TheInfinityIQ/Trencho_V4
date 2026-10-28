@@ -26,6 +26,7 @@ var heavy_production: RefCounted # One F10 heavy bay/admission owner.
 var training: RefCounted # Optional F06 elapsed-time courses; separate from operator-work.
 var vehicles: RefCounted # Optional G07 handling on this same clock and actor pool.
 var dispatch: RefCounted # Optional G12 manifests on the same identities and event clock.
+var hq: RefCounted # G14 physical HQ issue on the same ledger and event clock.
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -259,6 +260,7 @@ func advance_time(seconds: float) -> Dictionary:
 		var next := minf(target, yard.deadline)
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
 		if dispatch != null: next = minf(next,dispatch.next_boundary())
+		if hq != null: next = minf(next,hq.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -281,6 +283,7 @@ func advance_time(seconds: float) -> Dictionary:
 		yard.advance_to(next)
 		if vehicles != null: vehicles.advance_to(next)
 		if dispatch != null: dispatch.advance_to(next)
+		if hq != null: hq.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -453,6 +456,7 @@ func _settle() -> void:
 		var changed: bool = yard.complete_due()
 		if vehicles != null: changed = vehicles.settle() or changed
 		if dispatch != null: changed = dispatch.settle() or changed
+		if hq != null: changed = hq.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)

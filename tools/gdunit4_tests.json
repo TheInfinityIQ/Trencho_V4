@@ -171,6 +171,12 @@
   ],
   "Input": [
     {
+      "path": "game/hq/tests/hq_input_test.gd",
+      "cases": [
+        "test_hq_issue_panel_click_reserves_then_physically_issues_same_person"
+      ]
+    },
+    {
       "path": "game/dispatch/tests/dispatch_input_test.gd",
       "cases": [
         "test_normal_dispatch_accept_reject_depart_and_small_panel"
