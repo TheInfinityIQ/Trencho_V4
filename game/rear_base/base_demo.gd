@@ -74,8 +74,7 @@ func _ready() -> void:
 	base_map.selected.connect(_select)
 	split.add_child(base_map)
 	tabs = TabContainer.new()
-	tabs.custom_minimum_size.x = 350
-	tabs.get_tab_bar().add_theme_font_size_override("font_size",14)
+	tabs.custom_minimum_size.x = 400
 	split.add_child(tabs)
 	_orders_panel(_panel("Orders"))
 	_staff_panel(_panel("Staff"))
