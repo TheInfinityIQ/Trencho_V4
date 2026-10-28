@@ -22,6 +22,7 @@ var production: RefCounted # Optional G04 owner; null keeps the accepted G03 fix
 var munitions_production: RefCounted # Optional exclusive R02/R27 F05 owner on this same clock.
 var materials_production: RefCounted # Optional fixed R26/F13 owner on this same clock.
 var support_production: RefCounted # Explicit F09 owner; null in retained diagnostics.
+var heavy_production: RefCounted # One F10 heavy bay/admission owner.
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -234,6 +235,7 @@ func _production_activities() -> Array[RefCounted]:
 	if munitions_production != null: activities.append(munitions_production)
 	if materials_production != null: activities.append(materials_production)
 	if support_production != null: activities.append(support_production)
+	if heavy_production != null: activities.append(heavy_production)
 	return activities
 
 
@@ -788,6 +790,7 @@ func _waiting_job_viable(job: Dictionary) -> bool:
 
 func audit() -> Array[String]:
 	var failures: Array[String] = ledger.audit()
+	if heavy_production != null: failures.append_array(heavy_production.audit())
 	for a in actors.values():
 		var p: Dictionary = ledger.inspect_entity(a.id)
 		if not a.load.is_empty():

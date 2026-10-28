@@ -11,6 +11,8 @@ var _consumed: Dictionary[String, int] = {}
 var _lost: Dictionary[String, int] = {}
 var _sequence: int = 0
 var _time: float = 0.0
+var _rear_hull_promises: Dictionary = {}
+const REAR_FLEET_LIMIT := 8
 var _events: Array[Dictionary] = []
 
 
@@ -30,12 +32,83 @@ func add_place(id: String, description: String, position: Vector2) -> Dictionary
 
 
 func add_carrier(id: String, holder_id: String, owner: String, controller: String,
-		design_type: String = "Carrier fixture") -> Dictionary:
+		design_type: String = "Carrier fixture", fleet_domain: String = "External service") -> Dictionary:
 	if not _free_id(id) or not _is_place(holder_id) or owner.is_empty():
 		return _reject("INVALID_ENTITY", "A carrier needs a unique ID, owner and physical place.")
 	_new_entity(id, Records.Kind.CARRIER, design_type, owner, controller, holder_id,
 		"Supplier-owned carrier; not a third combat faction.")
+	_entities[id].fleet_domain = fleet_domain
 	return _ok("Carrier registered.", id)
+
+
+func create_heavy_output(admission: String, claimant: String, id: String, type: String, holder: String, owner: String, properties: Dictionary) -> Dictionary:
+	if not _free_id(id) or not _is_place(holder) or owner.is_empty() or (type != "E13" and type not in ["T01","T02","T03","T04","T05"]):
+		return _reject("INVALID_HEAVY_OUTPUT", "A heavy output needs its own identity, legal place and canonical type.")
+	if not properties.has("mass") or not properties.has("health") or not _valid_mass(properties.mass) or properties.health <= 0:
+		return _reject("INVALID_HEAVY_PROPERTIES", "Canonical physical output properties are required before creation.")
+	if type != "E13":
+		for key in ["stations","rack_capacity","passenger_seats","footprint","mechanisms","payload","tank_capacity"]:
+			if not properties.has(key): return _reject("INVALID_HULL_PROPERTIES", "Complete hull properties are required.")
+		var claim := inspect_rear_hull_claim(admission)
+		var status := rear_fleet_status(owner)
+		if claim.get("owner") != owner or claim.get("claimant") != claimant or status.live >= REAR_FLEET_LIMIT or status.live + status.reserved > REAR_FLEET_LIMIT:
+			return _reject("NO_OWN_FLEET_ADMISSION", "A valid own rear-fleet admission is required immediately before hull creation.")
+	var entity := _new_entity(id, Records.Kind.HEAVY_OBJECT if type == "E13" else Records.Kind.CARRIER, type, owner, owner, holder, "Manufactured empty field gun" if type == "E13" else "Manufactured empty, unfuelled and uncrewed hull")
+	if type == "E13":
+		entity.unit_mass_kg = properties.mass
+		entity.health = properties.health
+	else:
+		entity.vehicle_spec = properties.duplicate(true)
+		entity.unit_mass_kg = entity.vehicle_spec.mass
+		entity.health = entity.vehicle_spec.health
+		entity.fleet_domain = "Rear"
+		_rear_hull_promises.erase(admission)
+	_event("Physical heavy output created, without crew, fuel or ammunition", id)
+	return _ok("One empty heavy output created.", id)
+
+
+func rear_fleet_hulls(owner: String) -> Array[String]:
+	var result: Array[String] = []
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.CARRIER and entity.owner == owner and entity.fleet_domain == "Rear" and entity.design_type in ["T01","T02","T03","T04","T05"] and entity.health > 0:
+			result.append(entity.id)
+	return result
+
+
+func reserve_rear_hull(id: String, owner: String, claimant: String) -> Dictionary:
+	var status := rear_fleet_status(owner)
+	if id.is_empty() or owner.is_empty() or claimant.is_empty() or _rear_hull_promises.has(id):
+		return _reject("INVALID_FLEET_CLAIM", "A unique order and owning activity are required.")
+	if status.live + status.reserved >= REAR_FLEET_LIMIT:
+		return _reject("REAR_FLEET_FULL", "Rear fleet 8 is occupied/reserved; a military intention does not bypass it.")
+	_rear_hull_promises[id] = {"id":id,"owner":owner,"claimant":claimant}
+	return _ok("Rear fleet admission reserved before material consumption.", id)
+
+
+func release_rear_hull(id: String, claimant: String) -> Dictionary:
+	if not _rear_hull_promises.has(id) or _rear_hull_promises[id].claimant != claimant:
+		return _reject("NOT_OWN_UNUSED_ADMISSION", "Only this order's unused admission can be released; live hulls are retained.")
+	_rear_hull_promises.erase(id)
+	return _ok("Only the unused fleet admission released.")
+
+
+func inspect_rear_hull_claim(id: String) -> Dictionary:
+	return _rear_hull_promises.get(id, {}).duplicate(true)
+
+
+func rear_fleet_status(owner: String) -> Dictionary:
+	var ids := rear_fleet_hulls(owner)
+	var claims: Array[Dictionary] = []
+	for claim in _rear_hull_promises.values():
+		if claim.owner == owner: claims.append(claim.duplicate(true))
+	return {"live":ids.size(),"reserved":claims.size(),"limit":REAR_FLEET_LIMIT,"live_ids":ids,"claims":claims}
+
+
+func entities_at(holder: String, kinds: Array) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
+	return result
 
 
 func add_person(id: String, holder_id: String, owner: String,
@@ -383,6 +456,25 @@ func inspect_entity(id: String) -> Dictionary:
 		"quantity": entity.quantity, "unit_mass_kg": entity.unit_mass_kg,
 		"contents_mass_kg": _contents_mass(id), "origin_id": entity.origin_id,
 	}
+	if entity.kind == Records.Kind.HEAVY_OBJECT:
+		result.health = entity.health
+		result.packed = true
+		result.ammunition = {}
+	if entity.kind == Records.Kind.CARRIER:
+		result.fleet_domain = entity.fleet_domain
+		if not entity.vehicle_spec.is_empty():
+			result.vehicle_spec = entity.vehicle_spec.duplicate(true)
+			result.fuel = entity.fuel
+			result.health = entity.health
+			result.crew = []
+			result.passengers = []
+			result.ammunition = {}
+			for child in _entities.values():
+				if child.holder_id != id: continue
+				if child is Records.Person:
+					result.crew.append(child.id) if not child.crew_station.is_empty() else result.passengers.append(child.id)
+				if child.kind == Records.Kind.STOCK and entity.vehicle_spec.rack_capacity.has(child.design_type):
+					result.ammunition[child.design_type] = int(result.ammunition.get(child.design_type, 0)) + child.quantity
 	if entity.kind == Records.Kind.STOCK:
 		result.reserved = reserved(id)
 		result.available = available(id)
@@ -436,7 +528,7 @@ func snapshot() -> Dictionary:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
 		"created": _created.duplicate(), "consumed": _consumed.duplicate(),
-		"lost": _lost.duplicate(), "events": _events.duplicate(true)}
+		"lost": _lost.duplicate(), "rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
 func total_stock(type: String) -> int:
@@ -465,6 +557,14 @@ func available_stock_at(holder_id: String, type: String) -> int:
 
 func audit() -> Array[String]:
 	var failures: Array[String] = []
+	var owners: Array[String] = []
+	for claim in _rear_hull_promises.values():
+		if claim.owner not in owners: owners.append(claim.owner)
+	for entity in _entities.values():
+		if entity.fleet_domain == "Rear" and entity.owner not in owners: owners.append(entity.owner)
+	for owner in owners:
+		var status := rear_fleet_status(owner)
+		if status.live + status.reserved > REAR_FLEET_LIMIT: failures.append("Rear hull admission overbooked: " + owner)
 	for entity in _entities.values():
 		if entity.kind != Records.Kind.PLACE and not _entities.has(entity.holder_id):
 			failures.append("Missing holder: " + entity.id)

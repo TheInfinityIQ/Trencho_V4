@@ -29,6 +29,11 @@ var capacity: SpinBox
 var accessible: CheckBox
 var confirmation: ConfirmationDialog
 var _pending_token: int = -1
+var heavy_controls: VBoxContainer
+var heavy_status: Label
+var bay_access: CheckBox
+var parking_access: CheckBox
+var parking_destination: OptionButton
 var _pending_activity: RefCounted
 var scenario: OptionButton
 var declaration: Label
@@ -153,7 +158,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 
 	_label(box, "New session resets the base; inspection never does.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded non-heavy catalogue"])
+	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue"])
 	_button(box, "Start new session", _start_session)
 
 func _start_session() -> void:
@@ -169,18 +174,18 @@ func _start_session() -> void:
 	_selected_id = "terminal"
 	_load_production()
 	_load_store()
-	declaration.text = ("Expanded non-heavy catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
+	declaration.text = ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
 	_result({"ok": true, "message": "New paused session. Recipe access was declared at creation; actual cards remain separate."})
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
-	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support"]:
+	for duty in ["receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works"]:
 		var spin := _spin(box, duty.capitalize(), simulation.rear.requests[duty].positions)
 		targets[duty] = spin
 		spin.value_changed.connect(func(value: float) -> void: _result(simulation.rear.set_target(duty, int(value))))
 	people = _list(box, 150)
 	people.item_selected.connect(func(index: int) -> void: _select("entity", _person_ids[index], false))
-	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials", "support"])
+	person_duty = _option(box, "Selected person's requested duty", ["Available", "receiving", "hauling", "workshop", "munitions", "materials", "support", "vehicle_works"])
 	_button(box, "Reassign selected person", func() -> void:
 		if not people.get_selected_items().is_empty(): _result(simulation.rear.reassign_person(_person_ids[people.get_selected_items()[0]], person_duty.get_item_text(person_duty.selected))))
 
@@ -210,7 +215,7 @@ func _load_haul_goods(category: int) -> void:
 			if spec.duty == duty: goods_type.add_item(spec.output_type)
 
 func _production_panel(box: VBoxContainer) -> void:
-	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support"])
+	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production())
 	recipe = _option(box, "Recipe / declared session access", [])
 	_button(box, "Select recipe", _change_recipe)
@@ -223,6 +228,21 @@ func _production_panel(box: VBoxContainer) -> void:
 	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
 	_button(box, "Cancel consumed batch / stop", func() -> void: _result(_activity().cancel()))
 	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
+	heavy_controls = VBoxContainer.new()
+	box.add_child(heavy_controls)
+	_label(heavy_controls,"Heavy targets request goods; acceptance reserves the bay/fleet place.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_button(heavy_controls,"Accept heavy order",func() -> void: _result(simulation.rear.heavy_production.accept_order()))
+	bay_access = CheckBox.new()
+	bay_access.text = "F10 bay accessible"
+	heavy_controls.add_child(bay_access)
+	parking_access = CheckBox.new()
+	parking_access.text = "Parking route accessible"
+	heavy_controls.add_child(parking_access)
+	_button(heavy_controls,"Apply heavy access",func() -> void: _result(simulation.rear.heavy_production.set_access(bay_access.button_pressed,parking_access.button_pressed)))
+	parking_destination = _option(heavy_controls,"Requested parking destination",["F11 place 1","F11 place 2","F11 place 3","F11 place 4"])
+	_button(heavy_controls,"Change promised parking",func() -> void: _result(simulation.rear.heavy_production.set_parking_destination(parking_destination.selected)))
+	heavy_status = _label(heavy_controls,"")
+	heavy_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	production_status = _label(box, "")
 	production_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
@@ -242,10 +262,13 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
 
 func _activity() -> RefCounted:
-	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production][facility.selected]
+	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production, simulation.rear.heavy_production][facility.selected]
 
 func _load_production() -> void:
 	var activity := _activity()
+	heavy_controls.visible = activity == simulation.rear.heavy_production
+	bay_access.button_pressed = simulation.rear.heavy_production.bay_accessible
+	parking_access.button_pressed = simulation.rear.heavy_production.parking_accessible
 	mode.select(0 if activity.mode == "Stock target" else 1)
 	stock_target.value = activity.stock_target
 	var view: Dictionary = activity.snapshot()
@@ -286,7 +309,7 @@ func _select(kind: String, id: String, open_panel: bool = true) -> void:
 	_selected_kind = kind
 	_selected_id = id
 	if kind == "building":
-		var store_id := id if simulation.rear.stores.has(id) else id + "_input"
+		var store_id := "vehicle_input" if id == "vehicle_works" else (id if simulation.rear.stores.has(id) else id + "_input")
 		var index: int = simulation.rear.stores.keys().find(store_id)
 		if index >= 0:
 			store.select(index)
@@ -317,6 +340,14 @@ func _refresh() -> void:
 	for activity in [view.production, view.munitions, view.materials, view.support]:
 		lines.append("%s %s -> %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d; promised %.1f kg" % [activity.facility, activity.recipe, activity.output_type, activity.status, str(activity.local_inputs), str(activity.missing_local), activity.batch.get("work", 0.0), activity.required_work, activity.physical_output, activity.output_promise.get("mass", 0.0)])
 	production_status.text = "\n\n".join(lines)
+	var heavy: Dictionary = view.heavy
+	heavy_status.text = "%s -> %s: %s\nRear fleet: %d live + %d reserved / 8\nBay: %s\nOrder: %s; work %.1f/%.0f\n%s" % [heavy.recipe,heavy.output_type,heavy.status,heavy.fleet.live,heavy.fleet.reserved,heavy.bay.occupant if not heavy.bay.occupant.is_empty() else ("one accepted promise" if not heavy.order.is_empty() else "empty"),heavy.order.get("id","unaccepted"),heavy.batch.get("work",0.0),heavy.required_work,heavy.bay.clearance]
+	if heavy.bay.parking_slot >= 0:
+		heavy_status.text += "\nReserved destination: F11 place %d %s" % [heavy.bay.parking_slot+1,str(heavy.bay.parking_position)]
+	else: heavy_status.text += "\nDestination: F10 heavy collection bay"
+	if not heavy.bay.physical.is_empty():
+		var object: Dictionary = heavy.bay.physical
+		heavy_status.text += "\n%s: %.0f kg; fuel %.0f; %d crew, %d passengers; no ammunition" % [object.design_type,object.unit_mass_kg,object.get("fuel",0.0),object.get("crew",[]).size(),object.get("passengers",[]).size()]
 	var info := _selected_kind + ": " + _selected_id + "\n"
 	match _selected_kind:
 		"entity":
@@ -326,6 +357,7 @@ func _refresh() -> void:
 			if simulation.rear.requests.has(_selected_id):
 				var r: Dictionary = simulation.rear.requests[_selected_id]
 				info += "Staff target %d / %d positions; actual %d.\n" % [r.target, r.positions, simulation.rear._assigned(_selected_id)]
+			if _selected_id == "vehicle_works": info += heavy_status.text + "\n"
 			for row in view.rear.stores:
 				if row.id == _selected_id or row.id.begins_with(_selected_id + "_"):
 					info += "%s: %.1f kg, free %.1f, inbound %.1f, output promise %.1f\n" % [row.id, row.physical_kg, row.free_kg, row.reserved_inbound_kg, row.reserved_output_kg]

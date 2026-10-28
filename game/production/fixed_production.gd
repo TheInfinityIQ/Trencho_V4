@@ -48,6 +48,18 @@ const RECIPES := {
 		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
 	"R21": {"work": 25.0, "inputs": {"M01": 2, "M05": 2}, "output_type": "E21", "output_count": 1, "unit_mass": 4.0,
 		"duty": "support", "facility": "F09", "input_store": "support_input", "output_store": "support_output"},
+	"R13": {"work": 600.0, "inputs": {"M01": 100, "M02": 60}, "output_type": "E13", "output_count": 1, "unit_mass": 180.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
+	"R25": {"work": 800.0, "inputs": {"M01": 120, "M02": 80}, "output_type": "T01", "output_count": 1, "unit_mass": 4000.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
+	"R28": {"work": 700.0, "inputs": {"M01": 100, "M02": 60}, "output_type": "T02", "output_count": 1, "unit_mass": 3200.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
+	"R29": {"work": 900.0, "inputs": {"M01": 80, "M02": 50}, "output_type": "T03", "output_count": 1, "unit_mass": 2000.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
+	"R30": {"work": 2200.0, "inputs": {"M01": 500, "M02": 250, "M07": 20}, "output_type": "T04", "output_count": 1, "unit_mass": 14000.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
+	"R31": {"work": 4000.0, "inputs": {"M01": 1200, "M02": 500, "M07": 40}, "output_type": "T05", "output_count": 1, "unit_mass": 30000.0,
+		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
 }
 var _spec: Dictionary
 var _recipe: String
@@ -62,7 +74,7 @@ var _sequence := 0
 
 
 func _init(rear: RefCounted, recipe: String) -> void:
-	assert(recipe in RECIPES, "Only the released non-heavy recipes are supported.")
+	assert(recipe in RECIPES, "Only canonical released recipes are supported.")
 	_recipe = recipe
 	_spec = RECIPES[recipe]
 	_rear_ref = weakref(rear) # Rear owns this activity; do not retain a reference cycle.
@@ -171,7 +183,7 @@ func stock_coverage() -> Dictionary:
 		if count > 0:
 			relocation += count
 			portions.append({"job": job.id, "person": actor.id, "source": load.source, "destination": load.destination, "claim": load.get("claim", ""), "carried_stock": load.carried, "count": count})
-	var forecast: int = _spec.output_count if not batch.is_empty() and rear.output_space_valid(batch.id) else 0
+	var forecast: int = _spec.output_count if not batch.is_empty() and _output_valid(batch.id) else 0
 	return {"available": available, "planned": relocation + forecast, "projected": available + relocation + forecast,
 		"eligible_physical": physical, "eligible_reserved": reserved, "internal_relocation": relocation, "internal_carried": carried,
 		"batch_forecast": forecast, "batch_id": batch.get("id", ""), "stocks": stocks, "relocations": portions, "excluded": excluded}
@@ -182,8 +194,7 @@ func _target_satisfied() -> bool:
 
 
 func _can_work() -> bool:
-	var rear: RefCounted = _rear_ref.get_ref()
-	return not batch.is_empty() and enabled and not paused and _access() and rear.output_space_valid(batch.id) and not operators().is_empty()
+	return not batch.is_empty() and enabled and not paused and _access() and _output_valid(batch.id) and not operators().is_empty()
 
 
 func next_boundary() -> float:
@@ -209,10 +220,10 @@ func settle() -> bool:
 	if not batch.is_empty():
 		# All operator work is already earned. Physical completion needs no extra
 		# work credit, but still obeys facility pause/access and its valid promise.
-		if batch.work < _spec.work or not enabled or paused or not _access() or not rear.output_space_valid(batch.id): return false
-		var result: Dictionary = rear.ledger.add_stock(batch.output_id, _spec.output_type, _spec.output_count, _spec.unit_mass, _spec.output_store, rear.PLAYER)
+		if batch.work < _spec.work or not enabled or paused or not _access() or not _output_valid(batch.id): return false
+		var result: Dictionary = _create_output()
 		if not result.ok: return false # Keep complete work/promise; no duplicate or overflow fallback.
-		rear.release_output_space(batch.id)
+		_release_output(batch.id)
 		batch.completed_at = rear.time
 		batch.state = "Completed"
 		history.append(batch.duplicate(true))
@@ -221,10 +232,10 @@ func settle() -> bool:
 	if not enabled or paused or _target_satisfied() or not _access() or operators().is_empty() or not _missing().is_empty(): return false
 	var id := "%s-batch-%04d" % [_recipe.to_lower(), _sequence + 1]
 	if not rear.ledger.inspect_entity(id + "-" + _spec.output_type).is_empty(): return false
-	if not rear.reserve_output_space(id, _spec.output_store, _spec.output_type, (_spec.output_count * _spec.unit_mass)).ok: return false
+	if not _reserve_output(id).ok: return false
 	var consumption: Dictionary = rear.ledger.consume_local_batch(_spec.input_store, rear.PLAYER, _spec.inputs, id + " " + _recipe + " inputs")
 	if not consumption.ok:
-		rear.release_output_space(id)
+		_release_output(id)
 		return false
 	_sequence += 1
 	batch = {"id": id, "recipe": _recipe, "work": 0.0, "required_work": _spec.work,
@@ -248,7 +259,7 @@ func cancel() -> Dictionary:
 	enabled = false # Stop continuous requests too; repeated cancellation cannot start new input loss.
 	if not batch.is_empty():
 		var rear: RefCounted = _rear_ref.get_ref()
-		rear.release_output_space(batch.id)
+		_release_output(batch.id)
 		batch.state = "Cancelled"
 		batch.cancelled_at = rear.time
 		history.append(batch.duplicate(true))
@@ -265,7 +276,7 @@ func snapshot() -> Dictionary:
 	if not enabled: status = "No Recipe — stopped"
 	elif paused: status = "Paused"
 	elif not _access(): status = "Access blocked — work paused"
-	elif not batch.is_empty() and not rear.output_space_valid(batch.id): status = "Output blocked — promise/work retained"
+	elif not batch.is_empty() and not _output_valid(batch.id): status = "Output blocked — promise/work retained"
 	elif batch.is_empty() and _target_satisfied(): status = "Target satisfied — no new batch"
 	elif batch.is_empty() and not rear._valid_destination(_spec.output_store, _spec.output_type, (_spec.output_count * _spec.unit_mass)): status = "Output Full"
 	elif batch.is_empty() and not _missing().is_empty(): status = "Missing Inputs"
@@ -278,3 +289,18 @@ func snapshot() -> Dictionary:
 		"output_promise": rear._output_promises.get(batch.get("id", ""), {}).duplicate(true),
 		"physical_output": physical_output,
 		"required_work": _spec.work, "haul_shortage": rear._assigned("hauling") == 0 and not _missing().is_empty()}
+
+
+func _reserve_output(id: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	return rear.reserve_output_space(id, _spec.output_store, _spec.output_type, _spec.output_count * _spec.unit_mass)
+
+func _output_valid(id: String) -> bool:
+	return _rear_ref.get_ref().output_space_valid(id)
+
+func _release_output(id: String) -> void:
+	_rear_ref.get_ref().release_output_space(id)
+
+func _create_output() -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	return rear.ledger.add_stock(batch.output_id, _spec.output_type, _spec.output_count, _spec.unit_mass, _spec.output_store, rear.PLAYER)

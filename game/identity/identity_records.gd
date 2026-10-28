@@ -1,7 +1,7 @@
 extends RefCounted
 ## Internal records. The ledger returns detached inspection snapshots, never these objects.
 
-enum Kind { PLACE, CARRIER, PERSON, STOCK, WEAPON }
+enum Kind { PLACE, CARRIER, PERSON, STOCK, WEAPON, HEAVY_OBJECT }
 enum Assignment {
 	AVAILABLE, REAR_LABOUR, TRAINING, STRATEGIC_CREW, AWAITING_DEPLOYMENT,
 	PASSENGER, HQ_RESERVE, HQ_DUTY, FORMATION_DUTY, WOUNDED, RECOVERY, DEAD,
@@ -27,6 +27,9 @@ class Entity extends RefCounted:
 	var unit_mass_kg: float
 	var quantity: int = 1
 	var origin_id: String
+	var fleet_domain := "External service"
+	var vehicle_spec: Dictionary = {}
+	var fuel: float = 0.0
 	var health: int = 100
 	var ammo_type: String
 	var loaded_capacity: int

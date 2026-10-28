@@ -80,7 +80,7 @@ func _draw() -> void:
 		if entity.kind == "STOCK" and entity.quantity > 0 and not simulation.rear.ledger.inspect_entity(entity.holder_id).is_empty():
 			var holder: Dictionary = simulation.rear.ledger.inspect_entity(entity.holder_id)
 			if holder.kind == "PLACE": draw_rect(Rect2(point + Vector2(3, 3), Vector2(5, 5)), Color("ddbd72"))
-		if entity.kind == "CARRIER":
+		if entity.kind in ["CARRIER", "HEAVY_OBJECT"]:
 			if entity.position.x < -10: continue
 			draw_rect(Rect2(point - Vector2(7, 4), Vector2(14, 8)), Color("dba274"))
 		if entity.kind != "PERSON": continue
@@ -93,11 +93,15 @@ func _draw() -> void:
 	var ledger: RefCounted = simulation.rear.ledger
 	if simulation.expanded_catalogue:
 		var totals: Array[String] = []
-		for activity in simulation.rear._production_activities():
+		for activity in [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production]:
 			var type: String = activity._spec.output_type
 			totals.append("%s %s: %d" % [activity._spec.facility, type, ledger.total_stock(type)])
 		draw_string(font, Vector2(12, size.y - 50), "Physical outputs | " + " | ".join(totals), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	else:
 		draw_string(font, Vector2(12, size.y - 50), "Physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01"), ledger.total_stock("E02"), ledger.total_stock("M11"), ledger.total_stock("M06")], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+	var heavy: RefCounted = simulation.rear.heavy_production
+	var fleet: Dictionary = ledger.rear_fleet_status("army-blue")
+	var bay: String = "occupied " + ledger.inspect_entity(heavy.bay_occupant).get("design_type", "") if not heavy.bay_occupant.is_empty() else ("order accepted" if not heavy._order.is_empty() else "empty")
+	draw_string(font,Vector2(12,size.y-68),"F10 bay: %s | fleet %d live + %d reserved / 8" % [bay,fleet.live,fleet.reserved],HORIZONTAL_ALIGNMENT_LEFT,-1,12)
 	draw_string(font, Vector2(12, size.y - 32), "240 x 180 m | green people / gold freight / orange vehicles", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	draw_string(font, Vector2(12, size.y - 14), "Click to inspect | wheel zoom | middle-drag pan | Fit base", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
