@@ -798,7 +798,7 @@ func shortages() -> Array[String]:
 		if not assessment.ok: result.append("%s: %s" % [demand.kind,assessment.message])
 	for row in squads.values():
 		if row.state in ["Reporting","Equipping"]: result.append("%s: %s" % [row.id,row.blocker])
-		elif row.state == "Active":
+		elif row.state == "Active" and row.vehicle.is_empty():
 			var readiness_result: Dictionary = capability(row.id)
 			if not readiness_result.ok: result.append("%s: %s" % [row.id,readiness_result.message])
 	for row in platoons.values():
@@ -845,6 +845,7 @@ func readiness(id: String) -> float:
 func capability(id: String) -> Dictionary:
 	var row: Dictionary = squads.get(id,{})
 	if row.is_empty() or row.state != "Active": return _fail("Only a physically reported active squad has capability.")
+	if not row.vehicle.is_empty(): return _fail("Mounted passengers cannot provide dismounted fire or capture until actual exit.")
 	if row.leader.is_empty(): return _fail("Squad has no living ordinary or acting leader.")
 	var package: Dictionary = _package(row.kind,row.roster,id)
 	if not package.ok: return package

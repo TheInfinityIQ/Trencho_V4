@@ -120,6 +120,7 @@ func _test_vehicle_element_and_passengers() -> void:
 	_expect(rear.military.vehicle_readiness("g15-apc") == 0.0,"empty ammunition and fuel override healthy crew")
 	_expect(not rear.military.vehicle_capability("g15-apc","Fire").ok,"healthy gunner cannot fire an empty matching rack")
 	_expect(rear.military.board_squad(squad.id,"g15-apc").ok,"same four squad members board actual passenger seats")
+	_expect(not rear.military.capability(squad.id).ok,"mounted squad cannot claim dismounted fire or capture capability")
 	var second_roster: Array[String] = []
 	for i in 4:
 		var id := "other-mounted-%d" % i
@@ -132,6 +133,7 @@ func _test_vehicle_element_and_passengers() -> void:
 	hull = rear.ledger.inspect_entity("g15-apc")
 	_expect(hull.crew.size() == 3 and hull.passengers.size() == 4,"crew and squad passengers occupy separate pools")
 	_expect(rear.military.exit_squad(squad.id).ok,"same roster physically exits at HQ")
+	_expect(rear.military.capability(squad.id).ok,"same squad regains dismounted role only after actual exit")
 	_expect(rear.ledger.inspect_entity("g15-apc").crew.size() == 3 and rear.ledger.inspect_entity("g15-apc").passengers.is_empty(),"disembark leaves crew stations occupied")
 	_expect(base.audit().is_empty(),"vehicle attachment and boarding conserve identities: "+str(base.audit()))
 

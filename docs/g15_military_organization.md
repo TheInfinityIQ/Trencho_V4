@@ -10,7 +10,7 @@ Artillery claims a specific unallocated E13 and ten unreserved local E14 before 
 
 The hierarchy enforces three companies, three platoons per company, three infantry squads and two vehicle elements per platoon, two further service vehicles per company, eight roster places per squad, and 24 military hulls. The dispatch service continues to own the 384-person military admission, 96-place HQ Reserve admission and fleet handoff. Qualified actual reserve members report to distinct crew stations. Command attaches staffed hulls to available real parents. A mounted squad keeps its roster and occupies passenger seats separately from crew; it can leave at a lawful stopped place.
 
-Vehicle readiness measures actual crew, health, matching rack stock and declared route fuel. A separate purpose-specific capability check prevents a numerically ready but empty or unfuelled hull from moving, firing or transporting a squad.
+Vehicle readiness measures actual crew, health, matching rack stock and declared route fuel. A separate purpose-specific capability check prevents a numerically ready but empty or unfuelled hull from moving, firing or transporting a squad. A boarded squad remains a separate roster but cannot claim dismounted fire or capture capability until its actual exit.
 
 Squad appointments select living trained members, with a Rifle acting exception. A lost leader gets a five-second delay before replacement; senior and acting Commander appointments reuse existing identities. The status snapshot exposes roster, parent, leader, readiness, crew and shortage reasons. G16 owns casualty state changes and combat, G17 owns orders and movement, G23 owns firing, and G32 owns persistence.
 
