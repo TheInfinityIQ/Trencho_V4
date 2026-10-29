@@ -26,6 +26,8 @@ var heavy_production: RefCounted # One F10 heavy bay/admission owner.
 var training: RefCounted # Optional F06 elapsed-time courses; separate from operator-work.
 var vehicles: RefCounted # Optional G07 handling on this same clock and actor pool.
 var dispatch: RefCounted # Optional G12 manifests on the same identities and event clock.
+var construction: RefCounted # G05 physical facility sites, copies and builders.
+var additional_productions: Array[RefCounted] = []
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
@@ -80,6 +82,8 @@ func add_person(id: String, basic: bool = false, qualification: String = "None",
 
 
 func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
+	if construction != null and construction.is_office(id) and not construction._syncing_offices:
+		return construction.set_office_staff(id,count,priority)
 	if not requests.has(id) or count < 0 or count > int(requests[id].positions) or priority < 0 or priority > 3:
 		return _result(false, "Target must fit actual catalogue positions and a valid priority.")
 	var r: Dictionary = requests[id]
@@ -138,6 +142,7 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	if not actors.has(id) or (destination != "Available" and not requests.has(destination)):
 		return _result(false, "Choose an actual rear person and legal duty.")
 	var p: Dictionary = ledger.inspect_entity(id)
+	var former_duty: String = p.duty_id
 	if p.assignment == "Training" and destination not in ["Available","students"]:
 		return _result(false,"Withdraw the unfinished course before assigning this student to another duty; completed qualifications stay.")
 	if not _eligible(p, destination):
@@ -166,6 +171,8 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 		else: yard.request_exit()
 	elif a.phase not in ["Carry", "Drop"] and ledger.inspect_entity(id).carrying_stock_id.is_empty():
 		_report(a)
+	if construction != null and not construction._transferring and construction.office_members.has(id) and former_duty.begins_with("builders-") and destination != former_duty:
+		construction.on_builder_reassigned(id,former_duty)
 	return _result(true, "Duty requested; carrying or driving retains the old actual duty until safe handoff.")
 
 
@@ -247,7 +254,27 @@ func _production_activities() -> Array[RefCounted]:
 	if materials_production != null: activities.append(materials_production)
 	if support_production != null: activities.append(support_production)
 	if heavy_production != null: activities.append(heavy_production)
+	activities.append_array(additional_productions)
 	return activities
+
+
+func heavy_owners() -> Array[RefCounted]:
+	var owners: Array[RefCounted] = []
+	if heavy_production != null: owners.append(heavy_production)
+	if construction != null:
+		for activity in construction.activities.values():
+			if activity.has_method("accept_order"): owners.append(activity)
+	return owners
+
+func heavy_owner(bay_id: String) -> RefCounted:
+	for activity in heavy_owners():
+		if activity.bay_id == bay_id: return activity
+	return heavy_production
+
+func gun_owner(gun_id: String) -> RefCounted:
+	for activity in heavy_owners():
+		if activity.bay_occupant == gun_id: return activity
+	return null
 
 
 func advance_time(seconds: float) -> Dictionary:
@@ -259,6 +286,7 @@ func advance_time(seconds: float) -> Dictionary:
 		var next := minf(target, yard.deadline)
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
 		if dispatch != null: next = minf(next,dispatch.next_boundary())
+		if construction != null: next = minf(next,construction.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -273,6 +301,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if next <= time + EPS:
 			next = minf(target, time + EPS)
 		for activity in _production_activities(): activity.advance_work(next - time)
+		if construction != null: construction.advance_work(next - time)
 		if training != null: training.advance_work(next - time)
 		for a in actors.values():
 			if not a.motion.is_empty():
@@ -281,6 +310,7 @@ func advance_time(seconds: float) -> Dictionary:
 		yard.advance_to(next)
 		if vehicles != null: vehicles.advance_to(next)
 		if dispatch != null: dispatch.advance_to(next)
+		if construction != null: construction.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -316,7 +346,7 @@ func _rebalance() -> void:
 	var pool: Array = []
 	for id in actors:
 		var p: Dictionary = ledger.inspect_entity(id)
-		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:"):
+		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and not p.duty_id.begins_with("builders-"):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
@@ -385,10 +415,11 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 	if not Rect2(0, 0, 240, 180).has_point(p.position):
 		return false
 	if requests.has(duty) and requests[duty].get("manual",false):
+		if duty.begins_with("builders-"): return true
 		return vehicles != null and vehicles.eligible(p,duty)
 	if duty == "yard":
 		return p.basic_training and p.qualification == "P08"
-	if duty == "training":
+	if duty == "training" or (construction != null and construction.instances.has(duty) and construction.instances[duty].kind == "training" and construction.instances[duty].state == "Complete"):
 		return p.basic_training
 	return true
 
@@ -422,7 +453,7 @@ func _report(a: Dictionary) -> void:
 		a.phase = "Available"
 		return
 	var path: Array = []
-	if vehicles != null and requests[p.duty_id].get("manual",false):
+	if vehicles != null and requests[p.duty_id].get("manual",false) and not p.duty_id.begins_with("builders-"):
 		path = vehicles.report_path(a.id,p.duty_id)
 	else:
 		var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
@@ -453,6 +484,7 @@ func _settle() -> void:
 		var changed: bool = yard.complete_due()
 		if vehicles != null: changed = vehicles.settle() or changed
 		if dispatch != null: changed = dispatch.settle() or changed
+		if construction != null: changed = construction.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)
@@ -497,7 +529,7 @@ func _sync_receiving_people() -> void:
 func _sync_receiving_staff() -> void:
 	for a in actors.values():
 		var p: Dictionary = ledger.inspect_entity(a.id)
-		if p.duty_id == "receiving" and p.pending_assignment == "None" and a.phase == "Idle":
+		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None" and a.phase == "Idle":
 			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
 			a.phase = "Unloading"
 	receiving._pump()

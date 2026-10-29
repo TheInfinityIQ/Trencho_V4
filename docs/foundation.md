@@ -72,3 +72,7 @@ The [heavy foundation](heavy_production.md) adds ledger-owned rear-hull admissio
 ## Connected F06 training -27October2026
 
 The [training service](training_courses.md) owns elapsed course progress/physical seat reservations and consumes actual instructor coverage on the existing rear event clock. Ledger Training assignments exclude students from industrial rebalancing, while safe carries and instructor staffing reuse existing rules. Qualification completion updates the same person and grants no gear. The recovery purchase reuses the shared personnel route/admissions with a one-person cohort; normal eight-person procurement retains its path and prices. Declared recipe availability supplies course access independently of selected production.
+
+## G05 rear construction - 28 October 2026
+
+The [G05 construction service](g05_construction.md) reserves real bounded sites and delivers M11 through the accepted hauling and ledger lifecycle. Independent F02/F06/F07/F10/F11 copies extend their existing physical service and dispatch owners on the common rear clock. Local eight-metre road checks preserve vehicle access; dismantling waits for goods and active commitments before twenty builder work seconds and physical salvage. The catalogue and focused regression keep these decisions inspectable without a new global inventory or mission mode.
