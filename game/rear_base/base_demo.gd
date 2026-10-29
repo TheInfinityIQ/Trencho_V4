@@ -745,6 +745,13 @@ func _refresh_dispatch(view: Dictionary) -> void:
 	for hull_id in view.military.vehicles:
 		var element: Dictionary = view.military.vehicles[hull_id]
 		dispatch_status.text += "\nElement %s under %s | crew %s | passengers %s | readiness %.2f" % [hull_id,element.parent,str(element.crew),element.passenger_squad,simulation.rear.military.vehicle_readiness(hull_id)]
+	for person in view.combat.people:
+		dispatch_status.text += "\nCombat %s at %s | %s | health %d, morale %d, suppression %d, bleed %.1f s" % [person.id,str(person.position),person.state,person.health,person.morale,person.suppression,person.bleed_remaining]
+	for id in view.combat.formations:
+		var formation: Dictionary = view.combat.formations[id]
+		dispatch_status.text += "\nCohesion %s %.2f | %s %s" % [id,formation.cohesion,formation.state,formation.blocked_reason]
+	for id in view.combat.demands: dispatch_status.text += "\nCombat supply %s: %s" % [id,view.combat.demands[id].blocked_reason]
+	for id in view.combat.care: dispatch_status.text += "\nCare %s: %.1f/10 seconds, active %s, pack %s committed" % [id,view.combat.care[id].progress,str(view.combat.care[id].active),view.combat.care[id].pack]
 	for job in view.hq.rows:
 		if job.state not in ["Complete","Cancelled"]: dispatch_status.text += "\nHQ %s %s: %d/%d %s | %s" % [job.kind,job.target,job.issued,job.requested,job.state,job.blocker]
 	if dispatch_rows.get_selected_items().is_empty(): return

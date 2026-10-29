@@ -722,6 +722,109 @@ func record_consumption(source_id: String, quantity: int, reason: String) -> Dic
 	return _remove_stock(source_id, quantity, reason, false)
 
 
+func fire_loaded_round(weapon_id: String) -> Dictionary:
+	var weapon := _weapon(weapon_id)
+	if weapon == null or weapon.health <= 0:
+		return _reject("WEAPON_UNAVAILABLE", "A functional physical weapon is required.")
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.holder_id == weapon_id and entity.design_type == weapon.ammo_type and entity.quantity > 0:
+			entity.quantity -= 1
+			if entity.quantity == 0:
+				entity.state = "Depleted"
+				entity.state_entered_at = _time
+			_consumed[entity.design_type] = _consumed.get(entity.design_type,0) + 1
+			_event("One loaded round fired from " + weapon_id, entity.id)
+			return _ok("One actual loaded round consumed at release.", entity.id)
+	return _reject("EMPTY_WEAPON", "No matching round is loaded in this weapon; stock elsewhere cannot fire it.")
+
+
+func injure_person(person_id: String, injury: int) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or injury <= 0 or person.assignment == Records.Assignment.DEAD:
+		return _reject("INVALID_INJURY", "Positive injury to a living actual person is required.")
+	if person.assignment == Records.Assignment.WOUNDED:
+		return kill_person(person_id, "Further injury while incapacitated")
+	person.health = maxi(0, person.health - injury)
+	if person.health == 0:
+		person.bleed_until = _time + 60.0
+		_set_assignment(person, Records.Assignment.WOUNDED, person.duty_id)
+		_drop_personal_gear(person)
+		_event("Incapacitated; bleed-out in 60 seconds", person_id)
+		return {"ok":true,"code":"INCAPACITATED","message":"Person incapacitated; physical gear dropped once.","id":person_id}
+	_event("Injury %d" % injury, person_id)
+	return _ok("Active person injured.", person_id)
+
+
+func kill_person(person_id: String, reason: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment == Records.Assignment.DEAD or reason.is_empty():
+		return _reject("INVALID_DEATH", "Only a living person can enter Dead once.")
+	if person.assignment != Records.Assignment.WOUNDED: _drop_personal_gear(person)
+	var death_holder := person.holder_id
+	var holder: Records.Entity = _entities.get(death_holder)
+	if holder == null or holder.kind != Records.Kind.CARRIER: death_holder = "casualty-drop:" + person.id
+	for entity in _entities.values():
+		if entity.holder_id == person.id and entity.design_type in ["E03", "E04"]:
+			entity.holder_id = death_holder
+			entity.position = Vector2.ZERO
+	person.health = 0
+	person.bleed_until = INF
+	_set_assignment(person, Records.Assignment.DEAD, "")
+	person.loss_recorded = true
+	_event("Person loss: " + reason, person_id)
+	return {"ok":true,"code":"DEAD","message":"One person loss recorded; belongings remain physical.","id":person_id}
+
+
+func bleed_out_person(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or _time + 0.000001 < person.bleed_until:
+		return _reject("BLEED_NOT_DUE", "Only an untreated incapacitated person at the actual bleed deadline dies.")
+	return kill_person(person_id, "Bleed-out")
+
+
+func pause_bleed_during_care(person_id: String, seconds: float) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or not is_finite(seconds) or seconds <= 0.0:
+		return _reject("INVALID_CARE_TIME", "Only active qualified care can pause a living patient's bleed timer for positive finite time.")
+	person.bleed_until += seconds
+	return _ok("Remaining bleed time held while active care was performed.",person_id)
+
+
+func finish_field_care(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or _time + 0.000001 >= person.bleed_until:
+		return _reject("PATIENT_UNAVAILABLE", "Field care needs a living incapacitated patient before bleed-out.")
+	person.health = 35
+	person.bleed_until = INF
+	_set_assignment(person, Records.Assignment.RECOVERY, person.duty_id)
+	return _ok("Patient stabilized at 35 health and entered Recovery without regaining dropped gear.", person_id)
+
+
+func set_person_stress(person_id: String, morale_delta: int, suppression_delta: int) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment == Records.Assignment.DEAD:
+		return _reject("PERSON_UNAVAILABLE", "A living actual person is required.")
+	person.morale = clampi(person.morale + morale_delta, 0, 100)
+	person.suppression = clampi(person.suppression + suppression_delta, 0, 100)
+	return _ok("Morale and suppression updated on the same person.", person_id)
+
+
+func _drop_personal_gear(person: Records.Person) -> void:
+	var destination := person.holder_id
+	var holder: Records.Entity = _entities.get(destination)
+	if holder == null or holder.kind != Records.Kind.CARRIER:
+		destination = "casualty-drop:" + person.id
+		if not _entities.has(destination): add_place(destination, "Recoverable gear of " + person.id, _world_position(person.id))
+	for entity in _entities.values():
+		if entity.holder_id != person.id or entity.kind not in [Records.Kind.WEAPON, Records.Kind.STOCK]: continue
+		if entity.design_type in ["E03", "E04"]: continue
+		entity.holder_id = destination
+		entity.position = Vector2.ZERO
+		entity.state_entered_at = _time
+	person.carrying_stock_id = ""
+	person.carrying_weapon_id = ""
+
+
 func consume_local_batch(holder: String, owner: String, ingredients: Dictionary, reason: String) -> Dictionary:
 	# Validate the entire local input plan before any accounting mutation.
 	if not _is_place(holder) or owner.is_empty() or ingredients.is_empty() or reason.strip_edges().is_empty():
@@ -816,6 +919,8 @@ func inspect_entity(id: String) -> Dictionary:
 		result.crew_station = person.crew_station
 		result.service_seconds = person.service_seconds
 		result.leader_appointment = person.leader_appointment
+		result.bleed_remaining = maxf(0.0, person.bleed_until - _time) if person.assignment == Records.Assignment.WOUNDED else 0.0
+		result.loss_recorded = person.loss_recorded
 	if entity.kind == Records.Kind.WEAPON:
 		result.loaded_rounds = loaded_rounds(id)
 		result.loaded_capacity = entity.loaded_capacity
@@ -908,7 +1013,7 @@ func audit() -> Array[String]:
 			if entity.fuel < -0.000001 or entity.fuel > float(entity.vehicle_spec.tank_capacity) + 0.000001: failures.append("Invalid vehicle tank: " + entity.id)
 		if entity is Records.Person and not entity.crew_station.is_empty():
 			var hull: Records.Entity = _entities.get(entity.holder_id)
-			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment in [Records.Assignment.REAR_LABOUR,Records.Assignment.FORMATION_DUTY] and entity.carrying_stock_id.is_empty()
+			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment in [Records.Assignment.REAR_LABOUR,Records.Assignment.FORMATION_DUTY,Records.Assignment.WOUNDED,Records.Assignment.RECOVERY,Records.Assignment.DEAD] and entity.carrying_stock_id.is_empty()
 			if valid and not hull.vehicle_spec.is_empty():
 				valid = entity.crew_station in hull.vehicle_spec.stations and (entity.qualification == "P08" or (hull.design_type == "T03" and entity.crew_station == "Gunner" and entity.qualification == "P04"))
 			else: valid = valid and entity.crew_station == "Driver" and entity.qualification == "P08"

@@ -80,3 +80,7 @@ The [G05 construction service](g05_construction.md) reserves real bounded sites 
 ## G15 military organization - 29 October 2026
 
 The [G15 organization service](g15_military_organization.md) composes real HQ receipts, physical issue jobs, roster reports and military hulls into the GDD §11 hierarchy on the shared event clock. The identity ledger remains authoritative for people, goods, crew and passengers. Formation and artillery equipment claims remain observable until actual report; readiness cannot replace a missing minimum package. The Dispatch view exposes hierarchy and shortages without player formation controls.
+
+## G16 combat, wounds and morale - 29 October 2026
+
+The [G16 combat service](g16_combat_wounds_morale.md) uses the G01 physical ledger, G08 sight and cover, and G15 actual rosters on the shared event clock. The ledger owns loaded-round consumption, injury, death and recoverable dropped holders; combat owns eligibility, commitments, stress, care and cohesion. This boundary keeps G23 mounted weapons, G27 full medical logistics and G32 persistence as explicit later integrations.

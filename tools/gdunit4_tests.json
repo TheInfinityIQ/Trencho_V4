@@ -171,6 +171,12 @@
   ],
   "Input": [
     {
+      "path": "game/combat/tests/combat_input_test.gd",
+      "cases": [
+        "test_combat_review_accepts_real_input_and_renders_state"
+      ]
+    },
+    {
       "path": "game/military/tests/military_input_test.gd",
       "cases": [
         "test_dispatch_shows_real_automatic_formation_and_shortage"

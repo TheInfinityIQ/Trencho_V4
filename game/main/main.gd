@@ -12,6 +12,7 @@ const REVIEWS: Dictionary = {
 	"G08 Terrain & sight": preload("res://game/terrain/terrain_demo.tscn"),
 	"G02 Procurement": preload("res://game/procurement/receiving_demo.tscn"),
 	"G01 Identity": preload("res://game/identity/identity_demo.tscn"),
+	"G16 Combat & care": preload("res://game/combat/combat_demo.tscn"),
 }
 var _host: Control
 var _base: Control

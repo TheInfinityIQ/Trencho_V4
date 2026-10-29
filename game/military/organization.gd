@@ -145,6 +145,27 @@ func next_boundary() -> float:
 func advance_to(_at: float) -> void:
 	pass
 
+func record_death(person_id: String) -> void:
+	# One physical death vacates one roster place; living wounded remain assigned.
+	for row in squads.values():
+		if person_id not in row.roster: continue
+		row.roster.erase(person_id)
+		if row.leader == person_id:
+			_rear_ref.get_ref().ledger.clear_formation_appointment(person_id)
+			row.leader = ""
+			row.replacement_due = _rear_ref.get_ref().time+5.0
+			row.replacement_attempted = false
+		row.blocker = "Actual person lost; roster place and package require replacement."
+	for row in platoons.values():
+		if row.leader == person_id: row.leader = ""
+	for row in companies.values():
+		if row.leader == person_id: row.leader = ""
+	for id in replacement_reports.keys():
+		if id == person_id: replacement_reports.erase(id)
+	for id in crew_reports.keys():
+		if id == person_id: crew_reports.erase(id)
+	status = "%s died; one actual formation place released." % person_id
+
 func settle() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var changed := false
@@ -923,7 +944,7 @@ func audit() -> Array[String]:
 			if seen.has(id): errors.append("Person in two G15 squads: "+id)
 			seen[id] = true
 			var p: Dictionary = rear.ledger.inspect_entity(id)
-			if row.state == "Active" and (p.is_empty() or p.duty_id != row.id or p.assignment != "Formation Duty"): errors.append("Active G15 roster lacks real duty: "+id)
+			if row.state == "Active" and (p.is_empty() or p.duty_id != row.id or p.assignment not in ["Formation Duty","Wounded","Recovery"]): errors.append("Active G15 roster lacks real duty: "+id)
 		if not row.vehicle.is_empty():
 			if not vehicles.has(row.vehicle) or vehicles[row.vehicle].passenger_squad != row.id: errors.append("G15 passenger squad lacks matching vehicle element: "+row.id)
 	for row in platoons.values():
