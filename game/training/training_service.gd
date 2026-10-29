@@ -16,11 +16,38 @@ var _recipe_access: Callable
 var rows: Array[Dictionary] = []
 var _sequence := 0
 var accessible := true
+var training_sites: Array[Dictionary] = [{"id":"initial-training","center":Vector2(55,110),"duty":"training","active":true}]
 
 func _init(rear: RefCounted, access: Callable) -> void:
 	_rear_ref = weakref(rear)
 	_recipe_access = access
 	rear.requests.students = {"id":"students","target":0,"positions":12,"priority":1,"created":0.0,"order":rear._next(),"place":"duty-training"}
+
+func add_training_site(id: String, center: Vector2, duty: String) -> void:
+	training_sites.append({"id":id,"center":center,"duty":duty,"active":true})
+	_rear_ref.get_ref().requests.students.positions += STUDENT_LIMIT
+
+func site_busy(id: String) -> bool:
+	for index in training_sites.size():
+		if training_sites[index].id != id: continue
+		for row in _unfinished():
+			if row.seat >= index*STUDENT_LIMIT and row.seat < (index+1)*STUDENT_LIMIT: return true
+	return false
+
+func retire_training_site(id: String) -> bool:
+	if site_busy(id): return false
+	for site in training_sites:
+		if site.id == id and site.active:
+			site.active = false
+			_rear_ref.get_ref().requests.students.positions -= STUDENT_LIMIT
+			return true
+	return false
+
+func _seat_capacity() -> int:
+	var count := 0
+	for site in training_sites:
+		if site.active: count += STUDENT_LIMIT
+	return count
 
 func course_accessible(course: String) -> bool:
 	if not COURSES.has(course): return false
@@ -31,7 +58,7 @@ func course_accessible(course: String) -> bool:
 
 func request_course(course: String, count: int) -> Dictionary:
 	if not course_accessible(course): return _result(false,"Course access absent; requires available declared recipe access, not a selected production recipe.")
-	if count <= 0 or count > STUDENT_LIMIT - _unfinished().size(): return _result(false,"Course requests must fit twelve reserved student places, including queued/reporting people.")
+	if count <= 0 or count > _seat_capacity() - _unfinished().size(): return _result(false,"Course requests must fit actual reserved student places, including queued/reporting people.")
 	var rear: RefCounted = _rear_ref.get_ref()
 	for index in count:
 		_sequence += 1
@@ -52,15 +79,22 @@ func _eligible(person: Dictionary, course: String) -> bool:
 
 func student_position(id: String) -> Vector2:
 	for row in _unfinished():
-		if row.person_id == id and row.seat >= 0: return Vector2(40 - floorf(float(row.seat) / 6.0) * 2,104 + (row.seat % 6) * 2)
+		if row.person_id == id and row.seat >= 0:
+			var site_index: int = row.seat / STUDENT_LIMIT
+			var seat: int = row.seat % STUDENT_LIMIT
+			var center: Vector2 = training_sites[site_index].center
+			return center + Vector2(-15 - floorf(float(seat) / 6.0) * 2,-6 + (seat % 6) * 2)
 	return Vector2(44,110)
 
 func _seat_free() -> int:
 	var occupied: Array[int] = []
 	for row in _unfinished():
 		if row.seat >= 0: occupied.append(row.seat)
-	for index in STUDENT_LIMIT:
-		if index not in occupied: return index
+	for index in training_sites.size():
+		if not training_sites[index].active: continue
+		for seat in STUDENT_LIMIT:
+			var global_seat: int = index*STUDENT_LIMIT+seat
+			if global_seat not in occupied: return global_seat
 	return -1
 
 func instructors() -> Array[String]:
@@ -68,9 +102,14 @@ func instructors() -> Array[String]:
 	var result: Array[String] = []
 	for id in rear.actors:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.owner == rear.PLAYER and p.basic_training and p.health > 0 and p.assignment == "Rear Labour" and p.duty_id == "training" and p.pending_assignment == "None" and p.carrying_stock_id.is_empty() and p.crew_station.is_empty() and rear.actors[id].phase == "Idle" and p.position.is_equal_approx(rear.Layout.door("training")):
+		if p.owner == rear.PLAYER and p.basic_training and p.health > 0 and p.assignment == "Rear Labour" and p.pending_assignment == "None" and p.carrying_stock_id.is_empty() and p.crew_station.is_empty() and rear.actors[id].phase == "Idle" and rear.requests.has(p.duty_id) and p.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[p.duty_id].place).position) and _training_duty(p.duty_id):
 			result.append(id)
 	return result
+
+func _training_duty(duty: String) -> bool:
+	for site in training_sites:
+		if site.active and site.duty == duty: return true
+	return false
 
 func _present(row: Dictionary) -> bool:
 	if row.person_id.is_empty(): return false
@@ -81,10 +120,17 @@ func _present(row: Dictionary) -> bool:
 func _active() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if not accessible: return result
-	var coverage := instructors().size() * 6
-	# Enrollment sequence is stable: shortage always pauses the newest present students.
+	var coverage: Dictionary = {}
+	for id in instructors():
+		var duty: String = _rear_ref.get_ref().ledger.inspect_entity(id).duty_id
+		coverage[duty] = int(coverage.get(duty,0))+6
+	# Each actual instructor covers only students seated at that same F06.
 	for row in _unfinished():
-		if _present(row) and course_accessible(row.course) and result.size() < coverage: result.append(row)
+		if row.seat < 0 or not _present(row) or not course_accessible(row.course): continue
+		var duty: String = training_sites[int(row.seat / STUDENT_LIMIT)].duty
+		if int(coverage.get(duty,0)) <= 0: continue
+		coverage[duty] -= 1
+		result.append(row)
 	return result
 
 func next_boundary() -> float:
@@ -190,13 +236,13 @@ func snapshot() -> Dictionary:
 	_refresh_states()
 	var counts := {"Queued":0,"Reporting":0,"Active":0,"Paused":0,"Completed":0,"Withdrawn":0}
 	for row in rows: counts[row.state] += 1
-	return {"accessible":accessible,"courses":COURSES.duplicate(true),"rows":rows.duplicate(true),"counts":counts,"student_places":12,"reserved_student_places":_unfinished().size(),"instructors":instructors(),"coverage":instructors().size()*6,"instructor_target":_rear_ref.get_ref().requests.training.target}
+	return {"accessible":accessible,"courses":COURSES.duplicate(true),"rows":rows.duplicate(true),"counts":counts,"student_places":_seat_capacity(), "training_sites":training_sites.duplicate(true),"reserved_student_places":_unfinished().size(),"instructors":instructors(),"coverage":instructors().size()*6,"instructor_target":_rear_ref.get_ref().requests.training.target}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = []
 	var people: Array[String] = []
 	var seats: Array[int] = []
-	if _unfinished().size()>12 or instructors().size()>2: failures.append("F06 capacity overbooked")
+	if _unfinished().size()>_seat_capacity() or instructors().size()>training_sites.size()*2: failures.append("F06 capacity overbooked")
 	if _active().size()>instructors().size()*6: failures.append("Training exceeds actual instructor coverage")
 	for row in _unfinished():
 		if not row.person_id.is_empty():

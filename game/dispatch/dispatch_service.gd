@@ -30,6 +30,7 @@ var hq_staff: Array[String] = []
 var _sequence := 0
 var _accepting := false
 var _advancing_at := -1.0
+var dispatch_sites: Dictionary = {"dispatch":{"store":"dispatch","duty":"dispatch","door":Vector2(210,91),"berth":"dispatch-berth"}}
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -45,8 +46,30 @@ func _init(rear: RefCounted) -> void:
 		rear.ledger.add_person(id,"hq-berth",rear.PLAYER,Records.Assignment.HQ_DUTY,true,"None","None")
 		hq_staff.append(id)
 
-func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary, guns: Array = []) -> Dictionary:
+func add_dispatch_site(id: String, store: String, duty: String, door: Vector2) -> Dictionary:
+	if dispatch_sites.has(id): return _fail("This physical F07 berth already exists.")
+	var berth := id+"-berth"
 	var rear: RefCounted = _rear_ref.get_ref()
+	var added: Dictionary = rear.ledger.add_place(berth,"F07 copy physical dispatch berth",door)
+	if not added.ok: return added
+	dispatch_sites[id] = {"store":store,"duty":duty,"door":door,"berth":berth}
+	return {"ok":true,"message":"Independent F07 dispatch berth is ready."}
+
+func site_committed(id: String) -> bool:
+	for row in manifests.values():
+		if row.get("dispatch_site","") == id and row.state not in ["Complete","Cancelled","Safety Returned"]: return true
+	return false
+
+func remove_dispatch_site(id: String) -> Dictionary:
+	if id == "dispatch" or not dispatch_sites.has(id) or site_committed(id):
+		return _fail("Fixed or committed F07 dispatch berth cannot be dismantled.")
+	dispatch_sites.erase(id)
+	return {"ok":true,"message":"Unused F07 berth retired."}
+
+func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary, guns: Array = [], dispatch_site: String = "dispatch") -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if not dispatch_sites.has(dispatch_site): return _fail("Select an actual complete F07 dispatch berth.")
+	var site: Dictionary = dispatch_sites[dispatch_site]
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	if not rear.vehicles.vehicles.has(hull_id) or rear.vehicles.vehicles[hull_id].state != "Parked": return _fail("Select the same stopped F10-produced hull at F11.")
 	if mode not in ["Strategic Delivery","Fleet Transfer"] or (mode == "Strategic Delivery" and hull.design_type not in ["T01","T02"]): return _fail("Strategic Delivery needs T01/T02; Fleet Transfer permits all five real hull types.")
@@ -70,7 +93,8 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 		seen_guns[gun_id] = true
 		if weapon_promises.has(gun_id): return _fail("Field gun is already committed to another manifest.")
 		var gun: Dictionary = rear.ledger.inspect_entity(gun_id)
-		if gun.is_empty() or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.owner != rear.PLAYER or gun.holder_id != "heavy-bay" or rear.heavy_production.bay_occupant != gun_id: return _fail("Select the same packed E13 physically occupying F10 for collection.")
+		var owner: RefCounted = rear.gun_owner(gun_id)
+		if gun.is_empty() or owner == null or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.owner != rear.PLAYER or gun.holder_id != owner.bay_id: return _fail("Select the same packed E13 physically occupying F10 for collection.")
 	for type in cargo:
 		if type == "E13" or typeof(cargo[type]) != TYPE_INT or int(cargo[type]) <= 0: return _fail("Cargo requires positive whole item counts; E13 uses field-gun collection.")
 		var mass: float = _unit_mass(type)
@@ -90,14 +114,15 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 	if mode == "Fleet Transfer" and military_hulls.size() + incoming_hulls.size() >= MILITARY_HULL_LIMIT: return _fail("Military 24 incoming hull admission is full.")
 	_sequence += 1
 	var id := "manifest-%04d" % _sequence
-	var row := {"id":id,"hull":hull_id,"mode":mode,"state":"Requested","passengers":passengers.duplicate(),"cargo":cargo.duplicate(true),"guns":guns.duplicate(),"stock_items":[],"weapon_items":[],"driver":crew.Driver,"crew":crew.duplicate(),"task":{},"route":[],"route_length":0.0,"distance":0.0,"last_time":rear.time,"travel_speed":0.0,"travel_burn":0.0,"arrived":{},"unloaded":{},"blocker":"","departed":false,"hq_berth":false,"cancel_released":false,"home_slot":int(rear.vehicles.vehicles[hull_id].slot),"route_profile":{},"route_plan":{}}
+	var row := {"id":id,"hull":hull_id,"mode":mode,"state":"Requested","passengers":passengers.duplicate(),"cargo":cargo.duplicate(true),"guns":guns.duplicate(),"stock_items":[],"weapon_items":[],"driver":crew.Driver,"crew":crew.duplicate(),"task":{},"route":[],"route_length":0.0,"distance":0.0,"last_time":rear.time,"travel_speed":0.0,"travel_burn":0.0,"arrived":{},"unloaded":{},"blocker":"","departed":false,"hq_berth":false,"cancel_released":false,"home_slot":int(rear.vehicles.vehicles[hull_id].slot),"route_profile":{},"route_plan":{},"dispatch_site":dispatch_site,"dispatch_store":site.store,"dispatch_duty":site.duty,"dispatch_door":site.door,"berth_place":site.berth,"gun_bays":{}}
 	manifests[id] = row
+	for gun_id in guns: row.gun_bays[gun_id] = rear.gun_owner(gun_id).bay_id
 	for person_id in passengers: passenger_promises[person_id] = id
 	for person_id in entrant_ids: incoming_people[person_id] = id
 	if mode == "Fleet Transfer": incoming_hulls[hull_id] = id
 	for gun_id in guns: weapon_promises[gun_id] = id
 	var duty := "passenger:" + id
-	rear.requests[duty] = {"id":duty,"target":0,"positions":seats,"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-dispatch"}
+	rear.requests[duty] = {"id":duty,"target":0,"positions":seats,"priority":1,"created":rear.time,"order":rear._next(),"place":rear.requests[site.duty].place}
 	_accepting = true
 	for person_id in passengers: rear.reassign_person(person_id,duty)
 	_accepting = false
@@ -130,7 +155,7 @@ func _reserve_cargo(row: Dictionary) -> void:
 			if have >= int(row.cargo[type]): break
 			if weapon.kind != "WEAPON" or weapon.design_type != type or weapon.owner != rear.PLAYER or weapon_promises.has(weapon.id) or not rear.stores.has(weapon.holder_id) or weapon.loaded_rounds != 0: continue
 			weapon_promises[weapon.id] = row.id
-			row.weapon_items.append({"type":type,"id":weapon.id,"stage":"Staged" if weapon.holder_id == "dispatch" else "Source"})
+			row.weapon_items.append({"type":type,"id":weapon.id,"stage":"Staged" if weapon.holder_id == row.dispatch_store else "Source"})
 			have += 1
 		for stock in rear.ledger.snapshot().entities:
 			if have >= int(row.cargo[type]): break
@@ -141,13 +166,13 @@ func _reserve_cargo(row: Dictionary) -> void:
 			var claim := "dispatch-stock-%04d" % _sequence
 			var result: Dictionary = rear.ledger.request_stock(claim,stock.id,count,row.id,"Real outward manifest",rear.PLAYER)
 			if not result.ok or rear.ledger.inspect_claim(claim).reserved != count: continue
-			row.stock_items.append({"type":type,"id":stock.id,"quantity":count,"claim":claim,"stage":"Staged" if stock.holder_id == "dispatch" else "Source"})
+			row.stock_items.append({"type":type,"id":stock.id,"quantity":count,"claim":claim,"stage":"Staged" if stock.holder_id == row.dispatch_store else "Source"})
 			have += count
 
 func _begin_hull_approach(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-	var route: Array = Layout.path(hull.position,Layout.door("dispatch"))
+	var route: Array = _rear_vehicle_path(row,hull.position,row.dispatch_door)
 	if route.is_empty():
 		row.blocker = "No clear rear road to F07 Dispatch."
 		return
@@ -162,6 +187,11 @@ func _begin_hull_approach(row: Dictionary) -> void:
 	rear.vehicles.vehicles[row.hull].state = "Dispatch Approach"
 	rear.yard.occupied[row.home_slot] = ""
 	rear.yard.reserved[row.home_slot] = row.hull # Hold an actual predeparture/cancel return place.
+
+func _rear_vehicle_path(row: Dictionary, start: Vector2, goal: Vector2) -> Array:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if row.dispatch_site == "dispatch": return Layout.path(start,goal)
+	return rear.construction.vehicle_path(start,goal,[row.dispatch_site,rear.construction.parking_owner(row.home_slot)])
 
 func _start_route(row: Dictionary, points: Array, state: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -265,7 +295,7 @@ func _route_progress(row: Dictionary, elapsed: float) -> Dictionary:
 func _finish_route(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if row.state == "Approaching Dispatch":
-		rear.ledger.move_entity(row.hull,"dispatch-berth",Layout.door("dispatch"))
+		rear.ledger.move_entity(row.hull,row.berth_place,row.dispatch_door)
 		row.state = "Cancelling" if row.get("cancel_after_route",false) else "Staging"
 	elif row.state == "Departed":
 		for person_id in row.passengers: rear.ledger.set_rear_place(person_id,"Occupied","None")
@@ -295,9 +325,9 @@ func _finish_route(row: Dictionary) -> void:
 					incoming_people.erase(person_id)
 				elif rear.ledger.inspect_entity(person_id).rear_place == "Held Home": rear.ledger.set_rear_place(person_id,"Held Home","Occupied")
 			row.return_phase = "Rear"
-			_start_route(row,Layout.path(rear.ledger.inspect_entity(row.hull).position,Layout.door("dispatch")),"Safety Returning")
+			_start_route(row,_rear_vehicle_path(row,rear.ledger.inspect_entity(row.hull).position,row.dispatch_door),"Safety Returning")
 			return
-		rear.ledger.move_entity(row.hull,"dispatch-berth",Layout.door("dispatch"))
+		rear.ledger.move_entity(row.hull,row.berth_place,row.dispatch_door)
 		incoming_hulls.erase(row.hull)
 		row.state = "Cancelling"
 		row.blocker = "Physical safety-return unloading remains before this hull can park."
@@ -309,7 +339,7 @@ func _finish_route(row: Dictionary) -> void:
 		if row.get("return_phase","") == "Rear":
 			for person_id in row.crew.values():
 				if rear.ledger.inspect_entity(person_id).rear_place == "Held Home": rear.ledger.set_rear_place(person_id,"Held Home","Occupied")
-			_start_route(row,Layout.path(rear.ledger.inspect_entity(row.hull).position,rear.yard.PARKING_POSITIONS[row.home_slot]),"Returning")
+			_start_route(row,_rear_vehicle_path(row,rear.ledger.inspect_entity(row.hull).position,rear.yard.PARKING_POSITIONS[row.home_slot]),"Returning")
 			row.return_phase = "Park"
 			return
 		var slot: int = row.home_slot
@@ -358,11 +388,11 @@ func settle() -> bool:
 			changed = _schedule_cancel(row) or changed
 	return changed
 
-func _ready_worker() -> String:
+func _ready_worker(row: Dictionary) -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
 	for id in rear.actors:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.duty_id == "dispatch" and p.pending_assignment == "None" and rear.actors[id].phase == "Idle" and p.health > 0 and p.carrying_stock_id.is_empty() and p.carrying_weapon_id.is_empty(): return id
+		if p.duty_id == row.dispatch_duty and p.pending_assignment == "None" and rear.actors[id].phase == "Idle" and p.health > 0 and p.carrying_stock_id.is_empty() and p.carrying_weapon_id.is_empty(): return id
 	return ""
 
 func _start_task(row: Dictionary, phase: String, actors: Array, seconds: float, route: Array = []) -> void:
@@ -386,16 +416,17 @@ func _schedule_preparation(row: Dictionary) -> bool:
 	if row.state == "Requested":
 		_begin_hull_approach(row)
 		return row.state == "Approaching Dispatch"
-	if rear.ledger.inspect_entity(row.hull).holder_id != "dispatch-berth": return false
+	if rear.ledger.inspect_entity(row.hull).holder_id != row.berth_place: return false
 	for gun_id in row.guns:
 		if rear.ledger.inspect_entity(gun_id).holder_id == row.hull: continue
-		if rear.heavy_production.bay_occupant != gun_id or not rear.heavy_production.bay_accessible:
+		var owner: RefCounted = rear.heavy_owner(row.gun_bays[gun_id])
+		if owner.bay_occupant != gun_id or not owner.bay_accessible:
 			row.blocker = "The same F10 field gun or Vehicle Works access is unavailable."
 			return false
 		var loaders: Array[String] = []
 		for person_id in rear.actors:
 			var p: Dictionary = rear.ledger.inspect_entity(person_id)
-			if p.duty_id == "vehicle_works" and rear.actors[person_id].phase == "Idle" and p.health > 0 and p.position.is_equal_approx(Layout.door("vehicle_works")):
+			if p.duty_id == owner._spec.duty and rear.actors[person_id].phase == "Idle" and p.health > 0 and p.position.is_equal_approx(owner.site_door):
 				loaders.append(person_id)
 				if loaders.size() == 2: break
 		if loaders.size() != 2:
@@ -406,7 +437,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		row.state = "Loading"
 		row.blocker = ""
 		return true
-	var worker := _ready_worker()
+	var worker := _ready_worker(row)
 	for index in row.stock_items.size():
 		var item: Dictionary = row.stock_items[index]
 		if item.stage != "Source": continue
@@ -437,7 +468,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 	for person_id in row.passengers:
 		var p: Dictionary = rear.ledger.inspect_entity(person_id)
 		if p.holder_id == row.hull: continue
-		if p.duty_id == "passenger:"+row.id and rear.actors[person_id].phase == "Idle" and p.position.is_equal_approx(Layout.door("dispatch")):
+		if p.duty_id == "passenger:"+row.id and rear.actors[person_id].phase == "Idle" and p.position.is_equal_approx(row.dispatch_door):
 			_start_task(row,"Passenger Board",[person_id],1.0)
 			row.state = "Loading"
 			return true
@@ -482,11 +513,12 @@ func _finish_task(row: Dictionary) -> void:
 	var worker: String = task.actors[0] if not task.actors.is_empty() else ""
 	var result: Dictionary = {"ok":true}
 	if phase == "Gun Handling":
-		var path: Array = Layout.path(Layout.door("vehicle_works"),Layout.door("dispatch"))
+		var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
+		var path: Array = Layout.path(owner.site_door,row.dispatch_door)
 		if path.is_empty(): row.blocker = "Gun gear route to F07 blocked; same gun remains in F10."; _clear_task(row); return
-		result = rear.ledger.move_field_gun(task.gun,"rear",Layout.door("vehicle_works"))
+		result = rear.ledger.move_field_gun(task.gun,"rear",owner.site_door)
 		if not result.ok: row.blocker = result.message; _clear_task(row); return
-		rear.heavy_production.bay_occupant = ""
+		owner.bay_occupant = ""
 		_start_task(row,"Gun Carry",task.actors,Layout.length(path)/1.2,path)
 		row.task.gun = task.gun
 		return
@@ -507,7 +539,7 @@ func _finish_task(row: Dictionary) -> void:
 	elif phase == "Weapon Pickup":
 		result = rear.ledger.begin_weapon_carry(worker,row.weapon_items[task.item_index].id)
 	if phase in ["Stock Pickup","Weapon Pickup"] and result.ok:
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,Layout.door("dispatch"))
+		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
 		_start_task(row,"Stock Carry" if phase == "Stock Pickup" else "Weapon Carry",[worker],Layout.length(path)/1.2,path)
 		row.task.item_index = task.item_index
 		return
@@ -516,7 +548,7 @@ func _finish_task(row: Dictionary) -> void:
 		row.task.item_index = task.item_index
 		return
 	if phase == "Stock Drop":
-		result = rear.ledger.finish_carry(worker,"dispatch")
+		result = rear.ledger.finish_carry(worker,row.dispatch_store)
 		if result.ok:
 			var item: Dictionary = row.stock_items[task.item_index]
 			item.id = result.entity_id
@@ -525,7 +557,7 @@ func _finish_task(row: Dictionary) -> void:
 			item.claim = "dispatch-stock-%04d" % _sequence
 			rear.ledger.request_stock(item.claim,item.id,item.quantity,row.id,"Reserved staged manifest cargo",rear.PLAYER)
 	elif phase == "Weapon Drop":
-		result = rear.ledger.finish_weapon_carry(worker,"dispatch")
+		result = rear.ledger.finish_weapon_carry(worker,row.dispatch_store)
 		if result.ok: row.weapon_items[task.item_index].stage = "Staged"
 	elif phase == "Stock Load Pickup":
 		var item: Dictionary = row.stock_items[task.item_index]
@@ -581,29 +613,31 @@ func _finish_task(row: Dictionary) -> void:
 		result = rear.ledger.transfer_field_gun(task.gun,row.hull,"hq-stock")
 		if result.ok: row.unloaded.guns = int(row.unloaded.get("guns",0)) + 1
 	elif phase == "Cancel Passenger Exit":
-		result = rear.ledger.disembark_dispatch_passenger(worker,row.hull,"dispatch-berth")
-		if result.ok: result = rear.ledger.complete_dispatch_cancel_person(worker,"dispatch-berth")
+		result = rear.ledger.disembark_dispatch_passenger(worker,row.hull,row.berth_place)
+		if result.ok: result = rear.ledger.complete_dispatch_cancel_person(worker,row.berth_place)
 	elif phase == "Cancel Stock Drop":
 		for item in row.stock_items:
 			if item.id != task.item_id: continue
-			result = rear.ledger.transfer_stock(item.id,item.quantity,"dispatch")
+			result = rear.ledger.transfer_stock(item.id,item.quantity,row.dispatch_store)
 			if result.ok: item.id = result.entity_id; item.stage = "Staged"
 			break
 	elif phase == "Cancel Weapon Drop":
-		result = rear.ledger.transfer_weapon(task.item_id,"dispatch")
+		result = rear.ledger.transfer_weapon(task.item_id,row.dispatch_store)
 		if result.ok:
 			for item in row.weapon_items:
 				if item.id == task.item_id: item.stage = "Staged"; break
 	elif phase == "Gun Return Handling":
-		result = rear.ledger.move_field_gun(task.gun,"rear",Layout.door("dispatch"))
+		result = rear.ledger.move_field_gun(task.gun,"rear",row.dispatch_door)
 		if result.ok:
-			var path: Array = Layout.path(Layout.door("dispatch"),Layout.door("vehicle_works"))
+			var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
+			var path: Array = Layout.path(row.dispatch_door,owner.site_door)
 			_start_task(row,"Gun Return Carry",task.actors,Layout.length(path)/1.2,path)
 			row.task.gun = task.gun
 			return
 	elif phase == "Gun Return Carry":
-		result = rear.ledger.transfer_field_gun(task.gun,"rear","heavy-bay")
-		if result.ok: rear.heavy_production.bay_occupant = task.gun
+		var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
+		result = rear.ledger.transfer_field_gun(task.gun,"rear",owner.bay_id)
+		if result.ok: owner.bay_occupant = task.gun
 	if not result.ok: row.blocker = result.message
 	_clear_task(row)
 	if phase == "Passenger Board" and result.ok: rear.actors[worker].phase = "Passenger Seated"
@@ -617,14 +651,16 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 	var rear_exit: Vector2 = rear.ledger.inspect_entity("rear-exit").position
 	var segments: Array[Dictionary] = []
 	var road_start: Vector2 = hull.position
-	if hull.holder_id != "dispatch-berth":
-		var approach: Array = Layout.path(hull.position,Layout.door("dispatch"))
+	if hull.holder_id != row.berth_place:
+		var approach: Array = _rear_vehicle_path(row,hull.position,row.dispatch_door)
 		if approach.is_empty(): return _fail("No physical route from this hull to F07 dispatch.")
 		var approach_plan: Dictionary = Routes.plan(rear.ledger,row.hull,approach,{"strict_turns":false})
 		if not approach_plan.ok: return _fail(approach_plan.reason)
 		segments.append(approach_plan)
-		road_start = Layout.door("dispatch")
-	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,[road_start,rear_exit],{"strict_turns":false})
+		road_start = row.dispatch_door
+	var outward_route: Array = _rear_vehicle_path(row,road_start,rear_exit)
+	if outward_route.is_empty(): return _fail("No clear eight-metre road from this F07 berth to the rear exit.")
+	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,outward_route,{"strict_turns":false})
 	if not outward_rear.ok: return _fail(outward_rear.reason)
 	segments.append(outward_rear)
 	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,HQ_QUEUE],_crossing_profile(profile,[rear_exit,ENTRY,HQ_QUEUE]))
@@ -637,7 +673,7 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 		var back: Dictionary = Routes.plan(rear.ledger,row.hull,[HQ,ENTRY,rear_exit],_crossing_profile(profile,[HQ,ENTRY,rear_exit]))
 		if not back.ok: return _fail(back.reason)
 		segments.append(back)
-		var home: Array = Layout.path(rear_exit,rear.yard.PARKING_POSITIONS[row.home_slot])
+		var home: Array = _rear_vehicle_path(row,rear_exit,rear.yard.PARKING_POSITIONS[row.home_slot])
 		if home.is_empty(): return _fail("No physical rear route to the same F11 home slot.")
 		var home_plan: Dictionary = Routes.plan(rear.ledger,row.hull,home,{"strict_turns":false})
 		if not home_plan.ok: return _fail(home_plan.reason)
@@ -666,7 +702,7 @@ func depart(id: String) -> Dictionary:
 	var row: Dictionary = manifests.get(id,{})
 	if row.is_empty() or row.state != "Loaded Waiting Dispatch" or not row.task.is_empty(): return _fail("Wait for every real cargo item and passenger to finish physical loading.")
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-	if hull.holder_id != "dispatch-berth" or not rear.vehicles.readiness(row.hull).transfer_crew_eligible: return _fail("Healthy actual P08 driver and stopped loaded hull are required at F07.")
+	if hull.holder_id != row.berth_place or not rear.vehicles.readiness(row.hull).transfer_crew_eligible: return _fail("Healthy actual P08 driver and stopped loaded hull are required at F07.")
 	if not row.guns.is_empty():
 		for gun_id in row.guns:
 			if rear.ledger.inspect_entity(gun_id).holder_id != row.hull: return _fail("The same F10 field gun has not finished actual collection.")
@@ -692,7 +728,7 @@ func depart(id: String) -> Dictionary:
 	if row.mode == "Fleet Transfer" and not incoming_hulls.has(row.hull): return _fail("Incoming military hull 24 claim is missing.")
 	if _rear_ref.get_ref().receiving.rear_population() + _rear_ref.get_ref().receiving.incoming_people() > REAR_PEOPLE_LIMIT: return _fail("Rear 120 occupancy is invalid; departure cannot mask overbooking.")
 	row.departed = true
-	_start_route(row,[hull.position,rear.ledger.inspect_entity("rear-exit").position],"Departed")
+	_start_route(row,_rear_vehicle_path(row,hull.position,rear.ledger.inspect_entity("rear-exit").position),"Departed")
 	rear.vehicles.vehicles[row.hull].state = "Departed"
 	return {"ok":true,"message":"Irreversible physical trip begun with the same loaded hull and claims."}
 
@@ -798,9 +834,9 @@ func request_safe_return(id: String) -> Dictionary:
 			if rear.ledger.inspect_entity(person_id).rear_place == "None": needing.append(person_id)
 	if rear.receiving.rear_population() + rear.receiving.incoming_people() + return_places.size() + needing.size() > REAR_PEOPLE_LIMIT: return _fail("Rear 120 is full; same hull waits outside with every person and military claim intact.")
 	var route: Array = [hull.position,rear.ledger.inspect_entity("rear-exit").position]
-	var home_route: Array = Layout.path(rear.ledger.inspect_entity("rear-exit").position,Layout.door("dispatch"))
+	var home_route: Array = _rear_vehicle_path(row,rear.ledger.inspect_entity("rear-exit").position,row.dispatch_door)
 	if home_route.is_empty(): return _fail("No safe physical rear re-entry route; actual hull and admissions stay outside.")
-	var needed_fuel: float = (Layout.length(route)+Layout.length(home_route)+Layout.length(Layout.path(Layout.door("dispatch"),rear.yard.PARKING_POSITIONS[row.home_slot])))/1000.0*rear.vehicles._fuel_rate(hull.design_type)*1.25
+	var needed_fuel: float = (Layout.length(route)+Layout.length(home_route)+Layout.length(_rear_vehicle_path(row,row.dispatch_door,rear.yard.PARKING_POSITIONS[row.home_slot])))/1000.0*rear.vehicles._fuel_rate(hull.design_type)*1.25
 	var return_profile: Dictionary = row.route_profile.duplicate(true)
 	return_profile.erase("known_mine")
 	return_profile.erase("observed_hostile")
@@ -810,7 +846,7 @@ func request_safe_return(id: String) -> Dictionary:
 	if not outside_plan.ok: return _fail(outside_plan.reason)
 	var rear_plan: Dictionary = Routes.plan(rear.ledger,row.hull,home_route,{"strict_turns":false})
 	if not rear_plan.ok: return _fail(rear_plan.reason)
-	var park_plan: Dictionary = Routes.plan(rear.ledger,row.hull,Layout.path(Layout.door("dispatch"),rear.yard.PARKING_POSITIONS[row.home_slot]),{"strict_turns":false})
+	var park_plan: Dictionary = Routes.plan(rear.ledger,row.hull,_rear_vehicle_path(row,row.dispatch_door,rear.yard.PARKING_POSITIONS[row.home_slot]),{"strict_turns":false})
 	if not park_plan.ok: return _fail(park_plan.reason)
 	needed_fuel = (float(outside_plan.fuel)+float(rear_plan.fuel)+float(park_plan.fuel))*1.25
 	if hull.fuel + EPS < needed_fuel: return _fail("Fuel Empty or insufficient for real safety return plus 25 percent reserve; same hull waits outside.")
@@ -867,7 +903,7 @@ func cancel(id: String) -> Dictionary:
 	for item in row.stock_items:
 		if not item.claim.is_empty(): rear.ledger.release_claim(item.claim); item.claim = ""
 	row.state = "Cancelling"
-	if rear.ledger.inspect_entity(row.hull).holder_id == "dispatch-berth" and not row.task.is_empty(): row.blocker = "Current handling must finish before actual unloading."
+	if rear.ledger.inspect_entity(row.hull).holder_id == row.berth_place and not row.task.is_empty(): row.blocker = "Current handling must finish before actual unloading."
 	if rear.vehicles.vehicles[row.hull].state == "Dispatch Approach": row.cancel_after_route = true
 	rear._settle()
 	return {"ok":true,"message":"Commitments withdrawn once; anything already aboard needs physical cancellation unloading and vehicle return."}
@@ -904,8 +940,10 @@ func add_field_gun(id: String, gun_id: String) -> Dictionary:
 	if hull.design_type == "T02" and row.passengers.size() > 8: return _fail("T02 folded-bench mode allows at most eight passengers with a gun.")
 	if _manifest_payload(row) + 180.0 > float(hull.vehicle_spec.payload) + EPS: return _fail("Added field gun exceeds this hull's payload.")
 	var gun: Dictionary = rear.ledger.inspect_entity(gun_id)
-	if gun.is_empty() or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.holder_id != "heavy-bay" or rear.heavy_production.bay_occupant != gun_id or weapon_promises.has(gun_id): return _fail("Select the same uncommitted E13 currently occupying F10.")
+	var owner: RefCounted = rear.gun_owner(gun_id)
+	if gun.is_empty() or owner == null or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.holder_id != owner.bay_id or weapon_promises.has(gun_id): return _fail("Select the same uncommitted E13 currently occupying F10.")
 	row.guns.append(gun_id)
+	row.gun_bays[gun_id] = owner.bay_id
 	weapon_promises[gun_id] = id
 	row.erase("full_route_plan")
 	row.state = "Staging"
@@ -924,7 +962,7 @@ func _manifest_payload(row: Dictionary) -> float:
 func _schedule_cancel(row: Dictionary) -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-	if hull.holder_id != "dispatch-berth":
+	if hull.holder_id != row.berth_place:
 		if rear.vehicles.vehicles[row.hull].state == "Parked": row.state = "Cancelled"; return true
 		return false
 	for person_id in row.passengers:
@@ -933,32 +971,33 @@ func _schedule_cancel(row: Dictionary) -> bool:
 			return true
 	for item in row.stock_items:
 		if item.stage != "Onboard": continue
-		var worker := _ready_worker()
+		var worker := _ready_worker(row)
 		if worker.is_empty(): row.blocker = "Real Dispatch worker needed for physical cancellation cargo unload."; return false
 		_start_task(row,"Cancel Stock Pickup",[worker],2.0)
 		row.task.item_id = item.id
 		return true
 	for item in row.weapon_items:
 		if item.stage != "Onboard": continue
-		var worker := _ready_worker()
+		var worker := _ready_worker(row)
 		if worker.is_empty(): row.blocker = "Real Dispatch worker needed for physical cancellation rifle unload."; return false
 		_start_task(row,"Cancel Weapon Pickup",[worker],2.0)
 		row.task.item_id = item.id
 		return true
 	for gun_id in row.guns:
 		if rear.ledger.inspect_entity(gun_id).holder_id != row.hull: continue
-		if not rear.heavy_production.bay_occupant.is_empty(): row.blocker = "F10 bay occupied; cannot physically return the collected field gun."; return false
+		var owner: RefCounted = rear.heavy_owner(row.gun_bays[gun_id])
+		if not owner.bay_occupant.is_empty(): row.blocker = "F10 bay occupied; cannot physically return the collected field gun."; return false
 		var loaders: Array[String] = []
 		for person_id in rear.actors:
 			var p: Dictionary = rear.ledger.inspect_entity(person_id)
-			if p.duty_id == "vehicle_works" and rear.actors[person_id].phase == "Idle" and p.health > 0 and p.position.is_equal_approx(Layout.door("dispatch")):
+			if p.duty_id == owner._spec.duty and rear.actors[person_id].phase == "Idle" and p.health > 0 and p.position.is_equal_approx(row.dispatch_door):
 				loaders.append(person_id)
 				if loaders.size() == 2: break
 		if loaders.size() != 2: row.blocker = "Two actual F07 field-gun loaders must be present to unload/return it."; return false
 		_start_task(row,"Gun Return Handling",loaders,20.0)
 		row.task.gun = gun_id
 		return true
-	var route: Array = Layout.path(hull.position,rear.yard.PARKING_POSITIONS[row.home_slot])
+	var route: Array = _rear_vehicle_path(row,hull.position,rear.yard.PARKING_POSITIONS[row.home_slot])
 	if route.is_empty(): row.blocker = "No legal real route back to promised F11 place."; return false
 	row.return_phase = "Cancel"
 	_start_route(row,route,"Returning")
@@ -980,7 +1019,7 @@ func snapshot() -> Dictionary:
 			if incoming_people.has(person_id): committed.people += 1
 			var p: Dictionary = rear.ledger.inspect_entity(person_id)
 			if p.holder_id == row.hull: onboard.people += 1
-			elif p.duty_id == "passenger:"+id and p.position.is_equal_approx(Layout.door("dispatch")): staged.people += 1
+			elif p.duty_id == "passenger:"+id and p.position.is_equal_approx(row.dispatch_door): staged.people += 1
 		for gun_id in row.guns:
 			if weapon_promises.has(gun_id): committed.guns += 1
 			if rear.ledger.inspect_entity(gun_id).holder_id == row.hull: onboard.guns += 1
@@ -989,12 +1028,12 @@ func snapshot() -> Dictionary:
 			if p.is_empty(): continue
 			var claim: Dictionary = rear.ledger.inspect_claim(item.claim) if not item.claim.is_empty() else {}
 			committed[item.type] = int(committed.get(item.type,0)) + int(claim.get("reserved",0))
-			if p.holder_id == "dispatch" and item.stage == "Staged": staged[item.type] = int(staged.get(item.type,0)) + int(item.quantity)
+			if p.holder_id == row.dispatch_store and item.stage == "Staged": staged[item.type] = int(staged.get(item.type,0)) + int(item.quantity)
 			if p.holder_id == row.hull: onboard[item.type] = int(onboard.get(item.type,0)) + int(item.quantity)
 		for item in row.weapon_items:
 			var p: Dictionary = rear.ledger.inspect_entity(item.id)
 			if weapon_promises.has(item.id): committed[item.type] = int(committed.get(item.type,0)) + 1
-			if p.holder_id == "dispatch" and item.stage == "Staged": staged[item.type] = int(staged.get(item.type,0)) + 1
+			if p.holder_id == row.dispatch_store and item.stage == "Staged": staged[item.type] = int(staged.get(item.type,0)) + 1
 			if p.holder_id == row.hull: onboard[item.type] = int(onboard.get(item.type,0)) + 1
 		var copy: Dictionary = row.duplicate(true)
 		copy.hull_physical = hull

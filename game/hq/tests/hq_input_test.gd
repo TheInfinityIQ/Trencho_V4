@@ -19,7 +19,7 @@ func test_normal_player_dispatch_shows_automatic_hq_issue_without_manual_command
 	assert_bool(base.rear.ledger.add_stock("hq-auto-ui-rounds","E02",30,0.02,"hq-stock",base.rear.PLAYER).ok).is_true()
 	base.rear.advance_time(0)
 	demo.call("_refresh")
-	assert_int((demo.get("tabs") as TabContainer).get_tab_count()).is_equal(8)
+	assert_int((demo.get("tabs") as TabContainer).get_tab_count()).is_equal(9)
 	assert_object(demo.get("hq_person")).is_null()
 	var bar: TabBar = demo.get("tabs").get_tab_bar()
 	bar.ensure_tab_visible(7)
@@ -53,10 +53,10 @@ func test_hq_issue_panel_click_reserves_then_physically_issues_same_person() -> 
 	assert_bool(base.rear.ledger.add_stock("hq-ui-rounds","E02",20,0.02,"hq-stock",base.rear.PLAYER).ok).is_true()
 	demo.call("_refresh")
 	var bar: TabBar = demo.get("tabs").get_tab_bar()
-	bar.ensure_tab_visible(8)
+	bar.ensure_tab_visible(9)
 	await runner.simulate_frames(2)
-	await _click(runner,bar.global_position+bar.get_tab_rect(8).get_center())
-	assert_int((demo.get("tabs") as TabContainer).current_tab).is_equal(8)
+	await _click(runner,bar.global_position+bar.get_tab_rect(9).get_center())
+	assert_int((demo.get("tabs") as TabContainer).current_tab).is_equal(9)
 	assert_int((demo.get("hq_person") as OptionButton).item_count).is_equal(1)
 	assert_int((demo.get("hq_type") as OptionButton).item_count).is_equal(1)
 	(demo.get("hq_count") as SpinBox).value = 10
@@ -73,7 +73,7 @@ func test_hq_issue_panel_click_reserves_then_physically_issues_same_person() -> 
 	window.size = Vector2i(960,540)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(3)
-	var scroll: ScrollContainer = (demo.get("tabs") as TabContainer).get_child(8)
+	var scroll: ScrollContainer = (demo.get("tabs") as TabContainer).get_child(9)
 	scroll.ensure_control_visible(demo.get("hq_status"))
 	await runner.simulate_frames(3)
 	await RenderingServer.frame_post_draw

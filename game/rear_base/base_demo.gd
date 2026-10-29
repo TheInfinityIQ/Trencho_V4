@@ -4,7 +4,19 @@ const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
+const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
 var simulation := Simulation.new()
+var construction_kind: OptionButton
+var construction_x: SpinBox
+var construction_y: SpinBox
+var construction_turn: CheckBox
+var construction_source: OptionButton
+var construction_builders: SpinBox
+var construction_office: SpinBox
+var construction_staff: SpinBox
+var construction_rows: ItemList
+var construction_ids: Array[String] = []
+var construction_status: Label
 var base_map: Control
 var tabs: TabContainer
 var status: Label
@@ -45,6 +57,7 @@ var vehicle_station: OptionButton
 var vehicle_fuel_units: SpinBox
 var vehicle_status: Label
 var dispatch_hull: OptionButton
+var dispatch_site: OptionButton
 var dispatch_mode: OptionButton
 var dispatch_people: ItemList
 var dispatch_person_ids: Array[String] = []
@@ -99,6 +112,7 @@ func _ready() -> void:
 	layout.add_child(split)
 	base_map = Map.new()
 	base_map.simulation = simulation
+	base_map.placement_preview = {}
 	base_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	base_map.selected.connect(_select)
 	split.add_child(base_map)
@@ -113,6 +127,7 @@ func _ready() -> void:
 	_training_panel(_panel("Train"))
 	_vehicles_panel(_panel("Vehicles"))
 	_dispatch_panel(_panel("Dispatch"))
+	_construction_panel(_panel("Build"))
 	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -264,7 +279,7 @@ func _load_haul_goods(category: int) -> void:
 			if spec.duty == duty: goods_type.add_item(spec.output_type)
 
 func _production_panel(box: VBoxContainer) -> void:
-	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works", "training"])
+	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production())
 	recipe = _option(box, "Recipe / declared session access", [])
 	_button(box, "Select recipe", _change_recipe)
@@ -280,16 +295,16 @@ func _production_panel(box: VBoxContainer) -> void:
 	heavy_controls = VBoxContainer.new()
 	box.add_child(heavy_controls)
 	_label(heavy_controls,"Heavy targets request goods; acceptance reserves the bay/fleet place.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_button(heavy_controls,"Accept heavy order",func() -> void: _result(simulation.rear.heavy_production.accept_order()))
+	_button(heavy_controls,"Accept heavy order",func() -> void: _result(_activity().accept_order()))
 	bay_access = CheckBox.new()
 	bay_access.text = "F10 bay accessible"
 	heavy_controls.add_child(bay_access)
 	parking_access = CheckBox.new()
 	parking_access.text = "Parking route accessible"
 	heavy_controls.add_child(parking_access)
-	_button(heavy_controls,"Apply heavy access",func() -> void: _result(simulation.rear.heavy_production.set_access(bay_access.button_pressed,parking_access.button_pressed)))
+	_button(heavy_controls,"Apply heavy access",func() -> void: _result(_activity().set_access(bay_access.button_pressed,parking_access.button_pressed)))
 	parking_destination = _option(heavy_controls,"Requested parking destination",["F11 place 1","F11 place 2","F11 place 3","F11 place 4"])
-	_button(heavy_controls,"Change promised parking",func() -> void: _result(simulation.rear.heavy_production.set_parking_destination(parking_destination.selected)))
+	_button(heavy_controls,"Change promised parking",func() -> void: _result(_activity().set_parking_destination(parking_destination.selected)))
 	heavy_status = _label(heavy_controls,"")
 	heavy_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	production_status = _label(box, "")
@@ -309,6 +324,66 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		if id == "receiving" and capacity.value < simulation.receiving.receiving_kg() + simulation.rear._reserved_space(id):
 			_result({"ok": false, "message": "Receiving capacity must retain deposited goods and all promised inbound loads."})
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
+
+func _construction_panel(box: VBoxContainer) -> void:
+	_label(box,"Staff F12 with actual people. Its builders travel to sites after real M11 delivery, up to four per site.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	construction_office = _spin(box,"Initial F12 builder staff",4)
+	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
+	var kinds: Array = []
+	for kind in ConstructionCatalog.SPECS:
+		if not ConstructionCatalog.SPECS[kind].get("fixed",false): kinds.append(kind)
+	construction_kind = _option(box,"F-series facility",kinds)
+	construction_x = _spin(box,"Centre X metres",240,140)
+	construction_y = _spin(box,"Centre Y metres",180,10)
+	construction_turn = CheckBox.new()
+	construction_turn.text = "Turn footprint 90 degrees"
+	box.add_child(construction_turn)
+	_button(box,"Preview legal site",func() -> void:
+		var plan: Dictionary = simulation.rear.construction.preview(_construction_kind(),_construction_point(),construction_turn.button_pressed)
+		base_map.placement_preview = plan
+		base_map.queue_redraw()
+		_result(plan))
+	_button(box,"Place physical site",func() -> void:
+		_result(simulation.rear.construction.place(_construction_kind(),_construction_point(),construction_turn.button_pressed)))
+	construction_rows = _list(box,180)
+	construction_rows.item_selected.connect(func(index: int) -> void: _select("site",construction_ids[index],false))
+	construction_source = _option(box,"M11 source",simulation.rear.stores.keys())
+	construction_builders = _spin(box,"Builder target (max four)",4)
+	construction_staff = _spin(box,"Completed facility staff target",8)
+	_button(box,"Request M11 hauling",func() -> void:
+		_result(simulation.rear.construction.order_materials(_construction_site(),construction_source.get_item_text(construction_source.selected))))
+	_button(box,"Set builders",func() -> void:
+		_result(simulation.rear.construction.set_builders(_construction_site(),int(construction_builders.value))))
+	_button(box,"Set facility staff",func() -> void:
+		var id: String = _construction_site()
+		_result(simulation.rear.set_target(id,int(construction_staff.value)) if simulation.rear.requests.has(id) else {"ok":false,"message":"Select a completed facility with staff positions."}))
+	_button(box,"Cancel unfinished site",func() -> void:
+		_result(simulation.rear.construction.cancel(_construction_site())))
+	_button(box,"Dismantle completed facility",func() -> void:
+		_result(simulation.rear.construction.request_dismantle(_construction_site())))
+	construction_status = _label(box,"")
+	construction_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func _construction_kind() -> String:
+	return construction_kind.get_item_text(construction_kind.selected)
+
+func _construction_point() -> Vector2:
+	return Vector2(construction_x.value,construction_y.value)
+
+func _construction_site() -> String:
+	return construction_ids[construction_rows.get_selected_items()[0]] if not construction_rows.get_selected_items().is_empty() else ""
+
+func _sync_option(option: OptionButton, values: Array) -> void:
+	var selected: String = option.get_item_text(option.selected) if option.selected >= 0 else ""
+	if option.item_count == values.size():
+		var same := true
+		for index in values.size():
+			if option.get_item_text(index) != str(values[index]): same = false
+		if same: return
+	option.clear()
+	for value in values: option.add_item(str(value))
+	var index: int = values.find(selected)
+	option.select(index if index >= 0 else 0)
 
 func _training_panel(box: VBoxContainer) -> void:
 	_label(box,"F06: two instructors, twelve students").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -359,6 +434,7 @@ func _vehicles_panel(box: VBoxContainer) -> void:
 func _dispatch_panel(box: VBoxContainer) -> void:
 	_label(box,"G12/G13 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew, Fleet permanently transfers them at HQ. Preview the full route against tank fuel before departure.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dispatch_hull = _option(box,"Same F10-produced parked hull",[])
+	dispatch_site = _option(box,"Physical F07 dispatch berth",["Initial F07"])
 	dispatch_mode = _option(box,"Mode",["Strategic Delivery","Fleet Transfer"])
 	dispatch_surface = _option(box,"Route surface",["TR02 Road","TR03 Farm","TR07 Rocky","TR10 Ford","TR11 Deep water"])
 	dispatch_bridge = _option(box,"Specified crossing fixture",["No bridge","B02 Light road bridge","B03 Heavy road bridge"])
@@ -386,7 +462,7 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 		for index in dispatch_people.get_selected_items(): passengers.append(dispatch_person_ids[index])
 		var guns: Array = []
 		if dispatch_gun.selected > 0: guns.append(dispatch_gun.get_item_metadata(dispatch_gun.selected))
-		_result(simulation.rear.dispatch.accept(dispatch_hull.get_item_metadata(dispatch_hull.selected),dispatch_mode.get_item_text(dispatch_mode.selected),passengers,dispatch_draft,guns))
+		_result(simulation.rear.dispatch.accept(dispatch_hull.get_item_metadata(dispatch_hull.selected),dispatch_mode.get_item_text(dispatch_mode.selected),passengers,dispatch_draft,guns,str(dispatch_site.get_item_metadata(dispatch_site.selected))))
 		_refresh())
 	_label(box,"Accepted manifests | requested, reserved, staged, onboard, arrived and unloaded use the same physical IDs.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dispatch_rows = _list(box,110)
@@ -518,13 +594,21 @@ func _load_courses() -> void:
 		training_course.set_item_disabled(training_course.item_count-1,not allowed)
 
 func _activity() -> RefCounted:
-	return [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production, simulation.rear.heavy_production][facility.selected]
+	var id: String = facility.get_item_text(facility.selected)
+	if simulation.rear.construction.activities.has(id): return simulation.rear.construction.activities[id]
+	match id:
+		"workshop": return simulation.rear.production
+		"munitions": return simulation.rear.munitions_production
+		"materials": return simulation.rear.materials_production
+		"support": return simulation.rear.support_production
+		"vehicle_works": return simulation.rear.heavy_production
+	return simulation.rear.production
 
 func _load_production() -> void:
 	var activity := _activity()
-	heavy_controls.visible = activity == simulation.rear.heavy_production
-	bay_access.button_pressed = simulation.rear.heavy_production.bay_accessible
-	parking_access.button_pressed = simulation.rear.heavy_production.parking_accessible
+	heavy_controls.visible = activity.has_method("accept_order")
+	bay_access.button_pressed = activity.bay_accessible if activity.has_method("accept_order") else true
+	parking_access.button_pressed = activity.parking_accessible if activity.has_method("accept_order") else true
 	mode.select(0 if activity.mode == "Stock target" else 1)
 	stock_target.value = activity.stock_target
 	var view: Dictionary = activity.snapshot()
@@ -564,13 +648,16 @@ func _result(result: Dictionary) -> void:
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
 	_selected_kind = kind
 	_selected_id = id
+	if kind == "site":
+		var site_index: int = construction_ids.find(id)
+		if site_index >= 0: construction_rows.select(site_index)
 	if kind == "building":
 		var store_id := "vehicle_input" if id == "vehicle_works" else (id if simulation.rear.stores.has(id) else id + "_input")
 		var index: int = simulation.rear.stores.keys().find(store_id)
 		if index >= 0:
 			store.select(index)
 			_load_store()
-	if open_panel: tabs.current_tab = 4
+	if open_panel: tabs.current_tab = 8 if kind == "site" else 4
 	_refresh()
 
 func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callable) -> void:
@@ -585,6 +672,20 @@ func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callab
 		if entry.id == selected: list.select(ids.size() - 1)
 
 func _refresh_dispatch_choices(view: Dictionary) -> void:
+	var chosen_site: String = str(dispatch_site.get_item_metadata(dispatch_site.selected)) if dispatch_site.selected >= 0 else "dispatch"
+	var site_ids: Array = simulation.rear.dispatch.dispatch_sites.keys()
+	site_ids.sort()
+	var sites_changed: bool = dispatch_site.item_count != site_ids.size()
+	if not sites_changed:
+		for index in site_ids.size():
+			if dispatch_site.get_item_metadata(index) != site_ids[index]: sites_changed = true; break
+	if sites_changed:
+		dispatch_site.clear()
+		for site_id in site_ids:
+			dispatch_site.add_item("Initial F07" if site_id == "dispatch" else site_id + " / F07")
+			dispatch_site.set_item_metadata(dispatch_site.item_count-1,site_id)
+			if site_id == chosen_site: dispatch_site.select(dispatch_site.item_count-1)
+		if dispatch_site.selected < 0 and dispatch_site.item_count > 0: dispatch_site.select(0)
 	var chosen_hull: String = str(dispatch_hull.get_item_metadata(dispatch_hull.selected)) if dispatch_hull.selected >= 0 else ""
 	var hull_ids: Array[String] = []
 	for row in view.vehicles.rows:
@@ -600,16 +701,24 @@ func _refresh_dispatch_choices(view: Dictionary) -> void:
 			dispatch_hull.set_item_metadata(dispatch_hull.item_count-1,id)
 			if id == chosen_hull: dispatch_hull.select(dispatch_hull.item_count-1)
 		if dispatch_hull.selected < 0 and dispatch_hull.item_count > 0: dispatch_hull.select(0)
-	var gun: String = view.heavy.bay.occupant
-	if gun.is_empty() or simulation.rear.ledger.inspect_entity(gun).design_type != "E13": gun = ""
+	var gun_ids: Array[String] = []
+	for activity in simulation.rear._production_activities():
+		if not activity.has_method("accept_order") or activity.bay_occupant.is_empty(): continue
+		var occupant: String = activity.bay_occupant
+		if simulation.rear.ledger.inspect_entity(occupant).get("design_type","") == "E13": gun_ids.append(occupant)
+	gun_ids.sort()
 	var chosen_gun: String = str(dispatch_gun.get_item_metadata(dispatch_gun.selected)) if dispatch_gun.selected > 0 else ""
-	if dispatch_gun.item_count != (2 if not gun.is_empty() else 1) or (not gun.is_empty() and dispatch_gun.get_item_metadata(1) != gun):
+	var guns_changed: bool = dispatch_gun.item_count != gun_ids.size()+1
+	if not guns_changed:
+		for index in gun_ids.size():
+			if dispatch_gun.get_item_metadata(index+1) != gun_ids[index]: guns_changed = true; break
+	if guns_changed:
 		dispatch_gun.clear()
 		dispatch_gun.add_item("No field gun")
-		if not gun.is_empty():
-			dispatch_gun.add_item(gun+" at F10")
-			dispatch_gun.set_item_metadata(1,gun)
-			if chosen_gun == gun: dispatch_gun.select(1)
+		for gun_id in gun_ids:
+			dispatch_gun.add_item(gun_id+" at F10")
+			dispatch_gun.set_item_metadata(dispatch_gun.item_count-1,gun_id)
+			if chosen_gun == gun_id: dispatch_gun.select(dispatch_gun.item_count-1)
 	var ids: Array[String] = []
 	for p in view.rear.people:
 		if p.owner == "army-blue" and p.rear_place == "Occupied" and p.crew_station.is_empty() and simulation.rear.actors.has(p.id): ids.append(p.id)
@@ -643,6 +752,27 @@ func _refresh_dispatch(view: Dictionary) -> void:
 func _refresh() -> void:
 	if orders == null: return
 	var view: Dictionary = simulation.snapshot()
+	_sync_option(source,simulation.rear.stores.keys())
+	_sync_option(destination,simulation.rear.stores.keys())
+	_sync_option(store,simulation.rear.stores.keys())
+	_sync_option(construction_source,simulation.rear.stores.keys())
+	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
+	var parking_labels: Array = []
+	for index in simulation.rear.yard.PARKING_POSITIONS.size():
+		parking_labels.append("F11 place %d%s" % [index+1,"" if simulation.rear.yard.active_parking[index] else " (retired)"])
+	_sync_option(parking_destination,parking_labels)
+	var production_ids: Array = ["workshop","munitions","materials","support","vehicle_works"]
+	for row in view.construction.rows:
+		if row.state == "Complete" and simulation.rear.construction.activities.has(row.id): production_ids.append(row.id)
+	_sync_option(facility,production_ids)
+	_fill(construction_rows,construction_ids,view.construction.rows,func(row: Dictionary) -> String:
+		return "%s %s %s | M11 %d | work %.1f/%.0f" % [row.id,row.kind,row.state,row.m11,row.progress,row.work])
+	var selected_site: String = _construction_site()
+	construction_status.text = "Select a site or building to inspect its physical work."
+	for row in view.construction.rows:
+		if row.id == selected_site:
+			var builders: String = "builders-"+row.id
+			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
 	_refresh_dispatch(view)
 	_refresh_hq(view)
 	var offer: Dictionary = view.receiving.recovery_offer
@@ -675,8 +805,13 @@ func _refresh() -> void:
 	var lines: Array[String] = []
 	for activity in [view.production, view.munitions, view.materials, view.support]:
 		lines.append("%s %s -> %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d; promised %.1f kg" % [activity.facility, activity.recipe, activity.output_type, activity.status, str(activity.local_inputs), str(activity.missing_local), activity.batch.get("work", 0.0), activity.required_work, activity.physical_output, activity.output_promise.get("mass", 0.0)])
+	for site_id in simulation.rear.construction.activities:
+		var copy: RefCounted = simulation.rear.construction.activities[site_id]
+		if copy.has_method("accept_order"): continue
+		var activity: Dictionary = copy.snapshot()
+		lines.append("%s %s %s -> %s: %s\nLocal %s; missing %s\nWork %.1f/%.0f; output %d" % [site_id,activity.facility,activity.recipe,activity.output_type,activity.status,str(activity.local_inputs),str(activity.missing_local),activity.batch.get("work",0.0),activity.required_work,activity.physical_output])
 	production_status.text = "\n\n".join(lines)
-	var heavy: Dictionary = view.heavy
+	var heavy: Dictionary = _activity().snapshot() if _activity().has_method("accept_order") else view.heavy
 	heavy_status.text = "%s -> %s: %s\nRear fleet: %d live + %d reserved / 8\nBay: %s\nOrder: %s; work %.1f/%.0f\n%s" % [heavy.recipe,heavy.output_type,heavy.status,heavy.fleet.live,heavy.fleet.reserved,heavy.bay.occupant if not heavy.bay.occupant.is_empty() else ("one accepted promise" if not heavy.order.is_empty() else "empty"),heavy.order.get("id","unaccepted"),heavy.batch.get("work",0.0),heavy.required_work,heavy.bay.clearance]
 	if heavy.bay.parking_slot >= 0:
 		heavy_status.text += "\nReserved destination: F11 place %d %s" % [heavy.bay.parking_slot+1,str(heavy.bay.parking_position)]
@@ -686,6 +821,16 @@ func _refresh() -> void:
 		heavy_status.text += "\n%s: %.0f kg; fuel %.0f; %d crew, %d passengers; no ammunition" % [object.design_type,object.unit_mass_kg,object.get("fuel",0.0),object.get("crew",[]).size(),object.get("passengers",[]).size()]
 	var info := _selected_kind + ": " + _selected_id + "\n"
 	match _selected_kind:
+		"site":
+			if simulation.rear.construction.instances.has(_selected_id):
+				var row: Dictionary = simulation.rear.construction.instances[_selected_id]
+				info += "%s %s at %s\nFootprint %s; entrance %s\nM11 %d; work %.1f/%.0f\n%s\n" % [row.kind,row.state,str(row.center),str(row.size),str(row.door),row.m11,row.progress,row.work,row.blocker]
+				if simulation.rear.requests.has(_selected_id):
+					var request: Dictionary = simulation.rear.requests[_selected_id]
+					info += "Staff %d/%d target; %d actually assigned\n" % [request.target,request.positions,simulation.rear._assigned(_selected_id)]
+				for storage in view.rear.stores:
+					if storage.id == _selected_id or storage.id.begins_with(_selected_id+"-"):
+						info += "%s: %.1f/%.1f kg\n" % [storage.id,storage.physical_kg,storage.capacity]
 		"entity":
 			var p: Dictionary = simulation.rear.ledger.inspect_entity(_selected_id)
 			info += "Owner: %s\nHolder: %s\nPosition: %s\nDuty: %s; pending: %s\nCarry: %s\n%s" % [p.get("owner", ""), p.get("holder_id", ""), str(p.get("position", "")), p.get("duty_id", "External supplier service"), p.get("pending_duty", ""), p.get("carrying_stock_id", ""), p.get("blocked_reason", "")]

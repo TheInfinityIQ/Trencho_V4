@@ -9,3 +9,5 @@ The four logistics staff among the five fixed HQ people are exclusive across dis
 A24 is an explicit boundary: unloading E25 shells at HQ cannot refill a T05 two kilometres away. Only the same tank at the HQ berth may receive a local rack handoff. Remote delivery and local battlefield transfer are G23/G26, and save/restore is G32.
 
 Verification: `tools/check.ps1` includes `game/hq/tests/hq_regression.gd`; `tools/gdunit4_tests.json` names the interactive HQ panel case. Headless startup alone does not establish visual or gameplay correctness.
+
+G05 integration keeps construction and HQ issue as separate owners on the same rear ledger and event clock. Both contribute their next boundary, advance, settle, snapshot, and audit without transferring one system's stock or people into the other. The normal Build tab follows Dispatch; optional HQ Diagnostics follows Build. A concurrent regression runs a real F03 build and local T05 shell issue together, and the rendered input cases cover both tabs after this ordering change.

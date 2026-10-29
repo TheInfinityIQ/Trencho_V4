@@ -6,6 +6,7 @@ var simulation: RefCounted
 var zoom: float = 1.0
 var pan := Vector2.ZERO
 var selection := ""
+var placement_preview: Dictionary = {}
 var _dragging := false
 
 func _ready() -> void:
@@ -50,11 +51,20 @@ func _gui_input(event: InputEvent) -> void:
 				selection = nearest
 				selected.emit("entity", nearest)
 			else:
-				for id in Layout.FACILITIES:
-					var f: Array = Layout.FACILITIES[id]
-					if Rect2(f[1] - f[2] / 2, f[2]).grow(2).has_point(point):
-						selection = id
-						selected.emit("building", id)
+				var hit_site := false
+				for row in simulation.rear.construction.instances.values():
+					if row.id.begins_with("initial-") or row.state in ["Cancelled","Dismantled"]: continue
+					if Rect2(row.center-row.size/2.0,row.size).grow(2).has_point(point):
+						selection = row.id
+						selected.emit("site",row.id)
+						hit_site = true
+						break
+				if not hit_site:
+					for id in Layout.FACILITIES:
+						var f: Array = Layout.FACILITIES[id]
+						if Rect2(f[1] - f[2] / 2, f[2]).grow(2).has_point(point):
+							selection = id
+							selected.emit("building", id)
 			queue_redraw()
 	if event is InputEventMouseMotion and _dragging:
 		pan += event.relative
@@ -75,6 +85,18 @@ func _draw() -> void:
 		draw_rect(box, Color("ffd37c") if id == selection else Color("8ea6b2"), false, 2)
 		draw_circle(map_point(f[4]), 3, Color("b3d69a"))
 		draw_string(font, box.position + Vector2(0, -4), f[0] + " " + id.replace("vehicle_works", "vehicles"), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+	for row in simulation.rear.construction.instances.values():
+		if row.id.begins_with("initial-") or row.state in ["Cancelled","Dismantled"]: continue
+		var box := Rect2(map_point(row.center-row.size/2.0),row.size*scale)
+		var fill := Color("558b76") if row.state == "Complete" else Color("a77745")
+		draw_rect(box,fill)
+		draw_rect(box,Color("ffd37c") if row.id == selection else Color("a8d7b2"),false,2)
+		draw_circle(map_point(row.door),3,Color("b3d69a"))
+		draw_string(font,box.position+Vector2(0,-4),row.kind+" "+row.id,HORIZONTAL_ALIGNMENT_LEFT,-1,12)
+	if placement_preview.get("ok",false):
+		var ghost: Rect2 = placement_preview.footprint
+		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(0.3,0.8,0.7,0.3))
+		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color("90e2bf"),false,2)
 	for entity in simulation.rear.ledger.snapshot().entities:
 		var point := map_point(entity.position)
 		if entity.kind == "STOCK" and entity.quantity > 0 and not simulation.rear.ledger.inspect_entity(entity.holder_id).is_empty():

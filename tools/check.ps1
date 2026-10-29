@@ -50,6 +50,8 @@ Invoke-GodotCheck -Name 'identity-regression' -EngineArguments @('--script', 're
 Invoke-GodotCheck -Name 'receiving-regression' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_regression.gd')
 Invoke-GodotCheck -Name 'receiving-ui' -EngineArguments @('--script', 'res://game/procurement/tests/receiving_ui_regression.gd')
 Invoke-GodotCheck -Name 'rear-regression' -EngineArguments @('--script', 'res://game/staffing/tests/rear_regression.gd')
+Invoke-GodotCheck -Name 'construction-regression' -EngineArguments @('--script', 'res://game/construction/tests/construction_regression.gd')
+Invoke-GodotCheck -Name 'construction-ui' -EngineArguments @('--script', 'res://game/construction/tests/construction_ui_smoke.gd')
 Invoke-GodotCheck -Name 'vehicle-regression' -EngineArguments @('--script', 'res://game/vehicles/tests/vehicle_regression.gd')
 Invoke-GodotCheck -Name 'dispatch-regression' -EngineArguments @('--script', 'res://game/dispatch/tests/dispatch_regression.gd')
 Invoke-GodotCheck -Name 'route-regression' -EngineArguments @('--script', 'res://game/routes/tests/route_regression.gd')

@@ -12,6 +12,7 @@ func _initialize() -> void:
 	_test_carried_cancel_returns_to_hq()
 	_test_automatic_hq_command()
 	_test_real_dispatch_receipt_auto_issue()
+	_test_construction_and_hq_share_clock()
 	print("G14 HQ regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -29,6 +30,30 @@ func _tank(base: RefCounted) -> String:
 	_expect(ledger.complete_hq_hull_receipt("g14-tank").ok,"same fleet hull has military identity")
 	_expect(ledger.move_entity("g14-tank","field-entry",Vector2(3640,91)).ok,"same military hull physically two kilometres away")
 	return "g14-tank"
+
+func _test_construction_and_hq_share_clock() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var site: Dictionary = rear.construction.place("depot",Vector2(140,10))
+	_expect(site.ok,"G05 site starts during G14 HQ issue")
+	if not site.ok: return
+	_expect(rear.ledger.add_stock("g14-build-m11","M11",100,1.0,"depot",rear.PLAYER).ok,"real M11 exists for concurrent build")
+	_expect(rear.construction.order_materials(site.id,"depot").ok,"same rear requests physical M11 haul")
+	_expect(rear.set_target("hauling",4).ok,"real rear haulers assigned")
+	_expect(rear.construction.set_office_staff("construction",4).ok,"real F12 builders requested")
+	rear.advance_time(150)
+	_expect(rear._present("construction") >= 4,"builders report to F12 before transfer")
+	_expect(rear.construction.set_builders(site.id,4).ok,"four actual builders serve the site")
+	var tank := _tank(base)
+	_expect(rear.ledger.move_entity(tank,"hq-berth",Vector2(1640,91)).ok,"same tank is locally at HQ")
+	_expect(rear.ledger.add_stock("g14-build-shells","E25",2,12.0,"hq-stock",rear.PLAYER).ok,"separate unloaded HQ shells exist")
+	var issue: Dictionary = rear.hq.request_vehicle_ammo(tank,"E25",2)
+	_expect(issue.ok,"HQ shell issue starts while F03 builds")
+	if not issue.ok: return
+	rear.advance_time(900)
+	_expect(rear.construction.instances[site.id].state == "Complete","G05 construction completes on shared clock")
+	_expect(rear.hq.jobs[issue.id].state == "Complete" and rear.ledger.inspect_entity(tank).ammunition.E25 == 2,"G14 local issue completes once on same clock")
+	_expect(base.audit().is_empty(),"concurrent G05/G14 state remains conserved: "+str(base.audit()))
 
 func _test_a24_and_local_handoff() -> void:
 	var base := Base.new(true)

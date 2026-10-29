@@ -4,6 +4,9 @@ const CHOICES: Array[String] = ["R25","R28","R13","R29","R30","R31"]
 const Specs = preload("res://game/production/vehicle_specs.gd")
 const BAY := "heavy-bay"
 const CLAIMANT := "F10 heavy production"
+var bay_id := BAY
+var claimant := CLAIMANT
+var site_door := Vector2(165,40)
 var bay_accessible := true
 var parking_accessible := true
 var bay_occupant := ""
@@ -11,16 +14,20 @@ var _order: Dictionary = {}
 var _orders: Array[Dictionary] = []
 var _order_sequence := 0
 
-func _init(rear: RefCounted, declared_access: Array[String] = []) -> void:
-	assert(rear.heavy_production == null, "F10 has exactly one production owner.")
-	rear.ledger.add_place(BAY,"F10 one heavy object/vehicle output bay",rear.Layout.FACILITIES.vehicle_works[1])
-	super(rear,"R25",CHOICES,["R25","R28"],declared_access)
+func _init(rear: RefCounted, declared_access: Array[String] = [], instance_spec: Dictionary = {}) -> void:
+	if instance_spec.is_empty(): assert(rear.heavy_production == null, "Initial F10 has one owner.")
+	bay_id = instance_spec.get("output_store",BAY)
+	claimant = CLAIMANT if instance_spec.is_empty() else "F10 heavy production " + bay_id
+	site_door = instance_spec.get("door",rear.Layout.door("vehicle_works"))
+	var bay_position: Vector2 = instance_spec.get("bay_position",rear.Layout.FACILITIES.vehicle_works[1])
+	rear.ledger.add_place(bay_id,"F10 one heavy object/vehicle output bay",bay_position)
+	super(rear,"R25",CHOICES,["R25","R28"],declared_access,instance_spec)
 
 func _access() -> bool:
 	return recipe_accessible(_recipe) and bay_accessible and _rear_ref.get_ref().stores.vehicle_input.accessible
 
 func _empty_bay() -> bool:
-	return bay_occupant.is_empty() and _rear_ref.get_ref().ledger.entities_at(BAY,["CARRIER","HEAVY_OBJECT"]).is_empty()
+	return bay_occupant.is_empty() and _rear_ref.get_ref().ledger.entities_at(bay_id,["CARRIER","HEAVY_OBJECT"]).is_empty()
 
 func _parking_valid() -> bool:
 	if _order.is_empty(): return false
@@ -31,13 +38,20 @@ func _parking_valid() -> bool:
 
 func _slot_legal(slot: int, hull_type: String = "") -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	if slot < 0 or slot >= rear.yard.PARKING_POSITIONS.size(): return false
+	if slot < 0 or slot >= rear.yard.PARKING_POSITIONS.size() or not rear.yard.active_parking[slot]: return false
 	var proposed_type: String = _spec.output_type if hull_type.is_empty() else hull_type
 	if not Specs.TYPES.has(proposed_type): return false
 	var size: Vector2 = Specs.TYPES[proposed_type].footprint
 	var box := Rect2(rear.yard.PARKING_POSITIONS[slot] - size / 2.0,size)
-	var park: Array = rear.Layout.FACILITIES.park
-	if not Rect2(park[1]-park[2]/2.0,park[2]).encloses(box): return false
+	var within_park := false
+	if rear.construction == null:
+		var initial: Array = rear.Layout.FACILITIES.park
+		within_park = Rect2(initial[1]-initial[2]/2.0,initial[2]).encloses(box)
+	else:
+		for site in rear.construction.instances.values():
+			if site.kind == "park" and site.state == "Complete" and Rect2(site.center-site.size/2.0,site.size).encloses(box):
+				within_park = true
+	if not within_park: return false
 	for index in rear.yard.occupied.size():
 		if index == slot: continue
 		var id: String = rear.yard.occupied[index] if not rear.yard.occupied[index].is_empty() else rear.yard.reserved[index]
@@ -52,7 +66,7 @@ func _own_admission_valid() -> bool:
 	if _recipe == "R13": return true
 	if _order.is_empty(): return false
 	var claim: Dictionary = _rear_ref.get_ref().ledger.inspect_rear_hull_claim(_order.id)
-	return claim.get("claimant") == CLAIMANT and claim.get("owner") == "army-blue"
+	return claim.get("claimant") == claimant and claim.get("owner") == "army-blue"
 
 func accept_order() -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -70,14 +84,14 @@ func accept_order() -> Dictionary:
 				slot = index
 				break
 		if slot < 0: return _result(false,"No legal parking destination; no order accepted.")
-	var id := "heavy-order-%04d" % (_order_sequence + 1)
+	var id := "%sheavy-order-%04d" % [(_spec.duty+"-") if _instance_spec.has("duty") else "",_order_sequence+1]
 	if _recipe != "R13":
-		var admission: Dictionary = rear.ledger.reserve_rear_hull(id,rear.PLAYER,CLAIMANT)
+		var admission: Dictionary = rear.ledger.reserve_rear_hull(id,rear.PLAYER,claimant)
 		if not admission.ok: return admission
 		# No intervening yield: reserve the destination and order with this admission.
 		rear.yard.reserved[slot] = id
 	_order_sequence += 1
-	_order = {"id":id,"recipe":_recipe,"state":"Accepted","accepted_at":rear.time,"parking_slot":slot,"parking_position":rear.yard.PARKING_POSITIONS[slot] if slot >= 0 else rear.ledger.inspect_entity(BAY).position,"batch_id":"","output_id":""}
+	_order = {"id":id,"recipe":_recipe,"state":"Accepted","accepted_at":rear.time,"parking_slot":slot,"parking_position":rear.yard.PARKING_POSITIONS[slot] if slot >= 0 else rear.ledger.inspect_entity(bay_id).position,"batch_id":"","output_id":""}
 	_orders.append(_order)
 	rear._settle()
 	return _result(true,"Heavy order accepted; one bay" + (" and rear-fleet/parking admissions reserved before materials." if slot >= 0 else " reserved without a vehicle fleet slot."))
@@ -104,11 +118,11 @@ func _create_output() -> Dictionary:
 	if not _output_valid(batch.id) or not _own_admission_valid() or not _parking_valid():
 		return _result(false,"Fully earned output waits for its own legal admission and parking/collection destination.")
 	var properties: Dictionary = {"mass":180.0,"health":400} if _recipe == "R13" else Specs.TYPES[_spec.output_type]
-	var result: Dictionary = rear.ledger.create_heavy_output(_order.id,CLAIMANT,batch.output_id,_spec.output_type,BAY,rear.PLAYER,properties)
+	var result: Dictionary = rear.ledger.create_heavy_output(_order.id,claimant,batch.output_id,_spec.output_type,bay_id,rear.PLAYER,properties)
 	if not result.ok: return result
 	bay_occupant = batch.output_id
 	if _order.parking_slot >= 0: rear.yard.reserved[_order.parking_slot] = bay_occupant
-	if _order.parking_slot >= 0 and rear.vehicles != null: rear.vehicles.register_output(bay_occupant,_order.parking_slot)
+	if _order.parking_slot >= 0 and rear.vehicles != null: rear.vehicles.register_output(bay_occupant,_order.parking_slot,bay_id)
 	_order.state = "Completed"
 	_order.output_id = bay_occupant
 	_order.completed_at = rear.time
@@ -123,7 +137,7 @@ func _release_order() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if _order.parking_slot >= 0:
 		if rear.yard.reserved[_order.parking_slot] == _order.id: rear.yard.reserved[_order.parking_slot] = ""
-		rear.ledger.release_rear_hull(_order.id,CLAIMANT)
+		rear.ledger.release_rear_hull(_order.id,claimant)
 	_order.state = "Cancelled"
 	_order.cancelled_at = rear.time
 	_order = {}
@@ -160,7 +174,7 @@ func stock_coverage() -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var available := 0
 	if _spec.output_type == "E13":
-		for object in rear.ledger.entities_at(BAY,["HEAVY_OBJECT"]):
+		for object in rear.ledger.entities_at(bay_id,["HEAVY_OBJECT"]):
 			if object.owner == rear.PLAYER: available += 1
 	else:
 		for id in rear.ledger.rear_fleet_hulls(rear.PLAYER):
@@ -195,8 +209,8 @@ func snapshot() -> Dictionary:
 		for record in _orders:
 			if record.get("output_id","") == bay_occupant: slot = record.parking_slot
 	view.bay.parking_slot = slot
-	view.bay.parking_position = rear.yard.PARKING_POSITIONS[slot] if slot >= 0 else rear.ledger.inspect_entity(BAY).position
-	view.output_promise = {} if _order.is_empty() else {"id":_order.id,"store":BAY,"slots":1,"mass":_spec.unit_mass}
+	view.bay.parking_position = rear.yard.PARKING_POSITIONS[slot] if slot >= 0 else rear.ledger.inspect_entity(bay_id).position
+	view.output_promise = {} if _order.is_empty() else {"id":_order.id,"store":bay_id,"slots":1,"mass":_spec.unit_mass}
 	view.physical_output = 1 if not bay_occupant.is_empty() and rear.ledger.inspect_entity(bay_occupant).design_type == _spec.output_type else 0
 	if not bay_occupant.is_empty(): view.status = "Output bay occupied — actual clearance required"
 	elif not enabled: view.status = "No Recipe — stopped"
@@ -214,7 +228,7 @@ func snapshot() -> Dictionary:
 func audit() -> Array[String]:
 	var failures: Array[String] = []
 	var rear: RefCounted = _rear_ref.get_ref()
-	if rear.ledger.entities_at(BAY,["CARRIER","HEAVY_OBJECT"]).size() > 1: failures.append("F10 physical bay overbooked")
+	if rear.ledger.entities_at(bay_id,["CARRIER","HEAVY_OBJECT"]).size() > 1: failures.append("F10 physical bay overbooked")
 	if not bay_occupant.is_empty() and not _order.is_empty(): failures.append("F10 live output and promise overlap")
 	if not _order.is_empty() and not _own_admission_valid(): failures.append("Accepted hull order lost its own fleet admission")
 	return failures
