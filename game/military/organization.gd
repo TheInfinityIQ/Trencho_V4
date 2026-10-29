@@ -248,6 +248,7 @@ func _sync_commander() -> bool:
 			row.leader = ""
 			row.blocker = "Platoon command delegated to acting Commander; another trained subordinate needed."
 	rear.ledger.set_formation_appointment(successor,"Squad; Acting Commander")
+	_appoint_seniors()
 	status = "%s acts as Commander without a new person or location change." % successor
 	return true
 
@@ -334,7 +335,7 @@ func attach_vehicle(hull_id: String, parent_id: String) -> Dictionary:
 	if vehicles.has(hull_id) or not rear.dispatch.military_hulls.has(hull_id) or hull.is_empty() or hull.fleet_domain != "Military":
 		return _fail("Attach one actual admitted military hull once; an incoming or rear hull is not an element.")
 	if vehicles.size() >= 24: return _fail("Army military fleet cap is 24 actual hulls.")
-	if not hull.crew_by_station.has("Driver"): return _fail("A vehicle element needs its actual qualified driver before attachment.")
+	if _living_crew_id(hull,"Driver").is_empty(): return _fail("A vehicle element needs its living, actually assigned qualified driver before attachment.")
 	if platoons.has(parent_id):
 		if platoons[parent_id].vehicles.size() >= 2: return _fail("A platoon may attach at most two vehicle elements.")
 		platoons[parent_id].vehicles.append(hull_id)
@@ -360,7 +361,10 @@ func vehicle_readiness(hull_id: String) -> float:
 	var row: Dictionary = vehicles[hull_id]
 	var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(hull_id)
 	if hull.is_empty() or int(hull.health) <= 0: return 0.0
-	var crew := float(hull.crew_by_station.size())/float(hull.vehicle_spec.stations.size())
+	var staffed := 0
+	for station in hull.vehicle_spec.stations:
+		if not _living_crew_id(hull,station).is_empty(): staffed += 1
+	var crew := float(staffed)/float(hull.vehicle_spec.stations.size())
 	var health := float(hull.health)/float(hull.vehicle_spec.health)
 	var ammo := 1.0
 	for type in row.ammo_target:
@@ -374,12 +378,12 @@ func vehicle_capability(hull_id: String, purpose: String) -> Dictionary:
 	if not vehicles.has(hull_id): return _fail("No attached actual military hull has this identity.")
 	var row: Dictionary = vehicles[hull_id]
 	var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(hull_id)
-	if hull.is_empty() or hull.health <= 0 or not hull.crew_by_station.has("Driver"):
+	if hull.is_empty() or hull.health <= 0 or _living_crew_id(hull,"Driver").is_empty():
 		return _fail("Vehicle needs a healthy actual hull and qualified driver.")
 	if purpose in ["Movement","Transport"] and (hull.fuel <= EPS or hull.fuel+EPS < row.route_fuel):
 		return _fail("Actual fuel does not support movement and its declared route.")
 	if purpose == "Fire":
-		if hull.vehicle_spec.rack_capacity.is_empty() or not hull.crew_by_station.has("Gunner"):
+		if hull.vehicle_spec.rack_capacity.is_empty() or _living_crew_id(hull,"Gunner").is_empty():
 			return _fail("Actual mounted weapon and gunner are required to fire.")
 		var armed := false
 		for type in hull.vehicle_spec.rack_capacity:
@@ -388,6 +392,14 @@ func vehicle_capability(hull_id: String, purpose: String) -> Dictionary:
 	if purpose == "Transport" and (row.passenger_squad.is_empty() or hull.passengers.is_empty()):
 		return _fail("A real separately rostered squad must occupy passenger seats.")
 	return {"ok":true,"message":"Actual hull, operators and purpose-specific stores support this G15 role."}
+
+func _living_crew_id(hull: Dictionary, station: String) -> String:
+	if hull.is_empty() or not hull.has("crew_by_station") or not hull.crew_by_station.has(station): return ""
+	var id: String = hull.crew_by_station[station]
+	var person: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(id)
+	if person.is_empty() or person.health <= 0 or not person.basic_training or person.holder_id != hull.id or person.crew_station != station or person.assignment != "Formation Duty" or person.duty_id != "vehicle:"+hull.id: return ""
+	if person.qualification != "P08" and not (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04"): return ""
+	return id
 
 func board_squad(squad_id: String, hull_id: String) -> Dictionary:
 	var row: Dictionary = squads.get(squad_id,{})
@@ -680,6 +692,7 @@ func _issue_plan(kind: String) -> Array[Dictionary]:
 	return []
 
 func _package(kind: String, people: Array[String], squad_id: String = "") -> Dictionary:
+	if people.size() < int(MINIMUM[kind]): return _fail("%s needs at least %d living, physically assigned people; only %d are active." % [kind,MINIMUM[kind],people.size()])
 	var rear: RefCounted = _rear_ref.get_ref()
 	var required := {}
 	var specialist_ids: Array[String] = []
@@ -689,6 +702,8 @@ func _package(kind: String, people: Array[String], squad_id: String = "") -> Dic
 		var p: Dictionary = rear.ledger.inspect_entity(id)
 		if special != "None" and p.qualification == special: specialist_ids.append(id)
 		else: other_ids.append(id)
+	if kind != "Rifle" and specialist_ids.size() < int(SPECIALISTS[kind].values()[0]):
+		return _fail("%s needs %d living, physically assigned %s specialists; only %d are active." % [kind,SPECIALISTS[kind].values()[0],special,specialist_ids.size()])
 	var mandatory_rifles: Array[String] = people if kind in ["Rifle","Engineer"] else other_ids
 	if kind != "Rifle" and other_ids.size() < int(MINIMUM[kind])-int(SPECIALISTS[kind].values()[0]):
 		return _fail("%s needs actual generic guards alongside its qualified specialists." % kind)
@@ -809,47 +824,57 @@ func shortages() -> Array[String]:
 		var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(hull_id)
 		if hull.is_empty() or not hull.has("vehicle_spec"): continue
 		for station in hull.vehicle_spec.stations:
-			if not hull.crew_by_station.has(station): result.append("%s: missing actual %s crew" % [hull_id,station])
+			if _living_crew_id(hull,station).is_empty(): result.append("%s: missing living, assigned %s crew" % [hull_id,station])
 		if not vehicles.has(hull_id) and hull.crew_by_station.has("Driver"): result.append("%s: no free platoon or company vehicle place" % hull_id)
 	return result
 
 func readiness(id: String) -> float:
 	var row: Dictionary = squads.get(id,{})
 	if row.is_empty() or row.state != "Active": return 0.0
-	var rear: RefCounted = _rear_ref.get_ref()
-	var present := 0
-	for person_id in row.roster:
-		var p: Dictionary = rear.ledger.inspect_entity(person_id)
-		if not p.is_empty() and p.health > 0 and p.assignment == "Formation Duty" and p.duty_id == id: present += 1
+	var active: Array[String] = _active_roster_members(row,true)
 	var equipment := 1.0
 	var ammunition := 1.0
 	var desired: Dictionary = _desired_equipment(row.kind)
 	for type in desired:
-		var amount: int = _held_any(row.roster,type)
+		var amount: int = _held_any(active,type)
 		if row.kind == "Artillery" and type == "E13": amount = _artillery_count(type,id)
 		equipment = minf(equipment,float(amount)/float(desired[type]))
 	var rifle_carriers: Array[String] = []
-	for person_id in row.roster:
+	for person_id in active:
 		if _held(person_id,"E01") > 0 or _held(person_id,"E19") > 0: rifle_carriers.append(person_id)
 	var personal_target := 30 if row.kind in ["Engineer","Medical","Reconnaissance"] else 60
 	for person_id in rifle_carriers: ammunition = minf(ammunition,float(_rounds(person_id))/float(personal_target))
 	if row.kind == "Rifle":
 		ammunition = minf(ammunition,float(rifle_carriers.size())/8.0)
 	elif row.kind == "Machine gun":
-		var specialists: Array[String] = _roster_specialists(row)
+		var specialists: Array[String] = _roster_specialists(row,active)
 		ammunition = minf(ammunition,float(_rounds_any(specialists))/360.0)
-	elif row.kind == "Mortar": ammunition = minf(ammunition,float(_held_any(row.roster,"E07"))/12.0)
+	elif row.kind == "Mortar": ammunition = minf(ammunition,float(_held_any(active,"E07"))/12.0)
 	elif row.kind == "Artillery": ammunition = minf(ammunition,float(_artillery_count("E14",id))/20.0)
-	return clampf(minf(minf(float(present)/8.0,equipment),ammunition),0.0,1.0)
+	return clampf(minf(minf(float(active.size())/8.0,equipment),ammunition),0.0,1.0)
 
 func capability(id: String) -> Dictionary:
 	var row: Dictionary = squads.get(id,{})
 	if row.is_empty() or row.state != "Active": return _fail("Only a physically reported active squad has capability.")
 	if not row.vehicle.is_empty(): return _fail("Mounted passengers cannot provide dismounted fire or capture until actual exit.")
-	if row.leader.is_empty(): return _fail("Squad has no living ordinary or acting leader.")
-	var package: Dictionary = _package(row.kind,row.roster,id)
+	var active: Array[String] = _active_roster_members(row)
+	if row.leader.is_empty() or row.leader not in active: return _fail("Squad has no living, physically assigned leader during replacement delay.")
+	var leader: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(row.leader)
+	if not leader.basic_training and not (row.kind == "Rifle" and row.acting): return _fail("Squad leader lacks the required training or Rifle acting exception.")
+	var package: Dictionary = _package(row.kind,active,id)
 	if not package.ok: return package
 	return {"ok":true,"message":"Type minimum, actual local package and leader permit this squad's G15 role."}
+
+func _active_roster_members(row: Dictionary, include_boarded: bool = false) -> Array[String]:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var active: Array[String] = []
+	for id in row.roster:
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if person.is_empty() or person.health <= 0 or person.assignment != "Formation Duty" or person.duty_id != row.id or not person.crew_station.is_empty(): continue
+		var holder: Dictionary = rear.ledger.inspect_entity(person.holder_id)
+		if holder.is_empty() or (holder.kind == "CARRIER" and (not include_boarded or person.holder_id != row.vehicle)): continue
+		active.append(id)
+	return active
 
 func _desired_equipment(kind: String) -> Dictionary:
 	match kind:
@@ -863,10 +888,10 @@ func _desired_equipment(kind: String) -> Dictionary:
 		"Marksman": return {"E19":2,"E20":2,"E01":6}
 	return {}
 
-func _roster_specialists(row: Dictionary) -> Array[String]:
+func _roster_specialists(row: Dictionary, active: Array[String]) -> Array[String]:
 	var result: Array[String] = []
 	var code: String = str(SPECIALISTS[row.kind].keys()[0])
-	for id in row.roster:
+	for id in active:
 		if _rear_ref.get_ref().ledger.inspect_entity(id).qualification == code: result.append(id)
 	return result
 

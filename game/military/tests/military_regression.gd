@@ -9,6 +9,9 @@ func _initialize() -> void:
 	_test_a25()
 	_test_vehicle_element_and_passengers()
 	_test_leadership_delay_and_acting_commander()
+	_test_living_minimum_and_successor_capability()
+	_test_living_artillery_specialist_minimum()
+	_test_acting_commander_refills_senior_post()
 	_test_acting_rifle_conscript()
 	_test_other_squad_minima()
 	_test_replacements_readiness_and_roster_cap()
@@ -120,6 +123,7 @@ func _test_vehicle_element_and_passengers() -> void:
 	_expect(rear.military.vehicle_readiness("g15-apc") == 0.0,"empty ammunition and fuel override healthy crew")
 	_expect(not rear.military.vehicle_capability("g15-apc","Fire").ok,"healthy gunner cannot fire an empty matching rack")
 	_expect(rear.military.board_squad(squad.id,"g15-apc").ok,"same four squad members board actual passenger seats")
+	_expect(is_equal_approx(rear.military.readiness(squad.id),0.5),"boarded living roster keeps its equipment readiness while dismounted capability is suspended")
 	_expect(not rear.military.capability(squad.id).ok,"mounted squad cannot claim dismounted fire or capture capability")
 	var second_roster: Array[String] = []
 	for i in 4:
@@ -135,6 +139,19 @@ func _test_vehicle_element_and_passengers() -> void:
 	_expect(rear.military.exit_squad(squad.id).ok,"same roster physically exits at HQ")
 	_expect(rear.military.capability(squad.id).ok,"same squad regains dismounted role only after actual exit")
 	_expect(rear.ledger.inspect_entity("g15-apc").crew.size() == 3 and rear.ledger.inspect_entity("g15-apc").passengers.is_empty(),"disembark leaves crew stations occupied")
+	_expect(rear.ledger.add_stock("crew-live-ammo","E26",10,0.5,"g15-apc",rear.PLAYER).ok,"actual matching rounds enter the vehicle rack")
+	_expect(rear.ledger.add_stock("crew-live-fuel","M08",10,1.0,"hq-berth",rear.PLAYER).ok,"actual fuel is physically at the stopped HQ berth")
+	_expect(rear.ledger.begin_carry("initial-hq-01","crew-live-fuel",10).ok,"same HQ logistics worker carries actual fuel")
+	_expect(rear.ledger.load_vehicle_fuel("initial-hq-01","g15-apc").ok,"actual carried fuel enters this hull's tank")
+	_expect(rear.military.vehicle_readiness("g15-apc") == 1.0 and rear.military.vehicle_capability("g15-apc","Fire").ok and rear.military.vehicle_capability("g15-apc","Movement").ok,"living actual crew, fuel and rack stock support both roles")
+	var actual_gunner: String = rear.ledger.inspect_entity("g15-apc").crew_by_station.Gunner
+	rear.ledger._entities[actual_gunner].health = 0 # G16 later owns actual casualty transitions.
+	rear.advance_time(0)
+	_expect(rear.military.vehicle_readiness("g15-apc") < 1.0 and not rear.military.vehicle_capability("g15-apc","Fire").ok,"dead seated gunner cannot staff the real fire role despite rack stock")
+	_expect(rear.military.vehicle_capability("g15-apc","Movement").ok,"living driver retains movement even when gunner is incapacitated")
+	rear.ledger._entities["crew-driver"].health = 0
+	rear.advance_time(0)
+	_expect(not rear.military.vehicle_capability("g15-apc","Movement").ok,"dead seated driver cannot authorize movement despite physical fuel")
 	_expect(base.audit().is_empty(),"vehicle attachment and boarding conserve identities: "+str(base.audit()))
 
 func _test_leadership_delay_and_acting_commander() -> void:
@@ -159,6 +176,83 @@ func _test_leadership_delay_and_acting_commander() -> void:
 	_expect(rear.military.commander() == second,"highest eligible existing senior acts as Commander")
 	_expect(rear.ledger.inspect_entity(second).leader_appointment.contains("Acting Commander"),"same trained identity holds acting command without moving")
 	_expect(base.audit().is_empty(),"leadership succession keeps one physical identity: "+str(base.audit()))
+
+func _test_living_minimum_and_successor_capability() -> void:
+	var minimum := Base.new(true)
+	for i in 4: _person(minimum,"minimum-%d" % i,"None",true)
+	minimum.rear.advance_time(8)
+	var four: Dictionary = minimum.rear.military.squads.values()[0]
+	_expect(minimum.rear.military.capability(four.id).ok,"four living, assigned Rifle members meet the exact ordinary minimum")
+	var nonleader: String = four.roster[1] if four.roster[0] == four.leader else four.roster[0]
+	minimum.rear.ledger._entities[nonleader].health = 0 # G16 will own the casualty transition.
+	minimum.rear.advance_time(0)
+	_expect(four.roster.size() == 4,"incapacitated person retains the real roster place until a G16 medical handoff")
+	_expect(not minimum.rear.military.capability(four.id).ok,"four stored names with only three living Rifle members cannot deploy")
+	_expect(minimum.rear.military.readiness(four.id) < 0.5,"dead member's issued rifle and ammunition do not inflate operational readiness")
+	_expect(minimum.audit().is_empty(),"minimum casualty fixture preserves one identity per roster place")
+	var succession := Base.new(true)
+	for i in 5: _person(succession,"succession-%d" % i,"None",true)
+	succession.rear.advance_time(8)
+	var five: Dictionary = succession.rear.military.squads.values()[0]
+	var first: String = five.leader
+	_expect(five.roster.size() == 5 and succession.rear.military.capability(five.id).ok,"five living equipped Rifle members are operational before leader loss")
+	succession.rear.ledger._entities[first].health = 0
+	succession.rear.advance_time(0)
+	_expect(five.replacement_due == succession.rear.time+5.0,"named leader loss keeps the explicit five-second appointment delay")
+	_expect(not succession.rear.military.capability(five.id).ok,"dead named leader cannot satisfy capability with four living members")
+	succession.rear.advance_time(4.9)
+	_expect(not succession.rear.military.capability(five.id).ok,"capability stays unavailable before the replacement appointment")
+	succession.rear.advance_time(0.2)
+	_expect(five.leader != first and succession.rear.military.capability(five.id).ok,"living trained successor restores capability after the delay with four actual members")
+	_expect(succession.audit().is_empty(),"leader loss and replacement preserve exclusive identities")
+
+func _test_living_artillery_specialist_minimum() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var roster: Array[String] = []
+	for i in 4:
+		var id := "living-gunner-%d" % i
+		_person(base,id,"P05")
+		roster.append(id)
+	for i in 3:
+		var id := "living-guard-%d" % i
+		_person(base,id,"None",true)
+		roster.append(id)
+	_expect(rear.ledger.create_heavy_output("","","living-field-gun","E13","hq-berth",rear.PLAYER,{"mass":180.0,"health":300}).ok,"actual field gun for live specialist fixture")
+	_expect(rear.ledger.add_stock("living-shells","E14",10,5.0,"hq-berth",rear.PLAYER).ok,"actual ten local artillery shells")
+	_expect(rear.ledger.add_stock("living-radio","E18",1,3.0,"living-gunner-0",rear.PLAYER).ok,"actual qualified crew radio")
+	_expect(rear.military.form_squad("Artillery",roster).ok,"seven actual people include four P05 crew")
+	rear.advance_time(8)
+	var row: Dictionary = rear.military.squads.values()[0]
+	_expect(rear.military.capability(row.id).ok,"living four-P05 artillery has ordinary role capability")
+	rear.ledger._entities["living-gunner-1"].health = 0
+	rear.advance_time(0)
+	_expect(row.roster.size() == 7 and not rear.military.capability(row.id).ok,"six living people cannot substitute three P05 for four required crew")
+	_expect(base.audit().is_empty(),"specialist loss keeps physical roster and exclusive equipment")
+
+func _test_acting_commander_refills_senior_post() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	for group in 3:
+		var roster: Array[String] = []
+		for i in 4:
+			var id := "senior-%d-%d" % [group,i]
+			_person(base,id,"None",true)
+			roster.append(id)
+		_expect(rear.military.form_squad("Rifle",roster).ok,"separate real squad fills hierarchy for senior succession")
+		rear.advance_time(8)
+	var company: Dictionary = rear.military.companies.values()[0]
+	var platoon: Dictionary = rear.military.platoons.values()[0]
+	var former_company: String = company.leader
+	var former_platoon: String = platoon.leader
+	_expect(not former_company.is_empty() and former_company != former_platoon,"distinct existing trained people hold company and platoon posts")
+	rear.ledger._entities["initial-hq-05"].health = 0
+	rear.advance_time(0)
+	_expect(rear.military.commander() == former_company,"highest existing company leader becomes acting Commander")
+	_expect(not company.leader.is_empty() and company.leader != former_company and company.leader != former_platoon,"another eligible squad leader immediately fills vacated company post")
+	_expect(platoon.leader == former_platoon,"same trained platoon leader keeps its one senior post")
+	_expect(rear.ledger.inspect_entity(company.leader).leader_appointment.contains("Company"),"replacement company appointment is recorded on actual person")
+	_expect(base.audit().is_empty(),"acting Commander and refilled parent use three distinct existing people")
 
 func _test_acting_rifle_conscript() -> void:
 	var base := Base.new(true)
