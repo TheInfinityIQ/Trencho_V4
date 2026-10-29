@@ -207,6 +207,111 @@ func complete_hq_reserve_receipt(person_id: String, place_id: String) -> Diction
 	return _ok("Same person joined HQ Reserve on actual receipt.",person_id)
 
 
+func request_formation_report(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.holder_id != "hq-reserve" or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or person.pending_assignment != -1 or squad_id.is_empty():
+		return _reject("NOT_FREE_RESERVE", "Only one living, physically present and uncommitted HQ Reserve person may report to a formation.")
+	person.pending_assignment = Records.Assignment.FORMATION_DUTY
+	person.pending_duty = squad_id
+	return _ok("Actual reserve person reserved for a named formation walk; duty remains HQ Reserve until arrival.", person_id)
+
+
+func cancel_formation_report(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != squad_id:
+		return _reject("NO_FORMATION_REPORT", "Only this person's pending formation report may be cancelled.")
+	person.pending_assignment = -1
+	person.pending_duty = ""
+	return _ok("Pending formation report released without moving or duplicating the person.", person_id)
+
+
+func complete_formation_report(person_id: String, squad_id: String, place_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != squad_id or person.holder_id != place_id or not _colocated(person_id,place_id):
+		return _reject("NOT_AT_FORMATION", "The same reserved person must finish the physical report before joining the squad.")
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,squad_id)
+	return _ok("Same person joined the named formation after actual travel.", person_id)
+
+
+func set_formation_appointment(person_id: String, appointment: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.FORMATION_DUTY or not person.basic_training or person.health <= 0:
+		return _reject("INELIGIBLE_LEADER", "Only a living trained formation member may hold an ordinary appointment.")
+	person.leader_appointment = appointment
+	return _ok("Existing trained person holds this appointment; no leader was created.", person_id)
+
+
+func clear_formation_appointment(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null: return _reject("MISSING_PERSON", "Only an existing person's old appointment may be cleared.")
+	person.leader_appointment = "None"
+	return _ok("Old appointment cleared on the same identity.", person_id)
+
+func set_acting_rifle_appointment(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.FORMATION_DUTY or person.duty_id != squad_id or person.basic_training or person.health <= 0:
+		return _reject("INELIGIBLE_ACTING_LEADER", "Only a living conscript on this real Rifle roster may act for its squad.")
+	person.leader_appointment = "Acting Rifle Squad"
+	return _ok("Same untrained person temporarily leads only the Rifle squad.", person_id)
+
+
+func request_military_crew_report(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.fleet_domain != "Military" or hull.holder_id != "hq-berth" or station not in hull.vehicle_spec.get("stations",[]):
+		return _reject("INVALID_MILITARY_STATION", "A real stopped military hull and named station are required at HQ.")
+	if person.assignment != Records.Assignment.HQ_RESERVE or person.holder_id != "hq-reserve" or person.health <= 0 or person.pending_assignment != -1 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty():
+		return _reject("NOT_FREE_RESERVE", "A living, uncommitted HQ Reserve person must physically report to this crew station.")
+	if not person.basic_training or not (person.qualification == "P08" or (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04")):
+		return _reject("UNQUALIFIED_STATION", "This actual station needs a P08, or a T03 gunner may use P04.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station:
+			return _reject("STATION_OCCUPIED", "This hull's distinct station is already occupied.")
+	person.pending_assignment = Records.Assignment.FORMATION_DUTY
+	person.pending_duty = "vehicle:%s:%s" % [hull_id,station]
+	return _ok("Same qualified HQ Reserve member is reserved for a physical crew report.",person_id)
+
+
+func complete_military_crew_report(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	var duty := "vehicle:%s:%s" % [hull_id,station]
+	if person == null or hull == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != duty or person.holder_id != "hq-berth" or hull.holder_id != "hq-berth" or not _colocated(person_id,hull_id):
+		return _reject("NOT_AT_CREW_STATION", "The same reserved person must finish the actual HQ report to the stopped hull.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station:
+			return _reject("STATION_OCCUPIED", "This station filled before the pending crew report arrived.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	person.crew_station = station
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,"vehicle:"+hull_id)
+	return _ok("Same person occupies the physical crew station and leaves HQ Reserve duty.",person_id)
+
+
+func board_formation_passenger(person_id: String, hull_id: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.fleet_domain != "Military" or person.assignment != Records.Assignment.FORMATION_DUTY or person.health <= 0 or not person.crew_station.is_empty() or person.holder_id == hull_id or not _colocated(person_id,hull_id):
+		return _reject("INVALID_FORMATION_PASSENGER", "A living member on a separate squad roster must physically reach the military hull.")
+	var occupied := 0
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station.is_empty(): occupied += 1
+	if occupied >= int(hull.vehicle_spec.get("passenger_seats",0)):
+		return _reject("PASSENGER_SEATS_FULL", "Crew stations do not add passenger seats; this hull is full.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	return _ok("Same formation member boarded one actual passenger seat without becoming crew.",person_id)
+
+
+func exit_formation_passenger(person_id: String, hull_id: String, place_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.holder_id != hull_id or person.assignment != Records.Assignment.FORMATION_DUTY or not person.crew_station.is_empty() or not _is_place(place_id) or not _colocated(hull_id,place_id):
+		return _reject("INVALID_FORMATION_EXIT", "Only an actual squad passenger may exit at the stopped hull's place.")
+	person.holder_id = place_id
+	person.position = _world_position(hull_id)-_world_position(place_id)
+	return _ok("Same passenger physically exited; squad roster and exclusive duty persist.",person_id)
+
+
 func complete_dispatch_cancel_person(person_id: String, place_id: String) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.assignment != Records.Assignment.AWAITING_DEPLOYMENT or not _is_place(place_id) or not _colocated(person_id,place_id):

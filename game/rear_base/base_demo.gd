@@ -738,6 +738,13 @@ func _refresh_dispatch(view: Dictionary) -> void:
 	if dispatch_rows.get_selected_items().is_empty() and dispatch_rows.item_count > 0: dispatch_rows.select(dispatch_rows.item_count-1)
 	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg\nHQ local available %s | reserved %s" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg,str(view.hq.available),str(view.hq.reserved)]
 	dispatch_status.text += "\nHQ intact weapons %s | promised %s\nHQ command: %s" % [str(view.hq.weapons_available),str(view.hq.weapons_promised),str(view.hq.auto_status)]
+	dispatch_status.text += "\nArmy command %s | %d companies, %d platoons, %d squads, %d vehicle elements\nOrganization: %s" % [view.military.commander,view.military.companies.size(),view.military.platoons.size(),view.military.squads.size(),view.military.vehicles.size(),view.military.status]
+	for shortage in view.military.shortages: dispatch_status.text += "\nShortage: %s" % shortage
+	for squad in view.military.squads:
+		dispatch_status.text += "\n%s %s %s | %s/%s | %d actual members | leader %s | readiness %.2f | %s" % [squad.id,squad.kind,squad.state,squad.company,squad.platoon,squad.roster.size(),squad.leader,squad.readiness,squad.blocker]
+	for hull_id in view.military.vehicles:
+		var element: Dictionary = view.military.vehicles[hull_id]
+		dispatch_status.text += "\nElement %s under %s | crew %s | passengers %s | readiness %.2f" % [hull_id,element.parent,str(element.crew),element.passenger_squad,simulation.rear.military.vehicle_readiness(hull_id)]
 	for job in view.hq.rows:
 		if job.state not in ["Complete","Cancelled"]: dispatch_status.text += "\nHQ %s %s: %d/%d %s | %s" % [job.kind,job.target,job.issued,job.requested,job.state,job.blocker]
 	if dispatch_rows.get_selected_items().is_empty(): return

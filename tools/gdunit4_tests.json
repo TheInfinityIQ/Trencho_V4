@@ -171,6 +171,12 @@
   ],
   "Input": [
     {
+      "path": "game/military/tests/military_input_test.gd",
+      "cases": [
+        "test_dispatch_shows_real_automatic_formation_and_shortage"
+      ]
+    },
+    {
       "path": "game/hq/tests/hq_input_test.gd",
       "cases": [
         "test_normal_player_dispatch_shows_automatic_hq_issue_without_manual_commands",
