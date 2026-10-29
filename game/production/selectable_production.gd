@@ -7,13 +7,13 @@ var _saved: Dictionary = {}
 var _pending: Dictionary = {}
 var _request_sequence := 0
 
-func _init(rear: RefCounted, initial: String, choices: Array[String], essential: Array[String], declared: Array[String]) -> void:
+func _init(rear: RefCounted, initial: String, choices: Array[String], essential: Array[String], declared: Array[String], instance_spec: Dictionary = {}) -> void:
 	_choices.assign(choices)
 	_essential.assign(essential)
 	for recipe in declared:
 		assert(recipe in choices, "Declared access must belong to this facility.")
 	_declared_access.assign(declared)
-	super(rear, initial)
+	super(rear, initial, instance_spec)
 
 
 func recipe_accessible(recipe: String) -> bool:
@@ -80,7 +80,8 @@ func _select(recipe: String) -> Dictionary:
 	_saved[_recipe].enabled = was_enabled
 	var restored: Dictionary = _saved.get(recipe, _default_record()).duplicate(true)
 	_recipe = recipe
-	_spec = RECIPES[recipe]
+	_spec = RECIPES[recipe].duplicate(true)
+	_spec.merge(_instance_spec,true)
 	mode = restored.mode
 	stock_target = restored.stock_target
 	enabled = restored.enabled

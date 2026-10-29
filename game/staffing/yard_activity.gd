@@ -5,7 +5,8 @@ const Layout = preload("res://game/staffing/rear_layout.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const START := Vector2(180, 140)
 const FINISH := Vector2(170, 140)
-const PARKING_POSITIONS: Array[Vector2] = [START, FINISH, Vector2(190,140), Vector2(180,147)]
+var PARKING_POSITIONS: Array[Vector2] = [START, FINISH, Vector2(190,140), Vector2(180,147)]
+var active_parking: Array[bool] = [true,true,true,true]
 const ROAD_SPEED := 12.0
 const TURN_RADIUS := 10.0
 const TURN_SPEED := TURN_RADIUS * PI / 4.0 # T01 hull turns at most 45 degrees/s.
@@ -34,6 +35,23 @@ func _init(shared_ledger: RefCounted) -> void:
 	ledger.add_carrier("yard-t01", "yard-start", "army-blue", "army-blue", "T01", "Rear")
 	ledger.move_entity("yard-t01", "yard-lane", START)
 
+
+func add_park(center: Vector2) -> Array[int]:
+	var slots: Array[int] = []
+	for offset in [Vector2(-6,-4),Vector2(6,-4),Vector2(-6,4),Vector2(6,4)]:
+		var slot := PARKING_POSITIONS.size()
+		PARKING_POSITIONS.append(center+offset)
+		occupied.append("")
+		reserved.append("")
+		active_parking.append(true)
+		slots.append(slot)
+	return slots
+
+func retire_park(slots: Array) -> bool:
+	for slot in slots:
+		if slot < 4 or slot >= occupied.size() or not occupied[slot].is_empty() or not reserved[slot].is_empty(): return false
+	for slot in slots: active_parking[slot] = false
+	return true
 
 func board(person_id: String) -> Dictionary:
 	var p: Dictionary = ledger.inspect_entity(person_id)
@@ -124,7 +142,7 @@ func snapshot() -> Dictionary:
 	return {"id": "yard-t01", "type": "T01", "owner": "army-blue", "state": state,
 		"position": ledger.inspect_entity("yard-t01").position, "driver": driver,
 		"deadline": deadline, "pending_exit": pending_exit, "occupied_parking": occupied.duplicate(),
-		"reserved_parking": reserved.duplicate(), "fuel": fuel, "burned": burned,
+		"reserved_parking": reserved.duplicate(), "active_parking":active_parking.duplicate(), "fuel": fuel, "burned": burned,
 		"distance": distance, "route_length": route_length(), "footprint": Vector2(7, 2.7),
 		"road_speed": ROAD_SPEED, "turn_radius": TURN_RADIUS, "facing": route_facing(distance)}
 

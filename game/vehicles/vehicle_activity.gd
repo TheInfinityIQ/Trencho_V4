@@ -15,11 +15,11 @@ func _init(rear: RefCounted) -> void:
 func crew_duty(id: String, station: String) -> String:
 	return "crew:%s:%s" % [id,station]
 
-func register_output(id: String, slot: int) -> void:
+func register_output(id: String, slot: int, bay_id: String = "heavy-bay") -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(id)
 	assert(hull.kind == "CARRIER" and hull.vehicle_spec == Specs.TYPES[hull.design_type])
-	vehicles[id] = {"id":id,"slot":slot,"state":"In F10","deadline":INF,"route":[],"distance":0.0,"length":0.0,"elapsed":0.0,"last_time":rear.time,"duration":0.0,"burned":0.0}
+	vehicles[id] = {"id":id,"slot":slot,"state":"In F10","deadline":INF,"route":[],"distance":0.0,"length":0.0,"elapsed":0.0,"last_time":rear.time,"duration":0.0,"burned":0.0,"bay_id":bay_id}
 	for station in hull.vehicle_spec.stations:
 		_add_duty(crew_duty(id,station))
 	_add_duty("fuel:" + id)
@@ -62,20 +62,24 @@ func _path_to_hull(origin: Vector2, id: String) -> Array:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var destination: Vector2 = rear.ledger.inspect_entity(id).position
 	if vehicles[id].state == "In F10":
-		var path: Array = _walk_from(origin,Layout.door("vehicle_works"))
+		var bay_id: String = vehicles[id].bay_id
+		var door: Vector2 = rear.heavy_owner(bay_id).site_door
+		var path: Array = _walk_from(origin,door)
 		if not path.is_empty(): path.append(destination)
 		return path
 	return _walk_from(origin,destination)
 
 func _walk_from(origin: Vector2, destination: Vector2) -> Array:
-	var bay: Vector2 = _rear_ref.get_ref().ledger.inspect_entity("heavy-bay").position
-	if origin.is_equal_approx(bay):
-		var route: Array = [origin,Layout.door("vehicle_works")]
-		if not destination.is_equal_approx(Layout.door("vehicle_works")):
-			var rest: Array = Layout.path(Layout.door("vehicle_works"),destination)
-			if rest.is_empty(): return []
-			route.append_array(rest.slice(1))
-		return route
+	var rear: RefCounted = _rear_ref.get_ref()
+	for owner in rear.heavy_owners():
+		var bay: Vector2 = rear.ledger.inspect_entity(owner.bay_id).position
+		if origin.is_equal_approx(bay):
+			var route: Array = [origin,owner.site_door]
+			if not destination.is_equal_approx(owner.site_door):
+				var rest: Array = Layout.path(owner.site_door,destination)
+				if rest.is_empty(): return []
+				route.append_array(rest.slice(1))
+			return route
 	return Layout.path(origin,destination)
 
 func begin_board(person_id: String) -> Dictionary:
@@ -198,7 +202,7 @@ func complete_fuel_deposit(person_id: String) -> Dictionary:
 
 func start_drive(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
-	if not vehicles.has(id) or vehicles[id].state != "In F10" or rear.heavy_production.bay_occupant != id: return _result(false,"Only the same F10 occupied hull can clear this bay.")
+	if not vehicles.has(id) or vehicles[id].state != "In F10" or rear.heavy_owner(vehicles[id].bay_id).bay_occupant != id: return _result(false,"Only the same F10 occupied hull can clear this bay.")
 	for job in fuel_jobs.values():
 		if job.hull == id: return _result(false,"Finish this hull's physical fuel carry before driving out of F10.")
 	for person_id in rear.actors:
@@ -211,7 +215,7 @@ func start_drive(id: String) -> Dictionary:
 	if driver.qualification != "P08" or driver.health <= 0: return _result(false,"Healthy actual P08 driver required.")
 	var slot: int = vehicles[id].slot
 	if rear.yard.state == "Moving to reserved parking": return _result(false,"Existing yard hull is moving through the shared F11 lane; wait for physical clearance.")
-	if not rear.heavy_production.parking_accessible or not rear.heavy_production._slot_legal(slot,hull.design_type) or not rear.yard.occupied[slot].is_empty() or rear.yard.reserved[slot] != id: return _result(false,"Promised F11 parking occupied, inaccessible or invalid; hull stays in F10.")
+	if not rear.heavy_owner(vehicles[id].bay_id).parking_accessible or not rear.heavy_owner(vehicles[id].bay_id)._slot_legal(slot,hull.design_type) or not rear.yard.occupied[slot].is_empty() or rear.yard.reserved[slot] != id: return _result(false,"Promised F11 parking occupied, inaccessible or invalid; hull stays in F10.")
 	var route: Array = _route(id,slot)
 	if route.is_empty(): return _result(false,"No footprint-clear lane to this promised F11 place.")
 	var length: float = Layout.length(route)
@@ -232,15 +236,25 @@ func _route(id: String, slot: int) -> Array:
 	var hull: Dictionary = rear.ledger.inspect_entity(id)
 	var target: Vector2 = rear.yard.PARKING_POSITIONS[slot]
 	var lane_x: float = 170.0 if target.x < 180.0 else (190.0 if target.x > 180.0 else 180.0)
-	var route: Array = _rounded([hull.position,Vector2(180,66),Vector2(lane_x,76),Vector2(lane_x,120),target],_turn_radius(hull.design_type))
+	var source_site: String = "initial-vehicle_works" if vehicles[id].bay_id == "heavy-bay" else str(vehicles[id].bay_id).trim_suffix("-bay")
+	var route: Array = _rounded([hull.position,Vector2(180,66),Vector2(lane_x,76),Vector2(lane_x,120),target],_turn_radius(hull.design_type)) if source_site == "initial-vehicle_works" and slot < 4 else []
+	if route.is_empty():
+		var road_origin: Vector2 = hull.position
+		if source_site != "initial-vehicle_works": road_origin = rear.construction.instances[source_site].door
+		route = rear.construction.vehicle_path(road_origin,target,[source_site,rear.construction.parking_owner(slot)])
+		if not route.is_empty() and source_site != "initial-vehicle_works": route.push_front(hull.position)
+	if route.is_empty(): return []
 	var size: Vector2 = hull.vehicle_spec.footprint
 	for n in range(int(ceil(Layout.length(route)))+1):
 		var pos: Vector2 = Layout.position(route,float(n))
 		var box := Rect2(pos-size/2.0,size)
 		for facility in Layout.FACILITIES:
-			if facility == "park" or (facility == "vehicle_works" and pos.y < 56.0): continue
+			if facility == "park" or (facility == "vehicle_works" and (source_site == "initial-vehicle_works" and pos.y < 56.0)): continue
 			var data: Array = Layout.FACILITIES[facility]
 			if box.intersects(Rect2(data[1]-data[2]/2.0,data[2])): return []
+		for site in rear.construction.instances.values():
+			if site.id.begins_with("initial-") or site.id == source_site or site.kind == "park" or site.state in ["Cancelled","Dismantled"]: continue
+			if box.intersects(Rect2(site.center-site.size/2.0,site.size)): return []
 		for index in rear.yard.occupied.size():
 			if index == slot or rear.yard.occupied[index].is_empty(): continue
 			var other: Dictionary = rear.ledger.inspect_entity(rear.yard.occupied[index])
@@ -332,11 +346,11 @@ func settle() -> bool:
 	var changed := false
 	for id in vehicles:
 		var row: Dictionary = vehicles[id]
-		if row.state == "Moving to F11" and not rear.heavy_production.parking_accessible:
+		if row.state == "Moving to F11" and not rear.heavy_owner(row.bay_id).parking_accessible:
 			row.state = "Stopped on lane"
 			row.deadline = INF
 			changed = true
-		if row.state == "Stopped on lane" and rear.heavy_production.parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
+		if row.state == "Stopped on lane" and rear.heavy_owner(row.bay_id).parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
 			row.state = "Moving to F11"
 			row.last_time = rear.time
 			row.deadline = rear.time + row.duration-row.elapsed
@@ -346,7 +360,7 @@ func settle() -> bool:
 			rear.ledger.move_entity(id,"vehicle-lane",rear.yard.PARKING_POSITIONS[slot])
 			rear.yard.occupied[slot] = id
 			rear.yard.reserved[slot] = ""
-			rear.heavy_production.bay_occupant = ""
+			rear.heavy_owner(row.bay_id).bay_occupant = ""
 			row.state = "Parked"
 			row.deadline = INF
 			for person_id in rear.actors:
@@ -404,8 +418,8 @@ func audit() -> Array[String]:
 	for id in vehicles:
 		var row: Dictionary = vehicles[id]
 		if rear.ledger.inspect_entity(id).get("fleet_domain","") == "Military": continue # G12 actual HQ receipt ends rear ownership.
-		if row.state == "In F10" and rear.heavy_production.bay_occupant != id: errors.append("Produced hull lost F10 occupancy: " + id)
-		if row.state in ["Moving to F11","Stopped on lane"] and rear.heavy_production.bay_occupant != id: errors.append("F10 promise released before physical clearance: " + id)
+		if row.state == "In F10" and rear.heavy_owner(vehicles[id].bay_id).bay_occupant != id: errors.append("Produced hull lost F10 occupancy: " + id)
+		if row.state in ["Moving to F11","Stopped on lane"] and rear.heavy_owner(vehicles[id].bay_id).bay_occupant != id: errors.append("F10 promise released before physical clearance: " + id)
 		if row.state == "Parked" and rear.yard.occupied[row.slot] != id: errors.append("Produced hull lost F11 occupancy: " + id)
 		if id not in rear.ledger.rear_fleet_hulls(rear.PLAYER): errors.append("Produced hull lost rear fleet membership: " + id)
 	return errors

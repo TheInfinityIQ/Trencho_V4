@@ -61,6 +61,7 @@ const RECIPES := {
 	"R31": {"work": 4000.0, "inputs": {"M01": 1200, "M02": 500, "M07": 40}, "output_type": "T05", "output_count": 1, "unit_mass": 30000.0,
 		"duty": "vehicle_works", "facility": "F10", "input_store": "vehicle_input", "output_store": "heavy-bay", "heavy": true},
 }
+var _instance_spec: Dictionary = {}
 var _spec: Dictionary
 var _recipe: String
 var _rear_ref: WeakRef
@@ -73,10 +74,12 @@ var history: Array[Dictionary] = []
 var _sequence := 0
 
 
-func _init(rear: RefCounted, recipe: String) -> void:
+func _init(rear: RefCounted, recipe: String, instance_spec: Dictionary = {}) -> void:
 	assert(recipe in RECIPES, "Only canonical released recipes are supported.")
 	_recipe = recipe
-	_spec = RECIPES[recipe]
+	_instance_spec = instance_spec.duplicate(true)
+	_spec = RECIPES[recipe].duplicate(true)
+	_spec.merge(_instance_spec,true)
 	_rear_ref = weakref(rear) # Rear owns this activity; do not retain a reference cycle.
 
 
@@ -86,7 +89,7 @@ func operators() -> Array[String]:
 	for id in rear.actors:
 		var person: Dictionary = rear.ledger.inspect_entity(id)
 		var actor: Dictionary = rear.actors[id]
-		if rear._eligible(person, _spec.duty) and person.assignment == "Rear Labour" and person.duty_id == _spec.duty and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and actor.phase == "Idle" and actor.load.is_empty() and person.position.is_equal_approx(rear.Layout.door(_spec.duty)):
+		if rear._eligible(person, _spec.duty) and person.assignment == "Rear Labour" and person.duty_id == _spec.duty and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and actor.phase == "Idle" and actor.load.is_empty() and person.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[_spec.duty].place).position):
 			result.append(id)
 	return result
 
@@ -230,7 +233,7 @@ func settle() -> bool:
 		batch = {}
 		return true
 	if not enabled or paused or _target_satisfied() or not _access() or operators().is_empty() or not _missing().is_empty(): return false
-	var id := "%s-batch-%04d" % [_recipe.to_lower(), _sequence + 1]
+	var id := "%s%s-batch-%04d" % [(_spec.duty + "-") if _instance_spec.has("duty") else "", _recipe.to_lower(), _sequence + 1]
 	if not rear.ledger.inspect_entity(id + "-" + _spec.output_type).is_empty(): return false
 	if not _reserve_output(id).ok: return false
 	var consumption: Dictionary = rear.ledger.consume_local_batch(_spec.input_store, rear.PLAYER, _spec.inputs, id + " " + _recipe + " inputs")

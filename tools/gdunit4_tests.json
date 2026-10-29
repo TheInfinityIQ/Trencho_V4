@@ -171,6 +171,12 @@
   ],
   "Input": [
     {
+      "path": "game/construction/tests/construction_input_test.gd",
+      "cases": [
+        "test_build_panel_preview_place_and_cancel_through_real_input"
+      ]
+    },
+    {
       "path": "game/dispatch/tests/dispatch_input_test.gd",
       "cases": [
         "test_normal_dispatch_accept_reject_depart_and_small_panel"

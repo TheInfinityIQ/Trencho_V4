@@ -21,6 +21,7 @@ const FREIGHT_EXIT := Vector2(-12, 25)
 
 var ledger := Ledger.new()
 var receiving_position := RECEIVING
+var freight_berths: Array[Dictionary] = [{"store":"receiving","berth":FREIGHT_BERTH,"receiving_position":RECEIVING,"duty":"receiving","site":"initial-receiving"}]
 var personnel_position := PERSONNEL
 var route: Callable
 # Optional shared-store contract: returns currently legal free kilograms.
@@ -47,15 +48,16 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	if ledger.inspect_entity("personnel").is_empty():
 		_must(ledger.add_place("personnel", "F08 Personnel arrival point", PERSONNEL))
 	receiving_position = ledger.inspect_entity("receiving").position
+	freight_berths[0].receiving_position = receiving_position
 	personnel_position = ledger.inspect_entity("personnel").position
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
 
 func quote_resources(cart: Dictionary) -> Dictionary:
-	var quote := Catalog.quote(cart, FREIGHT_LIMIT)
+	var quote := Catalog.quote(cart, freight_limit())
 	if quote.ok:
-		quote.free_vehicle_places = FREIGHT_LIMIT - freight_admitted()
+		quote.free_vehicle_places = freight_limit() - freight_admitted()
 		quote.can_commit = quote.vehicle_count <= quote.free_vehicle_places and _money >= quote.cost
 	return quote
 
@@ -64,8 +66,8 @@ func buy_resources(cart: Dictionary) -> Dictionary:
 	var quote := quote_resources(cart)
 	if not quote.ok:
 		return quote
-	if quote.vehicle_count > FREIGHT_LIMIT - freight_admitted():
-		return _reject("FREIGHT_QUEUE_FULL", "All eleven freight commitments are reserved; wait for physical vehicle clearance or cancel an undispatched order.")
+	if quote.vehicle_count > freight_limit() - freight_admitted():
+		return _reject("FREIGHT_QUEUE_FULL", "All freight commitments are reserved; wait for physical vehicle clearance or cancel an undispatched order.")
 	if _money < quote.cost:
 		return _reject("INSUFFICIENT_MONEY", "The complete goods and per-vehicle transport price exceeds current requisition.")
 	var ids: Array[String] = []
@@ -199,10 +201,37 @@ func advance_clock_to(next: float) -> void:
 	_move_activities()
 
 
-func free_receiving_kg() -> int:
-	var physical_room := STORAGE_KG - receiving_kg() - reserved_storage_kg()
+func freight_limit() -> int:
+	return 10 + freight_berths.size()
+
+func add_freight_berth(site: String, store: String, berth: Vector2, duty: String, storage_position: Vector2) -> Dictionary:
+	for row in freight_berths:
+		if row.site == site or row.store == store: return _reject("DUPLICATE_BERTH","This Receiving bay already exists.")
+	freight_berths.append({"site":site,"store":store,"berth":berth,"duty":duty,"receiving_position":storage_position})
+	return _ok("One physical F02 berth added to the shared ten-place waiting queue.")
+
+func berth_committed(site: String) -> bool:
+	for index in freight_berths.size():
+		if freight_berths[index].site != site: continue
+		for order in _orders:
+			if order.kind == "Freight" and order.slot == index and order.state in ["Berthing","Berthed","Departing"]: return true
+	return false
+
+func remove_freight_berth(site: String) -> Dictionary:
+	for index in freight_berths.size():
+		if freight_berths[index].site != site: continue
+		if index == 0 or berth_committed(site): return _reject("BERTH_COMMITTED","Fixed or currently committed Receiving berth cannot be dismantled.")
+		freight_berths.remove_at(index)
+		for order in _orders:
+			if order.kind == "Freight" and order.slot > index: order.slot -= 1
+		return _ok("One physical berth removed; the ten waiting places remain shared.")
+	return _reject("NO_BERTH","No such physical Receiving berth.")
+
+func free_receiving_kg(slot: int = 0) -> int:
+	if slot < 0 or slot >= freight_berths.size(): return 0
+	var physical_room := STORAGE_KG - receiving_kg(slot) - reserved_storage_kg(slot)
 	if receiving_room.is_valid():
-		return mini(physical_room, maxi(0, int(receiving_room.call()) - reserved_storage_kg()))
+		return mini(physical_room, maxi(0, int(receiving_room.call(slot)) - reserved_storage_kg(slot)))
 	return physical_room
 
 
@@ -234,14 +263,14 @@ func rear_population() -> int:
 	return count
 
 
-func receiving_kg() -> int:
-	return int(ledger.loose_stock_mass_at("receiving"))
+func receiving_kg(slot: int = 0) -> int:
+	return int(ledger.loose_stock_mass_at(freight_berths[slot].store))
 
 
-func reserved_storage_kg() -> int:
+func reserved_storage_kg(slot: int = -1) -> int:
 	var mass: int = 0
 	for worker in _workers.values():
-		if not worker.job.is_empty():
+		if not worker.job.is_empty() and (slot < 0 or worker.job.get("slot",0) == slot):
 			mass += worker.job.quantity
 	return mass
 
@@ -265,7 +294,8 @@ func resource_counts(code: String) -> Dictionary:
 	for worker in _workers.values():
 		if not worker.job.is_empty() and worker.job.phase in ["Carry", "Drop"] and worker.job.code == code:
 			result.carried += worker.job.quantity
-	result.available = ledger.available_stock_at("receiving", code)
+	result.available = 0
+	for berth in freight_berths: result.available += ledger.available_stock_at(berth.store, code)
 	return result
 
 
@@ -278,17 +308,18 @@ func snapshot() -> Dictionary:
 	return {"time": _time, "money": _money, "income": _income, "spent": _spent, "refunds": _refunds,
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
 		"order_sequence": _order_sequence, "job_sequence": _job_sequence,
-		"events": _events.duplicate(true), "ledger": ledger.snapshot(), "recovery_offer":recovery_instructor_offer()}
+		"events": _events.duplicate(true), "ledger": ledger.snapshot(), "recovery_offer":recovery_instructor_offer(),
+		"freight_berths":freight_berths.duplicate(true),"freight_limit":freight_limit()}
 
 
 func audit() -> Array[String]:
 	var failures := ledger.audit()
-	if freight_admitted() > FREIGHT_LIMIT or personnel_admitted() > PERSONNEL_LIMIT:
+	if freight_admitted() > freight_limit() or personnel_admitted() > PERSONNEL_LIMIT:
 		failures.append("Vehicle admission overbooked")
 	if rear_population() + incoming_people() + _outside_rear_places() > REAR_LIMIT:
 		failures.append("Rear population overbooked")
-	if receiving_kg() + reserved_storage_kg() > STORAGE_KG:
-		failures.append("Receiving storage overbooked")
+	for index in freight_berths.size():
+		if receiving_kg(index) + reserved_storage_kg(index) > STORAGE_KG: failures.append("Receiving storage overbooked")
 	if not is_equal_approx(_money, 2500.0 + _income - _spent + _refunds):
 		failures.append("Money does not reconcile")
 	var pending_recovery := 0
@@ -428,12 +459,14 @@ func _exit_passenger(order: Dictionary) -> void:
 
 
 func _start_worker_job(id: String) -> bool:
-	var room := free_receiving_kg()
-	if room <= 0:
-		return false
 	for order in _orders:
-		if order.kind != "Freight" or order.state != "Berthed":
-			continue
+		if order.kind != "Freight" or order.state != "Berthed": continue
+		var slot: int = order.slot
+		var berth: Dictionary = freight_berths[slot]
+		var duty: String = ledger.inspect_entity(id).duty_id
+		if duty != berth.duty and not (slot == 0 and duty == "Receiving"): continue
+		var room := free_receiving_kg(slot)
+		if room <= 0: continue
 		for source_id in order.stock_ids:
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
 			if quantity <= 0:
@@ -443,9 +476,9 @@ func _start_worker_job(id: String) -> bool:
 			_must(ledger.request_stock(claim_id, source_id, quantity, id, "Physical Receiving unload", PLAYER))
 			var job := {"order_id": order.id, "source_id": source_id, "quantity": quantity,
 				"code": ledger.inspect_entity(source_id).design_type, "claim_id": claim_id,
-				"phase": "Approach", "started_at": _time}
+				"phase": "Approach", "started_at": _time, "slot":slot,"destination":berth.store}
 			var origin: Vector2 = ledger.inspect_entity(id).position
-			job.path = _worker_path(origin, FREIGHT_BERTH)
+			job.path = _worker_path(origin, berth.berth)
 			job.ends_at = _time + _path_length(job.path) / 1.5
 			_workers[id].job = job
 			_event("Reserved source and destination before walking to pickup", claim_id)
@@ -464,7 +497,7 @@ func _finish_worker_phase(id: String) -> void:
 		"Pickup":
 			_must(ledger.begin_carry(id, job.source_id, job.quantity, job.claim_id))
 			job.phase = "Carry"
-			job.path = _worker_path(FREIGHT_BERTH, receiving_position) if route.is_valid() else [FREIGHT_BERTH, RECEIVING]
+			job.path = _worker_path(freight_berths[job.slot].berth, freight_berths[job.slot].receiving_position) if route.is_valid() else [freight_berths[job.slot].berth, freight_berths[job.slot].receiving_position]
 			job.started_at = _time
 			job.ends_at = _time + _path_length(job.path) / 1.2
 		"Carry":
@@ -473,7 +506,7 @@ func _finish_worker_phase(id: String) -> void:
 			job.started_at = _time
 			job.ends_at = _time + 2.0
 		"Drop":
-			_must(ledger.finish_carry(id, "receiving"))
+			_must(ledger.finish_carry(id, job.destination))
 			var order := _find_order(job.order_id)
 			order.unloaded[job.code] = order.unloaded.get(job.code, 0) + job.quantity
 			_must(ledger.release_claim(job.claim_id))
@@ -484,7 +517,7 @@ func _finish_worker_phase(id: String) -> void:
 func _sync_workers() -> void:
 	for id in _workers.keys():
 		var person := ledger.inspect_entity(id)
-		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in ["Receiving", "receiving"]
+		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
 			continue # G01 retains the old duty until the carried freight is deposited.
@@ -514,7 +547,7 @@ func _start_vehicle_motion(order: Dictionary, state: String, destination: Vector
 
 
 func _slot_for(kind: String) -> int:
-	var count := 1 if kind == "Freight" else 2
+	var count := freight_berths.size() if kind == "Freight" else 2
 	for slot in range(count):
 		var occupied := false
 		for order in _orders:
@@ -546,7 +579,7 @@ func _order_blocker(order: Dictionary) -> String:
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
 		"Berthed":
 			if _workers.is_empty(): return "Missing actual Receiving unloaders"
-			if free_receiving_kg() <= 0: return "Receiving storage full or reserved; remainder stays aboard"
+			if free_receiving_kg(order.slot) <= 0: return "Receiving storage full or reserved; remainder stays aboard"
 			return "Unloaders must approach, pick up, carry and deposit real freight"
 		"Cancelled": return "Cancelled and refunded once"
 		_: return "Complete; supplier service remains external"
@@ -577,7 +610,7 @@ func _gate(order: Dictionary) -> Vector2:
 
 
 func _berth(order: Dictionary) -> Vector2:
-	return FREIGHT_BERTH if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
+	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 
 
 func _exit(order: Dictionary) -> Vector2:
