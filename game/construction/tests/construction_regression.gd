@@ -143,7 +143,10 @@ func _initialize() -> void:
 		dismantle.rear.advance_time(200)
 		_check(dismantle.rear.construction.instances["site-0001"].state == "Dismantled","Twenty builder work seconds dismantle")
 		_check(dismantle.rear.ledger.available_stock_at("depot","M11") == 50,"Dismantling salvages half build M11")
-	_check(not base.rear.construction.request_dismantle("initial-construction").ok,"Initial F12 recovery path protected")
+	var recovery_paths := {"initial-receiving":"supplier and personnel recovery admissions","initial-construction":"construct replacement facilities","initial-materials":"make replacement M11"}
+	for starter_id in recovery_paths:
+		var refused: Dictionary = base.rear.construction.request_dismantle(starter_id)
+		_check(not refused.ok and refused.message.contains(recovery_paths[starter_id]),"Protected starter states its recovery reason: "+starter_id+" / "+str(refused))
 	for kind in ["park","training","vehicle_works","dispatch"]:
 		var fixture := Base.new(true)
 		var target := Vector2.ZERO
@@ -259,6 +262,26 @@ func _initialize() -> void:
 				_check(fixture.audit().is_empty(),"Copy F10 output preserves shared invariants: "+str(fixture.audit()))
 	_check(not base.rear.construction.preview("terminal",Vector2(100,160)).ok,"Fixed F01 cannot be built")
 	_check(not base.rear.construction.preview("depot",Vector2(45,25)).ok,"Initial F02 footprint blocks construction")
+	var blocked_access := false
+	for y in range(10,171,5):
+		for x in range(10,231,5):
+			var candidate := Vector2(x,y)
+			var size: Vector2 = base.rear.Layout.FACILITIES.depot[2]
+			var candidate_box := Rect2(candidate-size/2.0,size).grow(0.25)
+			var overlaps := false
+			for facility in base.rear.construction.instances.values():
+				if candidate_box.intersects(Rect2(facility.center-facility.size/2.0,facility.size).grow(0.25)):
+					overlaps = true
+					break
+			if overlaps: continue
+			var refused: Dictionary = base.rear.construction.preview("depot",candidate)
+			if not refused.ok and (refused.message.contains("walking access") or refused.message.contains("eight-metre")):
+				blocked_access = true
+				var placement: Dictionary = base.rear.construction.place("depot",candidate)
+				_check(not placement.ok and (placement.message.contains("walking access") or placement.message.contains("eight-metre")),"A10 rejects non-overlap road or walking obstruction with its access reason: "+str(placement))
+				break
+		if blocked_access: break
+	_check(blocked_access,"A10 finds a non-overlap placement refused for walking or eight-metre vehicle access")
 	_check(base.audit().is_empty(),"Shared audit after placement: "+str(base.audit()))
 	_test_two_offices()
 	print("G05 construction regression: %d checks, %d failures" % [checks,failures])

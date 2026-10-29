@@ -436,7 +436,13 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 func request_dismantle(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual facility.")
 	var row: Dictionary = instances[id]
-	if row.state != "Complete" or row.protected_starter: return _fail("Protected starter or unfinished facility cannot be dismantled.")
+	if row.state != "Complete": return _fail("Only a completed facility can be dismantled.")
+	if row.protected_starter:
+		match row.kind:
+			"receiving": return _fail("Starting F02 receiving berth must remain for supplier and personnel recovery admissions.")
+			"construction": return _fail("Starting F12 builder office must remain to construct replacement facilities.")
+			"materials": return _fail("Starting F13 materials production must remain to make replacement M11.")
+			_: return _fail("This fixed starter facility cannot be dismantled.")
 	var rear: RefCounted = _rear_ref.get_ref()
 	if row.kind == "receiving" and (rear.receiving.berth_committed(id) or rear.receiving.freight_admitted() > rear.receiving.freight_limit()-1):
 		return _fail("This F02 berth is required by a committed supplier vehicle.")
