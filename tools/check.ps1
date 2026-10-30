@@ -66,6 +66,7 @@ Invoke-GodotCheck -Name 'vehicle-combat-regression' -EngineArguments @('--script
 Invoke-GodotCheck -Name 'recovery-regression' -EngineArguments @('--script', 'res://game/vehicle_recovery/tests/recovery_regression.gd')
 Invoke-GodotCheck -Name 'recovery-mines-regression' -EngineArguments @('--script', 'res://game/vehicle_recovery/tests/recovery_mines_regression.gd')
 Invoke-GodotCheck -Name 'order-regression' -EngineArguments @('--script', 'res://game/orders/tests/order_regression.gd')
+Invoke-GodotCheck -Name 'occupant-observation-regression' -EngineArguments @('--script', 'res://game/orders/tests/occupant_observation_regression.gd')
 Invoke-GodotCheck -Name 'objective-regression' -EngineArguments @('--script', 'res://game/objectives/tests/objective_regression.gd')
 Invoke-GodotCheck -Name 'field-regression' -EngineArguments @('--script', 'res://game/field_structures/tests/field_regression.gd')
 Invoke-GodotCheck -Name 'bridge-regression' -EngineArguments @('--script', 'res://game/bridges/tests/bridge_regression.gd')
