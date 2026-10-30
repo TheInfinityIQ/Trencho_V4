@@ -5,7 +5,7 @@ const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
 const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
-var simulation := Simulation.new()
+var simulation := Simulation.new(false, true)
 var construction_kind: OptionButton
 var construction_x: SpinBox
 var construction_y: SpinBox
@@ -223,7 +223,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 	_button(box, "Start new session", _start_session)
 
 func _start_session() -> void:
-	simulation = Simulation.new(scenario.selected == 1)
+	simulation = Simulation.new(scenario.selected == 1, true)
 	base_map.simulation = simulation
 	base_map.reset_camera()
 	_pending_activity = null

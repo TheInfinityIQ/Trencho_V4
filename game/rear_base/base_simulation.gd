@@ -27,9 +27,11 @@ var rear := Rear.new("Empty")
 var receiving: RefCounted
 var speed: int = 0
 var expanded_catalogue: bool = false
+var connected_world: bool = false
 
-func _init(expanded: bool = false) -> void:
+func _init(expanded: bool = false, world_session: bool = false) -> void:
 	expanded_catalogue = expanded
+	connected_world = world_session
 	# G02 deposits at the same accepted G03 store/entrance.
 	rear.ledger.add_place("personnel", "F08 shared arrival entrance", Layout.door("personnel"))
 	receiving = Receiving.new(rear.ledger)
@@ -49,9 +51,16 @@ func _init(expanded: bool = false) -> void:
 	rear.construction = Construction.new(rear)
 	rear.military = Military.new(rear)
 	rear.combat = Combat.new(rear)
+	if connected_world:
+		rear.combat.world.bounds = Rect2i(0, 0, 4000, 6000)
 	rear.vehicle_combat = VehicleCombat.new(rear)
 	rear.orders = Orders.new(rear)
 	rear.objectives = Objectives.new(rear)
+	if connected_world:
+		rear.ledger.add_place("resource-central", "Central resource objective", Vector2(2000, 3000))
+		rear.objectives.register("resource-central", "Resource")
+		rear.ledger.add_place("enemy-hq", "Opposing HQ", Vector2(2000, 5700))
+		rear.orders.register_enemy_hq("enemy-hq")
 	rear.field_structures = Field.new(rear)
 	rear.bridges = Bridges.new(rear)
 	rear.recovery = Recovery.new(rear)
