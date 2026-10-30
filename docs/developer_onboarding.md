@@ -1,79 +1,13 @@
 # Developer onboarding
 
-Prepared 25 October 2026 for the Game Designer's authorized project handoff. This document assigns a safe starting scope and explains the planning gates. It does not select an implementation architecture.
+Effective 30 October 2026. Previous scoped assignments and archived-chat reporting routes are superseded by [team_workflow.md](team_workflow.md).
+Read AGENTS.md, [design brief](design_brief.md), [playable delivery](playable_delivery.md), [handoff](team_handoff.md), then relevant GDD/foundation sections.
 
-## Read before work
+Baseline main ecac1f16dc77f81191aa30f1d32fd9fad0015046 contains PRs #77, #80, #81 and #82. Root is deliberately stale with a human project.godot edit: never reset, stash or overwrite it. Use your own isolated checkout from current main.
 
-1. [AGENTS.md](../AGENTS.md): working conventions, verification and repository care.
-2. [Design brief](design_brief.md): north star, authority and current scope.
-3. [GDD](game_design_document.md): full entity and system behaviour; read sections 1-4 and the governing v0.2.1 amendment in section 23 first, then the sections referenced by the assigned G issue.
-4. [Design decisions](design_decisions.md): corrected milestone sequencing and open gates.
-5. [Foundation decisions](foundation.md): Godot 4.7.2 standard edition, GDScript default and reversible bootstrap choices.
+Lead assigns work under [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83), owns engineering and merges. Designer owns intended behavior. Historical tasks do not automatically resume.
+First work is a bounded playable/diagnostic/missing-connections inventory, then the shortest runnable increment. Reuse existing identity, clock, dispatch, organization, combat and other services. Do not rebuild the project.
+Before shared changes, identify state owner, transitions, affected callers and meaningful interaction coverage. Holder/seat, work commitment and movement must agree. Damage resolves once; motion respects interruptions.
 
-The player supplies capacity and priorities; autonomous workers and military leaders execute. Preserve physical people and goods, distinct reservation/movement/arrival/issue, real crew, local inputs and observable blocking reasons. User-established scope is in GDD section 1.1. Exact defaults in section 1.2 are proposed balance; use the documented baseline and raise proposed changes explicitly.
-
-## PR and merge ownership
-
-The Software Developer implements scoped changes on feature branches and creates implementation PRs with design references and actual verification evidence. The Game Designer reviews gameplay scope and verification, then manages merges into `main` under the human's standing authorization. The Software Developer leaves implementation PRs unmerged for that review. This authority does not waive regression checks, interaction verification, or unresolved design gates.
-
-### Completion reports and next assignments
-
-The human authorized an ongoing completion/report/next-task loop on 26 October 2026. When an assigned PR or requested revision is ready, or a concrete blocker needs a design decision, the Software Developer sends one concise report using `send_message_to_thread` to the Game Designer chat `01a174da-797f-7d62-8340-fdb1af8e8131` on host `local`. This authorization is specific to that chat; respect any later human pause or stop in either chat.
-
-Include issue IDs, PR URL and exact head SHA, implemented acceptance, actual check and interaction evidence, deferred integration obligations, and blockers. Send a new report for a meaningful completion/revision or blocker, without repeated status pings or acknowledgement loops. If reporting is unavailable, record the pending handoff and concrete failure in the current chat.
-
-After reporting, wait for the next focused assignment. Do not merge the implementation PR or start unrelated or downstream work merely because it appears ready on the board. The Game Designer reviews the exact revision, manages approved main merges, updates tracking, and issues the next task. A backup follow-up does not replace the completion report or authorize duplicate work.
-
-## Historical starting assignment: G03 staffing and hauling
-
-G01 was accepted in [PR #50](https://github.com/TheInfinityIQ/Trencho_V4/pull/50); its full A03 casualty/recovery integration remains G16. G02 was accepted in [PR #51](https://github.com/TheInfinityIQ/Trencho_V4/pull/51), merged at `eb251eb83b90bbdc895ae917f9933655aaf794fb`, closing issue #10 for its bounded procurement/receiving scope. Its native practical display case does not settle literal 1280×720 physical display or production D01.
-
-The Game Designer assigned only [G03 #11](https://github.com/TheInfinityIQ/Trencho_V4/issues/11#issuecomment-6417729799), M0, from that merged main. Read the [G03 plan](g03_staffing_plan.md), [behavior/verification record](g03_staffing.md), GDD 3/4/7/8, applicable T01 yard rules in 9, declared initialization in 20, A05/A06 in 22, section 23 and D03. Implement real staffing, local hauling and safe worker/P08 handoffs. G03 proves A05 local-input readiness; G04 owns complete recipe/consumption/output continuation. Staffing priorities remain player-set; queued work alone ages under the dated clarification.
-
-G03 engine checks and earlier native A05 observations are recorded, but A06 native approach/carry/pile/driver and final selected-detail checks remain blocked by Windows input failure. Keep its review PR draft and issue #11 open until required evidence is supplied or an explicit design decision changes acceptance. Do not start G04/G08 or another feature without assignment. Only the Game Designer merges/closes the implementation.
-
-## Accepted foundation scope: G01 physical identity and ownership
-
-Assigned issue: [G01 #9](https://github.com/TheInfinityIQ/Trencho_V4/issues/9), under [M0](https://github.com/TheInfinityIQ/Trencho_V4/milestone/1). Use the [roadmap](roadmap.md) and [project board](https://github.com/users/TheInfinityIQ/projects/3) for the full work sequence. The accepted implementation and evidence are recorded in [G01 behavior](g01_identity.md). Gameplay changes return as reviewable PRs before merge.
-
-State a short plan and acceptance criteria before substantive implementation. Deliver a focused, reviewable first patch proving these behaviours from GDD sections 3-4:
-
-- A person has one visible identity, physical holding/location and exclusive assignment. Moving from rear work to training ends the former duty after any required safe handoff; the same person cannot contribute to both.
-- Ownership and control remain distinct, including purchaser-owned goods carried by a supplier-owned carrier. Do not add another battlefield combat faction.
-- A counted item has one physical holder. A reservation records claimant and purpose, never moves stock, and cannot exceed physically available stock. Two requests for the same ten rifles cannot reserve more than ten combined; unfilled demand stays explicit.
-- Loaded and loose ammunition reconcile exactly once across holders. A move or reservation does not duplicate rounds or turn an intact item into a permanently unusable object.
-- Inspection/evidence exposes identity, assignment, holder, actual/reserved/available quantities and the relevant blocking reason. Keep the demonstration understandable within the existing project and chosen reversible implementation details.
-
-G01 is foundation evidence, not an instruction to implement all downstream systems. Use the documented cases to demonstrate safe assignment and holding transitions. Full production, training, manifests, wounds and combat remain their scoped issues. Follow the accepted D03 contract for capacity rules; its definition does not supply downstream implementation evidence. A03's complete incapacitation/dropped-weapon/recovery case is an explicit later integration obligation with G16; G01's early closure does not mark that final case passed.
-
-## Follow-on work and gates
-
-After G01, G02 procurement/receiving and G03 staffing/hauling are independently scoped successors; G06 courses follows G03. G08 terrain movement/sight rules can proceed independently with repeatable fixtures. Full-size map requirements remain unchanged.
-
-- D01 allows measured presentation/world prototypes; production world presentation waits for the Game Designer's presentation, platform and performance decision. No 2D/3D choice is imposed here.
-- D02's exact cover-capacity definition was accepted in merged PR #52; G10 retains actual final-world validation and A17/A18.
-- D03's cross-lifecycle people/capacity definition was accepted in merged PR #53; G12/G15 and other owning issues retain actual gameplay acceptance.
-- M3 verifies contested objective play, income, retreat and resupply. Full HQ-outcome evidence begins at M5; existing assault capability rules remain mandatory.
-- G04/G31, G01/G16 and G07/G23 have staged acceptance under GDD section 23. Retain the complete final A09, A03 and A13 cases, respectively.
-- G08/G19 and G13/G20 likewise separate rule fixtures from later constructed-causeway and bridge integration. The issue backlog names each early proof and its later owner; final integrated cases are never waived.
-- G11 requires four validated full-size family fallbacks, not a reduced test map or one fallback for all families.
-
-Surface design contradictions, missing acceptance or costly choices to the Game Designer while continuing independent work. Resolve reversible engineering details independently. Do not turn uncertain design rules into hidden implementation defaults.
-
-## First patch verification and handoff
-
-Add focused regression coverage for the identity and count failures the first patch can actually cause: overlapping duty assignment, competing reservations, stock/holder transfer and loaded-versus-loose round duplication. Include interruption or reservation-release evidence for any such transition the patch introduces. Do not claim casualty integration passed before G16 supplies it.
-
-Run from the repository root in PowerShell 7:
-
-```powershell
-./tools/check.ps1 -GodotPath '<path to Godot 4.7.2 executable>'
-```
-
-Use `./tools/check.ps1` when `godot` is on PATH. Follow AGENTS.md for focused behaviour verification in Godot; a headless startup alone does not demonstrate gameplay or inspection correctness.
-
-Return a reviewable change with its behaviour, purpose, regression results, checks run, visible demonstration evidence and any unverified interactions. Include UID/import sidecars when applicable; exclude generated caches. Do not discard unrelated work, change the approved design silently or mark downstream scenarios complete based only on document calculations.
-
-## Current scoped handoff - 27 October 2026
-
-The G03 starting assignment above is historical: G03 foundation was accepted in PR #54, and PR #64 supplies only the first continuous R01 production slice. Neither closes full G04/A05/M0. The current assignment is [G08 final evidence/integration](https://github.com/TheInfinityIQ/Trencho_V4/issues/16#issuecomment-6442653786) in existing draft PR #55, retaining accepted G03/R01 and all framework checks. Follow [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) and the [G08 record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026). Finish exact-head checks, eight rendered image/state pairs and negative controls, then report once to the Game Designer and wait. Native testing remains stopped; Windows input/readability remain D01/M0 obligations. This handoff grants no next recipe or downstream feature scope.
+Use ./tools/check.ps1 with pinned Godot 4.7.2 and current verification policy. Report actual interaction and unverified behavior. Headless startup alone is insufficient.
+Report readiness/blockers to lead and material gameplay ambiguity to designer with a recommendation. Continue independent work where possible and leave a compact factual handoff.
