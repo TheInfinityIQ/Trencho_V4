@@ -200,6 +200,11 @@ func advance_clock_to(next: float) -> void:
 	_time = next
 	_move_activities()
 
+func credit_objective_income(amount: float) -> void:
+	assert(is_finite(amount) and amount >= 0.0)
+	_money += amount
+	_income += amount
+
 
 func freight_limit() -> int:
 	return 10 + freight_berths.size()

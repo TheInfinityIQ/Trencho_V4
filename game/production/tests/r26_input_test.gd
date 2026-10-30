@@ -3,9 +3,10 @@ extends GdUnitTestSuite
 
 
 func test_normal_launch_r26_multitrip_inputs_retained100work_and_physical_m11() -> void:
+	# Current development acceptance uses one fixed 1280x720 screen.
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
@@ -89,7 +90,7 @@ func test_normal_launch_r26_multitrip_inputs_retained100work_and_physical_m11() 
 	assert_dict(activity.batch).is_empty()
 	assert_array(rear.audit()).is_empty()
 	await _capture(runner, main, demo, "r26_physical100_m11_target_satisfied")
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(4)
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer

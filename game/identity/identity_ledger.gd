@@ -1,4 +1,5 @@
 extends RefCounted
+signal person_position_changed(person_id: String)
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
@@ -59,10 +60,12 @@ func create_heavy_output(admission: String, claimant: String, id: String, type: 
 	if type == "E13":
 		entity.unit_mass_kg = properties.mass
 		entity.health = properties.health
+		entity.max_health = properties.health
 	else:
 		entity.vehicle_spec = properties.duplicate(true)
 		entity.unit_mass_kg = entity.vehicle_spec.mass
 		entity.health = entity.vehicle_spec.health
+		entity.max_health = entity.vehicle_spec.health
 		entity.fleet_domain = "Rear"
 		_rear_hull_promises.erase(admission)
 	_event("Physical heavy output created, without crew, fuel or ammunition", id)
@@ -148,6 +151,7 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
+	if entity is Records.Person: person_position_changed.emit(id)
 	return _ok("Physical position updated by the timed activity.", id)
 
 
@@ -205,6 +209,113 @@ func complete_hq_reserve_receipt(person_id: String, place_id: String) -> Diction
 	person.controller = "army-blue"
 	_set_assignment(person,Records.Assignment.HQ_RESERVE,"")
 	return _ok("Same person joined HQ Reserve on actual receipt.",person_id)
+
+
+func request_formation_report(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.holder_id != "hq-reserve" or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or person.pending_assignment != -1 or squad_id.is_empty():
+		return _reject("NOT_FREE_RESERVE", "Only one living, physically present and uncommitted HQ Reserve person may report to a formation.")
+	person.pending_assignment = Records.Assignment.FORMATION_DUTY
+	person.pending_duty = squad_id
+	return _ok("Actual reserve person reserved for a named formation walk; duty remains HQ Reserve until arrival.", person_id)
+
+
+func cancel_formation_report(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != squad_id:
+		return _reject("NO_FORMATION_REPORT", "Only this person's pending formation report may be cancelled.")
+	person.pending_assignment = -1
+	person.pending_duty = ""
+	return _ok("Pending formation report released without moving or duplicating the person.", person_id)
+
+
+func complete_formation_report(person_id: String, squad_id: String, place_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != squad_id or person.holder_id != place_id or not _colocated(person_id,place_id):
+		return _reject("NOT_AT_FORMATION", "The same reserved person must finish the physical report before joining the squad.")
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,squad_id)
+	return _ok("Same person joined the named formation after actual travel.", person_id)
+
+
+func set_formation_appointment(person_id: String, appointment: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.FORMATION_DUTY or not person.basic_training or person.health <= 0:
+		return _reject("INELIGIBLE_LEADER", "Only a living trained formation member may hold an ordinary appointment.")
+	person.leader_appointment = appointment
+	return _ok("Existing trained person holds this appointment; no leader was created.", person_id)
+
+
+func clear_formation_appointment(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null: return _reject("MISSING_PERSON", "Only an existing person's old appointment may be cleared.")
+	person.leader_appointment = "None"
+	return _ok("Old appointment cleared on the same identity.", person_id)
+
+func set_acting_rifle_appointment(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.FORMATION_DUTY or person.duty_id != squad_id or person.basic_training or person.health <= 0:
+		return _reject("INELIGIBLE_ACTING_LEADER", "Only a living conscript on this real Rifle roster may act for its squad.")
+	person.leader_appointment = "Acting Rifle Squad"
+	return _ok("Same untrained person temporarily leads only the Rifle squad.", person_id)
+
+
+func request_military_crew_report(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.fleet_domain != "Military" or hull.holder_id != "hq-berth" or station not in hull.vehicle_spec.get("stations",[]):
+		return _reject("INVALID_MILITARY_STATION", "A real stopped military hull and named station are required at HQ.")
+	if person.assignment != Records.Assignment.HQ_RESERVE or person.holder_id != "hq-reserve" or person.health <= 0 or person.pending_assignment != -1 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty():
+		return _reject("NOT_FREE_RESERVE", "A living, uncommitted HQ Reserve person must physically report to this crew station.")
+	if not person.basic_training or not (person.qualification == "P08" or (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04")):
+		return _reject("UNQUALIFIED_STATION", "This actual station needs a P08, or a T03 gunner may use P04.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station:
+			return _reject("STATION_OCCUPIED", "This hull's distinct station is already occupied.")
+	person.pending_assignment = Records.Assignment.FORMATION_DUTY
+	person.pending_duty = "vehicle:%s:%s" % [hull_id,station]
+	return _ok("Same qualified HQ Reserve member is reserved for a physical crew report.",person_id)
+
+
+func complete_military_crew_report(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	var duty := "vehicle:%s:%s" % [hull_id,station]
+	if person == null or hull == null or person.assignment != Records.Assignment.HQ_RESERVE or person.pending_assignment != Records.Assignment.FORMATION_DUTY or person.pending_duty != duty or person.holder_id != "hq-berth" or hull.holder_id != "hq-berth" or not _colocated(person_id,hull_id):
+		return _reject("NOT_AT_CREW_STATION", "The same reserved person must finish the actual HQ report to the stopped hull.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station:
+			return _reject("STATION_OCCUPIED", "This station filled before the pending crew report arrived.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	person.crew_station = station
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,"vehicle:"+hull_id)
+	return _ok("Same person occupies the physical crew station and leaves HQ Reserve duty.",person_id)
+
+
+func board_formation_passenger(person_id: String, hull_id: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.fleet_domain != "Military" or person.assignment != Records.Assignment.FORMATION_DUTY or person.health <= 0 or not person.crew_station.is_empty() or person.holder_id == hull_id or not _colocated(person_id,hull_id):
+		return _reject("INVALID_FORMATION_PASSENGER", "A living member on a separate squad roster must physically reach the military hull.")
+	var occupied := 0
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station.is_empty(): occupied += 1
+	if occupied >= int(hull.vehicle_spec.get("passenger_seats",0)):
+		return _reject("PASSENGER_SEATS_FULL", "Crew stations do not add passenger seats; this hull is full.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	person_position_changed.emit(person_id)
+	return _ok("Same formation member boarded one actual passenger seat without becoming crew.",person_id)
+
+
+func exit_formation_passenger(person_id: String, hull_id: String, place_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.holder_id != hull_id or person.assignment != Records.Assignment.FORMATION_DUTY or not person.crew_station.is_empty() or not _is_place(place_id) or not _colocated(hull_id,place_id):
+		return _reject("INVALID_FORMATION_EXIT", "Only an actual squad passenger may exit at the stopped hull's place.")
+	person.holder_id = place_id
+	person.position = _world_position(hull_id)-_world_position(place_id)
+	person_position_changed.emit(person_id)
+	return _ok("Same passenger physically exited; squad roster and exclusive duty persist.",person_id)
 
 
 func complete_dispatch_cancel_person(person_id: String, place_id: String) -> Dictionary:
@@ -617,6 +728,124 @@ func record_consumption(source_id: String, quantity: int, reason: String) -> Dic
 	return _remove_stock(source_id, quantity, reason, false)
 
 
+func fire_loaded_round(weapon_id: String) -> Dictionary:
+	var weapon := _weapon(weapon_id)
+	if weapon == null or weapon.health <= 0:
+		return _reject("WEAPON_UNAVAILABLE", "A functional physical weapon is required.")
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.holder_id == weapon_id and entity.design_type == weapon.ammo_type and entity.quantity > 0:
+			entity.quantity -= 1
+			if entity.quantity == 0:
+				entity.state = "Depleted"
+				entity.state_entered_at = _time
+			_consumed[entity.design_type] = _consumed.get(entity.design_type,0) + 1
+			_event("One loaded round fired from " + weapon_id, entity.id)
+			return _ok("One actual loaded round consumed at release.", entity.id)
+	return _reject("EMPTY_WEAPON", "No matching round is loaded in this weapon; stock elsewhere cannot fire it.")
+
+
+func injure_person(person_id: String, injury: int) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or injury <= 0 or person.assignment == Records.Assignment.DEAD:
+		return _reject("INVALID_INJURY", "Positive injury to a living actual person is required.")
+	if person.assignment == Records.Assignment.WOUNDED:
+		return kill_person(person_id, "Further injury while incapacitated")
+	person.health = maxi(0, person.health - injury)
+	if person.health == 0:
+		person.bleed_until = _time + 60.0
+		_set_assignment(person, Records.Assignment.WOUNDED, person.duty_id)
+		_drop_personal_gear(person)
+		_event("Incapacitated; bleed-out in 60 seconds", person_id)
+		return {"ok":true,"code":"INCAPACITATED","message":"Person incapacitated; physical gear dropped once.","id":person_id}
+	_event("Injury %d" % injury, person_id)
+	return _ok("Active person injured.", person_id)
+
+
+func kill_person(person_id: String, reason: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment == Records.Assignment.DEAD or reason.is_empty():
+		return _reject("INVALID_DEATH", "Only a living person can enter Dead once.")
+	if person.assignment != Records.Assignment.WOUNDED: _drop_personal_gear(person)
+	var death_holder := person.holder_id
+	var holder: Records.Entity = _entities.get(death_holder)
+	if holder == null or holder.kind != Records.Kind.CARRIER: death_holder = "casualty-drop:" + person.id
+	for entity in _entities.values():
+		if entity.holder_id == person.id and entity.design_type in ["E03", "E04"]:
+			entity.holder_id = death_holder
+			entity.position = Vector2.ZERO
+	person.health = 0
+	person.bleed_until = INF
+	_set_assignment(person, Records.Assignment.DEAD, "")
+	person.loss_recorded = true
+	_event("Person loss: " + reason, person_id)
+	return {"ok":true,"code":"DEAD","message":"One person loss recorded; belongings remain physical.","id":person_id}
+
+
+func destroy_carrier_on_bridge(carrier_id: String) -> Dictionary:
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.health <= 0:
+		return _reject("INVALID_BRIDGE_COLLAPSE", "An actual surviving carrier on the water span is required.")
+	var people: Array[String] = []
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.PERSON and entity.holder_id == carrier_id and entity.assignment != Records.Assignment.DEAD:
+			people.append(entity.id)
+	for person_id in people: kill_person(person_id,"Bridge collapse on water span")
+	carrier.health = 0
+	carrier.state = "Destroyed by bridge collapse"
+	_event("Carrier destroyed on collapsed water span",carrier_id)
+	return _ok("Actual vehicle and its occupants lost on the water span.",carrier_id)
+
+
+func bleed_out_person(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or _time + 0.000001 < person.bleed_until:
+		return _reject("BLEED_NOT_DUE", "Only an untreated incapacitated person at the actual bleed deadline dies.")
+	return kill_person(person_id, "Bleed-out")
+
+
+func pause_bleed_during_care(person_id: String, seconds: float) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or not is_finite(seconds) or seconds <= 0.0:
+		return _reject("INVALID_CARE_TIME", "Only active qualified care can pause a living patient's bleed timer for positive finite time.")
+	person.bleed_until += seconds
+	return _ok("Remaining bleed time held while active care was performed.",person_id)
+
+
+func finish_field_care(person_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment != Records.Assignment.WOUNDED or _time + 0.000001 >= person.bleed_until:
+		return _reject("PATIENT_UNAVAILABLE", "Field care needs a living incapacitated patient before bleed-out.")
+	person.health = 35
+	person.bleed_until = INF
+	_set_assignment(person, Records.Assignment.RECOVERY, person.duty_id)
+	return _ok("Patient stabilized at 35 health and entered Recovery without regaining dropped gear.", person_id)
+
+
+func set_person_stress(person_id: String, morale_delta: int, suppression_delta: int) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.assignment == Records.Assignment.DEAD:
+		return _reject("PERSON_UNAVAILABLE", "A living actual person is required.")
+	person.morale = clampi(person.morale + morale_delta, 0, 100)
+	person.suppression = clampi(person.suppression + suppression_delta, 0, 100)
+	return _ok("Morale and suppression updated on the same person.", person_id)
+
+
+func _drop_personal_gear(person: Records.Person) -> void:
+	var destination := person.holder_id
+	var holder: Records.Entity = _entities.get(destination)
+	if holder == null or holder.kind != Records.Kind.CARRIER:
+		destination = "casualty-drop:" + person.id
+		if not _entities.has(destination): add_place(destination, "Recoverable gear of " + person.id, _world_position(person.id))
+	for entity in _entities.values():
+		if entity.holder_id != person.id or entity.kind not in [Records.Kind.WEAPON, Records.Kind.STOCK]: continue
+		if entity.design_type in ["E03", "E04"]: continue
+		entity.holder_id = destination
+		entity.position = Vector2.ZERO
+		entity.state_entered_at = _time
+	person.carrying_stock_id = ""
+	person.carrying_weapon_id = ""
+
+
 func consume_local_batch(holder: String, owner: String, ingredients: Dictionary, reason: String) -> Dictionary:
 	# Validate the entire local input plan before any accounting mutation.
 	if not _is_place(holder) or owner.is_empty() or ingredients.is_empty() or reason.strip_edges().is_empty():
@@ -638,6 +867,25 @@ func consume_local_batch(holder: String, owner: String, ingredients: Dictionary,
 	for portion in receipt:
 		_remove_stock(portion.id, portion.count, reason, false)
 	return {"ok": true, "code": "OK", "message": "Complete local batch consumed once.", "receipt": receipt}
+
+func recover_consumed_material(id: String, type: String, quantity: int, unit_mass_kg: float, holder: String, owner: String) -> Dictionary:
+	# G19 cancellation returns the documented half of an already consumed batch.
+	if quantity <= 0 or id.is_empty() or not _free_id(id) or not _is_place(holder) or owner.is_empty() or int(_consumed.get(type,0)) < quantity:
+		return _reject("INVALID_MATERIAL_RECOVERY","Recovery needs a unique real pile and previously consumed material units.")
+	var recovered: Dictionary = add_stock(id,type,quantity,unit_mass_kg,holder,owner)
+	if not recovered.ok: return recovered
+	_consumed[type] -= quantity
+	_created[type] -= quantity
+	_event("Previously consumed project material returned as one physical pile",id)
+	return recovered
+
+func apply_heavy_repair(id: String, health: int) -> Dictionary:
+	var entity: Records.Entity = _entities.get(id)
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or health <= 0 or entity.health >= entity.max_health:
+		return _reject("INVALID_HEAVY_REPAIR","Only an actually damaged vehicle or field gun can gain positive capped repair health.")
+	entity.health = mini(entity.max_health,entity.health+health)
+	_event("Field repair restored actual heavy-object health",id)
+	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
 
 
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
@@ -666,6 +914,7 @@ func inspect_entity(id: String) -> Dictionary:
 	}
 	if entity.kind == Records.Kind.HEAVY_OBJECT:
 		result.health = entity.health
+		result.max_health = entity.max_health
 		result.packed = true
 		result.ammunition = {}
 	if entity.kind == Records.Kind.CARRIER:
@@ -674,6 +923,7 @@ func inspect_entity(id: String) -> Dictionary:
 			result.vehicle_spec = entity.vehicle_spec.duplicate(true)
 			result.fuel = entity.fuel
 			result.health = entity.health
+			result.max_health = entity.max_health
 			result.crew = []
 			result.crew_by_station = {}
 			result.passengers = []
@@ -711,9 +961,12 @@ func inspect_entity(id: String) -> Dictionary:
 		result.crew_station = person.crew_station
 		result.service_seconds = person.service_seconds
 		result.leader_appointment = person.leader_appointment
+		result.bleed_remaining = maxf(0.0, person.bleed_until - _time) if person.assignment == Records.Assignment.WOUNDED else 0.0
+		result.loss_recorded = person.loss_recorded
 	if entity.kind == Records.Kind.WEAPON:
 		result.loaded_rounds = loaded_rounds(id)
 		result.loaded_capacity = entity.loaded_capacity
+		result.ammo_type = entity.ammo_type
 		result.functional = entity.health > 0
 	return result
 
@@ -803,7 +1056,7 @@ func audit() -> Array[String]:
 			if entity.fuel < -0.000001 or entity.fuel > float(entity.vehicle_spec.tank_capacity) + 0.000001: failures.append("Invalid vehicle tank: " + entity.id)
 		if entity is Records.Person and not entity.crew_station.is_empty():
 			var hull: Records.Entity = _entities.get(entity.holder_id)
-			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment in [Records.Assignment.REAR_LABOUR,Records.Assignment.FORMATION_DUTY] and entity.carrying_stock_id.is_empty()
+			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment in [Records.Assignment.REAR_LABOUR,Records.Assignment.FORMATION_DUTY,Records.Assignment.WOUNDED,Records.Assignment.RECOVERY,Records.Assignment.DEAD] and entity.carrying_stock_id.is_empty()
 			if valid and not hull.vehicle_spec.is_empty():
 				valid = entity.crew_station in hull.vehicle_spec.stations and (entity.qualification == "P08" or (hull.design_type == "T03" and entity.crew_station == "Gunner" and entity.qualification == "P04"))
 			else: valid = valid and entity.crew_station == "Driver" and entity.qualification == "P08"

@@ -12,6 +12,11 @@ const REVIEWS: Dictionary = {
 	"G08 Terrain & sight": preload("res://game/terrain/terrain_demo.tscn"),
 	"G02 Procurement": preload("res://game/procurement/receiving_demo.tscn"),
 	"G01 Identity": preload("res://game/identity/identity_demo.tscn"),
+	"G16 Combat & care": preload("res://game/combat/combat_demo.tscn"),
+	"G17 Orders & information": preload("res://game/orders/order_demo.tscn"),
+	"G18 Objectives & income": preload("res://game/objectives/objective_demo.tscn"),
+	"G19 Field structures & roads": preload("res://game/field_structures/field_demo.tscn"),
+	"G20 Bridges & traversal": preload("res://game/bridges/bridge_demo.tscn"),
 }
 var _host: Control
 var _base: Control

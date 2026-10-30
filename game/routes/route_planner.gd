@@ -78,7 +78,7 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 				return _blocked("%s cannot make this turn within its %.0f m rolling radius." % [type,RADII[type]])
 		if world != null:
 			if not bridge.is_empty(): return _blocked("Specified bridge fixture and authored terrain world cannot describe one crossing at once.")
-			var lane: Dictionary = world.route({"position":start,"facing":(finish-start).angle(),"size":hull.vehicle_spec.footprint,"movement_class":movement_class,"base":base*damage_factor,"rate":rate},finish)
+			var lane: Dictionary = world.route({"position":start,"facing":(finish-start).angle(),"size":hull.vehicle_spec.footprint,"movement_class":movement_class,"base":base*damage_factor,"rate":rate,"gross_mass_kg":gross},finish)
 			if not lane.ok: return _blocked(lane.reason)
 			for part in lane.parts:
 				sections.append(part)

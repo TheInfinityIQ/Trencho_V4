@@ -13,6 +13,7 @@ Recorded 2026-10-25. These decisions describe the current foundation and may cha
 | Validate import and startup locally and on Linux CI | Catch broken resources and case-sensitive paths early. This does not replace gameplay tests, export checks, profiling, or visual verification. |
 | Pin the CI runner to Ubuntu 24.04 and checkout action to its v7.0.1 commit | Avoid automatic runner distribution migrations and deprecated action runtimes. Review these pins during maintenance. |
 | Defer Git LFS rules until assets are introduced | Avoid imposing a storage workflow before asset requirements exist. Configure LFS before the first large asset commit to avoid later history migration. |
+| Keep G19 field project state on the shared ledger, terrain world and rear clock | A field site cannot grant capability from an order or remote promise. [G19 ownership and G26a delivery boundary](g19_field_structures_roads.md) document the physical handoff, cancellation and G32 restore obligations. |
 
 ## Sources consulted
 
@@ -76,3 +77,19 @@ The [training service](training_courses.md) owns elapsed course progress/physica
 ## G05 rear construction - 28 October 2026
 
 The [G05 construction service](g05_construction.md) reserves real bounded sites and delivers M11 through the accepted hauling and ledger lifecycle. Independent F02/F06/F07/F10/F11 copies extend their existing physical service and dispatch owners on the common rear clock. Local eight-metre road checks preserve vehicle access; dismantling waits for goods and active commitments before twenty builder work seconds and physical salvage. The catalogue and focused regression keep these decisions inspectable without a new global inventory or mission mode.
+
+## G15 military organization - 29 October 2026
+
+The [G15 organization service](g15_military_organization.md) composes real HQ receipts, physical issue jobs, roster reports and military hulls into the GDD §11 hierarchy on the shared event clock. The identity ledger remains authoritative for people, goods, crew and passengers. Formation and artillery equipment claims remain observable until actual report; readiness cannot replace a missing minimum package. The Dispatch view exposes hierarchy and shortages without player formation controls.
+
+## G16 combat, wounds and morale - 29 October 2026
+
+The [G16 combat service](g16_combat_wounds_morale.md) uses the G01 physical ledger, G08 sight and cover, and G15 actual rosters on the shared event clock. The ledger owns loaded-round consumption, injury, death and recoverable dropped holders; combat owns eligibility, commitments, stress, care and cohesion. This boundary keeps G23 mounted weapons, G27 full medical logistics and G32 persistence as explicit later integrations.
+
+## G17 hierarchical orders and information - 29 October 2026
+
+The [G17 order service](g17_hierarchical_orders.md) observes through real G15 members and G08 visibility, then carries time-stamped contacts and intent across one-second echelon links on the shared clock. It decides a supported flank from delivered information, G16 eligible fire, real ammunition, geometry and cohesion. The enemy HQ assault gate reads actual company capability and supplies an explicit preparation demand; it does not grant units or goods. An inspection scene exposes message age, roles, fallback and physical reconciliation.
+
+## G18 objectives and income - 29 October 2026
+
+The [G18 objective service](g18_objectives_income.md) derives eligibility from G01 actual holders and ammunition plus G16 morale, integrates capture at event boundaries, and credits controlled uncontested resource income to G02's existing requisition account. Its staged T02 passenger review proves a parked occupied vehicle contributes no capture before the same people exit; no objective ownership implies an HQ result or free depot contents.

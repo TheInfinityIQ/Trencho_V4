@@ -44,7 +44,8 @@ func _ready() -> void:
 	for side in ["left", "right", "top", "bottom"]: margin.add_theme_constant_override("margin_" + side, 14)
 	add_child(margin)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 6)
+	# Keep the inspection readable below the growing normal-launch selector.
+	layout.add_theme_constant_override("separation", 4)
 	margin.add_child(layout)
 	_title = _label(layout, "", 24)
 	_subtitle = _label(layout, "", 14)
@@ -95,6 +96,7 @@ func _ready() -> void:
 	_work = _label(layout, "", 16)
 	_physical = _label(layout, "", 14)
 	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size.y = 48
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	layout.add_child(scroll)

@@ -350,7 +350,7 @@ func _first_source(type: String) -> Dictionary:
 	return {}
 
 func _person_ready(person: Dictionary) -> bool:
-	return not person.is_empty() and person.kind == "PERSON" and person.assignment == "HQ Reserve" and person.owner == _rear_ref.get_ref().PLAYER and person.holder_id in ["hq-reserve","hq-stock"] and person.health > 0 and person.crew_station.is_empty()
+	return not person.is_empty() and person.kind == "PERSON" and person.assignment == "HQ Reserve" and person.pending_assignment == "None" and person.owner == _rear_ref.get_ref().PLAYER and person.holder_id in ["hq-reserve","hq-stock"] and person.health > 0 and person.crew_station.is_empty()
 
 func _vehicle_ready(hull: Dictionary) -> bool:
 	return not hull.is_empty() and hull.kind == "CARRIER" and hull.fleet_domain == "Military" and hull.owner == _rear_ref.get_ref().PLAYER and hull.holder_id == "hq-berth" and hull.position.is_equal_approx(HQ) and hull.health > 0

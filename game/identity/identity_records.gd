@@ -31,6 +31,7 @@ class Entity extends RefCounted:
 	var vehicle_spec: Dictionary = {}
 	var fuel: float = 0.0
 	var health: int = 100
+	var max_health: int = 100
 	var ammo_type: String
 	var loaded_capacity: int
 
@@ -50,6 +51,8 @@ class Person extends Entity:
 	var suppression: int = 0
 	var service_seconds: float = 0.0
 	var leader_appointment := "None"
+	var bleed_until: float = INF
+	var loss_recorded := false
 
 
 class Claim extends RefCounted:
