@@ -1,6 +1,6 @@
 # D01 overhead presentation evaluation
 
-Related [D01 issue 42 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/42#issuecomment-6429738909). The human chose clear 2D overhead with explicit height cues for the first evaluation, and Windows first for later native validation. This implements only that limited evaluation on accepted main `d3e2d69`; it does not select a production renderer or establish hardware/performance targets.
+Related [D01 issue 42 assignment](https://github.com/TheInfinityIQ/Trencho_V4/issues/42#issuecomment-6429738909). The human chose clear 2D overhead with explicit height cues for the first evaluation, and Windows first for later native validation. This implements only that limited evaluation on accepted main `d3e2d69`; it does not select a production renderer or establish hardware/performance targets. See the later [readiness review](d01_readiness_review.md) for current measurements and proposed targets.
 
 ## Sample and presentation
 

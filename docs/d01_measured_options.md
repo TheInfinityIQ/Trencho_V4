@@ -1,6 +1,6 @@
 # D01 measured presentation options
 
-Engineering decision packet, 26 October 2026, for [D01 #42](https://github.com/TheInfinityIQ/Trencho_V4/issues/42). **Recommendation and bounded evidence; production presentation, platforms, hardware and performance targets remain the Game Designer's decision.** Base is accepted main `857675783a21587b41fdbfa6bd1d3cdaae460d00`. G03/G08 remain separate draft/native-gated work; their runtime is neither copied nor changed here.
+Engineering decision packet, 26 October 2026, for [D01 #42](https://github.com/TheInfinityIQ/Trencho_V4/issues/42). **Recommendation and bounded evidence; production presentation, platforms, hardware and performance targets remain the Game Designer's decision.** Base is accepted main `857675783a21587b41fdbfa6bd1d3cdaae460d00`. G03/G08 remain separate draft/native-gated work; their runtime is neither copied nor changed here. The later [readiness review](d01_readiness_review.md) contains fresh measurements and proposed acceptance targets; this historical packet remains the source for the approach comparison and initial probe.
 
 ## Recommendation and comparison
 
