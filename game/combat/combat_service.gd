@@ -365,7 +365,7 @@ func snapshot(owner: String = "") -> Dictionary:
 		people.append({"id":item.id,"position":item.position,"assignment":item.assignment,"health":item.health,"bleed_remaining":item.bleed_remaining,"morale":item.morale,"suppression":item.suppression,"state":_state(item),"care":care.get(item.id,{}).duplicate(true)})
 	var formations := {}
 	for id in _rear().military.squads:
-		if owner.is_empty() or _rear().military.squads[id].owner == owner: formations[id] = squad_cohesion(id)
+		if owner.is_empty() or _rear().military.squads[id].get("owner",_rear().PLAYER) == owner: formations[id] = squad_cohesion(id)
 	var demand_rows := demands.duplicate(true)
 	var care_rows := care.duplicate(true)
 	if not owner.is_empty():

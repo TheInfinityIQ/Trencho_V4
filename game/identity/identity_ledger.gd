@@ -1268,13 +1268,8 @@ func snapshot() -> Dictionary:
 	# This inspection is synchronous. Compute aggregate masses once for this call;
 	# no cache survives a physical ledger change.
 	var masses := {}
-	for id in _entities: masses[id] = 0.0
-	for entity in _entities.values():
-		var holder: String = entity.holder_id
-		var mass: float = entity.unit_mass_kg*entity.quantity
-		while not holder.is_empty():
-			masses[holder] += mass
-			holder = _entities[holder].holder_id
+	var children: Dictionary = _children_by_holder()
+	for id in _entities: _indexed_contents_mass(id,children,masses)
 	for id in _entities:
 		entities.append(inspect_entity(id,masses))
 	for id in _claims:
@@ -1451,10 +1446,22 @@ func _contents_mass(holder_id: String) -> float:
 	# Stock is a leaf: all legal physical holders are places, carriers, people
 	# or (for loaded rounds) weapons.
 	if _entities.has(holder_id) and _entities[holder_id].kind == Records.Kind.STOCK: return 0.0
-	var total: float = 0.0
+	return _indexed_contents_mass(holder_id,_children_by_holder(),{})
+
+func _children_by_holder() -> Dictionary:
+	var children := {}
 	for entity in _entities.values():
-		if entity.holder_id == holder_id:
-			total += entity.unit_mass_kg * entity.quantity + _contents_mass(entity.id)
+		if not children.has(entity.holder_id): children[entity.holder_id] = []
+		children[entity.holder_id].append(entity)
+	return children
+
+func _indexed_contents_mass(holder_id: String, children: Dictionary, masses: Dictionary) -> float:
+	if masses.has(holder_id): return masses[holder_id]
+	var total: float = 0.0
+	# Original subtree/insertion addition order is preserved at exact carry limits.
+	for entity in children.get(holder_id,[]):
+		total += entity.unit_mass_kg*entity.quantity+_indexed_contents_mass(entity.id,children,masses)
+	masses[holder_id] = total
 	return total
 
 

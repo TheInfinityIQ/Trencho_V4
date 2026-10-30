@@ -8,14 +8,31 @@ func _run() -> void:
 	root.add_child(main)
 	await process_frame
 	var base: Control = main.get("_base")
-	base.scenario.select(2)
-	base._start_session()
+	var launch: Button
+	for button in main.find_children("*","Button",true,false):
+		if button.text == "New playtest": launch = button
+	assert(launch != null)
+	var down := InputEventMouseButton.new()
+	down.position = launch.get_global_rect().get_center()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.pressed = true
+	Input.parse_input_event(down)
+	await process_frame
+	var up := down.duplicate()
+	up.pressed = false
+	Input.parse_input_event(up)
+	await process_frame
 	assert(base.simulation.rear.military.squads.size() == 10)
 	main._show_battlefield()
 	var view: Control = main.get("_battlefield")
 	assert(view.simulation == base.simulation)
 	assert(main.get("_field_clock").is_visible_in_tree() and not main.get("_diagnostics").visible)
 	if "--boarding" in OS.get_cmdline_user_args(): base.simulation.rear.advance_time(12)
+	if "--underway" in OS.get_cmdline_user_args():
+		base.simulation.rear.advance_time(180)
+		var actual: Dictionary = base.simulation.rear.ledger.inspect_entity("start-blue-vehicle-00")
+		assert(actual.passengers.size() == 16 and actual.holder_id == "troop-transit","Actual first lift is underway with sixteen people aboard")
+		print("Underway first lift: ",actual.position," passengers=",actual.passengers.size()," fuel=",actual.fuel)
 	view.selected_id = "start-blue-vehicle-00"
 	await process_frame
 	await RenderingServer.frame_post_draw

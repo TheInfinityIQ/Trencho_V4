@@ -29,6 +29,10 @@ func advance_to(at: float) -> void:
 	for id in motions.keys():
 		var motion: Dictionary = motions[id]
 		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if motion.purpose == "Fallback" and not _fallback_safe(person,motion.destination):
+			motions.erase(id)
+			_report(person.duty_id,"Inability","Delivered hostile fire made the fallback unsafe; movement stopped",true)
+			continue
 		if not _on_foot(person) or _busy(id) or not person.position.is_equal_approx(motion.expected) or rear.combat.world.revision != motion.revision:
 			motions.erase(id)
 			continue

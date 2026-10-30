@@ -180,14 +180,14 @@ func _refresh() -> void:
 		if selected.kind == "PERSON": detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
+			for job in rear.military.troop_transport.jobs.values():
+				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
 			for station in selected.get("crew_by_station",{}):
 				var crew: Dictionary = rear.ledger.inspect_entity(selected.crew_by_station[station])
 				detail += "\n%s · %s · Health %d" % [station,crew.qualification,crew.health]
 			for id in selected.get("passengers",[]):
 				var passenger: Dictionary = rear.ledger.inspect_entity(id)
 				detail += "\n%s · Health %d · %s" % [_unit_label(passenger),passenger.health,passenger.assignment]
-			for job in rear.military.troop_transport.jobs.values():
-				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
@@ -201,6 +201,12 @@ func _refresh() -> void:
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear
+	if person.kind == "CARRIER":
+		for job in rear.military.troop_transport.jobs.values():
+			if job.hull == person.id and job.state != "Complete": return "Military transport: "+str(job.state)
+		for job in rear.forward_supply.transport.jobs.values():
+			if job.hull == person.id and job.state != "Complete": return "Supply delivery: "+str(job.state)
+		return "Stopped"
 	for job in rear.military.troop_transport.jobs.values():
 		if person.get("holder_id","") == job.hull and job.state != "Complete": return "Troop transport: "+str(job.state)
 		if person.id in job.people and job.state == "Boarding": return "Awaiting physical boarding"

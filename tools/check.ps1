@@ -96,3 +96,6 @@ if ($SceneInput) {
 
 
 Invoke-GodotCheck -Name 'forward-delivery-ui-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_delivery_ui_regression.gd')
+Invoke-GodotCheck -Name 'opening-regression' -EngineArguments @('--script', 'res://game/scenario/tests/opening_regression.gd')
+Invoke-GodotCheck -Name 'hq-affiliation-regression' -EngineArguments @('--script', 'res://game/orders/tests/hq_affiliation_regression.gd')
+Invoke-GodotCheck -Name 'mass-inspection-regression' -EngineArguments @('--script', 'res://game/identity/tests/mass_inspection_regression.gd')

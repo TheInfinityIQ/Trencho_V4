@@ -48,6 +48,11 @@ func _ready() -> void:
 	field_button.text = "Battlefield"
 	field_button.pressed.connect(_show_battlefield)
 	controls.add_child(field_button)
+	var playtest := Button.new()
+	playtest.text = "New playtest"
+	playtest.tooltip_text = "Start a fresh paused Farmland and Towns opening with its declared armies."
+	playtest.pressed.connect(_start_playtest)
+	controls.add_child(playtest)
 	_field_clock = HBoxContainer.new()
 	controls.add_child(_field_clock)
 	for speed in [0,1,2]:
@@ -117,6 +122,11 @@ func _clear_review() -> void:
 
 func _on_session_changed(next_simulation: RefCounted) -> void:
 	_battlefield.simulation = next_simulation
+
+func _start_playtest() -> void:
+	_base.scenario.select(2)
+	_base._start_session()
+	_show_battlefield()
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(_base) and _field_clock.visible:

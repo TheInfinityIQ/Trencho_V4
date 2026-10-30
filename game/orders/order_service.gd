@@ -15,6 +15,7 @@ var failed_since: Dictionary = {} # local unsolved reason key -> first detection
 var decisions: Dictionary = {} # platoon -> next two-second local review
 var leader_missing_since: Dictionary = {} # ordered squad -> first actual missing-leader sample
 var objective_markers: Dictionary = {} # scenario-declared physical places, never contacts by registration alone
+var objective_affiliations: Dictionary = {} # HQ ownership makes the marker hostile only to the opposing army.
 var preparation_demands: Dictionary = {} # company -> physical requirements for §16.3
 var _next_observation := INF
 var _sequence := 0
@@ -41,10 +42,11 @@ func unwatch(squad_id: String) -> Dictionary:
 	if watch_squads.is_empty(): _next_observation = INF
 	return {"ok":true,"message":"Observation assignment ended; old contacts age from their original sighting."}
 
-func register_enemy_hq(place_id: String) -> Dictionary:
+func register_enemy_hq(place_id: String, owner: String = "army-red") -> Dictionary:
 	var place: Dictionary = _rear().ledger.inspect_entity(place_id)
-	if place.get("kind","") != "PLACE" or objective_markers.has(place_id): return _block("An actual unique scenario enemy-HQ place is required.")
+	if place.get("kind","") != "PLACE" or objective_markers.has(place_id) or owner not in ["army-blue","army-red"]: return _block("An actual unique scenario enemy-HQ place and army affiliation are required.")
 	objective_markers[place_id] = "Enemy HQ"
+	objective_affiliations[place_id] = owner
 	return {"ok":true,"message":"Physical enemy HQ marker declared; command has no contact until a real observer sees it."}
 
 func contact(echelon_id: String, target_id: String) -> Dictionary:
@@ -346,6 +348,7 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 				var estimated_strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))
 				seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":estimated_strength,"source":person_id,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown")}
 		for objective_id in objective_markers:
+			if objective_affiliations.get(objective_id,"") == observer.owner: continue
 			var place: Dictionary = ledger.inspect_entity(objective_id)
 			if _rear().combat.world.observe(observer.position,place.position).visible:
 				seen[objective_id] = {"target":objective_id,"class":objective_markers[objective_id],"position":place.position,"observed_count":1,"observed_strength":0.0,"source":person_id,"observed_at":_rear().time,"visible_facing":"Unknown"}

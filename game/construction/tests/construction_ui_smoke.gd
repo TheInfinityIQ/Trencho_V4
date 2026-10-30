@@ -7,7 +7,7 @@ func _probe() -> void:
 	var demo: Control = scene.instantiate()
 	root.add_child(demo)
 	await process_frame
-	if demo.tabs.get_tab_count() != 9 or demo.construction_rows == null:
+	if not demo.tabs.has_node("Build") or demo.construction_rows == null:
 		push_error("Construction panel absent")
 		quit(1)
 		return

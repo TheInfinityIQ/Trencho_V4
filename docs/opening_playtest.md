@@ -11,3 +11,15 @@ The authored engagement resolves the initial free card choice to **C30** (GDD §
 The initial ordinary opening can be inspected before the APC experiment is complete. Rifle ammunition deliveries remain physical replenishment evidence; the generous starting ammunition does not establish that rear-source scarcity will be decisive.
 
 The map is one authored full-size representative, not final generation/fairness/performance acceptance. Town shells block sight and movement but cannot yet be entered or damaged. The opening issues no garrison or building-destruction tasks. Garrison, damage and rubble remain open GDD requirements. Populated battle readability and pacing require the integrated playtest.
+
+## Candidate controls and boundaries
+
+The ordinary main header's **New playtest** action creates this paused session and opens Battlefield. The Orders tab also retains the Farmland and Towns session choice. Rear base and Battlefield retain the same ledger and clock. Battlefield exposes Pause/1x/2x; foundation reviews are behind Diagnostics. Rectangular own hull markers show actual crew, individual passengers, fuel and timed trip progress when selected; aboard people are not drawn as loose soldiers. Enemy markers remain delivered, aged reports.
+
+Blue Engineers hold at the forward delivery stop as the declared unloading/courier element after their physical lift. The Rifle fallback is ten metres from that stop; Medical follows the identified forward Rifle formations for care/support. Red Engineer/Medical Hold Area orders retain their own HQ rallies. Fallback refuses or stops movement toward delivered hostile effective fire; this is a bounded refusal, not a complete alternate-route planner. The supply stop is roughly1.1km behind the follow-up objective, so walkback time and safety remain pacing observations.
+
+Supply controls select the real blue military T01, actual HQ freight, named HQ loader and named destination soldier. A delivery does not create an issue. At the stop, a distinct real courier and recipient still need legal local pickup/walk/drop before reload. Moving, boarding, care and handling commitments exclude each other.
+
+The opening scenario, command/transport, visibility and controls are integrated candidates. Required checks and the full ordinary encounter observation must pass before a player handoff; paused or boarding-in-progress renders alone do not establish completed deployment, combat or useful supply.
+
+The 30 October candidate passed `tools/check.ps1` with every regression runner and113named Domain tests, including actual three-lift admission, both HQ-observation directions and120legacy-exact mass/carry checks. Local engine input launched New playtest; a t180 OpenGL render and asserted transit state show16real passengers aboard the first T02 at(2821.972,650), with38.2314fuel remaining. The longer ordinary encounter observation and CI display-input gate remain outstanding. Autonomous local issue is the next scoped connection under the Designer's delegated role; manual individual issue is diagnostic evidence, not the intended player responsibility.
