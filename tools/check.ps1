@@ -83,6 +83,7 @@ Invoke-GodotCheck -Name 'battlefield-presentation-regression' -EngineArguments @
 Invoke-GodotCheck -Name 'squad-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/squad_execution_regression.gd')
 Invoke-GodotCheck -Name 'execution-safety-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/execution_safety_regression.gd')
 Invoke-GodotCheck -Name 'forward-supply-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_supply_regression.gd')
+Invoke-GodotCheck -Name 'vehicle-rack-issue-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/vehicle_rack_issue_regression.gd')
 Invoke-GodotCheck -Name 'forward-transport-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_transport_regression.gd')
 Invoke-GodotCheck -Name 'forward-clock-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/forward_clock_regression.gd')
 Invoke-GodotCheck -Name 'startup' -EngineArguments @('--quit-after', '3')

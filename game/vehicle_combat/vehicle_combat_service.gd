@@ -201,6 +201,7 @@ func fire(id: String, target_id: String, weapon: String, moving: bool = false) -
 	return {"ok":true,"hit":hit,"damage":damage,"penetrated":penetrated,"surface":check.surface,"remaining_local":_available_rack(id,str(spec.ammo))}
 
 func request_reload(id: String, weapon: String) -> Dictionary:
+	if _rear().forward_supply != null and _rear().forward_supply.rack_issue.hull_committed(id): return _block("Physical local rack handling must finish before mounted reload.")
 	var hull: Dictionary = _rear().ledger.inspect_entity(id)
 	if hull.is_empty() or not MOUNTS.has(hull.get("design_type","")) or not MOUNTS[hull.design_type].has(weapon): return _block("Actual integral mount required.")
 	if (weapon == "Main" and _operator(hull,"Loader").is_empty()) or (weapon != "Main" and _operator(hull,"Gunner").is_empty()): return _block("Actual reload operator absent.")

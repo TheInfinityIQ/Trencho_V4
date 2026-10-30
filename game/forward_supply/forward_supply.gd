@@ -3,6 +3,7 @@ extends RefCounted
 ## The ledger owns all stock and holder changes; this service owns only commitments.
 
 const ForwardTransport = preload("res://game/forward_supply/forward_transport.gd")
+const VehicleRackIssue = preload("res://game/forward_supply/vehicle_rack_issue.gd")
 const EPS := 0.000001
 const LOCAL_RADIUS := 20.0
 const HANDOFF_RADIUS := 0.75
@@ -10,6 +11,7 @@ const HANDLING_SECONDS := 2.0
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var transport: RefCounted
+var rack_issue: RefCounted
 var delivery_stops: Dictionary = {}
 var _sequence := 0
 
@@ -17,6 +19,10 @@ var _sequence := 0
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	transport = ForwardTransport.new(rear)
+	rack_issue = VehicleRackIssue.new(rear)
+
+func request_vehicle_rack_issue(stock_id: String, hull_id: String, handler_id: String, quantity: int, stop_id: String) -> Dictionary:
+	return rack_issue.request(stock_id,hull_id,handler_id,quantity,stop_id)
 
 
 func register_delivery_stop(stop_id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
@@ -57,7 +63,7 @@ func interrupt_delivery(id: String) -> Dictionary:
 
 
 func hull_committed(id: String) -> bool:
-	return transport.hull_committed(id)
+	return transport.hull_committed(id) or rack_issue.hull_committed(id)
 
 
 func start_issue(stock_id: String, recipient_id: String, handler_id: String, quantity: int, stop_id: String) -> Dictionary:
@@ -137,6 +143,7 @@ func resume_issue(id: String) -> Dictionary:
 
 
 func person_committed(person_id: String) -> bool:
+	if rack_issue.person_committed(person_id): return true
 	if transport.person_committed(person_id): return true
 	for row in jobs.values():
 		if row.state == "Interrupted Carry":
@@ -150,7 +157,7 @@ func handler_committed(person_id: String) -> bool:
 
 
 func next_boundary() -> float:
-	var next: float = transport.next_boundary()
+	var next: float = minf(transport.next_boundary(),rack_issue.next_boundary())
 	for row in jobs.values():
 		if row.state in ["Walking Source","Pickup","Walking Recipient","Drop"]: next = minf(next,float(row.deadline))
 	return next
@@ -158,6 +165,7 @@ func next_boundary() -> float:
 
 func advance_to(at: float) -> void:
 	transport.advance_to(at)
+	rack_issue.advance_to(at)
 	for row in jobs.values():
 		if row.state not in ["Walking Source","Walking Recipient"]: continue
 		var handler: Dictionary = _rear().ledger.inspect_entity(row.handler)
@@ -174,6 +182,7 @@ func advance_to(at: float) -> void:
 func settle() -> bool:
 	var rear: RefCounted = _rear()
 	var changed: bool = transport.settle()
+	changed = rack_issue.settle() or changed
 	for row in jobs.values():
 		if row.state not in ["Walking Source","Pickup","Walking Recipient","Drop"] or row.deadline > rear.time + EPS: continue
 		var handler: Dictionary = rear.ledger.inspect_entity(row.handler)
@@ -315,11 +324,12 @@ func _leg(person: Dictionary, destination: Vector2) -> Dictionary:
 func snapshot() -> Dictionary:
 	var rows: Array[Dictionary] = []
 	for row in jobs.values(): rows.append(row.duplicate(true))
-	return {"rows":rows,"transport":transport.snapshot()}
+	return {"rows":rows,"transport":transport.snapshot(),"rack_issue":rack_issue.snapshot()}
 
 
 func audit() -> Array[String]:
 	var errors: Array[String] = transport.audit()
+	errors.append_array(rack_issue.audit())
 	for row in jobs.values():
 		var carried: Dictionary = _rear().ledger.inspect_entity(row.carried_stock)
 		if row.state in ["Walking Recipient","Drop"] and (carried.is_empty() or carried.holder_id != row.handler or carried.quantity != row.quantity):
