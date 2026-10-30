@@ -145,10 +145,10 @@ func _tab(runner: GdUnitSceneRunner, demo: Control, index: int) -> void:
 	assert_int((demo.get("tabs") as TabContainer).current_tab).is_equal(index)
 
 func _press(runner: GdUnitSceneRunner, root: Control, text: String) -> void:
-	if title.begins_with("G"):
+	if text.begins_with("G"):
 		var hidden := false
 		for node in root.find_children("*", "Button", true, false):
-			if node.text == title and not node.is_visible_in_tree(): hidden = true
+			if node.text == text and not node.is_visible_in_tree(): hidden = true
 		if hidden: await _press(runner,root,"Diagnostics")
 	var matches: Array[Button] = []
 	for button in root.find_children("*", "Button", true, false):
