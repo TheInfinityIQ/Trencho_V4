@@ -6,7 +6,9 @@ const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
 const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
+const ForwardDeliveryPanel = preload("res://game/forward_supply/forward_delivery_panel.gd")
 var simulation := Simulation.new(false, true)
+var forward_delivery_panel: VBoxContainer
 var construction_kind: OptionButton
 var construction_x: SpinBox
 var construction_y: SpinBox
@@ -129,6 +131,9 @@ func _ready() -> void:
 	_vehicles_panel(_panel("Vehicles"))
 	_dispatch_panel(_panel("Dispatch"))
 	_construction_panel(_panel("Build"))
+	forward_delivery_panel = ForwardDeliveryPanel.new(simulation)
+	_panel("Supply").add_child(forward_delivery_panel)
+	forward_delivery_panel.result_reported.connect(_result)
 	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -225,6 +230,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 
 func _start_session() -> void:
 	simulation = Simulation.new(scenario.selected == 1, true)
+	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
 	base_map.simulation = simulation
 	base_map.reset_camera()
@@ -790,6 +796,7 @@ func _refresh() -> void:
 			var builders: String = "builders-"+row.id
 			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
 	_refresh_dispatch(view)
+	forward_delivery_panel.refresh()
 	_refresh_hq(view)
 	var offer: Dictionary = view.receiving.recovery_offer
 	recovery_button.visible = offer.available

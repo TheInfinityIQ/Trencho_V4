@@ -10,6 +10,7 @@ const HANDLING_SECONDS := 2.0
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var transport: RefCounted
+var delivery_stops: Dictionary = {}
 var _sequence := 0
 
 
@@ -18,9 +19,33 @@ func _init(rear: RefCounted) -> void:
 	transport = ForwardTransport.new(rear)
 
 
+func register_delivery_stop(stop_id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
+	var stop: Dictionary = _rear().ledger.inspect_entity(stop_id)
+	var hq: Vector2 = _rear().ledger.inspect_entity("hq-berth").position
+	if stop.get("kind","") != "PLACE" or stop.position.distance_to(hq) <= LOCAL_RADIUS:
+		return _fail("Declare a real forward place outside the HQ issue area.")
+	if outbound_points.is_empty() != return_points.is_empty():
+		return _fail("Declare both physical route directions or use the previewed direct candidate.")
+	if not outbound_points.is_empty():
+		if outbound_points.size() < 2 or return_points.size() < 2:
+			return _fail("Each authored route needs actual origin and destination waypoints.")
+		for point in outbound_points + return_points:
+			if typeof(point) != TYPE_VECTOR2 or not (point as Vector2).is_finite():
+				return _fail("Every authored waypoint must be a finite metre position.")
+		if not (outbound_points[0] as Vector2).is_equal_approx(hq) or not (outbound_points[-1] as Vector2).is_equal_approx(stop.position) or not (return_points[0] as Vector2).is_equal_approx(stop.position) or not (return_points[-1] as Vector2).is_equal_approx(hq):
+			return _fail("Authored routes must connect actual HQ and this stop in both directions.")
+	delivery_stops[stop_id] = {"outbound_points":outbound_points.duplicate(),"return_points":return_points.duplicate()}
+	return {"ok":true,"message":"Physical forward stop and its route candidate declared."}
+
+
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
 	return transport.request_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
 
 
 func resume_delivery(id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:

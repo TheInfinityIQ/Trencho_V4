@@ -23,6 +23,29 @@ func _init(rear: RefCounted) -> void:
 
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	var preview: Dictionary = preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+	if not preview.ok: return preview
+	var rear: RefCounted = _rear()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+	var stock: Dictionary = rear.ledger.inspect_entity(stock_id)
+	_sequence += 1
+	var id := "forward-delivery-%04d" % _sequence
+	var claimed: Dictionary = rear.ledger.request_stock(id,stock_id,quantity,id,"Forward T01 delivery",rear.PLAYER)
+	if not claimed.ok or rear.ledger.inspect_claim(id).reserved != quantity:
+		if claimed.ok: rear.ledger.release_claim(id)
+		return _fail("Exact HQ freight could not be committed without competing claims.")
+	jobs[id] = {"id":id,"hull":hull_id,"stock":stock_id,"type":stock.design_type,"quantity":quantity,
+		"stop":stop_id,"loader":loader_id,"unloader":unloader_id,"outbound_points":outbound_points.duplicate(),
+		"return_points":return_points.duplicate(),"claim":id,"loaded":0,"unloaded":0,"loaded_items":[],
+		"delivered_items":[],"state":"Loading","task":{},"route_plan":{},"route_points":[],
+		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
+		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
+	jobs[id].return_completed = false
+	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
+
+
+func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	var stock: Dictionary = rear.ledger.inspect_entity(stock_id)
@@ -52,20 +75,10 @@ func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	if not danger.is_empty(): return _fail(danger)
 	if float(hull.fuel)+EPS < 1.25*(float(outward.fuel)+float(home.fuel)):
 		return _fail("Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve.")
-	_sequence += 1
-	var id := "forward-delivery-%04d" % _sequence
-	var claimed: Dictionary = rear.ledger.request_stock(id,stock_id,quantity,id,"Forward T01 delivery",rear.PLAYER)
-	if not claimed.ok or rear.ledger.inspect_claim(id).reserved != quantity:
-		if claimed.ok: rear.ledger.release_claim(id)
-		return _fail("Exact HQ freight could not be committed without competing claims.")
-	jobs[id] = {"id":id,"hull":hull_id,"stock":stock_id,"type":stock.design_type,"quantity":quantity,
-		"stop":stop_id,"loader":loader_id,"unloader":unloader_id,"outbound_points":outbound_points.duplicate(),
-		"return_points":return_points.duplicate(),"claim":id,"loaded":0,"unloaded":0,"loaded_items":[],
-		"delivered_items":[],"state":"Loading","task":{},"route_plan":{},"route_points":[],
-		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
-		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
-	jobs[id].return_completed = false
-	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
+	return {"ok":true,"message":"Measured round trip is available.","distance":float(outward.distance)+float(home.distance),
+		"seconds":float(outward.seconds)+float(home.seconds),"fuel":float(outward.fuel)+float(home.fuel),
+		"required_fuel":1.25*(float(outward.fuel)+float(home.fuel)),"tank_fuel":float(hull.fuel),
+		"gross_kg":float(outward.gross_kg)+float(quantity)*float(stock.unit_mass_kg)}
 
 
 func interrupt_delivery(id: String) -> Dictionary:
