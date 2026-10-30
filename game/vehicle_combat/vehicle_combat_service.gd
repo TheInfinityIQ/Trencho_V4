@@ -355,4 +355,4 @@ func _available_rack(id: String, ammo: String) -> int:
 	return total
 
 func _seated(person: Dictionary) -> bool:
-	return _rear().ledger.inspect_entity(person.holder_id).get("kind","") == "CARRIER"
+	return _rear().ledger.entity_kind(person.holder_id) == "CARRIER"

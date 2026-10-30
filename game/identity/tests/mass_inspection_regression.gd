@@ -6,6 +6,7 @@ func _initialize() -> void:
 	var fixture := Fixture.new()
 	fixture.reset()
 	var ledger: RefCounted = fixture.ledger
+	check(ledger.entity_kind("missing") == "","Unknown kind query remains empty")
 	check(ledger.add_stock("retained-rounds","E02",50,0.02,"worker-01","army-blue").ok,"Real retained ammunition")
 	check(ledger.add_weapon("retained-rifle","E01",4,"worker-01","army-blue","E02",30).ok,"Actual retained rifle")
 	check(ledger.load_rounds("retained-rifle","retained-rounds",10).ok,"Actual nested loaded rounds")
@@ -25,6 +26,7 @@ func _initialize() -> void:
 	quit(0 if failures == 0 else 1)
 func compare(ledger: RefCounted) -> void:
 	for row in ledger.snapshot().entities:
+		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)

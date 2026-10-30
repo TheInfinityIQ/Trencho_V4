@@ -483,8 +483,7 @@ func _medic_busy(id: String) -> bool:
 	return false
 
 func _seated(person: Dictionary) -> bool:
-	var holder: Dictionary = _rear().ledger.inspect_entity(person.holder_id)
-	return holder.get("kind","") == "CARRIER"
+	return _rear().ledger.entity_kind(person.holder_id) == "CARRIER"
 
 func _segment_fraction(point: Vector2, start: Vector2, finish: Vector2) -> float:
 	return clampf((point-start).dot(finish-start)/maxf(EPS,start.distance_squared_to(finish)),0.0,1.0)

@@ -119,10 +119,10 @@ func _draw() -> void:
 		var totals: Array[String] = []
 		for activity in [simulation.rear.production, simulation.rear.munitions_production, simulation.rear.materials_production, simulation.rear.support_production]:
 			var type: String = activity._spec.output_type
-			totals.append("%s %s: %d" % [activity._spec.facility, type, ledger.total_stock(type)])
+			totals.append("%s %s: %d" % [activity._spec.facility, type, ledger.total_stock(type,simulation.rear.PLAYER)])
 		draw_string(font, Vector2(12, size.y - 50), "Physical outputs | " + " | ".join(totals), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	else:
-		draw_string(font, Vector2(12, size.y - 50), "Physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01"), ledger.total_stock("E02"), ledger.total_stock("M11"), ledger.total_stock("M06")], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+		draw_string(font, Vector2(12, size.y - 50), "Own physical goods: %d rifles | %d rounds | %d materials | %d explosives" % [ledger.total_stock("E01",simulation.rear.PLAYER), ledger.total_stock("E02",simulation.rear.PLAYER), ledger.total_stock("M11",simulation.rear.PLAYER), ledger.total_stock("M06",simulation.rear.PLAYER)], HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	var training: RefCounted = simulation.rear.training
 	for row in training.rows:
 		if row.seat >= 0:

@@ -177,7 +177,12 @@ func _refresh() -> void:
 		detail = "%s\nPosition: (%.0f, %.0f) m" % [title, selected.position.x, selected.position.y]
 		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
 		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
-		if selected.kind == "PERSON": detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
+		if selected.kind == "PERSON":
+			detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
+			var loaded := 0
+			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"]):
+				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
+			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
 			for job in rear.military.troop_transport.jobs.values():
@@ -207,6 +212,10 @@ func _activity_label(person: Dictionary) -> String:
 		for job in rear.forward_supply.transport.jobs.values():
 			if job.hull == person.id and job.state != "Complete": return "Supply delivery: "+str(job.state)
 		return "Stopped"
+	for job in rear.forward_supply.jobs.values():
+		if job.state in ["Complete","Interrupted"]: continue
+		if person.id == job.handler: return "Courier handoff: "+str(job.state)
+		if person.id == job.recipient: return "Receiving local issue: "+str(job.state)
 	for job in rear.military.troop_transport.jobs.values():
 		if person.get("holder_id","") == job.hull and job.state != "Complete": return "Troop transport: "+str(job.state)
 		if person.id in job.people and job.state == "Boarding": return "Awaiting physical boarding"

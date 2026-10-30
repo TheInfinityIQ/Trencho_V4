@@ -14,6 +14,7 @@ func _initialize() -> void:
 		check(is_equal_approx(float(entity.contents_mass_kg),float(rear.ledger.inspect_entity(entity.id).contents_mass_kg)),"Snapshot preserves recursive mass for "+entity.id)
 	var player: Dictionary = base.snapshot()
 	check(player.military.squads.size() == 5 and player.combat.formations.size() == 5,"Player panels include own formations only")
+	check(rear.ledger.total_stock("E01",rear.PLAYER) == 56 and rear.ledger.total_stock("E02",rear.PLAYER) == 8820,"Own goods readout does not expose opposing inventory totals")
 	check(not player.rear.people.any(func(person: Dictionary) -> bool: return person.owner == "army-red"),"Staff panel excludes hidden enemy people")
 	if "--profile-steady" in OS.get_cmdline_user_args():
 		rear.advance_time(6)

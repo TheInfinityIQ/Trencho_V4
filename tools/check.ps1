@@ -99,3 +99,5 @@ Invoke-GodotCheck -Name 'forward-delivery-ui-regression' -EngineArguments @('--s
 Invoke-GodotCheck -Name 'opening-regression' -EngineArguments @('--script', 'res://game/scenario/tests/opening_regression.gd')
 Invoke-GodotCheck -Name 'hq-affiliation-regression' -EngineArguments @('--script', 'res://game/orders/tests/hq_affiliation_regression.gd')
 Invoke-GodotCheck -Name 'mass-inspection-regression' -EngineArguments @('--script', 'res://game/identity/tests/mass_inspection_regression.gd')
+Invoke-GodotCheck -Name 'opening-resupply-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_resupply_regression.gd')
+Invoke-GodotCheck -Name 'opening-resupply-edges-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_resupply_edges_regression.gd')

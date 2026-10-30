@@ -267,7 +267,7 @@ func _busy(id: String) -> bool:
 	return rear.military.has_method("person_committed") and rear.military.person_committed(id)
 
 func _on_foot(person: Dictionary) -> bool:
-	return person.get("kind","") == "PERSON" and person.health > 0 and person.assignment == "Formation Duty" and person.pending_assignment == "None" and str(person.crew_station).is_empty() and _rear().ledger.inspect_entity(person.holder_id).get("kind","") == "PLACE"
+	return person.get("kind","") == "PERSON" and person.health > 0 and person.assignment == "Formation Duty" and person.pending_assignment == "None" and str(person.crew_station).is_empty() and _rear().ledger.entity_kind(person.holder_id) == "PLACE"
 
 func _report(squad: String, kind: String, detail: String, urgent: bool = false) -> void:
 	var key := squad+":"+kind+":"+detail

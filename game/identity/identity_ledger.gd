@@ -166,6 +166,9 @@ func entities_at(holder: String, kinds: Array) -> Array[Dictionary]:
 		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
 	return result
 
+func entity_kind(id: String) -> String:
+	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
+
 func entities_of_type(type: String, kinds: Array) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for entity in _entities.values():
@@ -1280,10 +1283,10 @@ func snapshot() -> Dictionary:
 		"rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
-func total_stock(type: String) -> int:
+func total_stock(type: String, owner: String = "") -> int:
 	var total: int = 0
 	for entity in _entities.values():
-		if entity.design_type == type and entity.kind in [Records.Kind.STOCK, Records.Kind.WEAPON]:
+		if entity.design_type == type and entity.kind in [Records.Kind.STOCK, Records.Kind.WEAPON] and (owner.is_empty() or entity.owner == owner):
 			total += entity.quantity
 	return total
 

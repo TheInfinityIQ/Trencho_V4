@@ -27,6 +27,17 @@ func _run() -> void:
 	var view: Control = main.get("_battlefield")
 	assert(view.simulation == base.simulation)
 	assert(main.get("_field_clock").is_visible_in_tree() and not main.get("_diagnostics").visible)
+	if "--supply" in OS.get_cmdline_user_args():
+		main._show_base()
+		base.tabs.current_tab = base.tabs.get_node("Supply").get_index()
+		base.forward_delivery_panel.refresh()
+		assert(not base.forward_delivery_panel.manual_issue.visible and base.forward_delivery_panel.loader_choice.disabled and base.forward_delivery_panel.unloader_choice.disabled)
+		await process_frame
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://.artifacts/opening-supply.png")
+		print("Opening Supply render: ordinary controls and autonomous-role presentation captured")
+		quit()
+		return
 	if "--boarding" in OS.get_cmdline_user_args(): base.simulation.rear.advance_time(12)
 	if "--underway" in OS.get_cmdline_user_args():
 		base.simulation.rear.advance_time(180)

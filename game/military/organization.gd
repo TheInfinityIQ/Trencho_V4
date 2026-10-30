@@ -1037,8 +1037,8 @@ func _active_roster_members(row: Dictionary, include_boarded: bool = false) -> A
 	for id in row.roster:
 		var person: Dictionary = rear.ledger.inspect_entity(id)
 		if person.is_empty() or person.health <= 0 or person.assignment != "Formation Duty" or person.duty_id != row.id or not person.crew_station.is_empty(): continue
-		var holder: Dictionary = rear.ledger.inspect_entity(person.holder_id)
-		if holder.is_empty() or (holder.kind == "CARRIER" and (not include_boarded or person.holder_id != row.vehicle)): continue
+		var holder: String = rear.ledger.entity_kind(person.holder_id)
+		if holder.is_empty() or (holder == "CARRIER" and (not include_boarded or person.holder_id != row.vehicle)): continue
 		active.append(id)
 	return active
 

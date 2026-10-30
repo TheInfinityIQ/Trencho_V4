@@ -57,6 +57,10 @@ func _test_player_controls() -> void:
 	var panel: VBoxContainer = DeliveryPanel.new(base)
 	root.add_child(panel)
 	await process_frame
+	_check(not panel.manual_issue.visible,"Manual member issue starts confined to Diagnostics")
+	panel.issue_diagnostics.set_pressed(true)
+	_check(panel.manual_issue.visible,"Diagnostics explicitly exposes manual issue tools")
+	panel.issue_diagnostics.set_pressed(false)
 	_check(panel.hull_choice.item_count == 1 and panel.stop_choice.item_count == 1 and panel.freight_choice.item_count == 1,"player sees only real eligible hull, freight and declared stop")
 	panel.amount.value = 10
 	_press(panel,"Preview route, load and fuel")

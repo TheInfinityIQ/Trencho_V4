@@ -20,6 +20,9 @@ var local_amount: SpinBox
 var issue_rows: ItemList
 var issue_ids: Array[String] = []
 var issue_status: Label
+var army_issue_status: Label
+var manual_issue: VBoxContainer
+var issue_diagnostics: CheckButton
 
 
 func _init(session: RefCounted) -> void:
@@ -43,6 +46,11 @@ func _ready() -> void:
 	_button("Resume selected delivery",_resume_delivery)
 	delivery_status = _note("A loaded truck remains physical and visible while travelling.")
 	_separator()
+	army_issue_status = _note("Local army issue waits for actual arrived freight and a safe receipt point.")
+	issue_diagnostics = CheckButton.new()
+	issue_diagnostics.text = "Diagnostics: manual individual issue"
+	add_child(issue_diagnostics)
+	var manual_start := get_child_count()
 	_note("Issue arrived freight to a soldier")
 	_note("After the truck unloads, a second active soldier carries actual stock to the selected recipient. Loose rounds still need a real reload.")
 	local_stock_choice = _option("Arrived stock at selected stop")
@@ -54,13 +62,21 @@ func _ready() -> void:
 	_button("Pause selected local issue",_pause_issue)
 	_button("Resume selected carried issue",_resume_issue)
 	issue_status = _note("")
+	var manual_nodes: Array = get_children().slice(manual_start)
+	manual_issue = VBoxContainer.new()
+	add_child(manual_issue)
+	for node in manual_nodes: node.reparent(manual_issue)
+	manual_issue.hide()
+	issue_diagnostics.toggled.connect(func(open: bool) -> void: manual_issue.visible = open)
 	stop_choice.item_selected.connect(func(_index: int) -> void: refresh())
 	refresh()
 
 
 func bind(next_simulation: RefCounted) -> void:
 	simulation = next_simulation
-	if is_node_ready(): refresh()
+	if is_node_ready():
+		route_status.text = "Select a real truck, HQ freight and stop to preview the route."
+		refresh()
 
 
 func refresh() -> void:
@@ -71,6 +87,7 @@ func refresh() -> void:
 	var hulls: Array[Dictionary] = []
 	var freight: Array[Dictionary] = []
 	var soldiers: Array[Dictionary] = []
+	var automatic: RefCounted = _automatic_issue()
 	for entity in entities:
 		if entity.kind == "CARRIER" and entity.owner == rear.PLAYER and entity.design_type == "T01" and entity.fleet_domain == "Military" and rear.military.vehicles.has(entity.id):
 			hulls.append({"id":entity.id,"label":"%s | %s | fuel %.1f" % [entity.id,entity.holder_id,entity.fuel]})
@@ -92,7 +109,17 @@ func refresh() -> void:
 	for id in rear.dispatch.free_hq_handlers(4):
 		loaders.append({"id":id,"label":id})
 	_sync(loader_choice,loaders)
-	_sync(unloader_choice,soldiers)
+	var unloaders: Array[Dictionary] = soldiers
+	if automatic != null:
+		unloaders = []
+		var element: Dictionary = rear.military.squads.get(automatic.engineer_squad,{})
+		for person in soldiers:
+			if person.id in element.get("roster",[]): unloaders.append(person)
+	loader_choice.disabled = automatic != null
+	unloader_choice.disabled = automatic != null
+	loader_choice.tooltip_text = "HQ assigns its actual available logistics staff." if automatic != null else ""
+	unloader_choice.tooltip_text = "The army assigns a real member of the forward Engineer element." if automatic != null else ""
+	_sync(unloader_choice,unloaders)
 	var stop_id: String = _selected(stop_choice)
 	var nearby: Array[Dictionary] = []
 	var arrived: Array[Dictionary] = []
@@ -113,7 +140,26 @@ func refresh() -> void:
 	delivery_status.text = "No delivery selected." if delivery_id.is_empty() else _delivery_detail(rear.forward_supply.transport.jobs[delivery_id],ledger)
 	var issue_id: String = _selected_row(issue_rows,issue_ids)
 	issue_status.text = "Arrived stock stays at the stop until a real local issue." if issue_id.is_empty() else _issue_detail(rear.forward_supply.jobs[issue_id])
+	if automatic != null:
+		var local: Dictionary = automatic.snapshot()
+		army_issue_status.text = "LOCAL ARMY ISSUE\nE02 available at the stop: %d\nPending member requests: %d\n%s" % [local.available_E02,local.requests.size(),local.status]
+		for request in local.requests:
+			army_issue_status.text += "\n%s needs %d · committed to couriers: %d" % [_member_label(request.person),request.needed,request.committed]
+		for job in rear.forward_supply.jobs.values():
+			if job.state != "Complete": army_issue_status.text += "\nCourier %s: %s · %d %s · %s" % [_member_label(job.handler),job.state,job.quantity,job.type,job.blocker]
+	else: army_issue_status.text = "Automatic local army issue is available in the Farmland and Towns playtest. Manual individual issue is under Diagnostics."
 	if stops.is_empty(): route_status.text = "No forward stop has been declared in this session."
+
+func _automatic_issue() -> RefCounted:
+	if simulation == null or simulation.rear.battlefield_operations == null: return null
+	var policy: RefCounted = simulation.rear.battlefield_operations.policy
+	return policy.get("resupply") if policy != null and policy.get("resupply") is RefCounted else null
+
+func _member_label(id: String) -> String:
+	if not id.begins_with("start-blue-squad-"): return id
+	var number := int(id.get_slice("-",3))
+	var role: String = "Rifle %d" % (number+1) if number < 3 else ("Engineer" if number == 3 else "Medical")
+	return role+" · "+str(int(id.get_slice("-",5))+1)
 
 
 func _routes(hull_id: String, stop_id: String) -> Dictionary:

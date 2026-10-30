@@ -287,7 +287,7 @@ func _active_member(id: String) -> bool:
 
 func _on_foot(person: Dictionary) -> bool:
 	if person.get("kind","") != "PERSON" or person.health <= 0 or person.pending_assignment != "None" or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty(): return false
-	return _rear().ledger.inspect_entity(person.holder_id).get("kind","") == "PLACE"
+	return _rear().ledger.entity_kind(person.holder_id) == "PLACE"
 
 
 func _other_busy(id: String) -> bool:

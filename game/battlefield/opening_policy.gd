@@ -1,4 +1,5 @@
 extends RefCounted
+const Resupply = preload("res://game/battlefield/opening_resupply.gd")
 ## Declared playtest opening only; broad commander operation scoring is deferred.
 var _rear_ref: WeakRef
 var armies: Dictionary
@@ -8,11 +9,13 @@ var reserve_active := false
 var trips: Dictionary = {}
 var status: Dictionary = {}
 var repositioned: Dictionary = {}
+var resupply: RefCounted
 
 func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> void:
 	_rear_ref = weakref(rear)
 	armies = army_data
 	points = waypoints
+	resupply = Resupply.new(rear,armies["army-blue"].rifles.slice(0,2),armies["army-blue"].engineer,"blue-delivery")
 	for side in ["blue","red"]:
 		var owner: String = "army-"+side
 		phases[owner] = "Opening"
@@ -83,6 +86,7 @@ func tick() -> void:
 		status[owner] = str(phases[owner])+": "+objective
 	_request_trips()
 	_reposition_supply_truck()
+	resupply.tick()
 
 func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	var army: Dictionary = armies[owner]
@@ -140,4 +144,4 @@ func snapshot() -> Dictionary:
 	var own_trips: Array[Dictionary] = []
 	for id in trips:
 		if id.begins_with("blue"): own_trips.append(trips[id].duplicate(true))
-	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips}
+	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips,"resupply":resupply.snapshot()}
