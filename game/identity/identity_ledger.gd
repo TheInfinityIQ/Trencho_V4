@@ -4,6 +4,7 @@ signal person_position_changed(person_id: String)
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
 const Records = preload("res://game/identity/identity_records.gd")
+const BLAST_TOP_ARMOUR := {"T01":0,"T02":0,"T03":0,"T04":10,"T05":25}
 
 var _entities: Dictionary[String, Records.Entity] = {}
 var _claims: Dictionary[String, Records.Claim] = {}
@@ -868,6 +869,30 @@ func consume_local_batch(holder: String, owner: String, ingredients: Dictionary,
 		_remove_stock(portion.id, portion.count, reason, false)
 	return {"ok": true, "code": "OK", "message": "Complete local batch consumed once.", "receipt": receipt}
 
+func available_stock_near(position: Vector2, radius: float, owner: String, type: String) -> int:
+	var total := 0
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.owner == owner and entity.design_type == type and _is_place(entity.holder_id) and _world_position(entity.id).distance_to(position) <= radius:
+			total += available(entity.id)
+	return total
+
+func consume_nearby_batch(position: Vector2, radius: float, owner: String, ingredients: Dictionary, reason: String) -> Dictionary:
+	if not position.is_finite() or radius < 0.0 or owner.is_empty() or ingredients.is_empty() or reason.is_empty():
+		return _reject("INVALID_BATCH","Physical position, owner and complete nearby batch required.")
+	var receipt: Array[Dictionary] = []
+	for type in ingredients:
+		var remaining: int = int(ingredients[type])
+		if remaining <= 0: return _reject("INVALID_BATCH","Positive whole ingredient quantities required.")
+		for entity in _entities.values():
+			if entity.kind != Records.Kind.STOCK or entity.owner != owner or entity.design_type != type or not _is_place(entity.holder_id) or _world_position(entity.id).distance_to(position) > radius: continue
+			var count := mini(remaining,available(entity.id))
+			if count > 0: receipt.append({"id":entity.id,"type":type,"count":count})
+			remaining -= count
+			if remaining == 0: break
+		if remaining > 0: return _reject("MISSING_NEARBY_INPUTS","Complete owned unreserved batch must be staged at nearby physical places.")
+	for portion in receipt: _remove_stock(portion.id,portion.count,reason,false)
+	return {"ok":true,"code":"OK","message":"Complete nearby physical batch consumed once.","receipt":receipt}
+
 func recover_consumed_material(id: String, type: String, quantity: int, unit_mass_kg: float, holder: String, owner: String) -> Dictionary:
 	# G19 cancellation returns the documented half of an already consumed batch.
 	if quantity <= 0 or id.is_empty() or not _free_id(id) or not _is_place(holder) or owner.is_empty() or int(_consumed.get(type,0)) < quantity:
@@ -886,6 +911,29 @@ func apply_heavy_repair(id: String, health: int) -> Dictionary:
 	entity.health = mini(entity.max_health,entity.health+health)
 	_event("Field repair restored actual heavy-object health",id)
 	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
+
+func apply_heavy_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
+	var entity: Records.Entity = _entities.get(id)
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or entity.health <= 0 or damage <= 0 or reason.is_empty():
+		return _reject("INVALID_HEAVY_DAMAGE","Positive damage requires an actual surviving vehicle or heavy object.")
+	var armour: int = int(BLAST_TOP_ARMOUR.get(entity.design_type,0))
+	if penetration < armour: return _ok("Blast failed to penetrate actual armour.",id)
+	entity.health = maxi(0,entity.health-damage)
+	if entity.health == 0: entity.state = "Destroyed by blast"
+	_event(reason,id)
+	return {"ok":true,"id":id,"health":entity.health,"penetrated":true,"message":"Actual heavy-object health reduced by blast."}
+
+func eject_destroyed_carrier_occupant(person_id: String, carrier_id: String, position: Vector2) -> Dictionary:
+	var person := _person(person_id)
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if person == null or carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.health > 0 or person.holder_id != carrier_id or person.assignment == Records.Assignment.DEAD or not position.is_finite() or not _is_place(carrier.holder_id):
+		return _reject("INVALID_EJECTION","Only a real occupant of a destroyed carrier can reach safe physical ground.")
+	person.holder_id = carrier.holder_id
+	person.position = position-_world_position(carrier.holder_id)
+	person.crew_station = ""
+	person_position_changed.emit(person_id)
+	_event("Destroyed vehicle occupant ejected to actual ground",person_id)
+	return _ok("Occupant left destroyed vehicle at a real safe point.",person_id)
 
 
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
