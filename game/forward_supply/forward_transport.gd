@@ -50,16 +50,18 @@ func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	var stock: Dictionary = rear.ledger.inspect_entity(stock_id)
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
-	if hull_committed(hull_id): return _fail("This physical hull already has an unfinished forward delivery.")
+	if hull_committed(hull_id) or (rear.military != null and rear.military.hull_committed(hull_id)):
+		return _fail("This physical hull already has an unfinished forward or troop delivery.")
 	var ready: String = _hq_hull_blocker(hull_id,hull)
 	if not ready.is_empty(): return _fail(ready)
 	if stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or quantity <= 0 or stock.available < quantity:
 		return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
 	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
 		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
-	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id):
+	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id) or (rear.military != null and rear.military.person_committed(loader_id)):
 		return _fail("The named actual HQ logistics loader is unavailable.")
 	if not _active_member(unloader_id): return _fail("Name one actual active formation member to unload at the destination.")
+	if rear.military != null and rear.military.person_committed(unloader_id): return _fail("This destination handler is committed to troop boarding or dismount.")
 	if not _empty_freight_hull(hull_id): return _fail("This one-type mission requires an empty T01 freight hold before loading.")
 	if float(quantity)*float(stock.unit_mass_kg) > float(hull.vehicle_spec.payload)+EPS:
 		return _fail("The requested physical freight exceeds the T01 payload.")

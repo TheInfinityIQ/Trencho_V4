@@ -1,6 +1,8 @@
 extends RefCounted
 ## G15 command organization. The shared ledger remains the owner of every person, hull and item.
 const Records = preload("res://game/identity/identity_records.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
+const TroopTransport = preload("res://game/military/troop_transport.gd")
 const HQ := Vector2(1640.0,91.0)
 const EPS := 0.000001
 const KINDS: Array[String] = ["Rifle","Machine gun","Mortar","Engineer","Medical","Artillery","Reconnaissance","Marksman"]
@@ -12,6 +14,7 @@ var companies: Dictionary = {}
 var platoons: Dictionary = {}
 var squads: Dictionary = {}
 var vehicles: Dictionary = {}
+var troop_transport: RefCounted
 var crew_reports: Dictionary = {} # person ID -> one real station report
 var replacement_reports: Dictionary = {} # person ID -> an unfilled active roster place
 var artillery_guns: Dictionary = {} # physical E13 ID -> one squad
@@ -25,6 +28,32 @@ func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	hq_position = rear.ledger.inspect_entity("hq-berth").position
 	rear.ledger.add_place("hq-formation","Military formation report at HQ",hq_position)
+	troop_transport = TroopTransport.new(rear,self)
+
+
+func request_troop_trip(hull_id: String, squad_ids: Array, board_place_id: String, dismount_place_id: String,
+		outbound_points: Array, return_points: Array) -> Dictionary:
+	return troop_transport.request_trip(hull_id,squad_ids,board_place_id,dismount_place_id,outbound_points,return_points)
+
+
+func request_reposition(hull_id: String, destination_place_id: String, route_points: Array, fallback_points: Array) -> Dictionary:
+	return troop_transport.request_reposition(hull_id,destination_place_id,route_points,fallback_points)
+
+
+func interrupt_troop_trip(id: String) -> Dictionary:
+	return troop_transport.interrupt_trip(id)
+
+
+func resume_troop_trip(id: String, route_points: Array = []) -> Dictionary:
+	return troop_transport.resume_trip(id,route_points)
+
+
+func hull_committed(id: String) -> bool:
+	return troop_transport.hull_committed(id)
+
+
+func person_committed(id: String) -> bool:
+	return troop_transport.person_committed(id)
 
 func add_initial_squad(id: String, kind: String, people: Array[String], company_id: String, platoon_id: String, owner: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -102,6 +131,7 @@ func form_squad(kind: String, people: Array[String]) -> Dictionary:
 	var parent: Dictionary = _available_platoon()
 	if parent.is_empty(): return _fail("Army has three companies, nine platoons or this parent's three squad places full.")
 	_sequence += 1
+	while squads.has("squad-%04d" % _sequence): _sequence += 1
 	var id := "squad-%04d" % _sequence
 	var accepted: Array[String] = []
 	for person_id in people:
@@ -167,15 +197,15 @@ func cancel_crew_report(person_id: String) -> Dictionary:
 	return {"ok":true,"message":"Only this unused crew station intent released; same person remains at HQ Reserve."}
 
 func next_boundary() -> float:
-	var next := INF
+	var next: float = troop_transport.next_boundary()
 	for row in squads.values():
 		next = minf(next,minf(float(row.report_due),float(row.replacement_due)))
 	for row in crew_reports.values(): next = minf(next,float(row.due))
 	for row in replacement_reports.values(): next = minf(next,float(row.due))
 	return next
 
-func advance_to(_at: float) -> void:
-	pass
+func advance_to(at: float) -> void:
+	troop_transport.advance_to(at)
 
 func record_death(person_id: String) -> void:
 	# One physical death vacates one roster place; living wounded remain assigned.
@@ -200,7 +230,7 @@ func record_death(person_id: String) -> void:
 
 func settle() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	var changed := false
+	var changed: bool = troop_transport.settle()
 	for id in replacement_reports.keys():
 		var report: Dictionary = replacement_reports[id]
 		if report.due > rear.time+EPS: continue
@@ -384,9 +414,18 @@ func assign_crew(person_id: String, hull_id: String, station: String) -> Diction
 	return {"ok":true,"message":"Qualified person committed to a timed HQ crew report; station remains empty until arrival."}
 
 func attach_vehicle(hull_id: String, parent_id: String) -> Dictionary:
+	return _attach_vehicle(hull_id,parent_id,true)
+
+
+func attach_initial_vehicle(hull_id: String, parent_id: String) -> Dictionary:
+	if _rear_ref.get_ref().time != 0.0: return _fail("Initial vehicle attachment is only available at time zero.")
+	return _attach_vehicle(hull_id,parent_id,false)
+
+
+func _attach_vehicle(hull_id: String, parent_id: String, require_dispatch: bool) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	if vehicles.has(hull_id) or not rear.dispatch.military_hulls.has(hull_id) or hull.is_empty() or hull.fleet_domain != "Military":
+	if vehicles.has(hull_id) or (require_dispatch and not rear.dispatch.military_hulls.has(hull_id)) or hull.is_empty() or hull.fleet_domain != "Military" or hull.owner not in ["army-blue","army-red"] or not Specs.TYPES.has(hull.design_type) or hull.vehicle_spec != Specs.TYPES[hull.design_type]:
 		return _fail("Attach one actual admitted military hull once; an incoming or rear hull is not an element.")
 	if _owned_count(vehicles,hull.owner) >= 24: return _fail("Army military fleet cap is 24 actual hulls.")
 	if _living_crew_id(hull,"Driver").is_empty(): return _fail("A vehicle element needs its living, actually assigned qualified driver before attachment.")
@@ -399,7 +438,7 @@ func attach_vehicle(hull_id: String, parent_id: String) -> Dictionary:
 		if companies[parent_id].service_vehicles.size() >= 2: return _fail("A company may attach at most two additional service vehicles.")
 		companies[parent_id].service_vehicles.append(hull_id)
 	else: return _fail("Choose one existing real platoon or company parent.")
-	vehicles[hull_id] = {"id":hull_id,"owner":hull.owner,"parent":parent_id,"crew":hull.crew_by_station.duplicate(true),"passenger_squad":"","ammo_target":{},"route_fuel":0.0,"blocker":""}
+	vehicles[hull_id] = {"id":hull_id,"owner":hull.owner,"parent":parent_id,"crew":hull.crew_by_station.duplicate(true),"passenger_squad":"","passenger_squads":[],"ammo_target":{},"route_fuel":0.0,"blocker":""}
 	return {"ok":true,"message":"Same military hull attached as a vehicle element with distinct actual crew."}
 
 func set_vehicle_mission(hull_id: String, ammo_target: Dictionary, route_fuel: float) -> Dictionary:
@@ -461,8 +500,10 @@ func board_squad(squad_id: String, hull_id: String) -> Dictionary:
 	var row: Dictionary = squads.get(squad_id,{})
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	if row.is_empty() or row.state != "Active" or not vehicles.has(hull_id) or not row.vehicle.is_empty() or not vehicles[hull_id].passenger_squad.is_empty() or hull.is_empty():
+	if row.is_empty() or row.state != "Active" or not vehicles.has(hull_id) or not row.vehicle.is_empty() or hull.is_empty() or hull_committed(hull_id):
 		return _fail("Only an active unboarded squad may use an attached military hull.")
+	if row.get("owner",rear.PLAYER) != hull.owner: return _fail("Squad passengers must belong to the hull's army.")
+	if _vehicle_squads(hull_id).size() >= (2 if hull.design_type == "T02" else 1): return _fail("This actual hull has no free separate squad commitment.")
 	if row.roster.size()+hull.passengers.size() > int(hull.vehicle_spec.passenger_seats):
 		return _fail("Actual squad passengers exceed seats; crew stations are separate.")
 	for id in row.roster:
@@ -471,17 +512,18 @@ func board_squad(squad_id: String, hull_id: String) -> Dictionary:
 			return _fail("Local supply handoff must finish before this person boards.")
 		if p.health <= 0 or p.holder_id != "hq-formation" or not p.crew_station.is_empty() or not p.position.is_equal_approx(hull.position):
 			return _fail("Every living roster member must physically reach the stopped hull before boarding.")
+	var reserved: Dictionary = _reserve_transport_manifest(hull_id,[squad_id])
+	if not reserved.ok: return reserved
 	for id in row.roster:
 		var boarded: Dictionary = rear.ledger.board_formation_passenger(id,hull_id)
 		if not boarded.ok: return boarded
-	row.vehicle = hull_id
-	vehicles[hull_id].passenger_squad = squad_id
 	return {"ok":true,"message":"Same squad members occupy passenger seats; actual crew remain separate."}
 
 func exit_squad(squad_id: String, place_id: String = "hq-formation") -> Dictionary:
 	var row: Dictionary = squads.get(squad_id,{})
 	if row.is_empty() or row.vehicle.is_empty(): return _fail("Only an actually boarded squad may disembark.")
 	var hull_id: String = row.vehicle
+	if hull_committed(hull_id): return _fail("Timed troop movement owns this hull's passenger exit.")
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	if hull.holder_id != "hq-berth" and hull.holder_id != place_id: return _fail("Stop at the same lawful actual exit place before squad disembarkation.")
@@ -489,9 +531,48 @@ func exit_squad(squad_id: String, place_id: String = "hq-formation") -> Dictiona
 	for id in row.roster:
 		var result: Dictionary = rear.ledger.exit_formation_passenger(id,hull_id,place_id)
 		if not result.ok: return result
-	row.vehicle = ""
-	vehicles[hull_id].passenger_squad = ""
+	_release_transport_squad(hull_id,squad_id)
 	return {"ok":true,"message":"Same roster physically left the passenger seats at the hull's actual place."}
+
+
+func _reserve_transport_manifest(hull_id: String, squad_ids: Array) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+	if not vehicles.has(hull_id) or hull.is_empty(): return _fail("Only one actual attached military hull can hold this manifest.")
+	var existing: Array = _vehicle_squads(hull_id)
+	if existing.size()+squad_ids.size() > (2 if hull.design_type == "T02" else 1): return _fail("The hull's separate squad places are full.")
+	var seen := {}
+	var count: int = hull.passengers.size()
+	for squad_id in squad_ids:
+		var row: Dictionary = squads.get(squad_id,{})
+		if seen.has(squad_id) or squad_id in existing or row.is_empty() or row.state != "Active" or not row.vehicle.is_empty() or row.get("owner",rear.PLAYER) != hull.owner:
+			return _fail("Only distinct active unboarded squads of this hull's army may reserve passenger places.")
+		seen[squad_id] = true
+		count += row.roster.size()
+	if count > int(hull.vehicle_spec.passenger_seats): return _fail("Named roster members exceed actual passenger seats.")
+	for squad_id in squad_ids:
+		squads[squad_id].vehicle = hull_id
+		existing.append(squad_id)
+	vehicles[hull_id].passenger_squads = existing
+	vehicles[hull_id].passenger_squad = str(existing[0]) if not existing.is_empty() else ""
+	return {"ok":true,"message":"Actual squad roster places committed to the same hull."}
+
+
+func _release_transport_squad(hull_id: String, squad_id: String) -> void:
+	if not vehicles.has(hull_id) or not squads.has(squad_id): return
+	var existing: Array = _vehicle_squads(hull_id)
+	existing.erase(squad_id)
+	vehicles[hull_id].passenger_squads = existing
+	vehicles[hull_id].passenger_squad = str(existing[0]) if not existing.is_empty() else ""
+	squads[squad_id].vehicle = ""
+
+
+func _vehicle_squads(hull_id: String) -> Array:
+	if not vehicles.has(hull_id): return []
+	var row: Dictionary = vehicles[hull_id]
+	var result: Array = row.get("passenger_squads",[]).duplicate()
+	if result.is_empty() and not str(row.get("passenger_squad","")).is_empty(): result.append(row.passenger_squad)
+	return result
 
 func _all_reported(row: Dictionary) -> bool:
 	for id in row.roster:
@@ -581,9 +662,17 @@ func _available_platoon() -> Dictionary:
 			break
 	if company_id.is_empty():
 		if _owned_count(companies,_rear_ref.get_ref().PLAYER) >= 3: return {}
-		company_id = "company-%02d" % (companies.size()+1)
+		var company_serial := companies.size()+1
+		company_id = "company-%02d" % company_serial
+		while companies.has(company_id):
+			company_serial += 1
+			company_id = "company-%02d" % company_serial
 		companies[company_id] = {"id":company_id,"platoons":[],"service_vehicles":[],"leader":"","blocker":"Awaiting an eligible existing subordinate leader."}
-	var platoon_id := "platoon-%02d" % (platoons.size()+1)
+	var platoon_serial := platoons.size()+1
+	var platoon_id := "platoon-%02d" % platoon_serial
+	while platoons.has(platoon_id):
+		platoon_serial += 1
+		platoon_id = "platoon-%02d" % platoon_serial
 	platoons[platoon_id] = {"id":platoon_id,"company":company_id,"squads":[],"vehicles":[],"leader":"","blocker":"Awaiting an eligible existing squad leader."}
 	companies[company_id].platoons.append(platoon_id)
 	return platoons[platoon_id]
@@ -854,38 +943,55 @@ func _at_berth(type: String) -> int:
 		if item.design_type == type and item.holder_id == "hq-berth" and item.owner == _rear_ref.get_ref().PLAYER: total += item.quantity
 	return total
 
-func snapshot() -> Dictionary:
+func snapshot(owner: String = "") -> Dictionary:
 	var rows: Array[Dictionary] = []
 	for row in squads.values():
+		if not owner.is_empty() and row.get("owner",_rear_ref.get_ref().PLAYER) != owner: continue
 		var copy: Dictionary = row.duplicate(true)
 		copy.readiness = readiness(row.id)
 		rows.append(copy)
-	return {"companies":companies.duplicate(true),"platoons":platoons.duplicate(true),"squads":rows,
-		"vehicles":vehicles.duplicate(true),"demands":demands.duplicate(true),"status":status,
-		"shortages":shortages(),
+	var company_rows: Dictionary = companies.duplicate(true)
+	var platoon_rows: Dictionary = platoons.duplicate(true)
+	var vehicle_rows: Dictionary = vehicles.duplicate(true)
+	if not owner.is_empty():
+		for id in company_rows.keys():
+			if company_rows[id].get("owner",_rear_ref.get_ref().PLAYER) != owner: company_rows.erase(id)
+		for id in platoon_rows.keys():
+			if platoon_rows[id].get("owner",_rear_ref.get_ref().PLAYER) != owner: platoon_rows.erase(id)
+		for id in vehicle_rows.keys():
+			if vehicle_rows[id].get("owner",_rear_ref.get_ref().PLAYER) != owner: vehicle_rows.erase(id)
+	return {"companies":company_rows,"platoons":platoon_rows,"squads":rows,
+		"vehicles":vehicle_rows,"demands":demands.duplicate(true) if owner.is_empty() or owner == _rear_ref.get_ref().PLAYER else {},
+		"status":status if owner.is_empty() else "Army command and physical formations active.",
+		"shortages":shortages(owner),"troop_transport":troop_transport.snapshot(owner),
 		"commander":commander(),"military_people":_rear_ref.get_ref().dispatch.military_people.size(),
 		"reserve":_rear_ref.get_ref().dispatch.hq_reserve.size()}
 
-func shortages() -> Array[String]:
+func shortages(owner: String = "") -> Array[String]:
 	var result: Array[String] = []
-	for demand in demands.values():
-		var assessment: Dictionary = assess_squad(demand.kind,_candidate_people(demand.kind))
-		if not assessment.ok: result.append("%s: %s" % [demand.kind,assessment.message])
+	if owner.is_empty() or owner == _rear_ref.get_ref().PLAYER:
+		for demand in demands.values():
+			var assessment: Dictionary = assess_squad(demand.kind,_candidate_people(demand.kind))
+			if not assessment.ok: result.append("%s: %s" % [demand.kind,assessment.message])
 	for row in squads.values():
+		if not owner.is_empty() and row.get("owner",_rear_ref.get_ref().PLAYER) != owner: continue
 		if row.state in ["Reporting","Equipping"]: result.append("%s: %s" % [row.id,row.blocker])
 		elif row.state == "Active" and row.vehicle.is_empty():
 			var readiness_result: Dictionary = capability(row.id)
 			if not readiness_result.ok: result.append("%s: %s" % [row.id,readiness_result.message])
 	for row in platoons.values():
+		if not owner.is_empty() and row.get("owner",_rear_ref.get_ref().PLAYER) != owner: continue
 		if row.leader.is_empty(): result.append("%s: %s" % [row.id,row.blocker])
 	for row in companies.values():
+		if not owner.is_empty() and row.get("owner",_rear_ref.get_ref().PLAYER) != owner: continue
 		if row.leader.is_empty(): result.append("%s: %s" % [row.id,row.blocker])
-	for hull_id in _rear_ref.get_ref().dispatch.military_hulls:
-		var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(hull_id)
-		if hull.is_empty() or not hull.has("vehicle_spec"): continue
-		for station in hull.vehicle_spec.stations:
-			if _living_crew_id(hull,station).is_empty(): result.append("%s: missing living, assigned %s crew" % [hull_id,station])
-		if not vehicles.has(hull_id) and hull.crew_by_station.has("Driver"): result.append("%s: no free platoon or company vehicle place" % hull_id)
+	if owner.is_empty() or owner == _rear_ref.get_ref().PLAYER:
+		for hull_id in _rear_ref.get_ref().dispatch.military_hulls:
+			var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(hull_id)
+			if hull.is_empty() or not hull.has("vehicle_spec"): continue
+			for station in hull.vehicle_spec.stations:
+				if _living_crew_id(hull,station).is_empty(): result.append("%s: missing living, assigned %s crew" % [hull_id,station])
+			if not vehicles.has(hull_id) and hull.crew_by_station.has("Driver"): result.append("%s: no free platoon or company vehicle place" % hull_id)
 	return result
 
 func readiness(id: String) -> float:
@@ -972,7 +1078,7 @@ func commander() -> String:
 	return ""
 
 func audit() -> Array[String]:
-	var errors: Array[String] = []
+	var errors: Array[String] = troop_transport.audit()
 	var rear: RefCounted = _rear_ref.get_ref()
 	for owner in ["army-blue","army-red"]:
 		if _owned_count(companies,owner) > 3 or _owned_count(platoons,owner) > 9 or _owned_count(squads,owner) > 27 or _owned_count(vehicles,owner) > 24: errors.append("G15 army organizational cap exceeded: " + owner)
@@ -988,7 +1094,7 @@ func audit() -> Array[String]:
 			var p: Dictionary = rear.ledger.inspect_entity(id)
 			if row.state == "Active" and (p.is_empty() or p.duty_id != row.id or p.assignment not in ["Formation Duty","Wounded","Recovery"]): errors.append("Active G15 roster lacks real duty: "+id)
 		if not row.vehicle.is_empty():
-			if not vehicles.has(row.vehicle) or vehicles[row.vehicle].passenger_squad != row.id: errors.append("G15 passenger squad lacks matching vehicle element: "+row.id)
+			if not vehicles.has(row.vehicle) or row.id not in _vehicle_squads(row.vehicle): errors.append("G15 passenger squad lacks matching vehicle element: "+row.id)
 	for row in platoons.values():
 		if row.squads.size() > 3 or row.vehicles.size() > 2: errors.append("Overfull G15 platoon "+row.id)
 		if not companies.has(row.company) or (companies.has(row.company) and row.id not in companies[row.company].platoons): errors.append("G15 platoon has no consistent company: "+row.id)
@@ -1006,6 +1112,9 @@ func audit() -> Array[String]:
 	for row in vehicles.values():
 		var hull: Dictionary = rear.ledger.inspect_entity(row.id)
 		if hull.is_empty() or hull.fleet_domain != "Military": errors.append("G15 vehicle element lacks real military hull: "+row.id)
+		for squad_id in _vehicle_squads(row.id):
+			if not squads.has(squad_id) or squads[squad_id].vehicle != row.id or squads[squad_id].get("owner",rear.PLAYER) != row.get("owner",rear.PLAYER):
+				errors.append("G15 passenger manifest lacks matching owned squad: "+row.id+":"+str(squad_id))
 		if platoons.has(row.parent):
 			if row.id not in platoons[row.parent].vehicles: errors.append("G15 hull missing from parent platoon: "+row.id)
 		elif companies.has(row.parent):
