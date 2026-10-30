@@ -18,6 +18,7 @@ const VehicleCombat = preload("res://game/vehicle_combat/vehicle_combat_service.
 const Recovery = preload("res://game/vehicle_recovery/recovery_service.gd")
 const Orders = preload("res://game/orders/order_service.gd")
 const Objectives = preload("res://game/objectives/objective_service.gd")
+const ForwardSupply = preload("res://game/forward_supply/forward_supply.gd")
 const Field = preload("res://game/field_structures/field_service.gd")
 const Bridges = preload("res://game/bridges/bridge_service.gd")
 const Mines = preload("res://game/mines/mine_service.gd")
@@ -56,6 +57,7 @@ func _init(expanded: bool = false, world_session: bool = false) -> void:
 	rear.vehicle_combat = VehicleCombat.new(rear)
 	rear.orders = Orders.new(rear)
 	rear.objectives = Objectives.new(rear)
+	rear.forward_supply = ForwardSupply.new(rear)
 	if connected_world:
 		rear.ledger.add_place("resource-central", "Central resource objective", Vector2(2000, 3000))
 		rear.objectives.register("resource-central", "Resource")
@@ -111,7 +113,7 @@ func snapshot() -> Dictionary:
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
 		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()
@@ -124,6 +126,7 @@ func audit() -> Array[String]:
 	failures.append_array(rear.recovery.audit())
 	failures.append_array(rear.orders.audit())
 	failures.append_array(rear.objectives.audit())
+	failures.append_array(rear.forward_supply.audit())
 	failures.append_array(rear.field_structures.audit())
 	failures.append_array(rear.bridges.audit())
 	failures.append_array(rear.demolition.audit())

@@ -112,17 +112,18 @@ func _draw() -> void:
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
 			_draw_marker(entity.position, Color("74c8ed") if entity.owner == "army-blue" else Color("e48378"), entity.id, font)
 		elif entity.kind == "PERSON" and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
-			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), "", font)
+			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), "", font, entity.id)
 	draw_string(font, area.position + Vector2(12, 22), "BATTLEFIELD  •  4,000 × 6,000 m", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e8f2ec"))
 	draw_line(area.position + Vector2(16, area.size.y - 24), area.position + Vector2(16 + 1000.0 * _scale(), area.size.y - 24), Color.WHITE, 3.0)
 	draw_string(font, area.position + Vector2(16, area.size.y - 30), "1 km", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 
 
-func _draw_marker(position: Vector2, colour: Color, title: String, font: Font) -> void:
+func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "") -> void:
 	var point := _screen(position)
-	draw_circle(point, 6.0 if title == selected_id else 4.0, colour)
-	if title == selected_id: draw_arc(point, 10.0, 0.0, TAU, 24, Color.WHITE, 1.5)
-	if not title.is_empty(): draw_string(font, point + Vector2(8, -6), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color.WHITE)
+	var id := entity_id if not entity_id.is_empty() else title
+	draw_circle(point, 6.0 if id == selected_id else 4.0, colour)
+	if id == selected_id: draw_arc(point, 10.0, 0.0, TAU, 24, Color.WHITE, 1.5)
+	if not title.is_empty() or id == selected_id: draw_string(font, point + Vector2(8, -6), id, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color.WHITE)
 
 
 func _refresh() -> void:

@@ -54,6 +54,7 @@ func _ready() -> void:
 	layout.add_child(_host)
 	_base = Base.instantiate()
 	_host.add_child(_base)
+	_base.session_changed.connect(_on_session_changed)
 	_battlefield = Battlefield.instantiate()
 	_battlefield.simulation = _base.simulation
 	_host.add_child(_battlefield)
@@ -87,6 +88,5 @@ func _clear_review() -> void:
 	_review = null
 
 
-func _process(_delta: float) -> void:
-	if _battlefield.simulation != _base.simulation:
-		_battlefield.simulation = _base.simulation
+func _on_session_changed(next_simulation: RefCounted) -> void:
+	_battlefield.simulation = next_simulation

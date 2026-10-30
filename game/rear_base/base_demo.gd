@@ -1,5 +1,6 @@
 extends Control
 ## One live scene, persistent panels, physical map and player commands.
+signal session_changed(next_simulation: RefCounted)
 const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
@@ -224,6 +225,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 
 func _start_session() -> void:
 	simulation = Simulation.new(scenario.selected == 1, true)
+	session_changed.emit(simulation)
 	base_map.simulation = simulation
 	base_map.reset_camera()
 	_pending_activity = null

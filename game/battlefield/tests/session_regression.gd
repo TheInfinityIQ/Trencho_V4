@@ -36,6 +36,9 @@ func _run() -> void:
 	await create_timer(0.05).timeout
 	_check(is_equal_approx(simulation.rear.time, paused), "Pause still stops the common clock")
 	_check(simulation.audit().is_empty(), "Connected session audit is clean")
+	base._start_session()
+	_check(base.simulation != simulation and battlefield.simulation == base.simulation, "New session rebinding is event driven")
+	_check(base.simulation.rear.time == 0.0 and base.simulation.rear.objectives.objectives.has("resource-central"), "New session starts paused with its own full-size world")
 	print("Battlefield session regression: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
 

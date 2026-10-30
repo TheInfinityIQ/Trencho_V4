@@ -432,6 +432,8 @@ func board_squad(squad_id: String, hull_id: String) -> Dictionary:
 		return _fail("Actual squad passengers exceed seats; crew stations are separate.")
 	for id in row.roster:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
+		if rear.forward_supply != null and rear.forward_supply.person_committed(id):
+			return _fail("Local supply handoff must finish before this person boards.")
 		if p.health <= 0 or p.holder_id != "hq-formation" or not p.crew_station.is_empty() or not p.position.is_equal_approx(hull.position):
 			return _fail("Every living roster member must physically reach the stopped hull before boarding.")
 	for id in row.roster:
