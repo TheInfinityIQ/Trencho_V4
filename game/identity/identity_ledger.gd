@@ -1,5 +1,7 @@
 extends RefCounted
 signal person_position_changed(person_id: String)
+signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
+var route_hazard: Callable
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
@@ -150,8 +152,10 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 	var entity := _entities[id]
 	if entity is Records.Person and not entity.crew_station.is_empty():
 		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
+	var previous := _world_position(id)
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
+	entity_moved.emit(id,previous,world_position)
 	if entity is Records.Person: person_position_changed.emit(id)
 	return _ok("Physical position updated by the timed activity.", id)
 
@@ -915,6 +919,31 @@ func apply_heavy_repair(id: String, health: int) -> Dictionary:
 	_event("Field repair restored actual heavy-object health",id)
 	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
 
+func apply_vehicle_surface_damage(id: String, damage: int, penetration: int, surface: String, reason: String) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	var armour: Dictionary = {
+		"T01":[0,0,0,0,0], "T02":[0,0,0,0,0], "T03":[0,0,0,0,0],
+		"T04":[35,20,12,10,15], "T05":[100,65,40,25,45],
+	}
+	var surfaces: Array[String] = ["Front","Side","Rear","Top","Bottom"]
+	if hull == null or hull.kind != Records.Kind.CARRIER or not armour.has(hull.design_type) or hull.health <= 0 or damage <= 0 or penetration < 0 or surface not in surfaces or reason.strip_edges().is_empty():
+		return _reject("INVALID_VEHICLE_STRIKE","A surviving hull, valid struck surface and positive attack are required.")
+	var rating: int = int(armour[hull.design_type][surfaces.find(surface)])
+	if penetration < rating:
+		return {"ok":true,"penetrated":false,"health":hull.health,"armour":rating,"surface":surface,"message":"Struck armour stopped the attack; zero hull damage."}
+	hull.health = maxi(0,hull.health-damage)
+	if hull.health == 0: hull.state = "Destroyed by vehicle strike"
+	_event(reason,id)
+	return {"ok":true,"penetrated":true,"health":hull.health,"armour":rating,"surface":surface,"message":"Actual hull health reduced by penetrating strike."}
+
+
+func apply_device_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
+	var result := apply_vehicle_surface_damage(id,damage,penetration,"Bottom",reason)
+	if result.get("penetrated",false) and result.health > 0:
+		_entities[id].damage_immobilized = true
+	return result
+
+
 func apply_heavy_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
 	var entity: Records.Entity = _entities.get(id)
 	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or entity.health <= 0 or damage <= 0 or reason.is_empty():
@@ -975,6 +1004,7 @@ func inspect_entity(id: String) -> Dictionary:
 			result.fuel = entity.fuel
 			result.health = entity.health
 			result.max_health = entity.max_health
+			result.damage_immobilized = entity.damage_immobilized
 			result.crew = []
 			result.crew_by_station = {}
 			result.passengers = []
