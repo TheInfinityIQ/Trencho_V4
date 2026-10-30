@@ -1,5 +1,6 @@
 extends RefCounted
 signal person_position_changed(person_id: String)
+signal vehicle_damaged(vehicle_id: String)
 signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
 var route_hazard: Callable
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
@@ -18,6 +19,7 @@ var _time: float = 0.0
 var _rear_hull_promises: Dictionary = {}
 var _fuel_loaded: float = 0.0
 var _fuel_burned: float = 0.0
+var _fuel_lost: float = 0.0
 const REAR_FLEET_LIMIT := 8
 var _events: Array[Dictionary] = []
 
@@ -145,13 +147,16 @@ func add_person(id: String, holder_id: String, owner: String,
 func move_entity(id: String, place_id: String, world_position: Vector2) -> Dictionary:
 	# Timed movement activities own eligibility and travel. This updates the
 	# authoritative physical endpoint, with carried goods following their holder.
-	if not _entities.has(id) or _entities[id].kind not in [Records.Kind.PERSON, Records.Kind.CARRIER]:
+	if not _entities.has(id) or (_entities[id].kind not in [Records.Kind.PERSON, Records.Kind.CARRIER] and not (_entities[id].kind == Records.Kind.HEAVY_OBJECT and not _entities[id].towed_by.is_empty())):
 		return _reject("INVALID_MOVING_ENTITY", "Only a physical person or carrier can move through this boundary.")
 	if not _is_place(place_id) or not world_position.is_finite():
 		return _reject("INVALID_DESTINATION", "Movement needs an existing place and finite world position.")
 	var entity := _entities[id]
 	if entity is Records.Person and not entity.crew_station.is_empty():
 		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
+	if entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
+		var travel: Vector2 = world_position-_world_position(id)
+		if travel.length_squared() > 0.000001: entity.facing_degrees = fposmod(rad_to_deg(travel.angle()),360.0)
 	var previous := _world_position(id)
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
@@ -796,6 +801,7 @@ func kill_person(person_id: String, reason: String) -> Dictionary:
 	if holder == null or holder.kind != Records.Kind.CARRIER: death_holder = "casualty-drop:" + person.id
 	for entity in _entities.values():
 		if entity.holder_id == person.id and entity.design_type in ["E03", "E04"]:
+			entity.personal_gear_owner = person.id
 			entity.holder_id = death_holder
 			entity.position = Vector2.ZERO
 	person.health = 0
@@ -814,9 +820,13 @@ func destroy_carrier_on_bridge(carrier_id: String) -> Dictionary:
 	for entity in _entities.values():
 		if entity.kind == Records.Kind.PERSON and entity.holder_id == carrier_id and entity.assignment != Records.Assignment.DEAD:
 			people.append(entity.id)
-	for person_id in people: kill_person(person_id,"Bridge collapse on water span")
 	carrier.health = 0
+	carrier.submerged = true
+	carrier.last_damage_at = _time
 	carrier.state = "Destroyed by bridge collapse"
+	if carrier.vehicle_spec.is_empty() or vehicle_damaged.get_connections().is_empty():
+		for person_id in people: kill_person(person_id,"Bridge collapse on water span")
+	vehicle_damaged.emit(carrier_id)
 	_event("Carrier destroyed on collapsed water span",carrier_id)
 	return _ok("Actual vehicle and its occupants lost on the water span.",carrier_id)
 
@@ -864,6 +874,7 @@ func _drop_personal_gear(person: Records.Person) -> void:
 	for entity in _entities.values():
 		if entity.holder_id != person.id or entity.kind not in [Records.Kind.WEAPON, Records.Kind.STOCK]: continue
 		if entity.design_type in ["E03", "E04"]: continue
+		entity.personal_gear_owner = person.id
 		entity.holder_id = destination
 		entity.position = Vector2.ZERO
 		entity.state_entered_at = _time
@@ -913,11 +924,33 @@ func recover_consumed_material(id: String, type: String, quantity: int, unit_mas
 
 func apply_heavy_repair(id: String, health: int) -> Dictionary:
 	var entity: Records.Entity = _entities.get(id)
-	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or health <= 0 or entity.health >= entity.max_health:
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or health <= 0 or entity.health <= 0 or entity.health >= entity.max_health:
 		return _reject("INVALID_HEAVY_REPAIR","Only an actually damaged vehicle or field gun can gain positive capped repair health.")
 	entity.health = mini(entity.max_health,entity.health+health)
 	_event("Field repair restored actual heavy-object health",id)
 	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
+
+func apply_heavy_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
+	var entity: Records.Entity = _entities.get(id)
+	if entity != null and entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
+		return apply_vehicle_surface_damage(id,damage,penetration,"Top",reason)
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or entity.health <= 0 or damage <= 0 or reason.is_empty():
+		return _reject("INVALID_HEAVY_DAMAGE","Positive damage requires an actual surviving vehicle or heavy object.")
+	var armour: int = int(BLAST_TOP_ARMOUR.get(entity.design_type,0))
+	if penetration < armour: return _ok("Blast failed to penetrate actual armour.",id)
+	entity.health = maxi(0,entity.health-damage)
+	if entity.health == 0: entity.state = "Destroyed by blast"
+	_event(reason,id)
+	return {"ok":true,"id":id,"health":entity.health,"penetrated":true,"message":"Actual heavy-object health reduced by blast."}
+
+func set_vehicle_facing(id: String, degrees: float) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.vehicle_spec.is_empty() or hull.health <= 0 or not is_finite(degrees):
+		return _reject("INVALID_VEHICLE_FACING","An actual surviving hull and finite heading are required.")
+	hull.facing_degrees = fposmod(degrees,360.0)
+	_event("Actual hull facing changed",id)
+	return _ok("Hull facing recorded for directional strikes.",id)
+
 
 func apply_vehicle_surface_damage(id: String, damage: int, penetration: int, surface: String, reason: String) -> Dictionary:
 	var hull: Records.Entity = _entities.get(id)
@@ -932,40 +965,133 @@ func apply_vehicle_surface_damage(id: String, damage: int, penetration: int, sur
 	if penetration < rating:
 		return {"ok":true,"penetrated":false,"health":hull.health,"armour":rating,"surface":surface,"message":"Struck armour stopped the attack; zero hull damage."}
 	hull.health = maxi(0,hull.health-damage)
+	hull.last_damage_at = _time
+	if hull.health <= hull.max_health/4: hull.damage_immobilized = true
 	if hull.health == 0: hull.state = "Destroyed by vehicle strike"
 	_event(reason,id)
+	vehicle_damaged.emit(id)
 	return {"ok":true,"penetrated":true,"health":hull.health,"armour":rating,"surface":surface,"message":"Actual hull health reduced by penetrating strike."}
 
 
 func apply_device_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
-	var result := apply_vehicle_surface_damage(id,damage,penetration,"Bottom",reason)
-	if result.get("penetrated",false) and result.health > 0:
-		_entities[id].damage_immobilized = true
-	return result
+	var hit := apply_vehicle_surface_damage(id,damage,penetration,"Bottom",reason)
+	if hit.get("penetrated",false) and hit.health > 0: _entities[id].damage_immobilized = true
+	return hit
 
-
-func apply_heavy_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
-	var entity: Records.Entity = _entities.get(id)
-	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or entity.health <= 0 or damage <= 0 or reason.is_empty():
-		return _reject("INVALID_HEAVY_DAMAGE","Positive damage requires an actual surviving vehicle or heavy object.")
-	var armour: int = int(BLAST_TOP_ARMOUR.get(entity.design_type,0))
-	if penetration < armour: return _ok("Blast failed to penetrate actual armour.",id)
-	entity.health = maxi(0,entity.health-damage)
-	if entity.health == 0: entity.state = "Destroyed by blast"
-	_event(reason,id)
-	return {"ok":true,"id":id,"health":entity.health,"penetrated":true,"message":"Actual heavy-object health reduced by blast."}
 
 func eject_destroyed_carrier_occupant(person_id: String, carrier_id: String, position: Vector2) -> Dictionary:
 	var person := _person(person_id)
 	var carrier: Records.Entity = _entities.get(carrier_id)
-	if person == null or carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.health > 0 or person.holder_id != carrier_id or person.assignment == Records.Assignment.DEAD or not position.is_finite() or not _is_place(carrier.holder_id):
-		return _reject("INVALID_EJECTION","Only a real occupant of a destroyed carrier can reach safe physical ground.")
+	if person == null or carrier == null or carrier.health > 0 or person.holder_id != carrier_id or not position.is_finite() or not _is_place(carrier.holder_id):
+		return _reject("INVALID_EJECTION","A real occupant of a destroyed hull and safe ground are required.")
 	person.holder_id = carrier.holder_id
 	person.position = position-_world_position(carrier.holder_id)
 	person.crew_station = ""
+	if person.assignment == Records.Assignment.PASSENGER:
+		_set_assignment(person,Records.Assignment.FORMATION_DUTY if not person.duty_id.is_empty() else Records.Assignment.AVAILABLE,person.duty_id)
 	person_position_changed.emit(person_id)
-	_event("Destroyed vehicle occupant ejected to actual ground",person_id)
-	return _ok("Occupant left destroyed vehicle at a real safe point.",person_id)
+	return _ok("Same person ejected onto actual adjacent ground.",person_id)
+
+
+func resolve_vehicle_wreck(id: String, submerged: bool) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.health > 0 or hull.destruction_resolved:
+		return _reject("INVALID_WRECK","An unresolved destroyed hull is required.")
+	hull.destruction_resolved = true # Set before callbacks or occupant processing.
+	hull.submerged = submerged
+	_fuel_lost += hull.fuel
+	hull.fuel = 0.0
+	hull.state = "Submerged wreck" if submerged else "Destroyed wreck"
+	if not hull.towing.is_empty(): set_tow_pair(id,hull.towing,false)
+	if not hull.towed_by.is_empty(): set_tow_pair(hull.towed_by,id,false)
+	var pile := "wreck:"+id
+	add_place(pile,"Owned salvage from "+id,_world_position(id))
+	var totals: Dictionary = {}
+	for child in _entities.values():
+		if child.holder_id == id and child.kind == Records.Kind.STOCK and child.personal_gear_owner.is_empty():
+			totals[child.design_type] = int(totals.get(child.design_type,0))+child.quantity
+	var retained: Dictionary = {}
+	for type in totals: retained[type] = 0 if submerged else int(totals[type])/2
+	for child in _entities.values():
+		if child.holder_id != id or child.kind != Records.Kind.STOCK or not child.personal_gear_owner.is_empty(): continue
+		for claim in _claims.values():
+			if claim.source_id == child.id and not claim.cancelled: release_claim(claim.id)
+		var keep: int = mini(child.quantity,int(retained[child.design_type]))
+		retained[child.design_type] -= keep
+		var loss: int = child.quantity-keep
+		if loss > 0: _remove_stock(child.id,loss,"Vehicle destruction",true)
+		child.holder_id = pile
+		child.position = Vector2.ZERO
+	return {"ok":true,"pile":pile,"submerged":submerged}
+
+
+func release_wreck_belongings(id: String, pile: String, submerged: bool) -> void:
+	for child in _entities.values():
+		if child.holder_id != id or child.kind not in [Records.Kind.WEAPON,Records.Kind.STOCK]: continue
+		if submerged:
+			if child.kind == Records.Kind.STOCK and child.quantity > 0:
+				for claim in _claims.values():
+					if claim.source_id == child.id and not claim.cancelled: release_claim(claim.id)
+				_remove_stock(child.id,child.quantity,"Submerged belongings",true)
+			elif child.kind == Records.Kind.WEAPON:
+				child.health = 0
+				child.state = "Lost underwater"
+		else:
+			child.holder_id = pile
+			child.position = Vector2.ZERO
+
+
+func _vehicle_material_sources(id: String) -> Array[String]:
+	var sources: Array[String] = []
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.vehicle_spec.is_empty(): return sources
+	for item in _entities.values():
+		if item.kind != Records.Kind.STOCK or item.design_type != "M11" or item.owner != hull.owner or available(item.id) <= 0 or _is_active_carry(item.id): continue
+		var holder: Records.Entity = _entities.get(item.holder_id)
+		if holder == null or holder.kind != Records.Kind.PLACE: continue
+		var delta: Vector2 = (_world_position(item.id)-_world_position(id)).rotated(-deg_to_rad(hull.facing_degrees)).abs()-Vector2(hull.vehicle_spec.footprint)/2.0
+		if Vector2(maxf(0,delta.x),maxf(0,delta.y)).length() <= 2.0: sources.append(item.id)
+	return sources
+
+
+func local_vehicle_material(id: String) -> int:
+	var total := 0
+	for source in _vehicle_material_sources(id): total += available(source)
+	return total
+
+
+func consume_local_vehicle_material(id: String, count: int) -> Dictionary:
+	if count <= 0 or local_vehicle_material(id) < count: return _reject("MISSING_LOCAL_M11","The complete unreserved M11 cost must be on nearby ground.")
+	var remaining := count
+	for source in _vehicle_material_sources(id):
+		var amount := mini(remaining,available(source))
+		if amount > 0: _remove_stock(source,amount,"Vehicle recovery "+id,false)
+		remaining -= amount
+		if remaining == 0: break
+	return _ok("Local M11 consumed once.",id)
+
+
+func finish_vehicle_recovery(id: String, mode: String) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER: return _reject("INVALID_RECOVERY","Actual hull required.")
+	if mode == "Clear wreck":
+		if hull.health > 0 or not hull.destruction_resolved or hull.submerged or hull.wreck_cleared: return _reject("INVALID_RECOVERY","Reachable uncleared land wreck required.")
+		hull.wreck_cleared = true
+		hull.state = "Cleared wreck"
+		return _ok("Wreck footprint cleared without extra metal.",id)
+	if hull.health <= 0: return _reject("INVALID_RECOVERY","Destroyed hulls cannot be repaired.")
+	if mode == "Mobility": hull.damage_immobilized = false
+	hull.health = mini(hull.max_health,hull.health+100)
+	return _ok("Paid repair restored capped health; terrain remains unchanged.",id)
+
+
+func set_tow_pair(tractor_id: String, target_id: String, attached: bool) -> Dictionary:
+	var tractor: Records.Entity = _entities.get(tractor_id)
+	var target: Records.Entity = _entities.get(target_id)
+	if tractor == null or target == null: return _reject("INVALID_TOW","Actual pair required.")
+	tractor.towing = target_id if attached else ""
+	target.towed_by = tractor_id if attached else ""
+	return _ok("Physical tow coupling updated.",tractor_id)
 
 
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
@@ -997,14 +1123,23 @@ func inspect_entity(id: String) -> Dictionary:
 		result.max_health = entity.max_health
 		result.packed = true
 		result.ammunition = {}
+		result.towing = entity.towing
+		result.towed_by = entity.towed_by
 	if entity.kind == Records.Kind.CARRIER:
 		result.fleet_domain = entity.fleet_domain
 		if not entity.vehicle_spec.is_empty():
 			result.vehicle_spec = entity.vehicle_spec.duplicate(true)
 			result.fuel = entity.fuel
+			result.facing_degrees = entity.facing_degrees
 			result.health = entity.health
 			result.max_health = entity.max_health
 			result.damage_immobilized = entity.damage_immobilized
+			result.last_damage_at = entity.last_damage_at
+			result.destruction_resolved = entity.destruction_resolved
+			result.submerged = entity.submerged
+			result.wreck_cleared = entity.wreck_cleared
+			result.towing = entity.towing
+			result.towed_by = entity.towed_by
 			result.crew = []
 			result.crew_by_station = {}
 			result.passengers = []
@@ -1076,7 +1211,7 @@ func snapshot() -> Dictionary:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
 		"created": _created.duplicate(), "consumed": _consumed.duplicate(),
-		"lost": _lost.duplicate(), "fuel_loaded":_fuel_loaded,"fuel_burned":_fuel_burned,
+		"lost": _lost.duplicate(), "fuel_loaded":_fuel_loaded,"fuel_burned":_fuel_burned,"fuel_lost":_fuel_lost,
 		"rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
@@ -1145,7 +1280,7 @@ func audit() -> Array[String]:
 			var key: String = entity.holder_id + ":" + entity.crew_station
 			if occupied_stations.has(key): failures.append("Double-filled station: " + key)
 			occupied_stations[key] = entity.id
-	if not is_equal_approx(tank_total + _fuel_burned, _fuel_loaded): failures.append("Manufactured vehicle fuel conservation")
+	if not is_equal_approx(tank_total + _fuel_burned + _fuel_lost, _fuel_loaded): failures.append("Manufactured vehicle fuel conservation")
 	for type in _created:
 		if not is_equal_approx(float(_created[type]), float(total_stock(type) + _consumed.get(type, 0) + _lost.get(type, 0)) + (_fuel_loaded if type == "M08" else 0.0)):
 			failures.append("Conservation failed: " + type)
@@ -1185,6 +1320,7 @@ func _split_stock(source: Records.Entity, quantity: int, destination_id: String)
 	var portion := _new_entity(new_id, Records.Kind.STOCK, source.design_type, source.owner,
 		"", destination_id, source.description)
 	portion.origin_id = source.origin_id
+	portion.personal_gear_owner = source.personal_gear_owner
 	portion.quantity = quantity
 	portion.unit_mass_kg = source.unit_mass_kg
 	source.quantity -= quantity

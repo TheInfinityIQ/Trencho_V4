@@ -45,6 +45,7 @@ func engineer_committed(id: String) -> bool:
 	return false
 
 func _busy(id: String) -> bool:
+	if _rear().recovery != null and _rear().recovery.workers.has(id): return true
 	return engineer_committed(id) or _rear().demolition.engineer_committed(id) or _rear().bridges.engineer_committed(id) or _rear().field_structures.engineer_committed(id)
 
 func spacing_clear(point: Vector2) -> bool:
@@ -203,7 +204,7 @@ func remote_trigger(id: String, vehicle: String) -> Dictionary:
 	var hull: Dictionary = _rear().ledger.inspect_entity(vehicle)
 	if row.get("code","") != "D03" or row.state != "Armed" or not _operator(row,row.controller): return _fail("An armed D03 needs its current qualified operator.")
 	var p: Dictionary = _rear().ledger.inspect_entity(row.controller)
-	if hull.get("kind","") != "CARRIER" or not hull.has("vehicle_spec") or hull.health <= 0 or hull.owner == row.owner or not _rear().combat.world.observe(p.position,hull.position).visible or _footprint_distance(row.position,hull.position,hull.position,hull,0.0) > 3.0+EPS: return _fail("Operator needs an actually observed hostile vehicle inside the designated six-metre trigger zone.")
+	if hull.get("kind","") != "CARRIER" or not hull.has("vehicle_spec") or hull.health <= 0 or hull.owner == row.owner or not _rear().combat.world.observe(p.position,hull.position).visible or _footprint_distance(row.position,hull.position,hull.position,hull,deg_to_rad(float(hull.get("facing_degrees",0.0)))) > 3.0+EPS: return _fail("Operator needs an actually observed hostile vehicle inside the designated six-metre trigger zone.")
 	for entity in _rear().ledger.snapshot().entities:
 		if entity.get("owner","") == row.owner and entity.kind in ["PERSON","CARRIER"] and (entity.get("assignment","") != "Dead" if entity.kind == "PERSON" else entity.get("health",100) > 0) and entity.position.distance_to(row.position) <= 11.0+EPS: return _fail("Known friendly within blast plus five metres withholds D03.")
 	_detonate(row,vehicle)
@@ -251,7 +252,7 @@ func _on_moved(id: String, start: Vector2, finish: Vector2) -> void:
 		if entity.get("health",100) <= 0: break
 		var touched := false
 		if row.code == "D01" and entity.kind == "PERSON" and _rear().ledger.inspect_entity(entity.holder_id).get("kind","") != "CARRIER": touched = _distance(row.position,start,finish) <= 1.0+EPS
-		if row.code == "D02" and entity.kind == "CARRIER" and entity.has("vehicle_spec"): touched = _footprint_distance(row.position,start,finish,entity,0.0) <= 1.5+EPS
+		if row.code == "D02" and entity.kind == "CARRIER" and entity.has("vehicle_spec"): touched = _footprint_distance(row.position,start,finish,entity,(finish-start).angle()) <= 1.5+EPS
 		if touched:
 			# Commit contact position before blast, including a coarse timed movement step.
 			var fraction: float = _contact_fraction(row,entity,start,finish)
@@ -277,13 +278,13 @@ func _detonate(row: Dictionary, trigger_id: String = "") -> void:
 			var cover: Dictionary = _rear().combat.world.cover(entity.position,row.position,0,false,row.position)
 			var injury: int = ceili(float(spec.injury)*maxf(0.0,1.0-distance/float(spec.radius))*float(cover.blast))
 			if injury > 0: _rear().combat.injure(entity.id,injury,true)
-		elif entity.kind == "CARRIER" and entity.has("vehicle_spec") and entity.health > 0 and row.code != "D01" and (entity.id == trigger_id or _footprint_distance(row.position,entity.position,entity.position,entity,0.0) <= spec.radius+EPS):
-			var distance: float = _footprint_distance(row.position,entity.position,entity.position,entity,0.0)
+		elif entity.kind == "CARRIER" and entity.has("vehicle_spec") and entity.health > 0 and row.code != "D01" and (entity.id == trigger_id or _footprint_distance(row.position,entity.position,entity.position,entity,deg_to_rad(float(entity.get("facing_degrees",0.0)))) <= spec.radius+EPS):
+			var distance: float = _footprint_distance(row.position,entity.position,entity.position,entity,deg_to_rad(float(entity.get("facing_degrees",0.0))))
 			var damage: int = int(spec.damage) if entity.id == trigger_id else ceili(float(spec.damage)*maxf(0.0,1.0-distance/float(spec.radius)))
 			if damage <= 0: continue
 			var hit: Dictionary = _rear().ledger.apply_device_damage(entity.id,damage,int(spec.penetration),row.code+" bottom blast")
 			var delegated: bool = _rear().ledger.has_signal("vehicle_damaged") and not _rear().ledger.get_signal_connection_list("vehicle_damaged").is_empty()
-			if hit.get("penetrated",false) and not delegated:
+			if hit.get("penetrated",false) and (hit.health > 0 or not delegated):
 				for person_id in entity.crew+entity.passengers:
 					if hit.health > 0: _rear().combat.injure(person_id,10,true)
 					else:

@@ -255,6 +255,7 @@ func _tank_tow_load() -> void:
 	var rear: RefCounted = base.rear
 	_hull(base,"tow-tractor","T05",Vector2(280.5,20.5))
 	_hull(base,"tow-tank","T05",Vector2(268.5,20.5))
+	_check(rear.ledger.set_tow_pair("tow-tractor","tow-tank",true).ok,"G21 load fixture seeds actual G24 coupling; timed attachment covered by G24")
 	var coupled := Routes.gross_kg(rear.ledger,"tow-tractor")+Routes.gross_kg(rear.ledger,"tow-tank")
 	_check(coupled > 60000.0 and coupled < 80000.0,"two actual fuelled tanks form below-80-tonne coupled gross")
 	_check(rear.bridges.request_crossing(id,"tow-tractor",0,false,"tow-tank").ok,"B03 accepts one compatible sub-limit tow combination")
@@ -445,11 +446,12 @@ func _damage_retimes_active_tow() -> void:
 	var rear: RefCounted = base.rear
 	_hull(base,"active-tractor","T05",Vector2(280.5,20.5))
 	_hull(base,"active-tow","T05",Vector2(268.5,20.5))
+	_check(rear.ledger.set_tow_pair("active-tractor","active-tow",true).ok,"G21 active-load fixture seeds actual G24 coupling")
 	var gross: float = Routes.gross_kg(rear.ledger,"active-tractor")+Routes.gross_kg(rear.ledger,"active-tow")
 	_check(gross > 40000.0 and gross < 80000.0,"actual coupled tank load fits sound B03 but exceeds damaged limit")
 	_check(rear.bridges.request_crossing(id,"active-tractor",0,false,"active-tow").ok,"coupled tow admitted before bridge damage")
 	rear.advance_time(0)
-	rear.advance_time(12)
+	rear.advance_time(24)
 	var before: Dictionary = rear.ledger.inspect_entity("active-tractor")
 	var fuel_before: float = before.fuel
 	_check(before.position.x > 301.0 and rear.bridges.inspect(id).traffic.size() == 1,"lead tank is actually over the water when damage occurs")

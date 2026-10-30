@@ -1,5 +1,7 @@
 # Foundation decisions
 
+G24 adds scene-owned [vehicle destruction and recovery](g24_vehicle_recovery.md), synchronously resolving one ledger destruction outcome across armour, demolition and bridge collapse, with paid repairs and physical tow coupling on the common clock.
+
 Recorded 2026-10-25. These decisions describe the current foundation and may change with the design brief.
 
 | Decision | Rationale and limits |

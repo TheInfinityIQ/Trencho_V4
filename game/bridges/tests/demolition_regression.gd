@@ -232,7 +232,7 @@ func _structure_remote(base: RefCounted, squad_id: String) -> void:
 	_check(fired.ok and rear.field_structures.inspect(site_id).state == "Destroyed" and rear.field_structures.inspect(site_id).health == 0,"remote D04 destroys actual 500-health S02")
 	_check(rear.ledger.inspect_entity("hostile-near-structure").assignment == "Wounded","blast inflicts 200 actual infantry injury")
 	_check(rear.ledger.inspect_entity("blast-t01").health == 250 and rear.ledger.inspect_entity("blast-passenger").health == 90,"penetrating blast deals 200 hull and only 10 protected occupant injury")
-	_check(rear.ledger.inspect_entity("wreck-t01").state == "Destroyed by blast" and rear.ledger.inspect_entity("wreck-passenger").holder_id == site_id and rear.ledger.inspect_entity("wreck-passenger").health == 40,"destroyed hull ejects occupant to passable ground with one 60 injury")
+	_check(rear.ledger.inspect_entity("wreck-t01").destruction_resolved and rear.ledger.inspect_entity("wreck-passenger").holder_id == site_id and rear.ledger.inspect_entity("wreck-passenger").health == 40,"G21/G24 destroying blast uses one authoritative recovery outcome and one60injury")
 
 func _world_remote(base: RefCounted, squad_id: String) -> void:
 	var rear: RefCounted = base.rear

@@ -175,6 +175,10 @@
         "cases": ["test_a37_a38_buttons_at_development_resolution"]
       },
     {
+      "path": "game/vehicle_recovery/tests/recovery_input_test.gd",
+      "cases": ["test_recovery_destruction_repair_and_tow_controls_at_development_size"]
+    },
+    {
       "path": "game/bridges/tests/demolition_input_test.gd",
       "cases": ["test_a36_real_buttons_clearance_and_small_render"]
     },
@@ -312,6 +316,12 @@
       "path": "game/vehicles/tests/vehicle_input_test.gd",
       "cases": [
         "test_normal_rear_vehicle_controls_report_refuel_drive_same_produced_hull_and_fit_small_view"
+      ]
+    },
+    {
+      "path": "game/vehicle_combat/tests/vehicle_combat_input_test.gd",
+      "cases": [
+        "test_vehicle_combat_review_accepts_mouse_input_and_renders_real_hulls"
       ]
     }
   ]
