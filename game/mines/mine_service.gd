@@ -45,6 +45,7 @@ func engineer_committed(id: String) -> bool:
 	return false
 
 func _busy(id: String) -> bool:
+	if _rear().recovery != null and _rear().recovery.workers.has(id): return true
 	return engineer_committed(id) or _rear().demolition.engineer_committed(id) or _rear().bridges.engineer_committed(id) or _rear().field_structures.engineer_committed(id)
 
 func spacing_clear(point: Vector2) -> bool:

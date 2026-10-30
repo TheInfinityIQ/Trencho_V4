@@ -46,6 +46,7 @@ func order(kind: String, target_id: String, squad_id: String, engineers: Array[S
 	for job in projects.values():
 		if job.state not in ["Detonated","Cancelled","Inert"] and job.target_id == target_id: return _fail("Target already has an active attached charge.")
 	for id in engineers:
+		if _rear().recovery != null and _rear().recovery.workers.has(id): return _fail("Engineer already owns repair or coupling work.")
 		if (_rear().mines != null and _rear().mines.engineer_committed(id)) or engineer_committed(id) or _rear().bridges.engineer_committed(id) or _rear().field_structures.engineer_committed(id): return _fail("An engineer cannot work on two demolition, construction or repair jobs together.")
 	var site: Vector2 = _site(target,kind,bank)
 	for other in projects.values():

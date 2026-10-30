@@ -9,6 +9,7 @@ func _initialize() -> void:
 	_tow_contact(true)
 	_tow_contact(false,false)
 	_rotated_blast()
+	_bridge_contact()
 	print("G22/G24 recovery mine regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -55,7 +56,7 @@ func _tow_contact(trailing: bool, destroying: bool = true) -> void:
 	expect(not rear.recovery.journeys.tractor.blocked_reason.is_empty(),"mine contact holds the interrupted coupled journey")
 	if trailing:
 		expect(absf(lead.position.x-200.25) < 0.001 and absf(target.position.x-188.25) < 0.001,"trailing footprint contact limits both actual bodies before tractor overshoots")
-		expect(target.health == 450 and lead.health == 1200,"only trailing tank takes the actual bottom hit")
+		expect(target.health == 450 and lead.health == 875,"trailing tank takes direct bottom hit and nearby tractor receives actual secondary falloff")
 		expect(is_equal_approx(lead.fuel,fuel-expected_burn),"surviving tractor retains all untravelled fuel")
 		for station in ["Driver","Gunner","Loader","Commander"]:
 			expect(ledger.inspect_entity("tow-"+station).health == 90,"surviving trailing hull retains once-only10injury: "+station)
@@ -90,3 +91,27 @@ func _rotated_blast() -> void:
 	rear.mines._detonate(rear.mines.projects[mine])
 	expect(ledger.inspect_entity("tractor").health == 996,"stationary rotated hull uses actual long-axis distance for secondary bottom blast")
 	expect(fixture.base.audit().is_empty(),"rotated secondary blast reconciles shared state")
+
+func _bridge_contact() -> void:
+	var fixture := Fixture.new()
+	var rear: RefCounted = fixture.base.rear
+	var ledger: RefCounted = rear.ledger
+	ledger.apply_vehicle_surface_damage("tractor",600,999,"Side","Bridge contact prior hull damage")
+	expect(rear.recovery.start_coupling("tractor","tow","repairer").ok,"real bridge recovery pair coupling")
+	rear.advance_time(20)
+	var mine := _armed(rear,Vector2(88.5,20.5))
+	var before: Dictionary = ledger.snapshot()
+	var fuel: float = ledger.inspect_entity("tractor").fuel
+	expect(rear.bridges.request_crossing(fixture.b03,"tractor",0).ok,"unknown approach device does not grant mine knowledge")
+	rear.advance_time(100)
+	var lead: Dictionary = ledger.inspect_entity("tractor")
+	var target: Dictionary = ledger.inspect_entity("tow")
+	var crossing: Dictionary = rear.bridges.inspect(fixture.b03).traffic[0]
+	var travelled: float = lead.position.distance_to(Vector2(80.5,20.5))
+	var expected_burn: float = float(crossing.fuel)*travelled/Vector2(crossing.finish-crossing.start).length()
+	expect(lead.health == 0 and absf(lead.position.x-82.75) < 0.001,"bridge lead destroys at real approach contact and is never rolled back")
+	expect(target.position == Vector2(68.5,20.5) and target.towed_by.is_empty(),"bridge destruction never moves the stale uncoupled tow snapshot")
+	expect(is_equal_approx(float(ledger.snapshot().fuel_burned)-float(before.fuel_burned),expected_burn),"bridge fuel charges only real approach prefix")
+	expect(is_equal_approx(float(ledger.snapshot().fuel_lost)-float(before.fuel_lost),fuel-expected_burn),"bridge destruction loses only remaining tank fuel")
+	expect(crossing.paused and rear.mines.inspect(mine).state == "Detonated","actual contact pauses bridge traffic after one detonation")
+	expect(fixture.base.audit().is_empty(),"bridge mine contact preserves occupants goods and fuel accounting")

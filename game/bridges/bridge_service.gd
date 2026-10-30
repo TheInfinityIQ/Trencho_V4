@@ -239,37 +239,62 @@ func advance_to(at: float) -> void:
 		if crossing.get("paused",false): continue
 		var earned: float = minf(delta,crossing.seconds-crossing.progress)
 		var lead_before: Dictionary = _rear().ledger.inspect_entity(crossing.entity)
+		if lead_before.get("health",0) <= 0 or lead_before.get("damage_immobilized",false):
+			crossing.paused = true
+			crossing.blocked_reason = "Destroyed or immobilized crossing body cannot travel."
+			continue
 		if lead_before.get("holder_id","") != crossing.place or lead_before.get("kind","") == "PERSON" and not lead_before.crew_station.is_empty():
 			crossing.blocked_reason = "Crossing body left its independent physical place; progress held until real disembark or return."
 			continue
 		var tow_before: Dictionary = {}
 		if not crossing.get("tow","").is_empty():
 			tow_before = _rear().ledger.inspect_entity(crossing.tow)
+			if tow_before.get("health",0) <= 0 or lead_before.get("towing","") != crossing.tow or tow_before.get("towed_by","") != crossing.entity:
+				crossing.paused = true
+				crossing.blocked_reason = "Actual surviving coupling required before further crossing travel."
+				continue
 			if tow_before.get("holder_id","") != crossing.tow_place:
 				crossing.blocked_reason = "Towed vehicle left its physical place; coupled crossing progress held."
 				continue
 		var next_progress: float = crossing.progress+earned
 		var position: Vector2 = crossing.start.lerp(crossing.finish,next_progress/crossing.seconds)
+		var travel: Vector2 = position-Vector2(lead_before.position)
+		var fraction := 1.0
+		if _rear().mines != null:
+			fraction = _rear().mines.movement_limit(crossing.entity,lead_before.position,position)
+			if not tow_before.is_empty(): fraction = minf(fraction,_rear().mines.movement_limit(crossing.tow,tow_before.position,Vector2(tow_before.position)+travel))
+		position = Vector2(lead_before.position)+travel*fraction
+		if crossing.fuel > 0.0:
+			var burned: Dictionary = _rear().ledger.burn_vehicle_fuel(crossing.entity,crossing.fuel*earned/crossing.seconds*fraction)
+			if not burned.ok:
+				crossing.blocked_reason = "Actual fuel unavailable; physical crossing held before movement."
+				continue
 		var moved: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,position)
 		if not moved.ok:
 			crossing.blocked_reason = "Actual crossing movement failed: "+moved.message
 			continue
+		crossing.progress += earned*fraction
+		var lead: Dictionary = _rear().ledger.inspect_entity(crossing.entity)
+		var stopped: bool = lead.get("health",0) <= 0 or lead.get("damage_immobilized",false)
 		if not crossing.get("tow","").is_empty():
-			var behind: Vector2 = -(crossing.finish-crossing.start).normalized()*12.0
-			var tow_moved: Dictionary = _rear().ledger.move_entity(crossing.tow,crossing.tow_place,position+behind)
+			var current_tow: Dictionary = _rear().ledger.inspect_entity(crossing.tow)
+			stopped = stopped or current_tow.get("health",0) <= 0 or lead.get("towing","") != crossing.tow or current_tow.get("towed_by","") != crossing.entity
+			if stopped:
+				crossing.paused = true
+				crossing.blocked_reason = "Mine damage or coupling loss stopped both crossing bodies."
+				continue
+			var tow_moved: Dictionary = _rear().ledger.move_entity(crossing.tow,crossing.tow_place,Vector2(tow_before.position)+travel*fraction)
 			if not tow_moved.ok:
-				var restored: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,lead_before.position)
-				crossing.blocked_reason = "Actual tow movement failed: "+tow_moved.message+("; lead rollback failed: "+restored.message if not restored.ok else "")
+				crossing.paused = true
+				crossing.blocked_reason = "Actual tow movement failed: "+tow_moved.message
 				continue
-		if crossing.fuel > 0.0:
-			var burned: Dictionary = _rear().ledger.burn_vehicle_fuel(crossing.entity,crossing.fuel*earned/crossing.seconds)
-			if not burned.ok:
-				var lead_restored: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,lead_before.position)
-				var tow_restored := {"ok":true,"message":""}
-				if not tow_before.is_empty(): tow_restored = _rear().ledger.move_entity(crossing.tow,crossing.tow_place,tow_before.position)
-				crossing.blocked_reason = "Actual fuel unavailable; crossing movement held."+(" Rollback failed." if not lead_restored.ok or not tow_restored.ok else "")
-				continue
-		crossing.progress = next_progress
+			current_tow = _rear().ledger.inspect_entity(crossing.tow)
+			lead = _rear().ledger.inspect_entity(crossing.entity)
+			stopped = current_tow.health < tow_before.health or current_tow.health <= 0 or lead.health <= 0 or lead.towing != crossing.tow
+		if stopped or fraction < 1.0-EPS:
+			crossing.paused = true
+			crossing.blocked_reason = "Mine contact stopped actual crossing progress; no rollback or further movement."
+			continue
 		crossing.blocked_reason = ""
 
 func settle() -> bool:

@@ -89,6 +89,10 @@ func _engineer(id: String, hull: Dictionary) -> bool:
 	if Vector2(maxf(0,delta.x),maxf(0,delta.y)).length() > 2.0+EPS: return false
 	return _rear().military._held(id,"E08") > 0 and _ground(p.position)
 
+func _other_commitment(id: String) -> bool:
+	var rear: RefCounted = _rear()
+	return rear.bridges.engineer_committed(id) or rear.field_structures.engineer_committed(id) or rear.demolition.engineer_committed(id) or rear.mines.engineer_committed(id)
+
 func start_repair(id: String, engineers: Array, mode: String = "Health") -> Dictionary:
 	var hull: Dictionary = _rear().ledger.inspect_entity(id)
 	if hull.get("kind","") != "CARRIER" or not hull.has("vehicle_spec") or mode not in ["Health","Mobility","Clear wreck"]: return _fail("Actual hull and valid recovery action required.")
@@ -101,7 +105,7 @@ func start_repair(id: String, engineers: Array, mode: String = "Health") -> Dict
 	if engineers.is_empty() or engineers.size() > 2: return _fail("One or two actual engineers required.")
 	var unique: Dictionary = {}
 	for person_id in engineers:
-		if unique.has(person_id) or workers.has(person_id) or _rear().bridges.engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or not _engineer(person_id,hull): return _fail("Distinct available P02 with E08 must be within two metres on accessible ground.")
+		if unique.has(person_id) or workers.has(person_id) or _other_commitment(person_id) or not _engineer(person_id,hull): return _fail("Distinct available P02 with E08 must be within two metres on accessible ground.")
 		unique[person_id] = true
 	var cost := 10 if mode == "Health" else 20
 	var paid: Dictionary = _rear().ledger.consume_local_vehicle_material(id,cost)
@@ -230,7 +234,7 @@ func _coupling_check(tractor_id: String, target_id: String, engineer_id: String,
 	return {"ok":true}
 
 func start_coupling(tractor: String, target: String, engineer: String, attach: bool = true) -> Dictionary:
-	if couplings.has(tractor) or workers.has(engineer) or jobs.has(tractor) or jobs.has(target) or _rear().bridges.engineer_committed(engineer) or _rear().field_structures.engineer_committed(engineer): return _fail("Recovery work already owns this person or vehicle.")
+	if couplings.has(tractor) or workers.has(engineer) or jobs.has(tractor) or jobs.has(target) or _other_commitment(engineer): return _fail("Recovery work already owns this person or vehicle.")
 	var check := _coupling_check(tractor,target,engineer,attach)
 	if not check.ok: return check
 	couplings[tractor] = {"tractor":tractor,"target":target,"engineer":engineer,"attach":attach,"progress":0.0,"last":_rear().time,"rate":0.0}
