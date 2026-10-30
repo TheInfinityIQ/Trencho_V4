@@ -56,8 +56,7 @@ func _on_damage(id: String) -> void:
 		if safe.is_finite(): rear.ledger.eject_destroyed_carrier_occupant(person_id,id,safe)
 	rear.ledger.release_wreck_belongings(id,result.pile,submerged)
 	if not submerged:
-		world.obstacles.append({"id":"wreck:"+id,"rect":Rect2(hull.position-hull.vehicle_spec.footprint/2.0,hull.vehicle_spec.footprint),"solid":true,"classes":[0,1,2]})
-		world.revision += 1
+		world.obstacle("wreck:"+id,Rect2(hull.position-hull.vehicle_spec.footprint/2.0,hull.vehicle_spec.footprint),0.0,1.0,true,false)
 	rear.dispatch.military_hulls.erase(id)
 	events.append({"time":rear.time,"hull":id,"kind":"Destroyed","pile":result.pile,"submerged":submerged,"occupants":hull.crew+hull.passengers})
 

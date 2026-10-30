@@ -59,7 +59,7 @@ func _water_and_no_exit() -> void:
 		var fixture := Fixture.new()
 		var rear: RefCounted = fixture.base.rear
 		if submerged: rear.combat.world.paint(Rect2i(490,40,20,20),"TR11")
-		else: rear.combat.world.obstacles.append({"id":"sealed","rect":Rect2(490,40,20,20),"solid":true,"classes":[0,1,2]})
+		else: rear.combat.world.obstacle("sealed",Rect2(490,40,20,20),0.0,2.0,true)
 		rear.ledger.apply_vehicle_surface_damage("carrier",1000,999,"Top","No safe exit")
 		for id in ["healthy","injured","incapacitated"]: expect(rear.ledger.inspect_entity(id).assignment == "Dead","no survivable exit kills once")
 		if submerged: expect(rear.ledger.inspect_entity("freight-a").quantity+rear.ledger.inspect_entity("freight-b").quantity == 0 and rear.ledger.inspect_entity("odd-rounds").quantity == 0,"deep water loses all cargo/ammunition")
