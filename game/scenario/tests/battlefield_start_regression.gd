@@ -7,11 +7,13 @@ var checks := 0
 var failures := 0
 
 func _initialize() -> void:
-	var base := Base.new(true,true,true,Vector2(2000,450),false)
+	var base := Base.new(false,true,true,Vector2(2000,450),false,{"heavy":["R30"],"munitions":["R33"]})
 	var rear: RefCounted = base.rear
 	var armies: Dictionary = Start.apply(base)
 	var facts: Array = rear.ledger.snapshot().entities
 	_check(not rear.objectives.objectives.has("resource-central") and rear.ledger.inspect_entity("enemy-hq").is_empty(),"Authored scenario can declare its own sites without extra diagnostic objectives")
+	_check(not base.expanded_catalogue and rear.heavy_production.recipe_accessible("R30") and rear.munitions_production.recipe_accessible("R33"),"Declared C30 permits the APC and autocannon recipe")
+	_check(not rear.heavy_production.recipe_accessible("R31") and not rear.production.recipe_accessible("R03"),"Selected card does not open the expanded catalogue")
 	for owner in ["army-blue","army-red"]:
 		var people := 0
 		var fixed_staff := 0
@@ -48,8 +50,10 @@ func _initialize() -> void:
 			squad_count += 1
 			_check(squad.roster.size() == 8 and rear.military.capability(squad.id).ok,"Each starting squad has its actual eight-person package")
 			for id in squad.roster:
-				qualification_counts[rear.ledger.inspect_entity(id).qualification] += 1
+				var person: Dictionary = rear.ledger.inspect_entity(id)
+				qualification_counts[person.qualification] += 1
 				infantry_rounds += rear.military._rounds(id)
+				if not squad.id.ends_with("-02"): _check(person.position.distance_to(rear.ledger.inspect_entity(person.holder_id).position) <= 20,"Initial transport queues stay near distinct real vehicle pads")
 		_check(squad_count == 5 and infantry_rounds == 1920 and qualification_counts == {"None":36,"P02":2,"P03":2},"Exact infantry qualifications and existing 1920 rounds")
 	_check(rear.receiving.rear_population() == 60 and rear.ledger.rear_fleet_status(rear.PLAYER).live == 3,"Battlefield seed does not consume or duplicate rear people or hull places")
 	_check(base.audit().is_empty(),"Complete initial physical ledger reconciles: "+str(base.audit()))

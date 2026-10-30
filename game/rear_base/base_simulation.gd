@@ -31,7 +31,7 @@ var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
 
-func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true) -> void:
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}) -> void:
 	rear = Rear.new("Empty",not initial_rear)
 	expanded_catalogue = expanded
 	connected_world = world_session
@@ -79,6 +79,9 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	var workshop_access: Array[String] = []
 	var munitions_access: Array[String] = []
 	var support_access: Array[String] = []
+	workshop_access.assign(declared_access.get("workshop",[]))
+	munitions_access.assign(declared_access.get("munitions",[]))
+	support_access.assign(declared_access.get("support",[]))
 	if expanded:
 		workshop_access.assign(R01.CHOICES)
 		munitions_access.assign(R02.CHOICES)
@@ -87,6 +90,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	rear.munitions_production = R02.new(rear, munitions_access)
 	rear.support_production = Support.new(rear, support_access)
 	var heavy_access: Array[String] = []
+	heavy_access.assign(declared_access.get("heavy",[]))
 	if expanded: heavy_access.assign(Heavy.CHOICES)
 	rear.heavy_production = Heavy.new(rear,heavy_access)
 	rear.materials_production = R26.new(rear)

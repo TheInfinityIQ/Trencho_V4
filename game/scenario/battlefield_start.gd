@@ -14,9 +14,13 @@ static func apply(base: RefCounted) -> Dictionary:
 		var owner: String = "army-"+side
 		var prefix: String = "start-"+side
 		var centre := Vector2(2000,400 if side == "blue" else 5600)
-		var stage := centre+Vector2(0,250 if side == "blue" else -250)
+		var stage := centre+Vector2(0,220 if side == "blue" else -220)
 		var stage_id: String = prefix+"-stage"
 		_must(rear.ledger.add_place(stage_id,"Initial troop staging",stage))
+		for hull_index in 4:
+			var pad_id: String = prefix+"-vehicle-%02d-pad" % hull_index
+			var at: Vector2 = stage+Vector2(-30 if hull_index%2 == 0 else 30,-12 if hull_index < 2 else 20)
+			_must(rear.ledger.add_place(pad_id,"Initial vehicle staging pad",at))
 		var hq_stock: String = "hq-stock" if side == "blue" else prefix+"-hq-stock"
 		var hq_reserve: String = "hq-reserve" if side == "blue" else prefix+"-hq-reserve"
 		if side == "red":
@@ -43,10 +47,14 @@ static func apply(base: RefCounted) -> Dictionary:
 			for person_index in 8:
 				var person_id: String = squad_id+"-person-%02d" % person_index
 				var qualification := "P02" if squad_index == 3 and person_index < 2 else ("P03" if squad_index == 4 and person_index < 2 else "None")
-				_must(rear.ledger.add_person(person_id,stage_id,owner,Records.Assignment.AVAILABLE,true,qualification,"None"))
-				var at: Vector2 = stage+Vector2((-30 if squad_index < 2 else 30)+(person_index-3.5)*2.0,-18 if squad_index in [0,3] else 0)
+				var boarding_hull := 0 if squad_index < 2 else 1
+				if side == "red" and squad_index == 1: boarding_hull = 1
+				var person_place: String = stage_id if squad_index == 2 else prefix+"-vehicle-%02d-pad" % boarding_hull
+				_must(rear.ledger.add_person(person_id,person_place,owner,Records.Assignment.AVAILABLE,true,qualification,"None"))
+				var queue_y := -18 if squad_index in [0,3] else (-6 if side == "red" and squad_index == 1 else 0)
+				var at: Vector2 = stage+Vector2((-30 if boarding_hull == 0 else 30)+(person_index-3.5)*2.0,queue_y)
 				if squad_index == 2: at = centre+Vector2((person_index-3.5)*2,60 if side == "blue" else -60)
-				_must(rear.ledger.move_entity(person_id,stage_id,at))
+				_must(rear.ledger.move_entity(person_id,person_place,at))
 				_must(rear.ledger.add_weapon(person_id+"-rifle","E01",4,person_id,owner,"E02",30))
 				_stock(rear,person_id,"E02",60 if kind == "Rifle" else 30,owner)
 				_must(rear.ledger.load_rounds(person_id+"-rifle",person_id+"-E02",10))
@@ -65,8 +73,6 @@ static func apply(base: RefCounted) -> Dictionary:
 			var type := "T02" if hull_index < 2 else ("T01" if hull_index == 2 else "T03")
 			var hull_id: String = prefix+"-vehicle-%02d" % hull_index
 			var pad_id: String = hull_id+"-pad"
-			var at: Vector2 = stage+Vector2(-30 if hull_index%2 == 0 else 30,-12 if hull_index < 2 else 20)
-			_must(rear.ledger.add_place(pad_id,"Initial vehicle staging pad",at))
 			_must(rear.ledger.add_initial_vehicle(hull_id,type,pad_id,owner,Specs.TYPES[type],float(Specs.TYPES[type].tank_capacity),"Military"))
 			for station in Specs.TYPES[type].stations:
 				var crew_id: String = hull_id+"-"+str(station).to_lower()
