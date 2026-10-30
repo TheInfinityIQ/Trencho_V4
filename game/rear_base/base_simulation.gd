@@ -24,13 +24,15 @@ const Bridges = preload("res://game/bridges/bridge_service.gd")
 const Mines = preload("res://game/mines/mine_service.gd")
 const Demolition = preload("res://game/bridges/demolition_service.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
-var rear := Rear.new("Empty")
+const RearStart = preload("res://game/scenario/rear_start.gd")
+var rear: RefCounted
 var receiving: RefCounted
 var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
 
-func _init(expanded: bool = false, world_session: bool = false) -> void:
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false) -> void:
+	rear = Rear.new("Empty",not initial_rear)
 	expanded_catalogue = expanded
 	connected_world = world_session
 	# G02 deposits at the same accepted G03 store/entrance.
@@ -72,7 +74,8 @@ func _init(expanded: bool = false, world_session: bool = false) -> void:
 	receiving.external_rear_reservations = func() -> int:
 		var owner: RefCounted = dispatch_rear_ref.get_ref()
 		return owner.dispatch.return_places.size() if owner != null else 0
-	for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
+	if not initial_rear:
+		for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
 	var workshop_access: Array[String] = []
 	var munitions_access: Array[String] = []
 	var support_access: Array[String] = []
@@ -96,6 +99,7 @@ func _init(expanded: bool = false, world_session: bool = false) -> void:
 	rear.training = Training.new(rear,access)
 	# Begin idle; the player sets staff, material orders and production targets.
 	for activity in rear._production_activities(): activity.set_mode("Stock target")
+	if initial_rear: RearStart.apply(self)
 	rear.advance_time(0)
 
 func tick(real_seconds: float) -> void:

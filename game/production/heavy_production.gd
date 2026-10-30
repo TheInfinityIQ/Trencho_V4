@@ -13,6 +13,23 @@ var bay_occupant := ""
 var _order: Dictionary = {}
 var _orders: Array[Dictionary] = []
 var _order_sequence := 0
+var initial_selection_empty := false
+
+func start_without_recipe() -> void:
+	assert(_rear_ref.get_ref().time == 0.0 and _order.is_empty())
+	initial_selection_empty = true
+	enabled = false
+
+func request_recipe(recipe: String) -> Dictionary:
+	var result: Dictionary = super.request_recipe(recipe)
+	if initial_selection_empty and result.ok and not result.get("confirmation_required",false):
+		initial_selection_empty = false
+		enabled = true
+	return result
+
+func resume() -> Dictionary:
+	if initial_selection_empty: return _result(false,"Select a vehicle recipe before enabling Vehicle Works.")
+	return super.resume()
 
 func _init(rear: RefCounted, declared_access: Array[String] = [], instance_spec: Dictionary = {}) -> void:
 	if instance_spec.is_empty(): assert(rear.heavy_production == null, "Initial F10 has one owner.")
@@ -24,7 +41,7 @@ func _init(rear: RefCounted, declared_access: Array[String] = [], instance_spec:
 	super(rear,"R25",CHOICES,["R25","R28"],declared_access,instance_spec)
 
 func _access() -> bool:
-	return recipe_accessible(_recipe) and bay_accessible and _rear_ref.get_ref().stores.vehicle_input.accessible
+	return not initial_selection_empty and recipe_accessible(_recipe) and bay_accessible and _rear_ref.get_ref().stores.vehicle_input.accessible
 
 func _empty_bay() -> bool:
 	return bay_occupant.is_empty() and _rear_ref.get_ref().ledger.entities_at(bay_id,["CARRIER","HEAVY_OBJECT"]).is_empty()
@@ -199,6 +216,7 @@ func clearance_reason() -> String:
 
 func snapshot() -> Dictionary:
 	var view := super.snapshot()
+	if initial_selection_empty: view.selected_recipe = ""
 	var rear: RefCounted = _rear_ref.get_ref()
 	view.order = _order.duplicate(true)
 	view.orders = _orders.duplicate(true)

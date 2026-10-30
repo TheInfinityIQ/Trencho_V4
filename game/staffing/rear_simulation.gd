@@ -44,7 +44,7 @@ var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
 
-func _init(fixture: String = "A05") -> void:
+func _init(fixture: String = "A05", include_yard_fixture: bool = true) -> void:
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
 	for id in Layout.FACILITIES:
@@ -57,7 +57,7 @@ func _init(fixture: String = "A05") -> void:
 		var definition: Array = Layout.STORES[id]
 		ledger.add_place(id, id + " physical storage", Layout.door(definition[0]))
 		stores[id] = {"id": id, "capacity": float(definition[1]), "accessible": true, "filter": [], "pile": false}
-	yard = Yard.new(ledger)
+	yard = Yard.new(ledger,include_yard_fixture)
 	if fixture == "Empty":
 		return
 	for i in range(1, 5):
@@ -941,7 +941,7 @@ func audit() -> Array[String]:
 	for r in requests.values():
 		if _assigned(r.id) > int(r.positions): failures.append("Too many actual staff positions: " + r.id)
 		if _retaining(r.id) + _pending_in(r.id) > int(r.positions): failures.append("Overbooked pending staff positions: " + r.id)
-	if not is_equal_approx(yard.fuel + yard.burned, 40.0) or yard.fuel < 0.0:
+	if not is_equal_approx(yard.fuel + yard.burned, 40.0 if yard.fixture_hull else 0.0) or yard.fuel < 0.0:
 		failures.append("Yard fuel conservation")
 	return failures
 

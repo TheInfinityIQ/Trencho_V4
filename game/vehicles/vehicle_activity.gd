@@ -28,6 +28,26 @@ func _add_duty(id: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	rear.requests[id] = {"id":id,"target":0,"positions":1,"priority":1,"created":rear.time,"order":rear._next(),"place":"vehicle-lane","manual":true}
 
+func register_initial_parked(id: String, slot: int, driver: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(id)
+	var person: Dictionary = rear.ledger.inspect_entity(driver)
+	if rear.time != 0.0 or vehicles.has(id) or hull.get("kind","") != "CARRIER" or hull.get("vehicle_spec",{}).is_empty() or not rear.actors.has(driver) or person.get("qualification","") != "P08" or person.get("assignment","") != "Available": return _result(false,"Initial hull requires a real available P08 and canonical vehicle at time zero.")
+	if not rear.heavy_production._slot_legal(slot,hull.design_type) or not rear.yard.occupied[slot].is_empty() or not rear.yard.reserved[slot].is_empty(): return _result(false,"Initial hull needs a legal empty parking place at time zero.")
+	register_output(id,slot)
+	vehicles[id].state = "Parked"
+	rear.yard.occupied[slot] = id
+	rear.ledger.move_entity(id,"vehicle-lane",rear.yard.PARKING_POSITIONS[slot])
+	rear.ledger.move_entity(driver,"rear",rear.yard.PARKING_POSITIONS[slot])
+	var result: Dictionary = assign_station(id,driver,"Driver")
+	if not result.ok: return result
+	result = rear.ledger.complete_vehicle_station_entry(driver,id,"Driver")
+	if result.ok:
+		rear.actors[driver].phase = "Vehicle Station"
+		rear.actors[driver].motion = {}
+		rear.actors[driver].deadline = INF
+	return result
+
 func eligible(person: Dictionary, duty: String) -> bool:
 	var parts := duty.split(":")
 	if person.is_empty() or parts.size() < 2 or not vehicles.has(parts[1]) or person.owner != "army-blue" or person.health <= 0: return false

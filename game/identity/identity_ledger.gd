@@ -18,6 +18,7 @@ var _sequence: int = 0
 var _time: float = 0.0
 var _rear_hull_promises: Dictionary = {}
 var _fuel_loaded: float = 0.0
+var _fuel_initial: float = 0.0
 var _fuel_burned: float = 0.0
 var _fuel_lost: float = 0.0
 const REAR_FLEET_LIMIT := 8
@@ -47,6 +48,22 @@ func add_carrier(id: String, holder_id: String, owner: String, controller: Strin
 		"Supplier-owned carrier; not a third combat faction.")
 	_entities[id].fleet_domain = fleet_domain
 	return _ok("Carrier registered.", id)
+
+
+func add_initial_vehicle(id: String, type: String, holder: String, owner: String, properties: Dictionary, fuel: float) -> Dictionary:
+	var canonical: Dictionary = preload("res://game/production/vehicle_specs.gd").TYPES
+	var fleet := rear_fleet_status(owner)
+	if _time != 0.0 or not _free_id(id) or not _is_place(holder) or owner.is_empty() or not canonical.has(type) or properties != canonical[type] or not is_finite(fuel) or fuel < 0.0 or fuel > float(properties.get("tank_capacity",-1)) or fleet.live+fleet.reserved >= REAR_FLEET_LIMIT:
+		return _reject("INVALID_INITIAL_VEHICLE","Initial vehicles require time zero, canonical properties, bounded fuel and a free rear fleet place.")
+	var entity := _new_entity(id,Records.Kind.CARRIER,type,owner,owner,holder,"Declared starting scenario vehicle")
+	entity.vehicle_spec = properties.duplicate(true)
+	entity.unit_mass_kg = properties.mass
+	entity.health = properties.health
+	entity.max_health = properties.health
+	entity.fleet_domain = "Rear"
+	entity.fuel = fuel
+	_fuel_initial += fuel
+	return _ok("Initial vehicle and tank fuel recorded once.",id)
 
 
 func create_heavy_output(admission: String, claimant: String, id: String, type: String, holder: String, owner: String, properties: Dictionary) -> Dictionary:
@@ -1211,7 +1228,7 @@ func snapshot() -> Dictionary:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
 		"created": _created.duplicate(), "consumed": _consumed.duplicate(),
-		"lost": _lost.duplicate(), "fuel_loaded":_fuel_loaded,"fuel_burned":_fuel_burned,"fuel_lost":_fuel_lost,
+		"lost": _lost.duplicate(), "fuel_initial":_fuel_initial,"fuel_loaded":_fuel_loaded,"fuel_burned":_fuel_burned,"fuel_lost":_fuel_lost,
 		"rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
@@ -1280,7 +1297,7 @@ func audit() -> Array[String]:
 			var key: String = entity.holder_id + ":" + entity.crew_station
 			if occupied_stations.has(key): failures.append("Double-filled station: " + key)
 			occupied_stations[key] = entity.id
-	if not is_equal_approx(tank_total + _fuel_burned + _fuel_lost, _fuel_loaded): failures.append("Manufactured vehicle fuel conservation")
+	if not is_equal_approx(tank_total + _fuel_burned + _fuel_lost, _fuel_initial + _fuel_loaded): failures.append("Manufactured vehicle fuel conservation")
 	for type in _created:
 		if not is_equal_approx(float(_created[type]), float(total_stock(type) + _consumed.get(type, 0) + _lost.get(type, 0)) + (_fuel_loaded if type == "M08" else 0.0)):
 			failures.append("Conservation failed: " + type)
