@@ -5,6 +5,8 @@ const Catalog = preload("res://game/terrain/terrain_catalog.gd")
 const EPS := 0.0000001
 var bounds := Rect2i(0, 0, 900, 40)
 var cells: Dictionary = {}
+var base_regions: Array[Dictionary] = []
+var scenario: Dictionary = {}
 var obstacles: Array[Dictionary] = []
 var shields: Array[Dictionary] = []
 var field_effects: Array[Dictionary] = []
@@ -23,7 +25,17 @@ func paint(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
 
 
 func cell(at: Vector2i) -> Dictionary:
-	return cells.get(at, {"terrain": "TR01"})
+	if cells.has(at): return cells[at]
+	for index in range(base_regions.size()-1,-1,-1):
+		if base_regions[index].area.has_point(at): return base_regions[index].tile
+	return {"terrain": "TR01"}
+
+func add_base_region(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
+	assert(bounds.encloses(area) and Catalog.SURFACES.has(terrain))
+	var tile := properties.duplicate(true)
+	tile.terrain = terrain
+	base_regions.append({"area":area,"tile":tile})
+	revision += 1
 
 func set_bridge_surface(id: String, deck_cells: Array, approach_cells: Array, code: String, load_kg: float, speed_cap: float, width: float, classes: Array, complete: bool) -> Dictionary:
 	if id.is_empty(): return _blocked("Bridge surface needs an actual project identity.")

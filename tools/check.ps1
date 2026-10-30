@@ -56,6 +56,7 @@ Invoke-GodotCheck -Name 'vehicle-regression' -EngineArguments @('--script', 'res
 Invoke-GodotCheck -Name 'dispatch-regression' -EngineArguments @('--script', 'res://game/dispatch/tests/dispatch_regression.gd')
 Invoke-GodotCheck -Name 'rear-start-regression' -EngineArguments @('--script', 'res://game/scenario/tests/rear_start_regression.gd')
 Invoke-GodotCheck -Name 'battlefield-start-regression' -EngineArguments @('--script', 'res://game/scenario/tests/battlefield_start_regression.gd')
+Invoke-GodotCheck -Name 'farmland-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/farmland_regression.gd')
 Invoke-GodotCheck -Name 'route-regression' -EngineArguments @('--script', 'res://game/routes/tests/route_regression.gd')
 Invoke-GodotCheck -Name 'hq-regression' -EngineArguments @('--script', 'res://game/hq/tests/hq_regression.gd')
 Invoke-GodotCheck -Name 'military-regression' -EngineArguments @('--script', 'res://game/military/tests/military_regression.gd')
