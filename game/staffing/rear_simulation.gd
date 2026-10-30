@@ -35,6 +35,7 @@ var recovery: RefCounted # G24 physical repair, towing and once-only destruction
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
 var forward_supply: RefCounted # Timed local issue from arrived forward stock to an active formation.
+var battlefield_operations: RefCounted # Delivered squad intent, movement and local action on this clock.
 var field_structures: RefCounted # G19 local engineer projects and field services.
 var bridges: RefCounted # G20 constructed crossing, traffic and repair owner.
 var mines: RefCounted # G22 field devices, knowledge and clearance.
@@ -307,6 +308,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
 		if forward_supply != null: next = minf(next,forward_supply.next_boundary())
+		if battlefield_operations != null: next = minf(next,battlefield_operations.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
 		if bridges != null: next = minf(next,bridges.next_boundary())
 		if mines != null: next = minf(next,mines.next_boundary())
@@ -337,6 +339,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if hq != null: hq.advance_to(next)
 		if construction != null: construction.advance_to(next)
 		if military != null: military.advance_to(next)
+		if battlefield_operations != null: battlefield_operations.advance_to(next)
 		if combat != null: combat.advance_to(next)
 		if orders != null: orders.advance_to(next)
 		if objectives != null: objectives.advance_to(next)
@@ -527,6 +530,7 @@ func _settle() -> void:
 		if orders != null: changed = orders.settle() or changed
 		if objectives != null: changed = objectives.settle() or changed
 		if forward_supply != null: changed = forward_supply.settle() or changed
+		if battlefield_operations != null: changed = battlefield_operations.settle() or changed
 		if field_structures != null: changed = field_structures.settle() or changed
 		if bridges != null: changed = bridges.settle() or changed
 		if mines != null: changed = mines.settle() or changed

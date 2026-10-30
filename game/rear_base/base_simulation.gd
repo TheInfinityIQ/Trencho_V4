@@ -131,6 +131,7 @@ func audit() -> Array[String]:
 	failures.append_array(rear.orders.audit())
 	failures.append_array(rear.objectives.audit())
 	failures.append_array(rear.forward_supply.audit())
+	if rear.battlefield_operations != null: failures.append_array(rear.battlefield_operations.audit())
 	failures.append_array(rear.field_structures.audit())
 	failures.append_array(rear.bridges.audit())
 	failures.append_array(rear.demolition.audit())
