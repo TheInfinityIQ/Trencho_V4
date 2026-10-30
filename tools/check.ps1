@@ -60,6 +60,7 @@ Invoke-GodotCheck -Name 'farmland-regression' -EngineArguments @('--script', 're
 Invoke-GodotCheck -Name 'route-regression' -EngineArguments @('--script', 'res://game/routes/tests/route_regression.gd')
 Invoke-GodotCheck -Name 'hq-regression' -EngineArguments @('--script', 'res://game/hq/tests/hq_regression.gd')
 Invoke-GodotCheck -Name 'military-regression' -EngineArguments @('--script', 'res://game/military/tests/military_regression.gd')
+Invoke-GodotCheck -Name 'crew-casualty-regression' -EngineArguments @('--script', 'res://game/military/tests/crew_casualty_regression.gd')
 Invoke-GodotCheck -Name 'troop-transport-regression' -EngineArguments @('--script', 'res://game/military/tests/troop_transport_regression.gd')
 Invoke-GodotCheck -Name 'combat-regression' -EngineArguments @('--script', 'res://game/combat/tests/combat_regression.gd')
 Invoke-GodotCheck -Name 'vehicle-combat-regression' -EngineArguments @('--script', 'res://game/vehicle_combat/tests/vehicle_combat_regression.gd')

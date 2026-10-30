@@ -1123,7 +1123,9 @@ func audit() -> Array[String]:
 		if not hull.is_empty():
 			for station in hull.crew_by_station:
 				var person: Dictionary = rear.ledger.inspect_entity(hull.crew_by_station[station])
-				if person.is_empty() or person.crew_station != station or person.holder_id != row.id or person.assignment != "Formation Duty": errors.append("G15 crew station lacks same qualified person: "+row.id+":"+station)
+				# Incapacitation does not physically vacate a station; operational crew
+				# eligibility remains the stricter _living_crew_id contract.
+				if person.is_empty() or person.crew_station != station or person.holder_id != row.id or person.assignment not in ["Formation Duty","Wounded","Recovery","Dead"]: errors.append("G15 crew station lacks same qualified person: "+row.id+":"+station)
 			for person_id in hull.passengers:
 				if hull.crew_by_station.values().has(person_id): errors.append("G15 person is both crew and passenger: "+person_id)
 	return errors
