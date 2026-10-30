@@ -21,6 +21,7 @@ func _run() -> void:
 	root.add_child(view)
 	await process_frame
 	await process_frame
+	assert(view.get("_inspector").text.contains("Resource 2") and view.get("_inspector").text.contains("TERRAIN KEY"),"Matching objective name and terrain key must be visible in the inspector")
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("res://.artifacts")
 	root.get_texture().get_image().save_png("res://.artifacts/farmland-overview.png")
