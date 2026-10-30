@@ -7,6 +7,7 @@ func _initialize() -> void:
 	fixture.reset()
 	var ledger: RefCounted = fixture.ledger
 	check(ledger.entity_kind("missing") == "","Unknown kind query remains empty")
+	check(ledger.inspect_person_status("missing").is_empty() and ledger.inspect_person_status("supplier-truck").is_empty(),"Person status refuses missing and nonperson identities")
 	check(ledger.add_stock("retained-rounds","E02",50,0.02,"worker-01","army-blue").ok,"Real retained ammunition")
 	check(ledger.add_weapon("retained-rifle","E01",4,"worker-01","army-blue","E02",30).ok,"Actual retained rifle")
 	check(ledger.load_rounds("retained-rifle","retained-rounds",10).ok,"Actual nested loaded rounds")
@@ -27,6 +28,13 @@ func _initialize() -> void:
 func compare(ledger: RefCounted) -> void:
 	for row in ledger.snapshot().entities:
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
+		if row.kind == "PERSON":
+			var full: Dictionary = ledger.inspect_entity(row.id)
+			full.erase("contents_mass_kg")
+			var status: Dictionary = ledger.inspect_person_status(row.id)
+			check(status == full and not status.has("contents_mass_kg"),"Status preserves exact person facts without inventing a load mass")
+			status.health = -1
+			check(ledger.inspect_person_status(row.id).health == full.health,"Person status remains a detached read")
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)

@@ -28,7 +28,7 @@ func advance_to(at: float) -> void:
 	var rear: RefCounted = _rear()
 	for id in motions.keys():
 		var motion: Dictionary = motions[id]
-		var person: Dictionary = rear.ledger.inspect_entity(id)
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		if motion.purpose == "Fallback" and not _fallback_safe(person,motion.destination):
 			motions.erase(id)
 			_report(person.duty_id,"Inability","Delivered hostile fire made the fallback unsafe; movement stopped",true)
@@ -69,7 +69,7 @@ func settle() -> bool:
 func _clear_unavailable_motions() -> bool:
 	var changed := false
 	for id in motions.keys():
-		if not _on_foot(_rear().ledger.inspect_entity(id)) or _busy(id) or ((_rear().combat.pinned.has(id) or _rear().combat.broken.has(id)) and motions[id].purpose not in ["Fallback","Cover"]):
+		if not _on_foot(_rear().ledger.inspect_person_status(id)) or _busy(id) or ((_rear().combat.pinned.has(id) or _rear().combat.broken.has(id)) and motions[id].purpose not in ["Fallback","Cover"]):
 			motions.erase(id)
 			changed = true
 	return changed
@@ -120,7 +120,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	status[squad.id] = "Withdrawing" if withdrawing else ("Advancing" if advance_allowed else "Holding for capability or supply")
 	if assault_blocked and not withdrawing: status[squad.id] = "Holding for validated HQ assault preparation"
 	for id in active:
-		var person: Dictionary = rear.ledger.inspect_entity(id)
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		if _busy(id) or not _on_foot(person): motions.erase(id); continue
 		if withdrawing or rear.combat.broken.has(id):
 			var at_rally: bool = person.position.distance_to(fallback.position) <= 8
@@ -158,7 +158,7 @@ func _support_goal(squad: Dictionary, objective: Dictionary, supported_squads: A
 	for friendly in _rear().military.squads.values():
 		if friendly.owner != squad.owner or friendly.kind != "Rifle" or friendly.id not in supported_squads: continue
 		for id in _rear().military._active_roster_members(friendly):
-			var person: Dictionary = _rear().ledger.inspect_entity(id)
+			var person: Dictionary = _rear().ledger.inspect_person_status(id)
 			if not _on_foot(person): continue
 			centre += person.position
 			count += 1
@@ -180,7 +180,10 @@ func _strength(squad: Dictionary, targets: Array[Dictionary]) -> Dictionary:
 	var own := 0.0
 	var enemy := 0.0
 	var centre: Vector2 = targets[0].position
-	var leader: Dictionary = _rear().ledger.inspect_entity(squad.leader)
+	var leader: Dictionary = _rear().ledger.inspect_person_status(squad.leader)
+	# Cohesion already halts offensive coordination during the real replacement
+	# delay; no cover/strength origin can be read from a missing leader.
+	if leader.is_empty() or leader.health <= 0 or leader.assignment != "Formation Duty": return {"own":0.0,"enemy":0.0}
 	for contact in targets:
 		var cover: Dictionary = _rear().combat.world.cover(contact.position,leader.position)
 		enemy += float(contact.caution_strength)*(1.3 if cover.hit <= 0.5 else (1.15 if cover.hit < 1 else 1.0))
@@ -189,7 +192,7 @@ func _strength(squad: Dictionary, targets: Array[Dictionary]) -> Dictionary:
 		var members: Array[String] = _rear().military._active_roster_members(friendly)
 		var local_count := 0
 		for id in members:
-			var person: Dictionary = _rear().ledger.inspect_entity(id)
+			var person: Dictionary = _rear().ledger.inspect_person_status(id)
 			if person.position.distance_to(centre) <= 300 and not _rear().combat.broken.has(id):
 				local_count += 1
 		if not members.is_empty(): own += _rear().orders._squad_strength(friendly.id)*float(local_count)/members.size()

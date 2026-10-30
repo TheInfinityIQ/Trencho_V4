@@ -1169,7 +1169,11 @@ func loaded_rounds(weapon_id: String) -> int:
 	return total
 
 
-func inspect_entity(id: String, snapshot_masses: Dictionary = {}) -> Dictionary:
+func inspect_person_status(id: String) -> Dictionary:
+	if not _entities.has(id) or not (_entities[id] is Records.Person): return {}
+	return inspect_entity(id,{},false)
+
+func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: bool = true) -> Dictionary:
 	if not _entities.has(id):
 		return {}
 	var entity := _entities[id]
@@ -1179,8 +1183,9 @@ func inspect_entity(id: String, snapshot_masses: Dictionary = {}) -> Dictionary:
 		"holder_id": entity.holder_id, "position": _world_position(id), "state": entity.state,
 		"created_at": entity.created_at, "state_entered_at": entity.state_entered_at,
 		"quantity": entity.quantity, "unit_mass_kg": entity.unit_mass_kg,
-		"contents_mass_kg": snapshot_masses[id] if snapshot_masses.has(id) else _contents_mass(id), "origin_id": entity.origin_id,
+		"origin_id": entity.origin_id,
 	}
+	if include_mass: result.contents_mass_kg = snapshot_masses[id] if snapshot_masses.has(id) else _contents_mass(id)
 	if entity.kind == Records.Kind.HEAVY_OBJECT:
 		result.health = entity.health
 		result.max_health = entity.max_health

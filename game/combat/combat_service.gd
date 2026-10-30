@@ -328,14 +328,14 @@ func squad_cohesion(squad_id: String) -> Dictionary:
 	var dismounted: Array[String] = []
 	var boarded := 0
 	for id in active:
-		if _seated(_rear().ledger.inspect_entity(id)): boarded += 1
+		if _seated(_rear().ledger.inspect_person_status(id)): boarded += 1
 		else: dismounted.append(id)
 	if boarded == active.size() and boarded > 0: return {"cohesion":1.0,"state":"Boarded","blocked_reason":"Dismount before infantry fire."}
 	if dismounted.is_empty(): return {"cohesion":0.0,"state":"No active infantry","blocked_reason":"No active dismounted people."}
-	var leader: Dictionary = _rear().ledger.inspect_entity(row.leader)
+	var leader: Dictionary = _rear().ledger.inspect_person_status(row.leader)
 	var near := 0
 	for id in dismounted:
-		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(_rear().ledger.inspect_entity(id).position) <= 30.0: near += 1
+		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(_rear().ledger.inspect_person_status(id).position) <= 30.0: near += 1
 	var value := float(near)/float(dismounted.size())
 	var state := "Coherent"
 	var reason := ""

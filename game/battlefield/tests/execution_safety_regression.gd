@@ -43,6 +43,17 @@ func _initialize() -> void:
 	operations._walk(unsafe.roster[0],"unsafe-goal",Vector2(2000,650),true,"Fallback")
 	physical.advance_time(0.25)
 	_check(physical.ledger.inspect_entity(unsafe.roster[0]).position.y > 540,"Known incoming fire still permits actual movement away from it")
+	var leader_loss: Dictionary = _fixture("leader-loss")
+	var affected: RefCounted = leader_loss.base.rear
+	_check(affected.ledger.add_place("leader-threat","Actual contact during leader replacement",Vector2(2100,540)).ok,"Actual leader-loss threat place")
+	_check(affected.ledger.add_person("leader-hostile","leader-threat","army-red",Records.Assignment.AVAILABLE,true,"None","None").ok,"Actual nearby hostile")
+	_check(affected.orders.watch(leader_loss.squad).ok,"Actual leader-loss observation")
+	_order(leader_loss,"Seize Objective")
+	_check(affected.combat.injure(leader_loss.roster[0],100).ok,"Actual squad leader is incapacitated")
+	_check(affected.combat.injure(leader_loss.roster[0],1,true).ok,"Further actual blast injury kills the incapacitated leader")
+	affected.advance_time(1)
+	_check(affected.military.squads[leader_loss.squad].leader.is_empty() and affected.battlefield_operations.status[leader_loss.squad] == "Withdrawing","Missing leader does not invent a strength origin or bypass below-minimum withdrawal")
+	_check(leader_loss.base.audit().is_empty(),"Leader replacement delay reconciles while actual fallback continues")
 	print("Execution safety regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 

@@ -4,6 +4,8 @@ The authored opening composes the existing ledger, military transport, orders, t
 
 Opening profiling exposed repeated full-ledger inspection and nested mass recomputation. Snapshot masses are now aggregated once per synchronous inspection, without a persistent cache; existing holder/type queries restrict reads to their actual candidates. Snapshot/live recursive mass equivalence and retained physical regressions protect the change. Terrain route aggregation separately uses the measured exact-output [interval sweep](route_sweep.md). These measurements do not settle full-map performance acceptance.
 
+Roster, cohesion and motion status reads use `inspect_person_status`, which returns detached person facts with no contents-mass field. Carry, route load, payload and complete inspection still use the full live mass calculation. This removes unused inventory aggregation from measured status queries while preserving exact mass arithmetic at admission boundaries.
+
 Current engineering authority is [team workflow](team_workflow.md). Before shared changes identify state owner, valid transitions, affected callers and interaction coverage. Reuse existing ownership; repair concrete occupancy/activity and damage/movement weaknesses without speculative frameworks. Historical entry-scene reports below are not current delivery status.
 
 G24 adds scene-owned [vehicle destruction and recovery](g24_vehicle_recovery.md), synchronously resolving one ledger destruction outcome across armour, demolition and bridge collapse, with paid repairs and physical tow coupling on the common clock.

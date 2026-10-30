@@ -1035,7 +1035,7 @@ func _active_roster_members(row: Dictionary, include_boarded: bool = false) -> A
 	var rear: RefCounted = _rear_ref.get_ref()
 	var active: Array[String] = []
 	for id in row.roster:
-		var person: Dictionary = rear.ledger.inspect_entity(id)
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		if person.is_empty() or person.health <= 0 or person.assignment != "Formation Duty" or person.duty_id != row.id or not person.crew_station.is_empty(): continue
 		var holder: String = rear.ledger.entity_kind(person.holder_id)
 		if holder.is_empty() or (holder == "CARRIER" and (not include_boarded or person.holder_id != row.vehicle)): continue

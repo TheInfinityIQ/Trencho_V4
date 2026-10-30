@@ -40,7 +40,8 @@ func _initialize() -> void:
 		var trips: Array = rear.battlefield_operations.policy.snapshot().trips
 		if not playthrough or step%12 == 11:
 			print("Opening t=",rear.time," phase=",rear.battlefield_operations.policy.phases," consumed=",rear.ledger.snapshot().consumed.get("E02",0)," trips=",trips.map(func(trip: Dictionary) -> String: return trip.hull+": "+("Dismounted" if trip.dismounted else ("Started" if trip.started else trip.blocker))))
-	check(rear.military.troop_transport.jobs.values().filter(func(job: Dictionary) -> bool: return job.kind == "Troop Trip").size() == 3,"Delivered hierarchy orders start all three actual troop trips")
+	var lift_count: int = rear.military.troop_transport.jobs.values().filter(func(job: Dictionary) -> bool: return job.kind == "Troop Trip").size()
+	check(lift_count >= 3 if playthrough else lift_count == 3,"Delivered hierarchy orders start all three initial troop trips; later reserve activation may add another")
 	check(rear.battlefield_operations.policy.trips["red-forward"].started,"Red's opening is not blocked by observing its own HQ as hostile")
 	if not playthrough: check(not rear.battlefield_operations.policy.reserve_active,"Red reserve awaits an actual report")
 	if playthrough:

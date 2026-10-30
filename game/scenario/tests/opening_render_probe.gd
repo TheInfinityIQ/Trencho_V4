@@ -44,16 +44,22 @@ func _run() -> void:
 		var actual: Dictionary = base.simulation.rear.ledger.inspect_entity("start-blue-vehicle-00")
 		assert(actual.passengers.size() == 16 and actual.holder_id == "troop-transit","Actual first lift is underway with sixteen people aboard")
 		print("Underway first lift: ",actual.position," passengers=",actual.passengers.size()," fuel=",actual.fuel)
+	var capture: bool = "--capture" in OS.get_cmdline_user_args()
+	if capture:
+		base.simulation.rear.advance_time(600)
+		assert(base.simulation.rear.objectives.inspect("resource-centre-blue").owner == "army-blue","First objective is physically captured")
+		print("Actual capture events: ",base.simulation.rear.objectives.events)
 	view.selected_id = "start-blue-vehicle-00"
+	if capture: view.selected_id = "resource-centre-blue"
 	await process_frame
 	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("res://.artifacts/opening-overview.png")
+	root.get_texture().get_image().save_png("res://.artifacts/opening-capture-overview.png" if capture else "res://.artifacts/opening-overview.png")
 	view.zoom = 5.0
-	view.pan = -Vector2(0,600-3000)*view._scale()
+	view.pan = Vector2.ZERO if capture else -Vector2(0,600-3000)*view._scale()
 	view._refresh()
 	view.queue_redraw()
 	await process_frame
 	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("res://.artifacts/opening-staging.png")
+	root.get_texture().get_image().save_png("res://.artifacts/opening-capture-front.png" if capture else "res://.artifacts/opening-staging.png")
 	print("Opening render probe: ordinary session creation and shared views captured")
 	quit()
