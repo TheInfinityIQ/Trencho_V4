@@ -1,5 +1,9 @@
 # Design decisions and readiness gates
 
+## Current scoped decision — 30 October 2026
+
+Dawson authorized the [connected playable delivery](playable_delivery.md) and [new workflow](team_workflow.md). One representative full-scale scenario precedes completion of all map families/campaign/persistence; final requirements remain. Clear 2D overhead and Windows-first are adopted for this build. This supersedes the blanket production-world stop for that scoped work only. D01 remains open for measured hardware/performance/readability/native acceptance; no certification or completed milestone is implied. Earlier tables below retain historical rationale, subject to this current decision.
+
 Recorded 25 October 2026. Authority: Game Designer's project-planning update. Gameplay baseline: [GDD v0.2](game_design_document.md); governing planning amendment: [v0.2.1, section 23](game_design_document.md#23-project-planning-amendment-v021---25-october-2026). Engineering decisions remain in [foundation.md](foundation.md).
 
 ## Recorded sequencing decisions

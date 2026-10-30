@@ -8,7 +8,11 @@ Project views: [Workflow](https://github.com/users/TheInfinityIQ/projects/3/view
 
 GDD v0.2 plus the dated v0.2.1 planning amendment governs this backlog. Gameplay values remain proposed defaults for review and playtests. GitHub issues are the execution record; the machine-readable [manifest](project_manifest.json) maps stable design IDs to issue URLs.
 
-## Start here
+## Current delivery priority — 30 October 2026
+
+[Delivery #83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83) is the active execution parent. Lead assigns its useful contributions; ready catalogue issues are not independently claimed. Existing milestones and feature IDs retain final scope and evidence obligations. Engineering-merged children do not imply playable acceptance. Follow [playable delivery](playable_delivery.md) and [team workflow](team_workflow.md).
+
+## Historical starting snapshot
 
 ### Status snapshot — 26 October 2026
 

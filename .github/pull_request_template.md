@@ -1,6 +1,6 @@
 ## Change
 
-Describe the problem, intended player behavior, and resulting change.
+Describe the problem, intended player behavior, and resulting change. Link the active delivery and explain what becomes playable or which specific connection this enables. Identify shared state ownership and peer review for high-risk changes.
 
 Link the assigned issue, milestone, GDD version/sections and relevant acceptance scenario IDs. State which scenarios this patch completes and which remain later integration obligations.
 

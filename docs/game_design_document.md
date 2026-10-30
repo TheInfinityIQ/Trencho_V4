@@ -1,6 +1,8 @@
 # Trencho v4 Game Design Document
 
-Version 0.2 | 25 October 2026 | Vehicles engineering and procedural battlefields
+Version 0.2 | Gameplay baseline preserved; delivery transition 30 October 2026
+
+Current delivery authority: [playable delivery](playable_delivery.md) and [team workflow](team_workflow.md), authorized by Dawson on 30 October. They supersede historical assignment/merge and sequencing restrictions only for the connected representative-first delivery. All gameplay rules, final scope and acceptance obligations below remain. Clear 2D overhead/Windows-first is adopted for this build; D01 performance/hardware/native certification remains open. Historical production-presentation gating does not prohibit this scoped implementation.
 
 Trencho v4 is a logistics management game in which the player supplies an autonomous military hierarchy. Industrial decisions become physical people, equipment, vehicles, and supplies; those assets determine what the army can actually do. The player should be able to trace a successful crossing or a failed attack back through that chain.
 

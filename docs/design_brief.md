@@ -1,5 +1,9 @@
 # Design brief
 
+## Current delivery — 30 October 2026
+
+Follow [playable delivery](playable_delivery.md), [team workflow](team_workflow.md) and [handoff](team_handoff.md). Dawson authorized a fresh designer/lead/two-developer team and one representative full-scale connected supply-to-battlefield delivery first. Gameplay requirements below remain; dated entry-scene and assignment statements are history. 2D overhead/Windows-first is authorized for this build; D01 certification remains open. The lead owns technical assignments and merges; the designer owns gameplay and experience acceptance.
+
 Updated 26 October 2026. Project: Trencho V4; repository: Trencho_V4. The Game Designer directs scope. The [Game Design Document](game_design_document.md) contains the v0.2 gameplay baseline plus the governing [v0.2.1 planning amendment](game_design_document.md#23-project-planning-amendment-v021---25-october-2026). Read [AGENTS.md](../AGENTS.md) and [foundation decisions](foundation.md) for repository and engineering guidance.
 
 ## Established design scope
