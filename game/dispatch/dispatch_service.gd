@@ -264,6 +264,11 @@ func advance_to(next_time: float) -> void:
 				row.state = "Stranded"
 				row.blocker = "10-second safety hold ended; " + fallback.message + " Same hull and contents remain stopped."
 		if row.state in ["Approaching Dispatch","Departed","Transit","Docking HQ","Returning","Safety Returning"]:
+			var current_hull: Dictionary = rear.ledger.inspect_entity(row.hull)
+			if current_hull.health <= 0 or current_hull.get("damage_immobilized",false):
+				row.state = "Stranded"
+				row.blocker = "Destroyed hull" if current_hull.health <= 0 else "Damage Immobilized before further travel; request recovery."
+		if row.state in ["Approaching Dispatch","Departed","Transit","Docking HQ","Returning","Safety Returning"]:
 			var progress: Dictionary = _route_progress(row,maxf(0.0,next_time-float(row.route_started)))
 			var moved: float = float(progress.distance)-float(row.distance)
 			if moved > EPS:

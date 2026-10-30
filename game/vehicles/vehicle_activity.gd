@@ -331,6 +331,10 @@ func advance_to(next_time: float) -> void:
 		var row: Dictionary = vehicles[id]
 		if row.state != "Moving to F11": continue
 		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		if hull.health <= 0 or hull.get("damage_immobilized",false):
+			row.state = "Stopped on lane"
+			row.deadline = INF
+			continue
 		row.elapsed = minf(row.duration,row.elapsed+maxf(0.0,next_time-row.last_time))
 		row.last_time = next_time
 		var next_distance: float = _distance_at_time(row,hull.design_type,row.elapsed)
@@ -350,7 +354,12 @@ func settle() -> bool:
 			row.state = "Stopped on lane"
 			row.deadline = INF
 			changed = true
-		if row.state == "Stopped on lane" and rear.heavy_owner(row.bay_id).parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
+		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		if row.state == "Moving to F11" and (hull.health <= 0 or hull.get("damage_immobilized",false)):
+			row.state = "Stopped on lane"
+			row.deadline = INF
+			changed = true
+		if row.state == "Stopped on lane" and hull.health > 0 and not hull.get("damage_immobilized",false) and rear.heavy_owner(row.bay_id).parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
 			row.state = "Moving to F11"
 			row.last_time = rear.time
 			row.deadline = rear.time + row.duration-row.elapsed
