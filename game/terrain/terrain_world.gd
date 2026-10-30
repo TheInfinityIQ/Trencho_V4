@@ -232,7 +232,18 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var tangent := Vector2.DOWN if offset == Vector2i.RIGHT else Vector2.RIGHT
 			for point in [edge, edge + tangent]:
 				if absf(_tile_height(cell(at), point) - _tile_height(cell(at + offset), point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
+	return _route_parts(entity, start, destination, distance, intervals, cuts)
+
+
+func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 	cuts.sort()
+	# Sweep starts once; only footprint cells still overlapping the current span
+	# participate. Keep original cell order so surface lists remain identical.
+	var pending: Array[int] = []
+	for index in intervals.size(): pending.append(index)
+	pending.sort_custom(func(a: int, b: int) -> bool: return intervals[a].from < intervals[b].from)
+	var cursor := 0
+	var active: Array[int] = []
 	var parts: Array[Dictionary] = []
 	var seconds := 0.0
 	var fuel := 0.0
@@ -241,13 +252,19 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 		var end: float = cuts[index + 1]
 		if end - begin <= EPS: continue
 		var middle := (begin + end) * 0.5
+		for index_active in range(active.size()-1,-1,-1):
+			if intervals[active[index_active]].to < middle: active.remove_at(index_active)
+		while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
+			var id: int = pending[cursor]
+			if intervals[id].to >= middle: active.insert(active.bsearch(id),id)
+			cursor += 1
 		var factor := INF
 		var burn := 0.0
 		var surfaces: Array[String] = []
 		var max_slope := 0.0
 		var speed_cap := INF
-		for interval in intervals:
-			if middle < interval.from or middle > interval.to: continue
+		for id in active:
+			var interval: Dictionary = intervals[id]
 			factor = minf(factor, interval.rule.factor)
 			burn = maxf(burn, interval.rule.fuel)
 			max_slope = maxf(max_slope, interval.rule.slope)
