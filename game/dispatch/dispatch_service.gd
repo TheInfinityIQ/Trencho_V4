@@ -16,6 +16,8 @@ const HQ_BERTHS := 2
 const ENTRY := Vector2(1240,91)
 const HQ := Vector2(1640,91)
 const HQ_QUEUE := Vector2(1600,91)
+var hq_position: Vector2
+var queue_position: Vector2
 var _rear_ref: WeakRef
 var manifests: Dictionary = {}
 var incoming_people: Dictionary = {} # actual person ID -> accepted manifest ID
@@ -32,15 +34,17 @@ var _accepting := false
 var _advancing_at := -1.0
 var dispatch_sites: Dictionary = {"dispatch":{"store":"dispatch","duty":"dispatch","door":Vector2(210,91),"berth":"dispatch-berth"}}
 
-func _init(rear: RefCounted) -> void:
+func _init(rear: RefCounted, at: Vector2 = HQ) -> void:
 	_rear_ref = weakref(rear)
+	hq_position = at
+	queue_position = at + (HQ_QUEUE - HQ)
 	rear.ledger.add_place("dispatch-berth","F07 real dispatch vehicle berth",Layout.door("dispatch"))
 	rear.ledger.add_place("rear-exit","Rear boundary of reference safe road",Vector2(240,91))
 	rear.ledger.add_place("field-entry","Friendly battlefield entry",ENTRY)
-	rear.ledger.add_place("hq-berth","Friendly HQ receiving berth",HQ)
-	rear.ledger.add_place("hq-queue","Friendly HQ safe receiving queue",HQ_QUEUE)
-	rear.ledger.add_place("hq-stock","Friendly HQ 20,000 kg stock",HQ)
-	rear.ledger.add_place("hq-reserve","Friendly HQ 96-person reserve",HQ + Vector2(15,0))
+	rear.ledger.add_place("hq-berth","Friendly HQ receiving berth",hq_position)
+	rear.ledger.add_place("hq-queue","Friendly HQ safe receiving queue",queue_position)
+	rear.ledger.add_place("hq-stock","Friendly HQ 20,000 kg stock",hq_position)
+	rear.ledger.add_place("hq-reserve","Friendly HQ 96-person reserve",hq_position + Vector2(15,0))
 	for index in 5:
 		var id := "initial-hq-%02d" % (index+1)
 		rear.ledger.add_person(id,"hq-berth",rear.PLAYER,Records.Assignment.HQ_DUTY,true,"None","None")
@@ -327,13 +331,13 @@ func _finish_route(row: Dictionary) -> void:
 		for person_id in row.passengers: rear.ledger.set_rear_place(person_id,"Occupied","None")
 		for person_id in row.crew.values(): rear.ledger.set_rear_place(person_id,"Occupied","Held Home" if row.mode == "Strategic Delivery" else "None")
 		if row.mode == "Fleet Transfer": rear.yard.reserved[row.home_slot] = ""
-		_start_route(row,[rear.ledger.inspect_entity(row.hull).position,ENTRY,HQ_QUEUE],"Transit")
+		_start_route(row,[rear.ledger.inspect_entity(row.hull).position,ENTRY,queue_position],"Transit")
 	elif row.state == "Transit":
-		rear.ledger.move_entity(row.hull,"hq-queue",HQ_QUEUE)
+		rear.ledger.move_entity(row.hull,"hq-queue",queue_position)
 		row.state = "Waiting HQ Berth"
 		row.blocker = "Waiting at the real HQ queue for one of two receiving berths."
 	elif row.state == "Docking HQ":
-		rear.ledger.move_entity(row.hull,"hq-berth",HQ)
+		rear.ledger.move_entity(row.hull,"hq-berth",hq_position)
 		row.state = "Arrived"
 		row.blocker = ""
 		row.arrived = _physical_totals(row)
@@ -408,7 +412,7 @@ func settle() -> bool:
 				var rear: RefCounted = _rear_ref.get_ref()
 				row.hq_berth = true
 				row.blocker = ""
-				_start_route(row,[rear.ledger.inspect_entity(row.hull).position,HQ],"Docking HQ")
+				_start_route(row,[rear.ledger.inspect_entity(row.hull).position,hq_position],"Docking HQ")
 				changed = true
 		elif row.state == "Cancelling":
 			changed = _schedule_cancel(row) or changed
@@ -604,7 +608,7 @@ func _finish_task(row: Dictionary) -> void:
 	elif phase == "HQ Passenger Exit":
 		result = rear.ledger.disembark_dispatch_passenger(worker,row.hull,"hq-berth")
 		if result.ok:
-			_start_task(row,"HQ Passenger Walk",[worker],10.0,[HQ,HQ+Vector2(15,0)])
+			_start_task(row,"HQ Passenger Walk",[worker],10.0,[hq_position,hq_position+Vector2(15,0)])
 			return
 	elif phase == "HQ Passenger Walk":
 		result = rear.ledger.complete_hq_reserve_receipt(worker,"hq-reserve")
@@ -689,14 +693,14 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,outward_route,{"strict_turns":false})
 	if not outward_rear.ok: return _fail(outward_rear.reason)
 	segments.append(outward_rear)
-	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,HQ_QUEUE],_crossing_profile(profile,[rear_exit,ENTRY,HQ_QUEUE]))
+	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,queue_position],_crossing_profile(profile,[rear_exit,ENTRY,queue_position]))
 	if not outward.ok: return _fail(outward.reason)
 	segments.append(outward)
-	var dock: Dictionary = Routes.plan(rear.ledger,row.hull,[HQ_QUEUE,HQ])
+	var dock: Dictionary = Routes.plan(rear.ledger,row.hull,[queue_position,hq_position])
 	if not dock.ok: return _fail(dock.reason)
 	segments.append(dock)
 	if row.mode == "Strategic Delivery":
-		var back: Dictionary = Routes.plan(rear.ledger,row.hull,[HQ,ENTRY,rear_exit],_crossing_profile(profile,[HQ,ENTRY,rear_exit]))
+		var back: Dictionary = Routes.plan(rear.ledger,row.hull,[hq_position,ENTRY,rear_exit],_crossing_profile(profile,[hq_position,ENTRY,rear_exit]))
 		if not back.ok: return _fail(back.reason)
 		segments.append(back)
 		var home: Array = _rear_vehicle_path(row,rear_exit,rear.yard.PARKING_POSITIONS[row.home_slot])
@@ -830,12 +834,13 @@ func _schedule_hq(row: Dictionary) -> bool:
 		_start_route(row,[rear.ledger.inspect_entity(row.hull).position,ENTRY],"Returning")
 	return true
 
-func free_hq_handlers(count: int) -> Array[String]:
+func free_hq_handlers(count: int, include_forward: bool = false) -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var result: Array[String] = []
 	for id in hq_staff.slice(0,4):
 		var person: Dictionary = rear.ledger.inspect_entity(id)
 		if person.is_empty() or person.health <= 0 or person.assignment != "HQ Duty" or person.holder_id != "hq-berth" or not person.carrying_stock_id.is_empty(): continue
+		if not include_forward and rear.forward_supply != null and rear.forward_supply.person_committed(id): continue
 		var busy := false
 		for manifest in manifests.values():
 			if id in manifest.task.get("actors",[]): busy = true

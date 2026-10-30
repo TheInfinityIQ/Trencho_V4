@@ -5,6 +5,8 @@ const EPS := 0.000001
 const HQ := Vector2(1640.0,91.0)
 const RESERVE := Vector2(1655.0,91.0)
 const WALK_SPEED := 2.0
+var hq_position: Vector2
+var reserve_position: Vector2
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var weapon_promises: Dictionary = {}
@@ -14,6 +16,8 @@ const HULL_TARGETS := {"T03":{"E02":900},"T04":{"E26":180},"T05":{"E25":30,"E02"
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	hq_position = rear.ledger.inspect_entity("hq-berth").position
+	reserve_position = rear.ledger.inspect_entity("hq-reserve").position
 
 func request_person_stock(person_id: String, type: String, quantity: int) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -116,7 +120,7 @@ func advance_to(next_time: float) -> void:
 	for row in jobs.values():
 		if row.state not in ["Walking","Returning"]: continue
 		var fraction: float = clampf((next_time-float(row.started))/maxf(EPS,float(row.deadline)-float(row.started)),0.0,1.0)
-		var destination: Vector2 = HQ if row.state == "Walking" else RESERVE
+		var destination: Vector2 = hq_position if row.state == "Walking" else reserve_position
 		rear.ledger.move_entity(row.target,"hq-reserve",row.from.lerp(destination,fraction))
 
 func settle() -> bool:
@@ -130,10 +134,10 @@ func settle() -> bool:
 			if row.kind.begins_with("Person"):
 				var person: Dictionary = rear.ledger.inspect_entity(row.target)
 				if not _person_ready(person): row.blocker = "Recipient must remain a real HQ Reserve person."; continue
-				if not person.position.is_equal_approx(HQ):
+				if not person.position.is_equal_approx(hq_position):
 					row.from = person.position
 					row.started = rear.time
-					row.deadline = rear.time+person.position.distance_to(HQ)/WALK_SPEED
+					row.deadline = rear.time+person.position.distance_to(hq_position)/WALK_SPEED
 					row.state = "Walking"
 					row.blocker = "Recipient walking to actual HQ stock."
 					changed = true
@@ -233,11 +237,11 @@ func _held_rounds(rear: RefCounted, person_id: String) -> int:
 func _finish_step(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if row.state == "Walking":
-		rear.ledger.move_entity(row.target,"hq-stock",HQ)
+		rear.ledger.move_entity(row.target,"hq-stock",hq_position)
 		row.state = "Waiting"
 		return
 	if row.state == "Returning":
-		rear.ledger.move_entity(row.target,"hq-reserve",RESERVE)
+		rear.ledger.move_entity(row.target,"hq-reserve",reserve_position)
 		_close(row,bool(row.cancel_pending))
 		return
 	if row.state == "Return Carry":
@@ -323,7 +327,7 @@ func _start_return(row: Dictionary) -> void:
 	row.from = person.position
 	row.state = "Returning"
 	row.started = rear.time
-	row.deadline = rear.time+person.position.distance_to(RESERVE)/WALK_SPEED
+	row.deadline = rear.time+person.position.distance_to(reserve_position)/WALK_SPEED
 	row.handler = ""
 	row.blocker = "Recipient walking back with actual issued goods."
 
@@ -353,9 +357,11 @@ func _person_ready(person: Dictionary) -> bool:
 	return not person.is_empty() and person.kind == "PERSON" and person.assignment == "HQ Reserve" and person.pending_assignment == "None" and person.owner == _rear_ref.get_ref().PLAYER and person.holder_id in ["hq-reserve","hq-stock"] and person.health > 0 and person.crew_station.is_empty()
 
 func _vehicle_ready(hull: Dictionary) -> bool:
-	return not hull.is_empty() and hull.kind == "CARRIER" and hull.fleet_domain == "Military" and hull.owner == _rear_ref.get_ref().PLAYER and hull.holder_id == "hq-berth" and hull.position.is_equal_approx(HQ) and hull.health > 0
+	return not hull.is_empty() and hull.kind == "CARRIER" and hull.fleet_domain == "Military" and hull.owner == _rear_ref.get_ref().PLAYER and hull.holder_id == "hq-berth" and hull.position.is_equal_approx(hq_position) and hull.health > 0
 
 func _target_busy(target: String) -> bool:
+	var supply: RefCounted = _rear_ref.get_ref().forward_supply
+	if supply != null and (supply.person_committed(target) or supply.hull_committed(target)): return true
 	for row in jobs.values():
 		if row.target == target and row.state not in ["Complete","Cancelled"]: return true
 	return false

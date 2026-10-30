@@ -8,6 +8,7 @@ const HANDLING_SECONDS := 2.0
 const LOCAL_RADIUS := 20.0
 const HQ := Vector2(1640.0,91.0)
 const THREAT_RANGE := {"T03":250.0,"T04":450.0,"T05":700.0}
+var hq_position: Vector2
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var _sequence := 0
@@ -15,6 +16,7 @@ var _sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	hq_position = rear.ledger.inspect_entity("hq-berth").position
 	if rear.ledger.inspect_entity("forward-transit").is_empty():
 		rear.ledger.add_place("forward-transit","Military supply hull travelling on its declared route",Vector2.ZERO)
 
@@ -30,7 +32,7 @@ func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	if not ready.is_empty(): return _fail(ready)
 	if stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or quantity <= 0 or stock.available < quantity:
 		return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
-	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(HQ) <= LOCAL_RADIUS:
+	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
 		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
 	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id):
 		return _fail("The named actual HQ logistics loader is unavailable.")
@@ -39,7 +41,7 @@ func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	if float(quantity)*float(stock.unit_mass_kg) > float(hull.vehicle_spec.payload)+EPS:
 		return _fail("The requested physical freight exceeds the T01 payload.")
 	var route_error: String = _validate_points(outbound_points,hull.position,stop.position)
-	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,HQ)
+	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,hq_position)
 	if not route_error.is_empty(): return _fail(route_error)
 	var outward: Dictionary = Routes.plan(rear.ledger,hull_id,outbound_points,{"world":rear.combat.world})
 	var home: Dictionary = Routes.plan(rear.ledger,hull_id,return_points,{"world":rear.combat.world})
@@ -93,14 +95,14 @@ func resume_delivery(id: String, outbound_points: Array = [], return_points: Arr
 	var hull: Dictionary = _rear().ledger.inspect_entity(row.hull)
 	var movable: String = _movement_blocker(row.hull,hull)
 	if not movable.is_empty(): return _fail(movable)
-	var destination: Vector2 = _rear().ledger.inspect_entity(row.stop).position if phase == "Outbound" else HQ
+	var destination: Vector2 = _rear().ledger.inspect_entity(row.stop).position if phase == "Outbound" else hq_position
 	var points: Array = outbound_points if phase == "Outbound" else return_points
 	if points.is_empty(): return _fail("Resume requires explicit waypoints from the hull's current position.")
 	var error: String = _validate_points(points,hull.position,destination)
 	if not error.is_empty(): return _fail(error)
 	if phase == "Outbound":
 		if not return_points.is_empty(): row.return_points = return_points.duplicate()
-		var home_error: String = _validate_points(row.return_points,_rear().ledger.inspect_entity(row.stop).position,HQ)
+		var home_error: String = _validate_points(row.return_points,_rear().ledger.inspect_entity(row.stop).position,hq_position)
 		if not home_error.is_empty(): return _fail(home_error)
 	row.state = phase
 	if not _begin_route(row,points,phase): return _fail(row.blocker)
@@ -173,7 +175,7 @@ func _finish_load(row: Dictionary) -> void:
 	var task: Dictionary = row.task
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(HQ): _pause_task(row,"Hull moved during physical HQ loading."); return
+	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position): _pause_task(row,"Hull moved during physical HQ loading."); return
 	if task.phase == "Load Pickup":
 		if not _loader_free(row.loader): _pause_task(row,"Named HQ loader became unavailable before pickup."); return
 		var stock: Dictionary = rear.ledger.inspect_entity(row.stock)
@@ -270,7 +272,7 @@ func _advance_unloader(row: Dictionary, at: float) -> void:
 func _begin_route(row: Dictionary, points: Array, phase: String) -> bool:
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
-	var destination: Vector2 = rear.ledger.inspect_entity(row.stop).position if phase == "Outbound" else HQ
+	var destination: Vector2 = rear.ledger.inspect_entity(row.stop).position if phase == "Outbound" else hq_position
 	var error: String = _validate_points(points,hull.position,destination)
 	if error.is_empty(): error = _movement_blocker(row.hull,hull)
 	if not error.is_empty(): _block_route(row,phase,error); return false
@@ -347,7 +349,7 @@ func _finish_route(row: Dictionary) -> void:
 		row.task = {}
 		row.blocker = "Waiting for the named local handler to unload real freight."
 	else:
-		var home: Dictionary = rear.ledger.move_entity(row.hull,"hq-berth",HQ)
+		var home: Dictionary = rear.ledger.move_entity(row.hull,"hq-berth",hq_position)
 		if not home.ok: _block_route(row,"Returning",home.message); return
 		row.state = "Complete"
 		row.return_completed = true
@@ -401,7 +403,7 @@ func _hq_hull_blocker(id: String, hull: Dictionary) -> String:
 	var rear: RefCounted = _rear()
 	if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T01" or hull.get("fleet_domain","") != "Military" or not rear.dispatch.military_hulls.has(id) or not rear.military.vehicles.has(id):
 		return "Forward freight requires one admitted, attached actual military T01."
-	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(HQ): return "Same T01 must stop at the actual HQ berth before loading."
+	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position): return "Same T01 must stop at the actual HQ berth before loading."
 	if rear.hq._target_busy(id): return "HQ has an unfinished physical issue or refuel job on this hull."
 	if not str(rear.military.vehicles[id].get("passenger_squad","")).is_empty() or not hull.passengers.is_empty(): return "Military boarding occupies this hull; freight mission requires no passengers."
 	return _movement_blocker(id,hull)
@@ -425,7 +427,7 @@ func _empty_freight_hull(id: String) -> bool:
 
 
 func _loader_free(id: String) -> bool:
-	return id in _rear().dispatch.free_hq_handlers(4)
+	return id in _rear().dispatch.free_hq_handlers(4,true)
 
 
 func _active_member(id: String) -> bool:

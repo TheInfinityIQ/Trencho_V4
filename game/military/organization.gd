@@ -6,6 +6,7 @@ const EPS := 0.000001
 const KINDS: Array[String] = ["Rifle","Machine gun","Mortar","Engineer","Medical","Artillery","Reconnaissance","Marksman"]
 const MINIMUM := {"Rifle":4,"Machine gun":4,"Mortar":4,"Engineer":4,"Medical":4,"Artillery":6,"Reconnaissance":4,"Marksman":4}
 const SPECIALISTS := {"Rifle":{"None":0},"Machine gun":{"P04":2},"Mortar":{"P04":3},"Engineer":{"P02":2},"Medical":{"P03":1},"Artillery":{"P05":4},"Reconnaissance":{"P06":1},"Marksman":{"P07":1}}
+var hq_position: Vector2
 var _rear_ref: WeakRef
 var companies: Dictionary = {}
 var platoons: Dictionary = {}
@@ -22,7 +23,8 @@ var _commander_id := "initial-hq-05"
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
-	rear.ledger.add_place("hq-formation","Military formation report at HQ",HQ)
+	hq_position = rear.ledger.inspect_entity("hq-berth").position
+	rear.ledger.add_place("hq-formation","Military formation report at HQ",hq_position)
 
 func request_need(kind: String, reason: String, priority: int = 4, parent_value: int = 0) -> Dictionary:
 	if kind not in KINDS or reason.is_empty() or priority < 0 or priority > 9 or parent_value < 0 or parent_value > 9:
@@ -86,7 +88,7 @@ func form_squad(kind: String, people: Array[String]) -> Dictionary:
 			for prior in accepted: rear.ledger.cancel_formation_report(prior,id)
 			_prune_empty_parent(parent.id)
 			return _fail("Actual unallocated E13 and ten claimable E14 are required for this artillery squad.")
-	var travel: float = HQ.distance_to(rear.ledger.inspect_entity(people[0]).position)/2.0
+	var travel: float = hq_position.distance_to(rear.ledger.inspect_entity(people[0]).position)/2.0
 	# Reserve and formation report are 15 m apart in the accepted HQ layout.
 	travel = maxf(1.0,travel)
 	squads[id] = {"id":id,"kind":kind,"company":parent.company,"platoon":parent.id,
@@ -172,7 +174,7 @@ func settle() -> bool:
 	for id in replacement_reports.keys():
 		var report: Dictionary = replacement_reports[id]
 		if report.due > rear.time+EPS: continue
-		var moved: Dictionary = rear.ledger.move_entity(id,"hq-formation",HQ)
+		var moved: Dictionary = rear.ledger.move_entity(id,"hq-formation",hq_position)
 		if moved.ok:
 			var joined: Dictionary = rear.ledger.complete_formation_report(id,report.squad,"hq-formation")
 			if joined.ok:
@@ -187,7 +189,7 @@ func settle() -> bool:
 	for id in crew_reports.keys():
 		var report: Dictionary = crew_reports[id]
 		if report.due > rear.time+EPS: continue
-		var moved: Dictionary = rear.ledger.move_entity(id,"hq-berth",HQ)
+		var moved: Dictionary = rear.ledger.move_entity(id,"hq-berth",hq_position)
 		if moved.ok:
 			var joined: Dictionary = rear.ledger.complete_military_crew_report(id,report.hull,report.station)
 			if joined.ok:
@@ -203,7 +205,7 @@ func settle() -> bool:
 		var row: Dictionary = squads[id]
 		if row.state == "Reporting" and row.report_due <= rear.time+EPS:
 			for person_id in row.roster:
-				var moved: Dictionary = rear.ledger.move_entity(person_id,"hq-formation",HQ)
+				var moved: Dictionary = rear.ledger.move_entity(person_id,"hq-formation",hq_position)
 				if not moved.ok:
 					row.blocker = moved.message
 					continue
@@ -287,7 +289,7 @@ func request_replacement(squad_id: String, person_id: String) -> Dictionary:
 	if not _replacement_ready(row,person_id): return _fail("Replacement needs the matching qualification and actually issued role package.")
 	var result: Dictionary = rear.ledger.request_formation_report(person_id,squad_id)
 	if not result.ok: return result
-	replacement_reports[person_id] = {"person":person_id,"squad":squad_id,"due":rear.time+HQ.distance_to(person.position)/2.0,"blocker":"Walking to the existing squad."}
+	replacement_reports[person_id] = {"person":person_id,"squad":squad_id,"due":rear.time+hq_position.distance_to(person.position)/2.0,"blocker":"Walking to the existing squad."}
 	return {"ok":true,"message":"Vacant roster place reserved; the same person remains HQ Reserve until actual rendezvous."}
 
 func _auto_replace() -> bool:
@@ -347,7 +349,7 @@ func assign_crew(person_id: String, hull_id: String, station: String) -> Diction
 		if report.hull == hull_id and report.station == station: return _fail("This real crew station already has a pending report.")
 	var result: Dictionary = rear.ledger.request_military_crew_report(person_id,hull_id,station)
 	if not result.ok: return result
-	crew_reports[person_id] = {"person":person_id,"hull":hull_id,"station":station,"due":rear.time+HQ.distance_to(rear.ledger.inspect_entity(person_id).position)/2.0,"blocker":"Walking to the stopped hull."}
+	crew_reports[person_id] = {"person":person_id,"hull":hull_id,"station":station,"due":rear.time+hq_position.distance_to(rear.ledger.inspect_entity(person_id).position)/2.0,"blocker":"Walking to the stopped hull."}
 	return {"ok":true,"message":"Qualified person committed to a timed HQ crew report; station remains empty until arrival."}
 
 func attach_vehicle(hull_id: String, parent_id: String) -> Dictionary:
@@ -508,7 +510,7 @@ func _equip_artillery(row: Dictionary) -> bool:
 		row.blocker = "Allocated field gun is absent or destroyed."
 		return false
 	if gun.holder_id in ["hq-berth","hq-stock"]:
-		var moved: Dictionary = rear.ledger.move_field_gun(row.gun_id,"hq-formation",HQ)
+		var moved: Dictionary = rear.ledger.move_field_gun(row.gun_id,"hq-formation",hq_position)
 		if not moved.ok:
 			row.blocker = moved.message
 			return false

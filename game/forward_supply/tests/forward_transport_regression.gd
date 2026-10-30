@@ -68,6 +68,10 @@ func _test_two_physical_cycles() -> void:
 	_expect(first.ok,"first physical HQ delivery accepted")
 	if not first.ok: return
 	_expect(supply.hull_committed("transport-t01"),"same hull committed across delivery")
+	rear.advance_time(0)
+	_expect("initial-hq-02" not in rear.dispatch.free_hq_handlers(4),"forward pickup excludes its loader from unrelated HQ handling before stock is lifted")
+	var competing_fuel: Dictionary = rear.hq.request_vehicle_fuel("transport-t01",1)
+	_expect(not competing_fuel.ok and "job" in str(competing_fuel.message),"HQ cannot start refuelling the hull committed to forward delivery")
 	_expect(not supply.request_delivery("transport-t01","transport-hq-rounds",30,"transport-stop",outbound,returning,"initial-hq-03","transport-a").ok,"second simultaneous mission cannot own same hull")
 	rear.advance_time(2)
 	_expect(not str(supply.transport.jobs[first.id].task.get("carry","")).is_empty(),"loader physically carries first portion")
