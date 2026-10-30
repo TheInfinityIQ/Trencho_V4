@@ -44,7 +44,9 @@ func order(code: String, center: Vector2, owner: String = "army-blue", company_i
 	var id := "field-%04d" % _sequence
 	var added: Dictionary = _rear().ledger.add_place(id,"%s physical field site" % code,center)
 	if not added.ok: return added
-	projects[id] = {"id":id,"code":code,"name":spec.name,"company":company_id,"owner":owner,"center":center,"area":area,"cells":cells,"facing":facing,"state":"Awaiting material and engineers","progress":0.0,"work_required":float(spec.work),"m11_required":int(spec.m11),"m11_consumed":0,"health":maxi(1,int(spec.health/4)) if code != "S11" else 0,"max_health":int(spec.health),"load_kg":float(spec.get("load_kg",0.0)),"upgrade_from_basic":false,"assigned":[],"staff":[],"occupants":[],"patients":[],"berths":[],"last_entry":-INF,"last_damage":-INF,"blocked_reason":"Stage all M11 at this physical site, then bring local P02 engineers with E08.","created_at":_rear().time,"completed_at":-1.0,"material_receipt":[]}
+	var entrances: Array[Vector2] = [center]
+	if code == "S01": entrances = [center+Vector2(-10,0),center,center+Vector2(10,0)]
+	projects[id] = {"id":id,"code":code,"name":spec.name,"company":company_id,"owner":owner,"center":center,"area":area,"cells":cells,"facing":facing,"entrances":entrances,"state":"Awaiting material and engineers","progress":0.0,"work_required":float(spec.work),"m11_required":int(spec.m11),"m11_consumed":0,"health":maxi(1,int(spec.health/4)) if code != "S11" else 0,"max_health":int(spec.health),"load_kg":float(spec.get("load_kg",0.0)),"upgrade_from_basic":false,"assigned":[],"staff":[],"occupants":[],"patients":[],"berths":[],"last_entry":-INF,"last_damage":-INF,"blocked_reason":"Stage all M11 at this physical site, then bring local P02 engineers with E08.","created_at":_rear().time,"completed_at":-1.0,"material_receipt":[]}
 	events.append({"at":_rear().time,"id":id,"kind":"Ordered","detail":code})
 	return {"ok":true,"id":id,"message":"Actual field site placed; work and capability await local people, tools and full delivered M11."}
 
@@ -87,16 +89,24 @@ func deliver_material(site_id: String, stock_id: String, count: int) -> Dictiona
 	var holder: Dictionary = _rear().ledger.inspect_entity(stock.holder_id)
 	if holder.get("kind","") not in ["PERSON","CARRIER"] or holder.position.distance_to(row.center) > 2.0+EPS: return _fail("A real person or carrier must finish its movement to within two metres of the field site with this stock.")
 	if row.state != "Complete" and (stock.design_type != "M11" or _rear().ledger.available_stock_at(site_id,"M11")+count > row.m11_required): return _fail("Temporary construction supply area holds exactly this blueprint's remaining M11, with no other free storage.")
-	if row.state == "Complete" and row.code in ["S06","S07"]:
-		var current_mass := 0.0
-		for item in _rear().ledger.entities_at(site_id,["STOCK"]): current_mass += float(item.quantity)*float(item.unit_mass_kg)
-		if current_mass+float(stock.unit_mass_kg)*count > float(Catalog.SPECS[row.code].storage_kg)+EPS: return _fail("Actual cache or depot mass capacity would be exceeded.")
+	if row.state == "Complete":
+		match row.code:
+			"S06","S07":
+				var current_mass := 0.0
+				for item in _rear().ledger.entities_at(site_id,["STOCK"]): current_mass += float(item.quantity)*float(item.unit_mass_kg)
+				if current_mass+float(stock.unit_mass_kg)*count > float(Catalog.SPECS[row.code].storage_kg)+EPS: return _fail("Actual cache or depot mass capacity would be exceeded.")
+			"S08":
+				if stock.design_type != "E12": return _fail("A completed aid post accepts only actual E12 medicine through this service handoff.")
+			"S09":
+				if stock.design_type != "M11": return _fail("A completed repair point accepts only actual M11 repair material through this service handoff.")
+			_:
+				return _fail("This completed structure has no permanent stock service; its construction supply area has closed.")
 	var moved: Dictionary
 	if holder.kind == "PERSON" and holder.carrying_stock_id == stock_id:
 		if count != stock.quantity: return _fail("An active person carry must deposit its whole physical load at this site.")
 		moved = _rear().ledger.finish_carry(holder.id,site_id)
 	else: moved = _rear().ledger.transfer_stock(stock_id,count,site_id)
-	if moved.ok: _refresh_site(row)
+	if moved.ok and row.state != "Complete": _refresh_site(row)
 	return moved
 
 func assign_staff(site_id: String, person_id: String) -> Dictionary:
@@ -126,6 +136,7 @@ func service_status(site_id: String) -> Dictionary:
 		if person.get("kind","") == "PERSON" and person.owner == row.owner and person.health > 0 and person.assignment not in ["Wounded","Recovery","Dead"] and person.position.distance_to(row.center) <= 2.0 and person.crew_station.is_empty(): local.append(id)
 	var reason := ""
 	var stock := {}
+	var bay_target := ""
 	match row.code:
 		"S06":
 			var mass := 0.0
@@ -144,15 +155,18 @@ func service_status(site_id: String) -> Dictionary:
 			if local.is_empty() or _rear().ledger.inspect_entity(local[0]).qualification != "P03" or _rear().military._held(local[0],"E11") < 1: reason = "Local P03 medic with E11 required."
 			elif _rear().ledger.available_stock_at(site_id,"E12") + _rear().military._held(local[0],"E12") < 1: reason = "Physical E12 at aid post or carried by its medic required; empty post gives no treatment."
 		"S09":
+			for target_id in repairs:
+				if repairs[target_id].point == site_id: bay_target = target_id
 			var ready_engineer := false
 			for id in local:
 				if _rear().ledger.inspect_entity(id).qualification == "P02" and _rear().military._held(id,"E08") > 0: ready_engineer = true
-			if not ready_engineer: reason = "Local P02 engineer with E08 required."
+			if not bay_target.is_empty(): reason = "The one repair bay is occupied by "+bay_target+"."
+			elif not ready_engineer: reason = "Local P02 engineer with E08 required."
 			elif _rear().ledger.available_stock_at(site_id,"M11") < 10: reason = "Ten local M11 required per repair; empty point repairs nothing."
 		"S10":
 			if local.is_empty() or not _rear().ledger.inspect_entity(local[0]).basic_training or _rear().military._held(local[0],"E20") < 1: reason = "Trained local observer with actual E20 required."
 		_: pass
-	return {"ok":reason.is_empty(),"reason":reason,"staff":local,"local_stock":stock,"capacity":Catalog.SPECS[row.code]}
+	return {"ok":reason.is_empty(),"reason":reason,"staff":local,"local_stock":stock,"bay_target":bay_target,"capacity":Catalog.SPECS[row.code]}
 
 func lookout_observe(site_id: String, target: Vector2) -> Dictionary:
 	var status: Dictionary = service_status(site_id)
@@ -218,6 +232,8 @@ func request_repair(target_id: String, engineers: Array, repair_point_id: String
 		if target.health <= 0 or target.health >= target.max_health or target.code == "S11": return _fail("Only a damaged, surviving ordinary structure can be repaired.")
 	else:
 		if site.code != "S09" or target.get("kind","") not in ["CARRIER","HEAVY_OBJECT"] or target.get("health",0) <= 0 or target.get("health",0) >= target.get("max_health",0) or target.position.distance_to(site.center) > 2.0+EPS: return _fail("A damaged, stationary actual vehicle or gun must be at the S09 bay.")
+		for other_id in repairs:
+			if repairs[other_id].point == repair_point_id: return _fail("The one S09 repair bay is occupied by "+other_id+"; this target waits.")
 		if not service_status(repair_point_id).ok: return _fail("Repair point lacks actual P02, E08 or ten local M11.")
 	for id in engineers:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
@@ -467,7 +483,7 @@ func enter(site_id: String, person_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(site_id,{})
 	if row.is_empty() or row.state != "Complete" or row.code not in ["S01","S03","S06"]: return _fail("A finished personnel shelter is required.")
 	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-	if person.get("kind","") != "PERSON" or person.owner not in ["army-blue","army-red"] or person.health <= 0 or person.position.distance_to(row.center) > 2.0+EPS: return _fail("An actual living person must be at the entry.")
+	if person.get("kind","") != "PERSON" or person.owner not in ["army-blue","army-red"] or person.health <= 0 or not _at_entrance(row,person.position): return _fail("An actual living person must be at one of this structure's physical entrances.")
 	if row.code == "S06" and person.owner != row.owner: return _fail("Enemy caches and their goods cannot be looted by entry.")
 	for current_id in row.occupants:
 		if _rear().ledger.inspect_entity(current_id).owner != person.owner: return _fail("Enemy occupants prevent entry until the shelter is cleared.")
@@ -489,10 +505,17 @@ func enter(site_id: String, person_id: String) -> Dictionary:
 func exit(site_id: String, person_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(site_id,{})
 	if row.is_empty() or not row.occupants.has(person_id): return _fail("Person is not in this actual structure.")
+	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
+	if person.get("kind","") != "PERSON" or not _at_entrance(row,person.position): return _fail("The actual occupant must reach a physical entrance to exit.")
 	if _rear().time-float(row.last_entry) < 1.0-EPS: return _fail("Exit supports one person per second.")
 	row.occupants.erase(person_id)
 	row.last_entry = _rear().time
 	return {"ok":true,"message":"Actual occupant left the structure."}
+
+func _at_entrance(row: Dictionary, position: Vector2) -> bool:
+	for entrance in row.entrances:
+		if position.distance_to(entrance) <= 2.0+EPS: return true
+	return false
 
 func bunker_port_allows(site_id: String, person_id: String, target: Vector2) -> bool:
 	var row: Dictionary = projects.get(site_id,{})
