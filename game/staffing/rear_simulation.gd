@@ -34,6 +34,7 @@ var vehicle_combat: RefCounted # G23 mounted fire against actual people, stock a
 var recovery: RefCounted # G24 physical repair, towing and once-only destruction.
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
+var forward_supply: RefCounted # Timed local issue from arrived forward stock to an active formation.
 var field_structures: RefCounted # G19 local engineer projects and field services.
 var bridges: RefCounted # G20 constructed crossing, traffic and repair owner.
 var mines: RefCounted # G22 field devices, knowledge and clearance.
@@ -43,7 +44,7 @@ var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
 
-func _init(fixture: String = "A05") -> void:
+func _init(fixture: String = "A05", include_yard_fixture: bool = true) -> void:
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
 	for id in Layout.FACILITIES:
@@ -56,7 +57,7 @@ func _init(fixture: String = "A05") -> void:
 		var definition: Array = Layout.STORES[id]
 		ledger.add_place(id, id + " physical storage", Layout.door(definition[0]))
 		stores[id] = {"id": id, "capacity": float(definition[1]), "accessible": true, "filter": [], "pile": false}
-	yard = Yard.new(ledger)
+	yard = Yard.new(ledger,include_yard_fixture)
 	if fixture == "Empty":
 		return
 	for i in range(1, 5):
@@ -305,6 +306,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if recovery != null: next = minf(next,recovery.next_boundary())
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
+		if forward_supply != null: next = minf(next,forward_supply.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
 		if bridges != null: next = minf(next,bridges.next_boundary())
 		if mines != null: next = minf(next,mines.next_boundary())
@@ -338,6 +340,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if combat != null: combat.advance_to(next)
 		if orders != null: orders.advance_to(next)
 		if objectives != null: objectives.advance_to(next)
+		if forward_supply != null: forward_supply.advance_to(next)
 		if field_structures != null: field_structures.advance_to(next)
 		if bridges != null: bridges.advance_to(next)
 		if mines != null: mines.advance_to(next)
@@ -523,6 +526,7 @@ func _settle() -> void:
 		if combat != null: changed = combat.settle() or changed
 		if orders != null: changed = orders.settle() or changed
 		if objectives != null: changed = objectives.settle() or changed
+		if forward_supply != null: changed = forward_supply.settle() or changed
 		if field_structures != null: changed = field_structures.settle() or changed
 		if bridges != null: changed = bridges.settle() or changed
 		if mines != null: changed = mines.settle() or changed
@@ -937,7 +941,7 @@ func audit() -> Array[String]:
 	for r in requests.values():
 		if _assigned(r.id) > int(r.positions): failures.append("Too many actual staff positions: " + r.id)
 		if _retaining(r.id) + _pending_in(r.id) > int(r.positions): failures.append("Overbooked pending staff positions: " + r.id)
-	if not is_equal_approx(yard.fuel + yard.burned, 40.0) or yard.fuel < 0.0:
+	if not is_equal_approx(yard.fuel + yard.burned, 40.0 if yard.fixture_hull else 0.0) or yard.fuel < 0.0:
 		failures.append("Yard fuel conservation")
 	return failures
 

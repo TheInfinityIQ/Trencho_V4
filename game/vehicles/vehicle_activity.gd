@@ -28,6 +28,27 @@ func _add_duty(id: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	rear.requests[id] = {"id":id,"target":0,"positions":1,"priority":1,"created":rear.time,"order":rear._next(),"place":"vehicle-lane","manual":true}
 
+func register_initial_parked(id: String, slot: int, driver: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(id)
+	var person: Dictionary = rear.ledger.inspect_entity(driver)
+	if rear.time != 0.0 or vehicles.has(id) or hull.get("kind","") != "CARRIER" or hull.get("vehicle_spec",{}).is_empty() or not rear.actors.has(driver) or person.get("qualification","") != "P08" or person.get("assignment","") != "Available": return _result(false,"Initial hull requires a real available P08 and canonical vehicle at time zero.")
+	if slot < 0 or slot >= rear.yard.PARKING_POSITIONS.size() or hull.owner != rear.PLAYER or hull.controller != rear.PLAYER or hull.fleet_domain != "Rear" or hull.health <= 0 or person.owner != hull.owner or person.health <= 0 or person.pending_assignment != "None" or not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty(): return _result(false,"Initial registration requires an owned live hull, free matching driver and actual parking slot.")
+	if not rear.heavy_production._slot_legal(slot,hull.design_type) or not rear.yard.occupied[slot].is_empty() or not rear.yard.reserved[slot].is_empty(): return _result(false,"Initial hull needs a legal empty parking place at time zero.")
+	register_output(id,slot)
+	vehicles[id].state = "Parked"
+	rear.yard.occupied[slot] = id
+	rear.ledger.move_entity(id,"vehicle-lane",rear.yard.PARKING_POSITIONS[slot])
+	rear.ledger.move_entity(driver,"rear",rear.yard.PARKING_POSITIONS[slot])
+	var result: Dictionary = assign_station(id,driver,"Driver")
+	if not result.ok: return result
+	result = rear.ledger.complete_vehicle_station_entry(driver,id,"Driver")
+	if result.ok:
+		rear.actors[driver].phase = "Vehicle Station"
+		rear.actors[driver].motion = {}
+		rear.actors[driver].deadline = INF
+	return result
+
 func eligible(person: Dictionary, duty: String) -> bool:
 	var parts := duty.split(":")
 	if person.is_empty() or parts.size() < 2 or not vehicles.has(parts[1]) or person.owner != "army-blue" or person.health <= 0: return false
@@ -331,6 +352,10 @@ func advance_to(next_time: float) -> void:
 		var row: Dictionary = vehicles[id]
 		if row.state != "Moving to F11": continue
 		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		if hull.health <= 0 or hull.get("damage_immobilized",false):
+			row.state = "Stopped on lane"
+			row.deadline = INF
+			continue
 		row.elapsed = minf(row.duration,row.elapsed+maxf(0.0,next_time-row.last_time))
 		row.last_time = next_time
 		var next_distance: float = _distance_at_time(row,hull.design_type,row.elapsed)
@@ -350,7 +375,12 @@ func settle() -> bool:
 			row.state = "Stopped on lane"
 			row.deadline = INF
 			changed = true
-		if row.state == "Stopped on lane" and rear.heavy_owner(row.bay_id).parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
+		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		if row.state == "Moving to F11" and (hull.health <= 0 or hull.get("damage_immobilized",false)):
+			row.state = "Stopped on lane"
+			row.deadline = INF
+			changed = true
+		if row.state == "Stopped on lane" and hull.health > 0 and not hull.get("damage_immobilized",false) and rear.heavy_owner(row.bay_id).parking_accessible and rear.yard.reserved[row.slot] == id and rear.yard.occupied[row.slot].is_empty():
 			row.state = "Moving to F11"
 			row.last_time = rear.time
 			row.deadline = rear.time + row.duration-row.elapsed

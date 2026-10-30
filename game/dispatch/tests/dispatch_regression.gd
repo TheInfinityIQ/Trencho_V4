@@ -6,12 +6,14 @@ var failures := 0
 var checks := 0
 
 func _initialize() -> void:
+	_test_passenger_duty_handoff()
 	_test_a20_a21_a60()
 	_test_a21_cancellation()
 	_test_driver_only_fleet_transfer()
 	_test_a20_exact_and_unload_cancel()
 	_test_hq_berth_wait()
 	_test_pre_hq_safety_return()
+	_test_damage_stops_transit()
 	print("G12 dispatch regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -60,6 +62,28 @@ func _passengers(count: int) -> Array[String]:
 	var ids: Array[String] = []
 	for index in count: ids.append("g12-passenger-%02d" % index)
 	return ids
+
+func _test_passenger_duty_handoff() -> void:
+	var f := _fixture()
+	var rear: RefCounted = f.rear
+	var service: RefCounted = rear.dispatch
+	var student := "g12-passenger-00"
+	var free_person := "g12-passenger-01"
+	_expect(rear.reassign_person(student,"students").ok,"actual rear person enters exclusive Training duty")
+	var before: Dictionary = rear.ledger.inspect_entity(student)
+	var free_before: Dictionary = rear.ledger.inspect_entity(free_person)
+	var rejected: Dictionary = service.accept(f.hull,"Strategic Delivery",[free_person,student],{})
+	_expect(not rejected.ok,"training student cannot be accepted as a dispatch passenger")
+	_expect(service.manifests.is_empty() and service.passenger_promises.is_empty() and service.incoming_people.is_empty(),"failed admission keeps no manifest or passenger/military claims")
+	_expect(rear.ledger.inspect_entity(student).assignment == "Training" and rear.ledger.inspect_entity(student).holder_id == before.holder_id and rear.ledger.inspect_entity(free_person).duty_id == free_before.duty_id and rear.ledger.inspect_entity(free_person).holder_id == free_before.holder_id,"rejected admission preserves both actual duties and holders")
+	_expect(rear.reassign_person(student,"Available").ok,"student is explicitly withdrawn to Available before dispatch")
+	var accepted: Dictionary = service.accept(f.hull,"Strategic Delivery",[free_person,student],{})
+	_expect(accepted.ok,"same people can be accepted after lawful duty handoff")
+	if not accepted.ok: return
+	_expect(service.passenger_promises.size() == 2 and service.incoming_people.size() == 2 and rear.ledger.inspect_entity(student).duty_id == "passenger:"+accepted.id,"accepted manifest retains only actual reporting passengers and their claims")
+	rear.advance_time(400)
+	_expect(rear.ledger.inspect_entity(student).holder_id == f.hull and rear.ledger.inspect_entity(free_person).holder_id == f.hull,"both named passengers physically board the same hull")
+	_expect(f.base.audit().is_empty(),"rejected admission and valid retry reconcile identities: "+str(f.base.audit()))
 
 func _test_a20_a21_a60() -> void:
 	var f := _fixture()
@@ -222,6 +246,29 @@ func _test_pre_hq_safety_return() -> void:
 	_expect(home_service.manifests[home_accepted.id].state == "Safety Returned" and home_rear.vehicles.vehicles[home.hull].state == "Parked","same Fleet hull physically readmitted and parked after return")
 	_expect(not home_service.incoming_people.has("g12-driver") and home_service.incoming_hulls.is_empty() and home_service.return_places.is_empty() and home_rear.ledger.inspect_entity("g12-driver").rear_place == "Occupied","real rear arrival withdraws each outstanding admission exactly once")
 	_expect(home.base.audit().is_empty(),"safety return conservation and shared audit: "+str(home.base.audit()))
+
+func _test_damage_stops_transit() -> void:
+	var f := _fixture()
+	var rear: RefCounted = f.rear
+	var service: RefCounted = rear.dispatch
+	var accepted: Dictionary = service.accept(f.hull,"Fleet Transfer",[],{})
+	_expect(accepted.ok,"damage fixture accepts a real driver and hull")
+	if not accepted.ok: return
+	rear.advance_time(160)
+	_expect(service.depart(accepted.id).ok,"damage fixture leaves F07")
+	rear.advance_time(30)
+	_expect(service.manifests[accepted.id].state == "Transit","hull is physically in transit before damage")
+	_expect(rear.ledger.add_stock("g12-damage-cargo","E02",3,0.02,f.hull,rear.PLAYER).ok,"three actual rounds are aboard damaged hull")
+	var before: Dictionary = rear.ledger.inspect_entity(f.hull)
+	var distance: float = service.manifests[accepted.id].distance
+	var hit: Dictionary = rear.ledger.apply_vehicle_surface_damage(f.hull,int(ceil(float(before.max_health)*0.8)),1,"Side","Transit interruption regression")
+	_expect(hit.ok and hit.health > 0 and rear.ledger.inspect_entity(f.hull).damage_immobilized,"penetrating hit leaves the hull alive but immobile")
+	rear.advance_time(10)
+	var after: Dictionary = rear.ledger.inspect_entity(f.hull)
+	_expect(service.manifests[accepted.id].state == "Stranded" and service.manifests[accepted.id].distance == distance,"newly immobilized hull stops before another route segment")
+	_expect(after.position.is_equal_approx(before.position) and is_equal_approx(float(after.fuel),float(before.fuel)),"no movement or fuel burn follows pre-existing damage")
+	_expect(rear.ledger.inspect_entity("g12-damage-cargo").holder_id == f.hull,"same real rounds remain aboard stranded hull")
+	_expect(f.base.audit().is_empty(),"stranded dispatch identities and stock reconcile: "+str(f.base.audit()))
 
 func _fill_rear_to(rear: RefCounted, target: int, prefix: String) -> void:
 	var missing: int = target-rear.receiving.rear_population()-rear.receiving.incoming_people()

@@ -18,18 +18,23 @@ const VehicleCombat = preload("res://game/vehicle_combat/vehicle_combat_service.
 const Recovery = preload("res://game/vehicle_recovery/recovery_service.gd")
 const Orders = preload("res://game/orders/order_service.gd")
 const Objectives = preload("res://game/objectives/objective_service.gd")
+const ForwardSupply = preload("res://game/forward_supply/forward_supply.gd")
 const Field = preload("res://game/field_structures/field_service.gd")
 const Bridges = preload("res://game/bridges/bridge_service.gd")
 const Mines = preload("res://game/mines/mine_service.gd")
 const Demolition = preload("res://game/bridges/demolition_service.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
-var rear := Rear.new("Empty")
+const RearStart = preload("res://game/scenario/rear_start.gd")
+var rear: RefCounted
 var receiving: RefCounted
 var speed: int = 0
 var expanded_catalogue: bool = false
+var connected_world: bool = false
 
-func _init(expanded: bool = false) -> void:
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91)) -> void:
+	rear = Rear.new("Empty",not initial_rear)
 	expanded_catalogue = expanded
+	connected_world = world_session
 	# G02 deposits at the same accepted G03 store/entrance.
 	rear.ledger.add_place("personnel", "F08 shared arrival entrance", Layout.door("personnel"))
 	receiving = Receiving.new(rear.ledger)
@@ -44,14 +49,22 @@ func _init(expanded: bool = false) -> void:
 		return maxf(0, store.capacity - owner.ledger.loose_stock_mass_at(store_id) - owner._reserved_space(store_id) + owner.receiving.reserved_storage_kg(slot))
 	rear.receiving = receiving
 	rear.vehicles = Vehicles.new(rear)
-	rear.dispatch = Dispatch.new(rear)
+	rear.dispatch = Dispatch.new(rear,hq_at)
 	rear.hq = Hq.new(rear)
 	rear.construction = Construction.new(rear)
 	rear.military = Military.new(rear)
 	rear.combat = Combat.new(rear)
+	if connected_world:
+		rear.combat.world.bounds = Rect2i(0, 0, 4000, 6000)
 	rear.vehicle_combat = VehicleCombat.new(rear)
 	rear.orders = Orders.new(rear)
 	rear.objectives = Objectives.new(rear)
+	rear.forward_supply = ForwardSupply.new(rear)
+	if connected_world:
+		rear.ledger.add_place("resource-central", "Central resource objective", Vector2(2000, 3000))
+		rear.objectives.register("resource-central", "Resource")
+		rear.ledger.add_place("enemy-hq", "Opposing HQ", Vector2(2000, 5700))
+		rear.orders.register_enemy_hq("enemy-hq")
 	rear.field_structures = Field.new(rear)
 	rear.bridges = Bridges.new(rear)
 	rear.recovery = Recovery.new(rear)
@@ -61,7 +74,8 @@ func _init(expanded: bool = false) -> void:
 	receiving.external_rear_reservations = func() -> int:
 		var owner: RefCounted = dispatch_rear_ref.get_ref()
 		return owner.dispatch.return_places.size() if owner != null else 0
-	for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
+	if not initial_rear:
+		for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
 	var workshop_access: Array[String] = []
 	var munitions_access: Array[String] = []
 	var support_access: Array[String] = []
@@ -85,6 +99,7 @@ func _init(expanded: bool = false) -> void:
 	rear.training = Training.new(rear,access)
 	# Begin idle; the player sets staff, material orders and production targets.
 	for activity in rear._production_activities(): activity.set_mode("Stock target")
+	if initial_rear: RearStart.apply(self)
 	rear.advance_time(0)
 
 func tick(real_seconds: float) -> void:
@@ -102,7 +117,7 @@ func snapshot() -> Dictionary:
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
 		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()
@@ -115,6 +130,7 @@ func audit() -> Array[String]:
 	failures.append_array(rear.recovery.audit())
 	failures.append_array(rear.orders.audit())
 	failures.append_array(rear.objectives.audit())
+	failures.append_array(rear.forward_supply.audit())
 	failures.append_array(rear.field_structures.audit())
 	failures.append_array(rear.bridges.audit())
 	failures.append_array(rear.demolition.audit())

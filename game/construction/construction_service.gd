@@ -75,6 +75,24 @@ func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dicti
 		"m11":int(Catalog.SPECS[kind].m11),"work":float(Catalog.SPECS[kind].work),
 		"message":"Legal bounded footprint, entrance, walking access and eight-metre vehicle roads."}
 
+func add_initial_park(id: String, center: Vector2) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.time != 0.0 or instances.has(id): return _fail("Initial park must be unique and declared at time zero.")
+	var size: Vector2 = Layout.FACILITIES.park[2]
+	var box := Rect2(center-size/2.0,size)
+	if not center.is_finite() or not BOUNDS.encloses(box.grow(1.0)): return _fail("Initial park must fit the rear.")
+	for existing in instances.values():
+		if box.grow(0.25).intersects(Rect2(existing.center-existing.size/2.0,existing.size).grow(0.25)): return _fail("Initial park overlaps an existing facility.")
+	# F11 is open parking ground, not an impassable building across foot/vehicle routes.
+	if vehicle_path(center,Layout.door("dispatch"),["initial-dispatch"]).is_empty(): return _fail("Initial park needs eight-metre vehicle access.")
+	var row: Dictionary = instances["initial-park"].duplicate(true)
+	row.id = id
+	row.center = center
+	row.door = center
+	row.parking_slots = rear.yard.add_park(center)
+	instances[id] = row
+	return {"ok":true,"message":"Declared second starting F11 park registered."}
+
 func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Dictionary:
 	var plan: Dictionary = preview(kind,center,quarter_turn)
 	if not plan.ok: return plan

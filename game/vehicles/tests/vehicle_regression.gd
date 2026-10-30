@@ -9,7 +9,9 @@ func _initialize() -> void:
 	if selected in ["all","types"]:
 		for recipe in ["R25","R28","R29","R30","R31"]: _test_hull(recipe)
 	if selected in ["all","stations"]: _test_station_readiness()
-	if selected in ["all","interruptions"]: _test_interruptions()
+	if selected in ["all","interruptions"]:
+		_test_interruptions()
+		_test_damage_stops_lane()
 	if selected in ["all","connected"]: _test_connected_session()
 	print("G07 vehicle regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
@@ -173,6 +175,31 @@ func _test_interruptions() -> void:
 	_expect(rear.ledger.inspect_entity("trip-driver").crew_station.is_empty(),"driver exits after stopped three-second handling")
 	_expect(id in rear.ledger.rear_fleet_hulls(rear.PLAYER),"parking does not release fleet admission")
 	_expect(f.base.audit().is_empty(),"interruption audit " + str(f.base.audit()))
+
+func _test_damage_stops_lane() -> void:
+	var f: Dictionary = _produced("R25")
+	var rear: RefCounted = f.rear
+	var id: String = f.id
+	_expect(not id.is_empty(),"damage fixture produced one physical hull")
+	if id.is_empty(): return
+	rear.add_person("damage-driver",true,"P08")
+	_expect(rear.vehicles.assign_station(id,"damage-driver","Driver").ok,"actual P08 reports to damage fixture")
+	rear.advance_time(180)
+	_expect(rear.ledger.add_stock("damage-fuel","M08",5,1.0,"depot",rear.PLAYER).ok,"physical fuel exists at rear depot")
+	_expect(rear.vehicles.request_refuel(id,"base-person-11",5).ok,"actual worker refuels same hull")
+	rear.advance_time(200)
+	_expect(rear.vehicles.start_drive(id).ok,"same hull begins measured F10 to F11 travel")
+	rear.advance_time(1)
+	var before: Dictionary = rear.ledger.inspect_entity(id)
+	var distance: float = rear.vehicles.vehicles[id].distance
+	var hit: Dictionary = rear.ledger.apply_vehicle_surface_damage(id,int(ceil(float(before.max_health)*0.8)),1,"Side","Lane interruption regression")
+	_expect(hit.ok and hit.health > 0 and rear.ledger.inspect_entity(id).damage_immobilized,"penetrating strike immobilizes living hull")
+	rear.advance_time(20)
+	var after: Dictionary = rear.ledger.inspect_entity(id)
+	_expect(rear.vehicles.vehicles[id].state == "Stopped on lane" and rear.vehicles.vehicles[id].distance == distance,"damage halts the F11 drive before another segment")
+	_expect(after.position.is_equal_approx(before.position) and is_equal_approx(float(after.fuel),float(before.fuel)),"damaged hull consumes no further fuel and stays at hit position")
+	_expect(rear.heavy_production.bay_occupant == id and rear.yard.reserved[rear.vehicles.vehicles[id].slot] == id,"stranded lane hull retains original bay and promised parking claims")
+	_expect(f.base.audit().is_empty(),"damaged lane hull remains accounted for: " + str(f.base.audit()))
 
 func _test_connected_session() -> void:
 	var base := Base.new()

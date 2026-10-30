@@ -48,6 +48,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	if broken.has(shooter_id): return _block("Broken morale requires fallback before offensive fire.")
 	if target.assignment in ["Wounded","Recovery","Dead"] or target.health <= 0 or _seated(target): return _block("No deliberate fire at incapacitated, recovering or seated people.")
 	if _medic_busy(shooter_id): return _block("Active care must be interrupted before firing.")
+	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Local supply handling must finish or stop before firing.")
 	if _rear().field_structures != null and _rear().field_structures.working(shooter_id): return _block("Active field construction must be interrupted before firing.")
 	if weapon.holder_id != shooter_id or not weapon.functional or not WEAPONS.has(weapon.design_type): return _block("Only the holder of an intact personal direct-fire weapon can fire it.")
 	var spec: Dictionary = WEAPONS[weapon.design_type]
@@ -112,6 +113,7 @@ func request_reload(shooter_id: String, weapon_id: String, source_id: String, qu
 	var stock: Dictionary = ledger.inspect_entity(source_id)
 	if shooter.is_empty() or weapon.is_empty() or stock.is_empty() or not WEAPONS.has(weapon.design_type): return _block("Actual personal weapon and local matching stock are required.")
 	if shooter.assignment in ["Wounded","Recovery","Dead"] or weapon.holder_id != shooter_id or stock.holder_id != shooter_id or stock.design_type != WEAPONS[weapon.design_type].ammo: return _block("Reload uses only matching loose rounds on the active holder.")
+	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Local supply handling must finish before reloading.")
 	if quantity <= 0 or quantity > stock.available or quantity > weapon.loaded_capacity-weapon.loaded_rounds: return _block("Reload quantity exceeds local unreserved stock or weapon capacity.")
 	if reloads.has(weapon_id) or _rear().time+EPS < float(cooldowns.get(weapon_id,0.0)): return _block("Weapon is busy with fire cadence or reload.")
 	var seconds: float = float(WEAPONS[weapon.design_type].reload)
@@ -210,6 +212,7 @@ func injure(person_id: String, injury: int, blast: bool = false) -> Dictionary:
 	return result
 
 func start_care(medic_id: String, patient_id: String, pack_id: String = "") -> Dictionary:
+	if _rear().forward_supply != null and _rear().forward_supply.person_committed(medic_id): return _block("Local supply handling must finish before medical care.")
 	var ledger: RefCounted = _rear().ledger
 	var medic: Dictionary = ledger.inspect_entity(medic_id)
 	var patient: Dictionary = ledger.inspect_entity(patient_id)
@@ -312,7 +315,7 @@ func _field_crew_ready(row: Dictionary) -> bool:
 	var count := 0
 	for id in row.roster:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
-		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0: count += 1
+		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0 and (_rear().forward_supply == null or not _rear().forward_supply.person_committed(id)): count += 1
 	return count >= 4
 
 func squad_cohesion(squad_id: String) -> Dictionary:

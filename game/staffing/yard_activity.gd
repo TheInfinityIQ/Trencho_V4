@@ -13,6 +13,7 @@ const TURN_SPEED := TURN_RADIUS * PI / 4.0 # T01 hull turns at most 45 degrees/s
 const FUEL_PER_METRE := 0.002
 
 var ledger: RefCounted
+var fixture_hull := true
 var time: float = 0.0
 var state := "Parked"
 var driver := ""
@@ -27,13 +28,19 @@ var reserved: Array = ["", "", "", ""]
 var destination_slot: int = -1
 
 
-func _init(shared_ledger: RefCounted) -> void:
+func _init(shared_ledger: RefCounted, include_fixture: bool = true) -> void:
 	ledger = shared_ledger
+	fixture_hull = include_fixture
 	ledger.add_place("yard-lane", "Clear eight-metre yard lane and turn area", Vector2.ZERO)
 	ledger.add_place("yard-start", "F11 occupied parking place 1", START)
 	ledger.add_place("yard-finish", "F11 parking place 2", FINISH)
-	ledger.add_carrier("yard-t01", "yard-start", "army-blue", "army-blue", "T01", "Rear")
-	ledger.move_entity("yard-t01", "yard-lane", START)
+	if include_fixture:
+		ledger.add_carrier("yard-t01", "yard-start", "army-blue", "army-blue", "T01", "Rear")
+		ledger.move_entity("yard-t01", "yard-lane", START)
+	else:
+		occupied[0] = ""
+		fuel = 0.0
+		state = "No fixture hull"
 
 
 func add_park(center: Vector2) -> Array[int]:

@@ -1,5 +1,5 @@
 extends Control
-## Scene-owned review selector; each bounded review has its own declared state/clock.
+## Keep the live session in the tree while the player changes views.
 
 const REVIEWS: Dictionary = {
 	"G24 Vehicle recovery": preload("res://game/vehicle_recovery/recovery_demo.tscn"),
@@ -23,7 +23,10 @@ const REVIEWS: Dictionary = {
 }
 var _host: Control
 var _base: Control
+var _battlefield: Control
+var _review: Control
 const Base = preload("res://game/rear_base/base_demo.tscn")
+const Battlefield = preload("res://game/battlefield/battlefield_view.tscn")
 
 
 func _ready() -> void:
@@ -34,9 +37,13 @@ func _ready() -> void:
 	layout.add_child(controls)
 	var home := Button.new()
 	home.text = "Rear base"
-	home.tooltip_text = "Return to the same live base. Diagnostics reset their own fixtures; base time pauses while away."
+	home.tooltip_text = "Return to the same live rear session."
 	home.pressed.connect(_show_base)
 	controls.add_child(home)
+	var field_button := Button.new()
+	field_button.text = "Battlefield"
+	field_button.pressed.connect(_show_battlefield)
+	controls.add_child(field_button)
 	for title in REVIEWS:
 		var button := Button.new()
 		button.text = title
@@ -45,23 +52,42 @@ func _ready() -> void:
 	_host = Control.new()
 	_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_host)
+	_base = Base.instantiate()
+	_host.add_child(_base)
+	_base.session_changed.connect(_on_session_changed)
+	_battlefield = Battlefield.instantiate()
+	_battlefield.simulation = _base.simulation
+	_host.add_child(_battlefield)
 	_show_base()
 
 
 func _show_review(title: String) -> void:
-	for child in _host.get_children():
-		_host.remove_child(child)
-		if child != _base: child.queue_free()
-	_host.add_child(REVIEWS[title].instantiate())
+	_clear_review()
+	_base.hide()
+	_battlefield.hide()
+	_review = REVIEWS[title].instantiate()
+	_host.add_child(_review)
+	_host.move_child(_review, 0)
 
 
 func _show_base() -> void:
-	for child in _host.get_children():
-		_host.remove_child(child)
-		if child != _base: child.queue_free()
-	if not is_instance_valid(_base): _base = Base.instantiate()
-	_host.add_child(_base)
+	_clear_review()
+	_battlefield.hide()
+	_base.show()
 
 
-func _exit_tree() -> void:
-	if is_instance_valid(_base) and not _base.is_inside_tree(): _base.queue_free()
+func _show_battlefield() -> void:
+	_clear_review()
+	_base.hide()
+	_battlefield.show()
+
+
+func _clear_review() -> void:
+	if is_instance_valid(_review):
+		_host.remove_child(_review)
+		_review.queue_free()
+	_review = null
+
+
+func _on_session_changed(next_simulation: RefCounted) -> void:
+	_battlefield.simulation = next_simulation
