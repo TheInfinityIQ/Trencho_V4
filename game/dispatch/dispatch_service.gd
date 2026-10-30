@@ -82,6 +82,7 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 		seen[id] = true
 		var p: Dictionary = rear.ledger.inspect_entity(id)
 		if p.is_empty() or not rear.actors.has(id) or p.owner != rear.PLAYER or p.rear_place != "Occupied" or p.health <= 0 or not p.crew_station.is_empty() or not p.carrying_stock_id.is_empty() or not p.carrying_weapon_id.is_empty() or p.pending_assignment != "None": return _fail("Passenger must be a healthy free actual rear person without carry or station: " + id)
+		if not rear._eligible(p,"passenger") or rear.actors[id].phase.begins_with("Dispatch "): return _fail("Passenger must finish training or another committed task before dispatch: " + id)
 		payload += p.unit_mass_kg + p.contents_mass_kg
 	var seats: int = int(hull.vehicle_spec.passenger_seats)
 	if hull.design_type == "T02" and not guns.is_empty(): seats = 8
@@ -115,17 +116,28 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 	_sequence += 1
 	var id := "manifest-%04d" % _sequence
 	var row := {"id":id,"hull":hull_id,"mode":mode,"state":"Requested","passengers":passengers.duplicate(),"cargo":cargo.duplicate(true),"guns":guns.duplicate(),"stock_items":[],"weapon_items":[],"driver":crew.Driver,"crew":crew.duplicate(),"task":{},"route":[],"route_length":0.0,"distance":0.0,"last_time":rear.time,"travel_speed":0.0,"travel_burn":0.0,"arrived":{},"unloaded":{},"blocker":"","departed":false,"hq_berth":false,"cancel_released":false,"home_slot":int(rear.vehicles.vehicles[hull_id].slot),"route_profile":{},"route_plan":{},"dispatch_site":dispatch_site,"dispatch_store":site.store,"dispatch_duty":site.duty,"dispatch_door":site.door,"berth_place":site.berth,"gun_bays":{}}
+	var duty := "passenger:" + id
+	rear.requests[duty] = {"id":duty,"target":0,"positions":seats,"priority":1,"created":rear.time,"order":rear._next(),"place":rear.requests[site.duty].place}
+	var previous_duties: Dictionary = {}
+	var assigned: Array[String] = []
+	_accepting = true
+	for person_id in passengers:
+		var person: Dictionary = rear.ledger.inspect_entity(person_id)
+		previous_duties[person_id] = person.duty_id if not person.duty_id.is_empty() else "Available"
+		var handoff: Dictionary = rear.reassign_person(person_id,duty)
+		if not handoff.ok or rear.ledger.inspect_entity(person_id).duty_id != duty:
+			for previous_id in assigned: rear.reassign_person(previous_id,previous_duties[previous_id])
+			rear.requests.erase(duty)
+			_accepting = false
+			return _fail("Passenger duty handoff failed; no manifest or admission retained: " + person_id)
+		assigned.append(person_id)
+	_accepting = false
 	manifests[id] = row
 	for gun_id in guns: row.gun_bays[gun_id] = rear.gun_owner(gun_id).bay_id
 	for person_id in passengers: passenger_promises[person_id] = id
 	for person_id in entrant_ids: incoming_people[person_id] = id
 	if mode == "Fleet Transfer": incoming_hulls[hull_id] = id
 	for gun_id in guns: weapon_promises[gun_id] = id
-	var duty := "passenger:" + id
-	rear.requests[duty] = {"id":duty,"target":0,"positions":seats,"priority":1,"created":rear.time,"order":rear._next(),"place":rear.requests[site.duty].place}
-	_accepting = true
-	for person_id in passengers: rear.reassign_person(person_id,duty)
-	_accepting = false
 	_reserve_cargo(row)
 	_begin_hull_approach(row)
 	rear._settle()

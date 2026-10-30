@@ -6,6 +6,7 @@ var failures := 0
 var checks := 0
 
 func _initialize() -> void:
+	_test_passenger_duty_handoff()
 	_test_a20_a21_a60()
 	_test_a21_cancellation()
 	_test_driver_only_fleet_transfer()
@@ -60,6 +61,28 @@ func _passengers(count: int) -> Array[String]:
 	var ids: Array[String] = []
 	for index in count: ids.append("g12-passenger-%02d" % index)
 	return ids
+
+func _test_passenger_duty_handoff() -> void:
+	var f := _fixture()
+	var rear: RefCounted = f.rear
+	var service: RefCounted = rear.dispatch
+	var student := "g12-passenger-00"
+	var free_person := "g12-passenger-01"
+	_expect(rear.reassign_person(student,"students").ok,"actual rear person enters exclusive Training duty")
+	var before: Dictionary = rear.ledger.inspect_entity(student)
+	var free_before: Dictionary = rear.ledger.inspect_entity(free_person)
+	var rejected: Dictionary = service.accept(f.hull,"Strategic Delivery",[free_person,student],{})
+	_expect(not rejected.ok,"training student cannot be accepted as a dispatch passenger")
+	_expect(service.manifests.is_empty() and service.passenger_promises.is_empty() and service.incoming_people.is_empty(),"failed admission keeps no manifest or passenger/military claims")
+	_expect(rear.ledger.inspect_entity(student).assignment == "Training" and rear.ledger.inspect_entity(student).holder_id == before.holder_id and rear.ledger.inspect_entity(free_person).duty_id == free_before.duty_id and rear.ledger.inspect_entity(free_person).holder_id == free_before.holder_id,"rejected admission preserves both actual duties and holders")
+	_expect(rear.reassign_person(student,"Available").ok,"student is explicitly withdrawn to Available before dispatch")
+	var accepted: Dictionary = service.accept(f.hull,"Strategic Delivery",[free_person,student],{})
+	_expect(accepted.ok,"same people can be accepted after lawful duty handoff")
+	if not accepted.ok: return
+	_expect(service.passenger_promises.size() == 2 and service.incoming_people.size() == 2 and rear.ledger.inspect_entity(student).duty_id == "passenger:"+accepted.id,"accepted manifest retains only actual reporting passengers and their claims")
+	rear.advance_time(400)
+	_expect(rear.ledger.inspect_entity(student).holder_id == f.hull and rear.ledger.inspect_entity(free_person).holder_id == f.hull,"both named passengers physically board the same hull")
+	_expect(f.base.audit().is_empty(),"rejected admission and valid retry reconcile identities: "+str(f.base.audit()))
 
 func _test_a20_a21_a60() -> void:
 	var f := _fixture()
