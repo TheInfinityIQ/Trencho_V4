@@ -30,6 +30,7 @@ class Entity extends RefCounted:
 	var fleet_domain := "External service"
 	var vehicle_spec: Dictionary = {}
 	var fuel: float = 0.0
+	var facing_degrees: float = 0.0
 	var health: int = 100
 	var max_health: int = 100
 	var ammo_type: String

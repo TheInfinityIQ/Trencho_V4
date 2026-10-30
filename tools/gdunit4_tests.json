@@ -305,6 +305,12 @@
       "cases": [
         "test_normal_rear_vehicle_controls_report_refuel_drive_same_produced_hull_and_fit_small_view"
       ]
+    },
+    {
+      "path": "game/vehicle_combat/tests/vehicle_combat_input_test.gd",
+      "cases": [
+        "test_vehicle_combat_review_accepts_mouse_input_and_renders_real_hulls"
+      ]
     }
   ]
 }

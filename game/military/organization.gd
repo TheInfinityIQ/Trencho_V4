@@ -441,19 +441,20 @@ func board_squad(squad_id: String, hull_id: String) -> Dictionary:
 	vehicles[hull_id].passenger_squad = squad_id
 	return {"ok":true,"message":"Same squad members occupy passenger seats; actual crew remain separate."}
 
-func exit_squad(squad_id: String) -> Dictionary:
+func exit_squad(squad_id: String, place_id: String = "hq-formation") -> Dictionary:
 	var row: Dictionary = squads.get(squad_id,{})
 	if row.is_empty() or row.vehicle.is_empty(): return _fail("Only an actually boarded squad may disembark.")
 	var hull_id: String = row.vehicle
 	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	if hull.holder_id != "hq-berth": return _fail("Stop at a lawful actual exit place before squad disembarkation.")
+	if hull.holder_id != "hq-berth" and hull.holder_id != place_id: return _fail("Stop at the same lawful actual exit place before squad disembarkation.")
+	if rear.ledger.inspect_entity(place_id).get("kind","") != "PLACE" or not hull.position.is_equal_approx(rear.ledger.inspect_entity(place_id).position): return _fail("Dismount needs a physical stopped exit place at the hull.")
 	for id in row.roster:
-		var result: Dictionary = rear.ledger.exit_formation_passenger(id,hull_id,"hq-formation")
+		var result: Dictionary = rear.ledger.exit_formation_passenger(id,hull_id,place_id)
 		if not result.ok: return result
 	row.vehicle = ""
 	vehicles[hull_id].passenger_squad = ""
-	return {"ok":true,"message":"Same roster physically left the passenger seats at HQ."}
+	return {"ok":true,"message":"Same roster physically left the passenger seats at the hull's actual place."}
 
 func _all_reported(row: Dictionary) -> bool:
 	for id in row.roster:

@@ -149,6 +149,9 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 	var entity := _entities[id]
 	if entity is Records.Person and not entity.crew_station.is_empty():
 		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
+	if entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
+		var travel: Vector2 = world_position-_world_position(id)
+		if travel.length_squared() > 0.000001: entity.facing_degrees = fposmod(rad_to_deg(travel.angle()),360.0)
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
 	if entity is Records.Person: person_position_changed.emit(id)
@@ -888,6 +891,33 @@ func apply_heavy_repair(id: String, health: int) -> Dictionary:
 	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
 
 
+func set_vehicle_facing(id: String, degrees: float) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.vehicle_spec.is_empty() or hull.health <= 0 or not is_finite(degrees):
+		return _reject("INVALID_VEHICLE_FACING","An actual surviving hull and finite heading are required.")
+	hull.facing_degrees = fposmod(degrees,360.0)
+	_event("Actual hull facing changed",id)
+	return _ok("Hull facing recorded for directional strikes.",id)
+
+
+func apply_vehicle_surface_damage(id: String, damage: int, penetration: int, surface: String, reason: String) -> Dictionary:
+	var hull: Records.Entity = _entities.get(id)
+	var armour: Dictionary = {
+		"T01":[0,0,0,0,0], "T02":[0,0,0,0,0], "T03":[0,0,0,0,0],
+		"T04":[35,20,12,10,15], "T05":[100,65,40,25,45],
+	}
+	var surfaces: Array[String] = ["Front","Side","Rear","Top","Bottom"]
+	if hull == null or hull.kind != Records.Kind.CARRIER or not armour.has(hull.design_type) or hull.health <= 0 or damage <= 0 or penetration < 0 or surface not in surfaces or reason.strip_edges().is_empty():
+		return _reject("INVALID_VEHICLE_STRIKE","A surviving hull, valid struck surface and positive attack are required.")
+	var rating: int = int(armour[hull.design_type][surfaces.find(surface)])
+	if penetration < rating:
+		return {"ok":true,"penetrated":false,"health":hull.health,"armour":rating,"surface":surface,"message":"Struck armour stopped the attack; zero hull damage."}
+	hull.health = maxi(0,hull.health-damage)
+	if hull.health == 0: hull.state = "Destroyed by vehicle strike"
+	_event(reason,id)
+	return {"ok":true,"penetrated":true,"health":hull.health,"armour":rating,"surface":surface,"message":"Actual hull health reduced by penetrating strike."}
+
+
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
 	return _remove_stock(source_id, quantity, reason, true)
 
@@ -922,6 +952,7 @@ func inspect_entity(id: String) -> Dictionary:
 		if not entity.vehicle_spec.is_empty():
 			result.vehicle_spec = entity.vehicle_spec.duplicate(true)
 			result.fuel = entity.fuel
+			result.facing_degrees = entity.facing_degrees
 			result.health = entity.health
 			result.max_health = entity.max_health
 			result.crew = []

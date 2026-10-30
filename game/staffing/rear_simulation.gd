@@ -30,6 +30,7 @@ var hq: RefCounted # G14 physical HQ issue on the same ledger and event clock.
 var construction: RefCounted # G05 physical facility sites, copies and builders.
 var military: RefCounted # G15 actual HQ formation and hierarchy on the same identities.
 var combat: RefCounted # G16 wounds, direct fire and care on the shared identities and clock.
+var vehicle_combat: RefCounted # G23 mounted fire against actual people, stock and hulls.
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
 var field_structures: RefCounted # G19 local engineer projects and field services.
@@ -297,6 +298,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if construction != null: next = minf(next,construction.next_boundary())
 		if military != null: next = minf(next,military.next_boundary())
 		if combat != null: next = minf(next,combat.next_boundary())
+		if vehicle_combat != null: next = minf(next,vehicle_combat.next_boundary())
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
@@ -334,6 +336,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if bridges != null: bridges.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
+		if vehicle_combat != null: vehicle_combat.advance_to(next)
 		if receiving != null: receiving.advance_clock_to(next)
 		_settle()
 	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
