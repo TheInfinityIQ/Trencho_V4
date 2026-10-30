@@ -612,6 +612,26 @@ func release_claim(id: String) -> Dictionary:
 	_event("Claim cancelled; physical stock unchanged", id)
 	return _ok("Claim released. Goods already moved stay at their physical destination.", id)
 
+func consume_claimed_batch(claim_ids: Array, claimant: String, position: Vector2, radius: float, type: String, count: int, reason: String) -> Dictionary:
+	var receipt: Array[Dictionary] = []
+	var seen := {}
+	var total := 0
+	for id in claim_ids:
+		var claim: Records.Claim = _claims.get(id)
+		if seen.has(id) or claim == null or claim.cancelled or claim.claimant != claimant or claim.reserved <= 0: return _reject("INVALID_CLAIM_BATCH","Every consumed portion needs its unique active project claim.")
+		seen[id] = true
+		var source := _stock(claim.source_id)
+		if source == null or source.design_type != type or not _is_place(source.holder_id) or _world_position(source.id).distance_to(position) > radius or source.quantity < claim.reserved: return _reject("CLAIM_NOT_LOCAL","Committed stock must remain physically staged at the project.")
+		total += claim.reserved
+		receipt.append({"id":source.id,"type":type,"count":claim.reserved,"claim":id})
+	if total != count: return _reject("INCOMPLETE_CLAIM_BATCH","Exact authorized quantity must be exclusively committed before consumption.")
+	for portion in receipt:
+		var claim: Records.Claim = _claims[portion.claim]
+		claim.fulfilled += portion.count
+		claim.reserved = 0
+		_remove_stock(portion.id,portion.count,reason,false)
+	return {"ok":true,"receipt":receipt,"message":"Exact project-claimed physical batch consumed once."}
+
 
 func reserve_remaining(id: String) -> Dictionary:
 	if not _claims.has(id) or _claims[id].cancelled:
@@ -875,23 +895,6 @@ func available_stock_near(position: Vector2, radius: float, owner: String, type:
 		if entity.kind == Records.Kind.STOCK and entity.owner == owner and entity.design_type == type and _is_place(entity.holder_id) and _world_position(entity.id).distance_to(position) <= radius:
 			total += available(entity.id)
 	return total
-
-func consume_nearby_batch(position: Vector2, radius: float, owner: String, ingredients: Dictionary, reason: String) -> Dictionary:
-	if not position.is_finite() or radius < 0.0 or owner.is_empty() or ingredients.is_empty() or reason.is_empty():
-		return _reject("INVALID_BATCH","Physical position, owner and complete nearby batch required.")
-	var receipt: Array[Dictionary] = []
-	for type in ingredients:
-		var remaining: int = int(ingredients[type])
-		if remaining <= 0: return _reject("INVALID_BATCH","Positive whole ingredient quantities required.")
-		for entity in _entities.values():
-			if entity.kind != Records.Kind.STOCK or entity.owner != owner or entity.design_type != type or not _is_place(entity.holder_id) or _world_position(entity.id).distance_to(position) > radius: continue
-			var count := mini(remaining,available(entity.id))
-			if count > 0: receipt.append({"id":entity.id,"type":type,"count":count})
-			remaining -= count
-			if remaining == 0: break
-		if remaining > 0: return _reject("MISSING_NEARBY_INPUTS","Complete owned unreserved batch must be staged at nearby physical places.")
-	for portion in receipt: _remove_stock(portion.id,portion.count,reason,false)
-	return {"ok":true,"code":"OK","message":"Complete nearby physical batch consumed once.","receipt":receipt}
 
 func recover_consumed_material(id: String, type: String, quantity: int, unit_mass_kg: float, holder: String, owner: String) -> Dictionary:
 	# G19 cancellation returns the documented half of an already consumed batch.

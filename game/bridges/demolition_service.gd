@@ -5,6 +5,7 @@ var _rear_ref: WeakRef
 var projects: Dictionary = {}
 var events: Array[Dictionary] = []
 var _sequence := 0
+var _claim_sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -67,10 +68,44 @@ func revise(id: String, count: int) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty() or row.state != "Placing" or row.m06_consumed > 0 or count < 1 or count > 100:
 		return _fail("Only an unconsumed placement may revise its authorized M06 quantity.")
+	_release_material(row)
 	row.m06_reserved = count
 	row.work_required = float(10+2*count)
 	row.progress = minf(row.progress,row.work_required)
 	return {"ok":true,"message":"Explicit pre-consumption quantity revision recorded."}
+
+func _release_material(row: Dictionary) -> void:
+	for claim_id in row.get("claims",[]): _rear().ledger.release_claim(claim_id)
+	row["claims"] = []
+
+func _committed(row: Dictionary) -> int:
+	var count := 0
+	for id in row.get("claims",[]):
+		var claim: Dictionary = _rear().ledger.inspect_claim(id)
+		var stock: Dictionary = _rear().ledger.inspect_entity(str(claim.get("source_id","")))
+		if stock.is_empty() or stock.position.distance_to(row.position) > 10.0+EPS: continue
+		count += int(claim.get("reserved",0))
+	return count
+
+func _reserve_material(row: Dictionary) -> void:
+	if _committed(row) == row.m06_reserved: return
+	_release_material(row)
+	if _rear().ledger.available_stock_near(row.position,10.0,row.owner,"M06") < row.m06_reserved: return
+	var remaining: int = row.m06_reserved
+	for stock in _rear().ledger.snapshot().entities:
+		if stock.kind != "STOCK" or stock.owner != row.owner or stock.design_type != "M06" or stock.position.distance_to(row.position) > 10.0+EPS: continue
+		if _rear().ledger.inspect_entity(stock.holder_id).get("kind","") != "PLACE": continue
+		var count := mini(remaining,int(stock.available))
+		if count <= 0: continue
+		_claim_sequence += 1
+		var claim_id: String = row.id+"-m06-%d" % _claim_sequence
+		var result: Dictionary = _rear().ledger.request_stock(claim_id,stock.id,count,row.id,"D04 fixed placement batch",row.owner)
+		if not result.ok:
+			_release_material(row)
+			return
+		row.claims.append(claim_id)
+		remaining -= count
+		if remaining == 0: return
 
 func deliver(id: String, stock_id: String, count: int) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
@@ -109,14 +144,24 @@ func _access(row: Dictionary) -> Dictionary:
 	for other in _rear().ledger.snapshot().entities:
 		if other.kind == "PERSON" and other.owner != row.owner and other.owner in ["army-blue","army-red"] and other.health > 0 and other.position.distance_to(row.position) <= 150.0 and _rear().combat.world.observe(row.position,other.position).visible:
 			return _fail("Visible hostile within 150 metres stops placement.")
-	if _rear().ledger.available_stock_near(row.position,10.0,row.owner,"M06") < row.m06_reserved: return _fail("Full owned unreserved M06 quantity must be physically staged within ten metres.")
+	if _committed(row) != row.m06_reserved: return _fail("Full M06 quantity must be physically staged within ten metres and exclusively reserved to this project.")
 	return {"ok":true}
 
 func _withdrawn(row: Dictionary) -> bool:
-	for id in row.engineers:
+	var squad: Dictionary = _rear().military.squads.get(row.squad,{})
+	if squad.is_empty(): return false
+	for id in squad.roster:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
-		if person.get("kind","") == "PERSON" and person.health > 0 and person.position.distance_to(row.position) < 25.0-EPS: return false
+		if person.get("kind","") != "PERSON": return false
+		if person.assignment != "Dead" and person.position.distance_to(row.position) < 25.0-EPS: return false
 	return true
+
+func remote_slot_blocker(squad_id: String, except_id: String = "") -> String:
+	# D03 must consult this same reservation when its later owner is added.
+	for other in projects.values():
+		if other.id != except_id and other.squad == squad_id and other.mode == "Remote" and other.state not in ["Detonated","Cancelled","Inert"]:
+			return "Squad remote slot is reserved by %s (%s); select Fuse or make that device inert first." % [other.id,other.state]
+	return ""
 
 func _present(entity: Dictionary) -> bool:
 	if entity.get("kind","") == "PERSON": return entity.get("assignment","") != "Dead"
@@ -173,8 +218,8 @@ func set_mode(id: String, mode: String, controller: String = "") -> Dictionary:
 		var person: Dictionary = _rear().ledger.inspect_entity(controller)
 		if person.get("kind","") != "PERSON" or person.health <= 0 or person.qualification != "P02" or person.owner != row.owner or controller not in _rear().military.squads[row.squad].roster or _rear().military._held(controller,"E08") < 1 or person.position.distance_to(row.position) > 300.0+EPS:
 			return _fail("Living squad P02 with E08 must physically assume remote control within 300 metres.")
-		for other in projects.values():
-			if other.id != id and other.squad == row.squad and other.mode == "Remote" and other.state in ["Armed","Waiting"]: return _fail("One armed remote demolition project per engineer squad.")
+		var blocker := remote_slot_blocker(row.squad,id)
+		if not blocker.is_empty(): return _fail(blocker)
 	row.mode = mode
 	row.controller = controller if mode == "Remote" else ""
 	return {"ok":true,"message":"Mode and actual controller recorded; arming, authorization and clearance still gate detonation."}
@@ -292,6 +337,7 @@ func cancel(id: String) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty() or row.state != "Placing": return _fail("Only unplaced D04 work can cancel; placed explosives stay physical.")
 	row.state = "Cancelled"
+	_release_material(row)
 	row.blocked_reason = "Unconsumed staged M06 remains at the actual target."
 	return {"ok":true,"message":row.blocked_reason}
 
@@ -325,10 +371,11 @@ func settle() -> bool:
 	var changed := false
 	for row in projects.values():
 		if row.state == "Placing":
+			_reserve_material(row)
 			var access: Dictionary = _access(row)
 			row.blocked_reason = "" if access.ok else access.message
 			if row.progress >= row.work_required-EPS and access.ok:
-				var spent: Dictionary = _rear().ledger.consume_nearby_batch(row.position,10.0,row.owner,{"M06":int(row.m06_reserved)},"D04 attached demolition "+row.id)
+				var spent: Dictionary = _rear().ledger.consume_claimed_batch(row.get("claims",[]),row.id,row.position,10.0,"M06",int(row.m06_reserved),"D04 attached demolition "+row.id)
 				if spent.ok:
 					row.m06_consumed = row.m06_reserved
 					row.receipt = spent.receipt
@@ -348,6 +395,9 @@ func settle() -> bool:
 			row.blocked_reason = "An engineer returned within 25 metres; withdrawal and full arming delay must restart."
 			changed = true
 		elif row.state == "Arming" and _rear().time+EPS >= row.armed_at:
+			if row.mode == "Remote" and not remote_slot_blocker(row.squad,row.id).is_empty():
+				row.blocked_reason = remote_slot_blocker(row.squad,row.id)
+				continue
 			row.state = "Armed"
 			row.blocked_reason = "Awaiting mode, authorization and actual clearance."
 			changed = true
@@ -365,7 +415,9 @@ func inspect(id: String) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty(): return _fail("Unknown D04 project.")
 	var view: Dictionary = row.duplicate(true)
-	view["local_m06"] = _rear().ledger.available_stock_near(row.position,10.0,row.owner,"M06")
+	view["available_m06"] = _rear().ledger.available_stock_near(row.position,10.0,row.owner,"M06")
+	view["committed_m06"] = _committed(row)
+	view["local_m06"] = int(view.available_m06)+int(view.committed_m06)
 	view["consequences_now"] = _consequences(row)
 	view["clearance"] = _clearance(row) if row.state in ["Armed","Waiting","Fusing"] else {"ok":false,"message":"Charge not armed."}
 	return view

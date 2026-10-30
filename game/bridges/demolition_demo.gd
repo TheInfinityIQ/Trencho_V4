@@ -120,5 +120,5 @@ func _refresh() -> void:
 	var rear: RefCounted = simulation.rear
 	var bridge: Dictionary = rear.bridges.inspect(bridge_id)
 	var project: Dictionary = rear.demolition.inspect(demolition_id) if not demolition_id.is_empty() else {}
-	details.text = "Time %.1f s | B03 %d / %d health | %s\nD04: %s | %.1f / %.1f work | M06 %d staged, %d consumed | %s\n%s" % [rear.time,bridge.health,bridge.max_health,bridge.state,project.get("state","Not ordered"),float(project.get("progress",0.0)),float(project.get("work_required",0.0)),int(project.get("local_m06",0)),int(project.get("m06_consumed",0)),str(project.get("blocked_reason","")),"Accounting reconciled" if simulation.audit().is_empty() else "Audit: "+str(simulation.audit())]
+	details.text = "Time %.1f s | B03 %d / %d health | %s\nD04: %s | %.1f / %.1f work | M06 %d available, %d reserved, %d consumed | %s\n%s" % [rear.time,bridge.health,bridge.max_health,bridge.state,project.get("state","Not ordered"),float(project.get("progress",0.0)),float(project.get("work_required",0.0)),int(project.get("available_m06",0)),int(project.get("committed_m06",0)),int(project.get("m06_consumed",0)),str(project.get("blocked_reason","")),"Accounting reconciled" if simulation.audit().is_empty() else "Audit: "+str(simulation.audit())]
 	map.queue_redraw()
