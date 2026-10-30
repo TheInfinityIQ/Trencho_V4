@@ -117,6 +117,7 @@ func inspect_fire(id: String, target_id: String, weapon: String, moving: bool = 
 	var hull: Dictionary = _rear().ledger.inspect_entity(id)
 	var target: Dictionary = _target(target_id)
 	if hull.is_empty() or not MOUNTS.has(hull.get("design_type","")) or not MOUNTS[hull.design_type].has(weapon) or hull.health <= 0: return _block("Surviving actual hull and integral mount required.")
+	if not hull.get("towing","").is_empty(): return _block("Tractor cannot fire while towing.")
 	if target.is_empty() or target.owner == hull.owner or target.get("health",0) <= 0 or target.kind not in ["PERSON","CARRIER","STRUCTURE"]: return _block("Active hostile person, vehicle or structure required.")
 	if target.kind == "PERSON" and (target.assignment in ["Wounded","Recovery","Dead"] or (_seated(target) and not _exposed_gunner(target))): return _block("Protected seated or incapacitated people cannot be targeted through a hull.")
 	if _operator(hull,"Gunner").is_empty(): return _block("Actual living gunner absent.")

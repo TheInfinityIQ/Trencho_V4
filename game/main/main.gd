@@ -2,6 +2,7 @@ extends Control
 ## Scene-owned review selector; each bounded review has its own declared state/clock.
 
 const REVIEWS: Dictionary = {
+	"G24 Vehicle recovery": preload("res://game/vehicle_recovery/recovery_demo.tscn"),
 	"G03 Staffing & hauling": preload("res://game/staffing/rear_demo.tscn"),
 	"G04 R01 Production": preload("res://game/production/production_demo.tscn"),
 	"G04 R02 Munitions": preload("res://game/production/munitions_demo.tscn"),

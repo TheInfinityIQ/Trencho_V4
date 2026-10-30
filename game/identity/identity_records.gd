@@ -27,12 +27,20 @@ class Entity extends RefCounted:
 	var unit_mass_kg: float
 	var quantity: int = 1
 	var origin_id: String
+	var personal_gear_owner := ""
 	var fleet_domain := "External service"
 	var vehicle_spec: Dictionary = {}
 	var fuel: float = 0.0
 	var facing_degrees: float = 0.0
 	var health: int = 100
 	var max_health: int = 100
+	var damage_immobilized := false
+	var last_damage_at: float = -INF
+	var destruction_resolved := false
+	var submerged := false
+	var wreck_cleared := false
+	var towing := ""
+	var towed_by := ""
 	var ammo_type: String
 	var loaded_capacity: int
 

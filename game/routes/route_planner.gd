@@ -28,6 +28,11 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 	if not Terrain.SURFACES.has(surface): return _blocked("Unknown terrain surface " + surface)
 	if surface == "TR10" and world == null: return _blocked("A ford needs authored marked, firm, banked, depth-checked physical terrain.")
 	if hull.health <= 0.25*float(hull.vehicle_spec.health): return _blocked("Damage Immobilized hull cannot start a route.")
+	if hull.get("damage_immobilized",false): return _blocked("Damage Immobilized: distinct mobility repair required.")
+	if not hull.get("towed_by","").is_empty(): return _blocked("Coupled tow object cannot move independently.")
+	var towing: String = hull.get("towing","")
+	var tow: Dictionary = ledger.inspect_entity(towing)
+	if not towing.is_empty() and (tow.get("health",0) <= 0 or tow.get("towed_by","") != hull_id): return _blocked("Actual surviving tow coupling required.")
 	var slope: float = float(profile.get("slope",0.0))
 	var slope_factor: float = Terrain.slope_factor(slope,movement_class)
 	var factor: float = float(Terrain.SURFACES[surface].speed[movement_class]) * slope_factor
@@ -38,6 +43,9 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 	if float(hull.vehicle_spec.footprint.y) > width + EPS: return _blocked("Whole hull footprint is wider than the declared route clearance.")
 	var bridge: String = str(profile.get("bridge",""))
 	var gross: float = gross_kg(ledger,hull_id)
+	if not towing.is_empty():
+		gross += gross_kg(ledger,towing) if tow.kind == "CARRIER" else float(tow.unit_mass_kg)+float(tow.contents_mass_kg)
+		if width < 20.0 and bool(profile.get("turning",false)): return _blocked("Tow combination requires twenty metres turn clearance.")
 	if not bridge.is_empty():
 		if not BRIDGES.has(bridge): return _blocked("Unknown crossing class " + bridge)
 		if float(hull.vehicle_spec.footprint.y) > float(BRIDGES[bridge].width) + EPS: return _blocked("Hull footprint exceeds %s bridge width." % bridge)
@@ -50,6 +58,8 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 	var base: float = float(Terrain.VEHICLES[type].base)
 	var rate: float = float(Terrain.VEHICLES[type].rate)
 	var damage_factor := 0.75 if hull.health <= 0.5*float(hull.vehicle_spec.health) else 1.0
+	if not towing.is_empty():
+		rate *= 2.0
 	var speed: float = base*factor*damage_factor
 	var fuel_factor: float = float(Terrain.SURFACES[surface].fuel)
 	var strict_turns: bool = bool(profile.get("strict_turns",true))
@@ -69,18 +79,23 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 		if not start.is_finite() or not finish.is_finite(): return _blocked("Route endpoint is not a finite physical position.")
 		var length: float = start.distance_to(finish)
 		if length <= EPS: continue
-		if strict_turns and index > 1 and RADII[type] > 0.0 and (points[index-2] as Vector2).distance_to(start) > EPS:
+		var radius: float = 20.0 if not towing.is_empty() else float(RADII[type])
+		if strict_turns and index > 1 and radius > 0.0 and (points[index-2] as Vector2).distance_to(start) > EPS:
 			var previous: Vector2 = points[index-2]
 			var incoming: Vector2 = (start-previous).normalized()
 			var outgoing: Vector2 = (finish-start).normalized()
 			var angle: float = acos(clampf(incoming.dot(outgoing),-1.0,1.0))
-			if angle > 0.001 and RADII[type]*tan(angle/2.0)*2.0 > minf(previous.distance_to(start),length) + EPS:
+			if not towing.is_empty() and angle > 0.001 and width < 20.0: return _blocked("Tow turn requires twenty metres clearance.")
+			if angle > 0.001 and radius*tan(angle/2.0)*2.0 > minf(previous.distance_to(start),length) + EPS:
 				return _blocked("%s cannot make this turn within its %.0f m rolling radius." % [type,RADII[type]])
 		if world != null:
 			if not bridge.is_empty(): return _blocked("Specified bridge fixture and authored terrain world cannot describe one crossing at once.")
 			var lane: Dictionary = world.route({"position":start,"facing":(finish-start).angle(),"size":hull.vehicle_spec.footprint,"movement_class":movement_class,"base":base*damage_factor,"rate":rate,"gross_mass_kg":gross},finish)
 			if not lane.ok: return _blocked(lane.reason)
 			for part in lane.parts:
+				if not towing.is_empty():
+					part.seconds *= 4.0
+					part.speed *= 0.25
 				sections.append(part)
 				total_seconds += float(part.seconds)
 				total_fuel += float(part.fuel)
@@ -98,6 +113,7 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 			var part_length: float = b-a
 			var mid_global: float = total_distance+(a+b)/2.0
 			var part_speed: float = minf(speed,4.0) if not bridge.is_empty() and mid_global >= slow_start-EPS and mid_global <= slow_end+EPS else speed
+			if not towing.is_empty(): part_speed *= 0.25
 			var seconds: float = part_length/part_speed
 			var fuel: float = part_length/1000.0*rate*fuel_factor
 			sections.append({"from":start.lerp(finish,a/length),"to":start.lerp(finish,b/length),"distance":part_length,"speed":part_speed,"seconds":seconds,"fuel":fuel,"surface":surface,"slope":slope,"bridge_approach":part_speed <= 4.0 and not bridge.is_empty()})

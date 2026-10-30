@@ -70,6 +70,7 @@ func release_engineer(person_id: String) -> Dictionary:
 	return {"ok":true,"message":"Engineer released; earned work and consumed goods remain."}
 
 func engineer_committed(person_id: String) -> bool:
+	if _rear().recovery != null and _rear().recovery.workers.has(person_id): return true
 	if workers.has(person_id) or service_staff.has(person_id): return true
 	for job in repairs.values():
 		if person_id in job.engineers: return true
@@ -236,6 +237,7 @@ func withdraw_stock(site_id: String, stock_id: String, count: int, carrier_id: S
 	return _rear().ledger.transfer_stock(stock_id,count,carrier_id)
 
 func request_repair(target_id: String, engineers: Array, repair_point_id: String = "") -> Dictionary:
+	if _rear().recovery != null and _rear().recovery.jobs.has(target_id): return _fail("Actual hull already has a recovery job.")
 	if repairs.has(target_id) or engineers.is_empty() or engineers.size() > 2: return _fail("One unfinished repair per actual target, with one or two P02 engineers.")
 	var target: Dictionary = projects.get(target_id,{}) if repair_point_id.is_empty() else _rear().ledger.inspect_entity(target_id)
 	var site: Dictionary = projects.get(target_id,{}) if repair_point_id.is_empty() else projects.get(repair_point_id,{})
@@ -288,6 +290,7 @@ func _repair_rate(job: Dictionary) -> float:
 	if not job.point.is_empty():
 		var target: Dictionary = _rear().ledger.inspect_entity(job.target)
 		if target.is_empty() or target.position.distance_to(site.center) > 2.0+EPS: return 0.0
+		if target.get("kind","") == "CARRIER" and _rear().recovery != null and not _rear().recovery._safe(target).is_empty(): return 0.0
 	var rate := 0.0
 	for id in job.engineers:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)

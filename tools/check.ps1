@@ -59,6 +59,7 @@ Invoke-GodotCheck -Name 'hq-regression' -EngineArguments @('--script', 'res://ga
 Invoke-GodotCheck -Name 'military-regression' -EngineArguments @('--script', 'res://game/military/tests/military_regression.gd')
 Invoke-GodotCheck -Name 'combat-regression' -EngineArguments @('--script', 'res://game/combat/tests/combat_regression.gd')
 Invoke-GodotCheck -Name 'vehicle-combat-regression' -EngineArguments @('--script', 'res://game/vehicle_combat/tests/vehicle_combat_regression.gd')
+Invoke-GodotCheck -Name 'recovery-regression' -EngineArguments @('--script', 'res://game/vehicle_recovery/tests/recovery_regression.gd')
 Invoke-GodotCheck -Name 'order-regression' -EngineArguments @('--script', 'res://game/orders/tests/order_regression.gd')
 Invoke-GodotCheck -Name 'objective-regression' -EngineArguments @('--script', 'res://game/objectives/tests/objective_regression.gd')
 Invoke-GodotCheck -Name 'field-regression' -EngineArguments @('--script', 'res://game/field_structures/tests/field_regression.gd')
