@@ -1,6 +1,8 @@
 extends RefCounted
 ## Executes delivered squad intent on the common clock; no hidden target search.
 const EPS := 0.000001
+const Vehicles = preload("res://game/battlefield/vehicle_execution.gd")
+var vehicle_execution: RefCounted
 var _rear_ref: WeakRef
 var next_decision := 0.0
 var motions: Dictionary = {}
@@ -11,13 +13,14 @@ var policy: RefCounted
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	vehicle_execution = Vehicles.new(rear)
 	next_decision = rear.time
 
 func _rear() -> RefCounted:
 	return _rear_ref.get_ref()
 
 func next_boundary() -> float:
-	var boundary := next_decision
+	var boundary: float = minf(next_decision,vehicle_execution.next_boundary())
 	for motion in motions.values(): boundary = minf(boundary,float(motion.deadline))
 	return boundary
 
@@ -56,6 +59,7 @@ func advance_to(at: float) -> void:
 func settle() -> bool:
 	var rear: RefCounted = _rear()
 	var changed := _clear_unavailable_motions()
+	changed = vehicle_execution.settle() or changed
 	if rear.time+EPS < next_decision: return changed
 	next_decision = rear.time+1.0
 	if policy != null: policy.tick()
@@ -282,7 +286,7 @@ func _offset(index: int) -> Vector2:
 	return Vector2((index%4-1.5)*2,(floori(index/4.0)-0.5)*2)
 
 func snapshot() -> Dictionary:
-	return {"status":status.duplicate(),"moving_people":motions.keys()}
+	return {"status":status.duplicate(),"moving_people":motions.keys(),"vehicles":vehicle_execution.snapshot()}
 
 func audit() -> Array[String]:
 	var errors: Array[String] = []
