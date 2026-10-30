@@ -157,6 +157,13 @@ func _test_field_gun_direct() -> void:
 	rear.advance_time(8)
 	var squad_id: String = formed.id
 	_expect(rear.military.squads[squad_id].state == "Active","field gun squad active after physical report")
+	_expect(ledger.add_carrier("g16-issue-carrier","hq-berth",rear.PLAYER,rear.PLAYER).ok,"actual local forward issue carrier")
+	_expect(ledger.add_stock("g16-issue-rounds","E02",1,0.02,"g16-issue-carrier",rear.PLAYER).ok,"actual round aboard issue carrier")
+	var handoff: Dictionary = rear.forward_supply.start_issue("g16-issue-rounds","guard-0","gunner-0",1,"hq-berth")
+	_expect(handoff.ok,"artillery gunner begins real local handoff")
+	if handoff.ok:
+		_expect(not rear.combat.deploy_field_gun(squad_id).ok,"one committed P05 cannot simultaneously set up a four-person gun")
+		_expect(rear.forward_supply.interrupt(handoff.id).ok,"gunner is released from pre-pickup handoff")
 	_expect(rear.combat.deploy_field_gun(squad_id).ok,"four P05 start twenty-second setup")
 	_expect(not rear.combat.inspect_field_gun_fire(squad_id,"missing-target").ok,"undeployed gun cannot fire")
 	rear.advance_time(20)

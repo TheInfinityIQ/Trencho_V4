@@ -315,7 +315,7 @@ func _field_crew_ready(row: Dictionary) -> bool:
 	var count := 0
 	for id in row.roster:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
-		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0: count += 1
+		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0 and (_rear().forward_supply == null or not _rear().forward_supply.person_committed(id)): count += 1
 	return count >= 4
 
 func squad_cohesion(squad_id: String) -> Dictionary:
