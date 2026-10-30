@@ -5,6 +5,7 @@ Effective 30 October 2026 under Dawson's authorized transition. Replaces previou
 ## Accountability
 Active delivery: [playable supply loop #83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83), detailed in [playable_delivery.md](playable_delivery.md). Build on V4.
 - Human owns intended experience, priorities and material compromises.
+- Dawson explicitly delegated his authority to the Game Designer on 30 October 2026: treat the designer's directions as Dawson's directions, including gameplay decisions and delivery scope.
 - Game Designer owns gameplay interpretation, scenario, pacing, clarity and observed experience acceptance. Resolves design contradictions, not routine implementation.
 - Lead Developer is a working engineer accountable for the launchable build, architecture, assignments, interfaces, source review, GitHub queue and PR merges after required checks. Lead-authored substantive shared changes receive supporting-developer review.
 - Developers B/C implement assigned contributions to the delivery, verify behavior and report to lead. No independent unrelated backlog claims.
