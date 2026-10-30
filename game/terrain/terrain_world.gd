@@ -200,7 +200,7 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			if overlay.get("complete",false) and overlay.get("kind","") == "causeway" and entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.get("load_kg",8000.0))+EPS:
 				return _blocked("Causeway gross-load limit excludes this actual body and contents")
 			if overlay.get("complete",false) and overlay.get("kind","") == "crossing" and overlay.has("code"):
-				if entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.load_kg)+EPS: return _blocked("%s gross-load limit excludes this actual body and contents" % overlay.code)
+				if entity.has("gross_mass_kg") and not entity.get("bridge_existing_traffic",false) and float(entity.gross_mass_kg) > float(overlay.load_kg)+EPS: return _blocked("%s gross-load limit excludes this actual body and contents" % overlay.code)
 				if entity.size.y > float(overlay.width)+EPS: return _blocked("%s deck is narrower than the actual footprint" % overlay.code)
 				rule["speed_cap"] = float(overlay.speed_cap)
 			elif bridge_approaches.has(at):

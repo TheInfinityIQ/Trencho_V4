@@ -12,6 +12,7 @@ var traffic: Dictionary = {} # bridge -> active traversal
 var queues: Dictionary = {} # bridge -> ordered waiting traversals
 var events: Array[Dictionary] = []
 var _sequence := 0
+var _salvage_sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -28,6 +29,12 @@ func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army
 	for bank in [bank_a,bank_b]:
 		var at := Vector2i(floori(bank.x),floori(bank.y))
 		if not world.bounds.has_point(at) or world.cell(at).terrain in ["TR09","TR10","TR11","TR12"] or not world.support(at,0).ok: return _fail("Both bridge endpoints require stable, infantry-accessible land support.")
+	for side in [0,1]:
+		var bank: Vector2 = bank_a if side == 0 else bank_b
+		var outward: Vector2 = -direction if side == 0 else direction
+		var holding: Vector2 = bank+outward*20.0
+		var foot_approach: Dictionary = world.route({"position":holding,"facing":(-outward).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":1.5,"rate":0.0,"gross_mass_kg":80.0},bank)
+		if not foot_approach.ok: return _fail("Both twenty-metre holding approaches need continuous physical infantry access: "+foot_approach.reason)
 	var samples := maxi(2,ceili(distance*4.0))
 	var first_water := INF
 	var last_water := -INF
@@ -194,6 +201,7 @@ func next_boundary() -> float:
 		if rate > 0: next = minf(next,_rear().time+(40.0-job.progress)/rate)
 	for id in traffic:
 		var crossing: Dictionary = traffic[id]
+		if crossing.get("paused",false): continue
 		next = minf(next,_rear().time+crossing.seconds-crossing.progress)
 	return next
 
@@ -207,18 +215,41 @@ func advance_to(at: float) -> void:
 		job.progress = minf(40.0,job.progress+_repair_rate(id)*delta)
 	for id in traffic:
 		var crossing: Dictionary = traffic[id]
+		if crossing.get("paused",false): continue
 		var earned: float = minf(delta,crossing.seconds-crossing.progress)
+		var lead_before: Dictionary = _rear().ledger.inspect_entity(crossing.entity)
+		if lead_before.get("holder_id","") != crossing.place or lead_before.get("kind","") == "PERSON" and not lead_before.crew_station.is_empty():
+			crossing.blocked_reason = "Crossing body left its independent physical place; progress held until real disembark or return."
+			continue
+		var tow_before: Dictionary = {}
+		if not crossing.get("tow","").is_empty():
+			tow_before = _rear().ledger.inspect_entity(crossing.tow)
+			if tow_before.get("holder_id","") != crossing.tow_place:
+				crossing.blocked_reason = "Towed vehicle left its physical place; coupled crossing progress held."
+				continue
+		var next_progress: float = crossing.progress+earned
+		var position: Vector2 = crossing.start.lerp(crossing.finish,next_progress/crossing.seconds)
+		var moved: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,position)
+		if not moved.ok:
+			crossing.blocked_reason = "Actual crossing movement failed: "+moved.message
+			continue
+		if not crossing.get("tow","").is_empty():
+			var behind: Vector2 = -(crossing.finish-crossing.start).normalized()*12.0
+			var tow_moved: Dictionary = _rear().ledger.move_entity(crossing.tow,crossing.tow_place,position+behind)
+			if not tow_moved.ok:
+				var restored: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,lead_before.position)
+				crossing.blocked_reason = "Actual tow movement failed: "+tow_moved.message+("; lead rollback failed: "+restored.message if not restored.ok else "")
+				continue
 		if crossing.fuel > 0.0:
 			var burned: Dictionary = _rear().ledger.burn_vehicle_fuel(crossing.entity,crossing.fuel*earned/crossing.seconds)
 			if not burned.ok:
-				crossing.blocked_reason = "Actual vehicle fuel exhausted on bridge; movement stalled."
+				var lead_restored: Dictionary = _rear().ledger.move_entity(crossing.entity,crossing.place,lead_before.position)
+				var tow_restored := {"ok":true,"message":""}
+				if not tow_before.is_empty(): tow_restored = _rear().ledger.move_entity(crossing.tow,crossing.tow_place,tow_before.position)
+				crossing.blocked_reason = "Actual fuel unavailable; crossing movement held."+(" Rollback failed." if not lead_restored.ok or not tow_restored.ok else "")
 				continue
-		crossing.progress += earned
-		var position: Vector2 = crossing.start.lerp(crossing.finish,crossing.progress/crossing.seconds)
-		_rear().ledger.move_entity(crossing.entity,crossing.place,position)
-		if not crossing.get("tow","").is_empty():
-			var behind: Vector2 = -(crossing.finish-crossing.start).normalized()*12.0
-			_rear().ledger.move_entity(crossing.tow,crossing.tow_place,position+behind)
+		crossing.progress = next_progress
+		crossing.blocked_reason = ""
 
 func settle() -> bool:
 	var changed := false
@@ -324,9 +355,49 @@ func damage(id: String, amount: int) -> Dictionary:
 			traffic.erase(key)
 		events.append({"at":_rear().time,"id":id,"kind":"Destroyed","detail":"Water-span occupants lost"})
 	else:
-		if row.state == "Complete": _set_surface(row,true)
+		if row.state == "Complete":
+			_set_surface(row,true)
+			if row.health <= row.max_health/2: _retime_traffic(row)
 		row.blocked_reason = "Damaged: half load and 2 m/s crossing cap." if row.health <= row.max_health/2 else "Structure remains sound; new crossings recheck current health."
 	return {"ok":true,"health":row.health,"message":row.blocked_reason}
+
+func _retime_traffic(row: Dictionary) -> void:
+	# A load admitted before damage stays aboard. Re-evaluate only the real
+	# remaining lane at the new speed; do not restart distance or grant fuel.
+	for key in traffic:
+		if str(key) != row.id and not str(key).begins_with(row.id+":"): continue
+		var crossing: Dictionary = traffic[key]
+		var entity: Dictionary = _rear().ledger.inspect_entity(crossing.entity)
+		var position: Vector2 = entity.position
+		if position.distance_to(crossing.finish) <= EPS: continue
+		var direction: Vector2 = (crossing.finish-position).normalized()
+		var profile := {"position":position,"facing":direction.angle(),"gross_mass_kg":float(entity.unit_mass_kg)+float(entity.contents_mass_kg)+float(entity.get("fuel",0.0)),"bridge_existing_traffic":true}
+		if entity.kind == "PERSON":
+			profile["size"] = Vector2(0.6,0.6)
+			profile["movement_class"] = 0
+			profile["base"] = 1.5
+			profile["rate"] = 0.0
+		else:
+			var vehicle: Dictionary = Terrain.VEHICLES.get(entity.design_type,{})
+			if vehicle.is_empty():
+				crossing.paused = true
+				crossing.blocked_reason = "Actual vehicle type is unavailable for remaining bridge route."
+				continue
+			profile["size"] = entity.vehicle_spec.footprint
+			profile["movement_class"] = int(vehicle.class)
+			profile["base"] = float(vehicle.base)*(0.75 if entity.health <= 0.5*float(entity.max_health) else 1.0)
+			profile["rate"] = float(vehicle.rate)
+		var remaining: Dictionary = _rear().combat.world.route(profile,crossing.finish)
+		if not remaining.ok:
+			crossing.paused = true
+			crossing.blocked_reason = "Remaining damaged-bridge route blocked: "+remaining.reason
+			continue
+		crossing.start = position
+		crossing.progress = 0.0
+		crossing.seconds = float(remaining.seconds)*(2.0 if not crossing.get("tow","").is_empty() else 1.0)
+		crossing.fuel = float(remaining.fuel)*(1.5 if not crossing.get("tow","").is_empty() else 1.0)
+		crossing.paused = false
+		crossing.blocked_reason = "Bridge damaged; remaining actual crossing retimed at current 2 m/s deck limit."
 
 func _on_water(row: Dictionary, position: Vector2) -> bool:
 	return Vector2i(floori(position.x),floori(position.y)) in row.deck
@@ -395,7 +466,8 @@ func cancel(id: String) -> Dictionary:
 	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"]: return _fail("Only unfinished bridge work can be cancelled.")
 	var recovered := int(row.m11_consumed/2)
 	if recovered > 0:
-		var pile_id := id+"-salvage"
+		_salvage_sequence += 1
+		var pile_id := "%s-salvage-%04d" % [id,_salvage_sequence]
 		var placed: Dictionary = _rear().ledger.add_place(pile_id,"Recovered bridge material",row.banks[row.work_bank])
 		if not placed.ok: return placed
 		var restored: Dictionary = _rear().ledger.recover_consumed_material(pile_id+"-m11","M11",recovered,1.0,pile_id,row.owner)
@@ -473,6 +545,8 @@ func cancel_crossing(id: String, entity_id: String) -> Dictionary:
 func _admission(row: Dictionary, entity_id: String, side: int, tow_id: String = "") -> Dictionary:
 	var entity: Dictionary = _rear().ledger.inspect_entity(entity_id)
 	if entity.get("kind","") not in ["PERSON","CARRIER"] or entity.health <= 0: return _fail("Actual living person or serviceable vehicle required.")
+	var holder: Dictionary = _rear().ledger.inspect_entity(entity.holder_id)
+	if holder.get("kind","") != "PLACE" or entity.kind == "PERSON" and not entity.crew_station.is_empty(): return _fail("Bridge entry needs an independently dismounted person or vehicle at a physical place; seated passengers and crew must exit first.")
 	var outward: Vector2 = -row.direction if side == 0 else row.direction
 	var start: Vector2 = row.banks[side]+outward*20.0
 	var finish: Vector2 = row.banks[1-side]-outward*20.0

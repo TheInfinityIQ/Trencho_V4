@@ -17,6 +17,10 @@ func _initialize() -> void:
 	_exclusive_engineering()
 	_damaged_foot_mass()
 	_collapse_vehicle()
+	_boarded_passenger_and_move_failure()
+	_impossible_approaches()
+	_repeated_upgrade_cancellation()
+	_damage_retimes_active_tow()
 	print("G20 bridge regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -308,3 +312,109 @@ func _collapse_vehicle() -> void:
 	_check(rear.ledger.inspect_entity("collapse-apc").health == 0 and rear.ledger.inspect_entity("collapse-passenger").assignment == "Dead","actual hull and occupant lost on water span")
 	_check(rear.bridges.inspect(id).traffic.is_empty(),"destroyed crossing releases occupied traffic identity")
 	_check(base.audit().is_empty(),"collapsed vehicle and person accounting: "+str(base.audit()))
+
+func _boarded_passenger_and_move_failure() -> void:
+	var base := Base.new(true)
+	var id := _build(base,"B01",101,20)
+	if id.is_empty(): return
+	var rear: RefCounted = base.rear
+	_hull(base,"passenger-truck","T02",Vector2(80.5,20.5))
+	_check(rear.ledger.add_person("same-passenger","passenger-truck",rear.PLAYER,Records.Assignment.PASSENGER,true).ok,"actual passenger seated at footbridge holding point")
+	_check(not rear.bridges.request_crossing(id,"same-passenger",0).ok,"seated person cannot claim independent B01 crossing")
+	_check(rear.bridges.inspect(id).queued.is_empty() and rear.bridges.inspect(id).traffic.is_empty(),"invalid seated request creates no footbridge occupancy")
+	_check(rear.ledger.disembark_dispatch_passenger("same-passenger","passenger-truck","passenger-truck-holding").ok,"same person physically exits actual carrier to a place")
+	_check(rear.ledger.inspect_entity("same-passenger").holder_id == "passenger-truck-holding","same identity now independently dismounted")
+	_check(rear.bridges.request_crossing(id,"same-passenger",0).ok,"same dismounted person admitted on B01")
+	rear.advance_time(0)
+	_check(rear.bridges.inspect(id).traffic.size() == 1,"same person occupies crossing after real disembark")
+	var progress: float = rear.bridges.inspect(id).traffic[0].progress
+	_check(rear.ledger.move_entity("same-passenger","hq-stock",Vector2(80.5,20.5)).ok,"person leaves recorded crossing place")
+	rear.advance_time(5)
+	_check(rear.bridges.inspect(id).traffic[0].progress == progress and rear.ledger.inspect_entity("same-passenger").position.x == 80.5,"failed physical movement earns no crossing progress")
+	_check(rear.ledger.move_entity("same-passenger","passenger-truck-holding",Vector2(80.5,20.5)).ok,"same person returns to recorded physical place")
+	rear.advance_time(50)
+	_check(rear.bridges.inspect(id).traffic.is_empty() and rear.ledger.inspect_entity("same-passenger").position.distance_to(Vector2(141.5,20.5)) < 0.01,"same dismounted person completes actual footbridge traversal")
+	_check(base.audit().is_empty(),"boarded passenger and movement interruption accounting: "+str(base.audit()))
+
+func _impossible_approaches() -> void:
+	var edge := Base.new(true)
+	var edge_world: RefCounted = edge.rear.combat.world
+	edge_world.paint(Rect2i(20,10,20,20),"TR11")
+	var outside: Dictionary = edge.rear.bridges.order("B02",Vector2(19.5,20.5),Vector2(40.5,20.5))
+	_check(not outside.ok and edge.rear.bridges.projects.is_empty(),"order rejects out-of-bounds twenty-metre holding approach before material is consumed")
+	var blocked := Base.new(true)
+	var world: RefCounted = blocked.rear.combat.world
+	world.paint(Rect2i(101,10,20,20),"TR11")
+	world.obstacle("blocked-bank",Rect2(Vector2(85,19),Vector2(2,3)),0.0,2.0)
+	var denied: Dictionary = blocked.rear.bridges.order("B02",Vector2(100.5,20.5),Vector2(121.5,20.5))
+	_check(not denied.ok and blocked.rear.bridges.projects.is_empty(),"order rejects blocked real holding approach before adding a project")
+	var one_bank := Base.new(true)
+	one_bank.rear.combat.world.paint(Rect2i(101,10,20,20),"TR11")
+	var legal: Dictionary = one_bank.rear.bridges.order("B02",Vector2(100.5,20.5),Vector2(121.5,20.5))
+	_check(legal.ok,"both approaches supported even while only near bank has friendly construction staff")
+	if legal.ok:
+		_engineer(one_bank,legal.id,"one")
+		_engineer(one_bank,legal.id,"two")
+		_stage(one_bank,legal.id,legal.m11)
+		one_bank.rear.advance_time(200)
+		_check(one_bank.rear.bridges.inspect(legal.id).state == "Complete","one-bank construction still completes without ownership of far bank")
+	_check(one_bank.audit().is_empty(),"bank feasibility accounting: "+str(one_bank.audit()))
+
+func _repeated_upgrade_cancellation() -> void:
+	var base := Base.new(true)
+	var id := _build(base,"B02",101,20)
+	if id.is_empty(): return
+	var rear: RefCounted = base.rear
+	var bridge: RefCounted = rear.bridges
+	var people: Array[String] = []
+	for suffix in ["one","two"]: people.append(_engineer_for_repeat(base,id,str(suffix)))
+	for iteration in range(2):
+		_check(bridge.upgrade(id).ok,"sound B02 can begin upgrade attempt %d" % iteration)
+		for person_id in people: _check(bridge.assign_engineer(id,person_id).ok,"same free P02 assigned to upgrade attempt %d" % iteration)
+		var stock_id := "repeat-upgrade-m11-%d" % iteration
+		_check(rear.ledger.add_stock(stock_id,"M11",800,1.0,id+"-carrier",rear.PLAYER).ok,"fresh physical M11 for upgrade attempt %d" % iteration)
+		_check(bridge.deliver_material(id,stock_id,800).ok,"upgrade attempt %d consumes full local M11" % iteration)
+		rear.advance_time(10)
+		var cancelled: Dictionary = bridge.cancel(id)
+		_check(cancelled.ok and cancelled.recovered == 400,"consumed upgrade attempt %d returns half as actual stock" % iteration)
+		_check(bridge.inspect(id).state == "Complete" and bridge.inspect(id).code == "B02","cancelled upgrade attempt %d reopens B02" % iteration)
+		var pile_id := "%s-salvage-%04d" % [id,iteration+1]
+		_check(rear.ledger.available_stock_at(pile_id,"M11") == 400,"upgrade attempt %d has distinct recoverable pile" % iteration)
+	_check(rear.ledger.available_stock_at(id+"-salvage-0001","M11") == 400 and rear.ledger.available_stock_at(id+"-salvage-0002","M11") == 400,"both cancelled upgrade piles persist without identity collision")
+	_check(base.audit().is_empty(),"repeated upgrade material conservation: "+str(base.audit()))
+
+func _engineer_for_repeat(base: RefCounted, bridge_id: String, suffix: String) -> String:
+	var rear: RefCounted = base.rear
+	var person_id := "repeat-"+suffix
+	_check(rear.ledger.add_person(person_id,bridge_id+"-a",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P02").ok,"actual free repeat-upgrade P02")
+	_check(rear.ledger.add_stock(person_id+"-kit","E08",1,5.0,person_id,rear.PLAYER).ok,"actual repeat-upgrade E08")
+	return person_id
+
+func _damage_retimes_active_tow() -> void:
+	var base := Base.new(true)
+	var id := _build(base,"B03",301,30)
+	if id.is_empty(): return
+	var rear: RefCounted = base.rear
+	_hull(base,"active-tractor","T05",Vector2(280.5,20.5))
+	_hull(base,"active-tow","T05",Vector2(268.5,20.5))
+	var gross: float = Routes.gross_kg(rear.ledger,"active-tractor")+Routes.gross_kg(rear.ledger,"active-tow")
+	_check(gross > 40000.0 and gross < 80000.0,"actual coupled tank load fits sound B03 but exceeds damaged limit")
+	_check(rear.bridges.request_crossing(id,"active-tractor",0,false,"active-tow").ok,"coupled tow admitted before bridge damage")
+	rear.advance_time(0)
+	rear.advance_time(12)
+	var before: Dictionary = rear.ledger.inspect_entity("active-tractor")
+	var fuel_before: float = before.fuel
+	_check(before.position.x > 301.0 and rear.bridges.inspect(id).traffic.size() == 1,"lead tank is actually over the water when damage occurs")
+	var original_remaining: float = rear.bridges.inspect(id).traffic[0].seconds-rear.bridges.inspect(id).traffic[0].progress
+	_check(rear.bridges.damage(id,3500).ok,"B03 damaged to half while overloaded tow is already on span")
+	var crossing: Dictionary = rear.bridges.inspect(id).traffic[0]
+	_check(crossing.progress == 0.0 and crossing.seconds > original_remaining and crossing.start.distance_to(before.position) < 0.01,"active tow retains physical position and longer remaining time")
+	_check(rear.ledger.inspect_entity("active-tractor").health > 0 and rear.ledger.inspect_entity("active-tow").health > 0,"new half-load limit does not auto-collapse already crossing tow")
+	rear.advance_time(5)
+	var after: Dictionary = rear.ledger.inspect_entity("active-tractor")
+	_check(after.position.distance_to(before.position) <= 5.01 and after.position.distance_to(before.position) > 0.0,"damaged active tow advances at at most effective 1 m/s")
+	_check(after.fuel < fuel_before,"damaged crossing continues to burn real fuel")
+	rear.advance_time(100)
+	_check(rear.bridges.inspect(id).traffic.is_empty() and rear.ledger.inspect_entity("active-tractor").position.distance_to(Vector2(351.5,20.5)) < 0.01,"already admitted tow clears damaged bridge without a fresh load admission")
+	_check(not rear.bridges.request_crossing(id,"active-tractor",1,false,"active-tow").ok,"new coupled return entry is rejected above damaged 40 tonne limit")
+	_check(base.audit().is_empty(),"active damaged tow accounting: "+str(base.audit()))
