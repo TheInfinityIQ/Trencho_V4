@@ -2,6 +2,8 @@ extends SceneTree
 const World = preload("res://game/terrain/terrain_world.gd")
 const Map = preload("res://game/battlefield/farmland_scenario.gd")
 const Base = preload("res://game/rear_base/base_simulation.gd")
+const Routes = preload("res://game/routes/route_planner.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 var checks := 0
 var failures := 0
 
@@ -50,6 +52,11 @@ func check_initial_defences() -> void:
 	expect(rear.ledger.available_stock_at("hq-stock","M11") == 600 and rear.ledger.snapshot().entities.filter(func(p: Dictionary) -> bool: return p.kind == "PERSON").size() == people,"Initial defences deduct no loose HQ stock and invent no people")
 	expect(not Map.initialize_defences(rear).ok and rear.field_structures.projects.size() == 6,"Repeated initialisation cannot duplicate physical defences")
 	expect(base.audit().is_empty(),"Initial defence owners reconcile with the live services")
+	rear.ledger.add_initial_vehicle("route-validation-t01","T01","vehicle-lane",rear.PLAYER,Specs.TYPES.T01,40)
+	for side in ["blue","red"]:
+		for suffix in ["-delivery-route","-delivery-return"]:
+			var route: Dictionary = Routes.plan(rear.ledger,"route-validation-t01",Map.waypoints()[side+suffix])
+			expect(route.ok,"Actual T01 rolling-turn contract accepts authored supply route: "+side+suffix+" / "+str(route.get("reason","")))
 	rear.advance_time(1)
 	expect(not rear.field_structures.initialize_defence("S01",Vector2(100,100),rear.PLAYER).ok,"No runtime free defence initialization")
 

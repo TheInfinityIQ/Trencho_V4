@@ -99,7 +99,10 @@ static func waypoints() -> Dictionary:
 	}
 	for side in ["blue","red"]:
 		var delivery: Array = result[side+"-service-route"].duplicate()
-		delivery.append_array(result[side+"-front-route"].slice(1))
+		delivery.pop_back() # Supply bypasses the troop pad's dead-end approach.
+		delivery.pop_back() # Continue east at the berth bypass, without reversing at x2000.
+		var front: Array = result[side+"-front-route"]
+		delivery.append_array(front.slice(2,front.size()-1))
 		delivery.append(result[side+"-delivery"])
 		result[side+"-delivery-route"] = delivery
 		var home := delivery.duplicate()
