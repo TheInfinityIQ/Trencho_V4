@@ -29,12 +29,10 @@ func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army
 	for bank in [bank_a,bank_b]:
 		var at := Vector2i(floori(bank.x),floori(bank.y))
 		if not world.bounds.has_point(at) or world.cell(at).terrain in ["TR09","TR10","TR11","TR12"] or not world.support(at,0).ok: return _fail("Both bridge endpoints require stable, infantry-accessible land support.")
-	for side in [0,1]:
-		var bank: Vector2 = bank_a if side == 0 else bank_b
-		var outward: Vector2 = -direction if side == 0 else direction
-		var holding: Vector2 = bank+outward*20.0
-		var foot_approach: Dictionary = world.route({"position":holding,"facing":(-outward).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":1.5,"rate":0.0,"gross_mass_kg":80.0},bank)
-		if not foot_approach.ok: return _fail("Both twenty-metre holding approaches need continuous physical infantry access: "+foot_approach.reason)
+	var near_access: Dictionary = _holding_approach(bank_a,bank_b,0)
+	var far_access: Dictionary = _holding_approach(bank_a,bank_b,1)
+	if not near_access.ok and not far_access.ok: return _fail("At least one twenty-metre holding approach needs continuous physical infantry access; near: %s; far: %s" % [near_access.reason,far_access.reason])
+	var work_bank := 0 if near_access.ok else 1
 	var samples := maxi(2,ceili(distance*4.0))
 	var first_water := INF
 	var last_water := -INF
@@ -88,7 +86,7 @@ func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army
 	if not b_place.ok: return b_place
 	var spec: Dictionary = Catalog.SPECS[code]
 	var max_health := int(spec.base_health)+int(spec.health_per_m)*span
-	projects[id] = {"id":id,"code":code,"owner":owner,"banks":[bank_a,bank_b],"places":[a_id,b_id],"work_bank":0,"direction":direction,"span":span,"deck":deck,"approaches":approaches,"width":width,"state":"Awaiting material and engineers","health":maxi(1,int(max_health/4)),"max_health":max_health,"m11_required":int(spec.m11)*span,"m11_consumed":0,"work_required":float(spec.work)*span,"progress":0.0,"assigned":[],"last_damage":-INF,"blocked_reason":"Stage full M11 at one bank; two local P02/E08 engineers must start safely.","upgrade_from":"","upgrade_old_deck":[],"upgrade_old_approaches":[],"completed_at":-1.0,"material_receipt":[]}
+	projects[id] = {"id":id,"code":code,"owner":owner,"banks":[bank_a,bank_b],"places":[a_id,b_id],"work_bank":work_bank,"direction":direction,"span":span,"deck":deck,"approaches":approaches,"width":width,"state":"Awaiting material and engineers","health":maxi(1,int(max_health/4)),"max_health":max_health,"m11_required":int(spec.m11)*span,"m11_consumed":0,"work_required":float(spec.work)*span,"progress":0.0,"assigned":[],"last_damage":-INF,"blocked_reason":"Stage full M11 at one bank; two local P02/E08 engineers must start safely.","upgrade_from":"","upgrade_old_deck":[],"upgrade_old_approaches":[],"completed_at":-1.0,"material_receipt":[]}
 	queues[id] = []
 	events.append({"at":_rear().time,"id":id,"kind":"Ordered","detail":code})
 	return {"ok":true,"id":id,"span":span,"m11":int(spec.m11)*span,"work":int(spec.work)*span,"max_health":max_health,"message":"Real water span and both supported bank endpoints recorded; full local delivery and engineers remain required."}
@@ -96,9 +94,18 @@ func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army
 func choose_work_bank(id: String, bank_index: int) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or row.m11_consumed > 0 or bank_index not in [0,1]: return _fail("Choose either accessible bank before this work consumes M11.")
+	var access: Dictionary = _holding_approach(row.banks[0],row.banks[1],bank_index)
+	if not access.ok: return _fail("Chosen work bank lacks a continuous physical holding approach: "+access.reason)
 	row.work_bank = bank_index
 	_refresh(row)
 	return {"ok":true,"message":"Construction or rebuilding will use the chosen physical bank supply area."}
+
+func _holding_approach(bank_a: Vector2, bank_b: Vector2, side: int) -> Dictionary:
+	var direction: Vector2 = (bank_b-bank_a).normalized()
+	var bank: Vector2 = bank_a if side == 0 else bank_b
+	var outward: Vector2 = -direction if side == 0 else direction
+	var holding: Vector2 = bank+outward*20.0
+	return _rear().combat.world.route({"position":holding,"facing":(-outward).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":1.5,"rate":0.0,"gross_mass_kg":80.0},bank)
 
 func deliver_material(id: String, stock_id: String, count: int, bank_index: int = -1) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
@@ -145,7 +152,7 @@ func engineer_committed(person_id: String) -> bool:
 
 func _eligible(row: Dictionary) -> Array[String]:
 	var result: Array[String] = []
-	if not _safe(row): return result
+	if not _safe(row) or not _holding_approach(row.banks[0],row.banks[1],row.work_bank).ok: return result
 	for id in row.assigned:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
 		if person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead","Training","Rear Labour"] or not person.crew_station.is_empty() or _rear().combat.broken.has(id): continue
@@ -165,10 +172,14 @@ func _refresh(row: Dictionary) -> bool:
 	if row.state in ["Complete","Cancelled","Destroyed"]: return false
 	var old_state: String = row.state
 	var old_reason: String = row.blocked_reason
+	var access: Dictionary = _holding_approach(row.banks[0],row.banks[1],row.work_bank)
 	var local: int = _rear().ledger.available_stock_at(row.places[row.work_bank],"M11")
 	var eligible: Array[String] = _eligible(row)
 	if row.m11_consumed == 0:
-		if local < row.m11_required:
+		if not access.ok:
+			row.state = "Awaiting access"
+			row.blocked_reason = "Chosen construction bank approach blocked: "+access.reason
+		elif local < row.m11_required:
 			row.state = "Awaiting material and engineers"
 			row.blocked_reason = "%d actual M11 missing at chosen bank." % (row.m11_required-local)
 		elif eligible.size() < 2:
@@ -185,7 +196,7 @@ func _refresh(row: Dictionary) -> bool:
 			else: row.blocked_reason = spent.message
 	else:
 		row.state = "Building" if eligible.size() >= 2 else "Paused"
-		row.blocked_reason = "" if eligible.size() >= 2 else "Work paused; two safe local P02/E08 required, with progress retained."
+		row.blocked_reason = "" if eligible.size() >= 2 else ("Work paused; chosen bank approach blocked: "+access.reason if not access.ok else "Work paused; two safe local P02/E08 required, with progress retained.")
 	return row.state != old_state or row.blocked_reason != old_reason
 
 func next_boundary() -> float:
@@ -405,6 +416,8 @@ func _on_water(row: Dictionary, position: Vector2) -> bool:
 func rebuild(id: String, bank_index: int = 0) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty() or row.state != "Destroyed" or bank_index not in [0,1]: return _fail("A destroyed bridge can rebuild from either actual bank.")
+	var access: Dictionary = _holding_approach(row.banks[0],row.banks[1],bank_index)
+	if not access.ok: return _fail("Rebuild bank lacks a continuous physical holding approach: "+access.reason)
 	row.work_bank = bank_index
 	row.state = "Awaiting material and engineers"
 	row.health = maxi(1,int(row.max_health/4))
