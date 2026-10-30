@@ -139,7 +139,7 @@ func deliver_material(id: String, stock_id: String, count: int, bank_index: int 
 func assign_engineer(id: String, person_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)) or row.assigned.size() >= 4 or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02": return _fail("Up to four actual uncommitted friendly P02 may join unfinished bridge work.")
+	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)) or (_rear().mines != null and _rear().mines.engineer_committed(person_id)) or row.assigned.size() >= 4 or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02": return _fail("Up to four actual uncommitted friendly P02 may join unfinished bridge work.")
 	row.assigned.append(person_id)
 	workers[person_id] = id
 	_refresh(row)
@@ -534,7 +534,7 @@ func request_repair(id: String, engineers: Array, bank_index: int = 0) -> Dictio
 	var unique: Dictionary = {}
 	for person_id in engineers:
 		var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-		if unique.has(person_id) or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.banks[bank_index]) > 2.0+EPS or _rear().military._held(person_id,"E08") < 1 or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)): return _fail("Each distinct repair engineer needs free time, physical bank access and actual E08.")
+		if unique.has(person_id) or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.banks[bank_index]) > 2.0+EPS or _rear().military._held(person_id,"E08") < 1 or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)) or (_rear().mines != null and _rear().mines.engineer_committed(person_id)): return _fail("Each distinct repair engineer needs free time, physical bank access and actual E08.")
 		unique[person_id] = true
 	var spent: Dictionary = _rear().ledger.consume_local_batch(row.places[bank_index],row.owner,{"M11":10},"G20 bridge repair "+id)
 	if not spent.ok: return spent

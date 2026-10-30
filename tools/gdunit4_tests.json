@@ -170,6 +170,10 @@
     }
   ],
   "Input": [
+      {
+        "path": "game/mines/tests/mine_input_test.gd",
+        "cases": ["test_a37_a38_buttons_at_development_resolution"]
+      },
     {
       "path": "game/vehicle_recovery/tests/recovery_input_test.gd",
       "cases": ["test_recovery_destruction_repair_and_tow_controls_at_development_size"]

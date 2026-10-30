@@ -7,6 +7,7 @@ var failures := 0
 func _initialize() -> void:
 	_tow_contact(false)
 	_tow_contact(true)
+	_tow_contact(false,false)
 	_rotated_blast()
 	print("G22/G24 recovery mine regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
@@ -27,7 +28,7 @@ func _armed(rear: RefCounted, position: Vector2) -> String:
 	rear.mines.projects[id] = {"id":id,"code":"D02","kind":"D02","position":position,"place":id,"squad":"","engineer":"","owner":"army-red","state":"Armed","progress":12.0,"work_required":12.0,"m06_reserved":3,"m06_consumed":3,"claims":[],"receipt":paid.receipt,"health":20,"armed_at":rear.time,"controller":"","blocked_reason":""}
 	return id
 
-func _tow_contact(trailing: bool) -> void:
+func _tow_contact(trailing: bool, destroying: bool = true) -> void:
 	var fixture := Fixture.new()
 	var rear: RefCounted = fixture.base.rear
 	var ledger: RefCounted = rear.ledger
@@ -35,7 +36,7 @@ func _tow_contact(trailing: bool) -> void:
 	ledger.move_entity("tractor","tractor-ground",Vector2(200,50))
 	ledger.move_entity("tow","tow-ground",Vector2(188,50))
 	ledger.move_entity("repairer","repairer-ground",Vector2(200,53))
-	if not trailing: ledger.apply_vehicle_surface_damage("tractor",600,999,"Side","Prior damage leaves600hull")
+	if not trailing and destroying: ledger.apply_vehicle_surface_damage("tractor",600,999,"Side","Prior damage leaves600hull")
 	expect(rear.recovery.start_coupling("tractor","tow","repairer").ok,"real engineer starts combined-case coupling")
 	rear.advance_time(20)
 	var mine := _armed(rear,Vector2(194,50) if trailing else Vector2(208,50))
@@ -56,7 +57,9 @@ func _tow_contact(trailing: bool) -> void:
 		expect(absf(lead.position.x-200.25) < 0.001 and absf(target.position.x-188.25) < 0.001,"trailing footprint contact limits both actual bodies before tractor overshoots")
 		expect(target.health == 450 and lead.health == 1200,"only trailing tank takes the actual bottom hit")
 		expect(is_equal_approx(lead.fuel,fuel-expected_burn),"surviving tractor retains all untravelled fuel")
-	else:
+		for station in ["Driver","Gunner","Loader","Commander"]:
+			expect(ledger.inspect_entity("tow-"+station).health == 90,"surviving trailing hull retains once-only10injury: "+station)
+	elif destroying:
 		expect(absf(lead.position.x-202.25) < 0.001 and lead.health == 0,"tractor destruction occurs at actual front-footprint contact")
 		expect(target.position.x <= lead.position.x-12.0+0.001 and lead.towing.is_empty() and target.towed_by.is_empty(),"destruction uncouples without moving the stale trailing snapshot")
 		expect(is_equal_approx(float(ledger.snapshot().fuel_lost)-float(start.fuel_lost),fuel-expected_burn),"only remaining fuel is lost after prefix travel was charged")
@@ -67,6 +70,10 @@ func _tow_contact(trailing: bool) -> void:
 		for event in rear.recovery.events:
 			if event.hull == "tractor" and event.kind == "Destroyed": resolved += 1
 		expect(resolved == 1,"synchronous mine damage has one authoritative destruction outcome")
+	else:
+		expect(lead.health == 550 and lead.damage_immobilized,"surviving tractor receives bottom damage and immobilization")
+		for station in ["Driver","Gunner","Loader","Commander"]:
+			expect(ledger.inspect_entity("tractor-"+station).health == 90,"surviving tractor retains once-only10injury with recovery subscriber: "+station)
 	var lead_position: Vector2 = lead.position
 	var target_position: Vector2 = target.position
 	rear.advance_time(20)

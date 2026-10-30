@@ -3,9 +3,10 @@ extends GdUnitTestSuite
 
 
 func test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06() -> void:
+	# Current development acceptance uses one fixed 1280x720 screen.
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
@@ -54,12 +55,12 @@ func test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06
 	assert_str(dialog.dialog_text).contains("finished goods remain")
 	assert_dict(activity.batch).is_equal(old)
 	await _capture(runner, main, demo, "r27_change_pending_confirmation")
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(4)
 	assert_float(((demo.get("_people") as Label).get_parent() as ScrollContainer).size.y).is_greater_equal(48)
 	await _capture(runner, main, demo, "r27_small_pending_confirmation")
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(4)
 	await _press(runner, dialog, "Keep current recipe")
@@ -119,7 +120,7 @@ func test_normal_launch_exclusive_f05_select_decline_confirm_and_manufacture_m06
 	assert_dict(rear._output_promises).is_empty()
 	assert_array(rear.audit()).is_empty()
 	await _capture(runner, main, demo, "r27_physical_m06_target_satisfied")
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(4)
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer

@@ -46,10 +46,11 @@ func order(kind: String, target_id: String, squad_id: String, engineers: Array[S
 	for job in projects.values():
 		if job.state not in ["Detonated","Cancelled","Inert"] and job.target_id == target_id: return _fail("Target already has an active attached charge.")
 	for id in engineers:
-		if engineer_committed(id) or _rear().bridges.engineer_committed(id) or _rear().field_structures.engineer_committed(id): return _fail("An engineer cannot work on two demolition, construction or repair jobs together.")
+		if (_rear().mines != null and _rear().mines.engineer_committed(id)) or engineer_committed(id) or _rear().bridges.engineer_committed(id) or _rear().field_structures.engineer_committed(id): return _fail("An engineer cannot work on two demolition, construction or repair jobs together.")
 	var site: Vector2 = _site(target,kind,bank)
 	for other in projects.values():
 		if other.state in ["Placed","Arming","Armed","Waiting","Fusing"] and other.position.distance_to(site) < 4.0-EPS: return _fail("Attached D04 occupies one metre and needs four metres from another placed device.")
+	if _rear().mines != null and not _rear().mines.spacing_clear(site): return _fail("Device needs four metres separation from D01-D03.")
 	var sight: Dictionary = _rear().combat.world.observe(_rear().ledger.inspect_entity(engineers[0]).position,site)
 	var known_health: int = int(target.health) if sight.visible else int(target.max_health)
 	var count := maxi(1,ceili(float(known_health)/500.0))
@@ -157,7 +158,9 @@ func _withdrawn(row: Dictionary) -> bool:
 	return true
 
 func remote_slot_blocker(squad_id: String, except_id: String = "") -> String:
-	# D03 must consult this same reservation when its later owner is added.
+	if _rear().mines != null:
+		var blocker: String = _rear().mines.remote_slot_blocker(squad_id,except_id)
+		if not blocker.is_empty(): return blocker
 	for other in projects.values():
 		if other.id != except_id and other.squad == squad_id and other.mode == "Remote" and other.state not in ["Detonated","Cancelled","Inert"]:
 			return "Squad remote slot is reserved by %s (%s); select Fuse or make that device inert first." % [other.id,other.state]

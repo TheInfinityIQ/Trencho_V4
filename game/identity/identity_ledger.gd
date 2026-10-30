@@ -1,6 +1,8 @@
 extends RefCounted
 signal person_position_changed(person_id: String)
 signal vehicle_damaged(vehicle_id: String)
+signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
+var route_hazard: Callable
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
@@ -155,8 +157,10 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 	if entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
 		var travel: Vector2 = world_position-_world_position(id)
 		if travel.length_squared() > 0.000001: entity.facing_degrees = fposmod(rad_to_deg(travel.angle()),360.0)
+	var previous := _world_position(id)
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
+	entity_moved.emit(id,previous,world_position)
 	if entity is Records.Person: person_position_changed.emit(id)
 	return _ok("Physical position updated by the timed activity.", id)
 

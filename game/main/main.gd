@@ -18,6 +18,7 @@ const REVIEWS: Dictionary = {
 	"G18 Objectives & income": preload("res://game/objectives/objective_demo.tscn"),
 	"G19 Field structures & roads": preload("res://game/field_structures/field_demo.tscn"),
 	"G20 Bridges & traversal": preload("res://game/bridges/bridge_demo.tscn"),
+	"G22 Mines and clearance": preload("res://game/mines/mine_demo.tscn"),
 	"G21 Bridge denial": preload("res://game/bridges/demolition_demo.tscn"),
 }
 var _host: Control

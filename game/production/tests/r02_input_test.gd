@@ -3,9 +3,10 @@ extends GdUnitTestSuite
 
 
 func test_normal_launch_r02_hauls_starts_retains_work_and_finishes_whole_yield() -> void:
+	# Current development acceptance uses one fixed 1280x720 screen.
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
@@ -78,7 +79,7 @@ func test_normal_launch_r02_hauls_starts_retains_work_and_finishes_whole_yield()
 	assert_int(rear.ledger.total_stock("E01")).is_zero()
 	assert_array(rear.audit()).is_empty()
 	await _capture(runner, main, demo, "r02_physical100_target_satisfied")
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(3)
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer
