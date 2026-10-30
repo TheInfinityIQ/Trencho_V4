@@ -88,3 +88,7 @@ The [G16 combat service](g16_combat_wounds_morale.md) uses the G01 physical ledg
 ## G17 hierarchical orders and information - 29 October 2026
 
 The [G17 order service](g17_hierarchical_orders.md) observes through real G15 members and G08 visibility, then carries time-stamped contacts and intent across one-second echelon links on the shared clock. It decides a supported flank from delivered information, G16 eligible fire, real ammunition, geometry and cohesion. The enemy HQ assault gate reads actual company capability and supplies an explicit preparation demand; it does not grant units or goods. An inspection scene exposes message age, roles, fallback and physical reconciliation.
+
+## G18 objectives and income - 29 October 2026
+
+The [G18 objective service](g18_objectives_income.md) derives eligibility from G01 actual holders and ammunition plus G16 morale, integrates capture at event boundaries, and credits controlled uncontested resource income to G02's existing requisition account. Its staged T02 passenger review proves a parked occupied vehicle contributes no capture before the same people exit; no objective ownership implies an HQ result or free depot contents.

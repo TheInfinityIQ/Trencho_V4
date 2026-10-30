@@ -928,6 +928,7 @@ func inspect_entity(id: String) -> Dictionary:
 	if entity.kind == Records.Kind.WEAPON:
 		result.loaded_rounds = loaded_rounds(id)
 		result.loaded_capacity = entity.loaded_capacity
+		result.ammo_type = entity.ammo_type
 		result.functional = entity.health > 0
 	return result
 

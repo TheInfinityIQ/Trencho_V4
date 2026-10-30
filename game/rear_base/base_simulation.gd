@@ -15,6 +15,7 @@ const Construction = preload("res://game/construction/construction_service.gd")
 const Military = preload("res://game/military/organization.gd")
 const Combat = preload("res://game/combat/combat_service.gd")
 const Orders = preload("res://game/orders/order_service.gd")
+const Objectives = preload("res://game/objectives/objective_service.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
 var rear := Rear.new("Empty")
 var receiving: RefCounted
@@ -43,6 +44,7 @@ func _init(expanded: bool = false) -> void:
 	rear.military = Military.new(rear)
 	rear.combat = Combat.new(rear)
 	rear.orders = Orders.new(rear)
+	rear.objectives = Objectives.new(rear)
 	var dispatch_rear_ref: WeakRef = weakref(rear)
 	receiving.external_rear_reservations = func() -> int:
 		var owner: RefCounted = dispatch_rear_ref.get_ref()
@@ -88,7 +90,7 @@ func snapshot() -> Dictionary:
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
 		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()
@@ -99,6 +101,7 @@ func audit() -> Array[String]:
 	failures.append_array(rear.military.audit())
 	failures.append_array(rear.combat.audit())
 	failures.append_array(rear.orders.audit())
+	failures.append_array(rear.objectives.audit())
 	if not is_equal_approx(rear.time, receiving._time) or not is_equal_approx(rear.time, rear.ledger.snapshot().time):
 		failures.append("Shared event clocks disagree")
 	for id in receiving._workers:

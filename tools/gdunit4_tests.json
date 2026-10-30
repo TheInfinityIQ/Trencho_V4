@@ -171,6 +171,10 @@
   ],
   "Input": [
     {
+      "path": "game/objectives/tests/objective_input_test.gd",
+      "cases": ["test_objective_review_real_dismount_input_and_small_render"]
+    },
+    {
       "path": "game/orders/tests/order_input_test.gd",
       "cases": ["test_orders_review_real_input_and_small_render"]
     },
