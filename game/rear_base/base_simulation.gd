@@ -31,7 +31,7 @@ var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
 
-func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false) -> void:
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91)) -> void:
 	rear = Rear.new("Empty",not initial_rear)
 	expanded_catalogue = expanded
 	connected_world = world_session
@@ -49,7 +49,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 		return maxf(0, store.capacity - owner.ledger.loose_stock_mass_at(store_id) - owner._reserved_space(store_id) + owner.receiving.reserved_storage_kg(slot))
 	rear.receiving = receiving
 	rear.vehicles = Vehicles.new(rear)
-	rear.dispatch = Dispatch.new(rear)
+	rear.dispatch = Dispatch.new(rear,hq_at)
 	rear.hq = Hq.new(rear)
 	rear.construction = Construction.new(rear)
 	rear.military = Military.new(rear)

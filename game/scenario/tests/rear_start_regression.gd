@@ -1,5 +1,6 @@
 extends SceneTree
 const Base = preload("res://game/rear_base/base_simulation.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 var failures := 0
 var checks := 0
 
@@ -40,6 +41,14 @@ func _initialize() -> void:
 	rear.advance_time(1)
 	expect(base.audit().is_empty(),"Initialized services advance consistently: "+str(base.audit()))
 	expect(rear.heavy_production.request_recipe("R25").ok and rear.heavy_production.enabled,"Player can select the first vehicle recipe")
+	var guard := Base.new()
+	var owner: RefCounted = guard.rear
+	expect(owner.add_person("guard-driver",true,"P08").ok,"Named initial registration driver")
+	expect(owner.ledger.add_initial_vehicle("guard-hull","T01","vehicle-lane",owner.PLAYER,Specs.TYPES.T01,40).ok,"Canonical time-zero hull")
+	expect(not owner.vehicles.register_initial_parked("guard-hull",-1,"guard-driver").ok and not owner.vehicles.register_initial_parked("guard-hull",99,"guard-driver").ok,"Out-of-range initial parking is refused")
+	expect(not owner.vehicles.vehicles.has("guard-hull") and owner.ledger.inspect_entity("guard-driver").assignment == "Available","Refused registration retains free driver and no activity ownership")
+	expect(owner.vehicles.register_initial_parked("guard-hull",1,"guard-driver").ok,"Same hull and driver can retry a valid initial slot")
+	expect(guard.audit().is_empty(),"Initial registration retry preserves ledger and parking")
 	print("Rear start regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 

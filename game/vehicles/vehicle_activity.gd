@@ -33,6 +33,7 @@ func register_initial_parked(id: String, slot: int, driver: String) -> Dictionar
 	var hull: Dictionary = rear.ledger.inspect_entity(id)
 	var person: Dictionary = rear.ledger.inspect_entity(driver)
 	if rear.time != 0.0 or vehicles.has(id) or hull.get("kind","") != "CARRIER" or hull.get("vehicle_spec",{}).is_empty() or not rear.actors.has(driver) or person.get("qualification","") != "P08" or person.get("assignment","") != "Available": return _result(false,"Initial hull requires a real available P08 and canonical vehicle at time zero.")
+	if slot < 0 or slot >= rear.yard.PARKING_POSITIONS.size() or hull.owner != rear.PLAYER or hull.controller != rear.PLAYER or hull.fleet_domain != "Rear" or hull.health <= 0 or person.owner != hull.owner or person.health <= 0 or person.pending_assignment != "None" or not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty(): return _result(false,"Initial registration requires an owned live hull, free matching driver and actual parking slot.")
 	if not rear.heavy_production._slot_legal(slot,hull.design_type) or not rear.yard.occupied[slot].is_empty() or not rear.yard.reserved[slot].is_empty(): return _result(false,"Initial hull needs a legal empty parking place at time zero.")
 	register_output(id,slot)
 	vehicles[id].state = "Parked"

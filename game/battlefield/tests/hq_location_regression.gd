@@ -1,9 +1,6 @@
 extends SceneTree
 ## HQ handling and formation report must use one scenario-declared location.
-const Rear = preload("res://game/staffing/rear_simulation.gd")
-const Dispatch = preload("res://game/dispatch/dispatch_service.gd")
-const Hq = preload("res://game/hq/hq_logistics.gd")
-const Military = preload("res://game/military/organization.gd")
+const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 var checks := 0
 var failures := 0
@@ -14,10 +11,8 @@ func _initialize() -> void:
 	quit(0 if failures == 0 else 1)
 
 func _exercise(at: Vector2) -> void:
-	var rear := Rear.new("Empty")
-	rear.dispatch = Dispatch.new(rear,at)
-	rear.hq = Hq.new(rear)
-	rear.military = Military.new(rear)
+	var base := Base.new(true,false,false,at)
+	var rear: RefCounted = base.rear
 	var ledger: RefCounted = rear.ledger
 	_check(ledger.inspect_entity("hq-stock").position == at and ledger.inspect_entity("hq-formation").position == at,"Stock and formation use declared HQ")
 	_check(ledger.inspect_entity("hq-queue").position == at+Vector2(-40,0),"Queue retains its local offset")
@@ -38,7 +33,7 @@ func _exercise(at: Vector2) -> void:
 	for index in 4:
 		var person: Dictionary = ledger.inspect_entity("location-person-%d" % index)
 		_check(person.assignment == "Formation Duty" and person.position.distance_to(at) < 20,"Formation report stays at declared HQ")
-	_check(rear.audit().is_empty() and rear.hq.audit().is_empty() and rear.military.audit().is_empty(),"Configured HQ preserves identities and goods")
+	_check(base.audit().is_empty(),"Configured HQ preserves identities and goods")
 
 func _check(ok: bool, detail: String) -> void:
 	checks += 1
