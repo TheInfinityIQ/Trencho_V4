@@ -377,7 +377,7 @@ func _deliver(entry: Dictionary) -> void:
 			var row: Dictionary = entry.report
 			row.current_at = entry.destination
 			row.path.append(entry.destination)
-			if entry.destination == "army":
+			if entry.destination in ["army","army-red"]:
 				row.state = "Delivered to Commander"
 				reports.append(row)
 			else: _push_up(row,entry.destination)

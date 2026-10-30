@@ -32,6 +32,12 @@ func _initialize() -> void:
 	_check(not rear.orders.contacts.get("army",{}).has("blue-person-0") and not rear.orders.contacts.get("army-red",{}).has("red-person-0"),"Opposing command forests never share observation channels")
 	_check(not rear.orders.contacts.get("army",{}).has("supplier-sample") and not rear.orders.contacts.get("army-red",{}).has("supplier-sample"),"Supplier identity is not classified as an opposing army")
 	_check(rear.orders.contacts.get("army-red",{}).has("leased-sample") and not rear.orders.contacts.get("army",{}).has("leased-sample"),"Control determines leased vehicle combat affiliation")
+	_check(rear.orders.report("red-squad","Progress","Initial position held").ok,"Red subordinate sends a real report")
+	rear.advance_time(4)
+	var red_report_delivered := false
+	for report in rear.orders.reports:
+		if report.source == "red-squad" and report.current_at == "army-red" and report.state == "Delivered to Commander": red_report_delivered = true
+	_check(red_report_delivered,"Red progress reaches its own Commander instead of being dropped at the root")
 	var no_people: Array[String] = []
 	_check(not rear.military.add_initial_squad("late","Rifle",no_people,"late-company","late-platoon","army-red").ok,"Starting formation API closes after time zero")
 	_check(base.audit().is_empty(),"Both real command forests preserve ledger and membership: "+str(base.audit()))
