@@ -339,8 +339,8 @@ func cancel_assignment_request(person_id: String) -> Dictionary:
 
 func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: String = "") -> Dictionary:
 	var person := _person(person_id)
-	if person == null or person.assignment != Records.Assignment.REAR_LABOUR:
-		return _reject("NOT_LABOUR", "A rear labour assignment is required for this carry fixture.")
+	if person == null or not (person.assignment == Records.Assignment.REAR_LABOUR or (person.assignment == Records.Assignment.HQ_DUTY and person.duty_id == "fixed-hq")):
+		return _reject("NOT_LABOUR", "An actual rear or HQ logistics worker is required for this carry.")
 	if not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or person.pending_assignment != -1 or not person.crew_station.is_empty():
 		return _reject("PERSON_BUSY", "Finish the existing carry or pending handoff first.")
 	var stock := _stock(stock_id)

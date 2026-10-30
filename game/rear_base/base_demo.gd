@@ -71,6 +71,14 @@ var dispatch_status: Label
 var dispatch_surface: OptionButton
 var dispatch_bridge: OptionButton
 var dispatch_clearance: SpinBox
+var hq_person: OptionButton
+var hq_hull: OptionButton
+var hq_type: OptionButton
+var hq_weapon: OptionButton
+var hq_count: SpinBox
+var hq_rows: ItemList
+var hq_ids: Array[String] = []
+var hq_status: Label
 var _pending_token: int = -1
 var heavy_controls: VBoxContainer
 var heavy_status: Label
@@ -120,6 +128,7 @@ func _ready() -> void:
 	_vehicles_panel(_panel("Vehicles"))
 	_dispatch_panel(_panel("Dispatch"))
 	_construction_panel(_panel("Build"))
+	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
@@ -481,6 +490,62 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 	dispatch_status = _label(box,"")
 	dispatch_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
+func _hq_panel(box: VBoxContainer) -> void:
+	_label(box,"Development diagnostics: manually exercise local HQ handoffs. Normal HQ command selects recipients automatically.")
+	hq_person = _option(box,"Same person in HQ Reserve",[])
+	hq_hull = _option(box,"Same stopped military hull at HQ berth",[])
+	hq_type = _option(box,"Unreserved unloaded stock type",[])
+	hq_weapon = _option(box,"Intact weapon in HQ stock",[])
+	hq_count = _spin(box,"Whole units",1200,1)
+	_button(box,"Issue stock to person",func() -> void:
+		if hq_person.selected < 0 or hq_type.selected < 0: return
+		_result(simulation.rear.hq.request_person_stock(str(hq_person.get_item_metadata(hq_person.selected)),str(hq_type.get_item_metadata(hq_type.selected)),int(hq_count.value))))
+	_button(box,"Issue intact weapon to person",func() -> void:
+		if hq_person.selected < 0 or hq_weapon.selected < 0: return
+		_result(simulation.rear.hq.request_person_weapon(str(hq_person.get_item_metadata(hq_person.selected)),str(hq_weapon.get_item_metadata(hq_weapon.selected)))))
+	_button(box,"Load matching rounds into HQ hull rack",func() -> void:
+		if hq_hull.selected < 0 or hq_type.selected < 0: return
+		_result(simulation.rear.hq.request_vehicle_ammo(str(hq_hull.get_item_metadata(hq_hull.selected)),str(hq_type.get_item_metadata(hq_type.selected)),int(hq_count.value))))
+	_button(box,"Refuel HQ hull from unloaded M08",func() -> void:
+		if hq_hull.selected < 0: return
+		_result(simulation.rear.hq.request_vehicle_fuel(str(hq_hull.get_item_metadata(hq_hull.selected)),int(hq_count.value))))
+	hq_rows = _list(box,125)
+	_button(box,"Cancel selected issue; return any carried stock",func() -> void:
+		if not hq_rows.get_selected_items().is_empty(): _result(simulation.rear.hq.cancel(hq_ids[hq_rows.get_selected_items()[0]])))
+	hq_status = _label(box,"")
+	hq_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func _refresh_hq_option(option: OptionButton, entries: Array[Dictionary]) -> void:
+	var selected: String = str(option.get_item_metadata(option.selected)) if option.selected >= 0 else ""
+	option.clear()
+	for entry in entries:
+		option.add_item(entry.label)
+		option.set_item_metadata(option.item_count-1,entry.id)
+		if entry.id == selected: option.select(option.item_count-1)
+	if option.selected < 0 and option.item_count > 0: option.select(0)
+
+func _refresh_hq(view: Dictionary) -> void:
+	if hq_person == null: return
+	var people: Array[Dictionary] = []
+	var hulls: Array[Dictionary] = []
+	var weapons: Array[Dictionary] = []
+	for entity in view.rear.ledger.entities:
+		if entity.kind == "PERSON" and entity.assignment == "HQ Reserve" and entity.holder_id in ["hq-reserve","hq-stock"]:
+			people.append({"id":entity.id,"label":"%s | %.1f/25 kg" % [entity.id,entity.contents_mass_kg]})
+		elif entity.kind == "CARRIER" and entity.fleet_domain == "Military" and entity.holder_id == "hq-berth":
+			hulls.append({"id":entity.id,"label":"%s %s | fuel %.0f" % [entity.id,entity.design_type,entity.fuel]})
+		elif entity.kind == "WEAPON" and entity.holder_id == "hq-stock":
+			weapons.append({"id":entity.id,"label":"%s %s" % [entity.id,entity.design_type]})
+	var types: Array[Dictionary] = []
+	for type in view.hq.available:
+		if int(view.hq.available[type]) > 0: types.append({"id":type,"label":"%s | %d available" % [type,int(view.hq.available[type])]})
+	_refresh_hq_option(hq_person,people)
+	_refresh_hq_option(hq_hull,hulls)
+	_refresh_hq_option(hq_type,types)
+	_refresh_hq_option(hq_weapon,weapons)
+	_fill(hq_rows,hq_ids,view.hq.rows,func(row: Dictionary) -> String: return "%s | %s %s | %d/%d | %s | %s" % [row.id,row.kind,row.target,row.issued,row.requested,row.state,row.blocker])
+	hq_status.text = "HQ stock %.1f/%.0f kg | available %s | reserved %s | intact weapons %s | promised weapons %s\nActual issue changes holdings only when local handoff finishes. Remote delivery and transfer are separate work." % [view.hq.occupied_stock_kg,view.hq.stock_limit_kg,str(view.hq.available),str(view.hq.reserved),str(view.hq.weapons_available),str(view.hq.weapons_promised)]
+
 func _dispatch_profile() -> Dictionary:
 	var profile := {"surface":dispatch_surface.get_item_text(dispatch_surface.selected).get_slice(" ",0),"corridor_width":dispatch_clearance.value}
 	if dispatch_bridge.selected > 0: profile.bridge = dispatch_bridge.get_item_text(dispatch_bridge.selected).get_slice(" ",0)
@@ -671,7 +736,10 @@ func _refresh_dispatch(view: Dictionary) -> void:
 	_refresh_dispatch_choices(view)
 	_fill(dispatch_rows,dispatch_ids,view.dispatch.rows,func(row: Dictionary) -> String: return "%s | %s | %s %s | %s" % [row.id,row.mode,row.hull,row.state,row.blocker])
 	if dispatch_rows.get_selected_items().is_empty() and dispatch_rows.item_count > 0: dispatch_rows.select(dispatch_rows.item_count-1)
-	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg]
+	dispatch_status.text = "Draft cargo %s\nMilitary: %d members + %d incoming / 384; hulls %d + %d / 24\nRear return places %d | HQ Reserve %d/96, stock %.1f/20000 kg\nHQ local available %s | reserved %s" % [str(dispatch_draft),view.dispatch.military_people,view.dispatch.incoming_people,view.dispatch.military_hulls,view.dispatch.incoming_hulls,view.dispatch.return_places,view.dispatch.hq_reserve,view.dispatch.hq_stock_kg,str(view.hq.available),str(view.hq.reserved)]
+	dispatch_status.text += "\nHQ intact weapons %s | promised %s\nHQ command: %s" % [str(view.hq.weapons_available),str(view.hq.weapons_promised),str(view.hq.auto_status)]
+	for job in view.hq.rows:
+		if job.state not in ["Complete","Cancelled"]: dispatch_status.text += "\nHQ %s %s: %d/%d %s | %s" % [job.kind,job.target,job.issued,job.requested,job.state,job.blocker]
 	if dispatch_rows.get_selected_items().is_empty(): return
 	var id: String = dispatch_ids[dispatch_rows.get_selected_items()[0]]
 	for row in view.dispatch.rows:
@@ -706,6 +774,7 @@ func _refresh() -> void:
 			var builders: String = "builders-"+row.id
 			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
 	_refresh_dispatch(view)
+	_refresh_hq(view)
 	var offer: Dictionary = view.receiving.recovery_offer
 	recovery_button.visible = offer.available
 	recovery_status.text = offer.message

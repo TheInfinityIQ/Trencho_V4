@@ -774,21 +774,25 @@ func _schedule_hq(row: Dictionary) -> bool:
 		if rear.ledger.inspect_entity("hq-stock").contents_mass_kg + float(item.quantity)*_unit_mass(item.type) > HQ_STOCK_KG + EPS:
 			row.blocker = "HQ stock 20,000 kg full; cargo remains physically aboard."
 			return false
-		if hq_staff.is_empty(): row.blocker = "No actual HQ cargo handler."; return false
-		_start_task(row,"HQ Stock Pickup",[hq_staff[0]],2.0)
+		var handlers := free_hq_handlers(1)
+		if handlers.is_empty(): row.blocker = "Four actual HQ logistics staff are busy or unavailable."; return false
+		_start_task(row,"HQ Stock Pickup",handlers,2.0)
 		row.task.item_id = item.id
 		return true
 	for item in row.weapon_items:
 		if item.stage != "Onboard": continue
 		if rear.ledger.inspect_entity("hq-stock").contents_mass_kg + _unit_mass(item.type) > HQ_STOCK_KG + EPS: row.blocker = "HQ stock 20,000 kg full."; return false
-		_start_task(row,"HQ Weapon Pickup",[hq_staff[0]],2.0)
+		var handlers := free_hq_handlers(1)
+		if handlers.is_empty(): row.blocker = "Four actual HQ logistics staff are busy or unavailable."; return false
+		_start_task(row,"HQ Weapon Pickup",handlers,2.0)
 		row.task.item_id = item.id
 		return true
 	for gun_id in row.guns:
 		if rear.ledger.inspect_entity(gun_id).holder_id != row.hull: continue
 		if rear.ledger.inspect_entity("hq-stock").contents_mass_kg + 180.0 > HQ_STOCK_KG + EPS: row.blocker = "HQ stock 20,000 kg full for field gun."; return false
-		if hq_staff.size() < 2: row.blocker = "Two actual HQ field-gun handlers required."; return false
-		_start_task(row,"HQ Gun Unload",[hq_staff[0],hq_staff[1]],20.0)
+		var handlers := free_hq_handlers(2)
+		if handlers.size() < 2: row.blocker = "Two actual HQ field-gun handlers required."; return false
+		_start_task(row,"HQ Gun Unload",handlers,20.0)
 		row.task.gun = gun_id
 		return true
 	for person_id in row.passengers:
@@ -799,6 +803,23 @@ func _schedule_hq(row: Dictionary) -> bool:
 		row.return_phase = "Outside"
 		_start_route(row,[rear.ledger.inspect_entity(row.hull).position,ENTRY],"Returning")
 	return true
+
+func free_hq_handlers(count: int) -> Array[String]:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var result: Array[String] = []
+	for id in hq_staff.slice(0,4):
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if person.is_empty() or person.health <= 0 or person.assignment != "HQ Duty" or person.holder_id != "hq-berth" or not person.carrying_stock_id.is_empty(): continue
+		var busy := false
+		for manifest in manifests.values():
+			if id in manifest.task.get("actors",[]): busy = true
+		if rear.hq != null:
+			for job in rear.hq.jobs.values():
+				if job.handler == id and job.state not in ["Complete","Cancelled"]: busy = true
+		if not busy:
+			result.append(id)
+			if result.size() == count: break
+	return result
 
 func request_safe_return(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()

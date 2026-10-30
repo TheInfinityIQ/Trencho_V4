@@ -171,6 +171,13 @@
   ],
   "Input": [
     {
+      "path": "game/hq/tests/hq_input_test.gd",
+      "cases": [
+        "test_normal_player_dispatch_shows_automatic_hq_issue_without_manual_commands",
+        "test_hq_issue_panel_click_reserves_then_physically_issues_same_person"
+      ]
+    },
+    {
       "path": "game/construction/tests/construction_input_test.gd",
       "cases": [
         "test_build_panel_preview_place_and_cancel_through_real_input"
