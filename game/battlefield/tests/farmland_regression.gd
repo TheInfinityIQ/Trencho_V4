@@ -23,7 +23,7 @@ func _initialize() -> void:
 				if Vector2(x,y).length() > 300: continue
 				var terrain: String = world.cell(Vector2i(hq)+Vector2i(x,y)).terrain
 				expect(terrain in ["TR01","TR02"],"Dry300m HQ safe-start")
-	for key in ["blue-service-route","red-service-route","blue-front-route","red-front-route"]: check_path(world,Map.waypoints()[key])
+	for key in ["blue-service-route","red-service-route","blue-front-route","red-front-route","blue-delivery-route","red-delivery-route"]: check_path(world,Map.waypoints()[key])
 	for x in [1000,3000]: check_path(world,[Vector2(x,650),Vector2(x,5350)])
 	var tank := {"position":Vector2(1000,2700),"facing":PI/2.0,"size":Vector2(8.5,3.5),"movement_class":2,"base":6.0,"rate":6.0,"gross_mass_kg":35000.0}
 	var driven: Dictionary = world.route(tank,Vector2(1000,2720))

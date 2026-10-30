@@ -87,7 +87,7 @@ static func _region_pair(world: RefCounted, area: Rect2i, terrain: String, group
 	world.add_base_region(Rect2i(area.position.x,6000-area.end.y,area.size.x,area.size.y),terrain,{"cover_group":group})
 
 static func waypoints() -> Dictionary:
-	return {
+	var result := {
 		"blue-service":Vector2(2000,450),"red-service":Vector2(2000,5650),
 		"blue-troop-staging":Vector2(2000,620),"red-troop-staging":Vector2(2000,5380),
 		"blue-dismount":Vector2(2000,2300),"red-dismount":Vector2(2000,3700),
@@ -97,6 +97,15 @@ static func waypoints() -> Dictionary:
 		"blue-front-route":[Vector2(2000,620),Vector2(2000,650),Vector2(3000,650),Vector2(3000,2300),Vector2(2000,2300)],
 		"red-front-route":[Vector2(2000,5380),Vector2(2000,5350),Vector2(3000,5350),Vector2(3000,3700),Vector2(2000,3700)],
 	}
+	for side in ["blue","red"]:
+		var delivery: Array = result[side+"-service-route"].duplicate()
+		delivery.append_array(result[side+"-front-route"].slice(1))
+		delivery.append(result[side+"-delivery"])
+		result[side+"-delivery-route"] = delivery
+		var home := delivery.duplicate()
+		home.reverse()
+		result[side+"-delivery-return"] = home
+	return result
 
 static func initialize_defences(rear: RefCounted) -> Dictionary:
 	var ids: Array[String] = []
