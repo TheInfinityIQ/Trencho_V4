@@ -1,4 +1,5 @@
 extends RefCounted
+signal person_position_changed(person_id: String)
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
@@ -148,6 +149,7 @@ func move_entity(id: String, place_id: String, world_position: Vector2) -> Dicti
 		return _reject("STATION_OCCUPIED", "Vacate the physical crew station before moving the person independently.")
 	entity.holder_id = place_id
 	entity.position = world_position - _world_position(place_id)
+	if entity is Records.Person: person_position_changed.emit(id)
 	return _ok("Physical position updated by the timed activity.", id)
 
 
@@ -300,6 +302,7 @@ func board_formation_passenger(person_id: String, hull_id: String) -> Dictionary
 		return _reject("PASSENGER_SEATS_FULL", "Crew stations do not add passenger seats; this hull is full.")
 	person.holder_id = hull_id
 	person.position = Vector2.ZERO
+	person_position_changed.emit(person_id)
 	return _ok("Same formation member boarded one actual passenger seat without becoming crew.",person_id)
 
 
@@ -309,6 +312,7 @@ func exit_formation_passenger(person_id: String, hull_id: String, place_id: Stri
 		return _reject("INVALID_FORMATION_EXIT", "Only an actual squad passenger may exit at the stopped hull's place.")
 	person.holder_id = place_id
 	person.position = _world_position(hull_id)-_world_position(place_id)
+	person_position_changed.emit(person_id)
 	return _ok("Same passenger physically exited; squad roster and exclusive duty persist.",person_id)
 
 

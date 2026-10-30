@@ -30,6 +30,7 @@ func _init(rear: RefCounted, terrain: RefCounted = null) -> void:
 	_rear_ref = weakref(rear)
 	world = terrain if terrain != null else World.new()
 	if terrain == null: world.bounds = Rect2i(0,0,4096,2048)
+	rear.ledger.person_position_changed.connect(_on_person_position_changed)
 	rng.seed = 16027
 	_next_stress_tick = rear.time + 1.0
 
@@ -144,7 +145,7 @@ func inspect_field_gun_fire(squad_id: String, target_id: String) -> Dictionary:
 	var ledger: RefCounted = _rear().ledger
 	var gun: Dictionary = ledger.inspect_entity(row.gun_id)
 	var target: Dictionary = ledger.inspect_entity(target_id)
-	if gun.is_empty() or target.is_empty() or gun.get("health",0) <= 0 or target.get("kind","") != "PERSON" or target.assignment in ["Wounded","Dead"] or target.owner == gun.owner: return _block("A functional gun and active hostile person are required.")
+	if gun.is_empty() or target.is_empty() or gun.get("health",0) <= 0 or target.get("kind","") != "PERSON" or target.assignment in ["Wounded","Recovery","Dead"] or target.owner == gun.owner: return _block("A functional gun and active hostile person are required.")
 	if _rear().time+EPS < float(cooldowns.get(row.gun_id,0.0)): return _block("Field-gun cadence is in progress.")
 	var distance: float = gun.position.distance_to(target.position)
 	if distance < 60.0-EPS or distance > 650.0+EPS: return _block("Field-gun direct target must be 60 to 650 metres away.")
@@ -202,6 +203,7 @@ func injure(person_id: String, injury: int, blast: bool = false) -> Dictionary:
 		_nearby_casualty(person_id,-8)
 		_cancel_reload_for(person_id)
 	if result.code == "DEAD": _on_death(person_id,before)
+	if not before.duty_id.is_empty(): formation_changed(before.duty_id)
 	_log("%s took %d injury: %s" % [person_id,injury,result.code])
 	return result
 
@@ -244,6 +246,9 @@ func next_boundary() -> float:
 	for id in bleeding:
 		var patient: Dictionary = _rear().ledger.inspect_entity(id)
 		if patient.assignment == "Wounded": next = minf(next,_rear().time+float(patient.bleed_remaining))
+	for id in dispersed_since:
+		var dispersal_due: float = float(dispersed_since[id])+10.0
+		if dispersal_due > _rear().time+EPS: next = minf(next,dispersal_due)
 	return next
 
 func advance_to(at: float) -> void:
@@ -327,11 +332,22 @@ func squad_cohesion(squad_id: String) -> Dictionary:
 	var state := "Coherent"
 	var reason := ""
 	if value < 0.5:
-		if not dispersed_since.has(squad_id): dispersed_since[squad_id] = _rear().time
-		state = "Dispersed" if _rear().time-float(dispersed_since[squad_id]) >= 10.0 else "Regrouping"
+		state = "Dispersed" if dispersed_since.has(squad_id) and _rear().time-float(dispersed_since[squad_id]) >= 10.0 else "Regrouping"
 		reason = "Offensive coordination paused; regroup around actual leader."
-	else: dispersed_since.erase(squad_id)
-	return {"cohesion":value,"state":state,"blocked_reason":reason}
+	return {"cohesion":value,"state":state,"blocked_reason":reason,"regroup_seconds":maxf(0.0,_rear().time-float(dispersed_since[squad_id])) if dispersed_since.has(squad_id) else 0.0}
+
+func formation_changed(squad_id: String) -> void:
+	if not _rear().military.squads.has(squad_id):
+		dispersed_since.erase(squad_id)
+		return
+	var assessment: Dictionary = squad_cohesion(squad_id)
+	if assessment.state in ["Unavailable","Boarded","No active infantry"] or assessment.cohesion >= 0.5:
+		dispersed_since.erase(squad_id)
+	elif not dispersed_since.has(squad_id): dispersed_since[squad_id] = _rear().time
+
+func _on_person_position_changed(person_id: String) -> void:
+	for row in _rear().military.squads.values():
+		if person_id in row.roster: formation_changed(row.id)
 
 func snapshot() -> Dictionary:
 	var people: Array[Dictionary] = []
@@ -369,6 +385,7 @@ func _on_death(id: String, before: Dictionary) -> void:
 	_rear().dispatch.military_people.erase(id)
 	_rear().dispatch.hq_reserve.erase(id)
 	if _rear().military != null: _rear().military.record_death(id)
+	if not before.duty_id.is_empty(): formation_changed(before.duty_id)
 	_nearby_casualty(id,-4)
 	_log("%s died; one military roster place released" % id)
 

@@ -570,6 +570,7 @@ func _appoint_squad(row: Dictionary) -> void:
 				break
 	row.blocker = "Acting conscript leader has no radio or specialist capability." if row.acting else ("No living eligible squad leader." if row.leader.is_empty() else "")
 	if not row.leader.is_empty(): row.replacement_attempted = false
+	if rear.combat != null: rear.combat.formation_changed(row.id)
 
 func _appoint_seniors() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()

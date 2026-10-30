@@ -12,6 +12,7 @@ func _initialize() -> void:
 	_test_fire_gates_and_stress()
 	_test_reload_commitment()
 	_test_field_gun_direct()
+	_test_cohesion_inspection_independence()
 	print("G16 combat regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -168,6 +169,14 @@ func _test_field_gun_direct() -> void:
 		_expect(shot.ok,"W04 direct shot releases one shell")
 		_expect(ledger.snapshot().consumed.get("E14",0) == 1,"W04 one shell consumed once")
 		_expect(not rear.combat.fire_field_gun(squad_id,"g16-gun-target").ok,"W04 cadence blocks immediate second shot")
+		if ledger.inspect_entity("g16-gun-target").assignment != "Wounded": _expect(rear.combat.injure("g16-gun-target",100).code == "INCAPACITATED","gun target wounded for Recovery eligibility")
+		_person(base,"red-medic","g16-gun-target-place","army-red","P03")
+		_expect(ledger.add_stock("red-kit","E11",1,4.0,"red-medic","army-red").ok,"hostile qualified-care kit")
+		_expect(ledger.add_stock("red-pack","E12",1,1.0,"red-medic","army-red").ok,"hostile care pack")
+		_expect(rear.combat.start_care("red-medic","g16-gun-target","red-pack").ok,"actual hostile care starts")
+		rear.advance_time(10)
+		_expect(ledger.inspect_entity("g16-gun-target").assignment == "Recovery","gun target stabilized into Recovery")
+		_expect(not rear.combat.inspect_field_gun_fire(squad_id,"g16-gun-target").ok,"W04 withholds deliberate fire on recovering person")
 	_expect(base.audit().is_empty(),"W04 physical shell and squad audit: "+str(base.audit()))
 	var squad: Dictionary = rear.military.squads[squad_id]
 	_expect(is_equal_approx(rear.combat.squad_cohesion(squad_id).cohesion,1.0),"same real leader and six dismounted members are cohesive")
@@ -204,3 +213,45 @@ func _test_reload_commitment() -> void:
 	_expect(rear.combat.reloads.is_empty() and ledger.inspect_entity("reload-rounds").reserved == 0,"casualty interrupts reload and releases claim")
 	_expect(ledger.inspect_entity("reload-rifle").loaded_rounds == 2 and ledger.inspect_entity("reload-rounds").holder_id == "casualty-drop:reload-person","already loaded rounds stay in dropped weapon; unspent round drops loose")
 	_expect(base.audit().is_empty(),"reload commitment and injury audit: "+str(base.audit()))
+
+func _rifle_squad_for_cohesion(base: RefCounted, prefix: String) -> String:
+	var rear: RefCounted = base.rear
+	var ids: Array[String] = []
+	for i in 4:
+		var id := prefix+"-person-%d" % i
+		_person(base,id,"hq-reserve",rear.PLAYER)
+		ids.append(id)
+		rear.dispatch.military_people[id] = prefix
+		rear.dispatch.hq_reserve[id] = "Occupied"
+		_expect(rear.ledger.add_weapon(id+"-rifle","E01",4.0,id,rear.PLAYER,"E02",30).ok,"cohesion fixture rifle")
+		_expect(rear.ledger.add_stock(id+"-rounds","E02",30,0.02,id,rear.PLAYER).ok,"cohesion fixture rounds")
+	var result: Dictionary = rear.military.form_squad("Rifle",ids)
+	_expect(result.ok,"cohesion fixture forms actual Rifle squad")
+	if not result.ok: return ""
+	rear.advance_time(8)
+	_expect(rear.military.squads[result.id].state == "Active","cohesion fixture reports physically")
+	_expect(rear.ledger.add_place(prefix+"-split","Actual separated position",Vector2(1700,91)).ok,"cohesion split place")
+	var squad: Dictionary = rear.military.squads[result.id]
+	for id in squad.roster:
+		if id == squad.leader: continue
+		_expect(rear.ledger.move_entity(id,prefix+"-split",Vector2(1700,91)).ok,"person actually separates from leader")
+	return result.id
+
+func _test_cohesion_inspection_independence() -> void:
+	var quiet := Base.new(true)
+	var observed := Base.new(true)
+	var quiet_id := _rifle_squad_for_cohesion(quiet,"quiet")
+	var observed_id := _rifle_squad_for_cohesion(observed,"observed")
+	if quiet_id.is_empty() or observed_id.is_empty(): return
+	var quiet_started: float = quiet.rear.combat.dispersed_since[quiet_id]
+	var observed_started: float = observed.rear.combat.dispersed_since[observed_id]
+	_expect(is_equal_approx(quiet_started,observed_started),"same actual separation event starts both timers")
+	quiet.rear.advance_time(10)
+	for i in 10:
+		observed.rear.advance_time(1)
+		observed.rear.combat.snapshot()
+		observed.rear.combat.squad_cohesion(observed_id)
+	_expect(quiet.rear.combat.squad_cohesion(quiet_id).state == "Dispersed","ten seconds without any inspection still reaches Dispersed")
+	_expect(observed.rear.combat.squad_cohesion(observed_id).state == "Dispersed","frequent inspection reaches same Dispersed state")
+	_expect(is_equal_approx(float(quiet.rear.combat.dispersed_since[quiet_id]),quiet_started) and is_equal_approx(float(observed.rear.combat.dispersed_since[observed_id]),observed_started),"inspection never starts or resets the simulation-owned timer")
+	_expect(quiet.audit().is_empty() and observed.audit().is_empty(),"cohesion inspection independence preserves actual rosters")
