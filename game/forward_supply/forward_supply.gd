@@ -215,7 +215,10 @@ func _release_claim(row: Dictionary) -> void:
 func _at_stop(stock: Dictionary, stop: Dictionary) -> bool:
 	if stock.get("kind","") != "STOCK" or stop.get("kind","") != "PLACE": return false
 	var holder: Dictionary = _rear().ledger.inspect_entity(stock.holder_id)
-	return (stock.holder_id == stop.id or holder.get("kind","") == "CARRIER") and stock.position.distance_to(stop.position) <= 2.0 + EPS
+	# A leased carrier can have a different owner, but its controller must be
+	# the purchaser's army before that army's handler may unload the goods.
+	var lawful_holder: bool = stock.holder_id == stop.id or (holder.get("kind","") == "CARRIER" and holder.get("controller","") == stock.owner)
+	return lawful_holder and stock.position.distance_to(stop.position) <= 2.0 + EPS
 
 
 func _active_member(id: String) -> bool:
