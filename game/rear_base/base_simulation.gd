@@ -31,7 +31,7 @@ var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
 
-func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91)) -> void:
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true) -> void:
 	rear = Rear.new("Empty",not initial_rear)
 	expanded_catalogue = expanded
 	connected_world = world_session
@@ -60,7 +60,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	rear.orders = Orders.new(rear)
 	rear.objectives = Objectives.new(rear)
 	rear.forward_supply = ForwardSupply.new(rear)
-	if connected_world:
+	if connected_world and declare_scaffold_markers:
 		rear.ledger.add_place("resource-central", "Central resource objective", Vector2(2000, 3000))
 		rear.objectives.register("resource-central", "Resource")
 		rear.ledger.add_place("enemy-hq", "Opposing HQ", Vector2(2000, 5700))

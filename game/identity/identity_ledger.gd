@@ -50,20 +50,49 @@ func add_carrier(id: String, holder_id: String, owner: String, controller: Strin
 	return _ok("Carrier registered.", id)
 
 
-func add_initial_vehicle(id: String, type: String, holder: String, owner: String, properties: Dictionary, fuel: float) -> Dictionary:
+func add_initial_vehicle(id: String, type: String, holder: String, owner: String, properties: Dictionary, fuel: float, domain: String = "Rear") -> Dictionary:
 	var canonical: Dictionary = preload("res://game/production/vehicle_specs.gd").TYPES
 	var fleet := rear_fleet_status(owner)
-	if _time != 0.0 or not _free_id(id) or not _is_place(holder) or owner.is_empty() or not canonical.has(type) or properties != canonical[type] or not is_finite(fuel) or fuel < 0.0 or fuel > float(properties.get("tank_capacity",-1)) or fleet.live+fleet.reserved >= REAR_FLEET_LIMIT:
+	var military_count := 0
+	for existing in _entities.values():
+		if existing.kind == Records.Kind.CARRIER and existing.owner == owner and existing.fleet_domain == "Military" and existing.health > 0: military_count += 1
+	if _time != 0.0 or not _free_id(id) or not _is_place(holder) or owner not in ["army-blue","army-red"] or domain not in ["Rear","Military"] or not canonical.has(type) or properties != canonical[type] or not is_finite(fuel) or fuel < 0.0 or fuel > float(properties.get("tank_capacity",-1)) or (domain == "Rear" and fleet.live+fleet.reserved >= REAR_FLEET_LIMIT) or (domain == "Military" and military_count >= 24):
 		return _reject("INVALID_INITIAL_VEHICLE","Initial vehicles require time zero, canonical properties, bounded fuel and a free rear fleet place.")
 	var entity := _new_entity(id,Records.Kind.CARRIER,type,owner,owner,holder,"Declared starting scenario vehicle")
 	entity.vehicle_spec = properties.duplicate(true)
 	entity.unit_mass_kg = properties.mass
 	entity.health = properties.health
 	entity.max_health = properties.health
-	entity.fleet_domain = "Rear"
+	entity.fleet_domain = domain
+	if domain == "Military": entity.controller = owner+"-hq"
 	entity.fuel = fuel
 	_fuel_initial += fuel
 	return _ok("Initial vehicle and tank fuel recorded once.",id)
+
+
+func assign_initial_vehicle_crew(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if _time != 0.0 or person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.health <= 0 or hull.fleet_domain != "Military" or station not in hull.vehicle_spec.get("stations",[]) or person.owner != hull.owner or person.health <= 0 or not person.basic_training or person.rear_place != "None" or person.assignment != Records.Assignment.AVAILABLE or person.pending_assignment != -1 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not _colocated(person_id,hull_id):
+		return _reject("INVALID_INITIAL_CREW","A time-zero military station requires its same-army qualified free person at the hull.")
+	if person.qualification != "P08" and not (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04"):
+		return _reject("UNQUALIFIED_INITIAL_CREW","The actual station requires P08, or P04 for a technical gunner.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station: return _reject("STATION_OCCUPIED","Initial station already has its real occupant.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	person.crew_station = station
+	person.controller = hull.controller
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,"vehicle:"+hull_id)
+	return _ok("Initial crew station occupied by the same real person.",person_id)
+
+
+func add_initial_hq_person(id: String, place: String, owner: String, assignment: int, qualification: String = "None") -> Dictionary:
+	if _time != 0.0 or owner not in ["army-blue","army-red"] or assignment not in [Records.Assignment.HQ_DUTY,Records.Assignment.HQ_RESERVE] or not _is_place(place): return _reject("INVALID_INITIAL_HQ_PERSON","Initial HQ staff require a declared physical place and army at time zero.")
+	var result := add_person(id,place,owner,Records.Assignment.AVAILABLE,true,qualification,"None")
+	if not result.ok: return result
+	_set_assignment(_person(id),assignment,"fixed-hq" if assignment == Records.Assignment.HQ_DUTY else "")
+	return _ok("Initial HQ person registered once at their actual staging place.",id)
 
 
 func create_heavy_output(admission: String, claimant: String, id: String, type: String, holder: String, owner: String, properties: Dictionary) -> Dictionary:
