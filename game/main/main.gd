@@ -67,6 +67,7 @@ func _show_review(title: String) -> void:
 	_battlefield.hide()
 	_review = REVIEWS[title].instantiate()
 	_host.add_child(_review)
+	_host.move_child(_review, 0)
 
 
 func _show_base() -> void:
