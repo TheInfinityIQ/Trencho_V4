@@ -308,6 +308,7 @@ func inspect_personal_vehicle(shooter_id: String, target_id: String, weapon_id: 
 	if target.kind not in ["PERSON","CARRIER"]: return _block("Actual exposed gunner or vehicle target required.")
 	if person.owner == target.owner or target.health <= 0 or person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"] or _seated(person) or not person.crew_station.is_empty(): return _block("Living dismounted hostile shooter and surviving hull required.")
 	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Forward issue handoff occupies this person.")
+	if _rear().military != null and _rear().military.person_committed(shooter_id): return _block("Troop transport handling occupies this person.")
 	if gun.holder_id != shooter_id or not gun.functional or gun.loaded_rounds <= 0: return _block("Shooter must hold a functional weapon with its own loaded E02.")
 	if gun.design_type == "E05" and person.qualification != "P04": return _block("Portable machine gun requires actual P04.")
 	if gun.design_type == "E19" and person.qualification != "P07": return _block("Marksman rifle requires actual P07.")

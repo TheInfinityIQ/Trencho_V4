@@ -3,7 +3,10 @@ extends RefCounted
 
 static func markers(rear: RefCounted) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
-	for entity in rear.ledger.snapshot().entities:
+	var entities: Array = rear.ledger.snapshot().entities
+	var kinds := {}
+	for entity in entities: kinds[entity.id] = entity.kind
+	for entity in entities:
 		if entity.kind == "PLACE":
 			if entity.id == "hq-berth" or rear.objectives.objectives.has(entity.id) or rear.orders.objective_markers.has(entity.id): rows.append(entity)
 		elif entity.kind in ["PERSON","CARRIER"]:
@@ -11,6 +14,7 @@ static func markers(rear: RefCounted) -> Array[Dictionary]:
 			if affiliation != rear.PLAYER: continue
 			if entity.kind == "PERSON" and entity.rear_place == "Occupied": continue
 			entity["affiliation"] = affiliation
+			if entity.kind == "PERSON": entity["aboard"] = kinds.get(entity.holder_id,"") == "CARRIER"
 			rows.append(entity)
 	for target_id in rear.orders.contacts.get("army",{}):
 		var report: Dictionary = rear.orders.contact("army",target_id)

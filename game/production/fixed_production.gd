@@ -155,7 +155,7 @@ func stock_coverage() -> Dictionary:
 	var stocks: Array[Dictionary] = []
 	var portions: Array[Dictionary] = []
 	var excluded: Array[Dictionary] = []
-	for stock in rear.ledger.snapshot().entities:
+	for stock in rear.ledger.entities_of_type(_spec.output_type,["STOCK","WEAPON"]):
 		if stock.kind not in ["STOCK", "WEAPON"] or stock.design_type != _spec.output_type or stock.quantity <= 0: continue
 		var usable: bool = stock.kind == "STOCK" or (_spec.output_type == "E01" and stock.functional and stock.loaded_rounds == 0)
 		if usable and stock.owner == rear.PLAYER and _eligible_store(stock.holder_id):

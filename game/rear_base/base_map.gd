@@ -42,6 +42,7 @@ func _gui_input(event: InputEvent) -> void:
 			var nearest := ""
 			var distance := 9.0 / _scale()
 			for entity in simulation.rear.ledger.snapshot().entities:
+				if entity.owner == "army-red": continue
 				if entity.kind not in ["PERSON", "CARRIER"]: continue
 				if entity.kind == "PERSON" and entity.holder_id not in ["rear", "rear-lane", "personnel"] and not entity.holder_id.begins_with("duty-"): continue
 				if entity.position.distance_to(point) < distance:
@@ -98,6 +99,7 @@ func _draw() -> void:
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(0.3,0.8,0.7,0.3))
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color("90e2bf"),false,2)
 	for entity in simulation.rear.ledger.snapshot().entities:
+		if entity.owner == "army-red": continue
 		var point := map_point(entity.position)
 		if entity.kind == "STOCK" and entity.quantity > 0 and not simulation.rear.ledger.inspect_entity(entity.holder_id).is_empty():
 			var holder: Dictionary = simulation.rear.ledger.inspect_entity(entity.holder_id)

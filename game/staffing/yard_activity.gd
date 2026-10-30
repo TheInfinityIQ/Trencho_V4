@@ -147,7 +147,7 @@ func complete_due() -> bool:
 
 func snapshot() -> Dictionary:
 	return {"id": "yard-t01", "type": "T01", "owner": "army-blue", "state": state,
-		"position": ledger.inspect_entity("yard-t01").position, "driver": driver,
+		"position": ledger.inspect_entity("yard-t01").get("position",START), "fixture_hull":fixture_hull, "driver": driver,
 		"deadline": deadline, "pending_exit": pending_exit, "occupied_parking": occupied.duplicate(),
 		"reserved_parking": reserved.duplicate(), "active_parking":active_parking.duplicate(), "fuel": fuel, "burned": burned,
 		"distance": distance, "route_length": route_length(), "footprint": Vector2(7, 2.7),

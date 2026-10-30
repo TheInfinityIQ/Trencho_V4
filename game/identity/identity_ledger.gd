@@ -166,6 +166,12 @@ func entities_at(holder: String, kinds: Array) -> Array[Dictionary]:
 		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
 	return result
 
+func entities_of_type(type: String, kinds: Array) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
+	return result
+
 
 func add_person(id: String, holder_id: String, owner: String,
 		initial_assignment: int = Records.Assignment.AVAILABLE,
@@ -1160,7 +1166,7 @@ func loaded_rounds(weapon_id: String) -> int:
 	return total
 
 
-func inspect_entity(id: String) -> Dictionary:
+func inspect_entity(id: String, snapshot_masses: Dictionary = {}) -> Dictionary:
 	if not _entities.has(id):
 		return {}
 	var entity := _entities[id]
@@ -1170,7 +1176,7 @@ func inspect_entity(id: String) -> Dictionary:
 		"holder_id": entity.holder_id, "position": _world_position(id), "state": entity.state,
 		"created_at": entity.created_at, "state_entered_at": entity.state_entered_at,
 		"quantity": entity.quantity, "unit_mass_kg": entity.unit_mass_kg,
-		"contents_mass_kg": _contents_mass(id), "origin_id": entity.origin_id,
+		"contents_mass_kg": snapshot_masses[id] if snapshot_masses.has(id) else _contents_mass(id), "origin_id": entity.origin_id,
 	}
 	if entity.kind == Records.Kind.HEAVY_OBJECT:
 		result.health = entity.health
@@ -1259,8 +1265,18 @@ func inspect_claim(id: String) -> Dictionary:
 func snapshot() -> Dictionary:
 	var entities: Array[Dictionary] = []
 	var claims: Array[Dictionary] = []
+	# This inspection is synchronous. Compute aggregate masses once for this call;
+	# no cache survives a physical ledger change.
+	var masses := {}
+	for id in _entities: masses[id] = 0.0
+	for entity in _entities.values():
+		var holder: String = entity.holder_id
+		var mass: float = entity.unit_mass_kg*entity.quantity
+		while not holder.is_empty():
+			masses[holder] += mass
+			holder = _entities[holder].holder_id
 	for id in _entities:
-		entities.append(inspect_entity(id))
+		entities.append(inspect_entity(id,masses))
 	for id in _claims:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
@@ -1432,6 +1448,9 @@ func _fill_entity(entity: Records.Entity, id: String, kind: Records.Kind, type: 
 
 
 func _contents_mass(holder_id: String) -> float:
+	# Stock is a leaf: all legal physical holders are places, carriers, people
+	# or (for loaded rounds) weapons.
+	if _entities.has(holder_id) and _entities[holder_id].kind == Records.Kind.STOCK: return 0.0
 	var total: float = 0.0
 	for entity in _entities.values():
 		if entity.holder_id == holder_id:

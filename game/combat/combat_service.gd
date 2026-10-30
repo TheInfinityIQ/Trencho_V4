@@ -49,6 +49,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	if target.assignment in ["Wounded","Recovery","Dead"] or target.health <= 0 or _seated(target): return _block("No deliberate fire at incapacitated, recovering or seated people.")
 	if _medic_busy(shooter_id): return _block("Active care must be interrupted before firing.")
 	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Local supply handling must finish or stop before firing.")
+	if _rear().military != null and _rear().military.person_committed(shooter_id): return _block("Troop transport handling must finish before this action.")
 	if _rear().field_structures != null and _rear().field_structures.working(shooter_id): return _block("Active field construction must be interrupted before firing.")
 	if weapon.holder_id != shooter_id or not weapon.functional or not WEAPONS.has(weapon.design_type): return _block("Only the holder of an intact personal direct-fire weapon can fire it.")
 	var spec: Dictionary = WEAPONS[weapon.design_type]
@@ -114,6 +115,7 @@ func request_reload(shooter_id: String, weapon_id: String, source_id: String, qu
 	if shooter.is_empty() or weapon.is_empty() or stock.is_empty() or not WEAPONS.has(weapon.design_type): return _block("Actual personal weapon and local matching stock are required.")
 	if shooter.assignment in ["Wounded","Recovery","Dead"] or weapon.holder_id != shooter_id or stock.holder_id != shooter_id or stock.design_type != WEAPONS[weapon.design_type].ammo: return _block("Reload uses only matching loose rounds on the active holder.")
 	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Local supply handling must finish before reloading.")
+	if _rear().military != null and _rear().military.person_committed(shooter_id): return _block("Troop transport handling must finish before this action.")
 	if quantity <= 0 or quantity > stock.available or quantity > weapon.loaded_capacity-weapon.loaded_rounds: return _block("Reload quantity exceeds local unreserved stock or weapon capacity.")
 	if reloads.has(weapon_id) or _rear().time+EPS < float(cooldowns.get(weapon_id,0.0)): return _block("Weapon is busy with fire cadence or reload.")
 	var seconds: float = float(WEAPONS[weapon.design_type].reload)
@@ -213,6 +215,7 @@ func injure(person_id: String, injury: int, blast: bool = false) -> Dictionary:
 
 func start_care(medic_id: String, patient_id: String, pack_id: String = "") -> Dictionary:
 	if _rear().forward_supply != null and _rear().forward_supply.person_committed(medic_id): return _block("Local supply handling must finish before medical care.")
+	if _rear().military != null and _rear().military.person_committed(medic_id): return _block("Troop transport handling must finish before this action.")
 	var ledger: RefCounted = _rear().ledger
 	var medic: Dictionary = ledger.inspect_entity(medic_id)
 	var patient: Dictionary = ledger.inspect_entity(patient_id)
@@ -315,7 +318,7 @@ func _field_crew_ready(row: Dictionary) -> bool:
 	var count := 0
 	for id in row.roster:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
-		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0 and (_rear().forward_supply == null or not _rear().forward_supply.person_committed(id)): count += 1
+		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0 and (_rear().forward_supply == null or not _rear().forward_supply.person_committed(id)) and (_rear().military == null or not _rear().military.person_committed(id)): count += 1
 	return count >= 4
 
 func squad_cohesion(squad_id: String) -> Dictionary:
@@ -354,14 +357,23 @@ func _on_person_position_changed(person_id: String) -> void:
 	for row in _rear().military.squads.values():
 		if person_id in row.roster: formation_changed(row.id)
 
-func snapshot() -> Dictionary:
+func snapshot(owner: String = "") -> Dictionary:
 	var people: Array[Dictionary] = []
 	for item in _rear().ledger.snapshot().entities:
+		if not owner.is_empty() and item.owner != owner: continue
 		if item.kind != "PERSON" or item.assignment not in ["Wounded","Recovery","Dead"] and item.suppression == 0 and item.morale == 60: continue
 		people.append({"id":item.id,"position":item.position,"assignment":item.assignment,"health":item.health,"bleed_remaining":item.bleed_remaining,"morale":item.morale,"suppression":item.suppression,"state":_state(item),"care":care.get(item.id,{}).duplicate(true)})
 	var formations := {}
-	for id in _rear().military.squads: formations[id] = squad_cohesion(id)
-	return {"people":people,"formations":formations,"demands":demands.duplicate(true),"reloads":reloads.duplicate(true),"care":care.duplicate(true),"deaths":deaths.duplicate(true),"events":events.duplicate(true)}
+	for id in _rear().military.squads:
+		if owner.is_empty() or _rear().military.squads[id].owner == owner: formations[id] = squad_cohesion(id)
+	var demand_rows := demands.duplicate(true)
+	var care_rows := care.duplicate(true)
+	if not owner.is_empty():
+		for id in demand_rows.keys():
+			if _rear().ledger.inspect_entity(id).get("owner","") != owner: demand_rows.erase(id)
+		for id in care_rows.keys():
+			if _rear().ledger.inspect_entity(id).get("owner","") != owner: care_rows.erase(id)
+	return {"people":people,"formations":formations,"demands":demand_rows,"reloads":reloads.duplicate(true),"care":care_rows,"deaths":deaths.duplicate(true),"events":events.duplicate(true)}
 
 func audit() -> Array[String]:
 	var errors: Array[String] = []

@@ -25,6 +25,10 @@ var _host: Control
 var _base: Control
 var _battlefield: Control
 var _review: Control
+var _diagnostics: Control
+var _diagnostic_button: Button
+var _field_clock: HBoxContainer
+var _clock_status: Label
 const Base = preload("res://game/rear_base/base_demo.tscn")
 const Battlefield = preload("res://game/battlefield/battlefield_view.tscn")
 
@@ -44,11 +48,28 @@ func _ready() -> void:
 	field_button.text = "Battlefield"
 	field_button.pressed.connect(_show_battlefield)
 	controls.add_child(field_button)
+	_field_clock = HBoxContainer.new()
+	controls.add_child(_field_clock)
+	for speed in [0,1,2]:
+		var button := Button.new()
+		button.text = ["Pause","1x","2x"][speed]
+		button.pressed.connect(func() -> void: _base.simulation.set_speed(speed))
+		_field_clock.add_child(button)
+	_clock_status = Label.new()
+	_field_clock.add_child(_clock_status)
+	_diagnostic_button = Button.new()
+	_diagnostic_button.text = "Diagnostics"
+	_diagnostic_button.toggle_mode = true
+	controls.add_child(_diagnostic_button)
+	_diagnostics = HFlowContainer.new()
+	_diagnostics.hide()
+	layout.add_child(_diagnostics)
+	_diagnostic_button.toggled.connect(func(open: bool) -> void: _diagnostics.visible = open)
 	for title in REVIEWS:
 		var button := Button.new()
 		button.text = title
 		button.pressed.connect(func() -> void: _show_review(title))
-		controls.add_child(button)
+		_diagnostics.add_child(button)
 	_host = Control.new()
 	_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_host)
@@ -63,6 +84,9 @@ func _ready() -> void:
 
 func _show_review(title: String) -> void:
 	_clear_review()
+	_field_clock.hide()
+	_diagnostic_button.set_pressed_no_signal(false)
+	_diagnostics.hide()
 	_base.hide()
 	_battlefield.hide()
 	_review = REVIEWS[title].instantiate()
@@ -72,12 +96,14 @@ func _show_review(title: String) -> void:
 
 func _show_base() -> void:
 	_clear_review()
+	_field_clock.hide()
 	_battlefield.hide()
 	_base.show()
 
 
 func _show_battlefield() -> void:
 	_clear_review()
+	_field_clock.show()
 	_base.hide()
 	_battlefield.show()
 
@@ -91,3 +117,7 @@ func _clear_review() -> void:
 
 func _on_session_changed(next_simulation: RefCounted) -> void:
 	_battlefield.simulation = next_simulation
+
+func _process(_delta: float) -> void:
+	if is_instance_valid(_base) and _field_clock.visible:
+		_clock_status.text = "  %.1f s · %s" % [_base.simulation.rear.time,"Paused" if _base.simulation.speed == 0 else "%dx" % _base.simulation.speed]

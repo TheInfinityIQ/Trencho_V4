@@ -203,6 +203,7 @@ func _manifest_people(hull: Dictionary, squad_ids: Array, board_place_id: String
 			return _fail("Every selected squad must be active, separate, unboarded and owned by the T02 army.")
 		for id in squad.roster:
 			var person: Dictionary = rear.ledger.inspect_entity(id)
+			if rear.battlefield_operations != null and rear.battlefield_operations.person_committed(id): return _fail("Passenger must stop tactical foot movement before boarding.")
 			if person.get("kind","") != "PERSON" or person.owner != hull.owner or person.assignment != "Formation Duty" or person.duty_id != squad_id or person.health <= 0 or person.holder_id != board_place_id or person.position.distance_to(hull.position) > LOCAL_RADIUS+EPS or person.pending_assignment != "None" or not str(person.crew_station).is_empty() or (rear.forward_supply != null and rear.forward_supply.person_committed(id)):
 				return _fail("Every real, living squad passenger must be free within 20 m of this stopped T02.")
 			if not _foot_leg(person,hull.position).ok: return _fail("A selected passenger lacks a safe physical approach to the T02.")

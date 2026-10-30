@@ -225,11 +225,11 @@ func _orders_panel(box: VBoxContainer) -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 
 	_label(box, "New session resets the base; inspection never does.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue"])
+	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue", "Farmland and Towns playtest"])
 	_button(box, "Start new session", _start_session)
 
 func _start_session() -> void:
-	simulation = Simulation.new(scenario.selected == 1, true)
+	simulation = preload("res://game/scenario/farmland_session.gd").create() if scenario.selected == 2 else Simulation.new(scenario.selected == 1, true)
 	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
 	base_map.simulation = simulation
@@ -246,8 +246,8 @@ func _start_session() -> void:
 	_selected_id = "terminal"
 	_load_production()
 	_load_store()
-	declaration.text = ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
-	_result({"ok": true, "message": "New paused session. Recipe access was declared at creation; actual cards remain separate."})
+	declaration.text = "Farmland and Towns | Declared starting armies and rear | Selected free card: C30 (APC and E26 recipes)." if scenario.selected == 2 else ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
+	_result({"ok": true, "message": "New paused Farmland opening. Buildings block sight and movement; entry and damage are pending." if scenario.selected == 2 else "New paused session. Recipe access was declared at creation; actual cards remain separate."})
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")

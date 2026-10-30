@@ -22,6 +22,11 @@ func _run() -> void:
 	_check(simulation.rear.objectives.objectives.has("resource-central"), "Central objective is registered on the live ledger")
 	main._show_battlefield()
 	_check(not base.visible and battlefield.visible and battlefield.simulation == simulation, "Battlefield uses the same session")
+	_check(main.get("_field_clock").is_visible_in_tree() and not main.get("_diagnostics").visible,"Battlefield clock is reachable and diagnostics begin collapsed")
+	main.get("_field_clock").get_child(2).pressed.emit()
+	_check(simulation.speed == 2,"Battlefield 2x changes the shared session")
+	main.get("_field_clock").get_child(0).pressed.emit()
+	_check(simulation.speed == 0,"Battlefield Pause changes the same shared session")
 	simulation.set_speed(1)
 	await create_timer(0.15).timeout
 	_check(simulation.rear.time > 0.0, "Rear clock advances while the rear view is hidden")

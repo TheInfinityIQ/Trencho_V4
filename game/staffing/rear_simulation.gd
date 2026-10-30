@@ -824,7 +824,7 @@ func _release_load(a: Dictionary) -> void:
 
 
 func _stock_at(holder: String) -> Array:
-	return ledger.snapshot().entities.filter(func(e: Dictionary) -> bool: return e.kind == "STOCK" and e.owner == PLAYER and e.holder_id == holder and e.quantity > 0)
+	return ledger.entities_at(holder,["STOCK"]).filter(func(e: Dictionary) -> bool: return e.owner == PLAYER and e.quantity > 0)
 
 
 func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> bool:

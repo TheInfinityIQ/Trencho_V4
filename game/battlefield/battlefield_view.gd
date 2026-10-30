@@ -82,6 +82,7 @@ func _select_nearest(point: Vector2) -> void:
 	if simulation == null: return
 	var distance := 14.0
 	for entity in Presentation.markers(simulation.rear):
+		if entity.kind == "PERSON" and entity.get("aboard",false): continue
 		var measure: float = _screen(entity.position).distance_to(point)
 		if measure < distance:
 			distance = measure
@@ -128,19 +129,22 @@ func _draw() -> void:
 		elif entity.kind == "CONTACT":
 			_draw_marker(entity.position, Color("e4a47c"), "Contact", font,entity.id)
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
-			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), entity.id, font)
-		elif entity.kind == "PERSON" and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
-			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), "", font, entity.id)
+			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), _unit_label(entity) if zoom >= 8 or entity.id == selected_id else "", font,entity.id,true)
+		elif entity.kind == "PERSON" and not entity.get("aboard",false) and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
+			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), _unit_label(entity) if entity.id == selected_id else "", font, entity.id)
 	draw_string(font, area.position + Vector2(12, 22), "BATTLEFIELD  •  4,000 × 6,000 m", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e8f2ec"))
 	draw_line(area.position + Vector2(16, area.size.y - 24), area.position + Vector2(16 + 1000.0 * _scale(), area.size.y - 24), Color.WHITE, 3.0)
 	draw_string(font, area.position + Vector2(16, area.size.y - 30), "1 km", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 
 
-func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "") -> void:
+func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "", carrier: bool = false) -> void:
 	var point := _screen(position)
 	if not _map_rect().grow(-10).has_point(point): return
 	var id := entity_id if not entity_id.is_empty() else title
-	draw_circle(point, 6.0 if id == selected_id else 4.0, colour)
+	if carrier:
+		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),colour)
+		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),Color("172633"),false,1)
+	else: draw_circle(point, 6.0 if id == selected_id else 4.0, colour)
 	if id == selected_id: draw_arc(point, 10.0, 0.0, TAU, 24, Color.WHITE, 1.5)
 	if not title.is_empty() or id == selected_id: draw_string(font, point + Vector2(8, -6), title if not title.is_empty() else id, HORIZONTAL_ALIGNMENT_LEFT, maxf(0,_map_rect().end.x-point.x-8), 11, Color.WHITE)
 
@@ -150,6 +154,14 @@ func _site_label(id: String) -> String:
 	for index in Farmland.OBJECTIVES.size():
 		if Farmland.OBJECTIVES[index].id == id: return "Resource %d" % (index+1)
 	return id
+
+func _unit_label(entity: Dictionary) -> String:
+	if entity.kind == "CARRIER": return str(entity.design_type)+" · "+str(int(str(entity.id).get_slice("-",3))+1) if str(entity.id).begins_with("start-blue-vehicle-") else str(entity.design_type)
+	if str(entity.id).begins_with("start-blue-squad-"):
+		var number := int(str(entity.id).get_slice("-",3))
+		var role: String = "Rifle %d" % (number+1) if number < 3 else ("Engineer" if number == 3 else "Medical")
+		return role+" · "+str(int(str(entity.id).get_slice("-",5))+1)
+	return entity.id
 
 
 func _refresh() -> void:
@@ -161,13 +173,37 @@ func _refresh() -> void:
 	var selected: Dictionary = Presentation.inspect(rear,selected_id)
 	var detail := ""
 	if not selected.is_empty():
-		var title: String = _site_label(selected.id) if selected.kind == "PLACE" else selected.id
+		var title: String = _site_label(selected.id) if selected.kind == "PLACE" else (_unit_label(selected) if selected.kind in ["PERSON","CARRIER"] else selected.id)
 		detail = "%s\nPosition: (%.0f, %.0f) m" % [title, selected.position.x, selected.position.y]
 		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
-		elif selected.kind != "PLACE": detail += "\nHolder: %s" % selected.holder_id
+		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
 		if selected.kind == "PERSON": detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
+		if selected.kind == "CARRIER":
+			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
+			for station in selected.get("crew_by_station",{}):
+				var crew: Dictionary = rear.ledger.inspect_entity(selected.crew_by_station[station])
+				detail += "\n%s · %s · Health %d" % [station,crew.qualification,crew.health]
+			for id in selected.get("passengers",[]):
+				var passenger: Dictionary = rear.ledger.inspect_entity(id)
+				detail += "\n%s · Health %d · %s" % [_unit_label(passenger),passenger.health,passenger.assignment]
+			for job in rear.military.troop_transport.jobs.values():
+				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
 	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s\n\nSelected\n%s\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money, _site_label(objective_id), objective.get("control", 0.0), objective.get("owner", "Neutral") if not str(objective.get("owner", "")).is_empty() else "Neutral", objective.get("income_rate", 0.0), blocked, detail]
 	if not rear.combat.world.scenario.is_empty(): _inspector.text += "\n\nTERRAIN KEY\nTan: fields and crops\nGreen: forest (dark = dense)\nGrey: rock; pale grey: towns\nBlue: water; teal: swamp\nCream lines: roads"
+	if rear.battlefield_operations != null and rear.battlefield_operations.policy != null:
+		var opening: Dictionary = rear.battlefield_operations.policy.snapshot()
+		_inspector.text += "\n\nOPENING\n"+str(opening.status)
+		for trip in opening.trips:
+			_inspector.text += "\n"+_unit_label(rear.ledger.inspect_entity(trip.hull))+": "+("Dismounted" if trip.dismounted else ("Transport active" if trip.started else (trip.blocker if not str(trip.blocker).is_empty() else "Awaiting orders")))
+
+func _activity_label(person: Dictionary) -> String:
+	var rear: RefCounted = simulation.rear
+	for job in rear.military.troop_transport.jobs.values():
+		if person.get("holder_id","") == job.hull and job.state != "Complete": return "Troop transport: "+str(job.state)
+		if person.id in job.people and job.state == "Boarding": return "Awaiting physical boarding"
+	if not str(person.get("crew_station","")).is_empty(): return "Vehicle crew: "+str(person.crew_station)
+	if rear.battlefield_operations != null and rear.battlefield_operations.status.has(person.get("duty_id","")): return str(rear.battlefield_operations.status[person.duty_id])
+	return "At HQ / staging" if str(person.get("holder_id","")).contains("stage") else str(person.get("assignment","Stationary"))

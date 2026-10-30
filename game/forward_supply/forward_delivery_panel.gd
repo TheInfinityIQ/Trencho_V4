@@ -72,7 +72,7 @@ func refresh() -> void:
 	var freight: Array[Dictionary] = []
 	var soldiers: Array[Dictionary] = []
 	for entity in entities:
-		if entity.kind == "CARRIER" and entity.design_type == "T01" and entity.fleet_domain == "Military" and rear.military.vehicles.has(entity.id):
+		if entity.kind == "CARRIER" and entity.owner == rear.PLAYER and entity.design_type == "T01" and entity.fleet_domain == "Military" and rear.military.vehicles.has(entity.id):
 			hulls.append({"id":entity.id,"label":"%s | %s | fuel %.1f" % [entity.id,entity.holder_id,entity.fuel]})
 		elif entity.kind == "STOCK" and entity.holder_id == "hq-stock" and entity.owner == rear.PLAYER and entity.available > 0:
 			freight.append({"id":entity.id,"label":"%s %s | %d available | %.2f kg each" % [entity.id,entity.design_type,entity.available,entity.unit_mass_kg]})

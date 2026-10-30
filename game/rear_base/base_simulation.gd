@@ -115,13 +115,16 @@ func set_speed(value: int) -> Dictionary:
 	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed}
 
 func snapshot() -> Dictionary:
-	return {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,
+	var view := {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),
 		"materials": rear.materials_production.snapshot(), "support": rear.support_production.snapshot(),
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
 		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"military":rear.military.snapshot(rear.PLAYER), "combat":rear.combat.snapshot(rear.PLAYER), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
+	view.rear.people = view.rear.people.filter(func(person: Dictionary) -> bool: return person.owner == rear.PLAYER)
+	view.rear.ledger.entities = view.rear.ledger.entities.filter(func(entity: Dictionary) -> bool: return entity.owner != "army-red")
+	return view
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()

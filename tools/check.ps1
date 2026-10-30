@@ -93,3 +93,5 @@ if ($SceneInput) {
     Write-Host 'Scene-input pilot NOT RUN: requires a display. CI runs check.ps1 -SceneInput under Xvfb.'
 }
 
+
+Invoke-GodotCheck -Name 'forward-delivery-ui-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_delivery_ui_regression.gd')

@@ -276,7 +276,8 @@ func settle() -> bool:
 	var changed := false
 	var now: float = _rear().time
 	if _next_observation <= now+EPS:
-		for id in watch_squads.keys(): _sample_squad(id)
+		var entities: Array = _rear().ledger.snapshot().entities if not watch_squads.is_empty() else []
+		for id in watch_squads.keys(): _sample_squad(id,entities)
 		_next_observation = now+1.0 if not watch_squads.is_empty() else INF
 		changed = true
 	for entry in pending.duplicate():
@@ -328,16 +329,17 @@ func audit() -> Array[String]:
 		if row.fixing == row.flanking or _parent(row.fixing) != id or _parent(row.flanking) != id: failures.append("G17 flank lacks distinct actual platoon squads: "+id)
 	return failures
 
-func _sample_squad(squad_id: String) -> void:
+func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 	var squad: Dictionary = _rear().military.squads.get(squad_id,{})
 	if squad.is_empty() or squad.state != "Active":
 		unwatch(squad_id)
 		return
 	var seen := {}
 	var ledger: RefCounted = _rear().ledger
+	var entities: Array = ledger.snapshot().entities if sampled_entities.is_empty() else sampled_entities
 	for person_id in _rear().military._active_roster_members(squad):
 		var observer: Dictionary = ledger.inspect_entity(person_id)
-		for target in ledger.snapshot().entities:
+		for target in entities:
 			var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
 			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
 			if _rear().combat.world.observe(observer.position,target.position).visible:

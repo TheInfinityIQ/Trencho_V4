@@ -218,6 +218,12 @@ func _schedule_unload(row: Dictionary) -> bool:
 	var stop: Dictionary = _rear().ledger.inspect_entity(row.stop)
 	if hull.holder_id != row.stop or not hull.position.is_equal_approx(stop.position): row.blocker = "Same loaded hull must be stopped at the declared destination."; return false
 	var handler: Dictionary = _rear().ledger.inspect_entity(row.unloader)
+	if _rear().military != null and _rear().military.person_committed(row.unloader):
+		row.blocker = "Named unloader is committed to troop transport handling."
+		return false
+	if _rear().battlefield_operations != null and _rear().battlefield_operations.person_committed(row.unloader):
+		row.blocker = "Named unloader must stop tactical foot movement."
+		return false
 	if not _active_member(row.unloader) or not _on_foot(handler) or handler.position.distance_to(stop.position) > LOCAL_RADIUS+EPS or _rear().forward_supply.person_committed(row.unloader) or _other_work(row.unloader):
 		row.blocker = "Waiting for the named active dismounted destination handler within 20 m."
 		return false

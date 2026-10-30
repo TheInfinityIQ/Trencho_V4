@@ -77,8 +77,12 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	if goal.get("kind","") != "PLACE": status[squad.id] = "Destination unavailable"; return
 	if not baseline.has(squad.id): baseline[squad.id] = squad.roster.size()
 	var active: Array[String] = rear.military._active_roster_members(squad)
-	if not squad.vehicle.is_empty() or intent.action == "Move by Transport": status[squad.id] = "Following troop transport order"; return
+	if not squad.vehicle.is_empty() or intent.action == "Move by Transport":
+		for id in squad.roster: motions.erase(id)
+		status[squad.id] = "Following troop transport order"
+		return
 	var role: String = str(intent.constraints.get("role",squad.kind))
+	if role in ["Medical","Support"] and intent.action == "Support Formation": goal = _support_goal(squad,goal,intent.constraints.get("supported_squads",[]))
 	var assault_blocked: bool = intent.action == "Assault HQ"
 	if assault_blocked:
 		for id in squad.roster:
@@ -143,6 +147,23 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		var leader: Dictionary = rear.ledger.inspect_entity(active[0])
 		if leader.position.distance_to(goal.position) <= 25 and rear.objectives.inspect(destination).owner == leader.owner:
 			_report(squad.id,"Complete","Captured "+destination)
+
+func _support_goal(squad: Dictionary, objective: Dictionary, supported_squads: Array) -> Dictionary:
+	var centre := Vector2.ZERO
+	var count := 0
+	for friendly in _rear().military.squads.values():
+		if friendly.owner != squad.owner or friendly.kind != "Rifle" or friendly.id not in supported_squads: continue
+		for id in _rear().military._active_roster_members(friendly):
+			var person: Dictionary = _rear().ledger.inspect_entity(id)
+			if not _on_foot(person): continue
+			centre += person.position
+			count += 1
+	var result := objective.duplicate(true)
+	if count == 0: return result
+	centre /= count
+	var direction: float = 1.0 if squad.owner == "army-blue" else -1.0
+	result.position = Vector2(centre.x,centre.y-direction*60.0)
+	return result
 
 func _targets(squad_id: String) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
@@ -215,9 +236,26 @@ func _walk(id: String, place: String, destination: Vector2, allow_unarmed: bool 
 	var rear: RefCounted = _rear()
 	var person: Dictionary = rear.ledger.inspect_entity(id)
 	if person.position.distance_to(destination) <= 1: return
+	if purpose == "Fallback" and not _fallback_safe(person,destination):
+		_report(person.duty_id,"Inability","Declared fallback crosses delivered hostile fire; holding for a safe route",true)
+		return
 	var plan: Dictionary = rear.combat.world.route({"position":person.position,"facing":(destination-person.position).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":2.0,"rate":0.0,"gross_mass_kg":80.0+float(person.contents_mass_kg)},destination)
 	if not plan.ok: _report(person.duty_id,"Blocked Route",str(plan.reason)); return
 	motions[id] = {"place":place,"destination":destination,"started":rear.time,"deadline":rear.time+float(plan.seconds),"plan":plan,"expected":person.position,"revision":rear.combat.world.revision,"allow_unarmed":allow_unarmed,"purpose":purpose}
+
+func _fallback_safe(person: Dictionary, destination: Vector2) -> bool:
+	var delta: Vector2 = destination-person.position
+	for target_id in _rear().orders.contacts.get(person.duty_id,{}):
+		var known: Dictionary = _rear().orders.contact(person.duty_id,target_id)
+		if known.get("confidence",0) <= 0 or not known.position.is_finite(): continue
+		if known.get("class","") in ["Resource","Route Hub","Observation","Enemy HQ","T01","T02"]: continue
+		var fraction: float = (known.position-person.position).dot(delta)/delta.length_squared()
+		# Existing fire at the starting point does not prohibit moving away from it.
+		if fraction <= 0: continue
+		var closest: Vector2 = person.position+delta*clampf(fraction,0,1)
+		var effective: float = {"T03":250.0,"T04":450.0,"T05":700.0,"P07":300.0,"P04":250.0}.get(known.get("class",""),160.0)
+		if closest.distance_to(known.position) <= effective: return false
+	return true
 
 func _busy(id: String) -> bool:
 	var rear: RefCounted = _rear()

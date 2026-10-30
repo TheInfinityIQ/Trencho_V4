@@ -73,6 +73,8 @@ func start_issue(stock_id: String, recipient_id: String, handler_id: String, qua
 		return _fail("Only unreserved friendly stock actually arrived in a carrier or at this stop can be issued.")
 	if handler_id == recipient_id or not _active_member(recipient_id) or not _active_member(handler_id):
 		return _fail("Recipient and distinct handler must be active actual squad members.")
+	if rear.battlefield_operations != null and (rear.battlefield_operations.person_committed(recipient_id) or rear.battlefield_operations.person_committed(handler_id)):
+		return _fail("Both people must stop tactical movement before local issue.")
 	if rear.military != null and (rear.military.person_committed(recipient_id) or rear.military.person_committed(handler_id)):
 		return _fail("Timed troop boarding or dismount already owns one of these people.")
 	if not _on_foot(recipient) or not _on_foot(handler) or _other_busy(recipient_id) or _other_busy(handler_id):
@@ -118,6 +120,8 @@ func resume_issue(id: String) -> Dictionary:
 	var stop: Dictionary = rear.ledger.inspect_entity(row.stop)
 	if carried.get("holder_id","") != row.handler or carried.quantity != row.quantity or not _active_member(row.handler) or not _active_member(row.recipient):
 		return _fail("The same real portion and active members must still exist; no stock is recreated.")
+	if rear.battlefield_operations != null and (rear.battlefield_operations.person_committed(row.recipient) or rear.battlefield_operations.person_committed(row.handler)):
+		return _fail("Both people must stop tactical movement before local issue.")
 	if rear.military != null and (rear.military.person_committed(row.handler) or rear.military.person_committed(row.recipient)):
 		return _fail("Timed troop boarding or dismount already owns one of these people.")
 	if not _on_foot(handler) or not _on_foot(recipient) or _other_busy(row.handler) or _other_busy(row.recipient):

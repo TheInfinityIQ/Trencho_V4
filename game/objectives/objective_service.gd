@@ -112,6 +112,8 @@ func _refresh() -> bool:
 	var red: Dictionary = {}
 	var blockers: Array[Dictionary] = []
 	var entities: Array = _rear().ledger.snapshot().entities
+	var by_id := {}
+	for item in entities: by_id[item.id] = item
 	var held_weapons: Dictionary = {}
 	var held_rounds: Dictionary = {}
 	for item in entities:
@@ -124,7 +126,7 @@ func _refresh() -> bool:
 	for person in entities:
 		if person.kind != "PERSON" or person.owner not in [_rear().PLAYER,"army-red"]: continue
 		var reason := ""
-		var holder: Dictionary = _rear().ledger.inspect_entity(person.holder_id)
+		var holder: Dictionary = by_id.get(person.holder_id,{})
 		if holder.get("kind","") != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
 		elif person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"]: reason = "Wounded, recovering or dead people cannot capture."
 		elif _rear().combat.broken.has(person.id): reason = "Broken morale requires regrouping."

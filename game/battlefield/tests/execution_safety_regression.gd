@@ -31,6 +31,18 @@ func _initialize() -> void:
 	pinned.base.rear.advance_time(0.25)
 	_check(pinned.base.rear.ledger.inspect_entity(pinned.roster[0]).position == before and not pinned.base.rear.battlefield_operations.motions.has(pinned.roster[0]),"Pinned status stops offensive motion before the next decision tick")
 	_check(pinned.base.audit().is_empty(),"Pinned motion cleanup preserves physical facts")
+	var unsafe: Dictionary = _fixture("unsafe")
+	var physical: RefCounted = unsafe.base.rear
+	_check(physical.ledger.add_place("unsafe-threat","Observed threat on fallback lane",Vector2(2000,520)).ok,"Actual fallback threat place")
+	_check(physical.ledger.add_person("unsafe-hostile","unsafe-threat","army-red",Records.Assignment.AVAILABLE,true,"None","None").ok,"Actual hostile on fallback lane")
+	_check(physical.orders.watch(unsafe.squad).ok,"Actual observation samples the fallback threat")
+	physical.advance_time(0.5)
+	var operations: RefCounted = physical.battlefield_operations
+	operations._walk(unsafe.roster[0],"unsafe-fallback",Vector2(2000,500),true,"Fallback")
+	_check(not operations.person_committed(unsafe.roster[0]),"Fallback cannot cross a delivered hostile firing area")
+	operations._walk(unsafe.roster[0],"unsafe-goal",Vector2(2000,650),true,"Fallback")
+	physical.advance_time(0.25)
+	_check(physical.ledger.inspect_entity(unsafe.roster[0]).position.y > 540,"Known incoming fire still permits actual movement away from it")
 	print("Execution safety regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
