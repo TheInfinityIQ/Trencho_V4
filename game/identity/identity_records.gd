@@ -32,6 +32,7 @@ class Entity extends RefCounted:
 	var fuel: float = 0.0
 	var health: int = 100
 	var max_health: int = 100
+	var damage_immobilized := false
 	var ammo_type: String
 	var loaded_capacity: int
 

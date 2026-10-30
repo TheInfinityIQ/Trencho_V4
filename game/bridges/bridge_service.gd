@@ -20,8 +20,12 @@ func _init(rear: RefCounted) -> void:
 func _rear() -> RefCounted:
 	return _rear_ref.get_ref()
 
-func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army-blue") -> Dictionary:
-	if not Catalog.SPECS.has(code) or owner not in ["army-blue","army-red"] or not bank_a.is_finite() or not bank_b.is_finite(): return _fail("Choose a bridge blueprint, two finite banks and an army owner.")
+func register_existing_bridge(id: String, code: String, bank_a: Vector2, bank_b: Vector2) -> Dictionary:
+	if id.is_empty() or not id.begins_with("world-") or projects.has(id): return _fail("An unregistered authored world crossing needs its own world identity.")
+	return order(code,bank_a,bank_b,"world",id)
+
+func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army-blue", existing_id: String = "") -> Dictionary:
+	if not Catalog.SPECS.has(code) or (owner not in ["army-blue","army-red"] and (owner != "world" or existing_id.is_empty())) or not bank_a.is_finite() or not bank_b.is_finite(): return _fail("Choose a bridge blueprint, two finite banks and an army owner.")
 	var world: RefCounted = _rear().combat.world
 	var direction := (bank_b-bank_a).normalized()
 	var distance := bank_a.distance_to(bank_b)
@@ -67,29 +71,34 @@ func order(code: String, bank_a: Vector2, bank_b: Vector2, owner: String = "army
 			elif (along >= -20.0 and along <= 0.0 or along >= distance and along <= distance+20.0) and world.cell(at).terrain != "TR11": approaches.append(at)
 	if deck.is_empty(): return _fail("Measured bridge footprint misses the water gap.")
 	for at in deck:
-		if not world.cell(at).get("overlay",{}).is_empty(): return _fail("Bridge deck cannot overwrite an existing authored crossing or completed surface.")
+		var existing: Dictionary = world.cell(at).get("overlay",{})
+		if existing_id.is_empty() and not existing.is_empty(): return _fail("Bridge deck cannot overwrite an existing authored crossing or completed surface.")
+		if not existing_id.is_empty() and (existing.get("id","") != existing_id or existing.get("code","") != code or not existing.get("complete",false)):
+			return _fail("An unowned bridge can register only a complete matching authored surface on every water-deck cell.")
 	for other in projects.values():
 		if other.state in ["Cancelled","Destroyed"]: continue
 		for at in deck:
 			if at in other.deck: return _fail("Another actual bridge project owns this water footprint.")
 	var active := 0
 	for other in projects.values():
-		if other.state not in ["Cancelled","Destroyed"]: active += 1
-	if active >= 6: return _fail("Six newly built bridge crossings are already active.")
-	_sequence += 1
-	var id := "bridge-%04d" % _sequence
+		if other.state not in ["Cancelled","Destroyed"] and other.get("source","Built") == "Built": active += 1
+	if existing_id.is_empty() and active >= 6: return _fail("Six newly built bridge crossings are already active.")
+	if existing_id.is_empty(): _sequence += 1
+	var id := "bridge-%04d" % _sequence if existing_id.is_empty() else existing_id
 	var a_id := id+"-a"
 	var b_id := id+"-b"
+	if not _rear().ledger.inspect_entity(a_id).is_empty() or not _rear().ledger.inspect_entity(b_id).is_empty(): return _fail("Authored bridge bank identities already exist in the physical ledger.")
 	var a_place: Dictionary = _rear().ledger.add_place(a_id,code+" near-bank supply and repair",bank_a)
 	if not a_place.ok: return a_place
 	var b_place: Dictionary = _rear().ledger.add_place(b_id,code+" far-bank supply and repair",bank_b)
 	if not b_place.ok: return b_place
 	var spec: Dictionary = Catalog.SPECS[code]
 	var max_health := int(spec.base_health)+int(spec.health_per_m)*span
-	projects[id] = {"id":id,"code":code,"owner":owner,"banks":[bank_a,bank_b],"places":[a_id,b_id],"work_bank":work_bank,"direction":direction,"span":span,"deck":deck,"approaches":approaches,"width":width,"state":"Awaiting material and engineers","health":maxi(1,int(max_health/4)),"max_health":max_health,"m11_required":int(spec.m11)*span,"m11_consumed":0,"work_required":float(spec.work)*span,"progress":0.0,"assigned":[],"last_damage":-INF,"blocked_reason":"Stage full M11 at one bank; two local P02/E08 engineers must start safely.","upgrade_from":"","upgrade_old_deck":[],"upgrade_old_approaches":[],"completed_at":-1.0,"material_receipt":[]}
+	projects[id] = {"id":id,"code":code,"owner":owner,"source":"Built" if existing_id.is_empty() else "World","banks":[bank_a,bank_b],"places":[a_id,b_id],"work_bank":work_bank,"direction":direction,"span":span,"deck":deck,"approaches":approaches,"width":width,"state":"Awaiting material and engineers" if existing_id.is_empty() else "Complete","health":maxi(1,int(max_health/4)) if existing_id.is_empty() else max_health,"max_health":max_health,"m11_required":int(spec.m11)*span,"m11_consumed":0,"work_required":float(spec.work)*span,"progress":0.0,"assigned":[],"last_damage":-INF,"blocked_reason":"Stage full M11 at one bank; two local P02/E08 engineers must start safely." if existing_id.is_empty() else "","upgrade_from":"","upgrade_old_deck":[],"upgrade_old_approaches":[],"completed_at":-1.0 if existing_id.is_empty() else _rear().time,"material_receipt":[]}
 	queues[id] = []
+	if not existing_id.is_empty(): _set_surface(projects[id],true)
 	events.append({"at":_rear().time,"id":id,"kind":"Ordered","detail":code})
-	return {"ok":true,"id":id,"span":span,"m11":int(spec.m11)*span,"work":int(spec.work)*span,"max_health":max_health,"message":"Real water span and both supported bank endpoints recorded; full local delivery and engineers remain required."}
+	return {"ok":true,"id":id,"span":span,"m11":int(spec.m11)*span,"work":int(spec.work)*span,"max_health":max_health,"message":"Existing authored surface registered for damage and denial." if not existing_id.is_empty() else "Real water span and both supported bank endpoints recorded; full local delivery and engineers remain required."}
 
 func choose_work_bank(id: String, bank_index: int) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
@@ -130,7 +139,7 @@ func deliver_material(id: String, stock_id: String, count: int, bank_index: int 
 func assign_engineer(id: String, person_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or row.assigned.size() >= 4 or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02": return _fail("Up to four actual uncommitted friendly P02 may join unfinished bridge work.")
+	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)) or (_rear().mines != null and _rear().mines.engineer_committed(person_id)) or row.assigned.size() >= 4 or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02": return _fail("Up to four actual uncommitted friendly P02 may join unfinished bridge work.")
 	row.assigned.append(person_id)
 	workers[person_id] = id
 	_refresh(row)
@@ -364,6 +373,13 @@ func damage(id: String, amount: int) -> Dictionary:
 				var tow: Dictionary = _rear().ledger.inspect_entity(crossing.tow)
 				if _on_water(row,tow.position): _rear().ledger.destroy_carrier_on_bridge(crossing.tow)
 			traffic.erase(key)
+		# Traffic is the ordinary owner of traversal, but an authored scenario or
+		# another physical activity may also have a body on this actual water deck.
+		# Collapse checks the ledger position, not only the crossing queue.
+		for entity in _rear().ledger.snapshot().entities:
+			if entity.kind == "CARRIER" and _on_water(row,entity.position): _rear().ledger.destroy_carrier_on_bridge(entity.id)
+		for entity in _rear().ledger.snapshot().entities:
+			if entity.kind == "PERSON" and entity.assignment != "Dead" and _on_water(row,entity.position): _rear().ledger.kill_person(entity.id,"Bridge collapse on water span")
 		events.append({"at":_rear().time,"id":id,"kind":"Destroyed","detail":"Water-span occupants lost"})
 	else:
 		if row.state == "Complete":
@@ -413,11 +429,13 @@ func _retime_traffic(row: Dictionary) -> void:
 func _on_water(row: Dictionary, position: Vector2) -> bool:
 	return Vector2i(floori(position.x),floori(position.y)) in row.deck
 
-func rebuild(id: String, bank_index: int = 0) -> Dictionary:
+func rebuild(id: String, bank_index: int = 0, restoring_owner: String = "") -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
 	if row.is_empty() or row.state != "Destroyed" or bank_index not in [0,1]: return _fail("A destroyed bridge can rebuild from either actual bank.")
+	if row.owner == "world" and restoring_owner not in ["army-blue","army-red"]: return _fail("An army must accept ownership and supply the full original M11 to restore an unowned world bridge.")
 	var access: Dictionary = _holding_approach(row.banks[0],row.banks[1],bank_index)
 	if not access.ok: return _fail("Rebuild bank lacks a continuous physical holding approach: "+access.reason)
+	if row.owner == "world": row.owner = restoring_owner
 	row.work_bank = bank_index
 	row.state = "Awaiting material and engineers"
 	row.health = maxi(1,int(row.max_health/4))
@@ -513,7 +531,7 @@ func request_repair(id: String, engineers: Array, bank_index: int = 0) -> Dictio
 	var unique: Dictionary = {}
 	for person_id in engineers:
 		var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-		if unique.has(person_id) or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.banks[bank_index]) > 2.0+EPS or _rear().military._held(person_id,"E08") < 1 or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id): return _fail("Each distinct repair engineer needs free time, physical bank access and actual E08.")
+		if unique.has(person_id) or person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.banks[bank_index]) > 2.0+EPS or _rear().military._held(person_id,"E08") < 1 or engineer_committed(person_id) or _rear().field_structures.engineer_committed(person_id) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)) or (_rear().mines != null and _rear().mines.engineer_committed(person_id)): return _fail("Each distinct repair engineer needs free time, physical bank access and actual E08.")
 		unique[person_id] = true
 	var spent: Dictionary = _rear().ledger.consume_local_batch(row.places[bank_index],row.owner,{"M11":10},"G20 bridge repair "+id)
 	if not spent.ok: return spent
@@ -615,7 +633,7 @@ func audit() -> Array[String]:
 		if row.health < 0 or row.health > row.max_health or row.progress < 0 or row.progress > row.work_required+EPS: failures.append("Bridge state bounds: "+row.id)
 		for person_id in row.assigned:
 			if workers.get(person_id,"") != row.id: failures.append("Bridge engineer ownership: "+person_id)
-		if row.state == "Complete" and row.m11_consumed <= 0: failures.append("Bridge completion without consumed material: "+row.id)
+		if row.state == "Complete" and row.m11_consumed <= 0 and row.get("source","Built") == "Built": failures.append("Bridge completion without consumed material: "+row.id)
 	return failures
 
 func _fail(message: String) -> Dictionary:

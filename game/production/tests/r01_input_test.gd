@@ -5,7 +5,7 @@ extends GdUnitTestSuite
 func test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_protected_work() -> void:
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
@@ -62,7 +62,7 @@ func test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_pro
 	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
 	assert_dict(rear.ledger.snapshot().consumed).is_equal({"M01": 2, "M02": 1})
 	assert_array(rear.audit()).is_empty()
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(3)
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer
@@ -83,7 +83,7 @@ func test_normal_launch_hauls_local_inputs_and_produces_one_empty_rifle_with_pro
 func test_normal_launch_stock_target_keeps_active_work_and_finishes_without_restart() -> void:
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control

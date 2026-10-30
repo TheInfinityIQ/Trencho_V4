@@ -27,6 +27,10 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 	var surface: String = str(profile.get("surface","TR02"))
 	if not Terrain.SURFACES.has(surface): return _blocked("Unknown terrain surface " + surface)
 	if surface == "TR10" and world == null: return _blocked("A ford needs authored marked, firm, banked, depth-checked physical terrain.")
+	if hull.get("damage_immobilized",false): return _blocked("Damage Immobilized after a device strike; recovery is required.")
+	if ledger.route_hazard.is_valid():
+		var hazard: String = ledger.route_hazard.call(hull.owner,points)
+		if not hazard.is_empty(): return _blocked(hazard)
 	if hull.health <= 0.25*float(hull.vehicle_spec.health): return _blocked("Damage Immobilized hull cannot start a route.")
 	var slope: float = float(profile.get("slope",0.0))
 	var slope_factor: float = Terrain.slope_factor(slope,movement_class)

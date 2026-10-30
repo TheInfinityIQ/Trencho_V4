@@ -14,6 +14,7 @@ Recorded 2026-10-25. These decisions describe the current foundation and may cha
 | Pin the CI runner to Ubuntu 24.04 and checkout action to its v7.0.1 commit | Avoid automatic runner distribution migrations and deprecated action runtimes. Review these pins during maintenance. |
 | Defer Git LFS rules until assets are introduced | Avoid imposing a storage workflow before asset requirements exist. Configure LFS before the first large asset commit to avoid later history migration. |
 | Keep G19 field project state on the shared ledger, terrain world and rear clock | A field site cannot grant capability from an order or remote promise. [G19 ownership and G26a delivery boundary](g19_field_structures_roads.md) document the physical handoff, cancellation and G32 restore obligations. |
+| Keep D04 on the existing ledger, target services and event clock | [G21 attached demolition](g21_bridge_denial.md) consumes staged M06 only at completed placement, records command and clearance, and changes the assigned bridge or structure through its real damage owner. G10 supplies authored crossing identities; G32 restores device, stock, timers and terrain together. |
 
 ## Sources consulted
 

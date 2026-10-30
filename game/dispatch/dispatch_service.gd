@@ -263,12 +263,21 @@ func advance_to(next_time: float) -> void:
 					fuel = hull.fuel
 					row.blocker = "Fuel Empty; same hull stopped with its actual contents and claims."
 					row.state = "Fuel Empty"
+				var destination: Vector2 = Layout.position(row.route,row.distance+moved)
+				var fraction: float = rear.mines.movement_limit(row.hull,hull.position,destination) if rear.mines != null else 1.0
+				fuel *= fraction
+				moved *= fraction
+				# Burn the travelled prefix before a synchronous G24 destruction callback loses remaining fuel.
 				rear.ledger.burn_vehicle_fuel(row.hull,fuel)
 				row.travel_burn += fuel
 				row.distance += moved
-				rear.ledger.move_entity(row.hull,"rear",Layout.position(row.route,row.distance))
+				rear.ledger.move_entity(row.hull,"rear",hull.position.lerp(destination,fraction))
+				var actual: Dictionary = rear.ledger.inspect_entity(row.hull)
+				if actual.health <= 0 or actual.get("damage_immobilized",false):
+					row.state = "Stranded"
+					row.blocker = "Destroyed hull" if actual.health <= 0 else "Damage Immobilized by actual device hit; request recovery."
 			row.last_time = next_time
-			if row.state != "Fuel Empty" and row.distance + EPS >= row.route_length: _finish_route(row)
+			if row.state in ["Approaching Dispatch","Departed","Transit","Docking HQ","Returning","Safety Returning"] and row.distance + EPS >= row.route_length: _finish_route(row)
 		if row.task.is_empty(): continue
 		var task: Dictionary = row.task
 		if not task.route.is_empty():
@@ -872,6 +881,9 @@ func clear_route_hazard(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
 	if row.is_empty() or row.state != "Safety Stop" or rear.time > float(row.stop_deadline) + EPS: return _fail("Only a live safety hold may resume before its ten-second deadline.")
+	if rear.ledger.route_hazard.is_valid():
+		var reason: String = rear.ledger.route_hazard.call(rear.ledger.inspect_entity(row.hull).owner,row.route)
+		if not reason.is_empty(): return _fail(reason)
 	var elapsed := 0.0
 	var left: float = row.distance
 	for part in row.route_plan.parts:

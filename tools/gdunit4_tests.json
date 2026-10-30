@@ -170,6 +170,14 @@
     }
   ],
   "Input": [
+      {
+        "path": "game/mines/tests/mine_input_test.gd",
+        "cases": ["test_a37_a38_buttons_at_development_resolution"]
+      },
+    {
+      "path": "game/bridges/tests/demolition_input_test.gd",
+      "cases": ["test_a36_real_buttons_clearance_and_small_render"]
+    },
     {
       "path": "game/bridges/tests/bridge_input_test.gd",
       "cases": ["test_bridge_delivery_traversal_damage_and_small_render"]
