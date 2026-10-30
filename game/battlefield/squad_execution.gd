@@ -79,11 +79,11 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var active: Array[String] = rear.military._active_roster_members(squad)
 	if not squad.vehicle.is_empty() or intent.action == "Move by Transport": status[squad.id] = "Following troop transport order"; return
 	var role: String = str(intent.constraints.get("role",squad.kind))
-	if intent.action == "Assault HQ":
-		for id in squad.roster: motions.erase(id)
-		status[squad.id] = "Holding for validated HQ assault preparation"
+	var assault_blocked: bool = intent.action == "Assault HQ"
+	if assault_blocked:
+		for id in squad.roster:
+			if motions.has(id) and motions[id].purpose != "Fallback": motions.erase(id)
 		_report(squad.id,"Inability","HQ assault requires a validated company preparation plan")
-		return
 	var targets: Array[Dictionary] = _targets(squad.id)
 	var withdrawing := active.size() <= float(baseline[squad.id])*0.4
 	if not rear.military.capability(squad.id).ok and not (role == "Guard" and intent.action == "Defend HQ"): withdrawing = true
@@ -110,14 +110,20 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var fallback: Dictionary = rear.ledger.inspect_entity(fallback_id)
 	if withdrawing and fallback.get("kind","") != "PLACE": status[squad.id] = "No safe declared fallback"; return
 	status[squad.id] = "Withdrawing" if withdrawing else ("Advancing" if advance_allowed else "Holding for capability or supply")
+	if assault_blocked and not withdrawing: status[squad.id] = "Holding for validated HQ assault preparation"
 	for id in active:
 		var person: Dictionary = rear.ledger.inspect_entity(id)
 		if _busy(id) or not _on_foot(person): motions.erase(id); continue
 		if withdrawing or rear.combat.broken.has(id):
-			var defensive_range: float = INF if person.position.distance_to(fallback.position) <= 8 else 30.0
-			if not rear.combat.broken.has(id) and _shoot(id,targets,defensive_range): continue
+			var at_rally: bool = person.position.distance_to(fallback.position) <= 8
+			var defensive_range: float = INF if at_rally else 30.0
+			var immediate_threat := false
+			for target in targets:
+				if person.position.distance_to(target.position) <= defensive_range: immediate_threat = true
+			if not rear.combat.broken.has(id) and (at_rally or immediate_threat) and _shoot(id,targets,defensive_range): continue
 			_walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true,"Fallback")
 			continue
+		if assault_blocked: continue
 		if rear.combat.pinned.has(id):
 			motions.erase(id)
 			_shoot(id,targets,30)
