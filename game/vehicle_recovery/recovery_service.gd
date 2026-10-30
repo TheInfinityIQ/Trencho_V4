@@ -84,6 +84,7 @@ func _safe(hull: Dictionary) -> String:
 func _engineer(id: String, hull: Dictionary) -> bool:
 	var p: Dictionary = _rear().ledger.inspect_entity(id)
 	if p.get("kind","") != "PERSON" or p.owner != hull.owner or p.qualification != "P02" or not p.basic_training or p.assignment in ["Wounded","Recovery","Dead"] or not p.crew_station.is_empty(): return false
+	if _rear().ledger.inspect_entity(p.holder_id).get("kind","") != "PLACE": return false
 	var delta: Vector2 = (p.position-hull.position).rotated(-deg_to_rad(float(hull.facing_degrees))).abs()-Vector2(hull.vehicle_spec.footprint)/2.0
 	if Vector2(maxf(0,delta.x),maxf(0,delta.y)).length() > 2.0+EPS: return false
 	return _rear().military._held(id,"E08") > 0 and _ground(p.position)
@@ -156,14 +157,34 @@ func advance_to(at: float) -> void:
 			continue
 		var part: Dictionary = journey.part
 		var earned := minf(delta,float(part.seconds)-float(journey.progress))
-		var fuel: float = float(part.fuel)*earned/float(part.seconds)
+		var position: Vector2 = Vector2(part.from).lerp(part.to,(float(journey.progress)+earned)/float(part.seconds))
+		var travel: Vector2 = position-Vector2(lead.position)
+		var fraction := 1.0
+		var mines: RefCounted = _rear().get("mines")
+		if mines != null:
+			fraction = minf(mines.movement_limit(tractor,lead.position,position),mines.movement_limit(target.id,target.position,Vector2(target.position)+travel))
+		var fuel: float = float(part.fuel)*earned/float(part.seconds)*fraction
 		if not _rear().ledger.burn_vehicle_fuel(tractor,fuel).ok:
 			journey.blocked_reason = "Fuel Empty; actual travel held."
 			continue
-		journey.progress += earned
-		var position: Vector2 = Vector2(part.from).lerp(part.to,float(journey.progress)/float(part.seconds))
-		_rear().ledger.move_entity(tractor,lead.holder_id,position)
-		_rear().ledger.move_entity(target.id,target.holder_id,position-Vector2(part.to-part.from).normalized()*12.0)
+		journey.progress += earned*fraction
+		var lead_goal: Vector2 = Vector2(lead.position)+travel*fraction
+		var target_goal: Vector2 = Vector2(target.position)+travel*fraction
+		var target_health: int = target.health
+		_rear().ledger.move_entity(tractor,lead.holder_id,lead_goal)
+		# Mine damage runs synchronously inside move_entity and can eject/uncouple.
+		# Never move the old target snapshot after its physical coupling is lost.
+		lead = _rear().ledger.inspect_entity(tractor)
+		target = _rear().ledger.inspect_entity(journey.target)
+		if lead.health <= 0 or target.health <= 0 or lead.towing != journey.target or target.towed_by != tractor or lead.damage_immobilized or lead.health <= lead.max_health/4:
+			journey.blocked_reason = "Mine contact, damage or coupling loss stopped both recovery bodies."
+			continue
+		_rear().ledger.move_entity(target.id,target.holder_id,target_goal)
+		lead = _rear().ledger.inspect_entity(tractor)
+		target = _rear().ledger.inspect_entity(journey.target)
+		if fraction < 1.0-EPS or lead.health <= 0 or target.health <= 0 or lead.towing != journey.target or target.towed_by != tractor or lead.damage_immobilized or target.health < target_health:
+			journey.blocked_reason = "Mine contact, damage or coupling loss stopped both recovery bodies."
+			continue
 		if journey.progress+EPS >= float(part.seconds):
 			journey.index += 1
 			if journey.index >= journey.parts.size(): journeys.erase(tractor)

@@ -9,6 +9,7 @@ func _initialize() -> void:
 	_water_and_no_exit()
 	_repairs()
 	_a42()
+	_boarded_engineer()
 	print("G24 recovery regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -141,3 +142,22 @@ func _a42() -> void:
 		rear.advance_time(lane.seconds)
 		expect(ledger.inspect_entity("tractor").position.distance_to(Vector2(201.5,20.5)) < 0.01 and ledger.inspect_entity("tow").position.distance_to(Vector2(189.5,20.5)) < 0.01,"ordinary recovery lane moves both actual hulls and keeps spacing")
 	expect(fixture.base.audit().is_empty(),"A42 physical load/fuel/person accounting: "+str(fixture.base.audit()))
+
+func _boarded_engineer() -> void:
+	var fixture := Fixture.new()
+	var rear: RefCounted = fixture.base.rear
+	var ledger: RefCounted = rear.ledger
+	ledger.move_entity("carrier","carrier-ground",Vector2(80.5,23.5))
+	expect(ledger.board_dispatch_passenger("repairer","carrier").ok,"actual P02 boards nearby carrier as passenger without a crew station")
+	ledger.apply_vehicle_surface_damage("tractor",100,999,"Side","Repair eligibility review")
+	rear.advance_time(10)
+	var materials: int = ledger.local_vehicle_material("tractor")
+	expect(not rear.recovery.start_repair("tractor",["repairer"]).ok and ledger.local_vehicle_material("tractor") == materials,"seated passenger cannot commit repair or consume M11")
+	expect(not rear.recovery.start_coupling("tractor","tow","repairer").ok,"seated passenger cannot begin coupling despite nearby kit and valid pair")
+	expect(ledger.disembark_dispatch_passenger("repairer","carrier","carrier-ground").ok,"same engineer actually disembarks to independent PLACE")
+	expect(rear.recovery.start_repair("tractor",["repairer"]).ok,"actual disembark enables repair without changing identity or kit")
+	rear.recovery.cancel("tractor")
+	expect(rear.recovery.start_coupling("tractor","tow","repairer").ok,"actual disembark enables coupling after repair commitment is released")
+	rear.advance_time(20)
+	expect(ledger.inspect_entity("tractor").towing == "tow","only independently standing engineer completes actual coupling")
+	expect(fixture.base.audit().is_empty(),"boarded engineer repair/coupling accounting")
