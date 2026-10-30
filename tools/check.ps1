@@ -61,6 +61,7 @@ Invoke-GodotCheck -Name 'combat-regression' -EngineArguments @('--script', 'res:
 Invoke-GodotCheck -Name 'order-regression' -EngineArguments @('--script', 'res://game/orders/tests/order_regression.gd')
 Invoke-GodotCheck -Name 'objective-regression' -EngineArguments @('--script', 'res://game/objectives/tests/objective_regression.gd')
 Invoke-GodotCheck -Name 'field-regression' -EngineArguments @('--script', 'res://game/field_structures/tests/field_regression.gd')
+Invoke-GodotCheck -Name 'bridge-regression' -EngineArguments @('--script', 'res://game/bridges/tests/bridge_regression.gd')
 Invoke-GodotCheck -Name 'rear-ui' -EngineArguments @('--script', 'res://game/staffing/tests/rear_ui_regression.gd')
 Invoke-GodotCheck -Name 'terrain-regression' -EngineArguments @('--script', 'res://game/terrain/tests/terrain_regression.gd')
 Invoke-GodotCheck -Name 'terrain-ui' -EngineArguments @('--script', 'res://game/terrain/tests/terrain_ui_regression.gd')

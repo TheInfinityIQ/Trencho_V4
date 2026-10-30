@@ -33,6 +33,7 @@ var combat: RefCounted # G16 wounds, direct fire and care on the shared identiti
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
 var field_structures: RefCounted # G19 local engineer projects and field services.
+var bridges: RefCounted # G20 constructed crossing, traffic and repair owner.
 var additional_productions: Array[RefCounted] = []
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
@@ -299,6 +300,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
+		if bridges != null: next = minf(next,bridges.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -329,6 +331,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if orders != null: orders.advance_to(next)
 		if objectives != null: objectives.advance_to(next)
 		if field_structures != null: field_structures.advance_to(next)
+		if bridges != null: bridges.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -509,6 +512,7 @@ func _settle() -> void:
 		if orders != null: changed = orders.settle() or changed
 		if objectives != null: changed = objectives.settle() or changed
 		if field_structures != null: changed = field_structures.settle() or changed
+		if bridges != null: changed = bridges.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)

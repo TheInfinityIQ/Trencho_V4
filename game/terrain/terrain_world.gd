@@ -8,6 +8,7 @@ var cells: Dictionary = {}
 var obstacles: Array[Dictionary] = []
 var shields: Array[Dictionary] = []
 var field_effects: Array[Dictionary] = []
+var bridge_approaches: Dictionary = {} # land cells within twenty metres of a live bridge
 var revision: int = 0
 
 
@@ -23,6 +24,30 @@ func paint(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
 
 func cell(at: Vector2i) -> Dictionary:
 	return cells.get(at, {"terrain": "TR01"})
+
+func set_bridge_surface(id: String, deck_cells: Array, approach_cells: Array, code: String, load_kg: float, speed_cap: float, width: float, classes: Array, complete: bool) -> Dictionary:
+	if id.is_empty(): return _blocked("Bridge surface needs an actual project identity.")
+	for at in deck_cells:
+		if not bounds.has_point(at): return _blocked("Bridge deck exceeds the declared world.")
+		var existing: Dictionary = cell(at).get("overlay",{})
+		if complete and not existing.is_empty() and existing.get("id","") != id: return _blocked("Another completed surface owns the bridge span.")
+	for at in deck_cells:
+		var tile: Dictionary = cell(at).duplicate(true)
+		if complete: tile["overlay"] = {"id":id,"kind":"crossing","code":code,"complete":true,"classes":classes,"load_kg":load_kg,"speed_cap":speed_cap,"width":width}
+		elif tile.get("overlay",{}).get("id","") == id: tile.erase("overlay")
+		cells[at] = tile
+	for at in bridge_approaches.keys():
+		var caps: Dictionary = bridge_approaches[at]
+		caps.erase(id)
+		if caps.is_empty(): bridge_approaches.erase(at)
+	if complete:
+		for at in approach_cells:
+			if bounds.has_point(at):
+				var caps: Dictionary = bridge_approaches.get(at,{})
+				caps[id] = speed_cap
+				bridge_approaches[at] = caps
+	revision += 1
+	return {"ok":true,"message":"Actual bridge support and approaches updated."}
 
 func set_project_overlay(id: String, area: Rect2i, kind: String, complete: bool, load_kg: float = 0.0, closed: bool = false) -> Dictionary:
 	if id.is_empty() or kind not in ["road","causeway"] or not bounds.encloses(area) or not area.has_area():
@@ -163,7 +188,7 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var at := Vector2i(x, y)
 			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
 			if interval.x < 0: continue
-			if not str(cell(at).get("closed_project","")).is_empty(): return _blocked("Active causeway upgrade closes this segment to traffic")
+			if not str(cell(at).get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
 			var rule := support(at, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
 			for effect in field_effects:
@@ -174,6 +199,14 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var overlay: Dictionary = cell(at).get("overlay",{})
 			if overlay.get("complete",false) and overlay.get("kind","") == "causeway" and entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.get("load_kg",8000.0))+EPS:
 				return _blocked("Causeway gross-load limit excludes this actual body and contents")
+			if overlay.get("complete",false) and overlay.get("kind","") == "crossing" and overlay.has("code"):
+				if entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.load_kg)+EPS: return _blocked("%s gross-load limit excludes this actual body and contents" % overlay.code)
+				if entity.size.y > float(overlay.width)+EPS: return _blocked("%s deck is narrower than the actual footprint" % overlay.code)
+				rule["speed_cap"] = float(overlay.speed_cap)
+			elif bridge_approaches.has(at):
+				var approach_cap := INF
+				for cap in bridge_approaches[at].values(): approach_cap = minf(approach_cap,float(cap))
+				rule["speed_cap"] = approach_cap
 			occupied_cells[at] = true
 			intervals.append({"from": interval.x, "to": interval.y, "rule": rule})
 			cuts.append(interval.x)
@@ -200,14 +233,16 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 		var burn := 0.0
 		var surfaces: Array[String] = []
 		var max_slope := 0.0
+		var speed_cap := INF
 		for interval in intervals:
 			if middle < interval.from or middle > interval.to: continue
 			factor = minf(factor, interval.rule.factor)
 			burn = maxf(burn, interval.rule.fuel)
 			max_slope = maxf(max_slope, interval.rule.slope)
+			speed_cap = minf(speed_cap,float(interval.rule.get("speed_cap",INF)))
 			if interval.rule.surface not in surfaces: surfaces.append(interval.rule.surface)
 		var length := (end - begin) * distance
-		var speed: float = entity.base * factor
+		var speed: float = minf(entity.base * factor,speed_cap)
 		var used: float = length * entity.rate * burn / 1000.0
 		parts.append({"from": start.lerp(destination, begin), "to": start.lerp(destination, end), "distance": length, "speed": speed, "seconds": length / speed, "fuel": used, "surfaces": surfaces, "slope": max_slope})
 		seconds += length / speed

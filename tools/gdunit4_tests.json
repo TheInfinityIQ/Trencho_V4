@@ -171,6 +171,10 @@
   ],
   "Input": [
     {
+      "path": "game/bridges/tests/bridge_input_test.gd",
+      "cases": ["test_bridge_delivery_traversal_damage_and_small_render"]
+    },
+    {
       "path": "game/field_structures/tests/field_input_test.gd",
       "cases": ["test_field_review_delivery_work_and_small_render"]
     },

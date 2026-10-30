@@ -781,6 +781,21 @@ func kill_person(person_id: String, reason: String) -> Dictionary:
 	return {"ok":true,"code":"DEAD","message":"One person loss recorded; belongings remain physical.","id":person_id}
 
 
+func destroy_carrier_on_bridge(carrier_id: String) -> Dictionary:
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.health <= 0:
+		return _reject("INVALID_BRIDGE_COLLAPSE", "An actual surviving carrier on the water span is required.")
+	var people: Array[String] = []
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.PERSON and entity.holder_id == carrier_id and entity.assignment != Records.Assignment.DEAD:
+			people.append(entity.id)
+	for person_id in people: kill_person(person_id,"Bridge collapse on water span")
+	carrier.health = 0
+	carrier.state = "Destroyed by bridge collapse"
+	_event("Carrier destroyed on collapsed water span",carrier_id)
+	return _ok("Actual vehicle and its occupants lost on the water span.",carrier_id)
+
+
 func bleed_out_person(person_id: String) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.assignment != Records.Assignment.WOUNDED or _time + 0.000001 < person.bleed_until:
