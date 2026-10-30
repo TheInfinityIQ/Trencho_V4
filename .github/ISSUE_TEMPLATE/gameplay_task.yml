@@ -6,7 +6,7 @@ body:
     id: outcome
     attributes:
       label: Player-visible outcome
-      description: State the behaviour and its purpose. Link the milestone or parent issue.
+      description: State the player behavior, its purpose and contribution to active delivery #83. Name the lead-assigned owner and integration point.
     validations:
       required: true
   - type: textarea
@@ -20,7 +20,7 @@ body:
     id: acceptance
     attributes:
       label: Acceptance and evidence
-      description: List concrete setup/action/expected result, acceptance IDs, required inspection and blocking reasons. Separate this patch from later integration.
+      description: List concrete setup/action/expected result, acceptance IDs, required inspection and blocking reasons. Name the existing state owner and meaningful transition/interaction checks. Link retained parent integration obligations; isolated proof is not playable delivery acceptance.
     validations:
       required: true
   - type: textarea
