@@ -35,6 +35,9 @@ func advance_to(at: float) -> void:
 		if not motion.allow_unarmed and rear.military._rounds(id) == 0:
 			motions.erase(id)
 			continue
+		if (_rear().combat.pinned.has(id) or _rear().combat.broken.has(id)) and motion.purpose not in ["Fallback","Cover"]:
+			motions.erase(id)
+			continue
 		var remaining: float = maxf(0,at-float(motion.started))
 		var point: Vector2 = motion.destination
 		for part in motion.plan.parts:
@@ -62,7 +65,7 @@ func settle() -> bool:
 func _clear_unavailable_motions() -> bool:
 	var changed := false
 	for id in motions.keys():
-		if not _on_foot(_rear().ledger.inspect_entity(id)) or _busy(id):
+		if not _on_foot(_rear().ledger.inspect_entity(id)) or _busy(id) or ((_rear().combat.pinned.has(id) or _rear().combat.broken.has(id)) and motions[id].purpose not in ["Fallback","Cover"]):
 			motions.erase(id)
 			changed = true
 	return changed
@@ -76,8 +79,14 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var active: Array[String] = rear.military._active_roster_members(squad)
 	if not squad.vehicle.is_empty() or intent.action == "Move by Transport": status[squad.id] = "Following troop transport order"; return
 	var role: String = str(intent.constraints.get("role",squad.kind))
+	if intent.action == "Assault HQ":
+		for id in squad.roster: motions.erase(id)
+		status[squad.id] = "Holding for validated HQ assault preparation"
+		_report(squad.id,"Inability","HQ assault requires a validated company preparation plan")
+		return
 	var targets: Array[Dictionary] = _targets(squad.id)
 	var withdrawing := active.size() <= float(baseline[squad.id])*0.4
+	if not rear.military.capability(squad.id).ok and not (role == "Guard" and intent.action == "Defend HQ"): withdrawing = true
 	var broken_count := 0
 	var rounds := 0
 	for id in active:
@@ -107,7 +116,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		if withdrawing or rear.combat.broken.has(id):
 			var defensive_range: float = INF if person.position.distance_to(fallback.position) <= 8 else 30.0
 			if not rear.combat.broken.has(id) and _shoot(id,targets,defensive_range): continue
-			_walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true)
+			_walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true,"Fallback")
 			continue
 		if rear.combat.pinned.has(id):
 			motions.erase(id)
@@ -186,14 +195,14 @@ func _care(id: String) -> bool:
 	for patient in rear.ledger.snapshot().entities:
 		if patient.kind != "PERSON" or patient.owner != medic.owner or patient.assignment != "Wounded" or patient.health <= 0 or patient.position.distance_to(medic.position) > 60: continue
 		if medic.position.distance_to(patient.position) > 2:
-			_walk(id,patient.holder_id,patient.position+Vector2(1,0),true)
+			_walk(id,patient.holder_id,patient.position+Vector2(1,0),true,"Care")
 			return true
 		motions.erase(id)
 		for stock in rear.ledger.entities_at(id,["STOCK"]):
 			if stock.design_type == "E12" and stock.available > 0: return rear.combat.start_care(id,patient.id,stock.id).ok
 	return false
 
-func _walk(id: String, place: String, destination: Vector2, allow_unarmed: bool = false) -> void:
+func _walk(id: String, place: String, destination: Vector2, allow_unarmed: bool = false, purpose: String = "Advance") -> void:
 	if motions.has(id):
 		if motions[id].destination.distance_to(destination) <= 1: return
 		motions.erase(id)
@@ -202,7 +211,7 @@ func _walk(id: String, place: String, destination: Vector2, allow_unarmed: bool 
 	if person.position.distance_to(destination) <= 1: return
 	var plan: Dictionary = rear.combat.world.route({"position":person.position,"facing":(destination-person.position).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":2.0,"rate":0.0,"gross_mass_kg":80.0+float(person.contents_mass_kg)},destination)
 	if not plan.ok: _report(person.duty_id,"Blocked Route",str(plan.reason)); return
-	motions[id] = {"place":place,"destination":destination,"started":rear.time,"deadline":rear.time+float(plan.seconds),"plan":plan,"expected":person.position,"revision":rear.combat.world.revision,"allow_unarmed":allow_unarmed}
+	motions[id] = {"place":place,"destination":destination,"started":rear.time,"deadline":rear.time+float(plan.seconds),"plan":plan,"expected":person.position,"revision":rear.combat.world.revision,"allow_unarmed":allow_unarmed,"purpose":purpose}
 
 func _busy(id: String) -> bool:
 	var rear: RefCounted = _rear()

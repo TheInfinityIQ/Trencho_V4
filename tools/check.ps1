@@ -79,6 +79,7 @@ Invoke-GodotCheck -Name 'hq-location-regression' -EngineArguments @('--script', 
 Invoke-GodotCheck -Name 'army-hierarchy-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/army_hierarchy_regression.gd')
 Invoke-GodotCheck -Name 'battlefield-presentation-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/presentation_regression.gd')
 Invoke-GodotCheck -Name 'squad-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/squad_execution_regression.gd')
+Invoke-GodotCheck -Name 'execution-safety-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/execution_safety_regression.gd')
 Invoke-GodotCheck -Name 'forward-supply-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_supply_regression.gd')
 Invoke-GodotCheck -Name 'forward-transport-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_transport_regression.gd')
 Invoke-GodotCheck -Name 'forward-clock-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/forward_clock_regression.gd')
