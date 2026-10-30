@@ -49,7 +49,7 @@ func hull(id: String, type: String, position: Vector2, crew: bool) -> void:
 			ledger.complete_military_crew_report(person,id,station)
 	ledger.add_place(id+"-fuel-place","Initial local fuel",ledger.inspect_entity("hq-berth").position)
 	ledger.add_stock(id+"-fuel","M08",int(Specs.TYPES[type].tank_capacity),1.0,id+"-fuel-place",rear.PLAYER)
-	ledger.add_person(id+"-fueler",id+"-fuel-place",rear.PLAYER,Records.Assignment.HQ_DUTY,true)
+	ledger.add_person(id+"-fueler","hq-berth",rear.PLAYER,Records.Assignment.HQ_DUTY,true)
 	var remaining: int = int(Specs.TYPES[type].tank_capacity)
 	while remaining > 0:
 		var count := mini(20,remaining)
@@ -69,7 +69,7 @@ func _bridge(code: String, x: int) -> String:
 	var rear: RefCounted = base.rear
 	rear.combat.world.paint(Rect2i(x,10,20,20),"TR11")
 	var result: Dictionary = rear.bridges.order(code,Vector2(x-0.5,20.5),Vector2(x+20.5,20.5))
-	assert(result.ok,result.get("message","Bridge order failed"))
+	assert(result.ok,"Bridge order failed")
 	var id: String = result.id
 	for n in range(2):
 		var person := id+"-builder-"+str(n)

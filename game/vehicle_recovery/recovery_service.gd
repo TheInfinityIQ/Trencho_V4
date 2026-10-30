@@ -22,6 +22,7 @@ func _fail(reason: String) -> Dictionary:
 func _on_damage(id: String) -> void:
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(id)
+	if not hull.has("vehicle_spec"): return
 	if hull.health > 0 or hull.destruction_resolved: return
 	var world: RefCounted = rear.combat.world
 	var tile: Dictionary = world.cell(Vector2i(hull.position.floor()))
@@ -51,7 +52,7 @@ func _on_damage(id: String) -> void:
 				if rear.ledger.kill_person(person_id,"Vehicle destruction without survivable ground").ok: rear.combat._on_death(person_id,person)
 			else:
 				rear.combat.injure(person_id,60)
-				rear.ledger.set_person_stress(person_id,0,80)
+				rear.combat._apply_stress(person_id,0,80,true)
 		if safe.is_finite(): rear.ledger.eject_destroyed_carrier_occupant(person_id,id,safe)
 	rear.ledger.release_wreck_belongings(id,result.pile,submerged)
 	if not submerged:
@@ -253,3 +254,15 @@ func snapshot() -> Dictionary:
 	for item in _rear().ledger.snapshot().entities:
 		if item.kind == "CARRIER" and item.has("vehicle_spec"): hulls.append(inspect(item.id))
 	return {"hulls":hulls,"jobs":jobs.duplicate(true),"couplings":couplings.duplicate(true),"journeys":journeys.duplicate(true),"events":events.duplicate(true)}
+
+func audit() -> Array[String]:
+	var errors: Array[String] = []
+	for item in _rear().ledger.snapshot().entities:
+		if item.kind != "CARRIER" or not item.has("vehicle_spec"): continue
+		if not item.towing.is_empty():
+			var target: Dictionary = _rear().ledger.inspect_entity(item.towing)
+			if target.get("towed_by","") != item.id or item.health <= 0 or target.get("health",0) <= 0: errors.append("Broken actual tow pair: "+item.id)
+		if item.health <= 0 and not item.destruction_resolved: errors.append("Unresolved destroyed vehicle: "+item.id)
+	for id in workers:
+		if not jobs.has(workers[id]) and not couplings.has(workers[id]): errors.append("Recovery worker lacks one actual job: "+id)
+	return errors

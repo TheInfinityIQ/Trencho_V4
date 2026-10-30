@@ -22,9 +22,12 @@ func _a41() -> void:
 	var fixture := Fixture.new()
 	var rear: RefCounted = fixture.base.rear
 	var ledger: RefCounted = rear.ledger
+	expect(rear.recovery.inspect("tractor").conditions.is_empty(),"inspection accepts supported hull at actual non-axis heading")
 	expect(ledger.request_stock("cargo-reservation","freight-b",4,"test","Reserved cargo",rear.PLAYER).ok,"real reservation before loss")
 	expect(ledger.apply_vehicle_surface_damage("carrier",1000,999,"Side","A41 destroying strike").ok,"destroying hull strike")
 	expect(ledger.inspect_entity("healthy").health == 40 and ledger.inspect_entity("healthy").suppression == 80,"A41 healthy occupant receives exactly60 injury/80 suppression")
+	rear.advance_time(0)
+	expect(ledger.inspect_entity("healthy").suppression == 80,"zero elapsed time cannot immediately recover destruction suppression")
 	expect(ledger.inspect_entity("injured").assignment == "Wounded" and ledger.inspect_entity("injured").health == 0,"A41 injured occupant incapacitated once")
 	expect(ledger.inspect_entity("incapacitated").assignment == "Dead" and rear.combat.deaths.has("incapacitated"),"A41 prior incapacitation becomes one roster loss")
 	for id in ["healthy","injured","incapacitated"]:
@@ -47,7 +50,8 @@ func _a41() -> void:
 	rear.advance_time(59.75)
 	expect(not ledger.inspect_entity("carrier").wreck_cleared,"wreck remains until exact work boundary")
 	rear.advance_time(0.25)
-	expect(ledger.inspect_entity("carrier").wreck_cleared and ledger.inspect_entity("clear-m11").quantity == 0,"wreck clears once without free Metal")
+	expect(ledger.inspect_entity("carrier").wreck_cleared and ledger.local_vehicle_material("carrier") == 3,"wreck clears after consuming20actual nearbyM11, including eligible owned salvage")
+	expect(ledger.total_stock("M01") == 0,"wreck clearance creates no Metal")
 	expect(fixture.base.audit().is_empty(),"A41 whole-ledger audit: "+str(fixture.base.audit()))
 
 func _water_and_no_exit() -> void:
@@ -83,6 +87,22 @@ func _repairs() -> void:
 	rear.advance_time(60)
 	expect(not ledger.inspect_entity("tow").damage_immobilized,"only completed mobility action clears immobilization")
 	expect(ledger.inspect_entity("repair-stock").quantity == 50,"health10 plus mobility20M11 consumed exactly once")
+	fixture.hull("stranded-wheel","T02",Vector2(600,50),false)
+	ledger.apply_vehicle_surface_damage("stranded-wheel",200,999,"Side","Stranded repair case")
+	rear.combat.world.paint(Rect2i(596,48,8,4),"TR09")
+	ledger.move_entity("repairer","repairer-ground",Vector2(600,53))
+	fixture.engineer("second-repairer",Vector2(600,53))
+	ledger.add_place("wheel-material","Physically staged beside wheel hull",Vector2(600,53))
+	ledger.add_stock("wheel-m11","M11",10,1.0,"wheel-material",rear.PLAYER)
+	ledger.add_person("repair-hostile","wheel-material","army-red")
+	rear.advance_time(10)
+	expect(not rear.recovery.start_repair("stranded-wheel",["repairer","second-repairer"]).ok and ledger.inspect_entity("wheel-m11").quantity == 10,"visible hostile blocks repair before material commitment")
+	ledger.move_entity("repair-hostile","wheel-material",Vector2(800,53))
+	expect(rear.recovery.start_repair("stranded-wheel",["repairer","second-repairer"]).ok,"two real local P02 commit one health repair")
+	rear.advance_time(19.75)
+	expect(ledger.inspect_entity("stranded-wheel").health == 200,"two engineers cannot finish40work before20active seconds")
+	rear.advance_time(0.25)
+	expect(ledger.inspect_entity("stranded-wheel").health == 300 and not rear.field_structures.assess_vehicle("stranded-wheel").ok,"health repair leaves actual wheel vehicle stranded on forbidden terrain")
 	expect(fixture.base.audit().is_empty(),"repair accounting")
 
 func _a42() -> void:
@@ -113,4 +133,11 @@ func _a42() -> void:
 	expect(rear.recovery.start_coupling("tractor","tow","repairer",false).ok,"stopped pair requires real detach work")
 	rear.advance_time(20)
 	expect(ledger.inspect_entity("tractor").towing.is_empty(),"detached after20active seconds; disabled target remains disabled")
+	expect(rear.recovery.start_coupling("tractor","tow","repairer").ok,"same physical pair can be recoupled")
+	rear.advance_time(20)
+	var lane: Dictionary = rear.recovery.start_tow_route("tractor",Vector2(201.5,20.5))
+	expect(lane.ok,"coupled tractor starts a measured ground recovery lane")
+	if lane.ok:
+		rear.advance_time(lane.seconds)
+		expect(ledger.inspect_entity("tractor").position.distance_to(Vector2(201.5,20.5)) < 0.01 and ledger.inspect_entity("tow").position.distance_to(Vector2(189.5,20.5)) < 0.01,"ordinary recovery lane moves both actual hulls and keeps spacing")
 	expect(fixture.base.audit().is_empty(),"A42 physical load/fuel/person accounting: "+str(fixture.base.audit()))

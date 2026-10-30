@@ -20,6 +20,7 @@ const Orders = preload("res://game/orders/order_service.gd")
 const Objectives = preload("res://game/objectives/objective_service.gd")
 const Field = preload("res://game/field_structures/field_service.gd")
 const Bridges = preload("res://game/bridges/bridge_service.gd")
+const Demolition = preload("res://game/bridges/demolition_service.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
 var rear := Rear.new("Empty")
 var receiving: RefCounted
@@ -53,6 +54,7 @@ func _init(expanded: bool = false) -> void:
 	rear.field_structures = Field.new(rear)
 	rear.bridges = Bridges.new(rear)
 	rear.recovery = Recovery.new(rear)
+	rear.demolition = Demolition.new(rear)
 	var dispatch_rear_ref: WeakRef = weakref(rear)
 	receiving.external_rear_reservations = func() -> int:
 		var owner: RefCounted = dispatch_rear_ref.get_ref()
@@ -98,7 +100,7 @@ func snapshot() -> Dictionary:
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
 		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"military":rear.military.snapshot(), "combat":rear.combat.snapshot(), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "expanded_catalogue": expanded_catalogue}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = rear.audit()
@@ -108,10 +110,12 @@ func audit() -> Array[String]:
 	failures.append_array(rear.construction.audit())
 	failures.append_array(rear.military.audit())
 	failures.append_array(rear.combat.audit())
+	failures.append_array(rear.recovery.audit())
 	failures.append_array(rear.orders.audit())
 	failures.append_array(rear.objectives.audit())
 	failures.append_array(rear.field_structures.audit())
 	failures.append_array(rear.bridges.audit())
+	failures.append_array(rear.demolition.audit())
 	if not is_equal_approx(rear.time, receiving._time) or not is_equal_approx(rear.time, rear.ledger.snapshot().time):
 		failures.append("Shared event clocks disagree")
 	for id in receiving._workers:

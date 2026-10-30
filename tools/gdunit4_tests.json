@@ -175,6 +175,10 @@
       "cases": ["test_recovery_destruction_repair_and_tow_controls_at_development_size"]
     },
     {
+      "path": "game/bridges/tests/demolition_input_test.gd",
+      "cases": ["test_a36_real_buttons_clearance_and_small_render"]
+    },
+    {
       "path": "game/bridges/tests/bridge_input_test.gd",
       "cases": ["test_bridge_delivery_traversal_damage_and_small_render"]
     },

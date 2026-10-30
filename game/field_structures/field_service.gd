@@ -52,7 +52,7 @@ func order(code: String, center: Vector2, owner: String = "army-blue", company_i
 
 func assign_engineer(site_id: String, person_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(site_id,{})
-	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or (_rear().bridges != null and _rear().bridges.engineer_committed(person_id)): return _fail("Choose an unfinished site and an engineer not already committed elsewhere.")
+	if row.is_empty() or row.state in ["Complete","Cancelled","Destroyed"] or engineer_committed(person_id) or (_rear().bridges != null and _rear().bridges.engineer_committed(person_id)) or (_rear().demolition != null and _rear().demolition.engineer_committed(person_id)): return _fail("Choose an unfinished site and an engineer not already committed elsewhere.")
 	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
 	if person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02": return _fail("A real friendly P02 engineer is required.")
 	if row.assigned.size() >= 4: return _fail("At most four engineers may share one ordinary field project.")
@@ -252,7 +252,7 @@ func request_repair(target_id: String, engineers: Array, repair_point_id: String
 		if not service_status(repair_point_id).ok: return _fail("Repair point lacks actual P02, E08 or ten local M11.")
 	for id in engineers:
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
-		if engineers.count(id) > 1 or person.get("kind","") != "PERSON" or person.owner != site.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(site.center) > 2.0+EPS or _rear().military._held(id,"E08") < 1 or workers.has(id) or _repair_busy(id) or (_rear().bridges != null and _rear().bridges.engineer_committed(id)) or (not repair_point_id.is_empty() and not site.staff.has(id)): return _fail("Each distinct assigned P02 needs actual local E08 and safe physical access.")
+		if engineers.count(id) > 1 or person.get("kind","") != "PERSON" or person.owner != site.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(site.center) > 2.0+EPS or _rear().military._held(id,"E08") < 1 or workers.has(id) or _repair_busy(id) or (_rear().bridges != null and _rear().bridges.engineer_committed(id)) or (_rear().demolition != null and _rear().demolition.engineer_committed(id)) or (not repair_point_id.is_empty() and not site.staff.has(id)): return _fail("Each distinct assigned P02 needs actual local E08 and safe physical access.")
 	var consumed: Dictionary = _rear().ledger.consume_local_batch(site.id,site.owner,{"M11":10},"G19 repair of "+target_id)
 	if not consumed.ok: return consumed
 	repairs[target_id] = {"target":target_id,"site":site.id,"point":repair_point_id,"engineers":engineers.duplicate(),"progress":0.0,"receipt":consumed.receipt,"at":_rear().time}
@@ -267,7 +267,7 @@ func clear_segment(site_id: String, engineer_id: String) -> Dictionary:
 	var row: Dictionary = projects.get(site_id,{})
 	if row.is_empty() or row.state != "Complete" or row.code not in ["S04","S05"] or clearances.has(site_id): return _fail("A completed wire or vehicle obstacle needs one clearance job.")
 	var person: Dictionary = _rear().ledger.inspect_entity(engineer_id)
-	if person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.center) > 2.0+EPS or _rear().military._held(engineer_id,"E08") < 1 or engineer_committed(engineer_id) or (_rear().bridges != null and _rear().bridges.engineer_committed(engineer_id)) or not _site_safe(row): return _fail("One uncommitted safe local P02 with E08 is required.")
+	if person.get("kind","") != "PERSON" or person.owner != row.owner or person.qualification != "P02" or person.health <= 0 or person.position.distance_to(row.center) > 2.0+EPS or _rear().military._held(engineer_id,"E08") < 1 or engineer_committed(engineer_id) or (_rear().bridges != null and _rear().bridges.engineer_committed(engineer_id)) or (_rear().demolition != null and _rear().demolition.engineer_committed(engineer_id)) or not _site_safe(row): return _fail("One uncommitted safe local P02 with E08 is required.")
 	clearances[site_id] = {"engineer":engineer_id,"progress":0.0,"required":20.0 if row.code == "S04" else 120.0}
 	return {"ok":true,"message":"Clearance started with no material yield; work pauses if engineer leaves."}
 
@@ -312,7 +312,9 @@ func assess_vehicle(hull_id: String, facing: float = 0.0) -> Dictionary:
 	var hull: Dictionary = _rear().ledger.inspect_entity(hull_id)
 	if hull.get("kind","") != "CARRIER" or not hull.has("vehicle_spec") or not Terrain.VEHICLES.has(hull.design_type): return _fail("An actual catalogued vehicle hull is required.")
 	var direction := Vector2.from_angle(facing)
-	var probe: Dictionary = _rear().combat.world.route({"position":hull.position,"facing":facing,"size":hull.vehicle_spec.footprint,"movement_class":Terrain.VEHICLES[hull.design_type].class,"base":Terrain.VEHICLES[hull.design_type].base,"rate":Terrain.VEHICLES[hull.design_type].rate,"gross_mass_kg":Routes.gross_kg(_rear().ledger,hull_id)},hull.position+direction*0.1)
+	var endpoint: Vector2 = hull.position+direction
+	var actual_heading: float = (endpoint-hull.position).angle()
+	var probe: Dictionary = _rear().combat.world.route({"position":hull.position,"facing":actual_heading,"size":hull.vehicle_spec.footprint,"movement_class":Terrain.VEHICLES[hull.design_type].class,"base":Terrain.VEHICLES[hull.design_type].base,"rate":Terrain.VEHICLES[hull.design_type].rate,"gross_mass_kg":Routes.gross_kg(_rear().ledger,hull_id)},endpoint)
 	return {"ok":probe.ok,"status":"Mobile terrain support" if probe.ok else "Terrain Stranded","reason":"" if probe.ok else probe.reason,"position":hull.position,"health":hull.health,"hull":hull_id}
 
 func route_vehicle(hull_id: String, destination: Vector2, facing: float = 0.0) -> Dictionary:

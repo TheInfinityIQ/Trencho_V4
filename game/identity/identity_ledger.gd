@@ -5,6 +5,7 @@ signal vehicle_damaged(vehicle_id: String)
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
 const Records = preload("res://game/identity/identity_records.gd")
+const BLAST_TOP_ARMOUR := {"T01":0,"T02":0,"T03":0,"T04":10,"T05":25}
 
 var _entities: Dictionary[String, Records.Entity] = {}
 var _claims: Dictionary[String, Records.Claim] = {}
@@ -616,6 +617,26 @@ func release_claim(id: String) -> Dictionary:
 	_event("Claim cancelled; physical stock unchanged", id)
 	return _ok("Claim released. Goods already moved stay at their physical destination.", id)
 
+func consume_claimed_batch(claim_ids: Array, claimant: String, position: Vector2, radius: float, type: String, count: int, reason: String) -> Dictionary:
+	var receipt: Array[Dictionary] = []
+	var seen := {}
+	var total := 0
+	for id in claim_ids:
+		var claim: Records.Claim = _claims.get(id)
+		if seen.has(id) or claim == null or claim.cancelled or claim.claimant != claimant or claim.reserved <= 0: return _reject("INVALID_CLAIM_BATCH","Every consumed portion needs its unique active project claim.")
+		seen[id] = true
+		var source := _stock(claim.source_id)
+		if source == null or source.design_type != type or not _is_place(source.holder_id) or _world_position(source.id).distance_to(position) > radius or source.quantity < claim.reserved: return _reject("CLAIM_NOT_LOCAL","Committed stock must remain physically staged at the project.")
+		total += claim.reserved
+		receipt.append({"id":source.id,"type":type,"count":claim.reserved,"claim":id})
+	if total != count: return _reject("INCOMPLETE_CLAIM_BATCH","Exact authorized quantity must be exclusively committed before consumption.")
+	for portion in receipt:
+		var claim: Records.Claim = _claims[portion.claim]
+		claim.fulfilled += portion.count
+		claim.reserved = 0
+		_remove_stock(portion.id,portion.count,reason,false)
+	return {"ok":true,"receipt":receipt,"message":"Exact project-claimed physical batch consumed once."}
+
 
 func reserve_remaining(id: String) -> Dictionary:
 	if not _claims.has(id) or _claims[id].cancelled:
@@ -799,7 +820,7 @@ func destroy_carrier_on_bridge(carrier_id: String) -> Dictionary:
 	carrier.submerged = true
 	carrier.last_damage_at = _time
 	carrier.state = "Destroyed by bridge collapse"
-	if vehicle_damaged.get_connections().is_empty():
+	if carrier.vehicle_spec.is_empty() or vehicle_damaged.get_connections().is_empty():
 		for person_id in people: kill_person(person_id,"Bridge collapse on water span")
 	vehicle_damaged.emit(carrier_id)
 	_event("Carrier destroyed on collapsed water span",carrier_id)
@@ -879,6 +900,13 @@ func consume_local_batch(holder: String, owner: String, ingredients: Dictionary,
 		_remove_stock(portion.id, portion.count, reason, false)
 	return {"ok": true, "code": "OK", "message": "Complete local batch consumed once.", "receipt": receipt}
 
+func available_stock_near(position: Vector2, radius: float, owner: String, type: String) -> int:
+	var total := 0
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.owner == owner and entity.design_type == type and _is_place(entity.holder_id) and _world_position(entity.id).distance_to(position) <= radius:
+			total += available(entity.id)
+	return total
+
 func recover_consumed_material(id: String, type: String, quantity: int, unit_mass_kg: float, holder: String, owner: String) -> Dictionary:
 	# G19 cancellation returns the documented half of an already consumed batch.
 	if quantity <= 0 or id.is_empty() or not _free_id(id) or not _is_place(holder) or owner.is_empty() or int(_consumed.get(type,0)) < quantity:
@@ -898,6 +926,18 @@ func apply_heavy_repair(id: String, health: int) -> Dictionary:
 	_event("Field repair restored actual heavy-object health",id)
 	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
 
+func apply_heavy_damage(id: String, damage: int, penetration: int, reason: String) -> Dictionary:
+	var entity: Records.Entity = _entities.get(id)
+	if entity != null and entity.kind == Records.Kind.CARRIER and not entity.vehicle_spec.is_empty():
+		return apply_vehicle_surface_damage(id,damage,penetration,"Top",reason)
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or entity.health <= 0 or damage <= 0 or reason.is_empty():
+		return _reject("INVALID_HEAVY_DAMAGE","Positive damage requires an actual surviving vehicle or heavy object.")
+	var armour: int = int(BLAST_TOP_ARMOUR.get(entity.design_type,0))
+	if penetration < armour: return _ok("Blast failed to penetrate actual armour.",id)
+	entity.health = maxi(0,entity.health-damage)
+	if entity.health == 0: entity.state = "Destroyed by blast"
+	_event(reason,id)
+	return {"ok":true,"id":id,"health":entity.health,"penetrated":true,"message":"Actual heavy-object health reduced by blast."}
 
 func set_vehicle_facing(id: String, degrees: float) -> Dictionary:
 	var hull: Records.Entity = _entities.get(id)
@@ -943,6 +983,8 @@ func eject_destroyed_carrier_occupant(person_id: String, carrier_id: String, pos
 	person.holder_id = carrier.holder_id
 	person.position = position-_world_position(carrier.holder_id)
 	person.crew_station = ""
+	if person.assignment == Records.Assignment.PASSENGER:
+		_set_assignment(person,Records.Assignment.FORMATION_DUTY if not person.duty_id.is_empty() else Records.Assignment.AVAILABLE,person.duty_id)
 	person_position_changed.emit(person_id)
 	return _ok("Same person ejected onto actual adjacent ground.",person_id)
 
@@ -1274,6 +1316,7 @@ func _split_stock(source: Records.Entity, quantity: int, destination_id: String)
 	var portion := _new_entity(new_id, Records.Kind.STOCK, source.design_type, source.owner,
 		"", destination_id, source.description)
 	portion.origin_id = source.origin_id
+	portion.personal_gear_owner = source.personal_gear_owner
 	portion.quantity = quantity
 	portion.unit_mass_kg = source.unit_mass_kg
 	source.quantity -= quantity
