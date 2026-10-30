@@ -74,6 +74,7 @@ Invoke-GodotCheck -Name 'terrain-ui' -EngineArguments @('--script', 'res://game/
 Invoke-GodotCheck -Name 'world-data-probe' -EngineArguments @('--script', 'res://game/world_probe/full_size_probe.gd')
 Invoke-GodotCheck -Name 'battlefield-session-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/session_regression.gd')
 Invoke-GodotCheck -Name 'hq-location-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/hq_location_regression.gd')
+Invoke-GodotCheck -Name 'army-hierarchy-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/army_hierarchy_regression.gd')
 Invoke-GodotCheck -Name 'forward-supply-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_supply_regression.gd')
 Invoke-GodotCheck -Name 'forward-transport-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_transport_regression.gd')
 Invoke-GodotCheck -Name 'forward-clock-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/forward_clock_regression.gd')

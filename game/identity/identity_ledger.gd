@@ -465,6 +465,14 @@ func request_assignment(person_id: String, assignment: int, duty_id: String) -> 
 	return _ok("Exclusive duty changed.", person_id)
 
 
+func assign_initial_formation(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if _time != 0.0 or person == null or squad_id.is_empty() or person.rear_place != "None" or person.assignment != Records.Assignment.AVAILABLE or person.pending_assignment != -1 or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not _is_place(person.holder_id):
+		return _reject("INVALID_INITIAL_FORMATION","An uncommitted living person on foot may begin in a declared formation only at time zero.")
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,squad_id)
+	return _ok("Initial formation duty recorded on the same person.",person_id)
+
+
 func cancel_assignment_request(person_id: String) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.pending_assignment == -1:

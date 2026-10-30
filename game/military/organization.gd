@@ -26,6 +26,36 @@ func _init(rear: RefCounted) -> void:
 	hq_position = rear.ledger.inspect_entity("hq-berth").position
 	rear.ledger.add_place("hq-formation","Military formation report at HQ",hq_position)
 
+func add_initial_squad(id: String, kind: String, people: Array[String], company_id: String, platoon_id: String, owner: String) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.time != 0.0 or id.is_empty() or company_id.is_empty() or platoon_id.is_empty() or owner not in ["army-blue","army-red"] or squads.has(id) or kind not in ["Rifle","Engineer","Medical"] or people.size() < MINIMUM.get(kind,9) or people.size() > 8:
+		return _fail("Initial squad requires time zero, one declared army, unique hierarchy and a supported actual roster.")
+	if companies.has(company_id) and companies[company_id].get("owner",rear.PLAYER) != owner: return _fail("A company cannot contain opposing armies.")
+	if owner == rear.PLAYER and rear.dispatch.military_people.size()+rear.dispatch.incoming_people.size()+people.size() > 384: return _fail("Initial military person admission is full.")
+	if _owned_count(squads,owner) >= 27 or (not companies.has(company_id) and _owned_count(companies,owner) >= 3) or (not platoons.has(platoon_id) and _owned_count(platoons,owner) >= 9): return _fail("This army's initial hierarchy capacity is full.")
+	if platoons.has(platoon_id) and (platoons[platoon_id].company != company_id or platoons[platoon_id].squads.size() >= 3): return _fail("Initial platoon parent or capacity conflicts.")
+	if not platoons.has(platoon_id) and companies.has(company_id) and companies[company_id].platoons.size() >= 3: return _fail("Company platoon capacity reached.")
+	var seen := {}
+	for person_id in people:
+		var person: Dictionary = rear.ledger.inspect_entity(person_id)
+		if seen.has(person_id) or rear.actors.has(person_id) or person.get("rear_place","") != "None" or person.get("owner","") != owner or person.get("assignment","") != "Available" or person.get("health",0) <= 0 or person.get("pending_assignment","") != "None" or not str(person.get("crew_station","")).is_empty() or not str(person.get("carrying_stock_id","")).is_empty() or not str(person.get("carrying_weapon_id","")).is_empty() or rear.ledger.inspect_entity(person.get("holder_id","")).get("kind","") != "PLACE": return _fail("Initial members must be distinct, living, free battlefield people of this army on foot.")
+		seen[person_id] = true
+	var package: Dictionary = _package(kind,people)
+	if not package.ok: return package
+	if not companies.has(company_id): companies[company_id] = {"id":company_id,"owner":owner,"army_id":"army" if owner == rear.PLAYER else owner,"platoons":[],"service_vehicles":[],"leader":"","blocker":""}
+	if not platoons.has(platoon_id):
+		platoons[platoon_id] = {"id":platoon_id,"owner":owner,"company":company_id,"squads":[],"vehicles":[],"leader":"","blocker":""}
+		companies[company_id].platoons.append(platoon_id)
+	for person_id in people:
+		var assigned: Dictionary = rear.ledger.assign_initial_formation(person_id,id)
+		assert(assigned.ok)
+		if owner == rear.PLAYER: rear.dispatch.military_people[person_id] = "Initial formation"
+	squads[id] = {"id":id,"owner":owner,"kind":kind,"company":company_id,"platoon":platoon_id,"roster":people.duplicate(),"state":"Active","leader":"","acting":false,"equipment":{},"report_due":INF,"replacement_due":INF,"gun_id":"","shell_claims":[],"shell_ids":[],"vehicle":"","blocker":"","replacement_attempted":false}
+	platoons[platoon_id].squads.append(id)
+	_appoint_squad(squads[id])
+	_appoint_seniors()
+	return {"ok":true,"id":id,"message":"Initial squad registered with its existing people and real parent hierarchy."}
+
 func request_need(kind: String, reason: String, priority: int = 4, parent_value: int = 0) -> Dictionary:
 	if kind not in KINDS or reason.is_empty() or priority < 0 or priority > 9 or parent_value < 0 or parent_value > 9:
 		return _fail("Command needs one known squad type, reason, priority and parent-mission value.")
@@ -39,7 +69,7 @@ func assess_squad(kind: String, people: Array[String]) -> Dictionary:
 	if kind not in KINDS: return _fail("Choose a defined G15 squad type.")
 	if people.size() < int(MINIMUM[kind]): return _fail("%s needs at least %d actual people; only %d offered." % [kind,MINIMUM[kind],people.size()])
 	if people.size() > 8: return _fail("An ordinary squad has at most eight actual roster places.")
-	if squads.size() >= 27: return _fail("Army infantry cap is 27 squads and 216 roster places.")
+	if _owned_count(squads,_rear_ref.get_ref().PLAYER) >= 27: return _fail("Army infantry cap is 27 squads and 216 roster places.")
 	var unique := {}
 	var specialist_count := 0
 	for id in people:
@@ -284,6 +314,7 @@ func request_replacement(squad_id: String, person_id: String) -> Dictionary:
 		if report.squad == squad_id: pending += 1
 	if row.roster.size()+pending >= 8: return _fail("Eight actual or reserved roster places are already occupied.")
 	var person: Dictionary = rear.ledger.inspect_entity(person_id)
+	if person.get("owner","") != row.get("owner",rear.PLAYER): return _fail("Replacement must belong to the squad's army.")
 	if not rear.dispatch.military_people.has(person_id) or rear.dispatch.hq_reserve.get(person_id,"") != "Occupied" or person.is_empty() or person.pending_assignment != "None" or rear.hq._target_busy(person_id):
 		return _fail("Only a physically received, free HQ Reserve member may report as a replacement.")
 	if not _replacement_ready(row,person_id): return _fail("Replacement needs the matching qualification and actually issued role package.")
@@ -357,16 +388,18 @@ func attach_vehicle(hull_id: String, parent_id: String) -> Dictionary:
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	if vehicles.has(hull_id) or not rear.dispatch.military_hulls.has(hull_id) or hull.is_empty() or hull.fleet_domain != "Military":
 		return _fail("Attach one actual admitted military hull once; an incoming or rear hull is not an element.")
-	if vehicles.size() >= 24: return _fail("Army military fleet cap is 24 actual hulls.")
+	if _owned_count(vehicles,hull.owner) >= 24: return _fail("Army military fleet cap is 24 actual hulls.")
 	if _living_crew_id(hull,"Driver").is_empty(): return _fail("A vehicle element needs its living, actually assigned qualified driver before attachment.")
 	if platoons.has(parent_id):
+		if platoons[parent_id].get("owner",rear.PLAYER) != hull.owner: return _fail("A hull may attach only to its own army.")
 		if platoons[parent_id].vehicles.size() >= 2: return _fail("A platoon may attach at most two vehicle elements.")
 		platoons[parent_id].vehicles.append(hull_id)
 	elif companies.has(parent_id):
+		if companies[parent_id].get("owner",rear.PLAYER) != hull.owner: return _fail("A hull may attach only to its own army.")
 		if companies[parent_id].service_vehicles.size() >= 2: return _fail("A company may attach at most two additional service vehicles.")
 		companies[parent_id].service_vehicles.append(hull_id)
 	else: return _fail("Choose one existing real platoon or company parent.")
-	vehicles[hull_id] = {"id":hull_id,"parent":parent_id,"crew":hull.crew_by_station.duplicate(true),"passenger_squad":"","ammo_target":{},"route_fuel":0.0,"blocker":""}
+	vehicles[hull_id] = {"id":hull_id,"owner":hull.owner,"parent":parent_id,"crew":hull.crew_by_station.duplicate(true),"passenger_squad":"","ammo_target":{},"route_fuel":0.0,"blocker":""}
 	return {"ok":true,"message":"Same military hull attached as a vehicle element with distinct actual crew."}
 
 func set_vehicle_mission(hull_id: String, ammo_target: Dictionary, route_fuel: float) -> Dictionary:
@@ -539,15 +572,15 @@ func _prune_empty_parent(platoon_id: String) -> void:
 
 func _available_platoon() -> Dictionary:
 	for id in platoons:
-		if platoons[id].squads.size() < 3: return platoons[id]
-	if platoons.size() >= 9: return {}
+		if platoons[id].get("owner",_rear_ref.get_ref().PLAYER) == _rear_ref.get_ref().PLAYER and platoons[id].squads.size() < 3: return platoons[id]
+	if _owned_count(platoons,_rear_ref.get_ref().PLAYER) >= 9: return {}
 	var company_id := ""
 	for id in companies:
-		if companies[id].platoons.size() < 3:
+		if companies[id].get("owner",_rear_ref.get_ref().PLAYER) == _rear_ref.get_ref().PLAYER and companies[id].platoons.size() < 3:
 			company_id = id
 			break
 	if company_id.is_empty():
-		if companies.size() >= 3: return {}
+		if _owned_count(companies,_rear_ref.get_ref().PLAYER) >= 3: return {}
 		company_id = "company-%02d" % (companies.size()+1)
 		companies[company_id] = {"id":company_id,"platoons":[],"service_vehicles":[],"leader":"","blocker":"Awaiting an eligible existing subordinate leader."}
 	var platoon_id := "platoon-%02d" % (platoons.size()+1)
@@ -929,9 +962,11 @@ func commander() -> String:
 	var original: Dictionary = rear.ledger.inspect_entity("initial-hq-05")
 	if not original.is_empty() and original.health > 0: return original.id
 	for company in companies.values():
+		if company.get("owner",rear.PLAYER) != rear.PLAYER: continue
 		var p: Dictionary = rear.ledger.inspect_entity(company.leader)
 		if not p.is_empty() and p.health > 0 and p.basic_training: return p.id
 	for platoon in platoons.values():
+		if platoon.get("owner",rear.PLAYER) != rear.PLAYER: continue
 		var p: Dictionary = rear.ledger.inspect_entity(platoon.leader)
 		if not p.is_empty() and p.health > 0 and p.basic_training: return p.id
 	return ""
@@ -939,7 +974,8 @@ func commander() -> String:
 func audit() -> Array[String]:
 	var errors: Array[String] = []
 	var rear: RefCounted = _rear_ref.get_ref()
-	if companies.size() > 3 or platoons.size() > 9 or squads.size() > 27 or vehicles.size() > 24: errors.append("G15 army organizational cap exceeded")
+	for owner in ["army-blue","army-red"]:
+		if _owned_count(companies,owner) > 3 or _owned_count(platoons,owner) > 9 or _owned_count(squads,owner) > 27 or _owned_count(vehicles,owner) > 24: errors.append("G15 army organizational cap exceeded: " + owner)
 	var seen := {}
 	for row in squads.values():
 		if row.roster.size() > 8: errors.append("Overfull G15 squad "+row.id)
@@ -985,3 +1021,9 @@ func audit() -> Array[String]:
 
 func _fail(message: String) -> Dictionary:
 	return {"ok":false,"message":message}
+
+func _owned_count(rows: Dictionary, owner: String) -> int:
+	var count := 0
+	for row in rows.values():
+		if row.get("owner",_rear_ref.get_ref().PLAYER) == owner: count += 1
+	return count

@@ -338,7 +338,8 @@ func _sample_squad(squad_id: String) -> void:
 	for person_id in _rear().military._active_roster_members(squad):
 		var observer: Dictionary = ledger.inspect_entity(person_id)
 		for target in ledger.snapshot().entities:
-			if target.kind not in ["PERSON","CARRIER"] or target.owner == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
+			var affiliation: String = str(target.controller) if target.kind == "CARRIER" else str(target.owner)
+			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
 			if _rear().combat.world.observe(observer.position,target.position).visible:
 				var estimated_strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))
 				seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":estimated_strength,"source":person_id,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown")}
@@ -457,7 +458,7 @@ func _parent(id: String) -> String:
 	if id == "army": return ""
 	if _rear().military.squads.has(id): return str(_rear().military.squads[id].platoon)
 	if _rear().military.platoons.has(id): return str(_rear().military.platoons[id].company)
-	if _rear().military.companies.has(id): return "army"
+	if _rear().military.companies.has(id): return str(_rear().military.companies[id].get("army_id","army"))
 	return ""
 
 func _source_current(source_id: String, target_id: String) -> bool:
