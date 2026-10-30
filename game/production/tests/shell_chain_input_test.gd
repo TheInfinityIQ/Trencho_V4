@@ -11,9 +11,10 @@ func test_normal_launch_r33_raw_explosives_haul_and_physical_autocannon_rounds()
 
 
 func _chain(recipe: String, metal: int, type: String, yield_count: int, mass: float, work: float) -> void:
+	# Current development acceptance uses one fixed 1280x720 screen.
 	var window := get_tree().root
 	var previous := {"size": window.size, "content": window.content_scale_size}
-	window.size = Vector2i(1000, 720)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
@@ -128,7 +129,7 @@ func _chain(recipe: String, metal: int, type: String, yield_count: int, mass: fl
 	assert_dict(rear._output_promises).is_empty()
 	assert_array(rear.audit()).is_empty()
 	await _capture(runner, main, demo, recipe.to_lower() + "_physical_output")
-	window.size = Vector2i(960, 640)
+	window.size = Vector2i(1280, 720)
 	window.content_scale_size = window.size
 	await runner.simulate_frames(4)
 	var scroll := (demo.get("_people") as Label).get_parent() as ScrollContainer
