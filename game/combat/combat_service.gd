@@ -48,6 +48,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	if broken.has(shooter_id): return _block("Broken morale requires fallback before offensive fire.")
 	if target.assignment in ["Wounded","Recovery","Dead"] or target.health <= 0 or _seated(target): return _block("No deliberate fire at incapacitated, recovering or seated people.")
 	if _medic_busy(shooter_id): return _block("Active care must be interrupted before firing.")
+	if _rear().field_structures != null and _rear().field_structures.working(shooter_id): return _block("Active field construction must be interrupted before firing.")
 	if weapon.holder_id != shooter_id or not weapon.functional or not WEAPONS.has(weapon.design_type): return _block("Only the holder of an intact personal direct-fire weapon can fire it.")
 	var spec: Dictionary = WEAPONS[weapon.design_type]
 	if weapon.design_type == "E19" and shooter.qualification != "P07": return _block("A marksman rifle needs its actual P07 holder.")
@@ -56,6 +57,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	if reloads.has(weapon_id): return _block("Reload work is in progress.")
 	var origin: Vector2 = shooter.position
 	var destination: Vector2 = target.position
+	if _rear().field_structures != null and not _rear().field_structures.occupant_fire_allowed(shooter_id,destination): return _block("Target is outside the bunker firing ports.")
 	var distance := origin.distance_to(destination)
 	if distance <= EPS or distance > float(spec.range)+EPS: return _block("Target is outside this weapon's legal direct-fire range.")
 	var sight: Dictionary = world.observe(origin,destination,"ordinary",1.5,float(spec.range))

@@ -60,10 +60,12 @@ func create_heavy_output(admission: String, claimant: String, id: String, type: 
 	if type == "E13":
 		entity.unit_mass_kg = properties.mass
 		entity.health = properties.health
+		entity.max_health = properties.health
 	else:
 		entity.vehicle_spec = properties.duplicate(true)
 		entity.unit_mass_kg = entity.vehicle_spec.mass
 		entity.health = entity.vehicle_spec.health
+		entity.max_health = entity.vehicle_spec.health
 		entity.fleet_domain = "Rear"
 		_rear_hull_promises.erase(admission)
 	_event("Physical heavy output created, without crew, fuel or ammunition", id)
@@ -851,6 +853,25 @@ func consume_local_batch(holder: String, owner: String, ingredients: Dictionary,
 		_remove_stock(portion.id, portion.count, reason, false)
 	return {"ok": true, "code": "OK", "message": "Complete local batch consumed once.", "receipt": receipt}
 
+func recover_consumed_material(id: String, type: String, quantity: int, unit_mass_kg: float, holder: String, owner: String) -> Dictionary:
+	# G19 cancellation returns the documented half of an already consumed batch.
+	if quantity <= 0 or id.is_empty() or not _free_id(id) or not _is_place(holder) or owner.is_empty() or int(_consumed.get(type,0)) < quantity:
+		return _reject("INVALID_MATERIAL_RECOVERY","Recovery needs a unique real pile and previously consumed material units.")
+	var recovered: Dictionary = add_stock(id,type,quantity,unit_mass_kg,holder,owner)
+	if not recovered.ok: return recovered
+	_consumed[type] -= quantity
+	_created[type] -= quantity
+	_event("Previously consumed project material returned as one physical pile",id)
+	return recovered
+
+func apply_heavy_repair(id: String, health: int) -> Dictionary:
+	var entity: Records.Entity = _entities.get(id)
+	if entity == null or entity.kind not in [Records.Kind.CARRIER,Records.Kind.HEAVY_OBJECT] or health <= 0 or entity.health >= entity.max_health:
+		return _reject("INVALID_HEAVY_REPAIR","Only an actually damaged vehicle or field gun can gain positive capped repair health.")
+	entity.health = mini(entity.max_health,entity.health+health)
+	_event("Field repair restored actual heavy-object health",id)
+	return _ok("The same vehicle or gun regained capped health, without changing terrain support.",id)
+
 
 func record_loss(source_id: String, quantity: int, reason: String) -> Dictionary:
 	return _remove_stock(source_id, quantity, reason, true)
@@ -878,6 +899,7 @@ func inspect_entity(id: String) -> Dictionary:
 	}
 	if entity.kind == Records.Kind.HEAVY_OBJECT:
 		result.health = entity.health
+		result.max_health = entity.max_health
 		result.packed = true
 		result.ammunition = {}
 	if entity.kind == Records.Kind.CARRIER:
@@ -886,6 +908,7 @@ func inspect_entity(id: String) -> Dictionary:
 			result.vehicle_spec = entity.vehicle_spec.duplicate(true)
 			result.fuel = entity.fuel
 			result.health = entity.health
+			result.max_health = entity.max_health
 			result.crew = []
 			result.crew_by_station = {}
 			result.passengers = []

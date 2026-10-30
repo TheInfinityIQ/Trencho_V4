@@ -13,6 +13,7 @@ Recorded 2026-10-25. These decisions describe the current foundation and may cha
 | Validate import and startup locally and on Linux CI | Catch broken resources and case-sensitive paths early. This does not replace gameplay tests, export checks, profiling, or visual verification. |
 | Pin the CI runner to Ubuntu 24.04 and checkout action to its v7.0.1 commit | Avoid automatic runner distribution migrations and deprecated action runtimes. Review these pins during maintenance. |
 | Defer Git LFS rules until assets are introduced | Avoid imposing a storage workflow before asset requirements exist. Configure LFS before the first large asset commit to avoid later history migration. |
+| Keep G19 field project state on the shared ledger, terrain world and rear clock | A field site cannot grant capability from an order or remote promise. [G19 ownership and G26a delivery boundary](g19_field_structures_roads.md) document the physical handoff, cancellation and G32 restore obligations. |
 
 ## Sources consulted
 

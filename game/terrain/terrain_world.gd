@@ -7,6 +7,7 @@ var bounds := Rect2i(0, 0, 900, 40)
 var cells: Dictionary = {}
 var obstacles: Array[Dictionary] = []
 var shields: Array[Dictionary] = []
+var field_effects: Array[Dictionary] = []
 var revision: int = 0
 
 
@@ -22,6 +23,50 @@ func paint(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
 
 func cell(at: Vector2i) -> Dictionary:
 	return cells.get(at, {"terrain": "TR01"})
+
+func set_project_overlay(id: String, area: Rect2i, kind: String, complete: bool, load_kg: float = 0.0, closed: bool = false) -> Dictionary:
+	if id.is_empty() or kind not in ["road","causeway"] or not bounds.encloses(area) or not area.has_area():
+		return _blocked("Project overlay needs a bounded real segment.")
+	for y in range(area.position.y,area.end.y):
+		for x in range(area.position.x,area.end.x):
+			var at := Vector2i(x,y)
+			var tile: Dictionary = cell(at)
+			var existing: Dictionary = tile.get("overlay",{})
+			if complete:
+				if not existing.is_empty() and existing.get("id","") != id: return _blocked("Another completed crossing or surface owns this cell.")
+				var slope: float = rad_to_deg(atan(Vector2(tile.get("gradient",Vector2.ZERO)).length()))
+				if kind == "road" and (tile.terrain in ["TR09","TR10","TR11","TR12"] or slope > 10.0+EPS): return _blocked("Road requires dry passable ground at at most ten degrees.")
+				if kind == "causeway" and not ((tile.terrain == "TR09" and not tile.get("deep_bog",false)) or (tile.terrain == "TR12" and tile.get("landform","") == "bog_edge")): return _blocked("Causeway needs shallow swamp or bog edge; deep water and cliffs remain barred.")
+	for y in range(area.position.y,area.end.y):
+		for x in range(area.position.x,area.end.x):
+			var at := Vector2i(x,y)
+			var tile: Dictionary = cell(at).duplicate(true)
+			if complete: tile["overlay"] = {"id":id,"kind":kind,"complete":true,"classes":[0,1,2],"load_kg":load_kg}
+			elif tile.get("overlay",{}).get("id","") == id: tile.erase("overlay")
+			if closed: tile["closed_project"] = id
+			elif tile.get("closed_project","") == id: tile.erase("closed_project")
+			cells[at] = tile
+	revision += 1
+	return {"ok":true,"message":"Actual project surface updated; routes recheck the terrain revision."}
+
+func set_project_structure(id: String, code: String, area: Rect2, complete: bool, facing: float = 0.0) -> void:
+	shields = shields.filter(func(row: Dictionary) -> bool: return row.get("id","") != id)
+	obstacles = obstacles.filter(func(row: Dictionary) -> bool: return row.get("id","") != id)
+	field_effects = field_effects.filter(func(row: Dictionary) -> bool: return row.get("id","") != id)
+	if complete:
+		if code in ["S01","S02","S03"]:
+			var forward := Vector2.from_angle(facing)
+			var face: Rect2
+			if absf(forward.x) >= absf(forward.y):
+				face = Rect2(Vector2(area.end.x,area.position.y) if forward.x >= 0.0 else area.position-Vector2(0.25,0.0),Vector2(0.25,area.size.y))
+			else:
+				face = Rect2(Vector2(area.position.x,area.end.y) if forward.y >= 0.0 else area.position-Vector2(0.0,0.25),Vector2(area.size.x,0.25))
+			shields.append({"id":id,"kind":code,"area":area,"rect":face,"bottom":0.0,"top":2.0 if code != "S03" else 3.0})
+		if code in ["S04","S05"]:
+			obstacle(id,area,0.0,1.5 if code == "S04" else 2.0,true,false)
+			obstacles[-1]["classes"] = [0,1] if code == "S04" else [1,2]
+		if code in ["S02","S04","S05"]: field_effects.append({"id":id,"code":code,"area":area})
+	revision += 1
 
 
 func ground(point: Vector2) -> float:
@@ -107,7 +152,7 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	for point in footprint(entity, start) + footprint(entity, destination):
 		if point.x < bounds.position.x - EPS or point.y < bounds.position.y - EPS or point.x > bounds.end.x + EPS or point.y > bounds.end.y + EPS: return _blocked("Whole footprint exceeds declared world")
 	for item in obstacles:
-		if item.solid and _overlap_interval(entity, start, destination, item.rect).x >= 0: return _blocked("Footprint blocked by %s" % item.id)
+		if item.solid and int(entity.movement_class) in item.get("classes",[0,1,2]) and _overlap_interval(entity, start, destination, item.rect).x >= 0: return _blocked("Footprint blocked by %s" % item.id)
 	var minimum := start.min(destination) - Vector2(entity.size.length(), entity.size.length()) * 0.5
 	var maximum := start.max(destination) + Vector2(entity.size.length(), entity.size.length()) * 0.5
 	var intervals: Array[Dictionary] = []
@@ -118,8 +163,17 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var at := Vector2i(x, y)
 			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
 			if interval.x < 0: continue
+			if not str(cell(at).get("closed_project","")).is_empty(): return _blocked("Active causeway upgrade closes this segment to traffic")
 			var rule := support(at, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
+			for effect in field_effects:
+				if not effect.area.has_point(Vector2(at)+Vector2(0.5,0.5)): continue
+				if effect.code == "S02" and entity.movement_class == 0: rule.factor *= 0.8
+				if effect.code == "S05" and entity.movement_class == 0: rule.factor *= 0.7
+				if effect.code == "S04" and entity.movement_class == 2: rule.factor *= 0.25
+			var overlay: Dictionary = cell(at).get("overlay",{})
+			if overlay.get("complete",false) and overlay.get("kind","") == "causeway" and entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.get("load_kg",8000.0))+EPS:
+				return _blocked("Causeway gross-load limit excludes this actual body and contents")
 			occupied_cells[at] = true
 			intervals.append({"from": interval.x, "to": interval.y, "rule": rule})
 			cuts.append(interval.x)
@@ -345,7 +399,7 @@ func _cover_place(person: Vector2) -> Dictionary:
 	for point in footprint(body, person):
 		if point.x < bounds.position.x or point.y < bounds.position.y or point.x > bounds.end.x or point.y > bounds.end.y: return _blocked("Cover position outside declared world")
 	for item in obstacles:
-		if item.solid and _overlap_interval(body, person, person, item.rect).x >= 0: return _blocked("Cover position occupied by solid " + item.id)
+		if item.solid and 0 in item.get("classes",[0,1,2]) and _overlap_interval(body, person, person, item.rect).x >= 0: return _blocked("Cover position occupied by solid " + item.id)
 	for y in range(int(floor(person.y - 0.3)), int(ceil(person.y + 0.3))):
 		for x in range(int(floor(person.x - 0.3)), int(ceil(person.x + 0.3))):
 			if not support(Vector2i(x, y), 0).ok: return _blocked("Cover position lacks physical foot support")
