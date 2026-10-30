@@ -8,6 +8,11 @@ var checks := 0
 var failures := 0
 
 func _initialize() -> void:
+	if "--dismounted" in OS.get_cmdline_user_args():
+		_dismounted_ground_actions()
+		print("G22 dismounted regression: %d checks, %d failures" % [checks,failures])
+		quit(0 if failures == 0 else 1)
+		return
 	if "--review-fixes" in OS.get_cmdline_user_args():
 		_a37()
 		_fuel_boundary()
@@ -22,6 +27,7 @@ func _initialize() -> void:
 	_d04_clearance()
 	_convoy_knowledge()
 	_fuel_boundary()
+	_dismounted_ground_actions()
 	print("G22 regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -311,6 +317,44 @@ func _convoy_knowledge() -> void:
 	rear.advance_time(305)
 	check(row.state == "Safety Returned","expired hold uses safe actual rear-return route instead of known hazard")
 	check(base.audit().is_empty(),"actual mine-hazard convoy audit: "+str(base.audit()))
+
+func _dismounted_ground_actions() -> void:
+	var base := fixture()
+	var rear: RefCounted = base.rear
+	var point := Vector2(200,100)
+	var parking := point+Vector2(1.5,0)
+	check(rear.ledger.add_place("ground-exit","Actual parked transport exit",parking).ok,"physical exit place")
+	check(rear.ledger.reserve_rear_hull("ground-claim",rear.PLAYER,"ground-fixture").ok,"ground-action transport admission")
+	check(rear.ledger.create_heavy_output("ground-claim","ground-fixture","ground-transport","T02","hq-berth",rear.PLAYER,Specs.TYPES.T02).ok,"actual transport hull")
+	check(rear.ledger.complete_hq_hull_receipt("ground-transport").ok,"transport physically received at HQ")
+	check(rear.ledger.move_entity("ground-transport","mine-road",parking).ok,"transport parks before device placement")
+	var mine := place(rear,"D02",point)
+	check(rear.ledger.add_person("ground-passenger",mine,rear.PLAYER,Records.Assignment.AVAILABLE,true,"P02","None").ok,"independent qualified passenger")
+	check(rear.ledger.add_stock("ground-passenger-kit","E08",1,5.0,"ground-passenger",rear.PLAYER).ok,"passenger retains actual kit")
+	for engineer in ["miner-1","ground-passenger"]:
+		check(rear.ledger.move_entity(engineer,"mine-road",parking).ok,"engineer physically reaches parked hull")
+		var formation_member: bool = engineer == "miner-1"
+		var boarded: Dictionary = rear.ledger.board_formation_passenger(engineer,"ground-transport") if formation_member else rear.ledger.board_dispatch_passenger(engineer,"ground-transport")
+		check(boarded.ok,"actual formation/Passenger boarding: "+engineer)
+		check(rear.ledger.inspect_entity(engineer).holder_id == "ground-transport","engineer is physically inside hull")
+		if not formation_member: check(rear.ledger.inspect_entity(engineer).assignment == "Passenger","reproduce Passenger assignment eligibility hole")
+		if formation_member: check(not rear.mines.order("D01",point+Vector2(10,0),squad(rear),engineer).ok,"boarded squad engineer cannot place")
+		check(not rear.mines.start_scan(engineer).ok,"boarded equipped engineer cannot scan")
+		check(not rear.mines.start_disarm(mine,engineer).ok,"boarded equipped engineer within two metres cannot disarm")
+		var exited: Dictionary = rear.ledger.exit_formation_passenger(engineer,"ground-transport","ground-exit") if formation_member else rear.ledger.disembark_dispatch_passenger(engineer,"ground-transport","ground-exit")
+		check(exited.ok and rear.ledger.inspect_entity(engineer).holder_id == "ground-exit","actual physical disembark onto a place")
+		if not formation_member: check(rear.ledger.complete_dispatch_cancel_person(engineer,"ground-exit").ok,"disembarked passenger resumes availability")
+		if formation_member:
+			var ordered: Dictionary = rear.mines.order("D01",point+Vector2(10,0),squad(rear),engineer)
+			check(ordered.ok,"same dismounted squad engineer can place")
+			if ordered.ok: check(rear.mines.cancel(ordered.id).ok,"release unworked placement before scanning")
+		check(rear.mines.start_scan(engineer).ok,"same dismounted engineer can scan")
+		rear.advance_time(3)
+		check(rear.mines.start_disarm(mine,engineer).ok,"same dismounted engineer can disarm")
+		if formation_member: rear.mines.cancel_task(engineer)
+		else: rear.advance_time(12)
+	check(rear.mines.inspect(mine).state == "Inert","only actual dismounted work clears device")
+	check(rear.ledger.audit().is_empty(),"boarding/disembark preserves physical accounting")
 
 func _fuel_boundary() -> void:
 	var base := fixture()

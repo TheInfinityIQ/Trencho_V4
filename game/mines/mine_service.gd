@@ -29,9 +29,14 @@ func _devices() -> Array:
 func _fail(message: String) -> Dictionary:
 	return {"ok":false,"message":message}
 
-func _engineer(id: String) -> bool:
+func _qualified_engineer(id: String) -> bool:
 	var p: Dictionary = _rear().ledger.inspect_entity(id)
 	return p.get("kind","") == "PERSON" and p.qualification == "P02" and p.health > 0 and p.assignment not in ["Wounded","Recovery","Dead","Training","Rear Labour"] and _rear().military._held(id,"E08") > 0
+
+func _engineer(id: String) -> bool:
+	if not _qualified_engineer(id): return false
+	var p: Dictionary = _rear().ledger.inspect_entity(id)
+	return p.crew_station.is_empty() and _rear().ledger.inspect_entity(p.holder_id).get("kind","") == "PLACE"
 
 func engineer_committed(id: String) -> bool:
 	if tasks.has(id): return true
@@ -191,7 +196,7 @@ func set_controller(id: String, engineer: String) -> Dictionary:
 
 func _operator(row: Dictionary, engineer: String) -> bool:
 	var p: Dictionary = _rear().ledger.inspect_entity(engineer)
-	return _engineer(engineer) and engineer in _rear().military.squads.get(row.squad,{}).get("roster",[]) and p.owner == row.owner and p.position.distance_to(row.position) <= 300.0+EPS
+	return _qualified_engineer(engineer) and engineer in _rear().military.squads.get(row.squad,{}).get("roster",[]) and p.owner == row.owner and p.position.distance_to(row.position) <= 300.0+EPS
 
 func remote_trigger(id: String, vehicle: String) -> Dictionary:
 	var row: Dictionary = projects.get(id,{})
