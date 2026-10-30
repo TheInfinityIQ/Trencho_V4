@@ -2,6 +2,7 @@ extends Control
 ## Read-only strategic view of the same identities and clock used by the rear.
 
 const WORLD_SIZE := Vector2(4000.0, 6000.0)
+const Presentation = preload("res://game/battlefield/battlefield_presentation.gd")
 const PANEL_WIDTH := 350.0
 var simulation: RefCounted
 var zoom := 1.0
@@ -79,10 +80,7 @@ func _gui_input(event: InputEvent) -> void:
 func _select_nearest(point: Vector2) -> void:
 	if simulation == null: return
 	var distance := 14.0
-	for entity in simulation.rear.ledger.snapshot().entities:
-		if entity.kind not in ["PERSON", "CARRIER", "PLACE"]: continue
-		if entity.kind == "PLACE" and entity.id not in ["hq-berth", "enemy-hq", "resource-central"]: continue
-		if entity.kind == "PERSON" and entity.rear_place == "Occupied": continue
+	for entity in Presentation.markers(simulation.rear):
 		var measure: float = _screen(entity.position).distance_to(point)
 		if measure < distance:
 			distance = measure
@@ -105,12 +103,14 @@ func _draw() -> void:
 	for y in range(0, 6001, 1000):
 		draw_line(_screen(Vector2(0, y)), _screen(Vector2(4000, y)), Color("678278", 0.45), 1.0)
 	if simulation == null: return
-	for entity in simulation.rear.ledger.snapshot().entities:
-		if entity.kind == "PLACE" and entity.id in ["hq-berth", "enemy-hq", "resource-central"]:
-			var colour := Color("f0c565") if entity.id == "resource-central" else (Color("73bde4") if entity.id == "hq-berth" else Color("e17c72"))
+	for entity in Presentation.markers(simulation.rear):
+		if entity.kind == "PLACE":
+			var colour := Color("f0c565") if simulation.rear.objectives.objectives.has(entity.id) else (Color("73bde4") if entity.id == "hq-berth" else Color("e17c72"))
 			_draw_marker(entity.position, colour, entity.id, font)
+		elif entity.kind == "CONTACT":
+			_draw_marker(entity.position, Color("e4a47c"), "Contact", font,entity.id)
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
-			_draw_marker(entity.position, Color("74c8ed") if entity.owner == "army-blue" else Color("e48378"), entity.id, font)
+			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), entity.id, font)
 		elif entity.kind == "PERSON" and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
 			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), "", font, entity.id)
 	draw_string(font, area.position + Vector2(12, 22), "BATTLEFIELD  •  4,000 × 6,000 m", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("e8f2ec"))
@@ -131,10 +131,12 @@ func _refresh() -> void:
 	var rear: RefCounted = simulation.rear
 	var view: Dictionary = simulation.snapshot()
 	var objective: Dictionary = rear.objectives.inspect("resource-central")
-	var selected: Dictionary = rear.ledger.inspect_entity(selected_id)
+	var selected: Dictionary = Presentation.inspect(rear,selected_id)
 	var detail := ""
 	if not selected.is_empty():
-		detail = "%s  •  %s\nHolder: %s\nPosition: (%.0f, %.0f) m" % [selected.id, selected.kind, selected.holder_id, selected.position.x, selected.position.y]
+		detail = "%s  •  %s\nPosition: (%.0f, %.0f) m" % [selected.id, selected.kind, selected.position.x, selected.position.y]
+		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
+		else: detail += "\nHolder: %s" % selected.holder_id
 		if selected.kind == "PERSON": detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	_inspector.text = "BATTLEFIELD\n\nTime: %.1f s  •  %s\nRequisition: %.0f\n\nCentral resource objective\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s\n\nSelected\n%s\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money, objective.get("control", 0.0), objective.get("owner", "Neutral") if not str(objective.get("owner", "")).is_empty() else "Neutral", objective.get("income_rate", 0.0), blocked, detail]

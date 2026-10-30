@@ -338,7 +338,7 @@ func _sample_squad(squad_id: String) -> void:
 	for person_id in _rear().military._active_roster_members(squad):
 		var observer: Dictionary = ledger.inspect_entity(person_id)
 		for target in ledger.snapshot().entities:
-			var affiliation: String = str(target.controller) if target.kind == "CARRIER" else str(target.owner)
+			var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
 			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
 			if _rear().combat.world.observe(observer.position,target.position).visible:
 				var estimated_strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))

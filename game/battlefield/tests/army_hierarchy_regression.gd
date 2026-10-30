@@ -24,7 +24,7 @@ func _initialize() -> void:
 		_check(not rear.military.add_initial_squad(side+"-duplicate","Rifle",roster,side+"-company",side+"-platoon",owner).ok,"Same people cannot occupy another initial squad")
 		_check(rear.orders.watch(side+"-squad").ok,"Both armies observe through actual squad members")
 	_check(ledger.add_carrier("supplier-sample","blue-stage","supplier","supplier").ok,"Supplier remains a service actor")
-	_check(ledger.add_carrier("leased-sample","blue-stage","supplier","army-blue").ok,"Army-controlled leased vehicle has explicit affiliation")
+	_check(ledger.add_carrier("leased-sample","blue-stage","supplier","army-blue-hq").ok,"Army-controlled leased vehicle has explicit HQ affiliation")
 	_check(not rear.orders.issue_order("army","red-company","Hold Area","Hold","Initial defence",{},"Normal","HQ").ok,"One army cannot order the opposing company")
 	rear.advance_time(6)
 	_check(rear.orders.contacts.get("army",{}).has("red-person-0"),"Blue command receives actual red contact")
