@@ -1,6 +1,7 @@
 extends SceneTree
 const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 var checks := 0
 var failures := 0
 
@@ -8,6 +9,7 @@ func _initialize() -> void:
 	_test_a28_observation_and_real_delay()
 	_test_a29_supported_flank_loses_ammunition()
 	_test_hq_assault_eligibility()
+	_test_unfuelled_armour_cannot_satisfy_assault_support()
 	_test_intent_and_report_chain()
 	print("G17 order regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
@@ -18,10 +20,10 @@ func _expect(ok: bool, message: String) -> void:
 		failures += 1
 		push_error(message)
 
-func _squad(base: RefCounted, prefix: String) -> String:
+func _squad(base: RefCounted, prefix: String, count: int = 4) -> String:
 	var rear: RefCounted = base.rear
 	var people: Array[String] = []
-	for i in 4:
+	for i in count:
 		var id := "%s-person-%d" % [prefix,i]
 		_expect(rear.ledger.add_person(id,"hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true,"None","None").ok,"real squad member "+id)
 		rear.dispatch.military_people[id] = prefix
@@ -31,7 +33,7 @@ func _squad(base: RefCounted, prefix: String) -> String:
 		_expect(rear.ledger.load_rounds(id+"-rifle",id+"-ammo",1).ok,"one physically loaded round "+id)
 		people.append(id)
 	var result: Dictionary = rear.military.form_squad("Rifle",people)
-	_expect(result.ok,"four actual people start Rifle formation")
+	_expect(result.ok,"actual equipped people start Rifle formation")
 	return str(result.get("id",""))
 
 func _enemy(base: RefCounted, id: String, position: Vector2) -> void:
@@ -95,9 +97,9 @@ func _test_a29_supported_flank_loses_ammunition() -> void:
 	for id in rear.military.squads[fixing].roster:
 		_expect(rear.ledger.fire_loaded_round(id+"-rifle").ok,"A29 last loaded fixing round physically spent")
 		_expect(rear.ledger.record_loss(id+"-ammo",29,"A29 controlled local stock removal").ok,"A29 remaining fixing rounds physically removed")
-	rear.advance_time(2)
+	rear.advance_time(1)
 	var paused: Dictionary = rear.orders.responsibilities[platoon_id]
-	_expect(paused.state == "Paused" and paused.blocker.contains("E02"),"A29 flank pauses with actionable missing local ammunition")
+	_expect(paused.state == "Paused" and paused.blocker.contains("E02"),"A29 flank pauses within one second with actionable missing local ammunition")
 	_expect(rear.orders.intents[flanking].state.begins_with("Paused"),"A29 flanker does not continue unsupported advance")
 	rear.advance_time(12)
 	var inability := false
@@ -114,14 +116,46 @@ func _test_hq_assault_eligibility() -> void:
 	var company_id: String = rear.military.squads[rifle].company
 	_expect(rear.ledger.add_place("enemy-hq-marker","Physical scenario enemy HQ",Vector2(1710,91)).ok,"actual HQ marker place")
 	_expect(rear.orders.register_enemy_hq("enemy-hq-marker").ok,"scenario declares physical enemy HQ without revealing contact")
-	_expect(not rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).ok,"unseen HQ is not an assault target")
+	_expect(rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).message.contains("Prepare Assault"),"final HQ assault cannot skip preparation")
 	var prepared: Dictionary = rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker")
 	_expect(prepared.ok and prepared.demands.ammo.size() == 4,"Prepare Assault exposes four actual 90-round person shortages")
+	_expect(prepared.demands.pending.size() == 3,"unknown route, transport and engineering remain explicit pending requirements")
 	_expect(rear.orders.watch(rifle).ok,"actual squad observes HQ marker")
 	rear.advance_time(3)
 	_expect(not rear.orders.contact(company_id,"enemy-hq-marker").is_empty(),"HQ location reaches company after real links")
+	_expect(rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).message.contains("unconfirmed"),"located HQ cannot bypass unknown preparation with a route_ok flag")
+	var plan := {"route":{"state":"Feasible","evidence":"controlled G08 clear approach","fallback":"covered return"},"transport":{"mode":"Foot","evidence":"controlled G08 foot ETA"},"engineering":{"state":"Clear","evidence":"controlled G08 obstacle survey"},"operating_hulls":[],"fuel_required":{}}
+	prepared = rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker",plan)
+	_expect(prepared.demands.pending.is_empty() and prepared.demands.transport.is_empty() and prepared.demands.engineering.is_empty(),"explicit evidenced foot and clear approach settle nonvehicle preparation")
 	var blocked: Dictionary = rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true)
 	_expect(not blocked.ok and blocked.message.contains("90"),"HQ assault refuses ordinary thirty-round rifle carriers")
+	var engineer_plan: Dictionary = plan.duplicate(true)
+	engineer_plan.engineering = {"state":"Needed","requirements":[{"project":"Clear surveyed minefield","type":"G21 engineer plan","quantity":1}]}
+	prepared = rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker",engineer_plan)
+	_expect(prepared.demands.engineering.size() == 1 and rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).message.contains("engineering"),"named unmet engineer work remains visible and blocks final eligibility")
+	var transport_plan: Dictionary = plan.duplicate(true)
+	transport_plan.transport = {"mode":"Vehicles","hulls":["unassigned-truck"]}
+	prepared = rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker",transport_plan)
+	_expect(prepared.demands.transport.size() == 1 and rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).message.contains("transport"),"unassigned transport cannot be invented by a route plan")
+	_expect(rear.ledger.reserve_rear_hull("assault-admission",rear.PLAYER,"assault-fixture").ok,"actual support hull admission")
+	_expect(rear.ledger.create_heavy_output("assault-admission","assault-fixture","assault-truck","T02","hq-berth",rear.PLAYER,Specs.TYPES.T02).ok,"actual empty unfuelled T02")
+	_expect(rear.ledger.complete_hq_hull_receipt("assault-truck").ok,"same hull enters military fleet")
+	rear.dispatch.military_hulls["assault-truck"] = "assault-fixture"
+	_expect(rear.ledger.add_person("assault-driver","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true,"P08","None").ok,"actual qualified reserve driver")
+	rear.dispatch.military_people["assault-driver"] = "assault-fixture"
+	rear.dispatch.hq_reserve["assault-driver"] = "Occupied"
+	_expect(rear.military.assign_crew("assault-driver","assault-truck","Driver").ok,"driver starts physical hull report")
+	rear.advance_time(8)
+	_expect(rear.military.vehicles.has("assault-truck"),"same staffed hull is assigned to company hierarchy")
+	var fuel_plan: Dictionary = plan.duplicate(true)
+	fuel_plan.operating_hulls = ["assault-truck"]
+	fuel_plan.fuel_required = {"assault-truck":5.0}
+	_expect(rear.ledger.add_stock("assault-fuel-source","M08",10,1.0,"hq-berth",rear.PLAYER).ok,"real available M08 source remains outside the hull tank")
+	fuel_plan.fuel_source = {"assault-truck":"assault-fuel-source"}
+	prepared = rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker",fuel_plan)
+	_expect(prepared.demands.fuel.size() == 1 and is_equal_approx(prepared.demands.fuel[0].missing,6.25) and prepared.demands.fuel[0].type == "M08" and prepared.demands.fuel[0].source_available == 10,"actual zero-fuel assigned hull exposes route and fallback reserve shortage and source availability without imaginary fueling")
+	_expect(rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true).message.contains("fuel"),"missing physical fuel blocks eligibility before readiness")
+	rear.orders.prepare_hq_assault(company_id,"enemy-hq-marker",plan)
 	for id in rear.military.squads[rifle].roster:
 		_expect(rear.ledger.add_stock(id+"-assault-ammo","E02",60,0.02,id,rear.PLAYER).ok,"actual additional assault rounds on carrier")
 	blocked = rear.orders.assess_hq_assault(company_id,"enemy-hq-marker",true)
@@ -153,3 +187,40 @@ func _test_intent_and_report_chain() -> void:
 	_expect(rear.orders.reports.size() == 1 and rear.orders.reports[0].path == [squad_id,platoon_id,company_id,"army"],"progress reaches Commander only through squad, platoon and company")
 	_expect(rear.orders.reports[0].observed_at == 14.0,"three-second message delay never rewrites original report time")
 	_expect(base.audit().is_empty(),"command chain remains detached from physical ledger: "+str(base.audit()))
+
+func _test_unfuelled_armour_cannot_satisfy_assault_support() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var rifle := _squad(base,"armour",8)
+	rear.advance_time(8)
+	var company_id: String = rear.military.squads[rifle].company
+	for id in rear.military.squads[rifle].roster:
+		_expect(rear.ledger.add_stock(id+"-extra","E02",60,0.02,id,rear.PLAYER).ok,"eight carriers physically carry assault ammunition")
+	_expect(rear.military.readiness(rifle) >= 0.75,"actual eight-person company assault formation meets readiness threshold")
+	_expect(rear.ledger.reserve_rear_hull("armour-admission",rear.PLAYER,"armour-fixture").ok,"actual T04 admission")
+	_expect(rear.ledger.create_heavy_output("armour-admission","armour-fixture","armour-apc","T04","hq-berth",rear.PLAYER,Specs.TYPES.T04).ok,"actual unfuelled T04 support hull")
+	_expect(rear.ledger.complete_hq_hull_receipt("armour-apc").ok,"same T04 enters military fleet")
+	rear.dispatch.military_hulls["armour-apc"] = "armour-fixture"
+	for station in ["Driver","Gunner","Commander"]:
+		var id := "armour-crew-"+str(station).to_lower()
+		_expect(rear.ledger.add_person(id,"hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true,"P08","None").ok,"actual qualified T04 crew member")
+		rear.dispatch.military_people[id] = "armour-fixture"
+		rear.dispatch.hq_reserve[id] = "Occupied"
+	_expect(rear.military.assign_crew("armour-crew-driver","armour-apc","Driver").ok,"actual driver report starts")
+	rear.advance_time(8)
+	_expect(rear.military.vehicles.has("armour-apc"),"T04 joins actual company hierarchy")
+	_expect(rear.ledger.add_stock("armour-shell","E26",1,0.5,"armour-apc",rear.PLAYER).ok,"matching physical T04 rack ammunition")
+	_expect(rear.military.vehicle_capability("armour-apc","Fire").ok and not rear.military.vehicle_capability("armour-apc","Movement").ok,"armed T04 can fire but zero fuel prevents movement")
+	_expect(rear.ledger.add_place("armour-hq","Declared enemy HQ",Vector2(1710,91)).ok,"physical enemy HQ marker")
+	_expect(rear.orders.register_enemy_hq("armour-hq").ok,"HQ declaration gives no free contact")
+	_expect(rear.orders.watch(rifle).ok,"real rifle squad observes the HQ")
+	rear.advance_time(3)
+	var plan := {"route":{"state":"Feasible","evidence":"controlled G08 route","fallback":"covered return"},"transport":{"mode":"Foot","evidence":"controlled foot ETA"},"engineering":{"state":"Clear","evidence":"controlled survey"},"operating_hulls":[],"fuel_required":{}}
+	rear.orders.prepare_hq_assault(company_id,"armour-hq",plan)
+	_expect(rear.orders.assess_hq_assault(company_id,"armour-hq",true).message.contains("support"),"unlisted T04 cannot satisfy operating assault support")
+	plan.operating_hulls = ["armour-apc"]
+	plan.fuel_required = {"armour-apc":5.0}
+	var prepared: Dictionary = rear.orders.prepare_hq_assault(company_id,"armour-hq",plan)
+	_expect(prepared.demands.fuel.size() == 1 and is_equal_approx(prepared.demands.fuel[0].missing,6.25),"listed T04 exposes actual M08 shortage with reserve")
+	_expect(rear.orders.assess_hq_assault(company_id,"armour-hq",true).message.contains("fuel"),"fire-ready but immobile T04 cannot pass assault eligibility")
+	_expect(base.audit().is_empty(),"unfuelled T04 remains physical, assigned and reconciled: "+str(base.audit()))

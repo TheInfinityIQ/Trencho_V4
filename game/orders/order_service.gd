@@ -68,8 +68,9 @@ func current_contact(echelon_id: String, target_id: String) -> bool:
 func issue_order(parent_id: String, child_id: String, action: String, outcome: String, purpose: String, constraints: Dictionary, priority: String, fallback: String) -> Dictionary:
 	if _parent(child_id) != parent_id or action not in ACTIONS or outcome.is_empty() or purpose.is_empty() or priority not in ["Emergency","High","Normal","Low"] or fallback.is_empty():
 		return _block("Intent needs a real parent-child link, supported action, outcome, purpose, constraints, priority and fallback.")
-	if intents.has(child_id) and _rear().time < float(intents[child_id].issued_at)+10.0-EPS and priority != "Emergency":
-		return _block("High-level mission persists ten seconds unless safety or feasibility changes.")
+	var hold_seconds := 3.0 if _rear().military.squads.has(child_id) else 10.0
+	if intents.has(child_id) and _rear().time < float(intents[child_id].issued_at)+hold_seconds-EPS and priority != "Emergency":
+		return _block("Current mission/action persists for its ten/three-second hold unless an Emergency safety change is required.")
 	_sequence += 1
 	var intent := {"id":"intent-%04d" % _sequence,"parent":parent_id,"child":child_id,"action":action,"outcome":outcome,"purpose":purpose,"constraints":constraints.duplicate(true),"priority":priority,"fallback":fallback,"issued_at":_rear().time,"received_at":-1.0,"acknowledged_at":-1.0,"state":"In transit","blocked_reason":"One real command link to deliver."}
 	intents[child_id] = intent
@@ -108,20 +109,20 @@ func plan_supported_flank(platoon_id: String, fixing_id: String, flanking_id: St
 	var flank_geometry: Dictionary = _flank_geometry(fixing_id,flanking_id,known.position)
 	if not flank_geometry.ok: return flank_geometry
 	for squad_id in [fixing_id,flanking_id]:
-		if intents.has(squad_id) and _rear().time < float(intents[squad_id].issued_at)+10.0-EPS:
-			return _block("Existing squad mission remains owned for ten seconds; wait or issue an Emergency safety change.")
+		if intents.has(squad_id) and _rear().time < float(intents[squad_id].issued_at)+3.0-EPS:
+			return _block("Existing squad tactical action remains owned for three seconds; wait or issue an Emergency safety change.")
 	responsibilities[platoon_id] = {"platoon":platoon_id,"fixing":fixing_id,"flanking":flanking_id,"target":target_id,"contact_observed_at":known.observed_at,"started_at":_rear().time,"state":"Supported","fixing_action":"Hold covered firing line and suppress the observed target","flanking_action":"Move at least 30 degrees around observed target under active fixing fire","fallback":fallback,"blocker":"","angle_degrees":flank_geometry.angle_degrees,"local_ammo":fix_ammo.rounds,"eligible_strength":local_strength,"known_enemy_strength":known.caution_strength}
-	decisions[platoon_id] = _rear().time+2.0
+	decisions[platoon_id] = _rear().time+1.0
 	var fix_order: Dictionary = issue_order(platoon_id,fixing_id,"Support Formation","Fix the observed target","Enable the other squad's flank",{"target":target_id},"High",fallback)
 	var flank_order: Dictionary = issue_order(platoon_id,flanking_id,"Seize Objective","Reach the observed target flank","Exploit fixing fire",{"target":target_id,"minimum_angle_degrees":30.0},"High",fallback)
 	assert(fix_order.ok and flank_order.ok)
 	status = "%s assigns %s to fix and %s to flank a delivered contact." % [platoon_id,fixing_id,flanking_id]
 	return {"ok":true,"message":status}
 
-func prepare_hq_assault(company_id: String, enemy_hq_id: String) -> Dictionary:
+func prepare_hq_assault(company_id: String, enemy_hq_id: String, operation_plan: Dictionary = {}) -> Dictionary:
 	var company: Dictionary = _rear().military.companies.get(company_id,{})
 	if company.is_empty() or objective_markers.get(enemy_hq_id,"") != "Enemy HQ": return _block("A real company and declared physical enemy HQ are required.")
-	var needs: Array[Dictionary] = []
+	var ammo_needs: Array[Dictionary] = []
 	for platoon_id in company.platoons:
 		for squad_id in _rear().military.platoons[platoon_id].squads:
 			var squad: Dictionary = _rear().military.squads[squad_id]
@@ -129,16 +130,84 @@ func prepare_hq_assault(company_id: String, enemy_hq_id: String) -> Dictionary:
 			for person_id in _rear().military._active_roster_members(squad):
 				if _rear().military._held(person_id,"E01") == 0 and _rear().military._held(person_id,"E19") == 0: continue
 				var carried: int = _rear().military._rounds(person_id)
-				if carried < 90: needs.append({"person":person_id,"type":"E02","missing":90-carried,"position":_rear().ledger.inspect_entity(person_id).position,"consequence":"HQ assault ineligible until 90 actual carried rounds"})
-	preparation_demands[company_id] = {"enemy_hq":enemy_hq_id,"ammo":needs,"support":"Actual armoured or indirect support required","route":"Actual feasible supply and fallback route required","created_at":_rear().time}
+				if carried < 90: ammo_needs.append({"person":person_id,"type":"E02","required":90,"present":carried,"missing":90-carried,"position":_rear().ledger.inspect_entity(person_id).position,"consequence":"HQ assault ineligible until 90 actual carried rounds"})
+	var pending_requirements: Array[String] = []
+	var route: Dictionary = operation_plan.get("route",{})
+	if route.get("state","") != "Feasible" or str(route.get("evidence","")).is_empty() or str(route.get("fallback","")).is_empty():
+		pending_requirements.append("Route owner must confirm feasible supply and fallback routes with evidence.")
+	var transport: Dictionary = operation_plan.get("transport",{})
+	var transport_needs: Array[Dictionary] = []
+	match transport.get("mode",""):
+		"Foot":
+			if str(transport.get("evidence","")).is_empty(): pending_requirements.append("Foot approach needs an actual route ETA/evidence, not an assumed absent transport need.")
+		"Vehicles":
+			var requested: Array = transport.get("hulls",[])
+			if requested.is_empty(): pending_requirements.append("Vehicle transport needs named real assigned hulls.")
+			for hull_id in requested:
+				var id := str(hull_id)
+				var assigned: bool = _company_hulls(company_id).has(id)
+				var capable: bool = assigned and bool(_rear().military.vehicle_capability(id,"Transport").ok)
+				if not capable: transport_needs.append({"hull":id,"required":"assigned, crewed and physically boarded transport","missing":true,"consequence":"Assault staging waits for actual usable transport or a revised foot plan."})
+		_:
+			pending_requirements.append("Transport mode is unknown; choose evidenced foot or named actual vehicles.")
+	var fuel_needs: Array[Dictionary] = []
+	var fuel_plan: Dictionary = operation_plan.get("fuel_required",{})
+	var fuel_sources: Dictionary = operation_plan.get("fuel_source",{})
+	var operating_hulls: Array = operation_plan.get("operating_hulls",[])
+	for hull_id in operating_hulls:
+		var id := str(hull_id)
+		if not _company_hulls(company_id).has(id):
+			fuel_needs.append({"hull":id,"required":"assigned military vehicle","missing":true,"consequence":"Unassigned hull cannot support the assault."})
+			continue
+		if not fuel_plan.has(id) or not is_finite(float(fuel_plan[id])) or float(fuel_plan[id]) <= 0.0:
+			pending_requirements.append("Route owner must provide positive route-and-fallback fuel for %s." % id)
+			continue
+		var hull: Dictionary = _rear().ledger.inspect_entity(id)
+		var base_route: float = float(fuel_plan[id])
+		var required: float = base_route*1.25
+		var present: float = float(hull.fuel)
+		if present+EPS < required:
+			var source_id := str(fuel_sources.get(id,""))
+			var source: Dictionary = _rear().ledger.inspect_entity(source_id) if not source_id.is_empty() else {}
+			fuel_needs.append({"hull":id,"type":"M08","base_route_and_fallback":base_route,"reserve_fraction":0.25,"required":required,"present":present,"missing":required-present,"source":source_id if source.get("design_type","") == "M08" else "Unassigned","source_available":int(source.get("available",0)) if source.get("design_type","") == "M08" else 0,"source_reserved":int(source.get("reserved",0)) if source.get("design_type","") == "M08" else 0,"consequence":"This actual hull lacks route-and-fallback fuel plus 25% reserve."})
+	for hull_id in transport.get("hulls",[]):
+		if _company_hulls(company_id).has(str(hull_id)) and not operating_hulls.has(hull_id): pending_requirements.append("Transport hull %s needs an operating-hull fuel plan." % str(hull_id))
+	var engineering: Dictionary = operation_plan.get("engineering",{})
+	var engineering_needs: Array[Dictionary] = []
+	match engineering.get("state",""):
+		"Clear":
+			if str(engineering.get("evidence","")).is_empty(): pending_requirements.append("Engineering clearance needs actual route survey evidence.")
+		"Needed":
+			for requirement in engineering.get("requirements",[]):
+				engineering_needs.append({"project":requirement.duplicate(true),"missing":true,"consequence":"Required engineer work must be completed by G21 before assault."})
+			if engineering_needs.is_empty(): pending_requirements.append("Needed engineer work requires a named project and quantities from G21.")
+		_:
+			pending_requirements.append("Engineering state unknown; G21 or route survey must clear or name the work.")
+	preparation_demands[company_id] = {"enemy_hq":enemy_hq_id,"ammo":ammo_needs,"fuel":fuel_needs,"transport":transport_needs,"engineering":engineering_needs,"pending":pending_requirements,"route":route.duplicate(true),"plan":operation_plan.duplicate(true),"support":"Actual armoured or indirect support required","created_at":_rear().time}
 	return {"ok":true,"message":"Physical assault demands recorded before eligibility; no stock or personnel moved.","demands":preparation_demands[company_id].duplicate(true)}
+
+func _company_hulls(company_id: String) -> Array[String]:
+	var result: Array[String] = []
+	var company: Dictionary = _rear().military.companies.get(company_id,{})
+	if company.is_empty(): return result
+	for id in company.service_vehicles: result.append(id)
+	for platoon_id in company.platoons:
+		for id in _rear().military.platoons[platoon_id].vehicles: result.append(id)
+	return result
 
 func assess_hq_assault(company_id: String, enemy_hq_id: String, route_ok: bool) -> Dictionary:
 	var company: Dictionary = _rear().military.companies.get(company_id,{})
 	if company.is_empty() or objective_markers.get(enemy_hq_id,"") != "Enemy HQ": return _block("A real company and declared enemy HQ are required.")
+	var prepared: Dictionary = preparation_demands.get(company_id,{})
+	if prepared.is_empty() or prepared.enemy_hq != enemy_hq_id: return _block("Prepare Assault must record actual ammunition, fuel, transport, engineering and route demands before final eligibility.")
+	prepare_hq_assault(company_id,enemy_hq_id,prepared.plan)
+	prepared = preparation_demands[company_id]
 	var hq: Dictionary = contact(company_id,enemy_hq_id)
 	if hq.is_empty() or hq.confidence <= 0.0: return _block("Enemy HQ is not located by a surviving delivered observation.")
 	if not route_ok: return _block("No feasible actual supply and fallback route has been confirmed.")
+	if not prepared.pending.is_empty(): return _block("Assault preparation remains unconfirmed: "+str(prepared.pending[0]))
+	for category in ["fuel","transport","engineering"]:
+		if not prepared[category].is_empty(): return _block("Assault preparation has unmet %s requirements: %s" % [category,str(prepared[category][0].consequence)])
 	var squads: Array[String] = []
 	for platoon_id in company.platoons:
 		for squad_id in _rear().military.platoons[platoon_id].squads:
@@ -155,7 +224,7 @@ func assess_hq_assault(company_id: String, enemy_hq_id: String, route_ok: bool) 
 			if _rear().military._held(person_id,"E01")+_rear().military._held(person_id,"E19") > 0 and _rear().military._rounds(person_id) < 90:
 				return _block("Dismounted rifle and marksman carriers each require 90 physically carried E02 before HQ assault.")
 	if readiness < 0.75: return _block("Actual company readiness is below the 0.75 HQ assault threshold.")
-	var support := _company_support(company_id)
+	var support := _company_support(company_id,prepared.plan.get("operating_hulls",[]))
 	if not support.ok: return support
 	var defenders := 0.0
 	for target_id in contacts.get(company_id,{}):
@@ -167,7 +236,7 @@ func assess_hq_assault(company_id: String, enemy_hq_id: String, route_ok: bool) 
 	if defenders > 0.0 and attackers < defenders*1.5: return _block("Actual attacking eligible strength is below 1.5 times known local defenders.")
 	return {"ok":true,"message":"§16.3 HQ assault gates satisfied using delivered observations and actual company people, ammunition and support.","readiness":readiness,"attackers":attackers,"known_defenders":defenders,"support":support.id}
 
-func _company_support(company_id: String) -> Dictionary:
+func _company_support(company_id: String, operating_hulls: Array) -> Dictionary:
 	var company: Dictionary = _rear().military.companies[company_id]
 	var hulls: Array[String] = []
 	for hull_id in company.service_vehicles: hulls.append(hull_id)
@@ -178,8 +247,9 @@ func _company_support(company_id: String) -> Dictionary:
 			if squad.kind == "Artillery" and _rear().combat.gun_setups.get(squad.gun_id,{}).get("complete",false) and _rear().military.capability(squad_id).ok:
 				return {"ok":true,"id":squad.gun_id}
 	for hull_id in hulls:
+		if hull_id not in operating_hulls: continue
 		var hull: Dictionary = _rear().ledger.inspect_entity(hull_id)
-		if hull.design_type in ["T04","T05"] and _rear().military.vehicle_capability(hull_id,"Fire").ok: return {"ok":true,"id":hull_id}
+		if hull.design_type in ["T04","T05"] and _rear().military.vehicle_capability(hull_id,"Fire").ok and _rear().military.vehicle_capability(hull_id,"Movement").ok: return {"ok":true,"id":hull_id}
 	return _block("HQ assault needs an actual operating armoured or indirect support element; engineer demolition integration remains with G21.")
 
 func _current_recon_of_hq(company_id: String, enemy_hq_id: String) -> bool:
@@ -217,7 +287,7 @@ func settle() -> bool:
 	for id in decisions.keys():
 		if float(decisions[id]) > now+EPS: continue
 		_review_flank(id)
-		decisions[id] = now+2.0 if responsibilities.has(id) and responsibilities[id].state == "Supported" else INF
+		decisions[id] = now+1.0 if responsibilities.has(id) and responsibilities[id].state == "Supported" else INF
 		changed = true
 	for key in failed_since.keys():
 		if float(failed_since[key])+10.0 > now+EPS: continue
