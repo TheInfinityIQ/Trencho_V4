@@ -171,6 +171,10 @@
   ],
   "Input": [
     {
+      "path": "game/orders/tests/order_input_test.gd",
+      "cases": ["test_orders_review_real_input_and_small_render"]
+    },
+    {
       "path": "game/combat/tests/combat_input_test.gd",
       "cases": [
         "test_combat_review_accepts_real_input_and_renders_state"

@@ -30,6 +30,7 @@ var hq: RefCounted # G14 physical HQ issue on the same ledger and event clock.
 var construction: RefCounted # G05 physical facility sites, copies and builders.
 var military: RefCounted # G15 actual HQ formation and hierarchy on the same identities.
 var combat: RefCounted # G16 wounds, direct fire and care on the shared identities and clock.
+var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var additional_productions: Array[RefCounted] = []
 var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
@@ -293,6 +294,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if construction != null: next = minf(next,construction.next_boundary())
 		if military != null: next = minf(next,military.next_boundary())
 		if combat != null: next = minf(next,combat.next_boundary())
+		if orders != null: next = minf(next,orders.next_boundary())
 		if receiving != null: next = minf(next, receiving.next_boundary())
 		if training != null: next = minf(next, training.next_boundary())
 		for activity in _production_activities(): next = minf(next, activity.next_boundary())
@@ -320,6 +322,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if construction != null: construction.advance_to(next)
 		if military != null: military.advance_to(next)
 		if combat != null: combat.advance_to(next)
+		if orders != null: orders.advance_to(next)
 		ledger.advance_time(next - time)
 		time = next
 		if receiving != null: receiving.advance_clock_to(next)
@@ -497,6 +500,7 @@ func _settle() -> void:
 		if construction != null: changed = construction.settle() or changed
 		if military != null: changed = military.settle() or changed
 		if combat != null: changed = combat.settle() or changed
+		if orders != null: changed = orders.settle() or changed
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)

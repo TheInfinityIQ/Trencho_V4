@@ -84,3 +84,7 @@ The [G15 organization service](g15_military_organization.md) composes real HQ re
 ## G16 combat, wounds and morale - 29 October 2026
 
 The [G16 combat service](g16_combat_wounds_morale.md) uses the G01 physical ledger, G08 sight and cover, and G15 actual rosters on the shared event clock. The ledger owns loaded-round consumption, injury, death and recoverable dropped holders; combat owns eligibility, commitments, stress, care and cohesion. This boundary keeps G23 mounted weapons, G27 full medical logistics and G32 persistence as explicit later integrations.
+
+## G17 hierarchical orders and information - 29 October 2026
+
+The [G17 order service](g17_hierarchical_orders.md) observes through real G15 members and G08 visibility, then carries time-stamped contacts and intent across one-second echelon links on the shared clock. It decides a supported flank from delivered information, G16 eligible fire, real ammunition, geometry and cohesion. The enemy HQ assault gate reads actual company capability and supplies an explicit preparation demand; it does not grant units or goods. An inspection scene exposes message age, roles, fallback and physical reconciliation.
