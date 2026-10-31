@@ -9,7 +9,7 @@ on:
       mode:
         description: Full required validation or a separate supply/combat observation
         type: choice
-        options: [full, supply, combat]
+        options: [full, supply, combat, c30]
         default: full
         required: true
       combat_profile:
@@ -32,9 +32,64 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  c30_checks:
+    name: Focused C30 connection checks (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'c30'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download and verify pinned Godot
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < .godot-version)"
+          archive="Godot_v${version}-stable_linux.x86_64.zip"
+          release="https://github.com/godotengine/godot-builds/releases/download/${version}-stable"
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 "$release/$archive" --output "$archive"
+          curl --fail --location --retry 3 "$release/SHA512-SUMS.txt" --output SHA512-SUMS.txt
+          awk -v archive="$archive" '$2 == archive || $2 == "*" archive {print}' SHA512-SUMS.txt > selected-checksum.txt
+          test "$(wc -l < selected-checksum.txt)" -eq 1
+          sha512sum --check selected-checksum.txt
+          unzip -q "$archive"
+          chmod +x "Godot_v${version}-stable_linux.x86_64"
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Import once on GitHub
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          pwsh -NoProfile -File ./tools/setup_gdunit4.ps1
+          mkdir -p .artifacts/c30
+          printf 'revision=%s\n' "$GITHUB_SHA" > .artifacts/c30/revision.txt
+          timeout --signal=TERM --kill-after=5s 110s "$GODOT_BIN" --headless --path . --editor --import > .artifacts/c30/import.log 2>&1
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/c30/import.log; then exit 1; fi
+      - name: Verify focused physical and presentation boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges; do
+            timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script "res://game/battlefield/tests/${name}_regression.gd" > ".artifacts/c30/${name}.log" 2>&1
+            tail -n 5 ".artifacts/c30/${name}.log"
+            if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' ".artifacts/c30/${name}.log"; then exit 1; fi
+          done
+      - name: Retain exact candidate and results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: godot-c30-checks
+          path: .artifacts/c30/
+          include-hidden-files: true
+          retention-days: 7
+
   validate:
     # A manual observation must not emit a skipped check with the required name.
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'Full validation omitted for supply observation' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && 'Full validation omitted for combat observation' || 'validate' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'Full validation omitted for supply observation' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && 'Full validation omitted for combat observation' || github.event_name == 'workflow_dispatch' && inputs.mode == 'c30' && 'Full validation omitted for C30 checks' || 'validate' }}
     if: github.event_name != 'workflow_dispatch' || inputs.mode == 'full'
     runs-on: ubuntu-24.04
     timeout-minutes: 45

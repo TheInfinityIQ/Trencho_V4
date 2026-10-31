@@ -106,6 +106,9 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		rounds += rear.military._rounds(id)
 	withdrawing = withdrawing or broken_count > active.size()/2.0
 	var offensive: bool = intent.action in ["Seize Objective","Probe","Assault HQ"] and role == "Rifle"
+	var armour: Dictionary = _blocking_armour(squad,goal.position) if offensive and squad.owner == "army-red" else {}
+	if not armour.is_empty():
+		_report(squad.id,"Inability","Delivered %s on the assigned approach; no actual penetrating support. Need an anti-armour capability; attempting the declared safe fallback." % str(armour.class),true)
 	var advance_allowed := true
 	var cohesion: Dictionary = rear.combat.squad_cohesion(squad.id)
 	if float(cohesion.get("cohesion",0)) < 0.5: advance_allowed = false
@@ -123,6 +126,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	if withdrawing and fallback.get("kind","") != "PLACE": status[squad.id] = "No safe declared fallback"; return
 	status[squad.id] = "Withdrawing" if withdrawing else ("Advancing" if advance_allowed else "Holding for capability or supply")
 	if assault_blocked and not withdrawing: status[squad.id] = "Holding for validated HQ assault preparation"
+	if not armour.is_empty() and not withdrawing: status[squad.id] = "Observed armour: seeking a safe declared fallback; otherwise holding"
 	for id in active:
 		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		if _busy(id) or not _on_foot(person): motions.erase(id); continue
@@ -134,6 +138,21 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 				if person.position.distance_to(target.position) <= defensive_range: immediate_threat = true
 			if not rear.combat.broken.has(id) and (at_rally or immediate_threat) and _shoot(id,targets,defensive_range): continue
 			_walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true,"Fallback")
+			continue
+		if not armour.is_empty():
+			# Existing withdrawal/Broken behavior above takes priority. Pinned
+			# people retain their stopped immediate-survival behavior.
+			if motions.has(id) and motions[id].purpose != "Fallback": motions.erase(id)
+			if rear.combat.pinned.has(id):
+				motions.erase(id)
+				_shoot(id,targets,30)
+				continue
+			if _shoot(id,targets,30): continue
+			if fallback.get("kind","") == "PLACE":
+				_walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true,"Fallback")
+			else:
+				motions.erase(id)
+				_report(squad.id,"Inability","Observed armour blocks this mission and no declared fallback exists; holding",true)
 			continue
 		if assault_blocked: continue
 		if rear.combat.pinned.has(id):
@@ -172,6 +191,23 @@ func _support_goal(squad: Dictionary, objective: Dictionary, supported_squads: A
 	var direction: float = 1.0 if squad.owner == "army-blue" else -1.0
 	result.position = Vector2(centre.x,centre.y-direction*60.0)
 	return result
+
+func _blocking_armour(squad: Dictionary, destination: Vector2) -> Dictionary:
+	# Read only information actually delivered to this unit. An unseen hull or
+	# an unrelated contact elsewhere cannot alter the assigned mission.
+	var rear: RefCounted = _rear()
+	if rear.orders._has_antiarmour(squad.platoon): return {}
+	var leader: Dictionary = rear.ledger.inspect_person_status(squad.leader)
+	if leader.is_empty() or leader.health <= 0: return {}
+	var delta: Vector2 = destination-leader.position
+	for id in rear.orders.contacts.get(squad.id,{}):
+		var known: Dictionary = rear.orders.contact(squad.id,id)
+		if known.get("confidence",0) <= 0 or not known.position.is_finite() or known.get("class","") not in ["T04","T05"]: continue
+		var fraction := 0.0 if delta.length_squared() <= EPS else clampf((known.position-leader.position).dot(delta)/delta.length_squared(),0,1)
+		var nearest: Vector2 = leader.position+delta*fraction
+		var effective := 450.0 if known.class == "T04" else 700.0
+		if nearest.distance_to(known.position) <= effective+float(known.get("uncertainty_m",0)): return known
+	return {}
 
 func _targets(squad_id: String) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []

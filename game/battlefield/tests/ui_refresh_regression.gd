@@ -94,6 +94,24 @@ func _run() -> void:
 	check(signals.changes == 0 and fresh.rear.time == 0 and fresh.rear.ledger._events.size() == ledger_events and fresh.rear._events.size() == rear_events,"Read loaders neither signal commands nor settle or advance physical state")
 	main._show_base()
 	check(demo.get("_displayed_time") == 0 and demo.status.text != "No rear refresh during direct battlefield launch" and demo.tabs.current_tab == prior_tab,"First return builds fresh rear state and preserves the selected tab")
+	# A casualty's activity cannot inherit its healthy squad's movement label.
+	var casualty := "start-blue-squad-00-person-00"
+	fresh.rear.battlefield_operations.status["start-blue-squad-00"] = "Advancing"
+	check(fresh.rear.combat.injure(casualty,100).ok,"Actual selected Rifle member is incapacitated")
+	field.selected_id = casualty
+	field._refresh()
+	check("Incapacitated: Wounded" in field.get("_inspector").text and not "Advancing" in field.get("_inspector").text,"Zero-health wounded person shows incapacity before formation activity")
+	check(fresh.rear.combat.injure(casualty,1).ok,"Further physical injury resolves death")
+	check(field._activity_label(fresh.rear.ledger.inspect_person_status(casualty)) == "Dead","Dead person is distinct from a living incapacitated casualty")
+	var reported := {"id":"reported-hull","class":"T04","kind":"CONTACT"}
+	field.zoom = 1
+	field.selected_id = "resource-centre-blue"
+	check(field._contact_label(reported).is_empty(),"Overview contact markers omit repeated labels")
+	field.selected_id = reported.id
+	check(field._contact_label(reported) == "Reported T04","Selected contact labels use delivered class without hidden identity details")
+	field.selected_id = "resource-centre-blue"
+	field.zoom = 8
+	check(field._contact_label(reported) == "Reported T04","Zoomed contact labels retain reported class")
 	demo.scenario.select(0)
 	demo._start_session()
 	check(demo.visible and demo.get("_displayed_time") == 0 and field.simulation == demo.simulation and field.selected_id == "resource-central","Normal visible Orders session creation still refreshes immediately and retains its real diagnostic objective")

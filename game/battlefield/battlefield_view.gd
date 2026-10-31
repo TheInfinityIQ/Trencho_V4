@@ -144,7 +144,7 @@ func _draw() -> void:
 			elif entity.id == "observation-central": colour = Color("d6b8ef")
 			_draw_marker(entity.position, colour, label, font,entity.id,false,entity.get("ownership_colour",Color.TRANSPARENT))
 		elif entity.kind == "CONTACT":
-			_draw_marker(entity.position, Color("e4a47c"), "Contact", font,entity.id)
+			_draw_marker(entity.position, Color("e4a47c"), _contact_label(entity), font,entity.id)
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
 			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), _unit_label(entity) if zoom >= 8 or entity.id == selected_id else "", font,entity.id,true)
 		elif entity.kind == "PERSON" and not entity.get("aboard",false) and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
@@ -183,6 +183,9 @@ func _unit_label(entity: Dictionary) -> String:
 		return role+" · "+str(int(str(entity.id).get_slice("-",5))+1)
 	return entity.id
 
+func _contact_label(entity: Dictionary) -> String:
+	return "Reported "+str(entity.get("class","Unknown")) if zoom >= 8 or entity.id == selected_id else ""
+
 
 func _refresh() -> void:
 	if _inspector == null or simulation == null: return
@@ -209,6 +212,10 @@ func _refresh() -> void:
 			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
+			if selected.design_type == "T04":
+				detail += "\nE26 aboard: %d / 240 maximum (includes loaded rounds)" % int(selected.get("ammunition",{}).get("E26",0))
+			if rear.battlefield_operations != null:
+				detail += "\nMounted action: "+str(rear.battlefield_operations.vehicle_execution.status.get(selected.id,"Awaiting actual military capability and delivered contact."))
 			for job in rear.military.troop_transport.jobs.values():
 				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
 			for station in selected.get("crew_by_station",{}):
@@ -233,6 +240,10 @@ func _refresh() -> void:
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear
+	if person.kind == "PERSON":
+		if person.get("assignment","") == "Dead": return "Dead"
+		if person.get("assignment","") in ["Wounded","Recovery"]: return "Incapacitated: "+str(person.assignment)
+		if person.get("health",0) <= 0: return "Incapacitated"
 	if person.kind == "CARRIER":
 		for job in rear.military.troop_transport.jobs.values():
 			if job.hull == person.id and job.state != "Complete": return "Military transport: "+str(job.state)

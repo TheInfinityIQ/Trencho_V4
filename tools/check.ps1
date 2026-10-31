@@ -90,6 +90,7 @@ Invoke-GodotCheck -Name 'objective-ownership-regression' -EngineArguments @('--s
 Invoke-GodotCheck -Name 'squad-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/squad_execution_regression.gd')
 Invoke-GodotCheck -Name 'vehicle-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/vehicle_execution_regression.gd')
 Invoke-GodotCheck -Name 'execution-safety-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/execution_safety_regression.gd')
+Invoke-GodotCheck -Name 'observed-armour-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/observed_armour_regression.gd')
 Invoke-GodotCheck -Name 'sustained-rifle-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/sustained_rifle_regression.gd')
 Invoke-GodotCheck -Name 'forward-supply-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_supply_regression.gd')
 Invoke-GodotCheck -Name 'vehicle-rack-issue-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/vehicle_rack_issue_regression.gd')

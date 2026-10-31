@@ -430,6 +430,7 @@ func _training_panel(box: VBoxContainer) -> void:
 
 func _vehicles_panel(box: VBoxContainer) -> void:
 	_label(box,"F10 produced hulls retain their identity through crew, fuel and F11 parking.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"C30 playtest: manufacture an empty R30 APC in Work. Board three existing P08 people at its distinct stations, carry real M08 into its tank, then drive to parking and Fleet Transfer it through Dispatch. Manufacture R33 E26 separately and deliver it through HQ and Supply; the army deploys the APC and assigns local Engineers to fill its rack.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vehicle_rows = _list(box,140)
 	vehicle_rows.item_selected.connect(func(_index: int) -> void: _load_vehicle_stations(); _refresh())
 	vehicle_person = _option(box,"Actual rear person",[])
@@ -832,10 +833,10 @@ func _refresh() -> void:
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:
 		vehicle_rows.select(0)
 		_load_vehicle_stations()
-	vehicle_status.text = "No F10-produced hull yet. Manufacture R25/R28 or expanded T03–T05, then use actual trained people and purchased M08."
+	vehicle_status.text = "No F10-produced hull yet. Select an accessible recipe in Work, then use actual trained people and M08. The C30 playtest provides R30 and R33 access alongside essential recipes."
 	for row in view.vehicles.rows:
 		if row.id != _vehicle_id(): continue
-		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Actual HQ transfer and firing are later systems." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
+		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Fleet Transfer preserves this hull at HQ; inspect military deployment on Battlefield and actual E26 issue in Supply." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
 	_fill(jobs, _job_ids, view.rear.jobs, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 	var lines: Array[String] = []
 	for activity in [view.production, view.munitions, view.materials, view.support]:
