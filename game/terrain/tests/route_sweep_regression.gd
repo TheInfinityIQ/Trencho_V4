@@ -38,6 +38,12 @@ class LegacyWorld extends World:
 			fuel += used
 		return {"ok": true, "reason": "Whole straight lane supported", "parts": parts, "seconds": seconds, "distance": distance, "fuel": fuel, "revision": revision}
 
+class CountedFoldWorld extends World:
+	var scalar_checks := 0
+	func _scalar_route_rule(rule: Dictionary) -> bool:
+		scalar_checks += 1
+		return super._scalar_route_rule(rule)
+
 func _initialize() -> void:
 	for spec in Fixtures.movement_cases():
 		var lane: RefCounted = Fixtures.lane(spec)
@@ -45,6 +51,7 @@ func _initialize() -> void:
 	_generated_intervals()
 	_repeated_rules()
 	_homogeneous_cases()
+	_folded_scalars()
 	_generated_lanes()
 	_long_lanes()
 	print("Route sweep regression: %d checks, %d failures" % [checks,failures])
@@ -196,6 +203,43 @@ func _interval_case(intervals: Array[Dictionary], cuts: Array[float], label: Str
 	var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 	var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 	_expect(var_to_bytes(actual) == var_to_bytes(expected),label+": exact legacy bytes for every part/total")
+
+func _folded_scalars() -> void:
+	var world := CountedFoldWorld.new()
+	var legacy := LegacyWorld.new()
+	var body := _body(Vector2.ZERO,Vector2(100,0))
+	var rule := {"factor":0.8,"fuel":1.2,"slope":-0.0,"surface":"TR01"}
+	var intervals: Array[Dictionary] = [{"from":0.1,"to":0.4,"rule":rule},{"from":0.6,"to":0.9,"rule":rule}]
+	var cuts: Array[float] = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.9,1.0]
+	var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	_expect(var_to_bytes(actual) == var_to_bytes(expected),"Lazy shared fold preserves every occupied part and surrounding empty gaps")
+	_expect(world.scalar_checks == 1,"Primitive rule shape checked once only after first occupied retained span")
+	actual.parts[1].surfaces.append("detached mutation")
+	_expect(actual.parts[2].surfaces == ["TR01"] and actual.parts[0].surfaces.is_empty(),"Every occupied and empty part owns an independent surfaces array")
+	rule.factor = 0.3
+	rule.fuel = 2.5
+	rule.slope = 14.0
+	rule.surface = "TR05"
+	rule.speed_cap = 1.1
+	expected = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	actual = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	_expect(var_to_bytes(actual) == var_to_bytes(expected) and world.scalar_checks == 2,"Same world/query arguments recompute changed rule and fresh surfaces on next invocation")
+	for fallback in [{"factor":1,"fuel":1,"slope":0,"surface":"TR01"},{"factor":0.8,"fuel":1.2,"slope":0.0,"surface":"TR01","speed_cap":2}]:
+		_expect(not world._scalar_route_rule(fallback),"Lenient numeric integer fields retain the original fold")
+		var fallback_intervals: Array[Dictionary] = [{"from":0.1,"to":0.4,"rule":fallback},{"from":0.6,"to":0.9,"rule":fallback}]
+		_interval_case(fallback_intervals,cuts,"Integer-valued rule uses unchanged fold across gaps",true)
+	for malformed in [{},{"factor":0.5},{"factor":"invalid","fuel":1.0,"slope":0.0,"surface":"TR01"},{"factor":1.0,"fuel":1.0,"slope":0.0,"surface":42},{"factor":1.0,"fuel":1.0,"slope":0.0,"surface":"TR01","speed_cap":null}]:
+		_expect(not world._scalar_route_rule(malformed),"Unknown/missing/nonprimitive rule fields decline scalar reuse")
+		var untouched := CountedFoldWorld.new()
+		var outside: Array[Dictionary] = [{"from":2.0,"to":3.0,"rule":malformed}]
+		expected = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,outside,[0.0,1.0])
+		actual = untouched._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,outside,[0.0,1.0])
+		_expect(var_to_bytes(actual) == var_to_bytes(expected) and untouched.scalar_checks == 0,"No occupied span never inspects malformed rule fields")
+		var covered: Array[Dictionary] = [{"from":0.0,"to":1.0,"rule":malformed}]
+		expected = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,covered,[0.0,World.EPS*0.5])
+		actual = untouched._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,covered,[0.0,World.EPS*0.5])
+		_expect(var_to_bytes(actual) == var_to_bytes(expected) and untouched.scalar_checks == 0,"Only sub-EPS cuts never inspect malformed rule fields")
 
 func _long_lanes() -> void:
 	var world := World.new()

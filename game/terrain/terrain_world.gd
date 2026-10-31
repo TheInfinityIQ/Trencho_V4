@@ -331,6 +331,10 @@ func _homogeneous_intervals(intervals: Array[Dictionary], cuts: Array[float]) ->
 	return true
 
 
+func _scalar_route_rule(rule: Dictionary) -> bool:
+	return typeof(rule.get("factor")) == TYPE_FLOAT and typeof(rule.get("fuel")) == TYPE_FLOAT and typeof(rule.get("slope")) == TYPE_FLOAT and typeof(rule.get("surface")) == TYPE_STRING and (not rule.has("speed_cap") or typeof(rule.get("speed_cap")) == TYPE_FLOAT)
+
+
 func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 	cuts.sort()
 	var homogeneous := _homogeneous_intervals(intervals,cuts)
@@ -345,6 +349,14 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 	var parts: Array[Dictionary] = []
 	var seconds := 0.0
 	var fuel := 0.0
+	var fold_checked := not homogeneous
+	var reuse_fold := false
+	var fold_ready := false
+	var saved_factor := INF
+	var saved_burn := 0.0
+	var saved_slope := 0.0
+	var saved_cap := INF
+	var saved_surface := ""
 	for index in range(cuts.size() - 1):
 		var begin: float = cuts[index]
 		var end: float = cuts[index + 1]
@@ -372,18 +384,36 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 		var surfaces: Array[String] = []
 		var max_slope := 0.0
 		var speed_cap := INF
-		var previous_rule: Dictionary = {}
-		for id in active:
-			var rule: Dictionary = intervals[id].rule
-			# Repeating the same consecutive min/max operand and surface is
-			# idempotent. Never skip across a differing active rule.
-			if is_same(rule,previous_rule): continue
-			previous_rule = rule
-			factor = minf(factor, rule.factor)
-			burn = maxf(burn, rule.fuel)
-			max_slope = maxf(max_slope, rule.slope)
-			speed_cap = minf(speed_cap,float(rule.get("speed_cap",INF)))
-			if rule.surface not in surfaces: surfaces.append(rule.surface)
+		# Do not inspect a rule's fields until an occupied retained span.
+		if not fold_checked and not active.is_empty():
+			fold_checked = true
+			reuse_fold = _scalar_route_rule(intervals[0].rule)
+		if reuse_fold and fold_ready and not active.is_empty():
+			factor = saved_factor
+			burn = saved_burn
+			max_slope = saved_slope
+			speed_cap = saved_cap
+			surfaces.append(saved_surface) # every part still owns a fresh array
+		else:
+			var previous_rule: Dictionary = {}
+			for id in active:
+				var rule: Dictionary = intervals[id].rule
+				# Repeating the same consecutive min/max operand and surface is
+				# idempotent. Never skip across a differing active rule.
+				if is_same(rule,previous_rule): continue
+				previous_rule = rule
+				factor = minf(factor, rule.factor)
+				burn = maxf(burn, rule.fuel)
+				max_slope = maxf(max_slope, rule.slope)
+				speed_cap = minf(speed_cap,float(rule.get("speed_cap",INF)))
+				if rule.surface not in surfaces: surfaces.append(rule.surface)
+			if reuse_fold and not fold_ready and not active.is_empty():
+				saved_factor = factor
+				saved_burn = burn
+				saved_slope = max_slope
+				saved_cap = speed_cap
+				saved_surface = surfaces[0]
+				fold_ready = true
 		var length := (end - begin) * distance
 		var speed: float = minf(entity.base * factor,speed_cap)
 		var used: float = length * entity.rate * burn / 1000.0
