@@ -219,7 +219,7 @@ func assess_hq_assault(company_id: String, enemy_hq_id: String, route_ok: bool) 
 	var attackers := 0.0
 	for squad_id in squads:
 		readiness = minf(readiness,_rear().military.readiness(squad_id))
-		attackers += _squad_strength(squad_id)
+		attackers += _squad_strength(squad_id,Vector2.INF,INF,"Deployment")
 		var squad: Dictionary = _rear().military.squads[squad_id]
 		if squad.kind not in ["Rifle","Marksman"]: continue
 		for person_id in _rear().military._active_roster_members(squad):
@@ -399,8 +399,8 @@ func _review_flank(platoon_id: String) -> void:
 	var plan: Dictionary = responsibilities[platoon_id]
 	var ammo: Dictionary = _fixing_ammunition(plan.fixing,plan.target)
 	var contact_now: Dictionary = contact(platoon_id,plan.target)
-	var fixing: Dictionary = _rear().military.capability(plan.fixing)
-	var flanking: Dictionary = _rear().military.capability(plan.flanking)
+	var fixing: Dictionary = _rear().military.capability(plan.fixing,"Sustained Execution")
+	var flanking: Dictionary = _rear().military.capability(plan.flanking,"Sustained Execution")
 	var cohesion: Dictionary = _rear().combat.squad_cohesion(plan.flanking)
 	if ammo.ok and fixing.ok and flanking.ok and contact_now.current and cohesion.state == "Coherent": return
 	plan.state = "Paused"
@@ -426,12 +426,14 @@ func _fixing_ammunition(squad_id: String, target_id: String) -> Dictionary:
 	if target.is_empty(): return _block("Observed target identity no longer exists.")
 	return _block("Fixing squad has no eligible loaded matching weapon with a current legal firing line; flank must pause and request local E02.")
 
-func _squad_strength(squad_id: String) -> float:
+func _squad_strength(squad_id: String, centre: Vector2 = Vector2.INF, radius: float = INF, purpose: String = "Sustained Execution") -> float:
 	var squad: Dictionary = _rear().military.squads.get(squad_id,{})
-	if squad.is_empty() or not _rear().military.capability(squad_id).ok: return 0.0
+	if squad.is_empty() or not _rear().military.capability(squad_id,purpose).ok: return 0.0
 	var total := 0.0
 	for id in _rear().military._active_roster_members(squad):
+		if squad.kind == "Rifle" and (not _rear().military.rifle_can_fight(id) or _rear().combat.broken.has(id)): continue
 		var person: Dictionary = _rear().ledger.inspect_entity(id)
+		if centre.is_finite() and person.position.distance_to(centre) > radius: continue
 		var base := 1.5 if squad.kind == "Marksman" and _rear().military._held(id,"E19") > 0 else 1.0
 		var factor := float(person.health)/100.0 * (1.0-float(person.suppression)/200.0)
 		var cover: Dictionary = _rear().combat.world.cover(person.position,Vector2.INF)

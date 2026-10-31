@@ -1019,7 +1019,8 @@ func readiness(id: String) -> float:
 	elif row.kind == "Artillery": ammunition = minf(ammunition,float(_artillery_count("E14",id))/20.0)
 	return clampf(minf(minf(float(active.size())/8.0,equipment),ammunition),0.0,1.0)
 
-func capability(id: String) -> Dictionary:
+func capability(id: String, purpose: String = "Deployment") -> Dictionary:
+	if purpose not in ["Deployment","Sustained Execution"]: return _fail("Unknown squad capability purpose.")
 	var row: Dictionary = squads.get(id,{})
 	if row.is_empty() or row.state != "Active": return _fail("Only a physically reported active squad has capability.")
 	if not row.vehicle.is_empty(): return _fail("Mounted passengers cannot provide dismounted fire or capture until actual exit.")
@@ -1027,9 +1028,28 @@ func capability(id: String) -> Dictionary:
 	if row.leader.is_empty() or row.leader not in active: return _fail("Squad has no living, physically assigned leader during replacement delay.")
 	var leader: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(row.leader)
 	if not leader.basic_training and not (row.kind == "Rifle" and row.acting): return _fail("Squad leader lacks the required training or Rifle acting exception.")
+	# Thirty rounds is the deployment package, not a per-shot whole-squad cutoff.
+	# Existing Rifle intent still needs the living minimum and a real armed member.
+	if purpose == "Sustained Execution" and row.kind == "Rifle":
+		if active.size() < int(MINIMUM.Rifle): return _fail("Rifle execution needs its actual living minimum.")
+		for person_id in active:
+			if rifle_can_fight(person_id): return {"ok":true,"message":"Existing Rifle intent has actual armed capability; deployment package is assessed separately."}
+		return _fail("No active Rifle member has a functional rifle and actual matching rounds.")
 	var package: Dictionary = _package(row.kind,active,id)
 	if not package.ok: return package
 	return {"ok":true,"message":"Type minimum, actual local package and leader permit this squad's G15 role."}
+
+func rifle_can_fight(id: String) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var ledger: RefCounted = rear.ledger
+	for weapon in ledger.entities_at(id,["WEAPON"]):
+		if weapon.design_type != "E01" or not weapon.functional: continue
+		if weapon.loaded_rounds > 0: return true
+		for stock in ledger.entities_at(id,["STOCK"]):
+			if stock.owner == weapon.owner and stock.design_type == weapon.ammo_type and stock.available > 0: return true
+		var reload: Dictionary = rear.combat.reloads.get(weapon.id,{})
+		if not reload.is_empty() and reload.operator == id and ledger.inspect_claim(reload.claim).get("reserved",0) > 0: return true
+	return false
 
 func _active_roster_members(row: Dictionary, include_boarded: bool = false) -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()

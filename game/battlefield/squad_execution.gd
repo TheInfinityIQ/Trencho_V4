@@ -98,7 +98,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		_report(squad.id,"Inability","HQ assault requires a validated company preparation plan")
 	var targets: Array[Dictionary] = _targets(squad.id)
 	var withdrawing := active.size() <= float(baseline[squad.id])*0.4
-	if not rear.military.capability(squad.id).ok and not (role == "Guard" and intent.action == "Defend HQ"): withdrawing = true
+	if not rear.military.capability(squad.id,"Sustained Execution").ok and not (role == "Guard" and intent.action == "Defend HQ"): withdrawing = true
 	var broken_count := 0
 	var rounds := 0
 	for id in active:
@@ -193,13 +193,7 @@ func _strength(squad: Dictionary, targets: Array[Dictionary]) -> Dictionary:
 		enemy += float(contact.caution_strength)*(1.3 if cover.hit <= 0.5 else (1.15 if cover.hit < 1 else 1.0))
 	for friendly in _rear().military.squads.values():
 		if friendly.company != squad.company or friendly.kind != "Rifle": continue
-		var members: Array[String] = _rear().military._active_roster_members(friendly)
-		var local_count := 0
-		for id in members:
-			var person: Dictionary = _rear().ledger.inspect_person_status(id)
-			if person.position.distance_to(centre) <= 300 and not _rear().combat.broken.has(id):
-				local_count += 1
-		if not members.is_empty(): own += _rear().orders._squad_strength(friendly.id)*float(local_count)/members.size()
+		own += _rear().orders._squad_strength(friendly.id,centre,300.0)
 	return {"own":own,"enemy":enemy}
 
 func _shoot(id: String, targets: Array[Dictionary], maximum_range: float) -> bool:
