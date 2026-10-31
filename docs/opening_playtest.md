@@ -12,6 +12,8 @@ The authored engagement resolves the initial free card choice to **C30** (GDD §
 
 The initial ordinary opening can be inspected before the APC experiment is complete. Rifle ammunition deliveries remain physical replenishment evidence; the generous starting ammunition does not establish that rear-source scarcity will be decisive.
 
+For the C30 experiment, Red's normal response means recognizing inability against actually observed armour, not receiving a new force or weapon. Only a delivered T04/T05 contact relevant to its current mission can trigger the existing capability check. With no valid counter, ordinary advance/assault into the threat is ineligible: report the shortage through the hierarchy and attempt the declared feasible safe fallback; hold/report if none is safe. Preserve immediate survival, Pinned/Broken behavior, real sight/cover/routes and hidden enemy inventory. No new Red squad, equipment, E07, mine plan, forced outcome or general counter-unit planner is authorized. Broader Red mounted tactics remain open scope. This response connection, new T04 deployment and automatic Engineer rack issue still require implementation and integrated observation.
+
 The map is one authored full-size representative, not final generation/fairness/performance acceptance. Town shells block sight and movement but cannot yet be entered or damaged. The opening issues no garrison or building-destruction tasks. Garrison, damage and rubble remain open GDD requirements. Populated battle readability and pacing require the integrated playtest.
 
 ## Candidate controls and boundaries
