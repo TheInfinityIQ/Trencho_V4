@@ -126,6 +126,11 @@ func obstacle(id: String, rectangle: Rect2, bottom: float, top: float, solid: bo
 func support(at: Vector2i, movement_class: int) -> Dictionary:
 	if not bounds.has_point(at): return _blocked("Outside declared world")
 	var tile := cell(at)
+	return _support_from_tile(tile,movement_class)
+
+
+func _support_from_tile(tile: Dictionary, movement_class: int) -> Dictionary:
+	# A fresh rule is required: route applies cell-local field effects and caps.
 	var surface: String = tile.terrain
 	var overlay: Dictionary = tile.get("overlay", {})
 	var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
@@ -200,15 +205,16 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var at := Vector2i(x, y)
 			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
 			if interval.x < 0: continue
-			if not str(cell(at).get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
-			var rule := support(at, entity.movement_class)
+			var tile := cell(at)
+			if not str(tile.get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
+			var rule := _support_from_tile(tile, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
 			for effect in field_effects:
 				if not effect.area.has_point(Vector2(at)+Vector2(0.5,0.5)): continue
 				if effect.code == "S02" and entity.movement_class == 0: rule.factor *= 0.8
 				if effect.code == "S05" and entity.movement_class == 0: rule.factor *= 0.7
 				if effect.code == "S04" and entity.movement_class == 2: rule.factor *= 0.25
-			var overlay: Dictionary = cell(at).get("overlay",{})
+			var overlay: Dictionary = tile.get("overlay",{})
 			if overlay.get("complete",false) and overlay.get("kind","") == "causeway" and entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.get("load_kg",8000.0))+EPS:
 				return _blocked("Causeway gross-load limit excludes this actual body and contents")
 			if overlay.get("complete",false) and overlay.get("kind","") == "crossing" and overlay.has("code"):
@@ -219,7 +225,9 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 				var approach_cap := INF
 				for cap in bridge_approaches[at].values(): approach_cap = minf(approach_cap,float(cap))
 				rule["speed_cap"] = approach_cap
-			occupied_cells[at] = true
+			# Only this synchronous route owns these read-only tile references.
+			# Keep insertion order for the existing first height-edge refusal.
+			occupied_cells[at] = tile
 			intervals.append({"from": interval.x, "to": interval.y, "rule": rule})
 			cuts.append(interval.x)
 			cuts.append(interval.y)
@@ -231,7 +239,7 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var edge := Vector2(at + offset)
 			var tangent := Vector2.DOWN if offset == Vector2i.RIGHT else Vector2.RIGHT
 			for point in [edge, edge + tangent]:
-				if absf(_tile_height(cell(at), point) - _tile_height(cell(at + offset), point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
+				if absf(_tile_height(occupied_cells[at], point) - _tile_height(occupied_cells[at + offset], point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
 	return _route_parts(entity, start, destination, distance, intervals, cuts)
 
 
