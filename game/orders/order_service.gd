@@ -63,7 +63,7 @@ func contact(echelon_id: String, target_id: String) -> Dictionary:
 	result.current = result.age <= 4.0+EPS and _source_current(result.source,target_id)
 	if result.has("observer_element"):
 		var observer: Dictionary = _apc_observer(result.observer_element)
-		result.current = result.current and not observer.is_empty() and observer.get("parent","") == result.observer_parent and observer.get("role","") == result.observer_role
+		result.current = result.current and not observer.is_empty() and observer.get("source","") == result.source and observer.get("parent","") == result.observer_parent and observer.get("role","") == result.observer_role
 	return result
 
 func current_contact(echelon_id: String, target_id: String) -> bool:

@@ -10,6 +10,7 @@ var failures := 0
 func _initialize() -> void:
 	_commander_observation()
 	_commander_loss()
+	_commander_migration()
 	_commander_geometry()
 	_empty_then_physical_issue()
 	_current_parent_contacts()
@@ -130,6 +131,37 @@ func _commander_loss() -> void:
 	rear.advance_time(50)
 	var expired: Dictionary = rear.orders.contact("mounted-company","mounted-target")
 	check(expired.get("confidence",1) == 0 and not expired.position.is_finite(),"Undelivered replacement cannot refresh original observation beyond confidence expiry")
+
+func _commander_migration() -> void:
+	var base := _fixture("T04",0,"T02",false,300)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	check(ledger.add_initial_vehicle("migration-hull","T04","mounted-stop",rear.PLAYER,Specs.TYPES.T04,20,"Military").ok,"Second actual APC at crew handoff place")
+	for station in ["Driver","Gunner"]:
+		var person_id: String = "migration-"+station
+		check(ledger.add_person(person_id,"mounted-stop",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok,"Second APC real qualified crew")
+		check(ledger.assign_initial_vehicle_crew(person_id,"migration-hull",station).ok,"Second APC actual occupied station")
+	check(rear.military.attach_initial_vehicle("migration-hull","mounted-company").ok,"Second APC attaches to actual company rather than original platoon")
+	check(ledger.add_person("migration-replacement","mounted-stop",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok,"Real qualified replacement Commander at handoff place")
+	rear.advance_time(1.5)
+	var last_observed: float = rear.orders.visible["mounted-hull"]["mounted-target"].observed_at
+	check(rear.orders.contact("mounted-platoon","mounted-target").get("current",false),"Original actual APC first receives its own Commander report")
+	# Declared stationary handoff fixture uses public ledger completion boundaries;
+	# it does not claim timed military reassignment or travel has been exercised.
+	check(ledger.request_assignment("mounted-Commander",Records.Assignment.REAR_LABOUR,"crew:migration-hull:Commander").ok,"Original person requests exclusive new crew duty")
+	check(ledger.complete_vehicle_station_exit("mounted-Commander","mounted-hull").ok,"Original Commander physically vacates old APC")
+	check(ledger.move_entity("mounted-Commander","mounted-stop",AT).ok,"Same person reaches colocated new APC entry")
+	check(ledger.complete_vehicle_station_entry("mounted-Commander","migration-hull","Commander").ok,"Same original person occupies new APC Commander station")
+	check(ledger.request_assignment("migration-replacement",Records.Assignment.REAR_LABOUR,"crew:mounted-hull:Commander").ok,"Replacement requests exclusive original APC station")
+	check(ledger.complete_vehicle_station_entry("migration-replacement","mounted-hull","Commander").ok,"Different actual qualified person occupies original Commander station")
+	check(ledger.move_entity("mounted-hull","mounted-stop",AT+Vector2(1000,0)).ok,"Declared original APC endpoint outside target observation range")
+	rear.advance_time(1)
+	check(rear.orders._source_current("mounted-Commander","mounted-target"),"Original source really has current sight from its different APC")
+	check(rear.orders._apc_observer("mounted-hull").source == "migration-replacement" and not rear.orders.visible["mounted-hull"].has("mounted-target"),"Original element has sameparent samerole replacement but no current sight")
+	var historical: Dictionary = rear.orders.contact("mounted-platoon","mounted-target")
+	check(historical.source == "mounted-Commander" and historical.observer_element == "mounted-hull" and historical.observed_at == last_observed,"Queued original report remains historical with original source element and sample time")
+	check(not historical.current and historical.confidence > 0 and historical.age > 0,"Original APC cannot borrow its former Commander's new APC sight to make historical contact current")
+	check(_shots(rear).is_empty(),"Source migration supplies neither ammunition nor authority to fire")
 
 func _commander_geometry() -> void:
 	var base := _fixture("T04",20,"T02",false,300)
