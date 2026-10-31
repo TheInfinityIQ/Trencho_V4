@@ -236,10 +236,15 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	for at in occupied_cells:
 		for offset in [Vector2i.RIGHT, Vector2i.DOWN]:
 			if not occupied_cells.has(at + offset): continue
+			var here: Dictionary = occupied_cells[at]
+			var there: Dictionary = occupied_cells[at + offset]
+			# The identical raw tile has identical pure height at either edge
+			# point. Distinct dictionaries still take every original check.
+			if is_same(here,there): continue
 			var edge := Vector2(at + offset)
 			var tangent := Vector2.DOWN if offset == Vector2i.RIGHT else Vector2.RIGHT
 			for point in [edge, edge + tangent]:
-				if absf(_tile_height(occupied_cells[at], point) - _tile_height(occupied_cells[at + offset], point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
+				if absf(_tile_height(here, point) - _tile_height(there, point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
 	return _route_parts(entity, start, destination, distance, intervals, cuts)
 
 
@@ -272,12 +277,12 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 		var max_slope := 0.0
 		var speed_cap := INF
 		for id in active:
-			var interval: Dictionary = intervals[id]
-			factor = minf(factor, interval.rule.factor)
-			burn = maxf(burn, interval.rule.fuel)
-			max_slope = maxf(max_slope, interval.rule.slope)
-			speed_cap = minf(speed_cap,float(interval.rule.get("speed_cap",INF)))
-			if interval.rule.surface not in surfaces: surfaces.append(interval.rule.surface)
+			var rule: Dictionary = intervals[id].rule
+			factor = minf(factor, rule.factor)
+			burn = maxf(burn, rule.fuel)
+			max_slope = maxf(max_slope, rule.slope)
+			speed_cap = minf(speed_cap,float(rule.get("speed_cap",INF)))
+			if rule.surface not in surfaces: surfaces.append(rule.surface)
 		var length := (end - begin) * distance
 		var speed: float = minf(entity.base * factor,speed_cap)
 		var used: float = length * entity.rate * burn / 1000.0

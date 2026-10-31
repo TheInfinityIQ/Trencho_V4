@@ -95,15 +95,20 @@ class LegacyWorld extends World:
 
 class CountedWorld extends World:
 	var resolutions: Dictionary = {}
+	var height_calls := 0
 	func cell(at: Vector2i) -> Dictionary:
 		resolutions[at] = int(resolutions.get(at,0))+1
 		return super.cell(at)
+	func _tile_height(tile: Dictionary, point: Vector2) -> float:
+		height_calls += 1
+		return super._tile_height(tile,point)
 
 func _initialize() -> void:
 	for spec in Fixtures.movement_cases():
 		var lane: RefCounted = Fixtures.lane(spec)
 		_compare(lane.world,lane.entity,lane.destination,spec.name)
 	_regions_and_mutations()
+	_height_identity()
 	_bridges_and_effects()
 	_generated()
 	_farmland()
@@ -174,6 +179,41 @@ func _regions_and_mutations() -> void:
 	_copy(slope,legacy)
 	for at in [Vector2i(-1,15),Vector2i(0,15),Vector2i(99,15),Vector2i(100,15)]:
 		for movement_class in 3: _expect(slope.support(at,movement_class) == legacy.support(at,movement_class),"Public support preserves bounds and class rules")
+
+func _height_identity() -> void:
+	var world := World.new()
+	world.bounds = Rect2i(0,0,100,30)
+	var properties := {"height":10.0,"gradient":Vector2(0.05,0)}
+	world.add_base_region(world.bounds,"TR01",properties)
+	var finish := Vector2(90,15)
+	var body := _body(Vector2(10,15),finish)
+	_expect(is_same(world.cell(Vector2i(40,15)),world.cell(Vector2i(41,15))),"One base region returns the same raw tile reference")
+	_expect(_compare(world,body,finish,"Shared nonzero sloped height plane").ok,"Shared sloped tile preserves independent legacy output")
+	var counted := CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok and counted.height_calls == 0,"Shared pure tile skips redundant endpoint height evaluations")
+	world.paint(Rect2i(40,0,20,30),"TR01",properties)
+	var here: Dictionary = world.cell(Vector2i(40,15))
+	var there: Dictionary = world.cell(Vector2i(41,15))
+	_expect(here == there and not is_same(here,there),"Equal explicit tile values remain distinct references")
+	_expect(_compare(world,body,finish,"Equal but distinct painted height planes").ok,"Distinct equal planes still meet at the original endpoints")
+	counted = CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok and counted.height_calls > 0,"Distinct dictionary edges retain endpoint height evaluations")
+	world.paint(Rect2i(49,14,1,1),"TR01",{"height":11.0,"gradient":Vector2(0.05,0)})
+	_expect(not _compare(world,body,finish,"Distinct painted height step").ok,"Distinct height change still fails at the same first edge")
+	world.paint(Rect2i(40,0,20,30),"TR01",properties)
+	world.base_regions[0].tile.height = 10.5
+	_expect(not _compare(world,body,finish,"Shared region mutation beside explicit cells").ok,"Identity shortcut cannot hide a changed boundary to another tile")
+	var bridge := World.new()
+	bridge.bounds = world.bounds
+	bridge.add_base_region(bridge.bounds,"TR11",{"height":99.0,"gradient":Vector2(0.05,0),"overlay":{"kind":"crossing","code":"shared-height","complete":true,"classes":[0,1,2],"load_kg":10000.0,"width":4.0,"speed_cap":2.0,"height":4.0}})
+	_expect(_compare(bridge,body,finish,"Shared completed overlay height overrides base plane").ok,"Shared overlay height preserves legacy support")
+	counted = CountedWorld.new()
+	_copy(bridge,counted)
+	_expect(counted.route(body,finish).ok and counted.height_calls == 0,"Same completed overlay tile also needs no redundant endpoint evaluations")
+	bridge.paint(Rect2i(49,14,1,1),"TR11",{"overlay":{"kind":"crossing","code":"changed-height","complete":true,"classes":[0,1,2],"load_kg":10000.0,"width":4.0,"speed_cap":2.0,"height":5.0}})
+	_expect(not _compare(bridge,body,finish,"Distinct completed overlay height step").ok,"Different overlay reference and height retain the original rejection")
 
 func _bridges_and_effects() -> void:
 	var world := World.new()
