@@ -192,7 +192,8 @@ func _seed_squad(row: Dictionary) -> void:
 			requests[id] = maxi(int(requests.get(id,0)),int(row.target))
 
 func _retire_squad_requests(row: Dictionary, all_members: bool = false) -> void:
-	var members: Array[String] = [] if all_members else _squad_members(row)
+	var members: Array[String] = []
+	if not all_members: members = _squad_members(row)
 	for id in row.seeded.keys():
 		if id in members: continue
 		# Retire only our unchanged target, preserving an earlier independent need.
