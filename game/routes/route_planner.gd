@@ -3,6 +3,7 @@ extends RefCounted
 const Terrain = preload("res://game/terrain/terrain_catalog.gd")
 const Specs = preload("res://game/production/vehicle_specs.gd")
 const TerrainWorld = preload("res://game/terrain/terrain_world.gd")
+const PlanWork = preload("res://game/routes/route_plan_work.gd")
 const EPS := 0.000001
 const BRIDGES := {
 	"B01":{"width":2.0,"span":20.0,"load":1000.0},
@@ -16,6 +17,9 @@ static func gross_kg(ledger: RefCounted, hull_id: String) -> float:
 	if hull.is_empty() or hull.kind != "CARRIER": return -1.0
 	# Contents include each actual child and its nested gear/ammunition exactly once.
 	return float(hull.unit_mass_kg) + float(hull.fuel) + float(hull.contents_mass_kg)
+
+static func begin_plan(ledger: RefCounted, hull_id: String, points: Array, profile: Dictionary = {}) -> RefCounted:
+	return PlanWork.new(ledger,hull_id,points,profile,BRIDGES,RADII)
 
 static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Dictionary = {}) -> Dictionary:
 	var hull: Dictionary = ledger.inspect_entity(hull_id)
