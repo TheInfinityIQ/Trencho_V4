@@ -289,7 +289,9 @@ func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[St
 			if fallback.get("kind","") == "PLACE": _walk(id,fallback_id,fallback.position+_offset(squad.roster.find(id)),true,"Fallback")
 			continue
 		if person.holder_id == stop_id and person.position.distance_to(stop.position) <= 8:
-			if motions.has(id) and motions[id].purpose == "Supply": motions.erase(id)
+			# Routine collection now owns this stationary Rifle carrier. An old
+			# Advance/return motion cannot carry a refilled member away early.
+			motions.erase(id)
 			continue
 		_walk(id,stop_id,stop.position+_offset(squad.roster.find(id)),true,"Supply")
 	return true
