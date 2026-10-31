@@ -1232,6 +1232,10 @@ func inspect_person_status(id: String) -> Dictionary:
 	if not _entities.has(id) or not (_entities[id] is Records.Person): return {}
 	return inspect_entity(id,{},false)
 
+func person_has_duty(id: String, duty: String) -> bool:
+	var person := _entities.get(id) as Records.Person
+	return person != null and person.duty_id == duty
+
 func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: bool = true, snapshot_facts: Dictionary = {}) -> Dictionary:
 	if not _entities.has(id):
 		return {}

@@ -9,6 +9,7 @@ func _initialize() -> void:
 	var ledger: RefCounted = fixture.ledger
 	check(ledger.entity_kind("missing") == "","Unknown kind query remains empty")
 	check(ledger.inspect_person_status("missing").is_empty() and ledger.inspect_person_status("supplier-truck").is_empty(),"Person status refuses missing and nonperson identities")
+	check(not ledger.person_has_duty("missing","") and not ledger.person_has_duty("supplier-truck",""),"Duty equality refuses unknown and nonperson identities even for an empty duty")
 	check(ledger.add_stock("retained-rounds","E02",50,0.02,"worker-01","army-blue").ok,"Real retained ammunition")
 	check(ledger.add_weapon("retained-rifle","E01",4,"worker-01","army-blue","E02",30).ok,"Actual retained rifle")
 	check(ledger.load_rounds("retained-rifle","retained-rounds",10).ok,"Actual nested loaded rounds")
@@ -44,6 +45,9 @@ func _initialize() -> void:
 		if row.kind == "STOCK": row.blocked_reason = "Mutated detached result"
 	check(ledger.entities_at_any(["person-03"],["WEAPON","STOCK"],false) == ledger.snapshot(false).entities.filter(func(row: Dictionary) -> bool: return row.holder_id == "person-03" and row.kind in ["WEAPON","STOCK"]),"Mutating returned stock and weapon facts cannot change later ledger inspections")
 	check(ledger.transfer_weapon("query-foreign","worker-01").ok,"Foreign loaded weapon physically changes holder")
+	compare(ledger)
+	check(ledger.request_assignment("worker-01",Records.Assignment.REAR_LABOUR,"query-next-duty").ok,"Actual assignment changes current duty without a cache")
+	check(ledger.person_has_duty("worker-01","query-next-duty") and not ledger.person_has_duty("worker-01","haul-fixture"),"Duty query immediately observes the physical assignment transition")
 	compare(ledger)
 	check(ledger.audit().is_empty(),"Mass inspections preserve all ledger invariants")
 	print("Mass inspection regression: %d checks, %d failures" % [checks,failures])
@@ -92,6 +96,8 @@ func compare(ledger: RefCounted) -> void:
 		check(row == ledger.inspect_entity(row.id),"Batched inspection equals independent raw facts for loaded rounds, carries and exact mass")
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
 		if row.kind == "PERSON":
+			for duty in ["",row.duty_id,"haul-fixture","query-next-duty","missing"]:
+				check(ledger.person_has_duty(row.id,duty) == (row.duty_id == duty),"Scalar duty equality matches current authoritative person facts")
 			var full: Dictionary = ledger.inspect_entity(row.id)
 			full.erase("contents_mass_kg")
 			var status: Dictionary = ledger.inspect_person_status(row.id)
