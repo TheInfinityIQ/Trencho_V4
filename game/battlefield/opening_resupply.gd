@@ -15,6 +15,8 @@ var rack_status := "Waiting for an initially empty local T04 rack."
 var _rack_seen: Dictionary = {}
 var _rack_jobs: Dictionary = {} # Owned job -> already credited physical deposits.
 var _rack_supplied: Dictionary = {}
+var _rack_replenishments: Dictionary = {}
+var _rack_cycle_keys: Dictionary = {} # Hull -> accepted keys, including closed cycles.
 
 func _init(rear: RefCounted, rifles: Array, engineers: String, stop: String) -> void:
 	_rear_ref = weakref(rear)
@@ -22,11 +24,72 @@ func _init(rear: RefCounted, rifles: Array, engineers: String, stop: String) -> 
 	engineer_squad = engineers
 	stop_id = stop
 
+func request_rack_replenishment(hull_id: String, cycle_key: String, target: int = 180) -> Dictionary:
+	if cycle_key.is_empty(): return {"ok":false,"message":"Rack replenishment needs a named cycle."}
+	if _rack_cycle_keys.get(hull_id,{}).has(cycle_key):
+		return {"ok":true,"hull":hull_id,"cycle":cycle_key,"message":"Existing cycle retained; no duplicate rack work created."}
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id,{},false)
+	var stop: Dictionary = rear.ledger.inspect_entity(stop_id,{},false)
+	var previous: Dictionary = _rack_replenishments.get(hull_id,{})
+	if not previous.is_empty():
+		var current: Dictionary = rack_replenishment_status(hull_id)
+		var obsolete: bool = not _replenishment_error(previous,hull,stop).is_empty()
+		if _replenishment_pending(previous) or (not obsolete and (not previous.completed or not previous.released or current.committed > 0)):
+			return {"ok":false,"message":"The existing rack cycle or its physical courier work is still unresolved."}
+	var attachment: Dictionary = rear.military.vehicles.get(hull_id,{})
+	var row := {"hull":hull_id,"cycle":cycle_key,"target":target,"owner":rear.PLAYER,"parent":str(attachment.get("parent","")),
+		"state":"Pending","blocker":"Waiting for the same APC at its local supply stop.","completed":false,"released":false,"jobs":[]}
+	var error: String = _replenishment_error(row,hull,stop)
+	if not error.is_empty(): return {"ok":false,"message":error}
+	if target <= 0 or target > int(hull.vehicle_spec.rack_capacity.get("E26",0)):
+		return {"ok":false,"message":"Rack target must be positive and within this APC's actual E26 capacity."}
+	_rack_replenishments[hull_id] = row
+	if not _rack_cycle_keys.has(hull_id): _rack_cycle_keys[hull_id] = {}
+	_rack_cycle_keys[hull_id][cycle_key] = true
+	return {"ok":true,"hull":hull_id,"cycle":cycle_key,"message":"Named current-deficit rack replenishment requested."}
+
+func release_rack_replenishment(hull_id: String, cycle_key: String) -> Dictionary:
+	# The deployment owner calls this only after real Support movement admission.
+	# Its new movement commitment is allowed; this releases bookkeeping, not goods.
+	var row: Dictionary = _rack_replenishments.get(hull_id,{})
+	if row.is_empty() or row.cycle != cycle_key: return {"ok":false,"message":"Only the exact current rack cycle can be handed off."}
+	if row.released: return {"ok":true,"hull":hull_id,"cycle":cycle_key,"message":"This rack cycle was already handed off."}
+	var current: Dictionary = rack_replenishment_status(hull_id)
+	if current.state != "Complete" or current.aboard < row.target or current.committed > 0 or _replenishment_pending(row):
+		return {"ok":false,"message":"Actual rack target and all physical courier work must be complete before handoff."}
+	row.completed = true
+	row.released = true
+	return {"ok":true,"hull":hull_id,"cycle":cycle_key,"message":"Completed rack cycle handed off; later consumption requires a new named cycle."}
+
+func rack_replenishment_status(hull_id: String) -> Dictionary:
+	var row: Dictionary = _rack_replenishments.get(hull_id,{})
+	if row.is_empty(): return {}
+	var rear: RefCounted = _rear_ref.get_ref()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id,{},false)
+	var aboard: int = int(hull.get("ammunition",{}).get("E26",0))
+	var needed: int = maxi(0,int(row.target)-aboard)
+	var committed: int = _rack_committed(hull_id)
+	var state: String = row.state
+	var blocker: String = row.blocker
+	var error: String = _replenishment_error(row,hull,rear.ledger.inspect_entity(stop_id,{},false))
+	if not error.is_empty(): state = "Blocked"; blocker = error
+	elif needed == 0 and committed == 0 and not _replenishment_pending(row): state = "Complete"; blocker = ""
+	elif row.released:
+		state = "Closed"
+		blocker = "Prior refill handed off; another current deficit requires a new named cycle." if needed > 0 else "Prior refill handed off; other physical rack courier work must clear."
+	elif state == "Complete":
+		state = "Pending"
+		blocker = "Current refill remains open; actual rack needs %d more rounds before departure." % needed
+	return {"state":state,"cycle":row.cycle,"hull":hull_id,"aboard":aboard,"target":row.target,"needed":needed,
+		"committed":committed,"available_at_stop":_replenishment_available(),"stop":stop_id,"blocker":blocker,"released":row.released}
+
 func tick() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
-	if stop.get("kind","") != "PLACE": return
+	if stop.get("kind","") != "PLACE": _tick_replenishments(stop); return
 	_tick_racks(stop)
+	_tick_replenishments(stop)
 	for job_id in owned_jobs.keys():
 		var job: Dictionary = rear.forward_supply.jobs.get(job_id,{})
 		if job.is_empty() or job.state in ["Complete","Interrupted"]: owned_jobs.erase(job_id); continue
@@ -146,6 +209,128 @@ func _tick_racks(stop: Dictionary) -> void:
 			rack_status = issued.message
 		if not started: rack_status = "Waiting for an eligible local Engineer rack courier."
 
+func _tick_replenishments(stop: Dictionary) -> void:
+	var rear: RefCounted = _rear_ref.get_ref()
+	for row in _rack_replenishments.values():
+		var hull: Dictionary = rear.ledger.inspect_entity(row.hull,{},false)
+		var error: String = _replenishment_error(row,hull,stop)
+		if not error.is_empty():
+			_interrupt_replenishment(row)
+			row.state = "Blocked"
+			row.blocker = error
+			continue
+		if row.released: continue # Only a real deployment handoff closes the cycle.
+		if int(hull.ammunition.get("E26",0)) >= int(row.target) and _rack_committed(row.hull) == 0 and not _replenishment_pending(row):
+			row.completed = true
+			row.state = "Complete"
+			row.blocker = ""
+			continue
+		if not _safe(row.parent,stop.position):
+			_interrupt_replenishment(row)
+			row.state = "Blocked"
+			row.blocker = "Delivered hostile fire blocks safe rack receipt and courier work."
+			continue
+		var waiting := false
+		for job_id in row.jobs.duplicate():
+			var job: Dictionary = rear.forward_supply.rack_issue.jobs.get(job_id,{})
+			if job.is_empty():
+				waiting = true
+				row.state = "Blocked"
+				row.blocker = "Owned rack courier record is missing; its physical obligation cannot be verified."
+				continue
+			if not _replenishment_job_pending(job): row.jobs.erase(job_id); continue
+			waiting = true
+			if job.state == "Interrupted Carry":
+				var resumed: Dictionary = rear.forward_supply.rack_issue.resume(job_id)
+				row.state = "Delivering" if resumed.ok else "Interrupted Carry"
+				row.blocker = "Same Engineer resumes its existing actual E26 portion." if resumed.ok else resumed.message
+			else:
+				row.state = "Delivering"
+				row.blocker = str(job.blocker) if not str(job.blocker).is_empty() else "Existing Engineer courier is handling actual ammunition."
+		if waiting: continue
+		var aboard: int = int(hull.ammunition.get("E26",0))
+		var needed: int = maxi(0,int(row.target)-aboard)
+		var committed: int = _rack_committed(row.hull)
+		if not _rack_at_stop(row.hull,hull,stop):
+			row.state = "Waiting Arrival"
+			row.blocker = "Same APC must physically stop within 20 m of the declared supply stop."
+			continue
+		if committed > 0:
+			row.state = "Delivering"
+			row.blocker = "Existing rack couriers own %d pending rounds; actual aboard still needs %d." % [committed,needed]
+			continue
+		if rear.forward_supply.hull_committed(row.hull) or rear.military.hull_committed(row.hull):
+			row.state = "Blocked"
+			row.blocker = "Same APC must finish its existing physical movement or supply commitment."
+			continue
+		var source: Dictionary = {}
+		for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
+			if stock.owner == row.owner and stock.design_type == "E26" and stock.available > 0: source = stock; break
+		if source.is_empty():
+			row.state = "Waiting Stock"
+			row.blocker = "Local unreserved autocannon rounds (E26) are missing; %d actual rounds are still needed." % needed
+			continue
+		var engineers: Dictionary = rear.military.squads.get(engineer_squad,{})
+		if engineers.is_empty() or engineers.kind != "Engineer" or engineers.state != "Active" or engineers.get("owner",rear.PLAYER) != row.owner:
+			row.state = "Blocked"
+			row.blocker = "The actual owned Engineer courier element is unavailable."
+			continue
+		row.state = "Waiting Handler"
+		row.blocker = "Waiting for a free actual Engineer within 20 m, with room for one whole round."
+		for handler_id in rear.military._active_roster_members(engineers):
+			if not _free(handler_id): continue
+			var handler: Dictionary = rear.ledger.inspect_person_status(handler_id)
+			if not _at_stop(handler,stop): continue
+			var capacity: int = int(hull.vehicle_spec.rack_capacity.get("E26",0))
+			var amount: int = mini(maxi(0,needed-committed),mini(int(source.available),maxi(0,capacity-aboard-committed)))
+			if amount <= 0: continue
+			var issued: Dictionary = rear.forward_supply.request_vehicle_rack_issue(source.id,row.hull,handler_id,amount,stop_id)
+			if issued.ok:
+				row.jobs.append(issued.id)
+				row.state = "Delivering"
+				row.blocker = "Engineer collecting actual E26 for this named current-deficit refill."
+				break
+			row.blocker = issued.message
+
+func _replenishment_error(row: Dictionary, hull: Dictionary, stop: Dictionary) -> String:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if stop.get("kind","") != "PLACE" or not rear.forward_supply.delivery_stops.has(stop_id): return "The declared physical rack supply stop is unavailable."
+	if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T04" or hull.get("fleet_domain","") != "Military" or hull.get("owner","") != row.owner or row.owner != rear.PLAYER:
+		return "The original own military APC is no longer available to this refill cycle."
+	if hull.get("health",0) <= 0: return "The original APC was destroyed; this refill cannot transfer to another hull."
+	var attachment: Dictionary = rear.military.vehicles.get(row.hull,{})
+	if attachment.get("owner","") != row.owner or str(attachment.get("parent","")) != row.parent or str(row.parent).is_empty():
+		return "APC parent or ownership changed; the original refill cycle cannot automatically reparent."
+	var formation: Dictionary = rear.military.platoons.get(row.parent,rear.military.companies.get(row.parent,{}))
+	if formation.is_empty() or formation.get("owner",rear.PLAYER) != row.owner: return "The original owned APC parent element is unavailable."
+	return ""
+
+func _replenishment_available() -> int:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var available := 0
+	for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
+		if stock.owner == rear.PLAYER and stock.design_type == "E26" and stock.available > 0: available += int(stock.available)
+	return available
+
+func _replenishment_job_pending(job: Dictionary) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var carry: Dictionary = rear.ledger.inspect_entity(str(job.get("carry","")),{},false)
+	if carry.get("holder_id","") == job.handler and carry.get("quantity",0) > 0: return true
+	if rear.ledger.inspect_claim(job.claim).get("reserved",0) > 0: return true
+	return job.state not in ["Complete","Interrupted"]
+
+func _replenishment_pending(row: Dictionary) -> bool:
+	for job_id in row.jobs:
+		var job: Dictionary = _rear_ref.get_ref().forward_supply.rack_issue.jobs.get(job_id,{})
+		if job.is_empty() or _replenishment_job_pending(job): return true
+	return false
+
+func _interrupt_replenishment(row: Dictionary) -> void:
+	for job_id in row.jobs:
+		var job: Dictionary = _rear_ref.get_ref().forward_supply.rack_issue.jobs.get(job_id,{})
+		if not job.is_empty() and job.state not in ["Complete","Interrupted","Interrupted Carry"]:
+			_rear_ref.get_ref().forward_supply.rack_issue.interrupt(job_id)
+
 func _rack_at_stop(id: String, hull: Dictionary, stop: Dictionary) -> bool:
 	return hull.get("owner","") == _rear_ref.get_ref().PLAYER and hull.get("design_type","") == "T04" and hull.get("fleet_domain","") == "Military" and hull.get("health",0) > 0 and _rear_ref.get_ref().military.vehicles.has(id) and hull.holder_id == stop_id and hull.position.distance_to(stop.position) <= 20.0
 
@@ -199,4 +384,6 @@ func snapshot() -> Dictionary:
 	var available_e26 := 0
 	for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
 		if stock.owner == rear.PLAYER and stock.design_type == "E26": available_e26 += int(stock.available)
-	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad,"rack_requests":racks,"available_E26":available_e26,"rack_status":rack_status}
+	var replenishments: Array[Dictionary] = []
+	for hull_id in _rack_replenishments: replenishments.append(rack_replenishment_status(hull_id))
+	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad,"rack_requests":racks,"available_E26":available_e26,"rack_status":rack_status,"rack_replenishments":replenishments}
