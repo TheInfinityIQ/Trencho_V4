@@ -200,6 +200,9 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var intervals: Array[Dictionary] = []
 	var occupied_cells: Dictionary = {}
 	var cuts: Array[float] = [0.0, 1.0]
+	var previous_tile: Dictionary = {}
+	var previous_rule: Dictionary = {}
+	var previous_shareable := false
 	for y in range(maxi(bounds.position.y, int(floor(minimum.y))), mini(bounds.end.y, int(ceil(maximum.y)))):
 		for x in range(maxi(bounds.position.x, int(floor(minimum.x))), mini(bounds.end.x, int(ceil(maximum.x)))):
 			var at := Vector2i(x, y)
@@ -209,8 +212,10 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			if not str(tile.get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
 			var rule := _support_from_tile(tile, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
+			var shareable := true
 			for effect in field_effects:
 				if not effect.area.has_point(Vector2(at)+Vector2(0.5,0.5)): continue
+				shareable = false
 				if effect.code == "S02" and entity.movement_class == 0: rule.factor *= 0.8
 				if effect.code == "S05" and entity.movement_class == 0: rule.factor *= 0.7
 				if effect.code == "S04" and entity.movement_class == 2: rule.factor *= 0.25
@@ -222,9 +227,16 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 				if entity.size.y > float(overlay.width)+EPS: return _blocked("%s deck is narrower than the actual footprint" % overlay.code)
 				rule["speed_cap"] = float(overlay.speed_cap)
 			elif bridge_approaches.has(at):
+				shareable = false
 				var approach_cap := INF
 				for cap in bridge_approaches[at].values(): approach_cap = minf(approach_cap,float(cap))
 				rule["speed_cap"] = approach_cap
+			# Finalize every fresh rule first. Only adjacent occupied cells with
+			# the identical raw tile and no cell-local modifier may share it.
+			if shareable and previous_shareable and is_same(tile,previous_tile): rule = previous_rule
+			previous_tile = tile
+			previous_rule = rule
+			previous_shareable = shareable
 			# Only this synchronous route owns these read-only tile references.
 			# Keep insertion order for the existing first height-edge refusal.
 			occupied_cells[at] = tile
@@ -276,8 +288,13 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 		var surfaces: Array[String] = []
 		var max_slope := 0.0
 		var speed_cap := INF
+		var previous_rule: Dictionary = {}
 		for id in active:
 			var rule: Dictionary = intervals[id].rule
+			# Repeating the same consecutive min/max operand and surface is
+			# idempotent. Never skip across a differing active rule.
+			if is_same(rule,previous_rule): continue
+			previous_rule = rule
 			factor = minf(factor, rule.factor)
 			burn = maxf(burn, rule.fuel)
 			max_slope = maxf(max_slope, rule.slope)

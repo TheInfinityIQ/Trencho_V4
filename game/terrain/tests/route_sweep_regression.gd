@@ -43,6 +43,7 @@ func _initialize() -> void:
 		var lane: RefCounted = Fixtures.lane(spec)
 		_compare_route(lane.world,lane.entity,lane.destination,spec.name)
 	_generated_intervals()
+	_repeated_rules()
 	_generated_lanes()
 	_long_lanes()
 	print("Route sweep regression: %d checks, %d failures" % [checks,failures])
@@ -114,6 +115,42 @@ func _generated_intervals() -> void:
 		var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 		var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 		_expect(actual == expected,"Generated interval aggregation %d preserves exact ordered output" % trial)
+
+func _repeated_rules() -> void:
+	var world := World.new()
+	var legacy := LegacyWorld.new()
+	var body := _body(Vector2.ZERO,Vector2(100,0))
+	# Repeated references, equal-but-distinct references and A/B/A must all
+	# preserve the legacy operation order, including exceptional operands.
+	for value in [1.0,-0.0,0.0,INF,-INF,NAN]:
+		var a := {"factor":1.0,"fuel":value,"slope":value,"speed_cap":INF,"surface":"TR01"}
+		var b := {"factor":0.7,"fuel":2.0,"slope":3.0,"speed_cap":2.0,"surface":"TR02"}
+		var equal_a: Dictionary = a.duplicate()
+		for sequence in [[a,a,a],[a,a,b,a,a],[a,equal_a,a],[b,a,a,b,a]]:
+			var intervals: Array[Dictionary] = []
+			var cuts: Array[float] = [0.0,1.0,0.5,0.50000001]
+			for index in sequence.size():
+				var begin := 0.0 if index%2 == 0 else 0.2
+				var end := 1.0 if index%3 == 0 else 0.8
+				intervals.append({"from":begin,"to":end,"rule":sequence[index]})
+				cuts.append(begin)
+				cuts.append(end)
+			var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+			var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+			# Byte comparison includes signed zero and accepts matching NaNs.
+			_expect(var_to_bytes(actual) == var_to_bytes(expected),"Consecutive/shared/intervening rules preserve serialized legacy result for %s" % value)
+	# Put exceptional values in each min/max input, not just fuel and slope.
+	for key in ["factor","fuel","slope","speed_cap"]:
+		for value in [-0.0,0.0,INF,-INF,NAN]:
+			var a := {"factor":1.0,"fuel":1.0,"slope":0.0,"speed_cap":INF,"surface":"TR01"}
+			a[key] = value
+			var b := {"factor":0.7,"fuel":2.0,"slope":3.0,"speed_cap":2.0,"surface":"TR02"}
+			var intervals: Array[Dictionary] = []
+			for rule in [a,a,b,a,a]: intervals.append({"from":0.0,"to":1.0,"rule":rule})
+			var cuts: Array[float] = [0.0,1.0]
+			var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+			var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+			_expect(var_to_bytes(actual) == var_to_bytes(expected),"Exceptional %s=%s preserves legacy result" % [key,value])
 
 func _long_lanes() -> void:
 	var world := World.new()

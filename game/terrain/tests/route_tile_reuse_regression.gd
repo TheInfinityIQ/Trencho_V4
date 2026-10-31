@@ -96,12 +96,20 @@ class LegacyWorld extends World:
 class CountedWorld extends World:
 	var resolutions: Dictionary = {}
 	var height_calls := 0
+	var support_calls := 0
+	var rules: Array[Dictionary] = []
 	func cell(at: Vector2i) -> Dictionary:
 		resolutions[at] = int(resolutions.get(at,0))+1
 		return super.cell(at)
 	func _tile_height(tile: Dictionary, point: Vector2) -> float:
 		height_calls += 1
 		return super._tile_height(tile,point)
+	func _support_from_tile(tile: Dictionary, movement_class: int) -> Dictionary:
+		support_calls += 1
+		return super._support_from_tile(tile,movement_class)
+	func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
+		for interval in intervals: rules.append(interval.rule)
+		return super._route_parts(entity,start,destination,distance,intervals,cuts)
 
 func _initialize() -> void:
 	for spec in Fixtures.movement_cases():
@@ -109,6 +117,7 @@ func _initialize() -> void:
 		_compare(lane.world,lane.entity,lane.destination,spec.name)
 	_regions_and_mutations()
 	_height_identity()
+	_rule_identity()
 	_bridges_and_effects()
 	_generated()
 	_farmland()
@@ -144,6 +153,7 @@ func _compare(source: RefCounted, body: Dictionary, finish: Vector2, label: Stri
 	_expect(new_calls == actual_world.resolutions.size(),label+": each occupied cell resolved at most once per route")
 	_expect(new_calls <= old_calls,label+": no extra cell resolutions")
 	if actual.ok: _expect(old_calls >= new_calls*3,label+": removes repeated support/overlay/height lookup")
+	if actual.ok: _expect(actual_world.support_calls == new_calls,label+": every occupied cell still computes fresh support")
 	if report: print("LOOKUPS ",label," old=",old_calls," new=",new_calls," parts=",actual.get("parts",[]).size())
 	return actual
 
@@ -214,6 +224,45 @@ func _height_identity() -> void:
 	_expect(counted.route(body,finish).ok and counted.height_calls == 0,"Same completed overlay tile also needs no redundant endpoint evaluations")
 	bridge.paint(Rect2i(49,14,1,1),"TR11",{"overlay":{"kind":"crossing","code":"changed-height","complete":true,"classes":[0,1,2],"load_kg":10000.0,"width":4.0,"speed_cap":2.0,"height":5.0}})
 	_expect(not _compare(bridge,body,finish,"Distinct completed overlay height step").ok,"Different overlay reference and height retain the original rejection")
+
+func _rule_identity() -> void:
+	var world := World.new()
+	world.bounds = Rect2i(0,0,100,30)
+	world.add_base_region(world.bounds,"TR01")
+	var finish := Vector2(90.5,15.5)
+	var body := _body(Vector2(10.5,15.5),finish,0)
+	body.size = Vector2(0.6,0.6)
+	_expect(_compare(world,body,finish,"Consecutive shared raw tile rules").ok,"Shared-rule lane supported")
+	var counted := CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok,"Capture supported shared rules")
+	_expect(counted.support_calls == counted.rules.size(),"Sharing occurs only after every fresh support evaluation")
+	for index in range(1,counted.rules.size()):
+		_expect(is_same(counted.rules[index-1],counted.rules[index]),"Unmodified consecutive same tile shares finalized rule")
+	world.field_effects = [{"code":"S02","area":Rect2(40,0,2,30)},{"code":"S04","area":Rect2(45,0,1,30)}]
+	world.bridge_approaches[Vector2i(60,15)] = {"cap":1.5}
+	world.bridge_approaches[Vector2i(61,15)] = {"cap":1.5}
+	world.bridge_approaches[Vector2i(65,15)] = {}
+	world.paint(Rect2i(70,15,2,1),"TR01")
+	_expect(_compare(world,body,finish,"Field factors, equal approach caps and distinct equal tiles").ok,"Modified lane keeps independent admission result")
+	counted = CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok,"Capture modified rules")
+	var cells: Array = counted.resolutions.keys()
+	for x in [40,41,42,45,46,60,61,62,65,66,70,71,72]:
+		var index := cells.find(Vector2i(x,15))
+		_expect(index > 0 and not is_same(counted.rules[index-1],counted.rules[index]),"Modifier/distinct tile prevents adjacent sharing at %d" % x)
+	world.field_effects.clear()
+	world.bridge_approaches.clear()
+	world.add_base_region(world.bounds,"TR11",{"overlay":{"kind":"crossing","code":"shared-rule","complete":true,"classes":[0,1,2],"load_kg":10000.0,"width":4.0,"speed_cap":2.0}})
+	world.cells.clear()
+	_expect(_compare(world,body,finish,"Same raw crossing tile includes its finalized cap").ok,"Crossing cap and checks preserved")
+	counted = CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok,"Capture crossing rules")
+	_expect(counted.rules.size() > 1 and is_same(counted.rules[0],counted.rules[1]) and counted.rules[0].speed_cap == 2.0,"Same crossing shares only after cap finalization")
+	world.base_regions[-1].tile.overlay.speed_cap = 0.75
+	_expect(_compare(world,body,finish,"Changed crossing cap recomputed on next query").ok,"No rule reference persists between routes")
 
 func _bridges_and_effects() -> void:
 	var world := World.new()
