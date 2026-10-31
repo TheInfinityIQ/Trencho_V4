@@ -32,7 +32,17 @@ func _initialize() -> void:
 	# The old count includes broken weapons; eligibility belongs to its caller.
 	ledger._entities["query-foreign"].health = 0
 	compare(ledger)
+	var held_batch: Array[Dictionary] = ledger.entities_at_any(["person-03"],["WEAPON","STOCK"],false)
+	var held_copy: Array[Dictionary] = held_batch.duplicate(true)
 	check(ledger.unload_rounds("query-other").ok,"Real unload changes nested quantities")
+	check(held_batch == held_copy,"Earlier batch results stay detached after physical unloading")
+	var fresh_batch: Array[Dictionary] = ledger.entities_at_any(["person-03"],["WEAPON","STOCK"],false)
+	check(fresh_batch != held_batch,"New batch inspection observes the real unload rather than stale loaded facts")
+	for row in fresh_batch:
+		row.quantity = -1
+		if row.kind == "WEAPON": row.loaded_rounds = -1
+		if row.kind == "STOCK": row.blocked_reason = "Mutated detached result"
+	check(ledger.entities_at_any(["person-03"],["WEAPON","STOCK"],false) == ledger.snapshot(false).entities.filter(func(row: Dictionary) -> bool: return row.holder_id == "person-03" and row.kind in ["WEAPON","STOCK"]),"Mutating returned stock and weapon facts cannot change later ledger inspections")
 	check(ledger.transfer_weapon("query-foreign","worker-01").ok,"Foreign loaded weapon physically changes holder")
 	compare(ledger)
 	check(ledger.audit().is_empty(),"Mass inspections preserve all ledger invariants")
