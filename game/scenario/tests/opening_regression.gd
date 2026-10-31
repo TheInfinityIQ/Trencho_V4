@@ -1,5 +1,6 @@
 extends SceneTree
 const Session = preload("res://game/scenario/farmland_session.gd")
+const Records = preload("res://game/identity/identity_records.gd")
 var failures := 0
 func _initialize() -> void:
 	var started := Time.get_ticks_msec()
@@ -104,7 +105,82 @@ func _initialize() -> void:
 		check(first_issue_at >= 0,"Natural combat need reaches physical autonomous Engineer issue")
 		check(arrived_round_fired,"Forward Rifle actually fires a round descended from the delivered HQ stock")
 	check(base.audit().is_empty(),"Active opening reconciles: "+str(base.audit()))
+	if playthrough: _print_final_diagnostics(rear)
 	print("Opening regression: ",failures," failures")
 	quit(0 if failures == 0 else 1)
+
+func _print_final_diagnostics(rear: RefCounted) -> void:
+	# Final read only: no extra simulation steps or per-tick observations.
+	# A status label has no recorded timestamp and does not prove movement.
+	# Narrow metadata queries avoid copying the long run's full event history.
+	var entities: Array[Dictionary] = rear.ledger.entities_of_kind(Records.Kind.PERSON,false)
+	entities.append_array(rear.ledger.entities_of_kind(Records.Kind.WEAPON,false))
+	entities.append_array(rear.ledger.entities_of_type("E02",["STOCK"],false))
+	var by_id := {}
+	var rounds := {}
+	for entity in entities: by_id[entity.id] = entity
+	for entity in entities:
+		if entity.kind != "STOCK" or entity.design_type != "E02" or entity.quantity <= 0: continue
+		var holder: Dictionary = by_id.get(entity.holder_id,{})
+		var person_id: String = str(holder.get("holder_id","")) if holder.get("kind","") == "WEAPON" else str(entity.holder_id)
+		var bucket: String = "loaded" if holder.get("kind","") == "WEAPON" else "loose"
+		if not rounds.has(person_id): rounds[person_id] = {"loose":0,"loaded":0}
+		rounds[person_id][bucket] += int(entity.quantity)
+	var latest_blockers := {}
+	var report_rows: Array = rear.orders.reports.duplicate()
+	for entry in rear.orders.pending:
+		if entry.kind == "Report": report_rows.append(entry.report)
+	for report in report_rows:
+		if report.kind not in ["Blocked Route","Inability","Lost Capability","Low Supply"]: continue
+		var prior: Dictionary = latest_blockers.get(report.source,{})
+		if prior.is_empty() or float(report.observed_at) >= float(prior.observed_at): latest_blockers[report.source] = report
+	print("FINAL DIAGNOSTICS sampled_at=",rear.time,"; current physical roster facts; recorded labels/reports are historical, not proof of ongoing movement; E02 includes reserved/foreign physically held portions")
+	for squad in rear.military.squads.values():
+		var living := 0
+		var health_positive := 0
+		var missing := 0
+		var centre := Vector2.ZERO
+		var low := Vector2.INF
+		var high := -Vector2.INF
+		var loose := 0
+		var loaded := 0
+		var motion_records: Array[Dictionary] = []
+		for id in squad.roster:
+			var person: Dictionary = by_id.get(id,{})
+			if person.get("kind","") != "PERSON": missing += 1; continue
+			var held: Dictionary = rounds.get(id,{})
+			loose += int(held.get("loose",0))
+			loaded += int(held.get("loaded",0))
+			if person.assignment != "Dead":
+				living += 1
+				centre += person.position
+				low = low.min(person.position)
+				high = high.max(person.position)
+			if person.health > 0: health_positive += 1
+			var motion: Dictionary = rear.battlefield_operations.motions.get(id,{})
+			if not motion.is_empty(): motion_records.append({"person":id,"purpose":motion.purpose,"started_at":motion.started,"deadline":motion.deadline})
+		var positions: Dictionary = {} if living == 0 else {"centroid":centre/living,"min":low,"max":high}
+		var report: Dictionary = latest_blockers.get(squad.id,{})
+		var blocker: Dictionary = {} if report.is_empty() else {"id":report.id,"kind":report.kind,"detail":report.detail,"observed_at":report.observed_at,"age_at_sample":rear.time-float(report.observed_at),"report_state":report.state,"current_at":report.current_at}
+		var intent: Dictionary = rear.orders.intents.get(squad.id,{})
+		print("FINAL SQUAD ",squad.id," ",{"owner":squad.get("owner",rear.PLAYER),"roster_count":squad.roster.size(),"missing_roster_ids":missing,"living_not_dead":living,"health_positive":health_positive,"living_positions":positions,"E02_roster_loose":loose,"E02_roster_loaded":loaded,"E02_roster_total":loose+loaded,"last_status_time_unknown":rear.battlefield_operations.status.get(squad.id,"Not recorded"),"motion_records_at_sample":motion_records,"last_recorded_blocker_report":blocker,"intent_action":intent.get("action","None"),"intent_state":intent.get("state","None"),"contacts":_final_contacts(rear,squad.id)})
+	var owners: Array[Dictionary] = []
+	for objective in rear.objectives.objectives.values():
+		owners.append({"id":objective.id,"owner":objective.owner,"state":objective.state,"control":objective.control,"last_at":objective.last_at})
+	print("FINAL OBJECTIVES sampled_at=",rear.time," ",owners)
+
+func _final_contacts(rear: RefCounted, squad_id: String) -> Dictionary:
+	var known: Array = rear.orders.contacts.get(squad_id,{}).values()
+	known.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.observed_at) > float(b.observed_at))
+	var actors: Array = known.filter(func(contact: Dictionary) -> bool: return contact.get("class","") not in ["Resource","Route Hub","Observation","Enemy HQ"])
+	var sampled: Array = actors if not actors.is_empty() else known
+	var newest: Array[Dictionary] = []
+	# Bound final contact reads: report exactly which newest contacts were
+	# sampled, rather than claiming currentness for the whole historical set.
+	for index in mini(3,sampled.size()):
+		var contact: Dictionary = rear.orders.contact(squad_id,str(sampled[index].target))
+		newest.append({"target":contact.target,"class":contact.get("class",""),"observed_at":contact.observed_at,"age_at_sample":contact.age,"current_at_sample":contact.current})
+	return {"recorded_count":known.size(),"actor_report_count":actors.size(),"sample_kind":"Newest actor reports" if not actors.is_empty() else "Newest markers; no actor reports","newest_three_sampled":newest}
+
 func check(ok: bool, message: String) -> void:
 	if not ok: failures += 1; push_error(message)
