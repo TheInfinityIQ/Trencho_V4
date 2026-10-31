@@ -341,11 +341,19 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 	var entities: Array = ledger.snapshot(false).entities if sampled_entities.is_empty() else sampled_entities
 	var world: RefCounted = _rear().combat.world
 	var maximum: float = float(world.Catalog.ROLES.ordinary.range)+float(world.EPS)
+	var candidates_by_owner := {}
 	for person_id in _rear().military._active_roster_members(squad):
 		var observer: Dictionary = ledger.inspect_person_status(person_id)
-		for target in entities:
-			var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
-			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
+		# Classification uses immutable metadata from this synchronous sample.
+		# Key by each actual observer owner, not the formation's affiliation.
+		if not candidates_by_owner.has(observer.owner):
+			var candidates: Array[Dictionary] = []
+			for target in entities:
+				var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
+				if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
+				candidates.append(target)
+			candidates_by_owner[observer.owner] = candidates
+		for target in candidates_by_owner[observer.owner]:
 			# The exact ordinary sight-range bound cannot produce a contact.
 			# Reject it before terrain heights/rays or protected-hull inspection.
 			if observer.position.distance_to(target.position) > maximum: continue
