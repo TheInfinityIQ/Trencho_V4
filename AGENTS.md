@@ -14,6 +14,7 @@
 - Prefer small composed scenes, clear ownership, and explicit dependencies. Add autoloads only for genuinely global lifetime.
 - Keep changes focused. Avoid speculative frameworks, unused folders, and unrelated refactors.
 - For substantive work, state a short plan and acceptance criteria before implementation.
+- Use the [engineering field guide](docs/engineering_field_guide.md) for whole-path planning, ownership/transition contracts, Godot assumptions and proportionate verification; the lead owns integration after child tasks finish.
 - Resolve reversible implementation details independently. Raise design contradictions, missing acceptance criteria, or costly choices with the Game Designer; continue independent work when possible.
 - Measure suspected performance problems with the profiler before optimizing. Avoid per-frame polling when events suffice.
 
