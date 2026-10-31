@@ -1,5 +1,6 @@
 extends RefCounted
 const Resupply = preload("res://game/battlefield/opening_resupply.gd")
+const Deployment = preload("res://game/battlefield/vehicle_deployment.gd")
 ## Declared playtest opening only; broad commander operation scoring is deferred.
 var _rear_ref: WeakRef
 var armies: Dictionary
@@ -10,6 +11,7 @@ var trips: Dictionary = {}
 var status: Dictionary = {}
 var repositioned: Dictionary = {}
 var resupply: RefCounted
+var deployments: RefCounted
 var _trip_admission_cursor := 0
 var _last_trip_attempt := -INF
 
@@ -17,6 +19,7 @@ func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> vo
 	_rear_ref = weakref(rear)
 	armies = army_data
 	points = waypoints
+	deployments = Deployment.new(rear,points)
 	resupply = Resupply.new(rear,armies["army-blue"].rifles.slice(0,2),armies["army-blue"].engineer,"blue-delivery")
 	for side in ["blue","red"]:
 		var owner: String = "army-"+side
@@ -67,9 +70,17 @@ func tick() -> void:
 		if commander.get("health",0) <= 0: status[owner] = "Commander unavailable; received intent continues"; continue
 		var objective: String = "resource-centre-red" if phases[owner] == "Probe" else first
 		var version: String = str(phases[owner])+str(reserve_active if side == "red" else false)
+		var vehicle_deployments: Dictionary = deployments.payloads(army.company) if owner == rear.PLAYER else {}
+		var deployment_versions: Array[String] = []
+		for hull_id in vehicle_deployments:
+			var payload: Dictionary = vehicle_deployments[hull_id]
+			deployment_versions.append(str([hull_id,payload.parent,rear.dispatch.military_hulls[hull_id],payload.stop]))
+		if not vehicle_deployments.is_empty(): version += str(deployment_versions)
 		var company_intent: Dictionary = rear.orders.intents.get(army.company,{})
 		if company_intent.get("constraints",{}).get("opening_version","") != version:
-			var sent: Dictionary = rear.orders.issue_order(army.root,army.company,"Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective"),"Secure the declared central approach","Opening supply and objective playtest",{"opening_version":version,"objective":objective},"Emergency" if reserve_active and side == "red" else "Normal","Own HQ staging")
+			var constraints := {"opening_version":version,"objective":objective}
+			if not vehicle_deployments.is_empty(): constraints.vehicle_deployments = vehicle_deployments
+			var sent: Dictionary = rear.orders.issue_order(army.root,army.company,"Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective"),"Secure the declared central approach","Opening supply and objective playtest",constraints,"Emergency" if reserve_active and side == "red" else "Normal","Own HQ staging")
 			if not sent.ok: status[owner] = sent.message
 			company_intent = rear.orders.intents.get(army.company,{})
 		if company_intent.get("state","") != "Acknowledged": continue
@@ -89,6 +100,7 @@ func tick() -> void:
 	_request_trips()
 	_reposition_supply_truck()
 	resupply.tick()
+	deployments.tick()
 
 func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	var army: Dictionary = armies[owner]
@@ -156,4 +168,4 @@ func snapshot() -> Dictionary:
 	var own_trips: Array[Dictionary] = []
 	for id in trips:
 		if id.begins_with("blue"): own_trips.append(trips[id].duplicate(true))
-	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips,"resupply":resupply.snapshot()}
+	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips,"resupply":resupply.snapshot(),"deployments":deployments.snapshot()}
