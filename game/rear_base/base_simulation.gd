@@ -36,6 +36,8 @@ var _live_planning := false
 var _live_wall_clock := true
 var _live_wall_usec := -1
 var _transport_view_revision := -1
+var _supply_view_revision := -1
+var _supply_planning_turn := true
 const LIVE_QUANTUM := 0.1
 
 func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}) -> void:
@@ -134,6 +136,8 @@ func enable_live_planning(use_wall_clock: bool = true) -> void:
 
 func cancel_live_planning() -> void:
 	if not _live_planning: return
+	var supply := _supply_travel_owner()
+	if supply != null: supply.cancel_planning()
 	rear.military.troop_transport.cancel_planning()
 	rear.military.troop_transport.incremental_planning = false
 	rear.vehicle_departures_allowed = false
@@ -160,11 +164,19 @@ func _accrue_live_wall_time() -> void:
 
 func _pump_live() -> void:
 	var transport: RefCounted = rear.military.troop_transport
-	if transport.has_planning_work():
+	var supply := _supply_travel_owner()
+	var transport_pending: bool = transport.has_planning_work()
+	var supply_pending: bool = supply != null and supply.has_planning_work()
+	if transport_pending or supply_pending:
 		# Pure work can reach Ready while paused. Only the running clock admits
 		# real work. No authoritative advance/settle/commit yields; pure route
 		# work emits no session mutations, so callbacks receive settled state.
-		if transport.pump_planning(speed > 0,128,4000): rear.advance_time(0.0,true)
+		# Both owners share this frame's one cooperative work allowance. A pure
+		# supply choice cannot starve an already requested physical departure.
+		var choose_supply: bool = supply_pending and (not transport_pending or _supply_planning_turn)
+		_supply_planning_turn = not choose_supply
+		var changed: bool = supply.pump_planning(speed > 0,128,4000) if choose_supply else transport.pump_planning(speed > 0,128,4000)
+		if changed: rear.advance_time(0.0,true)
 		_refresh_trip_admissions()
 		return
 	if speed == 0 or owed_simulation_seconds <= 0.0: return
@@ -179,11 +191,17 @@ func after_command() -> void:
 	# effects in receipt order before recapturing private planning inputs.
 	_accrue_live_wall_time()
 	rear.military.troop_transport.invalidate_planning()
+	var supply := _supply_travel_owner()
+	if supply != null: supply.invalidate_planning()
 	rear.advance_time(0.0,true)
 	_refresh_trip_admissions()
 	planning_view_revision += 1
 
 func _refresh_trip_admissions() -> void:
+	var supply := _supply_travel_owner()
+	if supply != null and int(supply.planning_revision) != _supply_view_revision:
+		_supply_view_revision = int(supply.planning_revision)
+		planning_view_revision += 1
 	var revision: int = rear.military.troop_transport.planning_revision
 	if revision == _transport_view_revision: return
 	_transport_view_revision = revision
@@ -191,6 +209,9 @@ func _refresh_trip_admissions() -> void:
 	if rear.battlefield_operations == null: return
 	var policy: RefCounted = rear.battlefield_operations.policy
 	if policy != null and policy.has_method("refresh_trip_admissions"): policy.refresh_trip_admissions()
+
+func _supply_travel_owner() -> RefCounted:
+	return rear.battlefield_operations.supply_travel if rear.battlefield_operations != null else null
 
 func set_speed(value: int) -> Dictionary:
 	if value not in [0, 1, 2]: return {"ok": false, "message": "Choose Pause, 1x or 2x."}

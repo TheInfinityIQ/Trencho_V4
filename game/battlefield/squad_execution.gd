@@ -2,7 +2,9 @@ extends RefCounted
 ## Executes delivered squad intent on the common clock; no hidden target search.
 const EPS := 0.000001
 const Vehicles = preload("res://game/battlefield/vehicle_execution.gd")
+const SupplyTravel = preload("res://game/battlefield/rifle_supply_travel.gd")
 var vehicle_execution: RefCounted
+var supply_travel: RefCounted
 var _rear_ref: WeakRef
 var next_decision := 0.0
 var motions: Dictionary = {}
@@ -16,6 +18,10 @@ var _collection_sequence := 0
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	vehicle_execution = Vehicles.new(rear)
+	var execution_ref := weakref(self)
+	supply_travel = SupplyTravel.new(rear,func(proposal: Dictionary, allow_issue: bool) -> Dictionary:
+		var execution: RefCounted = execution_ref.get_ref()
+		return execution._authorize_supply_transport(proposal,allow_issue) if execution != null else {"ok":false,"message":"The originating session is unavailable."})
 	next_decision = rear.time
 
 func _rear() -> RefCounted:
@@ -99,6 +105,17 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	if not baseline.has(squad.id): baseline[squad.id] = squad.roster.size()
 	var active: Array[String] = rear.military._active_roster_members(squad)
 	if not squad.vehicle.is_empty() or intent.action == "Move by Transport":
+		var journey: Dictionary = supply_travel.journey_status(squad.id)
+		var collection: Dictionary = rifle_collection.get(squad.id,{})
+		if not collection.is_empty() and not squad.vehicle.is_empty() and journey.get("hull","") == squad.vehicle and not str(journey.get("trip_job","")).is_empty():
+			for id in squad.roster: motions.erase(id)
+			if intent.action == "Defend HQ" or intent.get("parent","") != squad.platoon:
+				_interrupt_collection(squad.id,"Current command overrides the supply journey; actual occupants need safe reassessment.")
+				status[squad.id] = "Supply ride interrupted; people remain with their real transport."
+			else:
+				var leg: String = str(journey.get("leg","Collect"))
+				_drive_supply_journey(squad,intent,collection,leg,str(collection.stop) if leg == "Collect" else destination,active)
+			return
 		_interrupt_collection(squad.id,"Current operation assigns physical transport.")
 		for id in squad.roster: motions.erase(id)
 		status[squad.id] = "Following troop transport order"
@@ -141,7 +158,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var fallback_id: String = str(intent.constraints.get("fallback_place",destination))
 	var fallback: Dictionary = rear.ledger.inspect_entity(fallback_id,{},false)
 	if withdrawing and fallback.get("kind","") != "PLACE": status[squad.id] = "No safe declared fallback"; return
-	if _collect_ammunition(squad,intent,active,collectable,withdrawing): return
+	if _collect_ammunition(squad,intent,active,collectable,withdrawing,advance_allowed and not assault_blocked and armour.is_empty()): return
 	status[squad.id] = "Withdrawing" if withdrawing else ("Advancing" if advance_allowed else "Holding for capability or supply")
 	if assault_blocked and not withdrawing: status[squad.id] = "Holding for validated HQ assault preparation"
 	if not armour.is_empty() and not withdrawing: status[squad.id] = "Observed armour: seeking a safe declared fallback; otherwise holding"
@@ -202,6 +219,11 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 func _collection_owner() -> RefCounted:
 	return policy.squad_supply_owner() if policy != null and policy.has_method("squad_supply_owner") else null
 
+func _authorize_supply_transport(proposal: Dictionary, allow_issue: bool) -> Dictionary:
+	if policy == null or not policy.has_method("authorize_supply_transport"):
+		return {"ok":false,"message":"Awaiting the vehicle parent's collection assignment."}
+	return policy.authorize_supply_transport(proposal,allow_issue)
+
 func _collection_context(squad: Dictionary, intent: Dictionary, urgent: bool) -> bool:
 	if squad.kind != "Rifle" or intent.action == "Defend HQ" or _collection_owner() == null: return false
 	if intent.get("parent","") != squad.platoon: return false
@@ -212,6 +234,7 @@ func _collection_context(squad: Dictionary, intent: Dictionary, urgent: bool) ->
 func _interrupt_collection(squad_id: String, reason: String) -> void:
 	var row: Dictionary = rifle_collection.get(squad_id,{})
 	if row.is_empty(): return
+	supply_travel.interrupt_journey(squad_id,row.cycle,reason)
 	for id in motions.keys():
 		if motions[id].get("squad","") == squad_id and motions[id].purpose in ["Supply","Supply Return"]: motions.erase(id)
 	if not row.released:
@@ -221,7 +244,7 @@ func _interrupt_collection(squad_id: String, reason: String) -> void:
 		row.blocker = reason
 	elif row.state != "Operating": row.blocker = reason
 
-func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[String], collectable: bool, withdrawing: bool) -> bool:
+func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[String], collectable: bool, withdrawing: bool, resume_allowed: bool) -> bool:
 	var rear := _rear()
 	var row: Dictionary = rifle_collection.get(squad.id,{})
 	if not row.is_empty() and intent.get("parent","") != squad.platoon:
@@ -230,7 +253,13 @@ func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[St
 		return true
 	if not row.is_empty() and row.released:
 		row.intent = intent.id
-		if intent.action == "Defend HQ": row.state = "Operating"
+		if intent.action == "Defend HQ":
+			_interrupt_collection(squad.id,"Immediate HQ defence overrides routine collection travel.")
+			row.state = "Operating"
+		elif withdrawing or not resume_allowed or _collection_threat(active,_targets(squad.id)):
+			supply_travel.interrupt_journey(squad.id,row.cycle,"Survival and current tactical capability take priority over routine return.")
+		elif row.state != "Operating":
+			if _drive_supply_journey(squad,intent,row,"Return",str(intent.constraints.destination),active): return true
 	if not collectable or withdrawing:
 		if not row.is_empty() and not row.released:
 			_interrupt_collection(squad.id,"Immediate defence, casualty withdrawal or current command takes priority over routine collection.")
@@ -275,11 +304,13 @@ func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[St
 			row.released = true
 			row.state = "Returning to current operation"
 			row.blocker = ""
+			if resume_allowed and _drive_supply_journey(squad,intent,row,"Return",str(intent.constraints.destination),active): return true
 			return false
 		row.blocker = str(released.get("message","Current physical refill cannot be handed off."))
 	else: row.blocker = str(refill.get("blocker","Waiting for physical receipt and clear couriers."))
 	row.state = "Waiting for refill" if arrived else "Collecting"
 	status[squad.id] = "%s at %s: %d actual E02 still needed; %d committed. %s" % [row.state,stop_id,int(refill.get("needed",0)),int(refill.get("committed",0)),row.blocker]
+	if not arrived and _drive_supply_journey(squad,intent,row,"Collect",stop_id,active): return true
 	for id in active:
 		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		if _busy(id) or rear.combat.pinned.has(id): motions.erase(id); continue
@@ -295,6 +326,67 @@ func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[St
 			continue
 		_walk(id,stop_id,stop.position+_offset(squad.roster.find(id)),true,"Supply")
 	return true
+
+func _drive_supply_journey(squad: Dictionary, intent: Dictionary, collection: Dictionary, leg: String, destination_id: String, active: Array[String]) -> bool:
+	var rear := _rear()
+	var destination: Dictionary = rear.ledger.inspect_entity(destination_id,{},false)
+	if destination.get("kind","") != "PLACE": return false
+	var prior: Dictionary = supply_travel.journey_status(squad.id)
+	var long_trip := false
+	for id in active:
+		if rear.ledger.inspect_person_status(id).position.distance_to(destination.position) > 600: long_trip = true
+	var continuing: bool = prior.get("cycle","") == collection.cycle and prior.get("leg","") == leg and prior.get("state","") != "Arrived"
+	if not long_trip and not continuing and squad.vehicle.is_empty(): return false
+	# The controller observes current physical motion after admission; do not
+	# restart a returned foot plan each decision or treat travel as a claim.
+	if prior.is_empty() or prior.get("leg","") != leg or prior.get("intent","") != intent.id:
+		for id in active:
+			if motions.has(id) and motions[id].purpose not in ["Fallback","Cover"]: motions.erase(id)
+	var requested: Dictionary = supply_travel.request_journey(squad.id,collection.cycle,leg,destination_id,str(intent.id))
+	var journey: Dictionary = supply_travel.journey_status(squad.id)
+	if not requested.get("ok",false):
+		collection.blocker = str(requested.get("message","Travel is awaiting reassessment."))
+		status[squad.id] = collection.blocker
+		return true
+	collection.travel_mode = str(journey.get("mode",""))
+	collection.travel_state = str(journey.get("state","Planning"))
+	collection.travel_destination = destination_id
+	collection.blocker = str(journey.get("blocker",""))
+	if journey.get("arrival",false): return false
+	var mode: String = str(journey.get("mode",""))
+	var state: String = str(journey.get("state","Planning"))
+	var eta: float = float(journey.get("eta",-1.0))
+	var eta_text := " · ETA %.1f simulation seconds" % eta if is_finite(eta) and eta >= 0 else ""
+	status[squad.id] = "%s · %s to %s%s · %s" % ["Going to supply" if leg == "Collect" else "Returning to duty",mode if not mode.is_empty() else state,destination_id,eta_text,collection.blocker]
+	if mode == "Foot":
+		_install_supply_walks(squad,intent,supply_travel.walk_routes(squad.id),"Supply" if leg == "Collect" else "Supply Return")
+	elif mode == "Transport" and squad.vehicle.is_empty():
+		var pickup_id: String = str(journey.get("pickup",""))
+		var pickup: Dictionary = rear.ledger.inspect_entity(pickup_id,{},false)
+		if pickup.get("kind","") == "PLACE":
+			for id in active:
+				var person: Dictionary = rear.ledger.inspect_person_status(id)
+				if _busy(id) or rear.combat.pinned.has(id) or rear.combat.broken.has(id): continue
+				if person.position.distance_to(pickup.position) > 18:
+					_walk(id,pickup_id,pickup.position+_offset(squad.roster.find(id)),true,"Supply")
+				elif motions.has(id) and motions[id].purpose in ["Supply","Supply Return"]: motions.erase(id)
+	return true
+
+func _install_supply_walks(squad: Dictionary, intent: Dictionary, routes: Dictionary, purpose: String) -> void:
+	var rear := _rear()
+	var ready: Dictionary = {}
+	for id in routes:
+		var route: Dictionary = routes[id]
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if motions.has(id) and motions[id].get("intent","") == intent.id and motions[id].purpose == purpose: continue
+		if person.get("kind","") == "PERSON" and person.position.distance_to(route.destination) <= 1: continue
+		if not _on_foot(person) or _busy(id) or rear.combat.pinned.has(id) or rear.combat.broken.has(id) or person.duty_id != squad.id or route.intent != intent.id or rear.combat.world.get_instance_id() != int(route.world_id) or rear.combat.world.revision != int(route.world_revision) or not person.position.is_equal_approx(route.captured_position) or absf(float(person.unit_mass_kg)+float(person.contents_mass_kg)-float(route.captured_mass)) > EPS or not _fallback_safe(person,route.destination):
+			supply_travel.invalidate_planning()
+			return
+		ready[id] = route
+	for id in ready:
+		var route: Dictionary = ready[id]
+		motions[id] = {"place":route.place,"destination":route.destination,"started":rear.time,"deadline":rear.time+float(route.plan.seconds),"plan":route.plan,"expected":route.captured_position,"revision":route.world_revision,"allow_unarmed":purpose == "Supply","purpose":purpose,"squad":squad.id,"intent":intent.id}
 
 func _collection_threat(active: Array[String], targets: Array[Dictionary]) -> bool:
 	for id in active:
@@ -415,37 +507,15 @@ func _walk(id: String, place: String, destination: Vector2, allow_unarmed: bool 
 	if purpose in ["Fallback","Supply","Supply Return"] and not _fallback_safe(person,destination):
 		_report(person.duty_id,"Inability","Declared route crosses delivered hostile fire; holding for a safe route",true)
 		return
-	if supply_move and person.position.distance_to(destination) > 600 and _collection_transport_exists(person.owner):
-		_collection_transport_blocked(person.duty_id)
+	if supply_move and person.position.distance_to(destination) > 600:
+		_report(person.duty_id,"Inability","Waiting for the current measured supply journey before starting a long walk.")
 		return
 	var plan: Dictionary = rear.combat.world.route({"position":person.position,"facing":(destination-person.position).angle(),"size":Vector2(0.6,0.6),"movement_class":0,"base":2.0,"rate":0.0,"gross_mass_kg":80.0+float(person.contents_mass_kg)},destination)
 	if not plan.ok: _report(person.duty_id,"Blocked Route",str(plan.reason)); return
-	if supply_move and float(plan.distance) > 600 and _collection_transport_exists(person.owner):
-		_collection_transport_blocked(person.duty_id)
-		return
 	motions[id] = {"place":place,"destination":destination,"started":rear.time,"deadline":rear.time+float(plan.seconds),"plan":plan,"expected":person.position,"revision":rear.combat.world.revision,"allow_unarmed":allow_unarmed,"purpose":purpose}
 	if supply_move:
 		motions[id].squad = person.duty_id
 		motions[id].intent = str(rear.orders.intents.get(person.duty_id,{}).get("id",""))
-	if supply_move and rifle_collection.has(person.duty_id):
-		if float(plan.distance) > 600:
-			_report(person.duty_id,"Inability","No actual military personnel transport exists; safe collection foot march ETA %.1f simulation seconds." % float(plan.seconds))
-
-func _collection_transport_exists(owner: String) -> bool:
-	# Comparing a lift's arrival/trip ETA and its parent-approved admission is
-	# still unconnected here. A busy existing hull does not mean none exists.
-	for hull_id in _rear().military.vehicles:
-		var hull: Dictionary = _rear().ledger.inspect_entity(hull_id,{},false)
-		if hull.get("owner","") == owner and hull.get("health",0) > 0 and int(hull.get("vehicle_spec",{}).get("passenger_seats",0)) > 0: return true
-	return false
-
-func _collection_transport_blocked(squad_id: String) -> void:
-	var row: Dictionary = rifle_collection.get(squad_id,{})
-	if row.is_empty(): return
-	row.blocker = "Collection journey exceeds 600 m. A passenger vehicle exists, but this build cannot yet arrange its collection trip."
-	row.state = "Awaiting transport reassessment"
-	status[squad_id] = row.blocker
-	_report(squad_id,"Inability",row.blocker,true)
 
 func _fallback_safe(person: Dictionary, destination: Vector2) -> bool:
 	var delta: Vector2 = destination-person.position

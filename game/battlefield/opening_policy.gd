@@ -17,6 +17,7 @@ var _last_trip_attempt := -INF
 var _trip_request_sequence := 0
 var _company_order_ids: Dictionary = {}
 var _child_orders: Dictionary = {}
+var _supply_hull_orders: Dictionary = {}
 const LIVE_ORDER_STATES := ["In transit","Acknowledgement pending","Acknowledged"]
 
 func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> void:
@@ -120,6 +121,33 @@ func settle_vehicle_departures() -> bool:
 
 func squad_supply_owner() -> RefCounted:
 	return resupply
+
+func authorize_supply_transport(proposal: Dictionary, allow_issue: bool) -> Dictionary:
+	var rear := _rear()
+	var hull_id: String = str(proposal.get("hull",""))
+	var descriptor: Dictionary = proposal.get("authority",{})
+	var attachment: Dictionary = rear.military.vehicles.get(hull_id,{})
+	var squad: Dictionary = rear.military.squads.get(str(descriptor.get("squad","")),{})
+	var operation: Dictionary = rear.orders.intents.get(str(descriptor.get("squad","")),{})
+	if attachment.is_empty() or squad.is_empty() or squad.get("owner","") != rear.PLAYER or operation.get("state","") != "Acknowledged" or operation.get("id","") != descriptor.get("operation_intent","") or operation.get("parent","") != squad.platoon:
+		return {"ok":false,"message":"Awaiting the actual squad parent's current acknowledged operation."}
+	if str(proposal.get("parent","")) != str(attachment.parent): return {"ok":false,"message":"The vehicle's actual command parent changed; reassess the journey."}
+	var current: Dictionary = rear.orders.intents.get(hull_id,{})
+	if not current.is_empty() and (current.get("id","") != _supply_hull_orders.get(hull_id,"") or current.get("state","") not in LIVE_ORDER_STATES):
+		return {"ok":false,"message":"The vehicle has another current assignment; collection cannot take it."}
+	if not current.is_empty() and current.get("constraints",{}).get("supply_transport",{}) == descriptor:
+		return {"ok":true,"hull_intent":current.id,"pending":current.state != "Acknowledged","changed":false,"delay_seconds":maxf(0,float(current.issued_at)+2.0-rear.time),"message":"Existing named vehicle assignment retained."}
+	var hold: float = maxf(0,float(current.get("issued_at",-INF))+10.0-rear.time)
+	if not allow_issue:
+		return {"ok":true,"hull_intent":"","pending":true,"changed":false,"delay_seconds":hold+2.0,"message":"Vehicle parent can consider this collection assignment."}
+	var sent: Dictionary = rear.orders.issue_order(str(attachment.parent),hull_id,"Move by Transport","Carry the named Rifle cohort for its current supply journey","Support the acknowledged Rifle operation",{"supply_transport":descriptor},"Normal",str(descriptor.get("pickup","")))
+	if sent.get("ok",false):
+		_supply_hull_orders[hull_id] = sent.id
+		sent.hull_intent = sent.id
+		sent.pending = true
+		sent.changed = true
+		sent.delay_seconds = 2.0
+	return sent
 
 func _owns_company_order(company_id: String, root_id: String, current: Dictionary) -> bool:
 	if not _company_order_ids.has(company_id):

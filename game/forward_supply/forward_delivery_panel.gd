@@ -160,6 +160,13 @@ func refresh() -> void:
 			army_issue_status.text += "\n%s needs %d · committed to couriers: %d" % [_member_label(request.person),request.needed,request.committed]
 		for refill in local.get("squad_replenishments",[]):
 			army_issue_status.text += "\n\nRifle squad %s · %s\nRendezvous: %s · Target: %d E02 per eligible carrier\nActual shortage: %d · Committed to couriers: %d\nUnloaded and available: %d\n%s" % [refill.squad,refill.state,refill.stop,refill.target,refill.needed,refill.committed,refill.available_at_stop,refill.blocker]
+			if rear.battlefield_operations != null:
+				var journey: Dictionary = rear.battlefield_operations.supply_travel.journey_status(refill.squad)
+				if not journey.is_empty():
+					var state: String = {"Planning":"Planning safe travel","Ready":"Journey ready","AwaitingACK":"Waiting for vehicle orders","Pickup":"Awaiting pickup"}.get(str(journey.get("state","")),str(journey.get("state","")))
+					army_issue_status.text += "\n%s · %s · %s\n%s" % ["Going to supply" if journey.get("leg","") == "Collect" else "Returning to duty",state,"On foot" if journey.get("mode","") == "Foot" else str(journey.get("hull","Choosing travel")),journey.get("blocker","")]
+					var eta: float = float(journey.get("eta",-1.0))
+					if is_finite(eta) and eta >= 0: army_issue_status.text += "\nJourney ETA: %.1f simulation seconds" % eta
 			for person in refill.people:
 				army_issue_status.text += "\n%s: %d / %d actual rounds · needs %d · committed %d · %s" % [_member_label(person.person),person.rounds,person.target,person.needed,person.committed,person.blocker]
 		army_issue_status.text += "\n\nAPC RACK ISSUE\nAutocannon rounds (E26) available at the stop: %d\n%s" % [int(local.get("available_E26",0)),str(local.get("rack_status","Waiting for actual local ammunition need."))]
