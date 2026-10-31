@@ -9,6 +9,7 @@ var checks := 0
 func _initialize() -> void:
 	_test_a24_and_local_handoff()
 	_test_person_and_cancellation()
+	_test_raw_held_counts()
 	_test_carried_cancel_returns_to_hq()
 	_test_automatic_hq_command()
 	_test_real_dispatch_receipt_auto_issue()
@@ -116,6 +117,34 @@ func _test_person_and_cancellation() -> void:
 	_expect(cancelled.ok and rear.hq.cancel(cancelled.id).ok,"unstarted person issue cancelled")
 	_expect(rear.hq.jobs[cancelled.id].state == "Cancelled" and rear.hq.snapshot().reserved.get("E02",0) == 0,"cancellation releases only own claim")
 	_expect(base.audit().is_empty(),"person issue ledger remains conserved: "+str(base.audit()))
+
+func _test_raw_held_counts() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	_expect(ledger.add_person("g14-count-person","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true).ok,"count fixture recipient")
+	_expect(ledger.add_person("g14-count-other","hq-reserve",rear.PLAYER,Records.Assignment.HQ_RESERVE,true).ok,"count fixture other recipient")
+	_expect(ledger.add_weapon("g14-count-rifle","E01",4.0,"g14-count-person","foreign-army","E02",30).ok,"foreign-owned held rifle remains a raw held weapon")
+	_expect(ledger.add_weapon("g14-count-other-weapon","E07",4.0,"g14-count-person",rear.PLAYER,"E02",30).ok,"second held weapon for nested raw count")
+	_expect(ledger.add_stock("g14-count-loose","E02",5,0.02,"g14-count-person",rear.PLAYER).ok,"five loose matching rounds")
+	_expect(ledger.add_stock("g14-count-foreign","E02",7,0.02,"g14-count-person","foreign-army").ok,"seven foreign matching held rounds")
+	_expect(ledger.add_stock("g14-count-loaded","E02",3,0.02,"g14-count-rifle",rear.PLAYER).ok,"three nested matching rounds")
+	_expect(ledger.add_stock("g14-count-other-loaded","E02",2,0.02,"g14-count-other-weapon","foreign-army").ok,"two matching rounds in another held weapon type")
+	_expect(ledger.add_stock("g14-count-unrelated","E02",11,0.02,"g14-count-other",rear.PLAYER).ok,"other person's rounds remain separate")
+	_expect(ledger.add_stock("g14-count-wrong-type","E03",13,0.02,"g14-count-person",rear.PLAYER).ok,"nonmatching held stock remains separate")
+	_expect(ledger.request_stock("g14-count-claim","g14-count-loose",3,"g14-fixture","Held count reservation",rear.PLAYER).ok,"reserved loose rounds remain physically held")
+	_expect(rear.hq._held_weapon(rear,"g14-count-person","E01"),"held-weapon query preserves raw ownership semantics")
+	_expect(not rear.hq._held_weapon(rear,"g14-count-other","E01"),"held-weapon query requires the same physical holder")
+	_expect(rear.hq._held_rounds(rear,"g14-count-person") == 17,"held rounds include reserved and foreign loose/nested E02 without unrelated stock")
+	_expect(ledger.add_stock("g14-count-hq","E02",13,0.02,"hq-stock",rear.PLAYER).ok,"owned unloaded HQ stock")
+	_expect(ledger.add_stock("g14-count-hq-foreign","E02",17,0.02,"hq-stock","foreign-army").ok,"foreign unloaded stock excluded from availability")
+	_expect(ledger.add_stock("g14-count-berth","E02",19,0.02,"hq-berth",rear.PLAYER).ok,"arrived stock excluded before unloading")
+	_expect(ledger.request_stock("g14-count-hq-claim","g14-count-hq",4,"g14-fixture","HQ count reservation",rear.PLAYER).ok,"HQ availability subtracts actual reservation")
+	var counts: Dictionary = rear.hq._stock_counts()
+	_expect(counts.available.get("E02",0) == 9 and counts.reserved.get("E02",0) == 4,"automatic stock counts preserve ownership, location and reservation semantics")
+	var view: Dictionary = rear.hq.snapshot()
+	_expect(view.available == counts.available and view.reserved == counts.reserved,"public HQ snapshot retains the same available/reserved view")
+	_expect(is_equal_approx(float(view.occupied_stock_kg),0.6),"public HQ snapshot still includes owned and foreign physical mass")
 
 func _test_carried_cancel_returns_to_hq() -> void:
 	var base := Base.new(true)

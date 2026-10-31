@@ -245,13 +245,13 @@ func movement_limit(hull_id: String, start: Vector2, finish: Vector2) -> float:
 func _on_moved(id: String, start: Vector2, finish: Vector2) -> void:
 	if _handling_move or start.is_equal_approx(finish): return
 	if tasks.has(id) and tasks[id].kind == "Scan": tasks[id].progress = 0.0; tasks[id].position = finish
-	var entity: Dictionary = _rear().ledger.inspect_entity(id)
+	var entity: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 	for row in projects.values():
 		if row.state != "Armed" or row.code == "D03": continue
-		entity = _rear().ledger.inspect_entity(id)
+		entity = _rear().ledger.inspect_entity(id,{},false)
 		if entity.get("health",100) <= 0: break
 		var touched := false
-		if row.code == "D01" and entity.kind == "PERSON" and _rear().ledger.inspect_entity(entity.holder_id).get("kind","") != "CARRIER": touched = _distance(row.position,start,finish) <= 1.0+EPS
+		if row.code == "D01" and entity.kind == "PERSON" and _rear().ledger.inspect_entity(entity.holder_id,{},false).get("kind","") != "CARRIER": touched = _distance(row.position,start,finish) <= 1.0+EPS
 		if row.code == "D02" and entity.kind == "CARRIER" and entity.has("vehicle_spec"): touched = _footprint_distance(row.position,start,finish,entity,(finish-start).angle()) <= 1.5+EPS
 		if touched:
 			# Commit contact position before blast, including a coarse timed movement step.
