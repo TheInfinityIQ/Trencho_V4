@@ -575,8 +575,8 @@ func _load_vehicle_people() -> void:
 	if vehicle_person == null: return
 	var selected: String = str(vehicle_person.get_item_metadata(vehicle_person.selected)) if vehicle_person.selected >= 0 else ""
 	var ids: Array[String] = []
-	for p in simulation.rear.snapshot().people:
-		if p.owner == "army-blue": ids.append(p.id)
+	for p in simulation.rear.ledger.snapshot(false).entities:
+		if p.kind == "PERSON" and p.owner == "army-blue": ids.append(p.id)
 	if vehicle_person.item_count == ids.size():
 		var same := true
 		for index in ids.size():

@@ -1173,7 +1173,7 @@ func inspect_person_status(id: String) -> Dictionary:
 	if not _entities.has(id) or not (_entities[id] is Records.Person): return {}
 	return inspect_entity(id,{},false)
 
-func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: bool = true) -> Dictionary:
+func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: bool = true, snapshot_facts: Dictionary = {}) -> Dictionary:
 	if not _entities.has(id):
 		return {}
 	var entity := _entities[id]
@@ -1226,7 +1226,7 @@ func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: 
 		result.available = available(id)
 		result.loaded = _entities[entity.holder_id].kind == Records.Kind.WEAPON
 		result.blocked_reason = "Unload weapon before allocating these rounds" if result.loaded else (
-			"Finish the active carry before allocating this freight" if _is_active_carry(id) else "")
+			"Finish the active carry before allocating this freight" if (snapshot_facts.carried.has(id) if snapshot_facts.has("carried") else _is_active_carry(id)) else "")
 	if entity is Records.Person:
 		var person := entity as Records.Person
 		result.assignment = Records.ASSIGNMENT_NAMES[person.assignment]
@@ -1248,7 +1248,7 @@ func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: 
 		result.bleed_remaining = maxf(0.0, person.bleed_until - _time) if person.assignment == Records.Assignment.WOUNDED else 0.0
 		result.loss_recorded = person.loss_recorded
 	if entity.kind == Records.Kind.WEAPON:
-		result.loaded_rounds = loaded_rounds(id)
+		result.loaded_rounds = int(snapshot_facts.loaded.get(id,0)) if snapshot_facts.has("loaded") else loaded_rounds(id)
 		result.loaded_capacity = entity.loaded_capacity
 		result.ammo_type = entity.ammo_type
 		result.functional = entity.health > 0
@@ -1278,11 +1278,19 @@ func snapshot(include_mass: bool = true) -> Dictionary:
 	# This inspection is synchronous. Compute aggregate masses once for this call;
 	# no cache survives a physical ledger change.
 	var masses := {}
+	var facts := {"loaded":{},"carried":{}}
+	# This synchronous read sees one ledger state. Summing integer stock counts
+	# and carry IDs once preserves the raw inspection semantics, including
+	# interrupted carries. Nothing is cached across a ledger mutation.
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK:
+			facts.loaded[entity.holder_id] = int(facts.loaded.get(entity.holder_id,0))+entity.quantity
+		if entity is Records.Person and not entity.carrying_stock_id.is_empty(): facts.carried[entity.carrying_stock_id] = true
 	if include_mass:
 		var children: Dictionary = _children_by_holder()
 		for id in _entities: _indexed_contents_mass(id,children,masses)
 	for id in _entities:
-		entities.append(inspect_entity(id,masses,include_mass))
+		entities.append(inspect_entity(id,masses,include_mass,facts))
 	for id in _claims:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,

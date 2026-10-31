@@ -3,7 +3,7 @@ extends RefCounted
 
 static func markers(rear: RefCounted) -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
-	var entities: Array = rear.ledger.snapshot().entities
+	var entities: Array = rear.ledger.snapshot(false).entities
 	var kinds := {}
 	for entity in entities: kinds[entity.id] = entity.kind
 	for entity in entities:

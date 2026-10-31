@@ -6,6 +6,8 @@ func _initialize() -> void:
 	var base: RefCounted = Session.create()
 	print("Opening constructed in ",(Time.get_ticks_msec()-started)/1000.0," s")
 	var rear: RefCounted = base.rear
+	var refused_first: bool = "--refuse-first-lift" in OS.get_cmdline_user_args()
+	if refused_first: rear.battlefield_operations.policy.trips["blue-rifles"].outbound = []
 	check(rear.time == 0 and base.speed == 0,"Session begins paused")
 	check(rear.objectives.objectives.size() == 9 and rear.military.squads.size() == 10,"Complete authored opening is populated")
 	check(rear.military.vehicles.size() == 8,"Both armies attach their four physical hulls")
@@ -70,7 +72,16 @@ func _initialize() -> void:
 				print("SUPPLY OBSERVE ",rear.battlefield_operations.policy.resupply.snapshot()," delivery=",rear.forward_supply.transport.jobs.get(delivery_id,{}).get("state","Not requested")," rifle_status=",rear.battlefield_operations.status)
 		if supply_playthrough and arrived_round_fired and rear.forward_supply.transport.jobs[delivery_id].state == "Complete": break
 	var lift_count: int = rear.military.troop_transport.jobs.values().filter(func(job: Dictionary) -> bool: return job.kind == "Troop Trip").size()
-	check(lift_count >= 3 if playthrough else lift_count == 3,"Delivered hierarchy orders start all three initial troop trips; later reserve activation may add another")
+	check(lift_count >= 3 if playthrough else lift_count == (2 if refused_first else 3),"Delivered hierarchy orders start eligible initial troop trips; later reserve activation may add another")
+	var admission_times: Array = []
+	for id in ["blue-rifles","blue-support","red-forward"]:
+		var trip: Dictionary = rear.battlefield_operations.policy.trips[id]
+		if not trip.started: continue
+		check(trip.admitted_at not in admission_times,"Initial physical admissions occupy distinct existing decision ticks")
+		admission_times.append(trip.admitted_at)
+	if refused_first:
+		check(not rear.battlefield_operations.policy.trips["blue-rifles"].started and not rear.battlefield_operations.policy.trips["blue-rifles"].blocker.is_empty(),"Invalid first lift retains its actual refusal")
+		check(rear.battlefield_operations.policy.trips["blue-support"].started,"A refused first lift does not starve the next friendly lift")
 	check(rear.battlefield_operations.policy.trips["red-forward"].started,"Red's opening is not blocked by observing its own HQ as hostile")
 	if not playthrough: check(not rear.battlefield_operations.policy.reserve_active,"Red reserve awaits an actual report")
 	if playthrough:

@@ -49,6 +49,11 @@ jobs:
           set -euo pipefail
           command -v xvfb-run
           xvfb-run -a pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Input
+      - name: Record rendered opening responsiveness
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd
       - name: Prove R01 completed-work regression fails and restores
         shell: pwsh
         run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -G04Work

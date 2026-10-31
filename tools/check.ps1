@@ -69,6 +69,7 @@ Invoke-GodotCheck -Name 'recovery-regression' -EngineArguments @('--script', 're
 Invoke-GodotCheck -Name 'recovery-mines-regression' -EngineArguments @('--script', 'res://game/vehicle_recovery/tests/recovery_mines_regression.gd')
 Invoke-GodotCheck -Name 'order-regression' -EngineArguments @('--script', 'res://game/orders/tests/order_regression.gd')
 Invoke-GodotCheck -Name 'occupant-observation-regression' -EngineArguments @('--script', 'res://game/orders/tests/occupant_observation_regression.gd')
+Invoke-GodotCheck -Name 'observation-range-regression' -EngineArguments @('--script', 'res://game/orders/tests/observation_range_regression.gd')
 Invoke-GodotCheck -Name 'objective-regression' -EngineArguments @('--script', 'res://game/objectives/tests/objective_regression.gd')
 Invoke-GodotCheck -Name 'field-regression' -EngineArguments @('--script', 'res://game/field_structures/tests/field_regression.gd')
 Invoke-GodotCheck -Name 'bridge-regression' -EngineArguments @('--script', 'res://game/bridges/tests/bridge_regression.gd')
@@ -105,6 +106,7 @@ if ($SceneInput) {
 
 Invoke-GodotCheck -Name 'forward-delivery-ui-regression' -EngineArguments @('--script', 'res://game/forward_supply/tests/forward_delivery_ui_regression.gd')
 Invoke-GodotCheck -Name 'opening-regression' -EngineArguments @('--script', 'res://game/scenario/tests/opening_regression.gd')
+Invoke-GodotCheck -Name 'opening-queued-refusal-regression' -EngineArguments @('--script', 'res://game/scenario/tests/opening_regression.gd','--','--refuse-first-lift')
 Invoke-GodotCheck -Name 'hq-affiliation-regression' -EngineArguments @('--script', 'res://game/orders/tests/hq_affiliation_regression.gd')
 Invoke-GodotCheck -Name 'mass-inspection-regression' -EngineArguments @('--script', 'res://game/identity/tests/mass_inspection_regression.gd')
 Invoke-GodotCheck -Name 'opening-resupply-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_resupply_regression.gd')

@@ -40,6 +40,7 @@ func compare(ledger: RefCounted) -> void:
 	for type in ["E01","E02","missing"]:
 		compare_rows(ledger.entities_of_type(type,["STOCK","WEAPON"]),ledger.entities_of_type(type,["STOCK","WEAPON"],false))
 	for row in complete.entities:
+		check(row == ledger.inspect_entity(row.id),"Batched inspection equals independent raw facts for loaded rounds, carries and exact mass")
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
 		if row.kind == "PERSON":
 			var full: Dictionary = ledger.inspect_entity(row.id)

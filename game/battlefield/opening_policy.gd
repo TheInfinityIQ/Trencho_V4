@@ -10,6 +10,8 @@ var trips: Dictionary = {}
 var status: Dictionary = {}
 var repositioned: Dictionary = {}
 var resupply: RefCounted
+var _trip_admission_cursor := 0
+var _last_trip_attempt := -INF
 
 func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> void:
 	_rear_ref = weakref(rear)
@@ -46,7 +48,7 @@ func _add_trip(id: String, hull: String, squads: Array, side: String, index: int
 	route.append(rear.ledger.inspect_entity(destination).position)
 	var returning := route.duplicate()
 	returning.reverse()
-	trips[id] = {"hull":hull,"squads":squads,"board":actual.holder_id,"dismount":destination,"outbound":route,"return":returning,"reserve":reserve,"started":false,"dismounted":false,"job":"","blocker":""}
+	trips[id] = {"hull":hull,"squads":squads,"board":actual.holder_id,"dismount":destination,"outbound":route,"return":returning,"reserve":reserve,"started":false,"admitted_at":-1.0,"dismounted":false,"job":"","blocker":""}
 
 func tick() -> void:
 	var rear: RefCounted = _rear()
@@ -108,7 +110,8 @@ func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 func _request_trips() -> void:
 	var rear: RefCounted = _rear()
 	if not rear.military.has_method("request_troop_trip"): return
-	for trip in trips.values():
+	var ordered: Array = trips.values()
+	for trip in ordered:
 		if trip.reserve and not reserve_active: continue
 		if trip.started:
 			var all_out := true
@@ -118,17 +121,26 @@ func _request_trips() -> void:
 				for person_id in rear.military._active_roster_members(squad):
 					if rear.ledger.inspect_entity(person_id).holder_id != trip.dismount: all_out = false
 			if all_out: trip.dismounted = true
-			continue
+	# One potentially expensive physical admission per existing decision tick.
+	# Rotate even after a refusal so one invalid queued lift cannot starve others.
+	if rear.time == _last_trip_attempt: return
+	for offset in ordered.size():
+		var index: int = (_trip_admission_cursor+offset)%ordered.size()
+		var trip: Dictionary = ordered[index]
+		if trip.started or (trip.reserve and not reserve_active): continue
 		var acknowledged := true
 		for squad_id in trip.squads:
 			var intent: Dictionary = rear.orders.intents.get(squad_id,{})
 			if intent.get("state","") != "Acknowledged" or intent.action != "Move by Transport": acknowledged = false
 		if not acknowledged: continue
+		_trip_admission_cursor = (index+1)%ordered.size()
+		_last_trip_attempt = rear.time
 		var members: Array[String] = []
 		members.assign(trip.squads)
 		var requested: Dictionary = rear.military.request_troop_trip(trip.hull,members,trip.board,trip.dismount,trip.outbound,trip["return"])
-		if requested.ok: trip.started = true; trip.job = requested.id
+		if requested.ok: trip.started = true; trip.job = requested.id; trip.admitted_at = rear.time; trip.blocker = ""
 		else: trip.blocker = str(requested.get("message",requested.get("blocked_reason","Transport unavailable")))
+		return
 
 func _reposition_supply_truck() -> void:
 	var rear: RefCounted = _rear()

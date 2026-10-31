@@ -278,7 +278,7 @@ func settle() -> bool:
 	var changed := false
 	var now: float = _rear().time
 	if _next_observation <= now+EPS:
-		var entities: Array = _rear().ledger.snapshot().entities if not watch_squads.is_empty() else []
+		var entities: Array = _rear().ledger.snapshot(false).entities if not watch_squads.is_empty() else []
 		for id in watch_squads.keys(): _sample_squad(id,entities)
 		_next_observation = now+1.0 if not watch_squads.is_empty() else INF
 		changed = true
@@ -338,12 +338,17 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 		return
 	var seen := {}
 	var ledger: RefCounted = _rear().ledger
-	var entities: Array = ledger.snapshot().entities if sampled_entities.is_empty() else sampled_entities
+	var entities: Array = ledger.snapshot(false).entities if sampled_entities.is_empty() else sampled_entities
+	var world: RefCounted = _rear().combat.world
+	var maximum: float = float(world.Catalog.ROLES.ordinary.range)+float(world.EPS)
 	for person_id in _rear().military._active_roster_members(squad):
-		var observer: Dictionary = ledger.inspect_entity(person_id)
+		var observer: Dictionary = ledger.inspect_person_status(person_id)
 		for target in entities:
 			var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
 			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
+			# The exact ordinary sight-range bound cannot produce a contact.
+			# Reject it before terrain heights/rays or protected-hull inspection.
+			if observer.position.distance_to(target.position) > maximum: continue
 			# Protected occupants are observed through their hull, not as exposed people.
 			if target.kind == "PERSON" and ledger.entity_kind(target.holder_id) == "CARRIER" and not _rear().vehicle_combat._exposed_gunner(target): continue
 			if _rear().combat.world.observe(observer.position,target.position).visible:
@@ -351,7 +356,8 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 				seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":estimated_strength,"source":person_id,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown")}
 		for objective_id in objective_markers:
 			if objective_affiliations.get(objective_id,"") == observer.owner: continue
-			var place: Dictionary = ledger.inspect_entity(objective_id)
+			var place: Dictionary = ledger.inspect_entity(objective_id,{},false)
+			if observer.position.distance_to(place.position) > maximum: continue
 			if _rear().combat.world.observe(observer.position,place.position).visible:
 				seen[objective_id] = {"target":objective_id,"class":objective_markers[objective_id],"position":place.position,"observed_count":1,"observed_strength":0.0,"source":person_id,"observed_at":_rear().time,"visible_facing":"Unknown"}
 	visible[squad_id] = seen

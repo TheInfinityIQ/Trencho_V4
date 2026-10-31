@@ -41,7 +41,7 @@ func _gui_input(event: InputEvent) -> void:
 			var point := _world(event.position)
 			var nearest := ""
 			var distance := 9.0 / _scale()
-			for entity in simulation.rear.ledger.snapshot().entities:
+			for entity in simulation.rear.ledger.snapshot(false).entities:
 				if entity.owner == "army-red": continue
 				if entity.kind not in ["PERSON", "CARRIER"]: continue
 				if entity.kind == "PERSON" and entity.holder_id not in ["rear", "rear-lane", "personnel"] and not entity.holder_id.begins_with("duty-"): continue
@@ -98,18 +98,17 @@ func _draw() -> void:
 		var ghost: Rect2 = placement_preview.footprint
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(0.3,0.8,0.7,0.3))
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color("90e2bf"),false,2)
-	for entity in simulation.rear.ledger.snapshot().entities:
+	for entity in simulation.rear.ledger.snapshot(false).entities:
 		if entity.owner == "army-red": continue
 		var point := map_point(entity.position)
-		if entity.kind == "STOCK" and entity.quantity > 0 and not simulation.rear.ledger.inspect_entity(entity.holder_id).is_empty():
-			var holder: Dictionary = simulation.rear.ledger.inspect_entity(entity.holder_id)
-			if holder.kind == "PLACE": draw_rect(Rect2(point + Vector2(3, 3), Vector2(5, 5)), Color("ddbd72"))
+		if entity.kind == "STOCK" and entity.quantity > 0 and simulation.rear.ledger.entity_kind(entity.holder_id) == "PLACE":
+			draw_rect(Rect2(point + Vector2(3, 3), Vector2(5, 5)), Color("ddbd72"))
 		if entity.kind in ["CARRIER", "HEAVY_OBJECT"]:
 			if entity.position.x < -10: continue
 			draw_rect(Rect2(point - Vector2(7, 4), Vector2(14, 8)), Color("dba274"))
 		if entity.kind != "PERSON": continue
 		# Passengers/drivers remain visibly on their carrier; don't draw them as loose workers.
-		if simulation.rear.ledger.inspect_entity(entity.holder_id).get("kind", "") == "CARRIER": continue
+		if simulation.rear.ledger.entity_kind(entity.holder_id) == "CARRIER": continue
 		if entity.position.x < 0: continue
 		draw_circle(point, 4.0, Color("82e3b0") if entity.owner == "army-blue" else Color("dba274"))
 		if not entity.carrying_stock_id.is_empty(): draw_rect(Rect2(point + Vector2(4, -5), Vector2(6, 6)), Color("ffd37c"))
