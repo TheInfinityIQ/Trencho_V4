@@ -10,6 +10,7 @@ func _initialize() -> void:
 	_test_vehicle_occupant_drop()
 	_test_a26()
 	_test_a27()
+	_test_exclusive_care()
 	_test_fire_gates_and_stress()
 	_test_reload_commitment()
 	_test_field_gun_direct()
@@ -166,6 +167,57 @@ func _test_a27() -> void:
 	_expect(ledger.inspect_entity("a27-bleeder").assignment == "Dead" and base.rear.combat.deaths.has("a27-bleeder"),"A27 untreated bleed-out one death")
 	_expect(not base.rear.combat.injure("a27-bleeder",1).ok,"A27 no duplicate death after bleed-out")
 	_expect(base.audit().is_empty(),"A27 care and loss audit: "+str(base.audit()))
+
+func _test_exclusive_care() -> void:
+	for patients in [["care-a","care-b"],["care-b","care-a"]]:
+		var base := Base.new(true)
+		var rear: RefCounted = base.rear
+		var ledger: RefCounted = rear.ledger
+		var combat: RefCounted = rear.combat
+		for id in ["care-medic","care-relief"]:
+			_person(base,id,"hq-reserve",rear.PLAYER,"P03")
+			_expect(ledger.add_stock(id+"-kit","E11",1,4.0,id,rear.PLAYER).ok,"Each actual P03 holds a reusable kit")
+		_expect(ledger.add_stock("care-packs","E12",2,1.0,"care-medic",rear.PLAYER).ok,"Only two actual treatment packs exist")
+		for id in patients:
+			_person(base,id,"hq-reserve",rear.PLAYER)
+			_expect(combat.injure(id,100).code == "INCAPACITATED","Actual friendly patient is wounded near medic")
+		var first: String = patients[0]
+		var second: String = patients[1]
+		_expect(combat.start_care("care-medic",first,"care-packs").ok,"Either patient can receive the first commitment")
+		rear.advance_time(4)
+		var before_care: Dictionary = combat.care.duplicate(true)
+		var before_ledger: Dictionary = ledger.snapshot()
+		_expect(combat.start_care("care-medic",first).ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Same active patient resumes without reset, extra pack or claims")
+		var denied: Dictionary = combat.start_care("care-medic",second,"care-packs")
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Second live episode is denied without changing progress, stock or claims")
+		if denied.ok: return
+		rear.advance_time(1)
+		_expect(combat.care[first].progress == 5.0 and not combat.care.has(second) and ledger.inspect_entity(second).bleed_remaining == 55.0,"Only selected patient accumulates care; untreated patient keeps bleeding")
+		_expect(combat.start_care("care-relief",first).ok,"Free qualified relief can take over an existing episode without a pack")
+		_expect(combat.start_care("care-medic",second,"care-packs").ok,"Relieved medic is free to commit the remaining pack to the other patient")
+		rear.advance_time(2)
+		before_care = combat.care.duplicate(true)
+		before_ledger = ledger.snapshot()
+		denied = combat.start_care("care-medic",first)
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Busy medic cannot take over another committed episode or displace its relief")
+		if denied.ok: return
+		_expect(combat.interrupt_care(second).ok,"Explicit interruption releases medic while preserving second patient's work")
+		_expect(combat.start_care("care-medic",first).ok,"Released medic can take back the first existing episode")
+		before_care = combat.care.duplicate(true)
+		before_ledger = ledger.snapshot()
+		denied = combat.start_care("care-medic",second)
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Existing interrupted episode cannot resume while its medic treats another patient")
+		if denied.ok: return
+		rear.advance_time(3)
+		_expect(ledger.inspect_entity(first).assignment == "Recovery" and not combat.care.has(first),"First episode completes after exactly ten cumulative seconds across medics")
+		_expect(combat.care[second].progress == 2.0 and not combat.care[second].active,"Interrupted second episode gains no concurrent work")
+		_expect(combat.start_care("care-medic",second).ok,"Same medic resumes interrupted patient using its already consumed pack")
+		rear.advance_time(7.5)
+		_expect(ledger.inspect_entity(second).assignment == "Wounded" and combat.care[second].progress == 9.5,"Resumed treatment cannot finish before ten cumulative seconds")
+		rear.advance_time(0.5)
+		_expect(ledger.inspect_entity(second).assignment == "Recovery" and combat.care.is_empty(),"Second episode completes once at ten cumulative seconds")
+		_expect(ledger.snapshot().consumed.get("E12",0) == 2 and ledger.total_stock("E12") == 0 and ledger.total_stock("E11") == 2,"Handoffs and resumes consume no extra packs and retain both reusable kits")
+		_expect(base.audit().is_empty(),"Exclusive care, reassignment and resume preserve common invariants")
 
 func _test_fire_gates_and_stress() -> void:
 	var base := Base.new(true)

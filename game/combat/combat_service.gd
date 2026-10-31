@@ -223,6 +223,7 @@ func start_care(medic_id: String, patient_id: String, pack_id: String = "") -> D
 	if medic.is_empty() or patient.is_empty() or medic.kind != "PERSON" or patient.kind != "PERSON" or medic.qualification != "P03" or medic.assignment in ["Wounded","Recovery","Dead"] or patient.assignment != "Wounded" or medic.owner != patient.owner: return _block("A living P03 must care for a living friendly incapacitated patient.")
 	if medic.position.distance_to(patient.position) > 2.0+EPS or _seated(medic) or not medic.crew_station.is_empty(): return _block("Medic must be stationary and within two metres of the patient.")
 	if not _holds(medic_id,"E11"): return _block("Medic lacks an actual carried E11 kit.")
+	if _medic_busy(medic_id,patient_id): return _block("Active care for another patient must be interrupted before this action.")
 	if care.has(patient_id):
 		care[patient_id].medic = medic_id
 		care[patient_id].active = true
@@ -481,8 +482,10 @@ func _holds(id: String, type: String) -> bool:
 		if item.holder_id == id and item.design_type == type and item.quantity > 0: return true
 	return false
 
-func _medic_busy(id: String) -> bool:
-	for row in care.values():
+func _medic_busy(id: String, except_patient_id: String = "") -> bool:
+	for patient_id in care:
+		if patient_id == except_patient_id: continue
+		var row: Dictionary = care[patient_id]
 		if row.active and row.medic == id: return true
 	return false
 
