@@ -178,7 +178,8 @@ func _process(delta: float) -> void:
 
 func clock_text() -> String:
 	# Shared by both live views; no snapshot, wall-time estimate or clock advance.
-	return "  %.1f s · %s" % [simulation.rear.time,"Paused" if simulation.speed == 0 else "%dx" % simulation.speed]
+	var preparing: String = simulation.planning_status_text()
+	return "  %.1f s · %s%s" % [simulation.rear.time,"Paused" if simulation.speed == 0 else "%dx" % simulation.speed," · "+preparing if not preparing.is_empty() else ""]
 
 func use_shared_clock() -> void:
 	_local_clock_controls.hide()

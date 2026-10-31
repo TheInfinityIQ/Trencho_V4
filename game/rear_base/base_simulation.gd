@@ -40,6 +40,9 @@ var _supply_view_revision := -1
 var _planning_turn := 0
 var _resource_view_revision := -1
 const LIVE_QUANTUM := 0.1
+const PLANNING_FRAME_USEC := 4000
+const PLANNING_CHUNK_UNITS := 128
+const PLANNING_FRAME_UNITS := 4096
 
 func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}) -> void:
 	rear = Rear.new("Empty",not initial_rear)
@@ -179,11 +182,21 @@ func _pump_live() -> void:
 		# Pure work can reach Ready while paused. Only the running clock admits
 		# real work. No authoritative advance/settle/commit yields; pure route
 		# work emits no session mutations, so callbacks receive settled state.
-		# These three owners share one allowance per returned frame. Resource
-		# estimates cannot consume logical mission seconds or starve departures.
+		# Fill the existing time allowance with small bounded chunks. A cheap
+		# 128-unit chunk need not waste the rest of a frame's planning budget.
+		# The finite aggregate ceiling also bounds repeated small/no-op stages.
 		_planning_turn = (index+1)%owners.size()
-		var changed: bool = owner.pump_planning(speed > 0,128,4000)
-		if changed: rear.advance_time(0.0,true)
+		var deadline: int = Time.get_ticks_usec()+PLANNING_FRAME_USEC
+		var units := 0
+		while owner.has_planning_work() and units < PLANNING_FRAME_UNITS:
+			var remaining: int = deadline-Time.get_ticks_usec()
+			if remaining <= 0: break
+			var changed: bool = owner.pump_planning(speed > 0,PLANNING_CHUNK_UNITS,remaining)
+			units += PLANNING_CHUNK_UNITS
+			if changed:
+				rear.advance_time(0.0,true)
+				break # At most one authoritative admission per returned frame.
+			if speed == 0: break # Preserve quiet paused preparation/Ready waits.
 		_refresh_trip_admissions()
 		return
 	if speed == 0 or owed_simulation_seconds <= 0.0: return
@@ -230,6 +243,15 @@ func _resource_planning_owner() -> RefCounted:
 	if rear.battlefield_operations == null: return null
 	var policy: RefCounted = rear.battlefield_operations.policy
 	return policy.resource_planning_owner() if policy != null and policy.has_method("resource_planning_owner") else null
+
+func planning_status_text() -> String:
+	if not _live_planning: return ""
+	if rear.military.troop_transport.has_planning_work(): return "Preparing transport routes"
+	var supply := _supply_travel_owner()
+	if supply != null and supply.has_planning_work(): return "Preparing supply journey"
+	var resource := _resource_planning_owner()
+	if resource != null and resource.has_planning_work(): return "Preparing next operation"
+	return ""
 
 func set_speed(value: int) -> Dictionary:
 	if value not in [0, 1, 2]: return {"ok": false, "message": "Choose Pause, 1x or 2x."}
