@@ -192,7 +192,7 @@ func _spin(parent: Node, title: String, maximum: int, value: int = 0) -> SpinBox
 	spin.min_value = 0
 	spin.max_value = maximum
 	spin.step = 1
-	spin.value = value
+	spin.set_value_no_signal(value)
 	spin.custom_minimum_size.x = 100
 	row.add_child(spin)
 	return spin
@@ -233,26 +233,30 @@ func _orders_panel(box: VBoxContainer) -> void:
 	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue", "Farmland and Towns playtest"])
 	_button(box, "Start new session", _start_session)
 
-func _start_session() -> void:
+func _start_session(refresh_rear_ui: bool = true) -> void:
 	simulation = preload("res://game/scenario/farmland_session.gd").create() if scenario.selected == 2 else Simulation.new(scenario.selected == 1, true)
+	_displayed_time = -INF
 	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
 	base_map.simulation = simulation
 	base_map.reset_camera()
 	_pending_activity = null
 	_pending_token = -1
-	for spin in cart.values(): spin.value = 0
-	for spin in targets.values(): spin.value = 0
-	instructor_count.set_value_no_signal(0)
-	training_access.set_pressed_no_signal(true)
+	for spin in cart.values(): spin.set_value_no_signal(0)
+	for duty in targets: targets[duty].set_value_no_signal(int(simulation.rear.requests[duty].target))
+	instructor_count.set_value_no_signal(int(simulation.rear.requests.training.target))
+	training_access.set_pressed_no_signal(simulation.rear.training.accessible)
 	_load_courses()
 	facility.select(0)
 	_selected_kind = "building"
 	_selected_id = "terminal"
 	_load_production()
+	_sync_option(store,simulation.rear.stores.keys())
 	_load_store()
 	declaration.text = "Farmland and Towns | Declared starting armies and rear | Selected free card: C30 (APC and E26 recipes)." if scenario.selected == 2 else ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
-	_result({"ok": true, "message": "New paused Farmland opening. Buildings block sight and movement; entry and damage are pending." if scenario.selected == 2 else "New paused session. Recipe access was declared at creation; actual cards remain separate."})
+	var message := "New paused Farmland opening. Buildings block sight and movement; entry and damage are pending." if scenario.selected == 2 else "New paused session. Recipe access was declared at creation; actual cards remain separate."
+	if refresh_rear_ui: _result({"ok":true,"message":message})
+	elif feedback != null: feedback.text = message
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
@@ -417,7 +421,7 @@ func _training_panel(box: VBoxContainer) -> void:
 		if not training_rows.get_selected_items().is_empty(): _result(simulation.rear.training.withdraw(training_ids[training_rows.get_selected_items()[0]])))
 	training_access = CheckBox.new()
 	training_access.text = "Training facility accessible"
-	training_access.button_pressed = true
+	training_access.set_pressed_no_signal(true)
 	box.add_child(training_access)
 	training_access.toggled.connect(func(value: bool) -> void: _result(simulation.rear.training.set_access(value)))
 	training_status = _label(box,"")
@@ -620,10 +624,10 @@ func _activity() -> RefCounted:
 func _load_production() -> void:
 	var activity := _activity()
 	heavy_controls.visible = activity.has_method("accept_order")
-	bay_access.button_pressed = activity.bay_accessible if activity.has_method("accept_order") else true
-	parking_access.button_pressed = activity.parking_accessible if activity.has_method("accept_order") else true
+	bay_access.set_pressed_no_signal(activity.bay_accessible if activity.has_method("accept_order") else true)
+	parking_access.set_pressed_no_signal(activity.parking_accessible if activity.has_method("accept_order") else true)
 	mode.select(0 if activity.mode == "Stock target" else 1)
-	stock_target.value = activity.stock_target
+	stock_target.set_value_no_signal(activity.stock_target)
 	var view: Dictionary = activity.snapshot()
 	var choices: Array = view.get("recipe_choices", [view.recipe])
 	recipe.clear()
@@ -637,8 +641,8 @@ func _load_production() -> void:
 
 func _load_store() -> void:
 	var entry: Dictionary = simulation.rear.stores[store.get_item_text(store.selected)]
-	capacity.value = entry.capacity
-	accessible.button_pressed = entry.accessible
+	capacity.set_value_no_signal(entry.capacity)
+	accessible.set_pressed_no_signal(entry.accessible)
 
 func _change_recipe() -> void:
 	var activity := _activity()

@@ -124,8 +124,9 @@ func _on_session_changed(next_simulation: RefCounted) -> void:
 	_battlefield.bind(next_simulation)
 
 func _start_playtest() -> void:
+	_base.hide()
 	_base.scenario.select(2)
-	_base._start_session()
+	_base._start_session(false)
 	_show_battlefield()
 
 func _process(_delta: float) -> void:
