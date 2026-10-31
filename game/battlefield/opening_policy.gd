@@ -157,6 +157,9 @@ func settle_vehicle_departures() -> bool:
 func squad_supply_owner() -> RefCounted:
 	return resupply
 
+func resource_planning_owner() -> RefCounted:
+	return resource_operations
+
 func authorize_supply_transport(proposal: Dictionary, allow_issue: bool) -> Dictionary:
 	var rear := _rear()
 	var hull_id: String = str(proposal.get("hull",""))

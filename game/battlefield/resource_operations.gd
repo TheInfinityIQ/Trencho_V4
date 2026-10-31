@@ -1,16 +1,18 @@
 extends RefCounted
 ## Bounded resource proposals. Opening alone issues orders; Execution owns action.
 ## Reports/own facts are synchronous small policy stages. Terrain work shares one
-## cooperative allowance per policy tick, not a fresh deadline per candidate.
+## returned-frame cooperative allowance, not a fresh deadline per candidate.
 const EPS := 0.000001
 const REVIEW_SECONDS := 10.0
 const CHANGE_REPORTS := ["Inability","Casualties","Lost Capability","Low Supply","Blocked Route","Opportunity","Threatened Crossing"]
 const FIRE_RANGE := {"T03":250.0,"T04":450.0,"T05":700.0,"P07":300.0,"P04":250.0}
+var planning_revision: int = 0
 var _rear_ref: WeakRef
 var _rows: Dictionary = {}
 var _resources: Dictionary = {}
 var _report_cursor := 0
 var _turn := 0
+var _planning_turn := 0
 var _observation: Dictionary = {}
 var _observed: Dictionary = {}
 var _observation_cursors: Dictionary = {}
@@ -22,7 +24,7 @@ func _init(rear: RefCounted, armies: Dictionary) -> void:
 		var objective: Dictionary = rear.objectives.objectives[id]
 		if objective.kind == "Resource": _resources[id] = objective.position
 	for owner in armies:
-		_rows[owner] = {"owner":owner,"active":false,"known":{},"served":{},"operation":{},"trigger":false,"completed":false,
+		_rows[owner] = {"owner":owner,"active":false,"known":{},"served":{},"operation":{},"issued_operation":{},"trigger":false,"completed":false,
 			"next_review":0.0,"search":{},"blocker":"","threats":[],"generation":0,"inputs":[]}
 
 func proposal(owner: String) -> Dictionary:
@@ -42,20 +44,20 @@ func record_issued(owner: String, version: String, intent: String) -> void:
 	if row.operation.get("version","") != version or not str(row.operation.get("intent","")).is_empty(): return
 	row.operation.intent = intent
 	row.operation.issued_at = _rear().time
+	row.issued_operation = row.operation.duplicate(true)
 	row.served[row.operation.objective] = _rear().time
 
-func tick(armies: Dictionary, available: Dictionary, enabled: Dictionary, max_units: int = 128, budget_usec: int = 4000) -> void:
+func tick(armies: Dictionary, available: Dictionary, enabled: Dictionary) -> void:
 	_observation = {}
-	if not _rear().vehicle_departures_allowed or max_units <= 0 or budget_usec <= 0: return
-	var deadline: int = Time.get_ticks_usec()+budget_usec
+	if not _rear().vehicle_departures_allowed: return
 	var units := 0
 	# OrderService appends only after actual root delivery; pending owns transit.
-	while _report_cursor < _rear().orders.reports.size() and units < mini(16,max_units) and Time.get_ticks_usec() < deadline:
+	while _report_cursor < _rear().orders.reports.size() and units < 16:
 		_observe_report(_rear().orders.reports[_report_cursor],armies)
 		_report_cursor += 1
 		units += 1
 	var owners: Array = armies.keys()
-	if owners.is_empty() or units >= max_units or Time.get_ticks_usec() >= deadline: return
+	if owners.is_empty(): return
 	var owner: String = str(owners[_turn%owners.size()])
 	_turn += 1
 	var row: Dictionary = _rows[owner]
@@ -63,7 +65,6 @@ func tick(armies: Dictionary, available: Dictionary, enabled: Dictionary, max_un
 	if not row.active: return # The initial actual lift/capture/report chain is intact.
 	var army: Dictionary = armies[owner]
 	_observation = _local_observation(army,available.get(owner,[]),owner)
-	units += 1
 	if row.search.is_empty():
 		if _rear().time+EPS < float(row.next_review): return
 		var current_force := _force(army,available.get(owner,[]),owner)
@@ -76,22 +77,66 @@ func tick(armies: Dictionary, available: Dictionary, enabled: Dictionary, max_un
 		if not row.trigger: return
 		if not row.operation.is_empty() and (str(row.operation.get("intent","")).is_empty() or _rear().time < float(row.operation.issued_at)+REVIEW_SECONDS-EPS): return
 		_begin_search(row,army,available.get(owner,[]),owner)
+
+func has_planning_work() -> bool:
+	for row in _rows.values():
+		if not row.search.is_empty(): return true
+	return false
+
+func invalidate_planning() -> void:
+	for row in _rows.values():
+		row.search = {}
+		if str(row.operation.get("intent","")).is_empty(): row.operation = row.issued_operation.duplicate(true)
+		row.trigger = row.active
+		row.next_review = _rear().time
+		if row.active: row.blocker = "Inputs changed; current issued operation continues until fresh resource review."
+	_observation = {}
+	planning_revision += 1
+
+func cancel_planning() -> void:
+	for row in _rows.values():
+		row.search = {}
+		if str(row.operation.get("intent","")).is_empty(): row.operation = row.issued_operation.duplicate(true)
+		row.trigger = false
+		if row.active: row.blocker = "Private resource planning cancelled; issued orders retain their actual owner."
+	_observation = {}
+	planning_revision += 1
+
+func pump_planning(_allow_commit: bool, max_units: int = 128, budget_usec: int = 4000) -> bool:
+	# Pure geometry and proposal metadata only, including while paused. Policy
+	# ticks retain all report submission, review/capture and real order issuance.
+	if max_units <= 0 or budget_usec <= 0: return false
+	var deadline: int = Time.get_ticks_usec()+budget_usec
+	var units := 0
+	var owners: Array = _rows.keys()
+	var owner := ""
+	while units < owners.size() and units < max_units and Time.get_ticks_usec() < deadline:
+		var candidate_owner: String = str(owners[_planning_turn%owners.size()])
+		_planning_turn += 1
 		units += 1
-	if row.search.is_empty(): return
+		if not _rows[candidate_owner].search.is_empty(): owner = candidate_owner; break
+	if owner.is_empty(): return false
+	var row: Dictionary = _rows[owner]
 	var search: Dictionary = row.search
 	if search.world != _rear().combat.world or search.revision != search.world.revision:
-		row.search = {}; row.trigger = true; row.blocker = "Terrain changed; reassessing the resource routes."; return
+		row.search = {}; row.trigger = true; row.next_review = _rear().time
+		row.blocker = "Terrain changed; reassessing the resource routes."
+		planning_revision += 1
+		return false
 	while units < max_units and Time.get_ticks_usec() < deadline:
 		if search.work != null:
-			if search.work.invalidated: row.search = {}; row.trigger = true; return
+			if search.work.invalidated:
+				row.search = {}; row.trigger = true; row.next_review = _rear().time
+				planning_revision += 1
+				return false
 			if not search.work.done:
 				search.work.step(max_units-units,maxi(1,deadline-Time.get_ticks_usec()))
-				return # The child consumes this tick's entire remaining allowance.
+				return false # Child consumes the frame's entire remaining allowance.
 			units += 1
 			_finish_leg(row)
 			continue
 		units += 1
-		if search.index >= search.candidates.size(): _choose(row,army,available.get(owner,[]),owner); return
+		if search.index >= search.candidates.size(): _choose(row,search.army,search.available,owner); return false
 		var candidate: Dictionary = search.candidates[search.index]
 		if candidate.leg >= candidate.legs.size():
 			candidate.score = float(candidate.base)-0.1*float(candidate.seconds)-30.0*float(candidate.enemy)/float(search.force.strength)
@@ -105,6 +150,7 @@ func tick(armies: Dictionary, available: Dictionary, enabled: Dictionary, max_un
 		if (leg.from as Vector2).distance_to(leg.to) <= EPS: candidate.leg += 1; continue
 		search.work = search.world.begin_route({"position":leg.from,"facing":(leg.to-leg.from).angle(),"size":Vector2(0.6,0.6),
 			"movement_class":0,"base":2.0,"rate":0.0,"gross_mass_kg":leg.mass},leg.to)
+	return false
 
 func _observe_report(report: Dictionary, armies: Dictionary) -> void:
 	for owner in armies:
@@ -212,8 +258,9 @@ func _begin_search(row: Dictionary, army: Dictionary, available: Array, owner: S
 		candidates.append({"objective":id,"action":context.action,"base":context.base,"enemy":context.enemy,"seconds":0.0,"legs":legs,"leg":0,"score":-INF,
 			"supply":supply,"fallback":fallback,"served":float(row.served.get(id,-INF))})
 	row.search = {"world":_rear().combat.world,"revision":_rear().combat.world.revision,"force":force,"contacts":contacts,
-		"candidates":candidates,"index":0,"work":null,"ready":[],"notes":[]}
+		"army":army.duplicate(true),"available":available.duplicate(),"candidates":candidates,"index":0,"work":null,"ready":[],"notes":[]}
 	row.blocker = "Measuring resource approach, supply and fallback; current acknowledged operation continues."
+	planning_revision += 1
 
 func _candidate_context(row: Dictionary, id: String, owner: String, contacts: Array[Dictionary], force: Dictionary, threats: Array) -> Dictionary:
 	var owned: bool = row.known.get(id,{}).get("owner","") == owner
@@ -250,6 +297,7 @@ func _reject(search: Dictionary, candidate: Dictionary, reason: String) -> void:
 	search.work = null
 
 func _choose(row: Dictionary, army: Dictionary, available: Array, owner: String) -> void:
+	planning_revision += 1
 	var search: Dictionary = row.search
 	var force := _force(army,available,owner)
 	var contacts := _contacts(army.root)
