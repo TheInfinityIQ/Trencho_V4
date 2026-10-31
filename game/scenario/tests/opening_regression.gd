@@ -34,12 +34,41 @@ func _initialize() -> void:
 			print(id," started=",trip.started," blocker=",trip.blocker)
 		quit()
 		return
-	var playthrough: bool = "--playthrough" in OS.get_cmdline_user_args()
-	for step in (300 if playthrough else 6):
+	var supply_playthrough: bool = "--supply-playthrough" in OS.get_cmdline_user_args()
+	var playthrough: bool = "--playthrough" in OS.get_cmdline_user_args() or supply_playthrough
+	var delivery_id := ""
+	var first_issue_at := -1.0
+	var consumed_at_issue := 0
+	var arrived_round_fired := false
+	var event_cursor := 0
+	for step in (480 if supply_playthrough else (300 if playthrough else 6)):
 		rear.advance_time(5)
+		if supply_playthrough and delivery_id.is_empty() and rear.time >= 420:
+			var loaders: Array = rear.dispatch.free_hq_handlers(4)
+			var route: Dictionary = rear.forward_supply.delivery_stops["blue-delivery"]
+			if not loaders.is_empty():
+				var result: Dictionary = rear.forward_supply.request_delivery("start-blue-vehicle-02","start-blue-hq-E02",500,"blue-delivery",route.outbound_points,route.return_points,loaders[0],"start-blue-squad-03-person-00")
+				if result.ok: delivery_id = result.id; print("SUPPLY ACTUAL REQUEST t=",rear.time," ",result)
+				elif step%12 == 11: print("SUPPLY REQUEST BLOCKER ",result)
+		if supply_playthrough and first_issue_at < 0 and rear.forward_supply.jobs.values().any(func(job: Dictionary) -> bool: return job.state == "Complete"):
+			first_issue_at = rear.time
+			consumed_at_issue = int(rear.ledger.snapshot().consumed.get("E02",0))
+			print("SUPPLY ACTUAL ISSUE t=",first_issue_at," jobs=",rear.forward_supply.jobs)
+		if supply_playthrough:
+			# Exact fired-portion lineage proves delivered freight was used by a
+			# forward Rifle member, rather than counting unrelated army-wide shots.
+			var events: Array = rear.ledger.get("_events")
+			while event_cursor < events.size():
+				var event: Dictionary = events[event_cursor]
+				event_cursor += 1
+				if not str(event.description).begins_with("One loaded round fired from start-blue-squad-0"): continue
+				if rear.ledger.inspect_entity(event.entity_id).get("origin_id","") == "start-blue-hq-E02": arrived_round_fired = true; print("SUPPLY DELIVERED ROUND FIRED ",event)
 		var trips: Array = rear.battlefield_operations.policy.snapshot().trips
 		if not playthrough or step%12 == 11:
 			print("Opening t=",rear.time," phase=",rear.battlefield_operations.policy.phases," consumed=",rear.ledger.snapshot().consumed.get("E02",0)," trips=",trips.map(func(trip: Dictionary) -> String: return trip.hull+": "+("Dismounted" if trip.dismounted else ("Started" if trip.started else trip.blocker))))
+			if supply_playthrough:
+				print("SUPPLY OBSERVE ",rear.battlefield_operations.policy.resupply.snapshot()," delivery=",rear.forward_supply.transport.jobs.get(delivery_id,{}).get("state","Not requested")," rifle_status=",rear.battlefield_operations.status)
+		if supply_playthrough and arrived_round_fired and rear.forward_supply.transport.jobs[delivery_id].state == "Complete": break
 	var lift_count: int = rear.military.troop_transport.jobs.values().filter(func(job: Dictionary) -> bool: return job.kind == "Troop Trip").size()
 	check(lift_count >= 3 if playthrough else lift_count == 3,"Delivered hierarchy orders start all three initial troop trips; later reserve activation may add another")
 	check(rear.battlefield_operations.policy.trips["red-forward"].started,"Red's opening is not blocked by observing its own HQ as hostile")
@@ -51,6 +80,10 @@ func _initialize() -> void:
 		for id in ["start-red-squad-03","start-red-squad-04"]:
 			for member in rear.military._active_roster_members(rear.military.squads[id]):
 				check(rear.ledger.inspect_entity(member).position.distance_to(Vector2(2000,5380)) <= 35,"Red Engineer/Medical hold their declared HQ support rallies")
+	if supply_playthrough:
+		check(not delivery_id.is_empty() and rear.forward_supply.transport.jobs[delivery_id].state == "Complete","Actual500E02 delivery and same-hull return completes")
+		check(first_issue_at >= 0,"Natural combat need reaches physical autonomous Engineer issue")
+		check(arrived_round_fired,"Forward Rifle actually fires a round descended from the delivered HQ stock")
 	check(base.audit().is_empty(),"Active opening reconciles: "+str(base.audit()))
 	print("Opening regression: ",failures," failures")
 	quit(0 if failures == 0 else 1)
