@@ -258,12 +258,19 @@ func ammunition_quantity_at(holder: String, loose_type: String, weapon_types: Ar
 	# in one synchronous scan. Reservations, ownership and weapon health do not
 	# change a physical count; no eligibility or availability is implied here.
 	var total := 0
+	var parents := {}
+	var include_loaded := not weapon_types.is_empty()
 	for entity in _entities.values():
 		if entity.holder_id == holder and entity.design_type == loose_type and entity.kind in [Records.Kind.STOCK,Records.Kind.WEAPON,Records.Kind.HEAVY_OBJECT]:
 			total += entity.quantity
-		if entity.kind != Records.Kind.STOCK: continue
-		var parent: Records.Entity = _entities.get(entity.holder_id)
-		if parent != null and parent.kind == Records.Kind.WEAPON and parent.holder_id == holder and parent.design_type in weapon_types:
+		if entity.kind != Records.Kind.STOCK or not include_loaded: continue
+		# Parent classification is pure and shared only by siblings in this call.
+		var selected: int = int(parents.get(entity.holder_id,-1))
+		if selected == -1:
+			var parent: Records.Entity = _entities.get(entity.holder_id)
+			selected = 1 if parent != null and parent.kind == Records.Kind.WEAPON and parent.holder_id == holder and parent.design_type in weapon_types else 0
+			parents[entity.holder_id] = selected
+		if selected == 1:
 			total += entity.quantity
 	return total
 

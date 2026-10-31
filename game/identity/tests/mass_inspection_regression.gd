@@ -46,6 +46,11 @@ func _initialize() -> void:
 	check(ledger.entities_at_any(["person-03"],["WEAPON","STOCK"],false) == ledger.snapshot(false).entities.filter(func(row: Dictionary) -> bool: return row.holder_id == "person-03" and row.kind in ["WEAPON","STOCK"]),"Mutating returned stock and weapon facts cannot change later ledger inspections")
 	check(ledger.transfer_weapon("query-foreign","worker-01").ok,"Foreign loaded weapon physically changes holder")
 	compare(ledger)
+	check(ledger.create_heavy_output("","","query-heavy","E13","receiving","army-blue",{"mass":180.0,"health":400}).ok,"Actual heavy output retains direct loose-type count semantics")
+	# The raw loaded count never filters the parent weapon's own quantity.
+	ledger._entities["query-foreign"].quantity = 0
+	compare(ledger)
+	ledger._entities["query-foreign"].quantity = 1
 	check(ledger.request_assignment("worker-01",Records.Assignment.REAR_LABOUR,"query-next-duty").ok,"Actual assignment changes current duty without a cache")
 	check(ledger.person_has_duty("worker-01","query-next-duty") and not ledger.person_has_duty("worker-01","haul-fixture"),"Duty query immediately observes the physical assignment transition")
 	check(ledger.add_stock("summary-zero","Summary",1,0.5,"receiving","army-blue").ok,"Create first summary row for real depletion")
@@ -151,8 +156,8 @@ func compare(ledger: RefCounted) -> void:
 				if row.holder_id == holder and row.design_type == type and row.kind in ["WEAPON","STOCK","HEAVY_OBJECT"]: quantity += int(row.quantity)
 			check(ledger.physical_quantity_at(holder,type,["WEAPON","STOCK","HEAVY_OBJECT"]) == quantity,"Physical quantity equals full inspection after real carry and weapon moves")
 			check(ledger.physical_quantity_at(holder,type,[]) == 0,"An empty kind filter admits no physical quantities")
-	for holder in ["worker-01","person-02","person-03","retained-rifle","rear-store","missing",""]:
-		for loose_type in ["E02","E02 Round","E26","missing"]:
+	for holder in ["worker-01","person-02","person-03","retained-rifle","rear-store","receiving","missing",""]:
+		for loose_type in ["E02","E02 Round","E26","E01","E07","E13","M11","missing"]:
 			for weapon_types in [[],["E01"],["E01","E05","E19"],["E01","E01","E07"],["E01 Rifle"],["missing"]]:
 				var expected := 0
 				for row in complete.entities:
@@ -160,6 +165,7 @@ func compare(ledger: RefCounted) -> void:
 					if row.design_type == loose_type and row.kind in ["WEAPON","STOCK","HEAVY_OBJECT"]: expected += int(row.quantity)
 					if row.kind == "WEAPON" and row.design_type in weapon_types: expected += int(row.loaded_rounds)
 				check(ledger.ammunition_quantity_at(holder,loose_type,weapon_types) == expected,"Ammunition count equals independent full inspection across held, loaded, reserved, broken, foreign and moved goods")
+				check(ledger.ammunition_quantity_at(holder,loose_type,weapon_types) == legacy_ammunition_quantity_at(ledger,holder,loose_type,weapon_types),"Local parent facts preserve original one-pass raw addition order and parent predicates")
 	for row in complete.entities:
 		check(row == ledger.inspect_entity(row.id),"Batched inspection equals independent raw facts for loaded rounds, carries and exact mass")
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
@@ -181,6 +187,16 @@ func _expect_kind_rows(ledger: RefCounted, kinds: Array, full: Array, metadata: 
 	check(queried == metadata,"Kind union metadata equals independently filtered complete snapshot")
 	for row in queried: row.owner = "Mutated detached result"
 	check(ledger.entities_of_kinds(kinds,false) == metadata,"Kind union returns detached records without altering later fresh queries")
+
+func legacy_ammunition_quantity_at(ledger: RefCounted, holder: String, loose_type: String, weapon_types: Array) -> int:
+	# Retained original one-pass parent lookup; no shared parent classifications.
+	var total := 0
+	for entity in ledger._entities.values():
+		if entity.holder_id == holder and entity.design_type == loose_type and entity.kind in [Records.Kind.STOCK,Records.Kind.WEAPON,Records.Kind.HEAVY_OBJECT]: total += entity.quantity
+		if entity.kind != Records.Kind.STOCK: continue
+		var parent = ledger._entities.get(entity.holder_id)
+		if parent != null and parent.kind == Records.Kind.WEAPON and parent.holder_id == holder and parent.design_type in weapon_types: total += entity.quantity
+	return total
 
 func legacy_entities_at(ledger: RefCounted, holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	# Retained single-holder algorithm, without batch-query facts or delegation.
