@@ -242,6 +242,7 @@ func _test_proximity_snapshot_oracle() -> void:
 
 
 func _compare_snapshot_oracle(rear: RefCounted, label: String) -> void:
+	_compare_person_query(rear,label)
 	var expected: Dictionary = _legacy_snapshot_refresh(rear)
 	var ledger_events: int = rear.ledger._events.size()
 	var money: float = rear.receiving.requisition_balance()
@@ -249,6 +250,31 @@ func _compare_snapshot_oracle(rear: RefCounted, label: String) -> void:
 	_expect(changed == expected.changed,"legacy changed result: "+label)
 	_expect(rear.objectives.objectives == expected.rows,"legacy exact objective rows, participant/blocker order, control and income: "+label)
 	_expect(rear.ledger._events.size() == ledger_events and rear.receiving.requisition_balance() == money,"refresh remains a read of physical/account state: "+label)
+
+func _compare_person_query(rear: RefCounted, label: String) -> void:
+	var points: Array[Vector2] = []
+	for row in rear.objectives.objectives.values(): points.append(row.position)
+	var full: Array[Dictionary] = []
+	var metadata: Array[Dictionary] = []
+	# Independent complete inspection retains all people before the old filter.
+	for person in rear.ledger.snapshot().entities:
+		if person.kind != "PERSON" or person.owner not in [rear.PLAYER,"army-red"]: continue
+		for row in rear.objectives.objectives.values():
+			if person.position.distance_to(row.position) > 25.0+0.000001: continue
+			full.append(person)
+			var projected: Dictionary = person.duplicate(true)
+			projected.erase("contents_mass_kg")
+			metadata.append(projected)
+			break
+	_expect(rear.ledger.persons_near_any(points,25.0+0.000001,[rear.PLAYER,"army-red"]) == full,"Nearby person query preserves full fields, default mass and canonical order: "+label)
+	var queried: Array[Dictionary] = rear.ledger.persons_near_any(points,25.0+0.000001,[rear.PLAYER,"army-red"],false)
+	_expect(queried == metadata,"Nearby metadata matches original full-snapshot proximity selection: "+label)
+	for person in queried: person.position = Vector2.INF
+	var repeated: Array = points.duplicate()
+	repeated.reverse()
+	if not points.is_empty(): repeated.append(points[0])
+	_expect(rear.ledger.persons_near_any(repeated,25.0+0.000001,["army-red",rear.PLAYER,rear.PLAYER],false) == metadata,"Reordered/repeated points and owners keep each detached person once in ledger order: "+label)
+	_expect(rear.ledger.persons_near_any([],25.0,[rear.PLAYER]).is_empty() and rear.ledger.persons_near_any(points,25.0,[]).is_empty(),"Empty proximity or owner selection returns no people")
 
 
 func _legacy_snapshot_refresh(rear: RefCounted) -> Dictionary:

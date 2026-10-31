@@ -220,6 +220,18 @@ func entities_of_kinds(kinds: Array, include_mass: bool = true) -> Array[Diction
 		if entity.kind in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
+func persons_near_any(points: Array, radius: float, owners: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if points.is_empty() or owners.is_empty(): return result
+	for entity in _entities.values():
+		if entity.kind != Records.Kind.PERSON or entity.owner not in owners: continue
+		var position := _world_position(entity.id)
+		for point in points:
+			if position.distance_to(point) > radius: continue
+			result.append(inspect_entity(entity.id,{},include_mass))
+			break
+	return result
+
 func available_person_ids(owner: String) -> Array[String]:
 	var result: Array[String] = []
 	for entity in _entities.values():
