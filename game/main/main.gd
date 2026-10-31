@@ -44,6 +44,11 @@ func _ready() -> void:
 	home.tooltip_text = "Return to the same live rear session."
 	home.pressed.connect(_show_base)
 	controls.add_child(home)
+	var supply_button := Button.new()
+	supply_button.text = "Supply"
+	supply_button.tooltip_text = "Open forward deliveries and the army's actual supply needs."
+	supply_button.pressed.connect(_show_supply)
+	controls.add_child(supply_button)
 	var field_button := Button.new()
 	field_button.text = "Battlefield"
 	field_button.pressed.connect(_show_battlefield)
@@ -58,7 +63,9 @@ func _ready() -> void:
 	for speed in [0,1,2]:
 		var button := Button.new()
 		button.text = ["Pause","1x","2x"][speed]
-		button.pressed.connect(func() -> void: _base.simulation.set_speed(speed))
+		button.pressed.connect(func() -> void:
+			_base.simulation.set_speed(speed)
+			_refresh_clock())
 		_field_clock.add_child(button)
 	_clock_status = Label.new()
 	_field_clock.add_child(_clock_status)
@@ -92,6 +99,7 @@ func _ready() -> void:
 	layout.add_child(_host)
 	_base = Base.instantiate()
 	_host.add_child(_base)
+	_base.use_shared_clock()
 	_base.session_changed.connect(_on_session_changed)
 	_battlefield = Battlefield.instantiate()
 	_battlefield.simulation = _base.simulation
@@ -116,9 +124,14 @@ func _show_review(title: String) -> void:
 
 func _show_base() -> void:
 	_clear_review()
-	_field_clock.hide()
+	_field_clock.show()
 	_battlefield.hide()
 	_base.show()
+	_refresh_clock()
+
+func _show_supply() -> void:
+	_base.show_panel("Supply")
+	_show_base()
 
 
 func _show_battlefield() -> void:
@@ -126,6 +139,7 @@ func _show_battlefield() -> void:
 	_field_clock.show()
 	_base.hide()
 	_battlefield.show()
+	_refresh_clock()
 
 
 func _clear_review() -> void:
@@ -137,6 +151,7 @@ func _clear_review() -> void:
 
 func _on_session_changed(next_simulation: RefCounted) -> void:
 	_battlefield.bind(next_simulation)
+	_refresh_clock()
 
 func _start_playtest() -> void:
 	_base.hide()
@@ -146,4 +161,7 @@ func _start_playtest() -> void:
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(_base) and _field_clock.visible:
-		_clock_status.text = "  %.1f s · %s" % [_base.simulation.rear.time,"Paused" if _base.simulation.speed == 0 else "%dx" % _base.simulation.speed]
+		_refresh_clock()
+
+func _refresh_clock() -> void:
+	_clock_status.text = _base.clock_text()

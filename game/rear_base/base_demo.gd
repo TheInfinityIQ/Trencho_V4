@@ -23,6 +23,8 @@ var construction_status: Label
 var base_map: Control
 var tabs: TabContainer
 var status: Label
+var _local_clock_controls: HBoxContainer
+var _local_clock_status: Label
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -115,8 +117,13 @@ func _ready() -> void:
 	add_child(layout)
 	var clock := HBoxContainer.new()
 	layout.add_child(clock)
+	_local_clock_controls = HBoxContainer.new()
+	clock.add_child(_local_clock_controls)
 	for value in [0, 1, 2]:
-		_button(clock, ["Pause", "1x", "2x"][value], func() -> void: _result(simulation.set_speed(value)))
+		_button(_local_clock_controls, ["Pause", "1x", "2x"][value], func() -> void:
+			simulation.set_speed(value)
+			_local_clock_status.text = clock_text())
+	_local_clock_status = _label(_local_clock_controls,clock_text())
 	_button(clock, "Fit base", func() -> void: base_map.reset_camera())
 	status = _label(clock, "")
 	declaration = _label(layout, "Essential session | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods.")
@@ -162,11 +169,28 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	simulation.tick_live(delta)
 	if not is_visible_in_tree(): return
+	if _local_clock_controls.visible: _local_clock_status.text = clock_text()
 	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed and simulation.planning_view_revision == _displayed_planning_revision: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
 		_refresh()
+
+func clock_text() -> String:
+	# Shared by both live views; no snapshot, wall-time estimate or clock advance.
+	return "  %.1f s · %s" % [simulation.rear.time,"Paused" if simulation.speed == 0 else "%dx" % simulation.speed]
+
+func use_shared_clock() -> void:
+	_local_clock_controls.hide()
+
+func show_panel(title: String) -> bool:
+	for index in tabs.get_tab_count():
+		var panel: Control = tabs.get_tab_control(index)
+		if str(panel.name) != title: continue
+		tabs.current_tab = index
+		if panel is ScrollContainer: panel.scroll_vertical = 0
+		return true
+	return false
 
 func _panel(title: String) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
@@ -972,7 +996,7 @@ func _refresh() -> void:
 			if not row.person_id.is_empty():
 				var person: Dictionary = simulation.rear.ledger.inspect_entity(row.person_id)
 				training_status.text += "\nBasic completed: %s; specialist: %s\nActual position %s; duty %s" % [str(person.basic_training),person.qualification,str(person.position),person.duty_id if not person.duty_id.is_empty() else person.assignment]
-	status.text = "  %.1fs | %.0f req | %d rear + %d incoming" % [simulation.rear.time, view.receiving.money, simulation.receiving.rear_population(), simulation.receiving.incoming_people()]
+	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, simulation.receiving.rear_population(), simulation.receiving.incoming_people()]
 	_fill(orders, _order_ids, view.receiving.orders, func(o: Dictionary) -> String: return o.id + " " + o.state + " | " + o.blocked_reason)
 	var actual_people: Array = view.rear.people.filter(func(p: Dictionary) -> bool: return p.owner == "army-blue")
 	_fill(people, _person_ids, actual_people, func(p: Dictionary) -> String: return p.id + " | " + (p.duty_id if not p.duty_id.is_empty() else p.assignment) + " | " + p.phase)
