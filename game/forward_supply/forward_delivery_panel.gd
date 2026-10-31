@@ -212,7 +212,8 @@ func _routes(hull_id: String, stop_id: String) -> Dictionary:
 	var out: Array = entry.get("outbound_points",[])
 	var home: Array = entry.get("return_points",[])
 	if out.is_empty():
-		return {"out":[hull.position,stop.position],"home":[stop.position,rear.ledger.inspect_entity("hq-berth").position],"name":"Direct candidate"}
+		var origin: Vector2 = rear.ledger.inspect_entity("hq-berth",{},false).position
+		return {"out":[origin,stop.position],"home":[stop.position,origin],"name":"Direct HQ candidate"}
 	return {"out":out.duplicate(),"home":home.duplicate(),"name":"Scenario route"}
 
 
@@ -222,6 +223,8 @@ func _preview() -> void:
 	var preview: Dictionary = rear.forward_supply.preview_delivery_type(_selected(hull_choice),_selected(freight_choice),int(amount.value),_selected(stop_choice),route.out,route.home,_selected(loader_choice),_selected(unloader_choice))
 	if preview.ok:
 		route_status.text = "%s: %.0f m round trip, about %.0f s travel plus handling. Fuel %.2f needed with reserve / %.2f in tank. Loaded mass about %.0f kg." % [route.name,preview.distance,preview.seconds,preview.required_fuel,preview.tank_fuel,preview.gross_kg]
+		route_status.text += "\nRoute starts at HQ (%.0f, %.0f) m. Truck currently at (%.0f, %.0f) m. Travel to HQ is not included." % [preview.route_origin.x,preview.route_origin.y,preview.hull_position.x,preview.hull_position.y]
+		route_status.text += "\nReady for fresh dispatch validation." if preview.dispatch_ready else "\nNot ready to start: "+str(preview.dispatch_blocker)
 	else:
 		route_status.text = "%s refused: %s" % [route.name,preview.message]
 	preview["inspection_only"] = true

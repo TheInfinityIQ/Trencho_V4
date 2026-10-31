@@ -51,7 +51,7 @@ func _plan_sources(type: String, quantity: int, stock_id: String = "") -> Dictio
 
 func _request_delivery(hull_id: String, plan: Dictionary, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String, single_source: bool) -> Dictionary:
-	var preview: Dictionary = _preview_delivery(hull_id,plan,stop_id,outbound_points,return_points,loader_id,unloader_id)
+	var preview: Dictionary = _preview_delivery(hull_id,plan,stop_id,outbound_points,return_points,loader_id,unloader_id,true)
 	if not preview.ok: return preview
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
@@ -81,49 +81,68 @@ func _request_delivery(hull_id: String, plan: Dictionary, quantity: int, stop_id
 
 func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
-	return _preview_delivery(hull_id,_plan_sources("",quantity,stock_id),stop_id,outbound_points,return_points,loader_id,unloader_id)
+	return _preview_delivery(hull_id,_plan_sources("",quantity,stock_id),stop_id,outbound_points,return_points,loader_id,unloader_id,false)
 
 
 func preview_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
-	return _preview_delivery(hull_id,_plan_sources(type,quantity),stop_id,outbound_points,return_points,loader_id,unloader_id)
+	return _preview_delivery(hull_id,_plan_sources(type,quantity),stop_id,outbound_points,return_points,loader_id,unloader_id,false)
 
 
 func _preview_delivery(hull_id: String, plan: Dictionary, stop_id: String,
-		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String, require_ready: bool) -> Dictionary:
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
-	if hull_committed(hull_id) or (rear.military != null and rear.military.hull_committed(hull_id)):
-		return _fail("This physical hull already has an unfinished forward or troop delivery.")
-	var ready: String = _hq_hull_blocker(hull_id,hull)
-	if not ready.is_empty(): return _fail(ready)
+	if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T01" or hull.get("fleet_domain","") != "Military" or not rear.dispatch.military_hulls.has(hull_id) or not rear.military.vehicles.has(hull_id):
+		return _fail("Forward freight requires one admitted, attached actual military T01.")
+	var blocker: String = _dispatch_blocker(hull_id,hull,loader_id,unloader_id)
+	if require_ready and not blocker.is_empty(): return _fail(blocker)
 	if not plan.ok: return plan
 	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
 		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
-	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id) or (rear.military != null and rear.military.person_committed(loader_id)):
-		return _fail("The named actual HQ logistics loader is unavailable.")
-	if not _active_member(unloader_id): return _fail("Name one actual active formation member to unload at the destination.")
-	if rear.military != null and rear.military.person_committed(unloader_id): return _fail("This destination handler is committed to troop boarding or dismount.")
-	if not _empty_freight_hull(hull_id): return _fail("This one-type mission requires an empty T01 freight hold before loading.")
 	if float(plan.mass) > float(hull.vehicle_spec.payload)+EPS:
 		return _fail("The requested physical freight exceeds the T01 payload.")
-	var route_error: String = _validate_points(outbound_points,hull.position,stop.position)
+	# HQ stock can only load at HQ. Inspect this declared future departure while
+	# keeping the truck's actual current position explicit; do not move it, splice
+	# an invented approach, or silently replace an authored route's first point.
+	var route_error: String = _validate_points(outbound_points,hq_position,stop.position)
 	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,hq_position)
 	if not route_error.is_empty(): return _fail(route_error)
-	var outward: Dictionary = Routes.plan(rear.ledger,hull_id,outbound_points,{"world":rear.combat.world})
+	var outward: Dictionary = Routes.plan(rear.ledger,hull_id,outbound_points,{"world":rear.combat.world,"prospective_load_kg":float(plan.mass)})
 	var home: Dictionary = Routes.plan(rear.ledger,hull_id,return_points,{"world":rear.combat.world})
 	if not outward.ok: return _fail("No legal physical outward route: " + str(outward.reason))
 	if not home.ok: return _fail("No legal physical HQ return: " + str(home.reason))
 	var danger: String = _known_route_danger(hull_id,outward.parts)
 	if danger.is_empty(): danger = _known_route_danger(hull_id,home.parts)
-	if not danger.is_empty(): return _fail(danger)
+	if not danger.is_empty():
+		if require_ready: return _fail(danger)
+		if blocker.is_empty(): blocker = danger
 	if float(hull.fuel)+EPS < 1.25*(float(outward.fuel)+float(home.fuel)):
-		return _fail("Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve.")
-	return {"ok":true,"message":"Measured round trip is available.","distance":float(outward.distance)+float(home.distance),
+		var fuel_blocker := "Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve."
+		if require_ready: return _fail(fuel_blocker)
+		if blocker.is_empty(): blocker = fuel_blocker
+	return {"ok":true,"message":"Measured HQ round trip is available." if blocker.is_empty() else "HQ route preview available; dispatch is not ready. "+blocker,
+		"dispatch_ready":blocker.is_empty(),"dispatch_blocker":blocker,"route_origin":hq_position,"hull_position":hull.position,"hull_holder":hull.holder_id,
+		"reposition_required":hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position),"includes_reposition":false,
+		"distance":float(outward.distance)+float(home.distance),
 		"seconds":float(outward.seconds)+float(home.seconds),"fuel":float(outward.fuel)+float(home.fuel),
 		"required_fuel":1.25*(float(outward.fuel)+float(home.fuel)),"tank_fuel":float(hull.fuel),
-		"gross_kg":float(outward.gross_kg)+float(plan.mass)}
+		"gross_kg":float(outward.gross_kg)}
+
+
+func _dispatch_blocker(hull_id: String, hull: Dictionary, loader_id: String, unloader_id: String) -> String:
+	var rear: RefCounted = _rear()
+	if hull_committed(hull_id) or (rear.military != null and rear.military.hull_committed(hull_id)):
+		return "This physical hull already has an unfinished forward or troop delivery."
+	var ready: String = _hq_hull_blocker(hull_id,hull)
+	if not ready.is_empty(): return ready
+	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id) or (rear.military != null and rear.military.person_committed(loader_id)):
+		return "The named actual HQ logistics loader is unavailable."
+	if not _active_member(unloader_id): return "Name one actual active formation member to unload at the destination."
+	if rear.military != null and rear.military.person_committed(unloader_id): return "This destination handler is committed to troop boarding or dismount."
+	if not _empty_freight_hull(hull_id): return "This one-type mission requires an empty T01 freight hold before loading."
+	return ""
 
 
 func interrupt_delivery(id: String) -> Dictionary:
