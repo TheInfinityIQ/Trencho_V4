@@ -1,6 +1,9 @@
 extends SceneTree
 ## Rendered mouse/control probe. Extended warm-up belongs on GitHub, not the desktop.
+## Opt-in --seek-combat --warmup=1200 seeks natural fire up to that maximum,
+## then samples fixed 20-simulation-second 1x and 10-second 2x live windows.
 const Main = preload("res://game/main/main.tscn")
+const OpeningDiagnostics = preload("res://game/scenario/tests/opening_regression.gd")
 var main: Control
 var phase := "loading"
 var previous_phase := "loading"
@@ -19,6 +22,8 @@ var double_seconds := 6.0
 var heartbeat_path := ""
 var heartbeat_at := 0
 var capture := false
+var seek_combat := false
+var combat_observation: Dictionary = {}
 
 func _initialize() -> void:
 	for argument in OS.get_cmdline_user_args():
@@ -30,6 +35,12 @@ func _initialize() -> void:
 		if argument.begins_with("--heartbeat-path="): heartbeat_path = argument.trim_prefix("--heartbeat-path=")
 		if argument == "--profile-live": profile_live = true
 		if argument == "--capture": capture = true
+		if argument == "--seek-combat": seek_combat = true
+	if seek_combat:
+		# This opt-in mode uses fixed live sample lengths; warmup is a maximum
+		# simulation timestamp, not an unconditional advance to that timestamp.
+		run_seconds = 20.0
+		double_seconds = 10.0
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
 
@@ -95,6 +106,10 @@ func _press(label: String) -> bool:
 	return true
 
 func _run() -> void:
+	if seek_combat and (not is_finite(warmup) or warmup <= 0.0 or warmup > 1200.0):
+		failures.append("--seek-combat requires a finite --warmup maximum in (0,1200] simulation seconds")
+		_finish()
+		return
 	root.size = Vector2i(1280,720)
 	root.title = "Trencho V4 responsiveness check"
 	main = Main.instantiate()
@@ -107,26 +122,32 @@ func _run() -> void:
 		failures.append("New playtest did not create the opening policy")
 		_finish()
 		return
-	if warmup > 0:
+	if seek_combat:
+		if not await _warm_to_combat(base.rear):
+			_finish()
+			return
+	elif warmup > 0:
 		print("RESPONSIVENESS_WARMUP_START ",warmup)
 		base.rear.advance_time(warmup)
 		print("RESPONSIVENESS_WARMUP_COMPLETE ",base.rear.time)
-		if warmup >= 180.0:
-			for id in ["blue-rifles","blue-support","red-forward"]:
-				var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
-				var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
-				_check(job.get("state","") in ["Outbound","Dismounting","Returning","Complete"],"Actual initial lift departed before the later observation: "+id)
+	if (base.rear.time if seek_combat else warmup) >= 180.0:
+		for id in ["blue-rifles","blue-support","red-forward"]:
+			var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
+			var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
+			_check(job.get("state","") in ["Outbound","Dismounting","Returning","Complete"],"Actual initial lift departed before the later observation: "+id)
 	_phase("paused_battlefield")
 	await create_timer(0.5).timeout
 	if not await _press("1x"): return
 	_check(base.speed == 1,"Ordinary1x control changes the shared clock")
 	_phase("running_1x")
+	if seek_combat: _begin_combat_window("running_1x",base.rear,run_seconds)
 	if profile_live: EngineDebugger.profiler_enable("scripts",true)
 	await _wait_simulation(base.rear.time+run_seconds,maxf(60.0,run_seconds*6.0))
 	for id in ["blue-rifles","blue-support","red-forward"]:
 		_check(base.rear.battlefield_operations.policy.trips[id].started,"Observed the actual initial admission: "+id)
 	if not await _press("Pause"): return
 	var paused: float = base.rear.time
+	if seek_combat: _end_combat_window("running_1x",base.rear,true)
 	_phase("pause_response")
 	await create_timer(0.5).timeout
 	_check(base.speed == 0 and base.rear.time == paused,"Pause stops the shared simulation")
@@ -141,10 +162,12 @@ func _run() -> void:
 	if not await _press("2x"): return
 	_check(base.speed == 2,"Ordinary2x control changes the shared clock")
 	_phase("running_2x")
+	if seek_combat: _begin_combat_window("running_2x",base.rear,double_seconds)
 	await _wait_simulation(base.rear.time+double_seconds,maxf(40.0,double_seconds*4.0))
 	if not await _press("Pause"): return
 	_check(base.rear.time > paused,"The same session continues actual simulation at2x")
 	_check(base.speed == 0,"The final Pause stops the same session after2x")
+	if seek_combat: _end_combat_window("running_2x",base.rear,true)
 	_phase("loading")
 	_record_frame()
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
@@ -159,6 +182,45 @@ func _run() -> void:
 
 func _check(ok: bool, message: String) -> void:
 	if not ok: failures.append(message)
+
+func _consumed_e02(rear: RefCounted) -> int:
+	# The canonical counter is read narrowly; never snapshot the ledger for
+	# each warmup step, and never infer a shot from labels or enemy contacts.
+	var consumed: Dictionary = rear.ledger.get("_consumed")
+	return int(consumed.get("E02",0))
+
+func _warm_to_combat(rear: RefCounted) -> bool:
+	combat_observation = {"warmup_limit_sim":warmup,"warmup_start_sim":rear.time,"warmup_E02_start":_consumed_e02(rear),"windows":{}}
+	print("RESPONSIVENESS_SEEK_COMBAT_START ",combat_observation)
+	var next_note: float = rear.time+60.0
+	while _consumed_e02(rear) <= 0 and rear.time < warmup and not finished:
+		rear.advance_time(minf(5.0,warmup-float(rear.time)))
+		if rear.time >= next_note:
+			print("RESPONSIVENESS_SEEK_COMBAT_PROGRESS sim=",rear.time," E02_consumed=",_consumed_e02(rear))
+			next_note += 60.0
+		await process_frame
+	if finished: return false
+	combat_observation["warmup_end_sim"] = rear.time
+	combat_observation["warmup_E02_end"] = _consumed_e02(rear)
+	combat_observation["natural_E02_consumption_detected"] = _consumed_e02(rear) > 0
+	# Detection is sampled after a five-second step, not the exact shot time.
+	combat_observation["first_consumption_detected_sim"] = rear.time if _consumed_e02(rear) > 0 else -1.0
+	print("RESPONSIVENESS_SEEK_COMBAT_END ",combat_observation)
+	_check(_consumed_e02(rear) > 0,"Natural E02 fire exists by the configured warmup maximum")
+	return _consumed_e02(rear) > 0
+
+func _begin_combat_window(label: String, rear: RefCounted, duration: float) -> void:
+	combat_observation.windows[label] = {"start_sim":rear.time,"target_sim":rear.time+duration,"requested_sim_seconds":duration,"E02_start":_consumed_e02(rear),"completed":false}
+
+func _end_combat_window(label: String, rear: RefCounted, completed: bool) -> void:
+	var sample: Dictionary = combat_observation.windows[label]
+	sample["end_sim"] = rear.time
+	sample["E02_end"] = _consumed_e02(rear)
+	sample["E02_consumed_in_window"] = int(sample.E02_end)-int(sample.E02_start)
+	sample.completed = completed and float(rear.time) >= float(sample.target_sim)
+	if completed:
+		_check(sample.completed,"The actual combat timing window completes its requested simulation duration: "+label)
+		_check(sample.E02_end > sample.E02_start,"Additional natural E02 consumption occurs during "+label)
 
 func _wait_simulation(target: float, wall_limit: float) -> void:
 	var deadline := Time.get_ticks_msec()+int(wall_limit*1000.0)
@@ -175,6 +237,12 @@ func _finish() -> void:
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	var base: RefCounted = main.get("_base").simulation if is_instance_valid(main) and is_instance_valid(main.get("_base")) else null
 	if base != null: base.set_speed(0)
+	if seek_combat and base != null:
+		for label in combat_observation.get("windows",{}):
+			if not combat_observation.windows[label].has("end_sim"): _end_combat_window(label,base.rear,false)
+		# Timing has ended and the shared clock is paused. Reuse only the two
+		# static read-only diagnostics; no additional SceneTree is instantiated.
+		if base.rear.battlefield_operations != null: OpeningDiagnostics._print_final_diagnostics(base.rear)
 	var results := {}
 	for label in frames:
 		var values: Array = frames[label]
@@ -189,6 +257,10 @@ func _finish() -> void:
 			var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
 			admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker,"state":job.get("state","Not requested"),"boarded":job.get("boarded",0),"people":job.get("people",[]).size()}
 	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"phase_transitions":phase_transitions,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
+	if seek_combat:
+		output["seek_combat"] = true
+		output["combat_observation"] = combat_observation
+		if not is_finite(warmup): output["warmup_seconds"] = null
 	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
 	var file := FileAccess.open(report_path,FileAccess.WRITE)
 	if file == null:

@@ -109,7 +109,7 @@ func _initialize() -> void:
 	print("Opening regression: ",failures," failures")
 	quit(0 if failures == 0 else 1)
 
-func _print_final_diagnostics(rear: RefCounted) -> void:
+static func _print_final_diagnostics(rear: RefCounted) -> void:
 	# Final read only: no extra simulation steps or per-tick observations.
 	# A status label has no recorded timestamp and does not prove movement.
 	# Narrow metadata queries avoid copying the long run's full event history.
@@ -169,7 +169,7 @@ func _print_final_diagnostics(rear: RefCounted) -> void:
 		owners.append({"id":objective.id,"owner":objective.owner,"state":objective.state,"control":objective.control,"last_at":objective.last_at})
 	print("FINAL OBJECTIVES sampled_at=",rear.time," ",owners)
 
-func _final_contacts(rear: RefCounted, squad_id: String) -> Dictionary:
+static func _final_contacts(rear: RefCounted, squad_id: String) -> Dictionary:
 	var known: Array = rear.orders.contacts.get(squad_id,{}).values()
 	known.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.observed_at) > float(b.observed_at))
 	var actors: Array = known.filter(func(contact: Dictionary) -> bool: return contact.get("class","") not in ["Resource","Route Hub","Observation","Enemy HQ"])
