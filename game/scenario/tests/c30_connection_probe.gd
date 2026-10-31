@@ -2,6 +2,7 @@ extends SceneTree
 ## Remote-only observation: ordinary owners and authored inventory; no test grants.
 const Session = preload("res://game/scenario/farmland_session.gd")
 const Main = preload("res://game/main/main.tscn")
+const Fixed = preload("res://game/production/fixed_production.gd")
 var base: RefCounted
 var rear: RefCounted
 var hull := ""
@@ -20,6 +21,7 @@ var fired := false
 var first_deposit := false
 var empty_field_arrival := false
 var stage := "Starting authored C30 session"
+var last_input_report := -INF
 const REPORT := "res://.artifacts/c30/connection.json"
 
 func _initialize() -> void:
@@ -42,6 +44,10 @@ func _run() -> void:
 	_command(rear.heavy_production.request_recipe("R30"),"Select R30")
 	_command(rear.heavy_production.set_mode("Continuous"),"Request one APC")
 	_command(rear.heavy_production.accept_order(),"Accept actual F10 order")
+	for type in Fixed.RECIPES.R30.inputs:
+		_command(rear.request_haul("depot","vehicle_input",type,int(Fixed.RECIPES.R30.inputs[type])),"Haul actual R30 ingredient %d %s" % [int(Fixed.RECIPES.R30.inputs[type]),type])
+	for type in Fixed.RECIPES.R33.inputs:
+		_command(rear.request_haul("depot","munitions_input",type,2*int(Fixed.RECIPES.R33.inputs[type])),"Haul actual two-batch R33 ingredient %d %s" % [2*int(Fixed.RECIPES.R33.inputs[type]),type])
 	_command(rear.request_haul("munitions_output","dispatch","E26",200),"Haul E26 to dispatch")
 	if not await _until(func() -> bool: return not rear.heavy_production.bay_occupant.is_empty(),"Manufacturing empty T04",1700):
 		await _finish(); return
@@ -169,7 +175,12 @@ func _mark(label: String) -> void:
 
 func _save() -> void:
 	DirAccess.make_dir_recursive_absolute("res://.artifacts/c30")
-	var report := {"revision":OS.get_environment("GITHUB_SHA"),"stage":stage,"simulation_seconds":rear.time,"wall_seconds":(Time.get_ticks_msec()-started)/1000.0,"hull":hull,"hull_manifest":hull_manifest,"ammo_manifest":ammo_manifest,"forward_jobs":forward_jobs,"manufactured_origins":origins,"first_rack_deposit":first_deposit,"first_manufactured_round_release":fired,"second_demand_passed":false,"journal":journal,"failures":failures,"blockers":blockers,"opening":rear.battlefield_operations.policy.snapshot(),"heavy":rear.heavy_production.snapshot(),"munitions":rear.munitions_production.snapshot(),"dispatch":rear.dispatch.snapshot()}
+	var heavy: Dictionary = rear.heavy_production.snapshot()
+	var munitions: Dictionary = rear.munitions_production.snapshot()
+	if rear.time >= last_input_report+60:
+		last_input_report = rear.time
+		journal.append({"time":rear.time,"event":"Physical factory inputs","R30_local":heavy.local_inputs,"R30_missing":heavy.missing_local,"R33_local":munitions.local_inputs,"R33_missing":munitions.missing_local})
+	var report := {"revision":OS.get_environment("GITHUB_SHA"),"stage":stage,"simulation_seconds":rear.time,"wall_seconds":(Time.get_ticks_msec()-started)/1000.0,"hull":hull,"hull_manifest":hull_manifest,"ammo_manifest":ammo_manifest,"forward_jobs":forward_jobs,"manufactured_origins":origins,"first_rack_deposit":first_deposit,"first_manufactured_round_release":fired,"second_demand_passed":false,"journal":journal,"failures":failures,"blockers":blockers,"opening":rear.battlefield_operations.policy.snapshot(),"heavy":heavy,"munitions":munitions,"dispatch":rear.dispatch.snapshot()}
 	report["empty_field_arrival"] = empty_field_arrival
 	report["local_issue_origins"] = local_issue_origins
 	report["forward_units_completed"] = shipped_units
