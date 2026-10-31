@@ -13,6 +13,7 @@ func _initialize() -> void:
 	_test_reload_commitment()
 	_test_field_gun_direct()
 	_test_cohesion_inspection_independence()
+	_test_stress_projection_parity()
 	print("G16 combat regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -21,6 +22,59 @@ func _expect(ok: bool, message: String) -> void:
 	if not ok:
 		failures += 1
 		push_error(message)
+
+func _test_stress_projection_parity() -> void:
+	var current := Base.new(true)
+	var legacy := Base.new(true)
+	for base in [current,legacy]:
+		var ledger: RefCounted = base.rear.ledger
+		_expect(ledger.add_place("stress-safe","Safe stress fixture",Vector2(1000,1000)).ok,"safe stress place")
+		_expect(ledger.add_place("stress-near","Exposed stress fixture",Vector2(1300,1000)).ok,"exposed stress place")
+		_expect(ledger.add_place("stress-hostile","Visible hostile",Vector2(1350,1000)).ok,"hostile stress place")
+		for id in ["stress-trained","stress-untrained","stress-exposed","stress-broken","stress-dead"]:
+			var holder := "stress-hostile" if id == "stress-dead" else ("stress-near" if id == "stress-exposed" else "stress-safe")
+			_expect(ledger.add_person(id,holder,"army-blue",Records.Assignment.AVAILABLE,id != "stress-untrained").ok,"stress person "+id)
+			base.rear.combat._apply_stress(id,-2,5,true)
+			base.rear.combat.last_casualty[id] = 0.0
+		_expect(ledger.add_person("stress-enemy","stress-hostile","army-red").ok,"real hostile inhibits nearby recovery")
+		base.rear.combat._apply_stress("stress-broken",-40,60,false)
+		_expect(base.rear.combat.injure("stress-dead",100).code == "INCAPACITATED","actual casualty before death")
+		_expect(base.rear.combat.injure("stress-dead",1).code == "DEAD","actual death is excluded from stress tick")
+		# Keep nested goods in the snapshot oracle; stress must ignore their mass.
+		_expect(ledger.add_stock("stress-gear","E03",1,1.0,"stress-trained","army-blue").ok,"real retained gear")
+	for at in [2.0,3.0,10.0,11.0]:
+		for base in [current,legacy]:
+			var delta: float = at-base.rear.time
+			base.rear.ledger.advance_time(delta)
+			base.rear.time = at
+		current.rear.combat._stress_tick()
+		_legacy_stress_tick(legacy.rear)
+		_expect(current.rear.ledger.snapshot() == legacy.rear.ledger.snapshot(),"Person projection preserves exact full-ledger stress outcomes at "+str(at))
+		for field in ["last_incoming","last_casualty","pinned","broken"]:
+			_expect(current.rear.combat.get(field) == legacy.rear.combat.get(field),"Stress projection preserves "+field+" transitions")
+	_expect(current.rear.ledger.inspect_entity("stress-trained").morale == 60 and not current.rear.combat.last_incoming.has("stress-trained"),"Safe trained recovery clears incoming history")
+	_expect(current.rear.ledger.inspect_entity("stress-exposed").morale == 58 and current.rear.combat.last_incoming.has("stress-exposed"),"Visible hostile keeps exposed morale and incoming history unresolved")
+
+func _legacy_stress_tick(rear: RefCounted) -> void:
+	# Retained pre-projection algorithm: take a complete snapshot before mutation.
+	var combat: RefCounted = rear.combat
+	for item in rear.ledger.snapshot().entities:
+		if item.kind != "PERSON" or item.assignment == "Dead": continue
+		var since_fire: float = rear.time-float(combat.last_incoming.get(item.id,-INF))
+		var since_casualty: float = rear.time-float(combat.last_casualty.get(item.id,-INF))
+		var suppression_delta := -5 if since_fire >= 3.0-0.000001 and item.suppression > 0 else 0
+		var morale_delta := 0
+		if since_fire >= 10.0-0.000001 and since_casualty >= 10.0-0.000001 and item.morale < 60:
+			var hostile := false
+			for other in rear.ledger.snapshot().entities:
+				if other.kind == "PERSON" and other.owner != item.owner and other.assignment not in ["Wounded","Dead"] and other.position.distance_to(item.position) <= 100.0:
+					if combat.world.observe(item.position,other.position).visible: hostile = true; break
+			if not hostile: morale_delta = mini(60-item.morale,2 if item.basic_training else 1)
+		if suppression_delta != 0 or morale_delta != 0: combat._apply_stress(item.id,morale_delta,suppression_delta,false)
+		var person: Dictionary = rear.ledger.inspect_entity(item.id)
+		if person.suppression == 0 and person.morale >= 60 and since_fire >= 10.0-0.000001 and since_casualty >= 10.0-0.000001:
+			combat.last_incoming.erase(item.id)
+			combat.last_casualty.erase(item.id)
 
 func _person(base: RefCounted, id: String, holder: String, owner: String, qualification: String = "None") -> void:
 	_expect(base.rear.ledger.add_person(id,holder,owner,Records.Assignment.HQ_RESERVE if holder == "hq-reserve" else Records.Assignment.AVAILABLE,true,qualification,"None").ok,"add actual person "+id)

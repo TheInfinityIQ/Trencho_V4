@@ -1,6 +1,7 @@
 extends RefCounted
 ## G16 battle boundary; the shared ledger remains authoritative for people and goods.
 const World = preload("res://game/terrain/terrain_world.gd")
+const Records = preload("res://game/identity/identity_records.gd")
 const WEAPONS := {
 	"E01":{"ammo":"E02","range":160.0,"hit":0.55,"damage":34,"cadence":2.0,"reload":3.0,"suppression":4},
 	"E05":{"ammo":"E02","range":250.0,"hit":0.45,"damage":24,"cadence":0.25,"reload":6.0,"suppression":8},
@@ -39,9 +40,9 @@ func _rear() -> RefCounted:
 
 func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, moving_shooter: bool = false, moving_target: bool = false) -> Dictionary:
 	var ledger: RefCounted = _rear().ledger
-	var shooter: Dictionary = ledger.inspect_entity(shooter_id)
-	var target: Dictionary = ledger.inspect_entity(target_id)
-	var weapon: Dictionary = ledger.inspect_entity(weapon_id)
+	var shooter: Dictionary = ledger.inspect_entity(shooter_id,{},false)
+	var target: Dictionary = ledger.inspect_entity(target_id,{},false)
+	var weapon: Dictionary = ledger.inspect_entity(weapon_id,{},false)
 	if shooter.is_empty() or target.is_empty() or weapon.is_empty() or shooter.get("kind","") != "PERSON" or target.get("kind","") != "PERSON" or weapon.get("kind","") != "WEAPON": return _block("Actual shooter, person target and functional weapon are required.")
 	if shooter.owner == target.owner: return _block("Direct fire on a friendly person is withheld.")
 	if shooter.assignment in ["Wounded","Recovery","Dead"] or shooter.health <= 0 or not shooter.crew_station.is_empty() or _seated(shooter): return _block("Shooter must be active and dismounted.")
@@ -65,7 +66,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	var sight: Dictionary = world.observe(origin,destination,"ordinary",1.5,float(spec.range))
 	if not sight.visible: return _block("Target is not currently visible: " + str(sight.eye.reason))
 	if not sight.firing_line_clear: return _block("Firing line is obstructed: " + str(sight.muzzle.reason))
-	for item in ledger.snapshot().entities:
+	for item in ledger.snapshot(false).entities:
 		if item.id in [shooter_id,target_id] or item.owner != shooter.owner or item.kind not in ["PERSON","CARRIER"]: continue
 		if item.kind == "PERSON" and item.assignment in ["Wounded","Dead"]: continue
 		var along := _segment_fraction(item.position,origin,destination)
@@ -84,7 +85,7 @@ func fire(shooter_id: String, target_id: String, weapon_id: String, moving_shoot
 	var assessment := inspect_fire(shooter_id,target_id,weapon_id,moving_shooter,moving_target)
 	if not assessment.ok: return assessment
 	var ledger: RefCounted = _rear().ledger
-	var weapon: Dictionary = ledger.inspect_entity(weapon_id)
+	var weapon: Dictionary = ledger.inspect_entity(weapon_id,{},false)
 	if weapon.loaded_rounds <= 0:
 		_record_demand(shooter_id,str(WEAPONS[weapon.design_type].ammo))
 		return _block("Empty local weapon; matching stock elsewhere cannot fire it. " + demands[shooter_id].blocked_reason)
@@ -95,7 +96,7 @@ func fire(shooter_id: String, target_id: String, weapon_id: String, moving_shoot
 	if weapon.design_type == "E05" and not _assistant_near(shooter_id): cadence = 0.5
 	cooldowns[weapon_id] = _rear().time + cadence
 	var hit := rng.randf() < float(assessment.chance)
-	var target: Dictionary = ledger.inspect_entity(target_id)
+	var target: Dictionary = ledger.inspect_entity(target_id,{},false)
 	var suppression := int(spec.suppression)
 	if not target.basic_training: suppression = int(ceil(float(suppression)*1.25))
 	_apply_stress(target_id,0,suppression,true)
@@ -199,7 +200,7 @@ func fire_field_gun(squad_id: String, target_id: String) -> Dictionary:
 
 func injure(person_id: String, injury: int, blast: bool = false) -> Dictionary:
 	var ledger: RefCounted = _rear().ledger
-	var before: Dictionary = ledger.inspect_entity(person_id)
+	var before: Dictionary = ledger.inspect_entity(person_id,{},false)
 	if before.is_empty() or before.kind != "PERSON": return _block("Actual person required for injury.")
 	var result: Dictionary = ledger.injure_person(person_id,injury)
 	if not result.ok: return result
@@ -284,7 +285,7 @@ func settle() -> bool:
 			if not setup.complete: setup.due = INF
 			changed = true
 	for id in bleeding.keys():
-		var patient: Dictionary = ledger.inspect_entity(id)
+		var patient: Dictionary = ledger.inspect_entity(id,{},false)
 		if patient.assignment != "Wounded" or patient.bleed_remaining > EPS: continue
 		if ledger.bleed_out_person(id).ok:
 			_on_death(id,patient)
@@ -298,9 +299,9 @@ func settle() -> bool:
 	for weapon_id in reloads.keys():
 		var row: Dictionary = reloads[weapon_id]
 		if float(row.due) > _rear().time+EPS: continue
-		var person: Dictionary = ledger.inspect_entity(row.operator)
+		var person: Dictionary = ledger.inspect_entity(row.operator,{},false)
 		ledger.release_claim(row.claim)
-		if not person.is_empty() and person.assignment not in ["Wounded","Recovery","Dead"] and ledger.inspect_entity(weapon_id).holder_id == row.operator:
+		if not person.is_empty() and person.assignment not in ["Wounded","Recovery","Dead"] and ledger.inspect_entity(weapon_id,{},false).holder_id == row.operator:
 			var result: Dictionary = ledger.load_rounds(weapon_id,row.source,row.quantity)
 			if result.ok: demands.erase(row.operator)
 		reloads.erase(weapon_id)
@@ -313,11 +314,11 @@ func settle() -> bool:
 
 func _field_crew_ready(row: Dictionary) -> bool:
 	if row.is_empty() or row.get("gun_id","").is_empty(): return false
-	var gun: Dictionary = _rear().ledger.inspect_entity(row.gun_id)
+	var gun: Dictionary = _rear().ledger.inspect_entity(row.gun_id,{},false)
 	if gun.is_empty() or gun.get("health",0) <= 0: return false
 	var count := 0
 	for id in row.roster:
-		var person: Dictionary = _rear().ledger.inspect_entity(id)
+		var person: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 		if not person.is_empty() and person.qualification == "P05" and person.assignment == "Formation Duty" and person.health > 0 and person.position.distance_to(gun.position) <= 2.0 and (_rear().forward_supply == null or not _rear().forward_supply.person_committed(id)) and (_rear().military == null or not _rear().military.person_committed(id)): count += 1
 	return count >= 4
 
@@ -407,8 +408,8 @@ func _on_death(id: String, before: Dictionary) -> void:
 	_log("%s died; one military roster place released" % id)
 
 func _nearby_casualty(id: String, delta: int) -> void:
-	var source: Dictionary = _rear().ledger.inspect_entity(id)
-	for item in _rear().ledger.snapshot().entities:
+	var source: Dictionary = _rear().ledger.inspect_entity(id,{},false)
+	for item in _rear().ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if item.kind == "PERSON" and item.id != id and item.owner == source.owner and item.assignment != "Dead" and item.position.distance_to(source.position) <= 20.0:
 			_apply_stress(item.id,delta,0,false)
 			last_casualty[item.id] = _rear().time
@@ -416,14 +417,14 @@ func _nearby_casualty(id: String, delta: int) -> void:
 func _apply_stress(id: String, morale_delta: int, suppression_delta: int, incoming: bool) -> void:
 	_rear().ledger.set_person_stress(id,morale_delta,suppression_delta)
 	if incoming: last_incoming[id] = _rear().time
-	var person: Dictionary = _rear().ledger.inspect_entity(id)
+	var person: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 	if person.suppression >= 60: pinned[id] = true
 	elif person.suppression < 40: pinned.erase(id)
 	if person.morale < 20: broken[id] = true
 	elif person.morale >= 40: broken.erase(id)
 
 func _stress_tick() -> void:
-	for item in _rear().ledger.snapshot().entities:
+	for item in _rear().ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if item.kind != "PERSON" or item.assignment == "Dead": continue
 		var since_fire: float = _rear().time-float(last_incoming.get(item.id,-INF))
 		var since_casualty: float = _rear().time-float(last_casualty.get(item.id,-INF))
@@ -432,23 +433,23 @@ func _stress_tick() -> void:
 		if since_fire >= 10.0-EPS and since_casualty >= 10.0-EPS and item.morale < 60 and not _visible_hostile_near(item):
 			morale_delta = mini(60-item.morale,2 if item.basic_training else 1)
 		if suppression_delta != 0 or morale_delta != 0: _apply_stress(item.id,morale_delta,suppression_delta,false)
-		var current: Dictionary = _rear().ledger.inspect_entity(item.id)
+		var current: Dictionary = _rear().ledger.inspect_entity(item.id,{},false)
 		if current.suppression == 0 and current.morale >= 60 and since_fire >= 10.0-EPS and since_casualty >= 10.0-EPS:
 			last_incoming.erase(item.id)
 			last_casualty.erase(item.id)
 
 func _visible_hostile_near(person: Dictionary) -> bool:
-	for item in _rear().ledger.snapshot().entities:
+	for item in _rear().ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if item.kind == "PERSON" and item.owner != person.owner and item.assignment not in ["Wounded","Dead"] and item.position.distance_to(person.position) <= 100.0:
 			if world.observe(person.position,item.position).visible: return true
 	return false
 
 func _record_demand(id: String, ammo_type: String) -> void:
-	var holder: Dictionary = _rear().ledger.inspect_entity(id)
+	var holder: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 	var local: int = _rear().ledger.available_stock_at(id,ammo_type)
 	var elsewhere := 0
 	var sources: Array[Dictionary] = []
-	for item in _rear().ledger.snapshot().entities:
+	for item in _rear().ledger.snapshot(false).entities:
 		if item.kind != "STOCK" or item.design_type != ammo_type or item.owner != holder.owner or item.holder_id == id or item.loaded or item.available <= 0: continue
 		elsewhere += int(item.available)
 		sources.append({"id":item.id,"holder":item.holder_id,"available":item.available,"position":item.position})
@@ -460,15 +461,15 @@ func _cancel_reload_for(person_id: String) -> void:
 
 func _armour_factor(id: String) -> float:
 	var factor := 1.0
-	for item in _rear().ledger.snapshot().entities:
+	for item in _rear().ledger.snapshot(false).entities:
 		if item.holder_id != id: continue
 		if item.design_type == "E03": factor -= 0.05
 		if item.design_type == "E04": factor -= 0.15
 	return maxf(0.0,factor)
 
 func _assistant_near(id: String) -> bool:
-	var operator: Dictionary = _rear().ledger.inspect_entity(id)
-	for item in _rear().ledger.snapshot().entities:
+	var operator: Dictionary = _rear().ledger.inspect_entity(id,{},false)
+	for item in _rear().ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if item.kind == "PERSON" and item.id != id and item.owner == operator.owner and item.assignment == "Formation Duty" and item.health > 0 and item.position.distance_to(operator.position) <= 2.0 and not _seated(item): return true
 	return false
 
