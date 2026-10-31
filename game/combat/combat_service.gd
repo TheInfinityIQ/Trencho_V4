@@ -253,7 +253,7 @@ func next_boundary() -> float:
 	for patient_id in care:
 		if care[patient_id].active: next = minf(next,_rear().time+10.0-float(care[patient_id].progress))
 	for id in bleeding:
-		var patient: Dictionary = _rear().ledger.inspect_entity(id)
+		var patient: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 		if patient.assignment == "Wounded": next = minf(next,_rear().time+float(patient.bleed_remaining))
 	for id in dispersed_since:
 		var dispersal_due: float = float(dispersed_since[id])+10.0
@@ -266,8 +266,8 @@ func advance_to(at: float) -> void:
 	for patient_id in care:
 		var episode: Dictionary = care[patient_id]
 		if not episode.active: continue
-		var medic: Dictionary = _rear().ledger.inspect_entity(episode.medic)
-		var patient: Dictionary = _rear().ledger.inspect_entity(patient_id)
+		var medic: Dictionary = _rear().ledger.inspect_entity(episode.medic,{},false)
+		var patient: Dictionary = _rear().ledger.inspect_entity(patient_id,{},false)
 		if medic.is_empty() or patient.is_empty() or medic.assignment in ["Wounded","Recovery","Dead"] or patient.assignment != "Wounded" or medic.position.distance_to(patient.position) > 2.0+EPS:
 			episode.active = false
 			episode.medic = ""
