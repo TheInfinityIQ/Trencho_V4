@@ -537,6 +537,9 @@ func _on_foot(person: Dictionary) -> bool:
 
 func _report(squad: String, kind: String, detail: String, urgent: bool = false) -> void:
 	var key := squad+":"+kind+":"+detail
+	# A later acknowledged operation may genuinely recapture the same place.
+	# Suppress repeats within that task, rather than all future completions.
+	if kind == "Complete": key += ":"+str(_rear().orders.intents.get(squad,{}).get("id",""))
 	if reported.has(key): return
 	var result: Dictionary = _rear().orders.report(squad,kind,detail,urgent)
 	if result.ok: reported[key] = result.id

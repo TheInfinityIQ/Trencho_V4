@@ -1,0 +1,31 @@
+Trencho V4 - Windows demo candidate
+
+Extract the entire downloaded ZIP into a folder. Keep TrenchoDemo.exe and
+TrenchoDemo.pck together. Run TrenchoDemo.exe; Godot's editor is not required.
+REVISION.txt identifies this exact build.
+
+Launch enters the paused Farmland and Towns game. Getting started shows help.
+Rear base and Battlefield share the same people, inventory and clock.
+Use Pause, 1x or 2x to control time. Start at 1x.
+For a first delivery, let the initial deployments proceed at 1x. In Rear base,
+open Supply, select the military T01, rifle ammunition (E02), and the forward
+stop. Choose a quantity and Preview route, load and fuel. Read any blocker;
+the truck, loader and destination Engineers must actually be available.
+Start physical delivery when ready. Loading, travel, unloading and return take
+time. The army issues arrived ammunition; Diagnostics are not required.
+
+In Battlefield, select your formations to inspect current orders, actual loads
+and shortages. Resource control earns income only while uncontested. You can
+switch views or pause while planning without replacing the session.
+
+For replenishment, use Rear base Work to select a munitions recipe and output
+target. Staff assigns actual workers. Haul ingredients to the required input
+store; production does not pull distant depot stock automatically. Dispatch
+sends completed rear goods to HQ; Supply sends available HQ stock forward.
+Supplies still on a truck or courier are not ammunition already in a rifle.
+The army controls its own tactical movement and firing. New game deliberately
+replaces the current session with a fresh paused game.
+
+The game keeps the project's 30 FPS and four-worker limits. This candidate has
+not established responsiveness on the player's Windows computer. Export success
+only establishes that the executable/data were built, not gameplay acceptance.

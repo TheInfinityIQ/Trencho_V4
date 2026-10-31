@@ -1,0 +1,93 @@
+name: Build Windows demo
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/demo-build.yml'
+      - 'export_presets.cfg'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: demo-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-demo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Acquire matching official editor and Windows templates
+        timeout-minutes: 6
+        shell: python
+        run: |
+          import hashlib, os, pathlib, urllib.request, zipfile
+          version = pathlib.Path('.godot-version').read_text().strip()
+          release = f'https://github.com/godotengine/godot-builds/releases/download/{version}-stable'
+          directory = pathlib.Path(os.environ['RUNNER_TEMP']) / 'demo-engine'
+          directory.mkdir()
+          sums = urllib.request.urlopen(release + '/SHA512-SUMS.txt', timeout=60).read().decode()
+          hashes = {line.split()[1].lstrip('*'): line.split()[0] for line in sums.splitlines() if line.strip()}
+          for archive in [f'Godot_v{version}-stable_linux.x86_64.zip', f'Godot_v{version}-stable_export_templates.tpz']:
+              target = directory / archive
+              with urllib.request.urlopen(release + '/' + archive, timeout=90) as source, target.open('wb') as output:
+                  while chunk := source.read(1024 * 1024):
+                      output.write(chunk)
+              digest = hashlib.file_digest(target.open('rb'), 'sha512').hexdigest()
+              if digest != hashes[archive]:
+                  raise SystemExit('Official engine/template checksum mismatch')
+              with zipfile.ZipFile(target) as bundle:
+                  if archive.endswith('.zip'):
+                      bundle.extractall(directory)
+                  else:
+                      templates = pathlib.Path.home() / '.local/share/godot/export_templates' / (version + '.stable')
+                      templates.mkdir(parents=True)
+                      for filename in ['windows_release_x86_64.exe', 'windows_debug_x86_64.exe']:
+                          (templates / filename).write_bytes(bundle.read('templates/' + filename))
+          binary = directory / f'Godot_v{version}-stable_linux.x86_64'
+          binary.chmod(0o755)
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              output.write(f'GODOT_BIN={binary}\n')
+      - name: Export the current game without running gameplay or suites
+        timeout-minutes: 4
+        shell: python
+        run: |
+          import os, pathlib, re, subprocess
+          # Retained regression scripts are not runtime resources in this build.
+          for directory in pathlib.Path('game').rglob('tests'):
+              if directory.is_dir():
+                  (directory / '.gdignore').touch()
+          output = pathlib.Path('builds/windows')
+          output.mkdir(parents=True)
+          result = subprocess.run([os.environ['GODOT_BIN'], '--headless', '--path', '.', '--export-release', 'Windows Desktop', str(output / 'TrenchoDemo.exe')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=180)
+          pathlib.Path('builds/export.log').write_text(result.stdout)
+          print(result.stdout)
+          if result.returncode or re.search(r'^\s*(SCRIPT ERROR:|ERROR:)', result.stdout, re.MULTILINE):
+              raise SystemExit(result.returncode or 1)
+          for filename in ['TrenchoDemo.exe', 'TrenchoDemo.pck']:
+              if not (output / filename).is_file() or (output / filename).stat().st_size == 0:
+                  raise SystemExit('Missing exported file: ' + filename)
+          revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          (output / 'REVISION.txt').write_text(revision + '\n')
+          (output / 'START_HERE.txt').write_text(pathlib.Path('docs/demo_start.txt').read_text())
+      - name: Retain Windows executable and game data
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: Trencho-Windows-${{ github.event.pull_request.head.sha || github.sha }}
+          path: builds/windows/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Retain export log
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: demo-export-log-${{ github.event.pull_request.head.sha || github.sha }}
+          path: builds/export.log
+          if-no-files-found: ignore
+          retention-days: 7

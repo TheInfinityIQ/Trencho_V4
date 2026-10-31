@@ -49,8 +49,8 @@ func _ready() -> void:
 	field_button.pressed.connect(_show_battlefield)
 	controls.add_child(field_button)
 	var playtest := Button.new()
-	playtest.text = "New playtest"
-	playtest.tooltip_text = "Start a fresh paused Farmland and Towns opening with its declared armies."
+	playtest.text = "New game"
+	playtest.tooltip_text = "Replace the current session with a fresh paused Farmland and Towns game."
 	playtest.pressed.connect(_start_playtest)
 	controls.add_child(playtest)
 	_field_clock = HBoxContainer.new()
@@ -75,6 +75,18 @@ func _ready() -> void:
 		button.text = title
 		button.pressed.connect(func() -> void: _show_review(title))
 		_diagnostics.add_child(button)
+	var help_button := Button.new()
+	help_button.text = "Getting started"
+	help_button.toggle_mode = true
+	help_button.button_pressed = true
+	controls.add_child(help_button)
+	var help := PanelContainer.new()
+	layout.add_child(help)
+	var guide := Label.new()
+	guide.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	guide.text = "Keep the army supplied as it contests resources. The game starts paused; use 1x to begin.\nRear base: manage workers, haul ingredients and manufacture ammunition in Work. Supply: send existing HQ ammunition forward first, then replenish through rear production and Dispatch. Battlefield: inspect current orders, shortages and delivery progress; the army moves and fights autonomously.\nOwned, uncontested resources earn requisition. Withheld ammunition can stop an advance. Rear base and Battlefield share one continuing session; New game replaces it."
+	help.add_child(guide)
+	help_button.toggled.connect(func(open: bool) -> void: help.visible = open)
 	_host = Control.new()
 	_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_host)
@@ -84,7 +96,10 @@ func _ready() -> void:
 	_battlefield = Battlefield.instantiate()
 	_battlefield.simulation = _base.simulation
 	_host.add_child(_battlefield)
-	_show_base()
+	# Ordinary launch uses the same authored game and normal session binding as
+	# the New game action. Existing declared forces, stock and paused clock stay
+	# authoritative; no demonstration-only grants or initial freight departure.
+	_start_playtest()
 
 
 func _show_review(title: String) -> void:
