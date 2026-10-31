@@ -254,7 +254,7 @@ func settle() -> bool:
 			var joined: Dictionary = rear.ledger.complete_military_crew_report(id,report.hull,report.station)
 			if joined.ok:
 				rear.dispatch.hq_reserve.erase(id)
-				if vehicles.has(report.hull): vehicles[report.hull].crew = rear.ledger.inspect_entity(report.hull).crew_by_station.duplicate(true)
+				if vehicles.has(report.hull): vehicles[report.hull].crew = rear.ledger.inspect_entity(report.hull,{},false).crew_by_station.duplicate(true)
 				status = "%s physically reported as %s on %s." % [id,report.station,report.hull]
 				crew_reports.erase(id)
 				changed = true
@@ -292,7 +292,7 @@ func settle() -> bool:
 			_appoint_seniors()
 			changed = true
 		elif row.state == "Active":
-			var leader: Dictionary = rear.ledger.inspect_entity(row.leader)
+			var leader: Dictionary = rear.ledger.inspect_person_status(row.leader)
 			if leader.is_empty() or int(leader.get("health",0)) <= 0 or leader.duty_id != id:
 				if row.replacement_due == INF and not row.replacement_attempted:
 					if not row.leader.is_empty(): rear.ledger.clear_formation_appointment(row.leader)
@@ -314,7 +314,7 @@ func settle() -> bool:
 
 func _sync_commander() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	var current: Dictionary = rear.ledger.inspect_entity(_commander_id)
+	var current: Dictionary = rear.ledger.inspect_person_status(_commander_id)
 	if not current.is_empty() and current.health > 0: return false
 	var successor := commander()
 	if successor.is_empty() or successor == _commander_id:
@@ -380,7 +380,7 @@ func _auto_vehicle() -> bool:
 	var hull_ids: Array = rear.dispatch.military_hulls.keys()
 	hull_ids.sort()
 	for hull_id in hull_ids:
-		var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+		var hull: Dictionary = rear.ledger.inspect_entity(hull_id,{},false)
 		if hull.is_empty() or hull.fleet_domain != "Military" or hull.holder_id != "hq-berth" or hull.health <= 0: continue
 		if not vehicles.has(hull_id) and hull.crew_by_station.has("Driver"):
 			for platoon_id in platoons:
@@ -396,7 +396,7 @@ func _auto_vehicle() -> bool:
 			var ids: Array = rear.dispatch.hq_reserve.keys()
 			ids.sort()
 			for id in ids:
-				var person: Dictionary = rear.ledger.inspect_entity(id)
+				var person: Dictionary = rear.ledger.inspect_person_status(id)
 				if person.is_empty() or person.pending_assignment != "None" or rear.hq._target_busy(id): continue
 				if person.qualification != "P08" and not (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04"): continue
 				if assign_crew(id,hull_id,station).ok: return true
@@ -1080,17 +1080,17 @@ func _roster_specialists(row: Dictionary, active: Array[String]) -> Array[String
 
 func commander() -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
-	var appointed: Dictionary = rear.ledger.inspect_entity(_commander_id)
+	var appointed: Dictionary = rear.ledger.inspect_person_status(_commander_id)
 	if not appointed.is_empty() and appointed.health > 0: return appointed.id
-	var original: Dictionary = rear.ledger.inspect_entity("initial-hq-05")
+	var original: Dictionary = rear.ledger.inspect_person_status("initial-hq-05")
 	if not original.is_empty() and original.health > 0: return original.id
 	for company in companies.values():
 		if company.get("owner",rear.PLAYER) != rear.PLAYER: continue
-		var p: Dictionary = rear.ledger.inspect_entity(company.leader)
+		var p: Dictionary = rear.ledger.inspect_person_status(company.leader)
 		if not p.is_empty() and p.health > 0 and p.basic_training: return p.id
 	for platoon in platoons.values():
 		if platoon.get("owner",rear.PLAYER) != rear.PLAYER: continue
-		var p: Dictionary = rear.ledger.inspect_entity(platoon.leader)
+		var p: Dictionary = rear.ledger.inspect_person_status(platoon.leader)
 		if not p.is_empty() and p.health > 0 and p.basic_training: return p.id
 	return ""
 
