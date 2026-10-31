@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Ordinary authored session and production UI/service; no replacement world or stock.
 
 
-func test_ordinary_supply_preview_and_successful_delivery(_timeout := 230000) -> void:
+func test_ordinary_supply_preview_and_successful_delivery(_timeout := 320000) -> void:
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -94,7 +94,10 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	assert_object(run).is_not_null()
 	if run == null: return
 	run.pressed.emit()
-	var deadline: int = Time.get_ticks_msec()+210000
+	var driver_started: int = Time.get_ticks_usec()
+	var deadline: int = Time.get_ticks_msec()+300000
+	var clock_ticks := 0
+	var tick_usec := 0
 	var last_inspection := -INF
 	var last_log: int = Time.get_ticks_msec()
 	var admitted := false
@@ -108,25 +111,24 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	var deposits := {}
 	var state := "Awaiting actual truck and handlers"
 	while Time.get_ticks_msec() < deadline and session.rear.time < 2600.0:
-		# Batch controlled clock calls before yielding. The normal 30FPS cap must
-		# not add a rendered-frame wait to every simulated 0.1-second quantum.
-		# Each call still uses the same event boundaries and bounded planning pump.
-		var slice_end: int = Time.get_ticks_usec()+80000
-		while Time.get_ticks_usec() < slice_end:
-			session.tick(0.1)
-			if admitted:
-				var row: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
-				state = str(row.state)+" · "+str(row.blocker)
-				saw_outbound = saw_outbound or row.state == "Outbound"
-				var actual: Dictionary = session.rear.ledger.inspect_entity(row.hull,{},false)
-				saw_forward_hull = saw_forward_hull or actual.holder_id == row.stop
-				for id in row.delivered_items:
-					if deposits.has(id): continue
-					var stock: Dictionary = session.rear.ledger.inspect_entity(id,{},false)
-					assert_str(str(stock.get("holder_id",""))).is_equal(str(row.stop))
-					assert_str(str(stock.get("owner",""))).is_equal(str(session.rear.PLAYER))
-					deposits[id] = {"quantity":int(stock.get("quantity",0)),"holder":stock.get("holder_id",""),"origin":stock.get("origin_id",""),"time":session.rear.time}
-				if row.unloaded == 60: break
+		# One ordinary owner tick per returned frame; never drain planners or
+		# bypass event boundaries. Measure driver cost instead of assuming it.
+		var tick_started: int = Time.get_ticks_usec()
+		session.tick(0.1)
+		tick_usec += Time.get_ticks_usec()-tick_started
+		clock_ticks += 1
+		if admitted:
+			var row: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
+			state = str(row.state)+" · "+str(row.blocker)
+			saw_outbound = saw_outbound or row.state == "Outbound"
+			var actual: Dictionary = session.rear.ledger.inspect_entity(row.hull,{},false)
+			saw_forward_hull = saw_forward_hull or actual.holder_id == row.stop
+			for id in row.delivered_items:
+				if deposits.has(id): continue
+				var stock: Dictionary = session.rear.ledger.inspect_entity(id,{},false)
+				assert_str(str(stock.get("holder_id",""))).is_equal(str(row.stop))
+				assert_str(str(stock.get("owner",""))).is_equal(str(session.rear.PLAYER))
+				deposits[id] = {"quantity":int(stock.get("quantity",0)),"holder":stock.get("holder_id",""),"origin":stock.get("origin_id",""),"time":session.rear.time}
 		if not admitted and session.rear.time-last_inspection >= 5.0:
 			last_inspection = session.rear.time
 			panel.refresh()
@@ -164,7 +166,7 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	assert_bool(admitted).override_failure_message("No successful ordinary Supply admission: "+state+" at "+str(session.rear.time)).is_true()
 	if not admitted: return
 	var completed: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
-	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"deposits":deposits,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull}))
+	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"deposits":deposits,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull,"clock_ticks":clock_ticks,"tick_wall_seconds":tick_usec/1000000.0,"driver_wall_seconds":(Time.get_ticks_usec()-driver_started)/1000000.0}))
 	assert_int(completed.loaded).is_equal(60)
 	assert_int(completed.unloaded).is_equal(60)
 	assert_bool(saw_outbound).is_true()
