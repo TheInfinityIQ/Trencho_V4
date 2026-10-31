@@ -204,7 +204,7 @@ func _refresh() -> void:
 		if selected.kind == "PERSON":
 			detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
 			var loaded := 0
-			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"]):
+			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"],false):
 				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
 			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
 		if selected.kind == "CARRIER":
@@ -212,10 +212,10 @@ func _refresh() -> void:
 			for job in rear.military.troop_transport.jobs.values():
 				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
 			for station in selected.get("crew_by_station",{}):
-				var crew: Dictionary = rear.ledger.inspect_entity(selected.crew_by_station[station])
+				var crew: Dictionary = rear.ledger.inspect_person_status(selected.crew_by_station[station])
 				detail += "\n%s · %s · Health %d" % [station,crew.qualification,crew.health]
 			for id in selected.get("passengers",[]):
-				var passenger: Dictionary = rear.ledger.inspect_entity(id)
+				var passenger: Dictionary = rear.ledger.inspect_person_status(id)
 				detail += "\n%s · Health %d · %s" % [_unit_label(passenger),passenger.health,passenger.assignment]
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	var objective_detail := "No objective registered."
@@ -229,7 +229,7 @@ func _refresh() -> void:
 		var opening: Dictionary = rear.battlefield_operations.policy.snapshot()
 		_inspector.text += "\n\nOPENING\n"+str(opening.status)
 		for trip in opening.trips:
-			_inspector.text += "\n"+_unit_label(rear.ledger.inspect_entity(trip.hull))+": "+("Dismounted" if trip.dismounted else ("Transport active" if trip.started else (trip.blocker if not str(trip.blocker).is_empty() else "Awaiting orders")))
+			_inspector.text += "\n"+_unit_label(rear.ledger.inspect_entity(trip.hull,{},false))+": "+("Dismounted" if trip.dismounted else ("Transport active" if trip.started else (trip.blocker if not str(trip.blocker).is_empty() else "Awaiting orders")))
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear
