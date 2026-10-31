@@ -23,12 +23,17 @@ on:
         options: [extended, short]
         default: extended
         required: true
+      c30_observe:
+        description: Also observe the real C30 manufacturing and delivery chain on GitHub
+        type: boolean
+        default: false
+        required: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_profile && '-combat-profile' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_windows == 'short' && '-short' || '' }}
+  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_profile && '-combat-profile' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || github.event_name == 'workflow_dispatch' && inputs.mode == 'c30' && '-c30' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_windows == 'short' && '-short' || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -36,7 +41,7 @@ jobs:
     name: Focused C30 connection checks (manual)
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'c30'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -73,11 +78,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges; do
+          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges opening_rack_scheduling; do
             timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script "res://game/battlefield/tests/${name}_regression.gd" > ".artifacts/c30/${name}.log" 2>&1
             tail -n 5 ".artifacts/c30/${name}.log"
             if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' ".artifacts/c30/${name}.log"; then exit 1; fi
           done
+      - name: Observe ordinary C30 manufacturing, delivery and autonomous consequence
+        if: inputs.c30_observe
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=5s 1190s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/c30_connection_probe.gd > .artifacts/c30/connection.log 2>&1
+          grep -E '^C30_EVENT|^C30_RESULT' .artifacts/c30/connection.log
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/c30/connection.log; then exit 1; fi
       - name: Retain exact candidate and results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

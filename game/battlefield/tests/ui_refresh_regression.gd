@@ -94,6 +94,7 @@ func _run() -> void:
 	check(signals.changes == 0 and fresh.rear.time == 0 and fresh.rear.ledger._events.size() == ledger_events and fresh.rear._events.size() == rear_events,"Read loaders neither signal commands nor settle or advance physical state")
 	main._show_base()
 	check(demo.get("_displayed_time") == 0 and demo.status.text != "No rear refresh during direct battlefield launch" and demo.tabs.current_tab == prior_tab,"First return builds fresh rear state and preserves the selected tab")
+	check("APC RACK ISSUE" in demo.forward_delivery_panel.army_issue_status.text and "E26 available at the stop: 0" in demo.forward_delivery_panel.army_issue_status.text,"Ordinary C30 supply view distinguishes the empty local rack chain from rifle issue")
 	# A casualty's activity cannot inherit its healthy squad's movement label.
 	var casualty := "start-blue-squad-00-person-00"
 	fresh.rear.battlefield_operations.status["start-blue-squad-00"] = "Advancing"

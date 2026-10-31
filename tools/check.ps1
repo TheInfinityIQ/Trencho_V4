@@ -113,3 +113,4 @@ Invoke-GodotCheck -Name 'hq-affiliation-regression' -EngineArguments @('--script
 Invoke-GodotCheck -Name 'mass-inspection-regression' -EngineArguments @('--script', 'res://game/identity/tests/mass_inspection_regression.gd')
 Invoke-GodotCheck -Name 'opening-resupply-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_resupply_regression.gd')
 Invoke-GodotCheck -Name 'opening-resupply-edges-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_resupply_edges_regression.gd')
+Invoke-GodotCheck -Name 'opening-rack-scheduling-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/opening_rack_scheduling_regression.gd')
