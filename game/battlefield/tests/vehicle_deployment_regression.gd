@@ -10,6 +10,7 @@ const HULL := "deployment-output"
 const RECEIPT := "deployment-receipt"
 const COMPANY := "deployment-company"
 const PLATOON := "deployment-platoon"
+const HQ_BERTH := Vector2(2000,450)
 var checks := 0
 var failures := 0
 
@@ -42,15 +43,20 @@ func _hull(rear: RefCounted, parent: String) -> void:
 	rear.dispatch.military_hulls[HULL] = RECEIPT
 	check(rear.military.attach_vehicle(HULL,parent).ok,"Actual admitted staffed hull attaches to named parent")
 	check(ledger.add_stock("deployment-fuel","M08",60,1.0,"hq-berth",rear.PLAYER).ok,"Declared real local fuel supply")
+	var handler: Dictionary = ledger.inspect_entity("initial-hq-01")
+	check(handler.position.is_equal_approx(ledger.inspect_entity("deployment-fuel").position) and handler.position.is_equal_approx(ledger.inspect_entity(HULL).position),"Actual fuel source, HQ handler and hull are co-located for existing ledger handling")
 	for _portion in 3:
 		check(ledger.begin_carry("initial-hq-01","deployment-fuel",20).ok,"Actual fuel carry")
 		check(ledger.load_vehicle_fuel("initial-hq-01",HULL).ok,"Actual carried fuel enters same tank")
+	var fuelled: Dictionary = ledger.inspect_entity(HULL)
+	check(fuelled.fuel == 60.0 and fuelled.vehicle_spec.tank_capacity == 80.0,"Three real20-unit carries supply60 within the canonical80-unit T04 tank")
 
 func _fixture() -> Dictionary:
-	var base := Base.new(false,true,false,Map.BLUE_HQ,false)
+	var base := Base.new(false,true,false,HQ_BERTH,false)
 	var rear: RefCounted = base.rear
 	Map.apply(rear.combat.world)
 	var points: Dictionary = Map.waypoints()
+	check(HQ_BERTH == points["blue-service"] and HQ_BERTH == points["blue-delivery-route"][0],"Fixture uses actual service berth and canonical route origin, distinct from HQ building centre")
 	check(rear.ledger.add_place("blue-delivery","Declared forward supply stop",points["blue-delivery"]).ok,"Physical supply stop")
 	check(rear.forward_supply.register_delivery_stop("blue-delivery",points["blue-delivery-route"],points["blue-delivery-return"]).ok,"Forward owner knows declared stop")
 	check(rear.ledger.add_place("observation-central","Declared fixed support destination",Vector2(2000,3000)).ok,"Existing-map support point fixture")
@@ -136,7 +142,7 @@ func _command_and_readiness() -> void:
 	var fuel: float = hull.fuel
 	hull.fuel = 0.0
 	owner.tick()
-	check(row.transport_job.is_empty() and rear.ledger.inspect_entity(HULL).position == Map.BLUE_HQ,"Empty actual tank cannot move or teleport")
+	check(row.transport_job.is_empty() and rear.ledger.inspect_entity(HULL).position == HQ_BERTH,"Empty actual tank cannot move or teleport")
 	hull.fuel = fuel
 	var parent: String = rear.military.vehicles[HULL].parent
 	rear.military.vehicles[HULL].parent = COMPANY
@@ -169,12 +175,12 @@ func _route_refusals() -> void:
 	hull.fuel = 1.0 # Explicit insufficient-tank fault with positive Movement capability.
 	owner.tick()
 	check(row.transport_job.is_empty() and row.blocker.contains("25 percent reserve"),"Measured out/fallback fuel requirement rejects positive but inadequate actual tank")
-	check(rear.ledger.inspect_entity(HULL).position == Map.BLUE_HQ and hull.fuel == 1.0,"Fuel refusal neither moves hull nor consumes tank")
+	check(rear.ledger.inspect_entity(HULL).position == HQ_BERTH and hull.fuel == 1.0,"Fuel refusal neither moves hull nor consumes tank")
 	hull.fuel = 60.0
 	rear.combat.world.obstacle("deployment-blocked-lane",Rect2(2090,500,20,20),0,10)
 	owner.tick()
 	check(row.transport_job.is_empty() and row.blocker.contains("route"),"New physical route blocker is retained/reported by existing route owner")
-	check(rear.ledger.inspect_entity(HULL).position == Map.BLUE_HQ and hull.fuel == 60.0,"Blocked route cannot teleport or burn untravelled fuel")
+	check(rear.ledger.inspect_entity(HULL).position == HQ_BERTH and hull.fuel == 60.0,"Blocked route cannot teleport or burn untravelled fuel")
 
 func _two_physical_legs() -> void:
 	var f := _fixture()
