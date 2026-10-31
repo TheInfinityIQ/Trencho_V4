@@ -11,6 +11,10 @@ var failures := 0
 
 func _initialize() -> void:
 	_test_two_physical_cycles()
+	_test_multiportion_cycle()
+	_test_claim_rollback()
+	_test_mixed_masses()
+	_test_changed_source_and_handler()
 	print("Forward transport regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -119,3 +123,144 @@ func _test_two_physical_cycles() -> void:
 	_expect(ledger.burn_vehicle_fuel("transport-t01",remaining_fuel).ok,"actual tank can be depleted")
 	_expect(not supply.request_delivery("transport-t01","transport-hq-rounds",5,"transport-stop",outbound,returning,"initial-hq-02","transport-a").ok,"empty physical tank refuses further delivery")
 	_expect(supply.audit().is_empty() and base.audit().is_empty(),"transport and common ledger audit remain clean: " + str(supply.audit()) + " / " + str(base.audit()))
+
+
+func _multi_fixture() -> Dictionary:
+	var base := Base.new(false,true,false,HQ,false)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	_expect(ledger.add_place("multi-stop","Actual multiportion destination",STOP).ok,"multiportion stop")
+	var ids: Array[String] = []
+	for index in 4:
+		var id := "multi-person-%d" % index
+		_expect(ledger.add_person(id,"multi-stop",rear.PLAYER,Records.Assignment.AVAILABLE,true,"None","None").ok,"actual destination member")
+		_expect(ledger.add_weapon(id+"-rifle","E01",4,id,rear.PLAYER,"E02",30).ok and ledger.add_stock(id+"-rounds","E02",30,0.02,id,rear.PLAYER).ok,"actual formation package")
+		ids.append(id)
+	_expect(rear.military.add_initial_squad("multi-squad","Rifle",ids,"multi-company","multi-platoon",rear.PLAYER).ok,"actual destination hierarchy")
+	_expect(ledger.add_initial_vehicle("multi-t01","T01","hq-berth",rear.PLAYER,Specs.TYPES.T01,20,"Military").ok,"actual empty HQ truck with finite fuel")
+	_expect(ledger.add_person("multi-driver","hq-berth",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok and ledger.assign_initial_vehicle_crew("multi-driver","multi-t01","Driver").ok,"actual qualified truck driver")
+	_expect(rear.military.attach_initial_vehicle("multi-t01","multi-platoon").ok,"actual truck attachment")
+	rear.dispatch.military_hulls["multi-t01"] = "Initial multiportion fixture"
+	return {"base":base,"rear":rear,"ledger":ledger,"supply":rear.forward_supply}
+
+
+func _parts(f: Dictionary, count: int = 4) -> void:
+	for index in count:
+		_expect(f.ledger.add_stock("multi-source-%d" % index,"E26",50,0.5,"hq-stock",f.rear.PLAYER).ok,"distinct physical origin")
+
+
+func _request_multi(f: Dictionary, quantity: int) -> Dictionary:
+	return f.supply.request_delivery_type("multi-t01","E26",quantity,"multi-stop",[HQ,STOP],[STOP,HQ],"initial-hq-02","multi-person-0")
+
+
+func _test_multiportion_cycle() -> void:
+	var f := _multi_fixture()
+	_parts(f)
+	_expect(f.ledger.add_stock("multi-foreign","E26",200,0.5,"hq-stock","army-red").ok,"foreign stock cannot cover own request")
+	_expect(f.ledger.add_stock("multi-reserved","E26",50,0.5,"hq-stock",f.rear.PLAYER).ok and f.ledger.request_stock("multi-other","multi-reserved",50,"other","Competing request",f.rear.PLAYER).ok,"other reservation stays separate")
+	_expect(f.ledger.add_stock("multi-wrong","E25",200,1.0,"hq-stock",f.rear.PLAYER).ok,"wrong type cannot cover request")
+	_expect(f.ledger.add_weapon("multi-nested-weapon","E07",4.0,"hq-stock",f.rear.PLAYER,"E26",10).ok and f.ledger.add_stock("multi-nested-source","E26",5,0.5,"hq-stock",f.rear.PLAYER).ok,"real HQ weapon and matching ammunition")
+	_expect(f.ledger.load_rounds("multi-nested-weapon","multi-nested-source",5).ok,"nested loaded ammunition and depleted original source are not direct available freight")
+	_expect(not f.supply.request_delivery("multi-t01","multi-source-0",180,"multi-stop",[HQ,STOP],[STOP,HQ],"initial-hq-02","multi-person-0").ok,"legacy stock-ID request remains strictly single-source")
+	_expect(not _request_multi(f,201).ok,"foreign, reserved and wrong stock cannot inflate available own type")
+	var accepted := _request_multi(f,180)
+	_expect(accepted.ok,"one requested load spans four actual origins")
+	if not accepted.ok: return
+	var row: Dictionary = f.supply.transport.jobs[accepted.id]
+	_expect(row.sources.size() == 4 and row.sources[0].quantity == 50 and row.sources[3].quantity == 30,"canonical quotas total exactly 180 without merging stacks")
+	_expect(f.ledger.inspect_entity("multi-source-3").available == 20 and f.ledger.inspect_claim("multi-other").reserved == 50,"only the exact own deficit is reserved")
+	f.rear.advance_time(6)
+	_expect(row.loaded == 50 and row.task.get("source","") == "multi-source-1" and not str(row.task.get("carry","")).is_empty(),"second source is physically carried after first source was deposited")
+	if str(row.task.get("carry","")).is_empty(): return
+	var carry: String = row.task.carry
+	var claim: String = row.task.claim
+	_expect(f.supply.interrupt_delivery(row.id).ok,"actual second-source carry pauses")
+	f.rear.advance_time(3)
+	_expect(row.loaded == 50 and f.ledger.inspect_entity(carry).holder_id == row.loader and row.task.claim == claim,"pause retains exact carried ID, source claim and uncredited count")
+	_expect(f.ledger.move_entity("multi-t01","hq-berth",HQ+Vector2(2,0)).ok,"actual hull moves outside owned loading position")
+	_expect(f.supply.resume_delivery(row.id).ok,"same handling task resumes for fresh boundary validation")
+	f.rear.advance_time(2)
+	_expect(row.state == "Paused" and row.loaded == 50 and row.task.carry == carry,"changed hull blocks deposit without replacing the carry")
+	_expect(f.ledger.move_entity("multi-t01","hq-berth",HQ).ok and f.supply.resume_delivery(row.id).ok,"same hull returns before the same carry resumes")
+	f.rear.advance_time(220)
+	_expect(row.state == "Complete" and row.loaded == 180 and row.unloaded == 180 and row.return_completed,"one multiportion mission fully unloads and returns")
+	var delivered := {}
+	for id in row.delivered_items:
+		var stock: Dictionary = f.ledger.inspect_entity(id)
+		delivered[stock.origin_id] = int(delivered.get(stock.origin_id,0))+int(stock.quantity)
+	_expect(delivered == {"multi-source-0":50,"multi-source-1":50,"multi-source-2":50,"multi-source-3":30},"all four physical origins and quantities reach the stop exactly once")
+	_expect(f.ledger.inspect_entity("multi-source-3").quantity == 20 and f.ledger.total_stock("E26") == 455,"leftovers, nested, foreign and reserved goods remain conserved")
+	_expect(f.base.audit().is_empty(),"multiportion pause, load and one return retain common invariants")
+
+
+func _test_claim_rollback() -> void:
+	var f := _multi_fixture()
+	_parts(f)
+	var once: Array[bool] = [false]
+	# An existing route callback introduces a real competing claim after planning.
+	f.ledger.route_hazard = func(_owner: String, _points: Array) -> String:
+		if not once[0]:
+			once[0] = true
+			_expect(f.ledger.request_stock("late-other","multi-source-2",25,"other","Late real contention",f.rear.PLAYER).ok,"late competitor reserves physical stock")
+		return ""
+	var rejected := _request_multi(f,180)
+	f.ledger.route_hazard = Callable()
+	_expect(not rejected.ok and f.supply.transport.jobs.is_empty() and not f.supply.hull_committed("multi-t01"),"partial later claim cannot publish a job or hull commitment")
+	var own := 0
+	for item in f.ledger.snapshot().claims:
+		if str(item.claimant).begins_with("forward-delivery-"):
+			own += 1
+			_expect(item.cancelled and item.reserved == 0,"rollback releases every own claim including partially reserved last source")
+	_expect(own == 3 and f.ledger.inspect_claim("late-other").reserved == 25,"rollback leaves the competing claim unchanged")
+	_expect(f.ledger.inspect_entity("multi-source-0").available == 50 and f.ledger.inspect_entity("multi-source-1").available == 50 and f.ledger.total_stock("E26") == 200,"failed admission moves no goods and releases earlier source claims")
+	_expect(f.base.audit().is_empty(),"claim rollback retains ledger invariants")
+
+
+func _test_mixed_masses() -> void:
+	var f := _multi_fixture()
+	_expect(f.ledger.add_stock("mass-one","E26",20,1.0,"hq-stock",f.rear.PLAYER).ok and f.ledger.add_stock("mass-two","E26",20,2.0,"hq-stock",f.rear.PLAYER).ok,"same type retains heterogeneous physical unit masses")
+	var preview: Dictionary = f.supply.preview_delivery_type("multi-t01","E26",40,"multi-stop",[HQ,STOP],[STOP,HQ],"initial-hq-02","multi-person-0")
+	var hull: Dictionary = f.ledger.inspect_entity("multi-t01")
+	_expect(preview.ok and preview.gross_kg == hull.unit_mass_kg+hull.fuel+hull.contents_mass_kg+60.0,"preview sums each selected source mass rather than multiplying the first mass")
+	var accepted := _request_multi(f,40)
+	_expect(accepted.ok,"actual mixed-mass load admitted")
+	if not accepted.ok: return
+	var row: Dictionary = f.supply.transport.jobs[accepted.id]
+	f.rear.advance_time(6)
+	var carried: Dictionary = f.ledger.inspect_entity(row.task.get("carry",""))
+	_expect(row.loaded == 20 and carried.get("quantity",0) == 12 and carried.get("unit_mass_kg",0) == 2.0,"second-source pickup uses its own 25kg capacity, not first-source mass")
+	f.rear.advance_time(220)
+	_expect(row.state == "Complete" and f.ledger.loose_stock_mass_at("multi-stop") == 60.0,"all heterogeneous mass reaches the stop physically")
+	_expect(f.ledger.add_stock("over-one","E26",1,1.0,"hq-stock",f.rear.PLAYER).ok and f.ledger.add_stock("over-two","E26",2,3000.0,"hq-stock",f.rear.PLAYER).ok,"actual oversized mixed-mass source fixture")
+	var oversized: Dictionary = _request_multi(f,3)
+	_expect(not oversized.ok and "payload" in str(oversized.message),"sum of source masses enforces the unchanged truck payload")
+	_expect(f.base.audit().is_empty(),"mixed mass and payload refusal preserve physical quantities")
+
+
+func _test_changed_source_and_handler() -> void:
+	var moved := _multi_fixture()
+	_parts(moved,2)
+	var accepted := _request_multi(moved,100)
+	_expect(accepted.ok,"source-change fixture admitted")
+	if not accepted.ok: return
+	var row: Dictionary = moved.supply.transport.jobs[accepted.id]
+	moved.rear.advance_time(0)
+	_expect(moved.ledger.release_claim(row.sources[0].claim).ok,"actual source claim withdrawn")
+	_expect(moved.ledger.add_place("changed-source","Separate co-located actual holder",HQ).ok,"physical alternate holder")
+	_expect(moved.ledger.transfer_stock("multi-source-0",50,"changed-source").ok,"withdrawn source physically moves")
+	moved.rear.advance_time(2)
+	_expect(row.state == "Paused" and row.loaded == 0 and row.task.source == "multi-source-0" and moved.ledger.inspect_entity("multi-source-1").quantity == 50 and moved.ledger.inspect_claim(row.sources[1].claim).reserved == 50,"changed source blocks instead of silently switching to another stack")
+	var injured := _multi_fixture()
+	_parts(injured,2)
+	accepted = _request_multi(injured,100)
+	_expect(accepted.ok,"handler-change fixture admitted")
+	if not accepted.ok: return
+	row = injured.supply.transport.jobs[accepted.id]
+	injured.rear.advance_time(6)
+	var carry: String = str(row.task.get("carry",""))
+	_expect(not carry.is_empty(),"second-source handler actually holds the planned portion before injury")
+	if carry.is_empty(): return
+	_expect(injured.ledger.injure_person(row.loader,100).ok,"actual loader incapacitated mid-second-source carry")
+	injured.rear.advance_time(2)
+	_expect(row.state == "Paused" and row.loaded == 50 and not injured.supply.resume_delivery(row.id).ok,"unavailable handler cannot resume or credit a lost carry")
+	_expect(injured.ledger.inspect_entity(carry).origin_id == "multi-source-1" and injured.ledger.total_stock("E26") == 100,"dropped second-source goods retain physical identity without replacement")

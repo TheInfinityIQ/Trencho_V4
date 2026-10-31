@@ -32,7 +32,7 @@ func _init(session: RefCounted) -> void:
 func _ready() -> void:
 	_note("Forward delivery uses a staffed military T01, unloaded HQ stock and a declared forward stop. Loading, travel, unloading and return take time.")
 	hull_choice = _option("Military T01")
-	freight_choice = _option("Available HQ freight")
+	freight_choice = _option("HQ freight type (all available portions)")
 	stop_choice = _option("Declared forward stop")
 	loader_choice = _option("HQ logistics loader")
 	unloader_choice = _option("Soldier at destination for unloading")
@@ -69,6 +69,8 @@ func _ready() -> void:
 	manual_issue.hide()
 	issue_diagnostics.toggled.connect(func(open: bool) -> void: manual_issue.visible = open)
 	stop_choice.item_selected.connect(func(_index: int) -> void: refresh())
+	hull_choice.item_selected.connect(func(_index: int) -> void: refresh())
+	freight_choice.item_selected.connect(func(_index: int) -> void: refresh())
 	refresh()
 
 
@@ -86,18 +88,24 @@ func refresh() -> void:
 	var entities: Array = ledger.snapshot().entities
 	var hulls: Array[Dictionary] = []
 	var freight: Array[Dictionary] = []
+	var freight_types := {}
 	var soldiers: Array[Dictionary] = []
 	var automatic: RefCounted = _automatic_issue()
 	for entity in entities:
 		if entity.kind == "CARRIER" and entity.owner == rear.PLAYER and entity.design_type == "T01" and entity.fleet_domain == "Military" and rear.military.vehicles.has(entity.id):
 			hulls.append({"id":entity.id,"label":"%s | %s | fuel %.1f" % [entity.id,entity.holder_id,entity.fuel]})
 		elif entity.kind == "STOCK" and entity.holder_id == "hq-stock" and entity.owner == rear.PLAYER and entity.available > 0:
-			freight.append({"id":entity.id,"label":"%s %s | %d available | %.2f kg each" % [entity.id,entity.design_type,entity.available,entity.unit_mass_kg]})
+			if not freight_types.has(entity.design_type): freight_types[entity.design_type] = {"available":0,"portions":0}
+			freight_types[entity.design_type].available += int(entity.available)
+			freight_types[entity.design_type].portions += 1
 		elif entity.kind == "PERSON" and entity.owner == rear.PLAYER and entity.assignment == "Formation Duty" and entity.health > 0 and entity.pending_assignment == "None" and str(entity.crew_station).is_empty() and ledger.inspect_entity(entity.holder_id).get("kind","") == "PLACE":
 			for squad in rear.military.squads.values():
 				if squad.state == "Active" and entity.id in squad.roster:
 					soldiers.append({"id":entity.id,"label":"%s | %s | %s" % [entity.id,squad.id,str(entity.position)]})
 					break
+	for type in freight_types:
+		var stock: Dictionary = freight_types[type]
+		freight.append({"id":type,"label":"%s | %d available across %d portions" % [type,stock.available,stock.portions]})
 	var stops: Array[Dictionary] = []
 	for id in rear.forward_supply.delivery_stops:
 		var place: Dictionary = ledger.inspect_entity(id)
@@ -105,6 +113,9 @@ func refresh() -> void:
 	_sync(hull_choice,hulls)
 	_sync(freight_choice,freight)
 	_sync(stop_choice,stops)
+	var limit: int = _freight_limit(entities,ledger.inspect_entity(_selected(hull_choice)),_selected(freight_choice))
+	amount.max_value = maxi(1,limit)
+	amount.tooltip_text = "%d whole units currently fit the available portions and this hull's payload; preview revalidates the actual load." % limit
 	var loaders: Array[Dictionary] = []
 	for id in rear.dispatch.free_hq_handlers(4):
 		loaders.append({"id":id,"label":id})
@@ -186,7 +197,7 @@ func _routes(hull_id: String, stop_id: String) -> Dictionary:
 func _preview() -> void:
 	var rear: RefCounted = simulation.rear
 	var route: Dictionary = _routes(_selected(hull_choice),_selected(stop_choice))
-	var preview: Dictionary = rear.forward_supply.preview_delivery(_selected(hull_choice),_selected(freight_choice),int(amount.value),_selected(stop_choice),route.out,route.home,_selected(loader_choice),_selected(unloader_choice))
+	var preview: Dictionary = rear.forward_supply.preview_delivery_type(_selected(hull_choice),_selected(freight_choice),int(amount.value),_selected(stop_choice),route.out,route.home,_selected(loader_choice),_selected(unloader_choice))
 	if preview.ok:
 		route_status.text = "%s: %.0f m round trip, about %.0f s travel plus handling. Fuel %.2f needed with reserve / %.2f in tank. Loaded mass about %.0f kg." % [route.name,preview.distance,preview.seconds,preview.required_fuel,preview.tank_fuel,preview.gross_kg]
 	else:
@@ -196,7 +207,7 @@ func _preview() -> void:
 
 func _start_delivery() -> void:
 	var route: Dictionary = _routes(_selected(hull_choice),_selected(stop_choice))
-	_emit(simulation.rear.forward_supply.request_delivery(_selected(hull_choice),_selected(freight_choice),int(amount.value),_selected(stop_choice),route.out,route.home,_selected(loader_choice),_selected(unloader_choice)))
+	_emit(simulation.rear.forward_supply.request_delivery_type(_selected(hull_choice),_selected(freight_choice),int(amount.value),_selected(stop_choice),route.out,route.home,_selected(loader_choice),_selected(unloader_choice)))
 
 
 func _pause_delivery() -> void:
@@ -236,8 +247,24 @@ func _delivery_detail(row: Dictionary, ledger: RefCounted) -> String:
 	var hull: Dictionary = ledger.inspect_entity(row.hull)
 	var message := "%s | %s at %s | fuel %.2f | loaded %d/%d | unloaded %d/%d" % [row.id,row.state,str(hull.position),hull.fuel,row.loaded,row.quantity,row.unloaded,row.quantity]
 	if row.state in ["Outbound","Returning"]: message += " | route %.0f/%.0f m" % [row.route_distance,row.route_plan.distance]
+	for source in row.get("sources",[]):
+		message += "\n%s · origin %s · loaded %d/%d" % [source.stock,source.origin_id,source.loaded,source.quantity]
 	if not str(row.blocker).is_empty(): message += "\n" + str(row.blocker)
 	return message
+
+
+func _freight_limit(entities: Array, hull: Dictionary, type: String) -> int:
+	if hull.is_empty(): return 0
+	var capacity: float = float(hull.get("vehicle_spec",{}).get("payload",0.0))
+	var mass := 0.0
+	var total := 0
+	for stock in entities:
+		if stock.kind != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != simulation.rear.PLAYER or stock.design_type != type or stock.available <= 0: continue
+		var count: int = mini(int(stock.available),maxi(0,int(floorf((capacity+0.000001-mass)/float(stock.unit_mass_kg)))))
+		total += count
+		mass += count*float(stock.unit_mass_kg)
+		if count < int(stock.available): break
+	return total
 
 
 func _issue_detail(row: Dictionary) -> String:

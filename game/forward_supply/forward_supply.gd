@@ -54,6 +54,16 @@ func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	return transport.preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
 
 
+func request_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.request_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func preview_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.preview_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
 func resume_delivery(id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
 	return transport.resume_delivery(id,outbound_points,return_points)
 
