@@ -214,6 +214,12 @@ func entities_of_kind(kind: Records.Kind, include_mass: bool = true) -> Array[Di
 		if entity.kind == kind: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
+func entities_of_kinds(kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.kind in kinds: result.append(inspect_entity(entity.id,{},include_mass))
+	return result
+
 func available_person_ids(owner: String) -> Array[String]:
 	var result: Array[String] = []
 	for entity in _entities.values():

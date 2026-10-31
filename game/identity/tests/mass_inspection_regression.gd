@@ -77,6 +77,14 @@ func compare(ledger: RefCounted) -> void:
 	var complete: Dictionary = ledger.snapshot()
 	compare_available_people(ledger,complete)
 	var metadata: Dictionary = ledger.snapshot(false)
+	for kinds in [[],[-1],[Records.Kind.PERSON,Records.Kind.CARRIER],[Records.Kind.CARRIER,Records.Kind.PERSON,Records.Kind.PERSON],Records.Kind.values()]:
+		var expected_full: Array[Dictionary] = []
+		var expected_metadata: Array[Dictionary] = []
+		for index in complete.entities.size():
+			if ledger._entities[complete.entities[index].id].kind in kinds:
+				expected_full.append(complete.entities[index])
+				expected_metadata.append(metadata.entities[index])
+		_expect_kind_rows(ledger,kinds,expected_full,expected_metadata)
 	for index in complete.entities.size():
 		var expected: Dictionary = complete.entities[index].duplicate(true)
 		expected.erase("contents_mass_kg")
@@ -167,6 +175,13 @@ func compare(ledger: RefCounted) -> void:
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)
+func _expect_kind_rows(ledger: RefCounted, kinds: Array, full: Array, metadata: Array) -> void:
+	check(ledger.entities_of_kinds(kinds) == full,"Kind union preserves canonical full snapshot fields, mass and order")
+	var queried: Array[Dictionary] = ledger.entities_of_kinds(kinds,false)
+	check(queried == metadata,"Kind union metadata equals independently filtered complete snapshot")
+	for row in queried: row.owner = "Mutated detached result"
+	check(ledger.entities_of_kinds(kinds,false) == metadata,"Kind union returns detached records without altering later fresh queries")
+
 func legacy_entities_at(ledger: RefCounted, holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	# Retained single-holder algorithm, without batch-query facts or delegation.
 	var result: Array[Dictionary] = []

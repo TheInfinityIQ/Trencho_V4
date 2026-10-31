@@ -66,7 +66,7 @@ func inspect_fire(shooter_id: String, target_id: String, weapon_id: String, movi
 	var sight: Dictionary = world.observe(origin,destination,"ordinary",1.5,float(spec.range))
 	if not sight.visible: return _block("Target is not currently visible: " + str(sight.eye.reason))
 	if not sight.firing_line_clear: return _block("Firing line is obstructed: " + str(sight.muzzle.reason))
-	for item in ledger.snapshot(false).entities:
+	for item in ledger.entities_of_kinds([Records.Kind.PERSON,Records.Kind.CARRIER],false):
 		if item.id in [shooter_id,target_id] or item.owner != shooter.owner or item.kind not in ["PERSON","CARRIER"]: continue
 		if item.kind == "PERSON" and item.assignment in ["Wounded","Dead"]: continue
 		var along := _segment_fraction(item.position,origin,destination)
