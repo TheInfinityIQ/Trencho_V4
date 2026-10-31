@@ -88,6 +88,7 @@ jobs:
             game/forward_supply/tests/forward_transport_regression.gd
             game/forward_supply/tests/forward_delivery_ui_regression.gd
             game/combat/tests/combat_regression.gd
+            game/identity/tests/identity_regression.gd
           )
           for script in "${cases[@]}"; do
             name="${script##*/}"
