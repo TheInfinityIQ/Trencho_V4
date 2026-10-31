@@ -465,15 +465,15 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 
 func _any_eligible(ids: Array, duty: String) -> bool:
 	for id in ids:
-		if _eligible(ledger.inspect_entity(id), duty): return true
+		if _eligible(ledger.inspect_person_status(id), duty): return true
 	return false
 
 
 func _choose_person(ids: Array, duty: String) -> String:
-	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_entity(id), duty))
+	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_person_status(id), duty))
 	candidates.sort_custom(func(a: String, b: String) -> bool:
-		var first: Dictionary = ledger.inspect_entity(a)
-		var second: Dictionary = ledger.inspect_entity(b)
+		var first: Dictionary = ledger.inspect_person_status(a)
+		var second: Dictionary = ledger.inspect_person_status(b)
 		var rank_a := (2 if first.qualification != "None" else (1 if first.basic_training else 0))
 		var rank_b := (2 if second.qualification != "None" else (1 if second.basic_training else 0))
 		if (first.duty_id == duty) != (second.duty_id == duty): return first.duty_id == duty

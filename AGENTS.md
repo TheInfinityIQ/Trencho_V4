@@ -28,6 +28,7 @@ Run from the root in PowerShell 7:
 Or run `./tools/check.ps1` when `godot` is on PATH. CI uses the same command.
 For behavior changes, add focused regression coverage when it can meaningfully catch failures, and verify changed interactions in Godot.
 Report checks run, results, and any unverified behavior. Headless startup does not establish visual or gameplay correctness.
+Protect desktop responsiveness: coordinate one local Godot process across the team, use bounded lower-priority focused checks, and run broad checks on CI. Do not run local suites alongside play or restart long simulations before resource use is acceptable.
 
 ## Repository care
 
