@@ -108,7 +108,10 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	var deposits := {}
 	var state := "Awaiting actual truck and handlers"
 	while Time.get_ticks_msec() < deadline and session.rear.time < 2600.0:
-		var slice_end: int = Time.get_ticks_usec()+12000
+		# Batch controlled clock calls before yielding. The normal 30FPS cap must
+		# not add a rendered-frame wait to every simulated 0.1-second quantum.
+		# Each call still uses the same event boundaries and bounded planning pump.
+		var slice_end: int = Time.get_ticks_usec()+80000
 		while Time.get_ticks_usec() < slice_end:
 			session.tick(0.1)
 			if admitted:
