@@ -13,16 +13,22 @@ on:
         default: full
         required: true
       combat_profile:
-        description: Profile combat observation only (adds overhead; includes 20/10-second combat and post-contact samples)
+        description: Profile combat observation only (adds overhead; uses the selected combat windows)
         type: boolean
         default: false
         required: false
+      combat_windows:
+        description: Combat observation windows (extended 20/10 seconds or short 9/6 seconds)
+        type: choice
+        options: [extended, short]
+        default: extended
+        required: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_profile && '-combat-profile' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}
+  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_profile && '-combat-profile' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_windows == 'short' && '-short' || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -219,8 +225,9 @@ jobs:
     env:
       EVALUATION_HEAD: ${{ github.sha }}
       COMBAT_PROFILE: ${{ inputs.combat_profile && 'true' || 'false' }}
-      COMBAT_RUN_SECONDS: '20'
-      COMBAT_DOUBLE_SECONDS: '10'
+      COMBAT_WINDOWS: ${{ inputs.combat_windows || 'extended' }}
+      COMBAT_RUN_SECONDS: ${{ inputs.combat_windows == 'short' && '9' || '20' }}
+      COMBAT_DOUBLE_SECONDS: ${{ inputs.combat_windows == 'short' && '6' || '10' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -231,7 +238,7 @@ jobs:
           mkdir -p .artifacts/combat
           touch .artifacts/.gdignore
           printf 'revision=%s\n' "$EVALUATION_HEAD" > .artifacts/combat/revision.txt
-          printf 'combat_profile=%s\nrun_seconds=%s\ndouble_seconds=%s\n' "$COMBAT_PROFILE" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" >> .artifacts/combat/revision.txt
+          printf 'combat_profile=%s\ncombat_windows=%s\nrun_seconds=%s\ndouble_seconds=%s\n' "$COMBAT_PROFILE" "$COMBAT_WINDOWS" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" >> .artifacts/combat/revision.txt
           sha256sum game/scenario/tests/responsiveness_probe.gd > .artifacts/combat/driver.sha256
       - name: Download and verify pinned Godot
         timeout-minutes: 2
@@ -265,7 +272,7 @@ jobs:
         run: |
           set -euo pipefail
           command -v xvfb-run
-          printf 'revision=%s\nstarted_utc=%s\nsimulation_seek_limit_seconds=1200\ncombat_profile=%s\nrun_seconds=%s\ndouble_seconds=%s\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" "$COMBAT_PROFILE" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" > .artifacts/combat/run.txt
+          printf 'revision=%s\nstarted_utc=%s\nsimulation_seek_limit_seconds=1200\ncombat_profile=%s\ncombat_windows=%s\nrun_seconds=%s\ndouble_seconds=%s\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" "$COMBAT_PROFILE" "$COMBAT_WINDOWS" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" > .artifacts/combat/run.txt
           engine_flags=()
           probe_flags=()
           if [ "$COMBAT_PROFILE" = true ]; then
@@ -287,7 +294,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: ${{ inputs.combat_profile && 'godot-combat-profile' || 'godot-combat-observation' }}
+          name: ${{ inputs.combat_profile && 'godot-combat-profile' || 'godot-combat-observation' }}${{ inputs.combat_windows == 'short' && '-short' || '' }}
           path: .artifacts/combat/
           include-hidden-files: true
           retention-days: 7
