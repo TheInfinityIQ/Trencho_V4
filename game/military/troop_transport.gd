@@ -413,6 +413,8 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 	var rear: RefCounted = _rear()
 	var parent: String = str(_organization().vehicles[hull_id].parent)
 	var company: String = str(_organization().platoons[parent].company) if _organization().platoons.has(parent) else parent
+	var bounds := {}
+	var bounds_checked := false
 	for target_id in rear.orders.contacts.get(company,{}):
 		var contact: Dictionary = rear.orders.contact(company,target_id)
 		if contact.is_empty() or float(contact.confidence) <= EPS or not contact.position.is_finite(): continue
@@ -420,6 +422,12 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 		# effective fire. Unknown people/armed contacts retain the conservative margin.
 		if contact.get("class","") in ["Resource","Route Hub","Observation","T01","T02"]: continue
 		var radius: float = float(THREAT_RANGE.get(str(contact.get("class","")),300.0))+float(contact.uncertainty_m)
+		if not bounds_checked:
+			bounds = _danger_bounds(parts)
+			bounds_checked = true
+		if not bounds.is_empty():
+			var nearest: Vector2 = contact.position.clamp(bounds.low,bounds.high)
+			if contact.position.distance_to(nearest) > radius+EPS: continue
 		for part in parts:
 			var from: Vector2 = part.from
 			var to: Vector2 = part.to
@@ -427,6 +435,26 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 			if contact.position.distance_to(from.lerp(to,along)) <= radius+EPS:
 				return "Observed hostile effective fire blocks an ordinary troop route; use a safe declared path."
 	return ""
+
+
+func _danger_bounds(parts: Array) -> Dictionary:
+	if parts.is_empty(): return {}
+	var low := Vector2.INF
+	var high := -Vector2.INF
+	for part in parts:
+		if not (part is Dictionary) or not (part.get("from") is Vector2) or not (part.get("to") is Vector2): return {}
+		var from: Vector2 = part.from
+		var to: Vector2 = part.to
+		if not from.is_finite() or not to.is_finite(): return {}
+		# The pinned engine's component lerp is monotone over [0,1]. Use its
+		# computed endpoints, including cancellation at weight one, rather than
+		# assuming that endpoint equals `to`. Nonfinite arithmetic falls back.
+		var first := from.lerp(to,0.0)
+		var last := from.lerp(to,1.0)
+		if not first.is_finite() or not last.is_finite(): return {}
+		low = low.min(first).min(last)
+		high = high.max(first).max(last)
+	return {"low":low,"high":high}
 
 
 func _route_progress(plan: Dictionary, elapsed: float) -> Dictionary:

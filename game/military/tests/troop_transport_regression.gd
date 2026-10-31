@@ -4,14 +4,22 @@ const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const Specs = preload("res://game/production/vehicle_specs.gd")
 const BattlefieldStart = preload("res://game/scenario/battlefield_start.gd")
+const Transport = preload("res://game/military/troop_transport.gd")
 const HQ := Vector2(1640,91)
 const SAFE := Vector2(1640,150)
 var checks := 0
 var failures := 0
 
+class CountedTransport extends Transport:
+	var bounds_calls := 0
+	func _danger_bounds(parts: Array) -> Dictionary:
+		bounds_calls += 1
+		return super._danger_bounds(parts)
+
 
 func _initialize() -> void:
 	if "--seeded-only" not in OS.get_cmdline_user_args():
+		_test_route_danger_bounds()
 		_test_two_loaded_t02()
 		_test_owner_filter_and_generated_names()
 	if "--fixture-only" not in OS.get_cmdline_user_args(): _test_seeded_army_movement()
@@ -141,6 +149,76 @@ func _test_owner_filter_and_generated_names() -> void:
 	var blue_parent: Dictionary = rear.military._available_platoon()
 	_check(not blue_parent.is_empty() and blue_parent.id != "platoon-02" and blue_parent.company != "company-02","generated blue parent IDs skip opposing declared IDs")
 	_check(rear.military.squads[red_id].company == "company-02" and base.audit().is_empty(),"red original hierarchy remains intact after blue parent generation")
+
+
+func _test_route_danger_bounds() -> void:
+	var base: RefCounted = Base.new(false,true,false,HQ,false)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	var squad_id: String = _add_squad(rear,"blue",700,4,"hq-formation","danger-company","danger-platoon")
+	_check(ledger.add_initial_vehicle("danger-hull","T02","hq-formation",rear.PLAYER,Specs.TYPES.T02,40,"Military").ok,"real geometry-fixture hull")
+	_check(ledger.add_person("danger-driver","hq-formation",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok,"actual geometry-fixture driver")
+	_check(ledger.assign_initial_vehicle_crew("danger-driver","danger-hull","Driver").ok and rear.military.attach_initial_vehicle("danger-hull","danger-platoon").ok,"actual seated and attached fixture hull")
+	_check(ledger.add_place("danger-enemy-place","Recorded-threat fixture",Vector2(2000,700)).ok and ledger.add_person("danger-enemy","danger-enemy-place","army-red",Records.Assignment.AVAILABLE,true,"None","None").ok,"real opposing report identity")
+	var transport := CountedTransport.new(rear,rear.military)
+	var paths: Array = [[],[{"from":Vector2.ZERO,"to":Vector2.ZERO}],[{"from":Vector2.ZERO,"to":Vector2(2000,0)}],[{"from":Vector2(-600,-400),"to":Vector2(1200,900)},{"from":Vector2(1200,900),"to":Vector2(1200,1500)}],[{"from":Vector2(100000000,0),"to":Vector2(1,0)}],[{"from":Vector2(3e38,0),"to":Vector2(-3e38,0)},{"from":Vector2.ZERO,"to":Vector2(10,0)}]]
+	var long_path: Array = []
+	for index in 512: long_path.append({"from":Vector2(index*2,0),"to":Vector2(index*2+2,0)})
+	paths.append(long_path)
+	# Isolated recorded-report fixtures test geometry, not observation delivery.
+	for parts in paths:
+		for kind in ["P01","Unknown","T03","T04","T05","Resource","T01"]:
+			for point in [Vector2.ZERO,Vector2(-300,0),Vector2(100,250),Vector2(100,300),Vector2(100,300.001),Vector2(5000,5000),Vector2(-5000,-5000)]:
+				rear.orders.contacts["danger-company"] = {"danger-enemy":{"target":"danger-enemy","position":point,"class":kind,"observed_at":rear.time,"observed_strength":1.0,"source":squad_id}}
+				_compare_danger(rear,transport,parts)
+		for age in [0.0,10.0,20.0,49.99,50.0,60.0]:
+			rear.orders.contacts["danger-company"] = {"danger-enemy":{"target":"danger-enemy","position":Vector2(100,350),"class":"P01","observed_at":rear.time-age,"observed_strength":1.0,"source":squad_id}}
+			_compare_danger(rear,transport,parts)
+	var cancellation: Array = [{"from":Vector2(100000000,0),"to":Vector2(1,0)}]
+	var bounds: Dictionary = transport._danger_bounds(cancellation)
+	_check(bounds.low.x == 0.0,"computed lerp endpoint, rather than authored to.x=1, bounds cancellation")
+	for weight in [0.0,0.000001,0.25,0.5,0.75,0.999999,1.0]:
+		var point: Vector2 = cancellation[0].from.lerp(cancellation[0].to,weight)
+		_check(point == point.clamp(bounds.low,bounds.high),"finite lerp samples remain inside computed bounds")
+	_check(transport._danger_bounds([{ "from":Vector2.INF,"to":Vector2.ZERO }]).is_empty() and transport._danger_bounds([{ "from":Vector2.ZERO,"to":Vector2(NAN,0) }]).is_empty(),"nonfinite segments retain original geometry fallback")
+	_check(transport._danger_bounds([{ "from":Vector2(3e38,0),"to":Vector2(-3e38,0) }]).is_empty(),"overflowed endpoint computation retains original geometry fallback")
+	for id in ["danger-far","danger-near"]: _check(ledger.add_person(id,"danger-enemy-place","army-red",Records.Assignment.AVAILABLE,true,"None","None").ok,"distinct recorded-threat fixture identity")
+	rear.orders.contacts["danger-company"] = {"danger-enemy":{"target":"danger-enemy","position":Vector2.ZERO,"class":"Resource","observed_at":rear.time,"observed_strength":1.0,"source":squad_id},"danger-far":{"target":"danger-far","position":Vector2(5000,5000),"class":"P01","observed_at":rear.time,"observed_strength":1.0,"source":squad_id},"danger-near":{"target":"danger-near","position":Vector2(100,250),"class":"P01","observed_at":rear.time,"observed_strength":1.0,"source":squad_id}}
+	_compare_danger(rear,transport,long_path)
+	_check(transport.bounds_calls == 1,"ignored, far and blocking reports share one fresh bounds calculation")
+	rear.orders.contacts["danger-company"] = {"danger-enemy":{"target":"danger-enemy","position":Vector2(NAN,0),"class":"P01","observed_at":rear.time,"observed_strength":1.0,"source":squad_id}}
+	_compare_danger(rear,transport,long_path)
+	_check(transport.bounds_calls == 0,"invalid reported position is rejected before bounds construction")
+	rear.orders.contacts["danger-company"] = {}
+	_compare_danger(rear,transport,long_path)
+	_check(transport.bounds_calls == 0,"no reports require no bounds work")
+	_check(ledger.audit().is_empty(),"route danger reads preserve physical fixture identities")
+
+func _compare_danger(rear: RefCounted, transport: RefCounted, parts: Array) -> void:
+	var before: Dictionary = rear.orders.contacts.duplicate(true)
+	var event_count: int = rear.ledger._events.size()
+	var expected: String = _legacy_route_danger(rear,"danger-hull",parts)
+	transport.bounds_calls = 0
+	_check(transport._known_route_danger("danger-hull",parts) == expected,"route danger exactly matches prior segment decisions, including far/near/aged/ignored/degenerate/overflow inputs")
+	_check(transport.bounds_calls <= 1,"route bounds are constructed at most once per synchronous call")
+	_check(var_to_bytes(before) == var_to_bytes(rear.orders.contacts) and event_count == rear.ledger._events.size(),"danger reads do not mutate physical entities or reports, including NaN fixtures")
+
+func _legacy_route_danger(rear: RefCounted, hull_id: String, parts: Array) -> String:
+	# Retained pre-bound algorithm; no call to the new geometry helper.
+	var parent: String = str(rear.military.vehicles[hull_id].parent)
+	var company: String = str(rear.military.platoons[parent].company) if rear.military.platoons.has(parent) else parent
+	for target_id in rear.orders.contacts.get(company,{}):
+		var contact: Dictionary = rear.orders.contact(company,target_id)
+		if contact.is_empty() or float(contact.confidence) <= Transport.EPS or not contact.position.is_finite(): continue
+		if contact.get("class","") in ["Resource","Route Hub","Observation","T01","T02"]: continue
+		var radius: float = float(Transport.THREAT_RANGE.get(str(contact.get("class","")),300.0))+float(contact.uncertainty_m)
+		for part in parts:
+			var from: Vector2 = part.from
+			var to: Vector2 = part.to
+			var along: float = clampf((contact.position-from).dot(to-from)/maxf(Transport.EPS,from.distance_squared_to(to)),0.0,1.0)
+			if contact.position.distance_to(from.lerp(to,along)) <= radius+Transport.EPS:
+				return "Observed hostile effective fire blocks an ordinary troop route; use a safe declared path."
+	return ""
 
 
 func _test_seeded_army_movement() -> void:
