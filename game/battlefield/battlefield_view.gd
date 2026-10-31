@@ -8,11 +8,22 @@ const PANEL_WIDTH := 350.0
 var simulation: RefCounted
 var zoom := 1.0
 var pan := Vector2.ZERO
-var selected_id := "resource-central"
+var selected_id := ""
 var _dragging := false
 var _refresh_elapsed := 0.0
 var _inspector: Label
 
+func bind(next_simulation: RefCounted) -> void:
+	simulation = next_simulation
+	if is_node_ready():
+		_refresh()
+		queue_redraw()
+
+func _default_objective() -> String:
+	var objectives: Dictionary = simulation.rear.objectives.objectives
+	for id in ["resource-centre-blue","resource-central"]:
+		if objectives.has(id): return id
+	return str(objectives.keys()[0]) if not objectives.is_empty() else ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -171,9 +182,12 @@ func _refresh() -> void:
 	if _inspector == null or simulation == null: return
 	var rear: RefCounted = simulation.rear
 	var view: Dictionary = simulation.snapshot()
-	var objective_id := selected_id if rear.objectives.objectives.has(selected_id) else ("resource-centre-blue" if rear.objectives.objectives.has("resource-centre-blue") else "resource-central")
-	var objective: Dictionary = rear.objectives.inspect(objective_id)
 	var selected: Dictionary = Presentation.inspect(rear,selected_id)
+	if selected.is_empty():
+		selected_id = _default_objective()
+		selected = Presentation.inspect(rear,selected_id)
+	var objective_id := selected_id if rear.objectives.objectives.has(selected_id) else _default_objective()
+	var objective: Dictionary = rear.objectives.inspect(objective_id)
 	var detail := ""
 	if not selected.is_empty():
 		var title: String = _site_label(selected.id) if selected.kind == "PLACE" else (_unit_label(selected) if selected.kind in ["PERSON","CARRIER"] else selected.id)
@@ -197,9 +211,12 @@ func _refresh() -> void:
 				var passenger: Dictionary = rear.ledger.inspect_entity(id)
 				detail += "\n%s · Health %d · %s" % [_unit_label(passenger),passenger.health,passenger.assignment]
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
+	var objective_detail := "No objective registered."
+	if not objective.is_empty():
+		objective_detail = "%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s" % [_site_label(objective_id),objective.control,Presentation.ownership_label(str(objective.owner),rear.PLAYER),objective.income_rate,blocked]
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
-	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money, _site_label(objective_id), objective.get("control", 0.0), Presentation.ownership_label(str(objective.get("owner", "")),rear.PLAYER), objective.get("income_rate", 0.0), blocked, detail]
+	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money,objective_detail,detail]
 	if not rear.combat.world.scenario.is_empty(): _inspector.text += "\n\nTERRAIN KEY\nTan: fields and crops\nGreen: forest (dark = dense)\nGrey: rock; pale grey: towns\nBlue: water; teal: swamp\nCream lines: roads"
 	if rear.battlefield_operations != null and rear.battlefield_operations.policy != null:
 		var opening: Dictionary = rear.battlefield_operations.policy.snapshot()

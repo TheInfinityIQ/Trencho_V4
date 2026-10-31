@@ -121,7 +121,7 @@ func _clear_review() -> void:
 
 
 func _on_session_changed(next_simulation: RefCounted) -> void:
-	_battlefield.simulation = next_simulation
+	_battlefield.bind(next_simulation)
 
 func _start_playtest() -> void:
 	_base.scenario.select(2)
