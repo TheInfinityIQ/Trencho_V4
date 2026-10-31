@@ -9,6 +9,13 @@ var _rear_ref: WeakRef
 var _organization_ref: WeakRef
 var jobs: Dictionary = {}
 var _sequence := 0
+var incremental_planning: bool = false
+var planning_revision: int = 0
+var _planning_generation := 0
+var _planning_sequence := 0
+var _planning_requests: Dictionary = {}
+var _planning_fifo: Array[Dictionary] = []
+var _departure_requests: Dictionary = {}
 
 
 func _init(rear: RefCounted, organization: RefCounted) -> void:
@@ -16,6 +23,366 @@ func _init(rear: RefCounted, organization: RefCounted) -> void:
 	_organization_ref = weakref(organization)
 	if rear.ledger.inspect_entity("troop-transit").is_empty():
 		rear.ledger.add_place("troop-transit","Military personnel hull on its declared route",Vector2.ZERO)
+
+
+func request_trip_deferred(key: String, hull_id: String, squad_ids: Array, board: String, dismount: String,
+		outbound: Array, return_points: Array, intent_ids: Dictionary = {}) -> Dictionary:
+	if key.is_empty(): return _fail("A deferred trip needs a stable request key.")
+	if not _planning_requests.has(key):
+		var request: Dictionary = _planning_descriptor(key,hull_id,squad_ids,board,dismount,outbound,return_points,intent_ids)
+		_planning_requests[key] = request
+		_planning_fifo.append(request)
+		planning_revision += 1
+	var status: Dictionary = planning_status(key)
+	status.ok = true
+	status.pending = status.state in ["Pending","Ready"]
+	status.request_id = key
+	return status
+
+
+func planning_status(key: String) -> Dictionary:
+	var request: Dictionary = _planning_requests.get(key,{})
+	if request.is_empty(): return {}
+	var status := {"state":request.state,"message":request.message}
+	if request.state == "Admitted":
+		status.job = request.job
+		status.admitted_at = request.admitted_at
+	return status
+
+
+func has_planning_work() -> bool:
+	for request in _planning_fifo:
+		if request.state in ["Pending","Ready"]: return true
+	return false
+
+
+func invalidate_planning() -> void:
+	_planning_generation += 1
+	for request in _planning_fifo:
+		if request.state in ["Pending","Ready"]: _reset_planning(request)
+
+
+func cancel_planning() -> void:
+	_planning_generation += 1
+	for request in _planning_fifo:
+		if request.state not in ["Pending","Ready"]: continue
+		request.state = "Cancelled"
+		request.message = "Pure route planning cancelled; existing physical ownership is retained."
+		_drop_planning_work(request)
+		planning_revision += 1
+		if request.kind == "Departure":
+			var row: Dictionary = jobs.get(request.job,{})
+			if not row.is_empty() and row.state == "Planning Route": _block_route(row,request.phase,request.message)
+	_planning_fifo.clear()
+	_departure_requests.clear()
+
+
+func pump_planning(allow_commit: bool, max_units: int = 128, budget_usec: int = 4000) -> bool:
+	# Invoke only outside _settle at a fully settled shared-clock boundary.
+	# Guards/capture/local approaches and hazard/danger callbacks are indivisible.
+	if max_units <= 0 or budget_usec <= 0: return false
+	var deadline: int = Time.get_ticks_usec()+budget_usec
+	var units := 0
+	while not _planning_fifo.is_empty() and _planning_fifo[0].state not in ["Pending","Ready"]:
+		if units >= max_units or Time.get_ticks_usec() >= deadline: return false
+		_planning_fifo.pop_front()
+		units += 1
+	if _planning_fifo.is_empty(): return false
+	var request: Dictionary = _planning_fifo[0]
+	while units < max_units and Time.get_ticks_usec() < deadline:
+		if request.stage != "Capture" and (request.generation != _planning_generation or request.world != _rear().combat.world or request.revision != _rear().combat.world.revision):
+			_reset_planning(request)
+		if request.state == "Ready":
+			if not allow_commit: return false
+			return _commit_planning(request)
+		if request.stage == "Capture":
+			units += 1
+			var guarded: Dictionary = _planning_guard(request)
+			if not guarded.ok: return _deny_planning(request,guarded.message)
+			request.capture = _planning_capture(request,guarded)
+			request.world = _rear().combat.world
+			request.revision = request.world.revision
+			request.generation = _planning_generation
+			request.stage = "Outward"
+			continue
+		if request.work == null:
+			units += 1
+			var points: Array = request.home if request.stage == "Homeward" else request.out
+			request.work = Routes.begin_plan(_rear().ledger,request.hull,points,{"world":request.world})
+			continue
+		if request.work.done:
+			units += 1
+			return _complete_planning_leg(request)
+		var remaining_usec: int = deadline-Time.get_ticks_usec()
+		if remaining_usec <= 0: return false
+		var remaining: int = max_units-units
+		request.work.step(remaining,remaining_usec)
+		units += remaining # Conservative shared allowance; never reset per leg.
+		if request.work.invalidated:
+			_reset_planning(request)
+		return false
+	return false
+
+
+func _complete_planning_leg(request: Dictionary) -> bool:
+	var plan: Dictionary = request.work.result
+	if not plan.ok:
+		var prefix := "No legal outward route: " if request.stage == "Outward" else "No legal return route: "
+		if request.kind == "Departure": prefix = "" if request.stage == "Outward" else "HQ return became illegal: "
+		return _deny_planning(request,prefix+str(plan.reason))
+	if request.stage == "Outward":
+		request.outward = plan
+		request.out_facts = request.work.input_facts
+		request.work = null
+		# Existing departure checks outward danger before planning its reserve.
+		if request.kind == "Departure":
+			var danger: String = _known_route_danger(request.hull,plan.parts)
+			if not danger.is_empty(): return _deny_planning(request,danger)
+		if request.kind == "Admission" or request.phase == "Outbound":
+			request.stage = "Homeward"
+		else: request.state = "Ready"
+	else:
+		request.homeward = plan
+		request.home_facts = request.work.input_facts
+		request.work = null
+		request.state = "Ready"
+	if request.state == "Ready":
+		request.message = "Pure route plans ready; waiting for fresh running-state admission."
+		planning_revision += 1
+	return false
+
+
+func _planning_descriptor(key: String, hull: String, squads: Array, board: String, dismount: String,
+		out: Array, home: Array, intents: Dictionary) -> Dictionary:
+	return {"key":key,"kind":"Admission","hull":hull,"squads":squads.duplicate(),"board":board,"dismount":dismount,
+		"out":out.duplicate(),"home":home.duplicate(),"intents":intents.duplicate(true),"job":"","phase":"",
+		"state":"Pending","message":"Waiting for pure route planning.","stage":"Capture","work":null,
+		"capture":{},"outward":{},"homeward":{},"out_facts":{},"home_facts":{},"world":null,
+		"revision":-1,"generation":_planning_generation}
+
+
+func _reset_planning(request: Dictionary) -> void:
+	if request.state != "Pending" or request.message != "Waiting for fresh route capture.": planning_revision += 1
+	request.state = "Pending"
+	request.stage = "Capture"
+	request.message = "Waiting for fresh route capture."
+	_drop_planning_work(request)
+	request.generation = _planning_generation
+
+
+func _drop_planning_work(request: Dictionary) -> void:
+	request.work = null
+	request.capture = {}
+	request.outward = {}
+	request.homeward = {}
+	request.out_facts = {}
+	request.home_facts = {}
+	request.world = null
+
+
+func _planning_guard(request: Dictionary) -> Dictionary:
+	var rear: RefCounted = _rear()
+	var organization: RefCounted = _organization()
+	var hull: Dictionary = rear.ledger.inspect_entity(request.hull)
+	var board: Dictionary = rear.ledger.inspect_entity(request.board,{},false)
+	var dismount: Dictionary = rear.ledger.inspect_entity(request.dismount,{},false)
+	if request.kind == "Admission":
+		if hull_committed(request.hull) or (rear.forward_supply != null and rear.forward_supply.hull_committed(request.hull)):
+			return _fail("Another physical transport activity already owns this hull.")
+		if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T02" or hull.get("fleet_domain","") != "Military" or not organization.vehicles.has(request.hull):
+			return _fail("Choose one actually attached military T02.")
+		if board.get("kind","") != "PLACE" or dismount.get("kind","") != "PLACE" or request.board == request.dismount or hull.holder_id != request.board or not hull.position.is_equal_approx(board.position):
+			return _fail("Same stopped T02 must meet its passengers at a declared physical origin distinct from the dismount point.")
+		if request.squads.is_empty() or request.squads.size() > 2 or not hull.passengers.is_empty() or not str(organization.vehicles[request.hull].passenger_squad).is_empty():
+			return _fail("One T02 carries one or two separate unboarded squads, with no prior passenger commitment.")
+		var checked: Dictionary = _manifest_people(hull,request.squads,request.board)
+		if not checked.ok: return checked
+		if rear.forward_supply != null:
+			for id in checked.people:
+				if rear.forward_supply._other_busy(id): return _fail("Passenger must finish its existing physical activity before transport commitment.")
+		var admission_blocker: String = _movement_blocker(request.hull,hull)
+		if not admission_blocker.is_empty(): return _fail(admission_blocker)
+		var admission_error: String = _validate_points(request.out,hull.position,dismount.position)
+		if admission_error.is_empty(): admission_error = _validate_points(request.home,dismount.position,board.position)
+		if admission_error.is_empty(): admission_error = _planning_intent_error(request)
+		if not admission_error.is_empty(): return _fail(admission_error)
+		return {"ok":true,"hull":hull,"people":checked.people,"board":board,"dismount":dismount}
+	var row: Dictionary = jobs.get(request.job,{})
+	if row.is_empty() or row.state != "Planning Route" or row.planning_phase != request.phase:
+		return _fail("This physical trip no longer owns the queued route departure.")
+	if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T02" or hull.get("fleet_domain","") != "Military" or not organization.vehicles.has(request.hull):
+		return _fail("Choose one actually attached military T02.")
+	for other in jobs.values():
+		if other.id != row.id and other.hull == row.hull and other.state != "Complete": return _fail("Another physical transport activity already owns this hull.")
+	if rear.forward_supply != null and rear.forward_supply.hull_committed(row.hull): return _fail("Another physical transport activity already owns this hull.")
+	var blocker: String = _movement_blocker(request.hull,hull)
+	if not blocker.is_empty(): return _fail(blocker)
+	var destination: Dictionary = dismount if request.phase == "Outbound" else board
+	if destination.get("kind","") != "PLACE": return _fail("The declared physical route destination no longer exists.")
+	var error: String = _validate_points(request.out,hull.position,destination.position)
+	if error.is_empty() and request.phase == "Outbound": error = _validate_points(request.home,dismount.position,board.get("position",Vector2.INF))
+	if error.is_empty(): error = _planning_intent_error(request)
+	if error.is_empty(): error = _departure_manifest_error(row,hull,request.phase)
+	if not error.is_empty(): return _fail(error)
+	return {"ok":true,"hull":hull,"people":row.people if request.phase == "Outbound" else [],"board":board,"dismount":dismount}
+
+
+func _departure_manifest_error(row: Dictionary, hull: Dictionary, phase: String) -> String:
+	if float(hull.contents_mass_kg) > float(hull.vehicle_spec.payload)+EPS:
+		return "Actual passengers and their gear exceed the T02 payload mass."
+	if phase == "Returning":
+		if row.dismounted != row.people.size() or not hull.passengers.is_empty() or not _organization()._vehicle_squads(row.hull).is_empty():
+			return "Same T02 must finish the actual dismount and release its passenger places before returning."
+		return ""
+	if row.boarded != row.people.size() or row.dismounted != 0 or hull.passengers.size() != row.people.size():
+		return "Same T02 must retain its exact physically boarded passenger manifest."
+	for squad_id in row.squads:
+		var squad: Dictionary = _organization().squads.get(squad_id,{})
+		if squad.get("vehicle","") != row.hull or squad.get("state","") != "Active" or squad.get("owner",_rear().PLAYER) != hull.owner:
+			return "The same active owned passenger squads must remain reserved to this T02."
+	for id in row.people:
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
+		if id not in hull.passengers or person.get("holder_id","") != row.hull or person.get("owner","") != hull.owner or person.get("assignment","") != "Formation Duty" or person.get("health",0) <= 0 or person.get("duty_id","") not in row.squads:
+			return "Every named passenger must remain a living actual formation member aboard the same T02."
+		if id not in _organization().squads[person.duty_id].roster:
+			return "Every named passenger must remain in its actual reserved squad roster."
+	return ""
+
+
+func _planning_intent_error(request: Dictionary) -> String:
+	for squad_id in request.intents:
+		var intent: Dictionary = _rear().orders.intents.get(squad_id,{})
+		if squad_id not in request.squads or intent.get("id","") != request.intents[squad_id] or intent.get("state","") != "Acknowledged" or intent.get("action","") != "Move by Transport":
+			return "The same acknowledged Move by Transport intent is required before commitment."
+	return ""
+
+
+func _planning_capture(request: Dictionary, guarded: Dictionary) -> Dictionary:
+	var people := {}
+	for id in guarded.people: people[id] = _planning_person_facts(_rear().ledger.inspect_entity(id))
+	var attachment := {}
+	for key in ["owner","parent","passenger_squad","passenger_squads"]:
+		var value: Variant = _organization().vehicles[request.hull].get(key)
+		attachment[key] = value.duplicate() if value is Array else value
+	return {"people":people,"people_order":guarded.people.duplicate(),
+		"attachment":attachment,"board":{"kind":guarded.board.get("kind",""),"position":guarded.board.get("position",Vector2.INF)},
+		"dismount":{"kind":guarded.dismount.get("kind",""),"position":guarded.dismount.get("position",Vector2.INF)}}
+
+
+func _planning_person_facts(person: Dictionary) -> Dictionary:
+	var facts := {}
+	for key in ["id","owner","holder_id","position","health","assignment","duty_id","pending_assignment","crew_station","qualification","basic_training","unit_mass_kg","contents_mass_kg"]:
+		facts[key] = person.get(key)
+	return facts
+
+
+func _route_facts_match(facts: Dictionary, hull: Dictionary) -> bool:
+	for key in ["kind","design_type","owner","controller","holder_id","position","unit_mass_kg","contents_mass_kg","fuel","health","damage_immobilized","towing","towed_by","vehicle_spec","crew_by_station","passengers","fleet_domain"]:
+		if hull.get(key) != facts.hull.get(key): return false
+	if _rear().ledger.route_hazard != facts.route_hazard: return false
+	for id in facts.crew:
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
+		for key in facts.crew[id]:
+			if person.get(key) != facts.crew[id][key]: return false
+	return true
+
+
+func _commit_planning(request: Dictionary) -> bool:
+	var guarded: Dictionary = _planning_guard(request)
+	if not guarded.ok: return _deny_planning(request,guarded.message)
+	if request.world != _rear().combat.world or request.revision != request.world.revision:
+		_reset_planning(request)
+		return false
+	if not _route_facts_match(request.out_facts,guarded.hull) or (not request.home_facts.is_empty() and not _route_facts_match(request.home_facts,guarded.hull)) or _planning_capture(request,guarded) != request.capture:
+		return _deny_planning(request,"Captured hull, load, crew, roster or endpoints changed; request fresh route planning.")
+	var error := ""
+	if _rear().ledger.route_hazard.is_valid(): error = str(_rear().ledger.route_hazard.call(guarded.hull.owner,request.out))
+	if error.is_empty() and request.kind == "Departure": error = _known_route_danger(request.hull,request.outward.parts)
+	if error.is_empty() and not request.homeward.is_empty() and _rear().ledger.route_hazard.is_valid(): error = str(_rear().ledger.route_hazard.call(guarded.hull.owner,request.home))
+	if error.is_empty() and request.kind == "Admission":
+		error = _known_route_danger(request.hull,request.outward.parts)
+		if error.is_empty(): error = _known_route_danger(request.hull,request.homeward.parts)
+	if not error.is_empty(): return _deny_planning(request,error)
+	var required: float = float(request.outward.fuel)
+	if not request.homeward.is_empty(): required += float(request.homeward.fuel)
+	if float(guarded.hull.fuel)+EPS < required*1.25:
+		return _deny_planning(request,"Actual T02 tank cannot cover the full trip and 25 percent reserve." if request.kind == "Admission" else "Actual tank lacks travel fuel plus 25 percent reserve.")
+	if request.kind == "Admission":
+		var reserved: Dictionary = _organization()._reserve_transport_manifest(request.hull,request.squads)
+		if not reserved.ok: return _deny_planning(request,reserved.message)
+		_sequence += 1
+		var id := "troop-trip-%04d" % _sequence
+		jobs[id] = {"id":id,"kind":"Troop Trip","hull":request.hull,"owner":guarded.hull.owner,"squads":request.squads.duplicate(),"people":guarded.people,
+			"board_place":request.board,"dismount_place":request.dismount,"outbound_points":request.out.duplicate(),"return_points":request.home.duplicate(),
+			"boarded":0,"dismounted":0,"state":"Boarding","task":{},"route_plan":{},"route_points":[],"route_started":INF,
+			"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,"route_expected":guarded.hull.position,"world_revision":request.revision,
+			"paused_state":"","stopped_phase":"","blocker":"","return_completed":false,"intent_ids":request.intents.duplicate(true)}
+		request.job = id
+		request.admitted_at = _rear().time
+		request.message = "The same T02 and its actual squad members are committed to timed boarding and travel."
+	else:
+		var row: Dictionary = jobs[request.job]
+		row.state = request.phase
+		row.route_plan = request.outward
+		row.route_points = request.out.duplicate()
+		row.route_started = _rear().time
+		row.route_deadline = _rear().time+float(request.outward.seconds)
+		row.route_distance = 0.0
+		row.route_fuel = 0.0
+		row.route_expected = guarded.hull.position
+		row.world_revision = request.revision
+		row.stopped_phase = ""
+		row.planning_phase = ""
+		row.planning_points = []
+		row.blocker = ""
+		_departure_requests.erase(row.id)
+		request.message = "Fresh physical route started."
+	request.state = "Admitted"
+	_drop_planning_work(request)
+	planning_revision += 1
+	return true
+
+
+func _deny_planning(request: Dictionary, message: String) -> bool:
+	request.state = "Blocked"
+	request.message = message
+	_drop_planning_work(request)
+	planning_revision += 1
+	if request.kind != "Departure": return false
+	_departure_requests.erase(request.job)
+	var row: Dictionary = jobs.get(request.job,{})
+	if row.is_empty() or row.state != "Planning Route": return false
+	_block_route(row,request.phase,message)
+	return true
+
+
+func _queue_departure(row: Dictionary, points: Array, phase: String) -> bool:
+	_discard_departure(row.id)
+	_planning_sequence += 1
+	var request: Dictionary = _planning_descriptor("departure-%d" % _planning_sequence,row.hull,row.squads,row.board_place,row.dismount_place,points,row.return_points,
+		row.get("intent_ids",{}) if phase == "Outbound" else {})
+	request.kind = "Departure"
+	request.job = row.id
+	request.phase = phase
+	_departure_requests[row.id] = request
+	_planning_fifo.append(request)
+	planning_revision += 1
+	row.state = "Planning Route"
+	row.planning_phase = phase
+	row.planning_points = points.duplicate()
+	row.route_deadline = INF
+	row.blocker = "Planning a fresh route; existing physical trip remains committed."
+	return true
+
+
+func _discard_departure(job_id: String) -> void:
+	var request: Dictionary = _departure_requests.get(job_id,{})
+	if request.is_empty(): return
+	request.state = "Cancelled"
+	request.message = "Private departure planning interrupted; physical trip retained."
+	_drop_planning_work(request)
+	planning_revision += 1
+	_departure_requests.erase(job_id)
 
 
 func request_trip(hull_id: String, squad_ids: Array, board_place_id: String, dismount_place_id: String,
@@ -106,8 +473,9 @@ func request_reposition(hull_id: String, destination_place_id: String, route_poi
 
 func interrupt_trip(id: String) -> Dictionary:
 	var row: Dictionary = jobs.get(id,{})
-	if row.is_empty() or row.state not in ["Boarding","Outbound","Dismounting","Returning"]:
+	if row.is_empty() or row.state not in ["Boarding","Outbound","Dismounting","Returning","Planning Route"]:
 		return _fail("Only an active physical troop trip can be interrupted.")
+	if row.state == "Planning Route": _discard_departure(id)
 	row.paused_state = row.state
 	row.state = "Paused"
 	if not row.task.is_empty():
@@ -123,6 +491,9 @@ func resume_trip(id: String, route_points: Array = []) -> Dictionary:
 	if row.is_empty() or row.state not in ["Paused","Blocked Route","Stranded"]:
 		return _fail("Only a paused or physically blocked trip can resume.")
 	var phase: String = row.paused_state if row.state == "Paused" else row.stopped_phase
+	if phase == "Planning Route":
+		_queue_departure(row,route_points if not route_points.is_empty() else row.planning_points,str(row.planning_phase))
+		return {"ok":true,"pending":true,"message":"Fresh planning of the same physical departure queued."}
 	if phase in ["Boarding","Dismounting"]:
 		if not row.task.is_empty():
 			var remaining: float = maxf(EPS,float(row.task.get("remaining_seconds",HANDLING_SECONDS)))
@@ -145,6 +516,7 @@ func resume_trip(id: String, route_points: Array = []) -> Dictionary:
 	error = _validate_points(route_points,hull.position,destination)
 	if not error.is_empty(): return _fail(error)
 	if not _begin_route(row,route_points,phase): return _fail(row.blocker)
+	if row.state == "Planning Route": return {"ok":true,"pending":true,"message":"Fresh route planning queued; the physical trip remains committed."}
 	return {"ok":true,"message":"Same military hull resumes on a newly validated route from its actual position."}
 
 
@@ -156,6 +528,7 @@ func hull_committed(hull_id: String) -> bool:
 
 func person_committed(person_id: String) -> bool:
 	for row in jobs.values():
+		if row.state == "Planning Route" and row.planning_phase == "Outbound" and person_id in row.people: return true
 		if row.state in ["Boarding","Dismounting","Paused"] and person_id in row.people: return true
 	return false
 
@@ -302,6 +675,7 @@ func _finish_dismount(row: Dictionary) -> void:
 
 func _begin_route(row: Dictionary, points: Array, phase: String) -> bool:
 	var rear: RefCounted = _rear()
+	if incremental_planning and row.kind == "Troop Trip" and rear.ledger.entity_design_type(row.hull) == "T02": return _queue_departure(row,points,phase)
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var destination: Vector2 = rear.ledger.inspect_entity(row.dismount_place).position if phase == "Outbound" else rear.ledger.inspect_entity(row.board_place).position
 	var error: String = _movement_blocker(row.hull,hull)
