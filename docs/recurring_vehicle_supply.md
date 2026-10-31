@@ -32,7 +32,7 @@ The same boundary can record a once-per-cycle actual target-receipt milestone be
 | T04 APC | Its mission E26 target plus actual fuel | First connected ammunition return/refill/redeployment cycle at the authored stop. Forward fuel replenishment remains unfinished. |
 | T05 tank | Its mission E25/E02 targets plus actual fuel | Shared needs query; recurring forward physical connection remains unfinished. |
 
-The GDD 16.7 consumption/lead-time forecast planner is still required. The first short-foot [Rifle collection/refill/current-order return connection](rifle_collection.md) is now implemented; its longer-distance transport comparison remains unfinished. Campaign, persistent engagement state, remaining maps and other outstanding GDD connections remain required; this increment does not complete the main game or certify desktop responsiveness.
+The GDD 16.7 consumption/lead-time forecast planner is still required. The [Rifle collection/refill/current-order return connection](rifle_collection.md) now includes a first [long-distance T02 travel comparison and physical lift](rifle_collection_travel.md), within its explicit cohort/route scope. Campaign, persistent engagement state, remaining maps and other outstanding GDD connections remain required; this increment does not complete the main game or certify desktop responsiveness.
 
 ## Current direct evidence
 

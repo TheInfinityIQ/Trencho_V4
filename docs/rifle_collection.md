@@ -17,7 +17,7 @@ Acceptance is one current-action flow: actual urgent cohort arrival, real Engine
 
 The first connected case is a short safe foot journey to the declared blue-delivery rendezvous. Supply and return motions retain the actual acknowledged intent, person duty and delivered-fire checks. A changed or pending order stops that owned motion; resumption reads the current acknowledged destination.
 
-The greater-than-600-metre rule is conditional. If no actual military passenger hull exists, an otherwise safe foot march reports its real route-time estimate. Where a passenger hull exists, comparing its arrival/trip ETA and obtaining a parent-approved collection lift remain unconnected; this increment reports that specific boundary rather than treating the absence of a connection as the absence of transport. It does not claim the complete transport selection rule. The same limit applies to a longer return after an operation update. Existing route and physical admission calls retain synchronous blocking costs; no desktop latency guarantee is made.
+The greater-than-600-metre rule is conditional. The follow-up [collection travel connection](rifle_collection_travel.md) now compares measured safe foot travel with eligible same-company T02 pickup, boarding, loaded travel and dismount. Real parent acknowledgement and physical transport apply to both collection and current-operation return. Its supported cohort/route boundaries and remaining broader transport allocation are explicit; the first short-foot flow below was not replayed. Existing indivisible costs and desktop responsiveness remain unverified.
 
 General Red logistics, predictive supply planning, HQ-assault preparation and other vehicles' physical supply remain unfinished main-game requirements.
 
