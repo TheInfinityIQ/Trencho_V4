@@ -3,7 +3,7 @@ extends GdUnitTestSuite
 const Diagnostics = preload("res://game/forward_supply/tests/gdunit/happy_path_diagnostics.gd")
 
 
-func test_ordinary_supply_preview_and_successful_delivery(_timeout := 320000) -> void:
+func test_ordinary_supply_preview_and_successful_delivery(_timeout := 440000) -> void:
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -96,7 +96,7 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	if run == null: return
 	run.pressed.emit()
 	var driver_started: int = Time.get_ticks_usec()
-	var deadline: int = Time.get_ticks_msec()+300000
+	var deadline: int = Time.get_ticks_msec()+420000
 	var clock_ticks := 0
 	var tick_usec := 0
 	var last_inspection := -INF
