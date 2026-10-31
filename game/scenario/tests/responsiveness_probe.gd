@@ -252,8 +252,18 @@ func _finish() -> void:
 		var values: Array = frames[label]
 		values.sort()
 		var wall_ms := 0.0
-		for interval in values: wall_ms += float(interval)
-		results[label] = {"frames":values.size(),"p95_ms":values[mini(values.size()-1,int(values.size()*0.95))],"max_ms":values[-1],"wall_seconds":wall_ms/1000.0}
+		var over_100 := 0
+		var over_250 := 0
+		var over_500 := 0
+		var over_750 := 0
+		for interval in values:
+			wall_ms += float(interval)
+			if interval > 100.0: over_100 += 1
+			if interval > 250.0: over_250 += 1
+			if interval > 500.0: over_500 += 1
+			if interval > 750.0: over_750 += 1
+		results[label] = {"frames":values.size(),"p95_ms":values[mini(values.size()-1,int(values.size()*0.95))],"p99_ms":values[mini(values.size()-1,int(values.size()*0.99))],"max_ms":values[-1],"wall_seconds":wall_ms/1000.0,
+			"frames_over_100_ms":over_100,"frames_over_250_ms":over_250,"frames_over_500_ms":over_500,"frames_over_750_ms":over_750}
 	var admissions := {}
 	if base != null and base.rear.battlefield_operations != null and base.rear.battlefield_operations.policy != null:
 		for id in base.rear.battlefield_operations.policy.trips:
