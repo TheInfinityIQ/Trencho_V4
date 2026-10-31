@@ -116,14 +116,9 @@ func _refresh() -> bool:
 	var people: Array[Dictionary] = []
 	var reasons := {}
 	var armed_candidates: Array[String] = []
-	for person in ledger.entities_of_kind(Records.Kind.PERSON,false):
-		if person.owner not in [_rear().PLAYER,"army-red"]: continue
-		var nearby := false
-		for row in objectives.values():
-			if person.position.distance_to(row.position) > RADIUS+EPS: continue
-			nearby = true
-			break
-		if not nearby: continue
+	var positions: Array[Vector2] = []
+	for row in objectives.values(): positions.append(row.position)
+	for person in ledger.persons_near_any(positions,RADIUS+EPS,[_rear().PLAYER,"army-red"],false):
 		people.append(person)
 		var reason := ""
 		if ledger.entity_kind(person.holder_id) != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
