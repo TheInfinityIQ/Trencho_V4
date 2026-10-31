@@ -216,8 +216,17 @@ func _refresh() -> void:
 			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
-			if selected.design_type == "T04":
-				detail += "\nAutocannon rounds (E26): %d / 240 maximum (includes loaded rounds)" % int(selected.get("ammunition",{}).get("E26",0))
+			if rear.military.vehicles.has(selected.id):
+				var needs: Dictionary = rear.military.vehicle_supply_needs(selected.id,selected)
+				for type in needs.get("ammunition",{}):
+					var ammo: Dictionary = needs.ammunition[type]
+					var ammo_name: String = {"E02":"Rifle/MG rounds","E25":"Tank shells","E26":"Autocannon rounds"}.get(type,"Ammunition")
+					var capacity: int = int(selected.vehicle_spec.rack_capacity[type])
+					if ammo.target_set:
+						detail += "\n%s (%s): %d / %d target · %d maximum\nStill needed: %d%s" % [ammo_name,type,ammo.aboard,ammo.target,capacity,ammo.needed," · Urgent" if ammo.urgent else ""]
+					else: detail += "\n%s (%s): %d aboard · %d maximum; no active mission target." % [ammo_name,type,ammo.aboard,capacity]
+				if needs.get("fuel_urgent",false): detail += "\nFuel needed for assigned route: %.2f" % float(needs.fuel_needed)
+				elif needs.get("fuel_empty",false): detail += "\nFuel needed: tank empty."
 			if rear.battlefield_operations != null:
 				var action: String = str(rear.battlefield_operations.vehicle_execution.status.get(selected.id,"Waiting for crew, supply and a usable enemy report."))
 				if action == "Waiting for a current compatible contact delivered to the actual parent.": action = "Waiting for a usable enemy report."
@@ -248,6 +257,7 @@ func _refresh() -> void:
 			_inspector.text += "\n"+_unit_label(rear.ledger.inspect_entity(trip.hull,{},false))+": "+("Dismounted" if trip.dismounted else ("Transport active" if trip.started else (trip.blocker if not str(trip.blocker).is_empty() else "Awaiting orders")))
 		for deployment in opening.get("deployments",[]):
 			_inspector.text += "\n\nAPC DEPLOYMENT\n%s · %s\nDestination: %s\n%s" % [deployment.hull,deployment.state,_site_label(deployment.stop),deployment.blocker]
+			if not str(deployment.get("supply_stop","")).is_empty(): _inspector.text += "\nSupply rendezvous: "+_site_label(str(deployment.supply_stop))
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear

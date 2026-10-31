@@ -15,13 +15,16 @@ var deployments: RefCounted
 var _trip_admission_cursor := 0
 var _last_trip_attempt := -INF
 var _trip_request_sequence := 0
+var _company_order_ids: Dictionary = {}
+var _child_orders: Dictionary = {}
+const LIVE_ORDER_STATES := ["In transit","Acknowledgement pending","Acknowledged"]
 
 func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> void:
 	_rear_ref = weakref(rear)
 	armies = army_data
 	points = waypoints
-	deployments = Deployment.new(rear,points)
 	resupply = Resupply.new(rear,armies["army-blue"].rifles.slice(0,2),armies["army-blue"].engineer,"blue-delivery")
+	deployments = Deployment.new(rear,points,resupply)
 	for side in ["blue","red"]:
 		var owner: String = "army-"+side
 		phases[owner] = "Opening"
@@ -71,37 +74,95 @@ func tick() -> void:
 		if commander.get("health",0) <= 0: status[owner] = "Commander unavailable; received intent continues"; continue
 		var objective: String = "resource-centre-red" if phases[owner] == "Probe" else first
 		var version: String = str(phases[owner])+str(reserve_active if side == "red" else false)
-		var vehicle_deployments: Dictionary = deployments.payloads(army.company) if owner == rear.PLAYER else {}
+		var company_intent: Dictionary = rear.orders.intents.get(army.company,{})
+		var opening_owned: bool = _owns_company_order(army.company,army.root,company_intent)
+		var vehicle_deployments: Dictionary = deployments.payloads(army.company) if opening_owned and owner == rear.PLAYER else {}
 		var deployment_versions: Array[String] = []
 		for hull_id in vehicle_deployments:
 			var payload: Dictionary = vehicle_deployments[hull_id]
-			deployment_versions.append(str([hull_id,payload.parent,rear.dispatch.military_hulls[hull_id],payload.stop]))
+			deployment_versions.append(str([hull_id,rear.dispatch.military_hulls[hull_id],payload]))
 		if not vehicle_deployments.is_empty(): version += str(deployment_versions)
-		var company_intent: Dictionary = rear.orders.intents.get(army.company,{})
-		if company_intent.get("constraints",{}).get("opening_version","") != version:
+		if opening_owned and company_intent.get("constraints",{}).get("opening_version","") != version:
 			var constraints := {"opening_version":version,"objective":objective}
 			if not vehicle_deployments.is_empty(): constraints.vehicle_deployments = vehicle_deployments
 			var sent: Dictionary = rear.orders.issue_order(army.root,army.company,"Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective"),"Secure the declared central approach","Opening supply and objective playtest",constraints,"Emergency" if reserve_active and side == "red" else "Normal","Own HQ staging")
 			if not sent.ok: status[owner] = sent.message
+			else: _company_order_ids[army.company] = sent.id
 			company_intent = rear.orders.intents.get(army.company,{})
 		if company_intent.get("state","") != "Acknowledged": continue
+		# A denied update cannot authorize new scenario instructions under the old
+		# acknowledged parent. The old operation continues until the update arrives.
+		if opening_owned and company_intent.get("constraints",{}).get("opening_version","") != version: continue
 		for platoon_id in rear.military.companies[army.company].platoons:
-			var platoon_intent: Dictionary = rear.orders.intents.get(platoon_id,{})
-			if platoon_intent.get("constraints",{}).get("relayed_from","") != company_intent.id:
-				rear.orders.relay_order(army.company,platoon_id)
-				continue
-			if platoon_intent.get("state","") != "Acknowledged": continue
+			var platoon_intent: Dictionary = _relay_once(army.company,platoon_id,company_intent)
+			if platoon_intent.is_empty(): continue
 			for squad_id in rear.military.platoons[platoon_id].squads:
+				if not opening_owned:
+					_relay_once(platoon_id,squad_id,platoon_intent)
+					continue
 				var desired: Dictionary = _squad_order(owner,squad_id,objective)
 				var current: Dictionary = rear.orders.intents.get(squad_id,{})
+				if not _may_issue_child(squad_id,str(platoon_intent.id),current): continue
 				var key: String = version+str(desired.action)+str(desired.destination)
 				if current.get("constraints",{}).get("opening_key","") == key: continue
-				rear.orders.issue_order(platoon_id,squad_id,desired.action,"Perform the assigned opening role","Support the company objective",{"destination":desired.destination,"fallback_place":desired.fallback,"role":desired.role,"supported_squads":[army.rifles[0],army.rifles[1]],"opening_key":key},"Normal",desired.fallback)
-		status[owner] = str(phases[owner])+": "+objective
+				var sent: Dictionary = rear.orders.issue_order(platoon_id,squad_id,desired.action,"Perform the assigned opening role","Support the company objective",{"destination":desired.destination,"fallback_place":desired.fallback,"role":desired.role,"supported_squads":[army.rifles[0],army.rifles[1]],"opening_key":key},"Normal",desired.fallback)
+				_remember_child_attempt(squad_id,str(platoon_intent.id),current,sent)
+		status[owner] = str(phases[owner])+": "+objective if opening_owned else "Following the current parent operation."
 	_request_trips()
 	_reposition_supply_truck()
 	resupply.tick()
 	deployments.tick()
+
+func settle_vehicle_departures() -> bool:
+	return deployments.settle_ready_departures()
+
+func _owns_company_order(company_id: String, root_id: String, current: Dictionary) -> bool:
+	if not _company_order_ids.has(company_id):
+		if current.is_empty(): return true
+		# Attaching to an existing order is not permission to replace it.
+		_company_order_ids[company_id] = ""
+		return false
+	return not str(_company_order_ids[company_id]).is_empty() and current.get("id","") == _company_order_ids[company_id] and current.get("parent","") == root_id and current.get("state","") in LIVE_ORDER_STATES
+
+func _may_issue_child(child_id: String, parent_order_id: String, current: Dictionary) -> bool:
+	var current_id: String = str(current.get("id",""))
+	var current_state: String = str(current.get("state",""))
+	if not _child_orders.has(child_id):
+		_child_orders[child_id] = {"source":parent_order_id,"issued":"","basis":current_id,
+			"basis_state":current_state,"pending":current.is_empty()}
+		return current.is_empty()
+	var row: Dictionary = _child_orders[child_id]
+	if row.source != parent_order_id:
+		# A genuinely new authoritative parent can issue a new child operation.
+		row.source = parent_order_id
+		row.issued = ""
+		row.basis = current_id
+		row.basis_state = current_state
+		row.pending = true
+	if row.pending:
+		if current_id != row.basis or (not current.is_empty() and current_state not in LIVE_ORDER_STATES and current_state != row.basis_state):
+			row.pending = false
+			return false
+		return true
+	return not str(row.issued).is_empty() and current_id == row.issued and current_state in LIVE_ORDER_STATES
+
+func _remember_child_attempt(child_id: String, source: String, current: Dictionary, result: Dictionary) -> void:
+	var row: Dictionary = _child_orders[child_id]
+	row.source = source
+	row.pending = not result.ok
+	row.basis = str(current.get("id",""))
+	row.basis_state = str(current.get("state",""))
+	if result.ok: row.issued = result.id
+
+func _relay_once(parent_id: String, child_id: String, parent_order: Dictionary) -> Dictionary:
+	var current: Dictionary = _rear().orders.intents.get(child_id,{})
+	var remembered: Dictionary = _child_orders.get(child_id,{})
+	if not remembered.is_empty() and remembered.source == parent_order.id and not remembered.pending and remembered.issued == current.get("id",""):
+		return current if current.get("state","") == "Acknowledged" else {}
+	if not _may_issue_child(child_id,str(parent_order.id),current): return {}
+	var sent: Dictionary = _rear().orders.relay_order(parent_id,child_id)
+	_remember_child_attempt(child_id,str(parent_order.id),current,sent)
+	return {}
 
 func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	var army: Dictionary = armies[owner]
@@ -147,6 +208,7 @@ func _request_trips() -> void:
 		for squad_id in trip.squads:
 			var intent: Dictionary = rear.orders.intents.get(squad_id,{})
 			if intent.get("state","") != "Acknowledged" or intent.action != "Move by Transport": acknowledged = false
+			if intent.get("id","") != _child_orders.get(squad_id,{}).get("issued","") or intent.get("constraints",{}).get("destination","") != trip.dismount: acknowledged = false
 			intent_ids[squad_id] = str(intent.get("id",""))
 		if not acknowledged: continue
 		_trip_admission_cursor = (index+1)%ordered.size()

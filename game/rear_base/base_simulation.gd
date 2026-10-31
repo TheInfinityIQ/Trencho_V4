@@ -130,11 +130,13 @@ func enable_live_planning(use_wall_clock: bool = true) -> void:
 	_live_wall_clock = use_wall_clock
 	_live_wall_usec = Time.get_ticks_usec() if _live_wall_clock else -1
 	rear.military.troop_transport.incremental_planning = true
+	rear.vehicle_departures_allowed = speed > 0
 
 func cancel_live_planning() -> void:
 	if not _live_planning: return
 	rear.military.troop_transport.cancel_planning()
 	rear.military.troop_transport.incremental_planning = false
+	rear.vehicle_departures_allowed = false
 	owed_simulation_seconds = 0.0
 	_live_planning = false
 	_live_wall_usec = -1
@@ -194,6 +196,7 @@ func set_speed(value: int) -> Dictionary:
 	if value not in [0, 1, 2]: return {"ok": false, "message": "Choose Pause, 1x or 2x."}
 	if _live_planning: _accrue_live_wall_time()
 	speed = value
+	if _live_planning: rear.vehicle_departures_allowed = speed > 0
 	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed,"speed_change":true}
 
 func snapshot() -> Dictionary:

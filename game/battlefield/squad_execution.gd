@@ -59,6 +59,10 @@ func advance_to(at: float) -> void:
 func settle() -> bool:
 	var rear: RefCounted = _rear()
 	var changed := _clear_unavailable_motions()
+	# Consume only already-named, acknowledged refill readiness before mounted
+	# fire. This adds no strategic decision or resupply-cycle generation.
+	if policy != null and policy.has_method("settle_vehicle_departures"):
+		changed = policy.settle_vehicle_departures() or changed
 	changed = vehicle_execution.settle() or changed
 	if rear.time+EPS < next_decision: return changed
 	next_decision = rear.time+1.0

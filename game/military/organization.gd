@@ -451,6 +451,33 @@ func set_vehicle_mission(hull_id: String, ammo_target: Dictionary, route_fuel: f
 	vehicles[hull_id].route_fuel = route_fuel
 	return {"ok":true,"message":"Vehicle mission uses actual crew, health, rack stock and route fuel."}
 
+func vehicle_supply_needs(hull_id: String, hull_snapshot: Dictionary = {}) -> Dictionary:
+	if not vehicles.has(hull_id): return _fail("No attached actual military hull has this identity.")
+	var hull: Dictionary = hull_snapshot if not hull_snapshot.is_empty() else _rear_ref.get_ref().ledger.inspect_entity(hull_id,{},false)
+	if hull.get("id","") != hull_id or hull.get("kind","") != "CARRIER" or not hull.has("vehicle_spec"):
+		return _fail("Supply needs require this same actual vehicle.")
+	var mission: Dictionary = vehicles[hull_id]
+	var ammunition := {}
+	var ammo_urgent := false
+	# A mission target, not rack capacity, defines the common urgent threshold.
+	# Unarmed transports have no matching ammunition types and acquire no demand.
+	for type in hull.vehicle_spec.rack_capacity:
+		var target: int = int(mission.ammo_target.get(type,0))
+		var aboard: int = int(hull.get("ammunition",{}).get(type,0))
+		var urgent: bool = target > 0 and float(aboard) < 0.25*float(target)
+		ammunition[type] = {"aboard":aboard,"target":target,"target_set":target > 0,
+			"needed":maxi(0,target-aboard),"urgent":urgent}
+		ammo_urgent = ammo_urgent or urgent
+	var fuel: float = float(hull.get("fuel",0.0))
+	var declared: float = float(mission.route_fuel)
+	# This is the existing declared mission requirement, not a new route plan.
+	# Physical movement admission still measures its actual route and reserve.
+	return {"ok":true,"hull":hull_id,"design_type":hull.design_type,"ammunition":ammunition,
+		"ammo_urgent":ammo_urgent,"fuel":fuel,"declared_route_fuel":declared,
+		"fuel_needed":maxf(0.0,declared-fuel),"fuel_plan_declared":declared > EPS,
+		"fuel_urgent":declared > EPS and fuel+EPS < declared,"fuel_empty":fuel <= EPS}
+
+
 func vehicle_readiness(hull_id: String) -> float:
 	if not vehicles.has(hull_id): return 0.0
 	var row: Dictionary = vehicles[hull_id]

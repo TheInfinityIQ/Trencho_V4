@@ -164,6 +164,14 @@ func refresh() -> void:
 				army_issue_status.text += "\nAPC %s aboard: %d / 180 initial target · 240 maximum (includes loaded)" % [entity.id,int(entity.ammunition.get("E26",0))]
 		for request in local.get("rack_requests",[]):
 			army_issue_status.text += "\nAPC %s initial allocation still needs %d · committed: %d" % [request.hull,request.needed,request.committed]
+		for refill in local.get("rack_replenishments",[]):
+			var delivery_hulls := {}
+			for job in rear.forward_supply.transport.jobs.values():
+				if job.type == "E26" and job.stop == refill.stop and job.state != "Complete": delivery_hulls[job.hull] = true
+			var on_delivery_vehicles := 0
+			for entity in entities:
+				if entity.kind == "STOCK" and entity.design_type == "E26" and entity.owner == rear.PLAYER and delivery_hulls.has(entity.holder_id): on_delivery_vehicles += int(entity.quantity)
+			army_issue_status.text += "\n\nAPC %s replenishment · %s\nActually aboard: %d / %d target · Still needed: %d\nUnloaded and available at %s: %d\nCommitted to rack couriers: %d · On delivery vehicles: %d\n%s" % [refill.hull,refill.state,refill.aboard,refill.target,refill.needed,refill.stop,refill.available_at_stop,refill.committed,on_delivery_vehicles,refill.blocker]
 		for job in rear.forward_supply.rack_issue.jobs.values():
 			army_issue_status.text += "\nAPC %s rack: %d/%d actually deposited · %s · %s" % [job.hull,job.issued,job.quantity,job.state,job.blocker]
 		for job in rear.forward_supply.jobs.values():

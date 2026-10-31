@@ -12,6 +12,7 @@ const EPS := 0.000001
 var ledger := Ledger.new()
 var yard: RefCounted
 var time: float = 0.0
+var vehicle_departures_allowed := true # Explicit-time callers own their clock; live Base gates Pause.
 var stores: Dictionary = {}
 var requests: Dictionary = {}
 var actors: Dictionary = {}

@@ -108,6 +108,7 @@ static func waypoints() -> Dictionary:
 		var home := delivery.duplicate()
 		home.reverse()
 		result[side+"-delivery-return"] = home
+	result["blue-support-route"] = [result["blue-delivery"],Vector2(3000,2300),Vector2(3000,3000),Vector2(2000,3000)]
 	return result
 
 static func initialize_defences(rear: RefCounted) -> Dictionary:
