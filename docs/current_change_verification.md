@@ -1,5 +1,11 @@
 # Current-change verification
 
+## Focused demo exception — 31 October 2026
+
+Dawson subsequently requested GDUnit verification before another demo and identified an unavailable Supply route preview. The Windows demo workflow must run the named ordinary-session Supply preview case before exporting a demo. Use the pinned GDUnit dependency and retain its exact named, passing, unskipped JUnit result and engine log. Missing or empty reports, failures, engine errors and timeouts block delivery. The check exercises the real player panel and real delivery service, not a replacement world or mocked route result. Preview must provide a usable physical route/load/fuel estimate without moving stock, reserving freight or dispatching a truck. No local engine runs are authorized by this exception; other regression suites remain deferred.
+
+## General policy
+
 Effective 31 October 2026. Dawson directed the team to stop writing regression tests and running tests until the main game is complete, except to check that the actual code just written works. This overrides earlier regression, suite, oracle-matrix, failure-injection and broad-observation instructions.
 
 - Build the main game first. Do not create or extend regression coverage, comprehensive matrices or testing frameworks.
