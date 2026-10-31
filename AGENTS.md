@@ -20,7 +20,7 @@
 
 ## Verification
 
-Dawson subsequently requested a focused GDUnit check of the reported unavailable Supply route preview before the next demo. Run that named check on GitHub and gate demo export on its passing result; this is a narrow exception to the deferred-regression rule below.
+Dawson subsequently requested focused GDUnit coverage of the unavailable Supply route preview and its successful physical delivery path before the next demo. Run that named check on GitHub and gate demo export on its passing result; this is a narrow exception to the deferred-regression rule below.
 
 Dawson's 31 October instruction takes precedence: until the main game is complete, do not write regression tests or run regression suites, broad scenarios, failure injection or coverage matrices. Only brief direct checks that the code just changed works are allowed. Preserve existing tests for later; do not rename a regression suite as a direct check.
 CI parses changed production scripts and can run one brief, explicitly supplied current-change demonstration; it does not run the old suites. See [current verification policy](docs/current_change_verification.md). Compilation is not gameplay acceptance; report the exact direct check and unverified behavior.

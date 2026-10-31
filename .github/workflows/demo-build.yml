@@ -82,7 +82,7 @@ jobs:
           fi
       - name: Pass exactly the named unskipped Demo route-preview case
         id: demo-test
-        timeout-minutes: 1
+        timeout-minutes: 5
         shell: bash
         run: |
           set -euo pipefail
@@ -90,7 +90,7 @@ jobs:
           # Domain/Input suites, old scenarios or failure-control scripts.
           # GNU timeout uses its own process group by default (no --foreground),
           # so TERM/KILL also stop the child Godot process, not just PowerShell.
-          timeout --signal=TERM --kill-after=5s 45s pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Demo -ReportName demo -CaseName test_ordinary_supply_preview_becomes_available_without_dispatching 2>&1 | tee .artifacts/gdunit4/demo/runner.log
+          timeout --signal=TERM --kill-after=5s 240s pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Demo -ReportName demo -CaseName test_ordinary_supply_preview_becomes_available_without_dispatching 2>&1 | tee .artifacts/gdunit4/demo/runner.log
       - name: Retain focused Demo JUnit HTML and logs
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

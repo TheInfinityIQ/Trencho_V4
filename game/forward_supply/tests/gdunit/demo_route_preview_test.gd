@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Ordinary authored session and production UI/service; no replacement world or stock.
 
 
-func test_ordinary_supply_preview_becomes_available_without_dispatching() -> void:
+func test_ordinary_supply_preview_becomes_available_without_dispatching(_timeout := 230000) -> void:
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -67,6 +67,117 @@ func test_ordinary_supply_preview_becomes_available_without_dispatching() -> voi
 	assert_dict(session.rear.forward_supply.transport.jobs).is_equal(jobs)
 	assert_float(session.rear.time).is_equal(0.0)
 	assert_int(session.speed).is_zero()
+	await _successful_delivery(main,base,session,panel,results)
+
+
+func _successful_delivery(main: Control, base: Control, session: RefCounted, panel: VBoxContainer, results: Array[Dictionary]) -> void:
+	# Supply deterministic elapsed time to the existing clock adapter. Keep the
+	# ordinary world, initial orders, pending planners and physical custody intact.
+	# Cancelling/recreating live planning here would invalidate the real opening.
+	base.set_process(false)
+	var before_clock: Dictionary = session.rear.ledger.snapshot()
+	var transport: RefCounted = session.rear.military.troop_transport
+	var before_jobs: Dictionary = transport.jobs.duplicate(true)
+	var pending_keys: Array = transport.get("_planning_requests").keys().duplicate()
+	var generation: int = transport.get("_planning_generation")
+	var owed: float = session.owed_simulation_seconds
+	session.set("_live_wall_clock",false)
+	session.set("_live_wall_usec",-1)
+	assert_dict(session.rear.ledger.snapshot()).is_equal(before_clock)
+	assert_dict(transport.jobs).is_equal(before_jobs)
+	assert_array(transport.get("_planning_requests").keys()).is_equal(pending_keys)
+	assert_int(int(transport.get("_planning_generation"))).is_equal(generation)
+	assert_float(session.owed_simulation_seconds).is_equal(owed)
+	assert_float(session.rear.time).is_equal(0.0)
+	assert_int(session.speed).is_zero()
+	var run := _button(main.get("_field_clock"),"1x")
+	assert_object(run).is_not_null()
+	if run == null: return
+	run.pressed.emit()
+	var deadline: int = Time.get_ticks_msec()+210000
+	var last_inspection := -INF
+	var last_log: int = Time.get_ticks_msec()
+	var admitted := false
+	var job_id := ""
+	var expected_sources: Array = []
+	var hq_before := 0
+	var start_time := -1.0
+	var starting_fuel := 0.0
+	var saw_outbound := false
+	var saw_forward_hull := false
+	var state := "Awaiting actual truck and handlers"
+	while Time.get_ticks_msec() < deadline and session.rear.time < 2600.0:
+		var slice_end: int = Time.get_ticks_usec()+12000
+		while Time.get_ticks_usec() < slice_end:
+			session.tick(0.1)
+			if admitted:
+				var row: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
+				state = str(row.state)+" · "+str(row.blocker)
+				saw_outbound = saw_outbound or row.state == "Outbound"
+				var actual: Dictionary = session.rear.ledger.inspect_entity(row.hull,{},false)
+				saw_forward_hull = saw_forward_hull or actual.holder_id == row.stop
+				if row.unloaded == 60: break
+		if not admitted and session.rear.time-last_inspection >= 5.0:
+			last_inspection = session.rear.time
+			panel.refresh()
+			var hulls: OptionButton = panel.get("hull_choice")
+			var unloaders: OptionButton = panel.get("unloader_choice")
+			var loaders: OptionButton = panel.get("loader_choice")
+			var hull_id := str(hulls.get_item_metadata(hulls.selected)) if hulls.selected >= 0 else ""
+			var hull: Dictionary = session.rear.ledger.inspect_entity(hull_id,{},false)
+			state = "Waiting at "+str(hull.get("holder_id","no truck"))+" · handlers "+str(loaders.item_count)+"/"+str(unloaders.item_count)
+			if hull.get("holder_id","") == "hq-berth" and unloaders.selected >= 0 and loaders.selected >= 0:
+				(panel.get("amount") as SpinBox).value = 60
+				_button(panel,"Preview route, load and fuel").pressed.emit()
+				var estimate: Dictionary = results.back()
+				state = str(estimate.get("message","No estimate"))
+				if estimate.get("ok",false) and estimate.get("dispatch_ready",false):
+					hq_before = _stock_at(session,"hq-stock","E02")
+					_button(panel,"Start physical delivery").pressed.emit()
+					var request: Dictionary = results.back()
+					assert_bool(bool(request.get("ok",false))).is_true()
+					if not request.get("ok",false): return
+					job_id = str(request.id)
+					var row: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
+					expected_sources = row.sources.duplicate(true)
+					start_time = session.rear.time
+					starting_fuel = float(hull.fuel)
+					admitted = true
+					print("HAPPY_DELIVERY_ADMITTED ",JSON.stringify({"time":start_time,"job":job_id,"quantity":row.quantity,"sources":expected_sources}))
+		if admitted and session.rear.forward_supply.transport.jobs[job_id].unloaded == 60: break
+		if admitted and session.rear.forward_supply.transport.jobs[job_id].state in ["Blocked Route","Stranded","Fuel Empty","Paused"]: break
+		if not admitted and session.rear.time >= 1800.0: break
+		if Time.get_ticks_msec()-last_log >= 10000:
+			last_log = Time.get_ticks_msec()
+			print("HAPPY_DELIVERY_PROGRESS ",JSON.stringify({"time":session.rear.time,"admitted":admitted,"state":state}))
+		await get_tree().process_frame
+	assert_bool(admitted).override_failure_message("No successful ordinary Supply admission: "+state+" at "+str(session.rear.time)).is_true()
+	if not admitted: return
+	var completed: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
+	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull}))
+	assert_int(completed.loaded).is_equal(60)
+	assert_int(completed.unloaded).is_equal(60)
+	assert_bool(saw_outbound).is_true()
+	assert_bool(saw_forward_hull).is_true()
+	assert_float(float(session.rear.ledger.inspect_entity(completed.hull,{},false).fuel)).is_less(starting_fuel)
+	assert_array(completed.delivered_items).is_not_empty()
+	assert_int(_stock_at(session,"hq-stock","E02")).is_equal(hq_before-60)
+	for id in completed.delivered_items:
+		var delivered: Dictionary = session.rear.ledger.inspect_entity(id,{},false)
+		assert_str(str(delivered.get("design_type",""))).is_equal("E02")
+		var traced := false
+		for source in expected_sources:
+			if delivered.get("origin_id","") == source.origin_id: traced = true
+		assert_bool(traced).is_true()
+	_button(main.get("_field_clock"),"Pause").pressed.emit()
+	assert_int(session.speed).is_zero()
+
+
+func _stock_at(session: RefCounted, place: String, type: String) -> int:
+	var quantity := 0
+	for stock in session.rear.ledger.entities_at(place,["STOCK"],false):
+		if stock.owner == session.rear.PLAYER and stock.design_type == type: quantity += int(stock.quantity)
+	return quantity
 
 
 func _button(node: Node, title: String) -> Button:
