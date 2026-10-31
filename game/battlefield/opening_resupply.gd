@@ -17,12 +17,207 @@ var _rack_jobs: Dictionary = {} # Owned job -> already credited physical deposit
 var _rack_supplied: Dictionary = {}
 var _rack_replenishments: Dictionary = {}
 var _rack_cycle_keys: Dictionary = {} # Hull -> accepted keys, including closed cycles.
+var _squad_replenishments: Dictionary = {}
+var _squad_cycle_keys: Dictionary = {}
 
 func _init(rear: RefCounted, rifles: Array, engineers: String, stop: String) -> void:
 	_rear_ref = weakref(rear)
 	rifle_squads = rifles.duplicate()
 	engineer_squad = engineers
 	stop_id = stop
+
+func request_squad_replenishment(squad_id: String, cycle_key: String, target: int = 60) -> Dictionary:
+	if cycle_key.is_empty(): return {"ok":false,"message":"Squad replenishment needs a named cycle."}
+	var previous: Dictionary = _squad_replenishments.get(squad_id,{})
+	if _squad_cycle_keys.get(squad_id,{}).has(cycle_key):
+		if not previous.is_empty() and previous.cycle == cycle_key and previous.interrupted and not previous.released:
+			var resume_error: String = _squad_basis_error(previous)
+			if not resume_error.is_empty(): return {"ok":false,"message":resume_error}
+			previous.interrupted = false
+			_seed_squad(previous)
+		return {"ok":true,"squad":squad_id,"cycle":cycle_key,"message":"Existing squad cycle retained; no duplicate issue work created."}
+	if target <= 0: return {"ok":false,"message":"A squad refill needs a positive actual-round target."}
+	if not previous.is_empty() and (_squad_pending(previous,_squad_members(previous)) or (not previous.released and _squad_basis_error(previous).is_empty())):
+		return {"ok":false,"message":"The current squad cycle or its physical handling is still unresolved."}
+	var rear: RefCounted = _rear_ref.get_ref()
+	var squad: Dictionary = rear.military.squads.get(squad_id,{})
+	var row := {"squad":squad_id,"cycle":cycle_key,"target":target,"owner":rear.PLAYER,
+		"parent":str(squad.get("platoon","")),"interrupted":false,"released":false,"jobs":[],"blockers":{},"seeded":{}}
+	var error: String = _squad_basis_error(row)
+	if not error.is_empty(): return {"ok":false,"message":error}
+	_squad_replenishments[squad_id] = row
+	if not _squad_cycle_keys.has(squad_id): _squad_cycle_keys[squad_id] = {}
+	_squad_cycle_keys[squad_id][cycle_key] = true
+	_seed_squad(row)
+	return {"ok":true,"squad":squad_id,"cycle":cycle_key,"message":"Named squad refill requested through the existing local issue owner."}
+
+func interrupt_squad_replenishment(squad_id: String, cycle_key: String) -> Dictionary:
+	var row: Dictionary = _squad_replenishments.get(squad_id,{})
+	if row.is_empty() or row.cycle != cycle_key: return {"ok":false,"message":"Only the exact current squad cycle can be interrupted."}
+	if row.released: return {"ok":false,"message":"This squad cycle was already handed off."}
+	row.interrupted = true
+	_interrupt_squad_jobs(row)
+	return {"ok":true,"squad":squad_id,"cycle":cycle_key,"message":"Squad collection interrupted; actual courier goods and claims retain their owners."}
+
+func release_squad_replenishment(squad_id: String, cycle_key: String) -> Dictionary:
+	var row: Dictionary = _squad_replenishments.get(squad_id,{})
+	if row.is_empty() or row.cycle != cycle_key: return {"ok":false,"message":"Only the exact current squad cycle can be handed off."}
+	if row.released: return {"ok":true,"squad":squad_id,"cycle":cycle_key,"message":"Squad cycle already handed off."}
+	var current: Dictionary = squad_replenishment_status(squad_id)
+	if current.state != "Complete" or not current.handling_clear: return {"ok":false,"message":"Every eligible carrier must reach its actual target with physical handling clear before handoff."}
+	row.released = true
+	_retire_squad_requests(row,true)
+	return {"ok":true,"squad":squad_id,"cycle":cycle_key,"message":"Completed squad refill handed off; normal operation may resume under its owner."}
+
+func squad_replenishment_status(squad_id: String) -> Dictionary:
+	var row: Dictionary = _squad_replenishments.get(squad_id,{})
+	if row.is_empty(): return {}
+	var rear: RefCounted = _rear_ref.get_ref()
+	var stop: Dictionary = rear.ledger.inspect_entity(stop_id,{},false)
+	var eligible: Array[String] = _squad_members(row)
+	var people: Array[Dictionary] = []
+	var needed := 0
+	var committed := 0
+	var all_equipped: bool = not eligible.is_empty()
+	var all_at_stop: bool = not eligible.is_empty()
+	var blocker := ""
+	for id in eligible:
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
+		var rounds: int = rear.military._rounds(id)
+		var deficit: int = maxi(0,int(row.target)-rounds)
+		var pending: int = _committed(id)
+		var has_rifle: bool = _squad_has_rifle(id)
+		var at_stop: bool = stop.get("kind","") == "PLACE" and _at_stop(person,stop)
+		var reason := ""
+		if not has_rifle: reason = "Actual functional rifle is missing; ammunition alone does not restore this carrier."
+		elif deficit > 0 and not at_stop: reason = "Carrier must physically reach the local supply rendezvous."
+		elif pending > 0: reason = _person_issue_blocker(id)
+		elif not _free(id): reason = "Existing physical movement or handling must finish."
+		elif deficit > 0: reason = str(row.blockers.get(id,"Waiting for actual local E02 and an eligible Engineer courier."))
+		needed += deficit
+		committed += pending
+		all_equipped = all_equipped and has_rifle
+		all_at_stop = all_at_stop and at_stop
+		if blocker.is_empty() and not reason.is_empty(): blocker = reason
+		people.append({"person":id,"rounds":rounds,"target":row.target,"needed":deficit,"committed":pending,"has_rifle":has_rifle,"at_stop":at_stop,"blocker":reason})
+	var handling_clear: bool = not _squad_pending(row,eligible)
+	for id in eligible:
+		if not _free(id): handling_clear = false
+	var state := "Pending"
+	var basis_error: String = _squad_basis_error(row)
+	if row.interrupted:
+		state = "Interrupted"
+		blocker = basis_error if not basis_error.is_empty() else "Collection is interrupted; retained courier work requires the same cycle or explicit physical resolution."
+	elif not basis_error.is_empty(): state = "Blocked"; blocker = basis_error
+	elif row.released: state = "Closed"; blocker = "Squad refill handed off; later collection requires a new named cycle."
+	elif eligible.is_empty(): state = "Blocked"; blocker = "No current eligible living Rifle carriers remain; no refill is credited."
+	elif not all_equipped: state = "Blocked"
+	elif needed == 0 and handling_clear: state = "Complete"; blocker = ""
+	elif not handling_clear:
+		state = "Handling"
+		if blocker.is_empty(): blocker = "Original courier work remains unresolved, including work for members no longer eligible."
+	elif not all_at_stop: state = "Collecting"
+	var available := 0
+	for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
+		if stock.owner == row.owner and stock.design_type == "E02" and stock.available > 0: available += int(stock.available)
+	return {"squad":squad_id,"cycle":row.cycle,"state":state,"stop":stop_id,"target":row.target,"eligible":eligible,"people":people,
+		"needed":needed,"committed":committed,"handling_clear":handling_clear,"at_stop":all_at_stop,"available_at_stop":available,"blocker":blocker,"released":row.released}
+
+func _squad_members(row: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	var rear: RefCounted = _rear_ref.get_ref()
+	for id in rear.military.squads.get(row.squad,{}).get("roster",[]):
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
+		if person.get("owner","") == row.owner and person.get("assignment","") == "Formation Duty" and person.get("health",0) > 0 and person.get("duty_id","") == row.squad:
+			result.append(id)
+	return result
+
+func _squad_basis_error(row: Dictionary) -> String:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var squad: Dictionary = rear.military.squads.get(row.squad,{})
+	if row.squad not in rifle_squads or squad.get("kind","") != "Rifle" or squad.get("state","") != "Active" or squad.get("owner",rear.PLAYER) != row.owner or row.owner != rear.PLAYER:
+		return "The original active own Rifle squad is unavailable to this collection cycle."
+	var parent: Dictionary = rear.military.platoons.get(row.parent,{})
+	if squad.get("platoon","") != row.parent or parent.get("owner",rear.PLAYER) != row.owner or parent.is_empty():
+		return "Squad parent or ownership changed; this collection cannot automatically reparent."
+	if rear.ledger.entity_kind(stop_id) != "PLACE" or not rear.forward_supply.delivery_stops.has(stop_id): return "The declared local squad supply stop is unavailable."
+	return ""
+
+func _squad_has_rifle(id: String) -> bool:
+	for weapon in _rear_ref.get_ref().ledger.entities_at(id,["WEAPON"],false):
+		if weapon.design_type == "E01" and weapon.functional and weapon.ammo_type == "E02": return true
+	return false
+
+func _person_issue_pending(job: Dictionary) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.ledger.inspect_claim(job.claim).get("reserved",0) > 0: return true
+	var carry: Dictionary = rear.ledger.inspect_entity(str(job.get("carried_stock","")),{},false)
+	if carry.get("holder_id","") == job.handler and carry.get("quantity",0) > 0: return true
+	return job.state not in ["Complete","Interrupted"]
+
+func _person_issue_blocker(id: String) -> String:
+	for job in _rear_ref.get_ref().forward_supply.jobs.values():
+		if job.recipient == id and job.type == "E02" and _person_issue_pending(job):
+			if not str(job.blocker).is_empty(): return str(job.blocker)
+	return "Existing courier allocation must arrive physically; pending rounds are not carried rounds."
+
+func _squad_pending(row: Dictionary, eligible: Array[String]) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	for job_id in row.jobs:
+		if not rear.forward_supply.jobs.has(job_id): return true
+	for job in rear.forward_supply.jobs.values():
+		if (job.id in row.jobs or job.recipient in eligible or job.handler in eligible) and _person_issue_pending(job): return true
+	return false
+
+func _named_person_request(id: String) -> Dictionary:
+	var person: Dictionary = _rear_ref.get_ref().ledger.inspect_person_status(id)
+	var row: Dictionary = _squad_replenishments.get(str(person.get("duty_id","")),{})
+	return row if not row.is_empty() and id in _squad_members(row) else {}
+
+func _named_job_request(job_id: String) -> Dictionary:
+	for row in _squad_replenishments.values():
+		if job_id in row.jobs: return row
+	return {}
+
+func _seed_squad(row: Dictionary) -> void:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var members: Array[String] = _squad_members(row)
+	_retire_squad_requests(row)
+	for job_id in owned_jobs:
+		var job: Dictionary = rear.forward_supply.jobs.get(job_id,{})
+		if not job.is_empty() and job.recipient in members and _person_issue_pending(job) and job_id not in row.jobs: row.jobs.append(job_id)
+	for id in members:
+		if _squad_has_rifle(id) and rear.military._rounds(id) < int(row.target):
+			if not row.seeded.has(id): row.seeded[id] = int(requests.get(id,0))
+			requests[id] = maxi(int(requests.get(id,0)),int(row.target))
+
+func _retire_squad_requests(row: Dictionary, all_members: bool = false) -> void:
+	var members: Array[String] = [] if all_members else _squad_members(row)
+	for id in row.seeded.keys():
+		if id in members: continue
+		# Retire only our unchanged target, preserving an earlier independent need.
+		if int(requests.get(id,0)) == int(row.target):
+			var prior: int = int(row.seeded[id])
+			if prior > 0 and _rear_ref.get_ref().military._rounds(id) < prior: requests[id] = prior
+			else: requests.erase(id)
+		row.seeded.erase(id)
+
+func _interrupt_squad_jobs(row: Dictionary) -> void:
+	for job_id in row.jobs:
+		var job: Dictionary = _rear_ref.get_ref().forward_supply.jobs.get(job_id,{})
+		if not job.is_empty() and job.state not in ["Complete","Interrupted","Interrupted Carry"]: _rear_ref.get_ref().forward_supply.interrupt(job_id)
+
+func _tick_squad_requests() -> void:
+	for row in _squad_replenishments.values():
+		if row.interrupted or not _squad_basis_error(row).is_empty():
+			_retire_squad_requests(row)
+			_interrupt_squad_jobs(row)
+		elif not row.released: _seed_squad(row)
+
+func _person_status(id: String, message: String) -> void:
+	status = message
+	var row: Dictionary = _named_person_request(id)
+	if not row.is_empty() and not row.released: row.blockers[id] = message
 
 func request_rack_replenishment(hull_id: String, cycle_key: String, target: int = 180) -> Dictionary:
 	if cycle_key.is_empty(): return {"ok":false,"message":"Rack replenishment needs a named cycle."}
@@ -87,12 +282,17 @@ func rack_replenishment_status(hull_id: String) -> Dictionary:
 func tick() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
+	_tick_squad_requests()
 	if stop.get("kind","") != "PLACE": _tick_replenishments(stop); return
 	_tick_racks(stop)
 	_tick_replenishments(stop)
 	for job_id in owned_jobs.keys():
 		var job: Dictionary = rear.forward_supply.jobs.get(job_id,{})
 		if job.is_empty() or job.state in ["Complete","Interrupted"]: owned_jobs.erase(job_id); continue
+		var named: Dictionary = _named_job_request(job_id)
+		if not named.is_empty() and (named.interrupted or not _squad_basis_error(named).is_empty() or job.recipient not in _squad_members(named)):
+			if job.state != "Interrupted Carry": rear.forward_supply.interrupt(job_id)
+			continue
 		var current_recipient: Dictionary = rear.ledger.inspect_entity(job.recipient)
 		if not _safe(str(current_recipient.get("duty_id","")),stop.position):
 			if job.state != "Interrupted Carry": rear.forward_supply.interrupt(job_id)
@@ -116,19 +316,24 @@ func tick() -> void:
 		if person.get("owner","") != rear.PLAYER or person.get("assignment","") != "Formation Duty" or person.get("health",0) <= 0:
 			requests.erase(id)
 			continue
+		var named: Dictionary = _named_person_request(id)
+		if not named.is_empty() and not named.released:
+			if named.interrupted or not _squad_basis_error(named).is_empty(): continue
+			if not _squad_has_rifle(id): _person_status(id,"Actual functional rifle must be restored before this named refill."); continue
 		var needed: int = int(requests[id])-rear.military._rounds(id)
 		if needed <= 0: requests.erase(id); continue
 		needed -= _committed(id)
-		if needed <= 0: status = "Actual couriers are carrying the committed deficit."; continue
-		if not _at_stop(person,stop) or not _free(id): status = "Waiting for the named rifle member at the local supply rendezvous."; continue
-		if not _safe(person.duty_id,stop.position): status = "Delivered hostile fire blocks safe local receipt."; continue
+		if needed <= 0: _person_status(id,"Actual couriers are carrying the committed deficit."); continue
+		if not _at_stop(person,stop) or not _free(id): _person_status(id,"Waiting for the named rifle member at the local supply rendezvous."); continue
+		if not _safe(person.duty_id,stop.position): _person_status(id,"Delivered hostile fire blocks safe local receipt."); continue
 		var source := ""
 		for stock in rear.ledger.entities_at(stop_id,["STOCK"]):
 			if stock.owner == rear.PLAYER and stock.design_type == "E02" and stock.available > 0: source = stock.id; break
-		if source.is_empty(): status = "Local E02 is missing; manufacture and physically deliver freight."; continue
+		if source.is_empty(): _person_status(id,"Local E02 is missing; manufacture and physically deliver freight."); continue
 		var engineers: Dictionary = rear.military.squads.get(engineer_squad,{})
-		if engineers.is_empty(): status = "The actual Engineer courier element is unavailable."; continue
+		if engineers.is_empty(): _person_status(id,"The actual Engineer courier element is unavailable."); continue
 		var started := false
+		var refusal := ""
 		for handler_id in rear.military._active_roster_members(engineers):
 			if handler_id == id or not _free(handler_id): continue
 			var handler: Dictionary = rear.ledger.inspect_entity(handler_id)
@@ -141,11 +346,12 @@ func tick() -> void:
 			var issued: Dictionary = rear.forward_supply.start_issue(source,id,handler_id,amount,stop_id)
 			if issued.ok:
 				owned_jobs[issued.id] = true
-				status = "Engineer courier collecting actual E02 for a depleted Rifle member."
+				if not named.is_empty() and not named.released: named.jobs.append(issued.id)
+				_person_status(id,"Engineer courier collecting actual E02 for a depleted Rifle member.")
 				started = true
 				break
-			status = issued.message
-		if not started: status = "Waiting for an eligible local Engineer courier and carry capacity."
+			refusal = issued.message
+		if not started: _person_status(id,refusal if not refusal.is_empty() else "Waiting for an eligible local Engineer courier and carry capacity.")
 
 func _tick_racks(stop: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -386,4 +592,6 @@ func snapshot() -> Dictionary:
 		if stock.owner == rear.PLAYER and stock.design_type == "E26": available_e26 += int(stock.available)
 	var replenishments: Array[Dictionary] = []
 	for hull_id in _rack_replenishments: replenishments.append(rack_replenishment_status(hull_id))
-	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad,"rack_requests":racks,"available_E26":available_e26,"rack_status":rack_status,"rack_replenishments":replenishments}
+	var squads: Array[Dictionary] = []
+	for squad_id in _squad_replenishments: squads.append(squad_replenishment_status(squad_id))
+	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad,"rack_requests":racks,"available_E26":available_e26,"rack_status":rack_status,"rack_replenishments":replenishments,"squad_replenishments":squads}
