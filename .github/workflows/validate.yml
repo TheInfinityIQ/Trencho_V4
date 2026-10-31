@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Full required validation or a separate physical supply observation
+        description: Full required validation or a separate supply/combat observation
         type: choice
-        options: [full, supply]
+        options: [full, supply, combat]
         default: full
         required: true
 
@@ -17,14 +17,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || '' }}
+  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}
   cancel-in-progress: true
 
 jobs:
   validate:
     # A manual observation must not emit a skipped check with the required name.
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'Full validation omitted for supply observation' || 'validate' }}
-    if: github.event_name != 'workflow_dispatch' || inputs.mode != 'supply'
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'Full validation omitted for supply observation' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && 'Full validation omitted for combat observation' || 'validate' }}
+    if: github.event_name != 'workflow_dispatch' || inputs.mode == 'full'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -203,5 +203,75 @@ jobs:
         with:
           name: godot-supply-observation
           path: .artifacts/supply/
+          include-hidden-files: true
+          retention-days: 7
+
+  combat_observation:
+    name: Observe rendered combat responsiveness (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'combat'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      EVALUATION_HEAD: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Record exact candidate for complete or partial evidence
+        shell: bash
+        run: |
+          mkdir -p .artifacts/combat
+          touch .artifacts/.gdignore
+          printf 'revision=%s\n' "$EVALUATION_HEAD" > .artifacts/combat/revision.txt
+          sha256sum game/scenario/tests/responsiveness_probe.gd > .artifacts/combat/driver.sha256
+      - name: Download and verify pinned Godot
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < .godot-version)"
+          archive="Godot_v${version}-stable_linux.x86_64.zip"
+          release="https://github.com/godotengine/godot-builds/releases/download/${version}-stable"
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 "$release/$archive" --output "$archive"
+          curl --fail --location --retry 3 "$release/SHA512-SUMS.txt" --output SHA512-SUMS.txt
+          awk -v archive="$archive" '$2 == archive || $2 == "*" archive {print}' SHA512-SUMS.txt > selected-checksum.txt
+          test "$(wc -l < selected-checksum.txt)" -eq 1
+          sha512sum --check selected-checksum.txt
+          unzip -q "$archive"
+          chmod +x "Godot_v${version}-stable_linux.x86_64"
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Prepare the rendered combat driver
+        timeout-minutes: 2
+        shell: pwsh
+        run: |
+          ./tools/setup_gdunit4.ps1
+          & timeout --signal=TERM --kill-after=5s 115s $env:GODOT_BIN --headless --path . --editor --import --log-file "$env:GITHUB_WORKSPACE/.artifacts/combat/import.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Combat driver import failed or exceeded two minutes.' }
+          if (Select-String -LiteralPath .artifacts/combat/import.log -Pattern '^\s*(SCRIPT ERROR:|ERROR:)') { throw 'Combat driver import reported engine errors.' }
+      - name: Observe rendered response after actual first combat fire
+        timeout-minutes: 16
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v xvfb-run
+          printf 'revision=%s\nstarted_utc=%s\nsimulation_seek_limit_seconds=1200\nrun_seconds=20\ndouble_seconds=10\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" > .artifacts/combat/run.txt
+          set +e
+          timeout --signal=TERM --kill-after=5s 895s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --log-file "$GITHUB_WORKSPACE/.artifacts/combat/engine.log" --script res://game/scenario/tests/responsiveness_probe.gd -- --seek-combat --warmup=1200 --run-seconds=20 --double-seconds=10 --capture --report-path=res://.artifacts/combat/responsiveness.json > .artifacts/combat/probe.log 2>&1
+          result=$?
+          set -e
+          printf 'exit_code=%s\nfinished_utc=%s\n' "$result" "$(date -u +%FT%TZ)" >> .artifacts/combat/run.txt
+          grep -E 'RESPONSIVENESS_' .artifacts/combat/probe.log > .artifacts/combat/evidence.log || true
+          tail -n 100 .artifacts/combat/probe.log
+          if [ "$result" -ne 0 ]; then exit "$result"; fi
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/combat/probe.log .artifacts/combat/engine.log; then exit 1; fi
+          test -s .artifacts/combat/responsiveness.json
+      - name: Retain complete or partial combat observation
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: godot-combat-observation
+          path: .artifacts/combat/
           include-hidden-files: true
           retention-days: 7
