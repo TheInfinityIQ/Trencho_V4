@@ -1,5 +1,11 @@
 # Foundation decisions
 
+## APC observation boundary — 31 October 2026
+
+The existing military vehicle element now supplies its own observation through the actual living qualified seated T04 Commander, using the accepted 450-metre / three-metre-eye profile. A surviving qualified seated Gunner or Driver supplies ordinary 220-metre fallback when the Commander capability is absent. The order service reuses its half-second local share and one-second actual-parent links, preserving original observation time, source loss and confidence aging; attachment/army changes cannot lend an old report to a new command chain. The existing foot-squad sampler remains independent.
+
+Mounted observation and its separate firing-line probe use the actual available eye role and accepted three-metre vehicle muzzle. A delivered contact still cannot bypass sight, crew, physical ammunition, aim, range or friendly-fire checks. Diagnostic ground truth is confined to the remote C30 observer and never feeds military knowledge. This connects the existing GDD §9.3 / §12.1 / §14.2 capabilities; it adds no target, wave, chase operation, sensor framework or encounter-balance change. It does not establish that a legal target existed in the earlier no-shot observation.
+
 The authored opening composes the existing ledger, military transport, orders, terrain and objective owners under the rear clock; scenario policy creates intent, and squad execution consumes delivered intent. HQ marker affiliation is relative to the observing army, so a formation never reports its own HQ as hostile. Player panels filter own physical formations; enemies remain delivered reports.
 
 Opening profiling exposed repeated full-ledger inspection and nested mass recomputation. Snapshot masses are now aggregated once per synchronous inspection, without a persistent cache; existing holder/type queries restrict reads to their actual candidates. Snapshot/live recursive mass equivalence and retained physical regressions protect the change. Terrain route aggregation separately uses the measured exact-output [interval sweep](route_sweep.md). These measurements do not settle full-map performance acceptance.
