@@ -8,7 +8,9 @@ var hull := ""
 var ammo_manifest := ""
 var hull_manifest := ""
 var forward_jobs: Array[String] = []
+var shipped_units := 0
 var origins: Dictionary = {}
+var local_issue_origins: Dictionary = {}
 var journal: Array[Dictionary] = []
 var failures: Array[String] = []
 var blockers: Dictionary = {}
@@ -16,6 +18,7 @@ var started := 0
 var event_cursor := 0
 var fired := false
 var first_deposit := false
+var empty_field_arrival := false
 var stage := "Starting authored C30 session"
 const REPORT := "res://.artifacts/c30/connection.json"
 
@@ -34,6 +37,7 @@ func _run() -> void:
 	_command(rear.production.set_stock_target(0),"Stop new rifle batches")
 	_command(rear.materials_production.set_stock_target(0),"Stop new material batches")
 	_command(rear.munitions_production.request_recipe("R33"),"Select R33")
+	_command(rear.munitions_production.set_mode("Stock target"),"Set actual R33 stock-target mode")
 	_command(rear.munitions_production.set_stock_target(200),"Manufacture two real E26 batches")
 	_command(rear.heavy_production.request_recipe("R30"),"Select R30")
 	_command(rear.heavy_production.set_mode("Continuous"),"Request one APC")
@@ -73,24 +77,37 @@ func _run() -> void:
 	ammo_manifest = str(shipment.get("id",""))
 	if not await _until(func() -> bool: return rear.dispatch.manifests.get(ammo_manifest,{}).get("state","") == "Loaded Waiting Dispatch","Loading real E26 freight",400):
 		await _finish(); return
-	_command(rear.dispatch.depart(ammo_manifest),"Depart separate E26 shipment")
-	_mark("Separate hull and ammunition manifests departed")
+	_mark("Ammunition is physically loaded and withheld in the rear while the empty APC deploys")
 	if not await _until(func() -> bool: return rear.dispatch.manifests.get(hull_manifest,{}).get("state","") == "Complete","Actual same-hull HQ receipt",700):
 		await _finish(); return
 	_mark("Actual Fleet Transfer complete; military deployment remains distinct from issue")
-	# R33 batches stay separate physical origins. Each real forward trip carries
-	# one actual HQ stack; two trips still serve one initial rack allocation.
-	for trip in 2:
+	var at_supply := func() -> bool:
+		var actual: Dictionary = rear.ledger.inspect_entity(hull,{},false)
+		return actual.holder_id == "blue-delivery" and actual.position == rear.ledger.inspect_entity("blue-delivery",{},false).position
+	if not await _until(at_supply,"Empty APC physical arrival at the forward stop",1000):
+		await _finish(); return
+	empty_field_arrival = int(rear.ledger.inspect_entity(hull,{},false).ammunition.get("E26",0)) == 0
+	if not empty_field_arrival: failures.append("APC did not reach the forward stop with an actually empty rack")
+	_mark("Same APC physically arrived at forward stop with empty rack; ammunition still withheld in rear")
+	_command(rear.dispatch.depart(ammo_manifest),"Release separately manufactured E26 after empty APC field arrival")
+	# Rear loading splits batches into real carry-sized identities. The current
+	# forward owner accepts one stack per trip; preserve those actual portions.
+	# Multiple trips still serve ONE initial allocation, not repeated demand.
+	while shipped_units < 200 and failures.is_empty():
 		var delivery := {"ok":false}
 		var attempt_delivery := func() -> bool:
 			if delivery.ok: return true
 			var loaders: Array = rear.dispatch.free_hq_handlers(4)
 			if loaders.is_empty(): return false
 			for stock in rear.ledger.entities_at("hq-stock",["STOCK"],false):
-				if stock.owner != rear.PLAYER or stock.design_type != "E26" or stock.available < 100: continue
+				if stock.owner != rear.PLAYER or stock.design_type != "E26" or stock.available <= 0: continue
 				var route: Dictionary = rear.forward_supply.delivery_stops["blue-delivery"]
-				var result: Dictionary = rear.forward_supply.request_delivery("start-blue-vehicle-02",stock.id,100,"blue-delivery",route.outbound_points,route.return_points,loaders[0],"start-blue-squad-03-person-00")
-				if result.ok: delivery.merge(result,true); return true
+				var quantity: int = mini(200-shipped_units,int(stock.available))
+				var result: Dictionary = rear.forward_supply.request_delivery("start-blue-vehicle-02",stock.id,quantity,"blue-delivery",route.outbound_points,route.return_points,loaders[0],"start-blue-squad-03-person-00")
+				if result.ok:
+					delivery.merge(result,true)
+					delivery["quantity"] = quantity
+					return true
 				blockers["forward_delivery"] = result.duplicate(true)
 			return false
 		if not await _until(attempt_delivery,"Waiting for actual HQ E26 and available military truck",1000):
@@ -99,6 +116,7 @@ func _run() -> void:
 		_mark("Actual forward E26 trip admitted: "+str(delivery.id))
 		if not await _until(func() -> bool: return rear.forward_supply.transport.jobs[delivery.id].state == "Complete","Forward travel, unloading and return",1300):
 			await _finish(); return
+		shipped_units += int(delivery.quantity)
 		_mark("Actual forward E26 trip completed: "+str(delivery.id))
 	if not await _until(func() -> bool: return fired,"Waiting for automatic issue, military support deployment and a legal delivered contact",1200):
 		await _finish(); return
@@ -121,17 +139,24 @@ func _until(predicate: Callable, label: String, maximum_sim: float) -> bool:
 func _observe() -> void:
 	for batch in rear.munitions_production.history:
 		if batch.recipe == "R33" and batch.state == "Completed": origins[batch.output_id] = batch.receipt
+	for job in rear.forward_supply.rack_issue.jobs.values():
+		if job.hull != hull or job.stop != "blue-delivery" or job.source_holder != "blue-delivery" or int(job.issued) <= 0: continue
+		var origin: String = str(rear.ledger.inspect_entity(job.stock,{},false).get("origin_id",""))
+		if not origins.has(origin): continue
+		local_issue_origins[origin] = {"job":job.id,"handler":job.handler,"actually_issued":job.issued,"source":job.stock}
+		if not first_deposit:
+			first_deposit = true
+			_mark("First actual Engineer E26 rack deposit at blue-delivery from manufactured R33 origin")
 	var events: Array = rear.ledger.get("_events")
 	while event_cursor < events.size():
 		var event: Dictionary = events[event_cursor]
 		event_cursor += 1
 		if not hull.is_empty() and str(event.description) == "Consumption: Mounted Autocannon fired from "+hull:
 			var origin: String = str(rear.ledger.inspect_entity(event.entity_id,{},false).get("origin_id",""))
-			if origins.has(origin): fired = true
-			else: failures.append("Cannon consumed an unmanufactured E26 origin: "+origin)
+			if empty_field_arrival and local_issue_origins.has(origin): fired = true
+			else: failures.append("Cannon release did not follow evidenced empty field arrival and local R33 rack issue: "+origin)
 	if not hull.is_empty() and not first_deposit and int(rear.ledger.inspect_entity(hull,{},false).get("ammunition",{}).get("E26",0)) > 0:
-		first_deposit = true
-		_mark("First actual E26 rack deposit; independent from hull arrival and cannon release")
+		failures.append("APC rack filled before an evidenced physical forward Engineer deposit")
 
 func _command(result: Dictionary, label: String) -> void:
 	journal.append({"time":rear.time,"action":label,"result":result.duplicate(true)})
@@ -145,8 +170,16 @@ func _mark(label: String) -> void:
 func _save() -> void:
 	DirAccess.make_dir_recursive_absolute("res://.artifacts/c30")
 	var report := {"revision":OS.get_environment("GITHUB_SHA"),"stage":stage,"simulation_seconds":rear.time,"wall_seconds":(Time.get_ticks_msec()-started)/1000.0,"hull":hull,"hull_manifest":hull_manifest,"ammo_manifest":ammo_manifest,"forward_jobs":forward_jobs,"manufactured_origins":origins,"first_rack_deposit":first_deposit,"first_manufactured_round_release":fired,"second_demand_passed":false,"journal":journal,"failures":failures,"blockers":blockers,"opening":rear.battlefield_operations.policy.snapshot(),"heavy":rear.heavy_production.snapshot(),"munitions":rear.munitions_production.snapshot(),"dispatch":rear.dispatch.snapshot()}
+	report["empty_field_arrival"] = empty_field_arrival
+	report["local_issue_origins"] = local_issue_origins
+	report["forward_units_completed"] = shipped_units
 	if not hull.is_empty(): report["actual_hull"] = rear.ledger.inspect_entity(hull,{},false)
-	FileAccess.open(REPORT,FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
+	var output := FileAccess.open(REPORT,FileAccess.WRITE)
+	if output == null:
+		if not failures.has("Could not write the C30 evidence report"): failures.append("Could not write the C30 evidence report")
+		push_error("Could not write the C30 evidence report")
+		return
+	output.store_string(JSON.stringify(report,"\t"))
 
 func _finish() -> void:
 	failures.append_array(base.audit())
@@ -168,6 +201,7 @@ func _finish() -> void:
 		if not hull.is_empty(): field.selected_id = hull; field._refresh()
 		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://.artifacts/c30/connection.png")
+		if root.get_texture().get_image().save_png("res://.artifacts/c30/connection.png") != OK: failures.append("Could not save the ordinary C30 inspector image")
+	_save()
 	print("C30_RESULT ",JSON.stringify({"stage":stage,"fired":fired,"first_deposit":first_deposit,"failures":failures}))
 	quit(0 if failures.is_empty() and fired else 1)

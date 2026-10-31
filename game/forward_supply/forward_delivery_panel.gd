@@ -145,11 +145,14 @@ func refresh() -> void:
 		army_issue_status.text = "LOCAL ARMY ISSUE\nE02 available at the stop: %d\nPending member requests: %d\n%s" % [local.available_E02,local.requests.size(),local.status]
 		for request in local.requests:
 			army_issue_status.text += "\n%s needs %d · committed to couriers: %d" % [_member_label(request.person),request.needed,request.committed]
-		army_issue_status.text += "\n\nAPC RACK ISSUE\nE26 available at the stop: %d\n%s" % [int(local.get("available_E26",0)),str(local.get("rack_status","Waiting for actual local ammunition need."))]
+		army_issue_status.text += "\n\nAPC RACK ISSUE\nAutocannon rounds (E26) available at the stop: %d\n%s" % [int(local.get("available_E26",0)),str(local.get("rack_status","Waiting for actual local ammunition need."))]
+		for entity in entities:
+			if entity.kind == "CARRIER" and entity.owner == rear.PLAYER and entity.design_type == "T04" and rear.military.vehicles.has(entity.id):
+				army_issue_status.text += "\nAPC %s aboard: %d / 180 initial target · 240 maximum (includes loaded)" % [entity.id,int(entity.ammunition.get("E26",0))]
 		for request in local.get("rack_requests",[]):
-			army_issue_status.text += "\n%s initial allocation still needs %d · committed: %d" % [request.hull,request.needed,request.committed]
+			army_issue_status.text += "\nAPC %s initial allocation still needs %d · committed: %d" % [request.hull,request.needed,request.committed]
 		for job in rear.forward_supply.rack_issue.jobs.values():
-			army_issue_status.text += "\n%s rack: %d/%d actually deposited · %s · %s" % [job.hull,job.issued,job.quantity,job.state,job.blocker]
+			army_issue_status.text += "\nAPC %s rack: %d/%d actually deposited · %s · %s" % [job.hull,job.issued,job.quantity,job.state,job.blocker]
 		for job in rear.forward_supply.jobs.values():
 			if job.state != "Complete": army_issue_status.text += "\nCourier %s: %s · %d %s · %s" % [_member_label(job.handler),job.state,job.quantity,job.type,job.blocker]
 	else: army_issue_status.text = "Automatic local army issue is available in the Farmland and Towns playtest. Manual individual issue is under Diagnostics."

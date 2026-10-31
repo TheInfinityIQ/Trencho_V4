@@ -169,7 +169,7 @@ func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, e
 	if not title.is_empty() or id == selected_id: draw_string(font, point + Vector2(8, -6), title if not title.is_empty() else id, HORIZONTAL_ALIGNMENT_LEFT, maxf(0,_map_rect().end.x-point.x-8), 11, Color.WHITE)
 
 func _site_label(id: String) -> String:
-	var names := {"hq-berth":"Friendly HQ","enemy-hq":"Enemy HQ","resource-central":"Central resource","route-hub-west":"West hub","route-hub-east":"East hub","observation-central":"Observation"}
+	var names := {"hq-berth":"Friendly HQ","enemy-hq":"Enemy HQ","resource-central":"Central resource","route-hub-west":"West hub","route-hub-east":"East hub","observation-central":"Observation","blue-delivery":"Forward supply stop"}
 	if names.has(id): return names[id]
 	for index in Farmland.OBJECTIVES.size():
 		if Farmland.OBJECTIVES[index].id == id: return "Resource %d" % (index+1)
@@ -237,6 +237,8 @@ func _refresh() -> void:
 		_inspector.text += "\n\nOPENING\n"+str(opening.status)
 		for trip in opening.trips:
 			_inspector.text += "\n"+_unit_label(rear.ledger.inspect_entity(trip.hull,{},false))+": "+("Dismounted" if trip.dismounted else ("Transport active" if trip.started else (trip.blocker if not str(trip.blocker).is_empty() else "Awaiting orders")))
+		for deployment in opening.get("deployments",[]):
+			_inspector.text += "\n\nAPC DEPLOYMENT\n%s · %s\nDestination: %s\n%s" % [deployment.hull,deployment.state,_site_label(deployment.stop),deployment.blocker]
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear

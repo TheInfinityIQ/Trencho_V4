@@ -41,7 +41,7 @@ jobs:
     name: Focused C30 connection checks (manual)
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'c30'
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -78,11 +78,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges opening_rack_scheduling; do
+          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges opening_rack_scheduling vehicle_deployment; do
             timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script "res://game/battlefield/tests/${name}_regression.gd" > ".artifacts/c30/${name}.log" 2>&1
             tail -n 5 ".artifacts/c30/${name}.log"
             if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' ".artifacts/c30/${name}.log"; then exit 1; fi
           done
+          timeout --signal=TERM --kill-after=5s 30s "$GODOT_BIN" --headless --path . --check-only --script res://game/scenario/tests/c30_connection_probe.gd > .artifacts/c30/connection-parse.log 2>&1
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/c30/connection-parse.log; then exit 1; fi
       - name: Observe ordinary C30 manufacturing, delivery and autonomous consequence
         if: inputs.c30_observe
         timeout-minutes: 20
