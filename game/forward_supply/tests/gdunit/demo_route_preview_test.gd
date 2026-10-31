@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Ordinary authored session and production UI/service; no replacement world or stock.
 
 
-func test_ordinary_supply_preview_becomes_available_without_dispatching(_timeout := 230000) -> void:
+func test_ordinary_supply_preview_and_successful_delivery(_timeout := 230000) -> void:
 	var runner := scene_runner("res://game/main/main.tscn")
 	var main := runner.scene() as Control
 	await runner.simulate_frames(2)
@@ -105,6 +105,7 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	var starting_fuel := 0.0
 	var saw_outbound := false
 	var saw_forward_hull := false
+	var deposits := {}
 	var state := "Awaiting actual truck and handlers"
 	while Time.get_ticks_msec() < deadline and session.rear.time < 2600.0:
 		var slice_end: int = Time.get_ticks_usec()+12000
@@ -116,6 +117,12 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 				saw_outbound = saw_outbound or row.state == "Outbound"
 				var actual: Dictionary = session.rear.ledger.inspect_entity(row.hull,{},false)
 				saw_forward_hull = saw_forward_hull or actual.holder_id == row.stop
+				for id in row.delivered_items:
+					if deposits.has(id): continue
+					var stock: Dictionary = session.rear.ledger.inspect_entity(id,{},false)
+					assert_str(str(stock.get("holder_id",""))).is_equal(str(row.stop))
+					assert_str(str(stock.get("owner",""))).is_equal(str(session.rear.PLAYER))
+					deposits[id] = {"quantity":int(stock.get("quantity",0)),"holder":stock.get("holder_id",""),"origin":stock.get("origin_id",""),"time":session.rear.time}
 				if row.unloaded == 60: break
 		if not admitted and session.rear.time-last_inspection >= 5.0:
 			last_inspection = session.rear.time
@@ -154,13 +161,16 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	assert_bool(admitted).override_failure_message("No successful ordinary Supply admission: "+state+" at "+str(session.rear.time)).is_true()
 	if not admitted: return
 	var completed: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
-	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull}))
+	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"deposits":deposits,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull}))
 	assert_int(completed.loaded).is_equal(60)
 	assert_int(completed.unloaded).is_equal(60)
 	assert_bool(saw_outbound).is_true()
 	assert_bool(saw_forward_hull).is_true()
 	assert_float(float(session.rear.ledger.inspect_entity(completed.hull,{},false).fuel)).is_less(starting_fuel)
 	assert_array(completed.delivered_items).is_not_empty()
+	var deposited := 0
+	for deposit in deposits.values(): deposited += int(deposit.quantity)
+	assert_int(deposited).is_equal(60)
 	assert_int(_stock_at(session,"hq-stock","E02")).is_equal(hq_before-60)
 	for id in completed.delivered_items:
 		var delivered: Dictionary = session.rear.ledger.inspect_entity(id,{},false)
@@ -171,6 +181,10 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 		assert_bool(traced).is_true()
 	_button(main.get("_field_clock"),"Pause").pressed.emit()
 	assert_int(session.speed).is_zero()
+	var trace := {"revision":OS.get_environment("GITHUB_SHA"),"quantity":60,"accepted_at":start_time,"unloaded_at":session.rear.time,"job":job_id,"stop":completed.stop,"hq_debit":hq_before-_stock_at(session,"hq-stock","E02"),"deposits":deposits,"fuel_before":starting_fuel,"fuel_after":session.rear.ledger.inspect_entity(completed.hull,{},false).fuel,"paused":session.speed == 0}
+	var output := FileAccess.open("res://.artifacts/gdunit4/demo/happy_path.json",FileAccess.WRITE)
+	assert_object(output).is_not_null()
+	if output != null: output.store_string(JSON.stringify(trace,"\t"))
 
 
 func _stock_at(session: RefCounted, place: String, type: String) -> int:

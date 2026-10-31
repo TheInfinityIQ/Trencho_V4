@@ -3,7 +3,7 @@
     {
       "path": "game/forward_supply/tests/gdunit/demo_route_preview_test.gd",
       "cases": [
-        "test_ordinary_supply_preview_becomes_available_without_dispatching"
+        "test_ordinary_supply_preview_and_successful_delivery"
       ]
     }
   ],
