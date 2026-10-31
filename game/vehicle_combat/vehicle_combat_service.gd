@@ -66,6 +66,16 @@ func _exposed_gunner(person: Dictionary) -> bool:
 	var hull: Dictionary = _rear().ledger.inspect_entity(person.holder_id)
 	return hull.get("design_type","") == "T03" and hull.get("health",0) > 0
 
+func observation_station(hull: Dictionary) -> Dictionary:
+	if hull.get("design_type","") != "T04" or hull.get("health",0) <= 0: return {}
+	for station in ["Commander","Gunner","Driver"]:
+		var person_id: String = _operator(hull,station)
+		if person_id.is_empty(): continue
+		var person: Dictionary = _rear().ledger.inspect_entity(person_id)
+		if person.owner != hull.owner: continue
+		return {"source":person_id,"role":"apc_commander" if station == "Commander" else "ordinary"}
+	return {}
+
 func _surface(target: Dictionary, origin: Vector2) -> String:
 	var direction: Vector2 = origin-target.position
 	if direction.length_squared() <= EPS: return "Side"
@@ -143,7 +153,8 @@ func inspect_fire(id: String, target_id: String, weapon: String, moving: bool = 
 		var radius := 6.0 if weapon == "Main" else 2.0
 		for person in _rear().ledger.snapshot().entities:
 			if person.kind == "PERSON" and person.owner == hull.owner and person.health > 0 and not _seated(person) and person.position.distance_to(target.position) < radius: return _block("Friendly person occupies the cannon blast area.")
-	var sight: Dictionary = _rear().combat.world.observe(hull.position,target.position,"ordinary",1.5,float(spec.range))
+	var observer: Dictionary = observation_station(hull)
+	var sight: Dictionary = _rear().combat.world.observe(hull.position,target.position,str(observer.get("role","ordinary")),3.0,float(spec.range))
 	if not sight.visible or not sight.firing_line_clear: return _block("Observation or firing line blocked.")
 	var friendly: String = _friendly_line_blocker(hull.owner,id,target_id,hull.position,target.position)
 	if not friendly.is_empty(): return _block("Friendly person or vehicle "+friendly+" intersects the direct firing line.")

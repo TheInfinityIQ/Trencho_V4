@@ -8,6 +8,9 @@ var checks := 0
 var failures := 0
 
 func _initialize() -> void:
+	_commander_observation()
+	_commander_loss()
+	_commander_geometry()
 	_empty_then_physical_issue()
 	_current_parent_contacts()
 	_fire_guards()
@@ -24,14 +27,14 @@ func check(ok: bool, message: String) -> void:
 	checks += 1
 	if not ok: failures += 1; push_error(message)
 
-func _fixture(type: String = "T04", rounds: int = 0, target_type: String = "T02", company_parent: bool = false) -> RefCounted:
+func _fixture(type: String = "T04", rounds: int = 0, target_type: String = "T02", company_parent: bool = false, distance: float = 200.0) -> RefCounted:
 	var base := Base.new(false,true)
 	var rear: RefCounted = base.rear
 	var ledger: RefCounted = rear.ledger
 	rear.combat.world.bounds = Rect2i(0,0,4000,6000)
 	check(ledger.add_place("mounted-stop","Actual local stop",AT).ok,"Real stop")
 	check(rear.forward_supply.register_delivery_stop("mounted-stop").ok,"Real forward destination")
-	check(ledger.add_place("mounted-target-place","Observed hostile lane",AT+Vector2(0,200)).ok,"Real hostile place")
+	check(ledger.add_place("mounted-target-place","Observed hostile lane",AT+Vector2(0,distance)).ok,"Real hostile place")
 	var roster: Array[String] = []
 	for index in 4:
 		var id := "mounted-observer-%d" % index
@@ -57,6 +60,114 @@ func _shots(rear: RefCounted) -> Array:
 
 func _watch(rear: RefCounted) -> void:
 	check(rear.orders.watch("mounted-squad").ok,"Actual observation starts")
+
+func _commander_observation() -> void:
+	var base := _fixture("T04",0,"T02",true,300)
+	var rear: RefCounted = base.rear
+	rear.advance_time(0)
+	_watch(rear)
+	check(not rear.orders.visible["mounted-squad"].has("mounted-target"),"Ordinary squad cannot observe hostile at300m")
+	check(rear.orders.visible["mounted-hull"].has("mounted-target"),"Actual seated APC Commander observes hostile at300m")
+	check(rear.orders.contact("mounted-company","mounted-target").is_empty(),"Commander's local sight is not instantaneous parent knowledge")
+	rear.advance_time(0.5)
+	var local: Dictionary = rear.orders.contact("mounted-hull","mounted-target")
+	check(local.get("source","") == "mounted-Commander" and local.observed_at == 0 and is_equal_approx(local.age,0.5),"Vehicle element receives actual source and original sample time after halfsecond")
+	rear.advance_time(0.9)
+	check(rear.orders.contact("mounted-company","mounted-target").is_empty(),"Actual parent waits full additional command link")
+	rear.advance_time(0.1)
+	var delivered: Dictionary = rear.orders.contact("mounted-company","mounted-target")
+	check(delivered.get("current",false) and delivered.observed_at == 0 and is_equal_approx(delivered.age,1.5),"Attached company receives original observation after physical link delay")
+	check(rear.orders.contact("mounted-platoon","mounted-target").is_empty() and rear.orders.contact("army-red","mounted-target").is_empty(),"Contact does not leak down into unattached platoon or opposing army")
+	rear.advance_time(3)
+	check(_shots(rear).is_empty(),"Real450m sight cannot fire an empty rack")
+	check(rear.ledger.add_stock("commander-arrival","E26",12,0.5,"mounted-stop",rear.PLAYER).ok,"Declared local physical ammunition")
+	var issue: Dictionary = rear.forward_supply.request_vehicle_rack_issue("commander-arrival","mounted-hull","mounted-observer-0",12,"mounted-stop")
+	check(issue.ok,"Actual handler starts timed local rack deposit")
+	if not issue.ok: return
+	rear.advance_time(1)
+	check(_shots(rear).is_empty(),"Reserved and carried ammunition cannot authorize commander fire")
+	rear.advance_time(25)
+	check(rear.forward_supply.rack_issue.jobs[issue.id].state == "Complete" and not _shots(rear).is_empty(),"Only actual rack deposit enables autonomous300m fire")
+	check(base.audit().is_empty(),"Commander observation delayed reports and physical fire reconcile")
+
+func _commander_loss() -> void:
+	for loss in ["unseated","dead","unqualified","wrongarmy"]:
+		var base := _fixture("T04",0,"T02",false,300)
+		var rear: RefCounted = base.rear
+		rear.advance_time(1.5)
+		var original: Dictionary = rear.orders.contact("mounted-platoon","mounted-target")
+		var last_observed: float = rear.orders.visible["mounted-hull"]["mounted-target"].observed_at
+		check(original.get("current",false),"Actual Commander report precedes "+loss)
+		if loss == "unseated":
+			check(rear.ledger.complete_vehicle_station_exit("mounted-Commander","mounted-hull").ok,"Same Commander physically leaves station")
+		elif loss == "dead": rear.combat.injure("mounted-Commander",1000)
+		elif loss == "unqualified":
+			# Explicit invalid qualification fixture; no runtime grant or new observer.
+			rear.ledger.get("_entities")["mounted-Commander"].qualification = "None"
+		else:
+			# Explicit invalid crew affiliation fixture tests source admission, not reassignment.
+			rear.ledger.get("_entities")["mounted-Commander"].owner = "army-red"
+		check(not rear.orders.contact("mounted-platoon","mounted-target").current,"Lost real commander invalidates source without waiting for confidence expiry: "+loss)
+		check(rear.vehicle_combat.observation_station(rear.ledger.inspect_entity("mounted-hull")).role == "ordinary","Remaining real seated crew has only ordinary fallback: "+loss)
+		rear.advance_time(2)
+		check(not rear.orders.visible["mounted-hull"].has("mounted-target"),"Fallback cannot reveal300m target: "+loss)
+		var aged: Dictionary = rear.orders.contact("mounted-platoon","mounted-target")
+		check(not aged.current and aged.observed_at == last_observed and aged.confidence > 0,"Last intransit observation retains original time but loses current status: "+loss)
+		check(rear.ledger.move_entity("mounted-target","mounted-target-place",AT+Vector2(0,200)).ok,"Same hostile moves inside ordinary fallback")
+		rear.advance_time(3)
+		check(rear.orders.contact("mounted-platoon","mounted-target").get("current",false),"Actual remaining crew reports within ordinary220m: "+loss)
+		check(_shots(rear).is_empty(),"Fallback contact does not invent ammunition or deployment readiness: "+loss)
+	var base := _fixture("T04",0,"T02",false,300)
+	var rear: RefCounted = base.rear
+	rear.advance_time(0.5)
+	# Declared stale attachment fixture tests a pending report crossing a changed boundary.
+	rear.military.vehicles["mounted-hull"].parent = "mounted-company"
+	rear.advance_time(1)
+	check(rear.orders.contact("mounted-platoon","mounted-target").is_empty(),"Queued report cannot enter former parent after attachment changes")
+	check(rear.ledger.move_entity("mounted-target","mounted-target-place",AT+Vector2(0,451)).ok,"Same target actually leaves450m")
+	rear.advance_time(6)
+	check(not rear.orders.contact("mounted-company","mounted-target").get("current",false),"Leaving accepted range invalidates current reports")
+	rear.advance_time(50)
+	var expired: Dictionary = rear.orders.contact("mounted-company","mounted-target")
+	check(expired.get("confidence",1) == 0 and not expired.position.is_finite(),"Undelivered replacement cannot refresh original observation beyond confidence expiry")
+
+func _commander_geometry() -> void:
+	var base := _fixture("T04",20,"T02",false,300)
+	var rear: RefCounted = base.rear
+	check(rear.ledger.add_initial_vehicle("commander-friend","T02","mounted-target-place",rear.PLAYER,Specs.TYPES.T02,20,"Military").ok,"Actual samearmy hull in observation range")
+	rear.advance_time(0)
+	check(not rear.orders.visible["mounted-hull"].has("commander-friend"),"Ownarmy hull is never a hostile report")
+	check(rear.ledger.move_entity("commander-friend","mounted-stop",AT+Vector2(-30,0)).ok,"Friend clears actual firing line")
+	# A low opaque wall blocks the old1.5m muzzle; both accepted3m rays clear it.
+	rear.combat.world.obstacle("commander-low-wall",Rect2(1998,600,4,5),0,2,true,true)
+	rear.advance_time(1)
+	var hull: Dictionary = rear.ledger.inspect_entity("mounted-hull")
+	var target: Dictionary = rear.ledger.inspect_entity("mounted-target")
+	var rays: Dictionary = rear.combat.world.observe(hull.position,target.position,"apc_commander",3.0,450)
+	check(rays.visible and rays.firing_line_clear and not rear.combat.world.probe(hull.position,target.position,1.5,1.7,450).clear,"Accepted3m eye and muzzle clear a wall that blocks old1.5m muzzle")
+	check(rear.vehicle_combat.aim("mounted-hull","mounted-target").ok,"Actual gunner aims before geometry check")
+	rear.advance_time(3)
+	check(not _shots(rear).is_empty(),"Actual mounted release uses accepted3m muzzle geometry")
+	var count: int = _shots(rear).size()
+	rear.combat.world.obstacles.clear()
+	rear.combat.world.revision += 1
+	rear.combat.world.obstacle("commander-opaque-wall",Rect2(1998,640,4,5),0,6,true,true)
+	rear.advance_time(2)
+	check(not rear.orders.contact("mounted-platoon","mounted-target").get("current",false) and _shots(rear).size() == count,"Opaque wall removes real source sight and prevents further release")
+	check(not rear.vehicle_combat.inspect_fire("mounted-hull","mounted-target","Autocannon").ok,"Direct mounted gate still denies blocked eye and muzzle")
+	var fallback := _fixture("T04",20)
+	var local: RefCounted = fallback.rear
+	check(local.ledger.complete_vehicle_station_exit("mounted-Commander","mounted-hull").ok,"Commander leaves actual fallback fixture")
+	local.combat.world.obstacle("commander-high-slab",Rect2(1998,600,4,5),2.2,2.6,true,true)
+	var ordinary: Dictionary = local.combat.world.observe(AT,AT+Vector2(0,200),"ordinary",3.0,450)
+	check(ordinary.visible and not ordinary.firing_line_clear,"Ordinary fallback eye sees below raised slab while actual3m muzzle is blocked")
+	check(local.vehicle_combat.aim("mounted-hull","mounted-target").ok,"Actual fallback gunner completes normal aim")
+	local.advance_time(3)
+	var blocked: Dictionary = local.vehicle_combat.inspect_fire("mounted-hull","mounted-target","Autocannon")
+	check(not blocked.ok and blocked.blocked_reason == "Observation or firing line blocked.","Shared ordinary contact never bypasses independently blocked3m muzzle")
+	local.combat.world.obstacles.clear()
+	local.combat.world.revision += 1
+	check(local.vehicle_combat.inspect_fire("mounted-hull","mounted-target","Autocannon").ok,"Same stopped gunner rack and aim become eligible only when actual muzzle clears")
 
 func _empty_then_physical_issue() -> void:
 	var base := _fixture()

@@ -22,6 +22,7 @@ var first_deposit := false
 var empty_field_arrival := false
 var stage := "Starting authored C30 session"
 var last_input_report := -INF
+var contact_evidence: Array[Dictionary] = []
 const REPORT := "res://.artifacts/c30/connection.json"
 
 func _initialize() -> void:
@@ -198,12 +199,63 @@ func _save() -> void:
 		if not hull.is_empty() and job.target == hull: hq_handling.append(job.duplicate(true))
 	report["actual_hq_vehicle_handling"] = hq_handling
 	if not hull.is_empty(): report["actual_hull"] = rear.ledger.inspect_entity(hull,{},false)
+	if not hull.is_empty():
+		var support_complete := false
+		for deployment in report.opening.deployments:
+			if deployment.hull == hull and deployment.state == "Support position reached": support_complete = true
+		if contact_evidence.is_empty() and support_complete and int(report.actual_hull.ammunition.get("E26",0)) > 0:
+			contact_evidence.append(_contact_evidence("Supplied support position reached"))
+		if not failures.is_empty() and (contact_evidence.is_empty() or contact_evidence[-1].get("label","") != "Failure"):
+			contact_evidence.append(_contact_evidence("Failure"))
+	report["contact_evidence"] = contact_evidence
 	var output := FileAccess.open(REPORT,FileAccess.WRITE)
 	if output == null:
 		if not failures.has("Could not write the C30 evidence report"): failures.append("Could not write the C30 evidence report")
 		push_error("Could not write the C30 evidence report")
 		return
 	output.store_string(JSON.stringify(report,"\t"))
+
+func _contact_evidence(label: String) -> Dictionary:
+	# Diagnostic-only ground truth, never fed into command knowledge or target selection.
+	var actual: Dictionary = rear.ledger.inspect_entity(hull,{},false)
+	var parent: String = str(rear.military.vehicles.get(hull,{}).get("parent",""))
+	var observer: Dictionary = rear.orders._apc_observer(hull)
+	var candidates: Array[Dictionary] = []
+	var world: RefCounted = rear.combat.world
+	for target in rear.ledger.snapshot(false).entities:
+		var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
+		if affiliation != "army-red" or target.kind not in ["PERSON","CARRIER"] or target.get("health",0) <= 0 or target.get("assignment","") in ["Wounded","Recovery","Dead"]: continue
+		var distance: float = actual.position.distance_to(target.position)
+		var known: Dictionary = rear.orders.contact(parent,target.id)
+		var protected_person: bool = target.kind == "PERSON" and rear.ledger.entity_kind(target.holder_id) == "CARRIER" and not rear.vehicle_combat._exposed_gunner(target)
+		var row := {"id":target.id,"class":target.design_type,"position":target.position,"health":target.health,"holder":target.holder_id,"distance_m":distance,"protected_person":protected_person,"parent_contact":known,"visible_sources":[],"refusals":[]}
+		if distance > 450.0+world.EPS: row.refusals.append("Outside450m weapon range")
+		if protected_person: row.refusals.append("Protected occupant")
+		if target.design_type == "T05": row.refusals.append("Autonomous Autocannon excludes reportedT05")
+		if not known.get("current",false): row.refusals.append("No current contact delivered to actual parent")
+		for element in rear.orders.visible:
+			var seen: Dictionary = rear.orders.visible[element].get(target.id,{})
+			if not seen.is_empty(): row.visible_sources.append({"element":element,"parent":rear.orders._parent(element),"source":seen.source,"observed_at":seen.observed_at})
+		if distance <= 450.0+world.EPS:
+			var sight: Dictionary = world.observe(actual.position,target.position,str(observer.get("role","ordinary")),3.0,450)
+			row["sight"] = {"role":sight.role,"visible":sight.visible,"firing_line_clear":sight.firing_line_clear,"eye":{},"muzzle":{}}
+			for ray in ["eye","muzzle"]:
+				for field in ["reason","blocker","distance","range","from","to","budget"]: row.sight[ray][field] = sight[ray].get(field)
+			if not row.sight.visible: row.refusals.append("Actual mounted eye blocked or outside available observation range")
+			if not row.sight.firing_line_clear: row.refusals.append("Actual3m muzzle blocked")
+			if rear.vehicle_combat.mounts.has(hull): row["mounted_fire_gate"] = rear.vehicle_combat.inspect_fire(hull,target.id,"Autocannon")
+			else: row["mounted_fire_gate"] = {"ok":false,"blocked_reason":"No mount acquired/aimed yet"}
+		candidates.append(row)
+	var squad_observers: Array[Dictionary] = []
+	for squad_id in rear.orders.watch_squads:
+		var squad: Dictionary = rear.military.squads.get(squad_id,{})
+		if squad.get("owner","") != rear.PLAYER: continue
+		for person_id in rear.military._active_roster_members(squad):
+			var person: Dictionary = rear.ledger.inspect_entity(person_id,{},false)
+			squad_observers.append({"squad":squad_id,"parent":squad.platoon,"person":person_id,"position":person.position,"health":person.health})
+	var parent_contacts := {}
+	for target_id in rear.orders.contacts.get(parent,{}): parent_contacts[target_id] = rear.orders.contact(parent,target_id)
+	return {"label":label,"simulation_seconds":rear.time,"hull":hull,"position":actual.position,"actual_parent":parent,"observer":observer,"capability":rear.military.vehicle_capability(hull,"Fire"),"readiness":rear.military.vehicle_readiness(hull),"military_committed":rear.military.hull_committed(hull),"supply_committed":rear.forward_supply.hull_committed(hull),"mounted_action":rear.battlefield_operations.vehicle_execution.status.get(hull,""),"parent_contacts":parent_contacts,"living_red_candidates":candidates,"actual_blue_squad_observers":squad_observers}
 
 func _finish() -> void:
 	failures.append_array(base.audit())
