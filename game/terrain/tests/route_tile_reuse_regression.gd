@@ -98,9 +98,11 @@ class CountedWorld extends World:
 	var height_calls := 0
 	var support_calls := 0
 	var rules: Array[Dictionary] = []
-	func cell(at: Vector2i) -> Dictionary:
+	var candidates: Array[Dictionary] = []
+	func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
 		resolutions[at] = int(resolutions.get(at,0))+1
-		return super.cell(at)
+		candidates = regions
+		return super._route_tile(at,regions)
 	func _tile_height(tile: Dictionary, point: Vector2) -> float:
 		height_calls += 1
 		return super._tile_height(tile,point)
@@ -116,6 +118,7 @@ func _initialize() -> void:
 		var lane: RefCounted = Fixtures.lane(spec)
 		_compare(lane.world,lane.entity,lane.destination,spec.name)
 	_regions_and_mutations()
+	_region_candidates()
 	_height_identity()
 	_rule_identity()
 	_bridges_and_effects()
@@ -189,6 +192,64 @@ func _regions_and_mutations() -> void:
 	_copy(slope,legacy)
 	for at in [Vector2i(-1,15),Vector2i(0,15),Vector2i(99,15),Vector2i(100,15)]:
 		for movement_class in 3: _expect(slope.support(at,movement_class) == legacy.support(at,movement_class),"Public support preserves bounds and class rules")
+
+func _region_candidates() -> void:
+	var world := World.new()
+	world.bounds = Rect2i(-20,-20,140,80)
+	var finish := Vector2(90.5,15.5)
+	var body := _body(Vector2(10.5,15.5),finish)
+	body.size = Vector2(0.6,0.6)
+	_expect(_compare(world,body,finish,"No regions retains fresh default tiles").ok,"Default route supported")
+	# The exact integer scan is [10,91) x [15,16). Touching its outside
+	# edges cannot own a scanned cell; touching internal half-open edges can.
+	for area in [Rect2i(-10,15,20,1),Rect2i(91,15,10,1),Rect2i(10,14,81,1),Rect2i(10,16,81,1)]:
+		world.add_base_region(area,"TR11")
+	world.add_base_region(Rect2i(10,15,30,1),"TR03")
+	world.add_base_region(Rect2i(40,15,20,1),"TR05")
+	world.add_base_region(Rect2i(50,15,10,1),"TR02")
+	world.paint(Rect2i(55,15,1,1),"TR01")
+	_expect(_compare(world,body,finish,"Touching AABB and internal half-open region boundaries").ok,"Only occupied integer cells affect support")
+	var counted := CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok,"Capture route candidates")
+	_expect(counted.candidates.size() == 3,"Four outside touching regions excluded exactly once per route")
+	for index in 3:
+		_expect(is_same(counted.candidates[index],world.base_regions[6-index]),"Candidate references retain descending original order")
+	_expect(is_same(counted._route_tile(Vector2i(55,15),counted.candidates),world.cells[Vector2i(55,15)]),"Explicit cell still wins over overlapping candidates")
+	for at in [Vector2i(10,15),Vector2i(39,15),Vector2i(40,15),Vector2i(49,15),Vector2i(50,15),Vector2i(59,15),Vector2i(60,15),Vector2i(90,15)]:
+		_expect(counted._route_tile(at,counted.candidates) == world.cell(at),"Candidate tile equals public cell at %s" % at)
+	world.base_regions[0].area = Rect2i(80,15,1,1)
+	_expect(not _compare(world,body,finish,"Moved formerly excluded region now blocks").ok,"Next route sees region-area mutation")
+	world.paint(Rect2i(80,15,1,1),"TR01")
+	_expect(_compare(world,body,finish,"Explicit override restores mutated region route").ok,"Explicit cells retain priority")
+	world.base_regions[0].tile.terrain = "TR02"
+	world.cells.erase(Vector2i(80,15))
+	_expect(_compare(world,body,finish,"Changed region tile after prior query").ok,"No candidate or tile cache survives query")
+	world.add_base_region(Rect2i(35,15,40,1),"TR07")
+	_expect(_compare(world,body,finish,"New overlapping last region after prior query").ok,"New last region retains priority")
+	# Non-integer and degenerate rectangles retain the public lookup's point
+	# semantics. A negative-size region is retained but never evaluated here:
+	# a final full region shadows it, avoiding the engine's invalid-size log.
+	world.base_regions.append({"area":Rect2(80.25,15.0,0.5,1.0),"tile":{"terrain":"TR11"}})
+	_expect(_compare(world,body,finish,"Fractional rectangle between integer cell coordinates").ok,"Fractional area retains exact has_point semantics")
+	world.base_regions[-1].area = Rect2(80.0,15.0,0.25,1.0)
+	_expect(not _compare(world,body,finish,"Fractional rectangle owning one integer coordinate").ok,"Non-integer region can still own and block an occupied cell")
+	world.base_regions.append({"area":Rect2i(5,5,0,1),"tile":{"terrain":"TR11"}})
+	world.base_regions.append({"area":Rect2i(5,5,-1,1),"tile":{"terrain":"TR11"}})
+	world.add_base_region(world.bounds,"TR01")
+	_expect(_compare(world,body,finish,"Unusual rectangles conservatively retained behind later region").ok,"Conservative retention keeps exact legacy admission")
+	counted = CountedWorld.new()
+	_copy(world,counted)
+	_expect(counted.route(body,finish).ok,"Capture unusual candidates")
+	for index in [world.base_regions.size()-2,world.base_regions.size()-3,world.base_regions.size()-4]:
+		var retained := false
+		for region in counted.candidates:
+			if is_same(region,world.base_regions[index]): retained = true
+		_expect(retained,"Non-integer/zero/negative rectangle remains a candidate")
+	# Negative-coordinate scan and both rotated directions exercise the same
+	# clamped floor/ceil AABB beyond the horizontal boundary fixture.
+	for endpoints in [[Vector2(-15.5,-15.5),Vector2(105.5,45.5)],[Vector2(105.5,45.5),Vector2(-15.5,-15.5)]]:
+		_expect(_compare(world,_body(endpoints[0],endpoints[1]),endpoints[1],"Negative-coordinate rotated region scan").ok,"Rotated route matches independent legacy")
 
 func _height_identity() -> void:
 	var world := World.new()

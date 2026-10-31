@@ -30,6 +30,12 @@ func cell(at: Vector2i) -> Dictionary:
 		if base_regions[index].area.has_point(at): return base_regions[index].tile
 	return {"terrain": "TR01"}
 
+func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
+	if cells.has(at): return cells[at]
+	for region in regions:
+		if region.area.has_point(at): return region.tile
+	return {"terrain": "TR01"}
+
 func add_base_region(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
 	assert(bounds.encloses(area) and Catalog.SURFACES.has(terrain))
 	var tile := properties.duplicate(true)
@@ -203,12 +209,25 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var previous_tile: Dictionary = {}
 	var previous_rule: Dictionary = {}
 	var previous_shareable := false
-	for y in range(maxi(bounds.position.y, int(floor(minimum.y))), mini(bounds.end.y, int(ceil(maximum.y)))):
-		for x in range(maxi(bounds.position.x, int(floor(minimum.x))), mini(bounds.end.x, int(ceil(maximum.x)))):
+	var first_cell := Vector2i(maxi(bounds.position.x,int(floor(minimum.x))),maxi(bounds.position.y,int(floor(minimum.y))))
+	var past_cell := Vector2i(mini(bounds.end.x,int(ceil(maximum.x))),mini(bounds.end.y,int(ceil(maximum.y))))
+	var cell_area := Rect2i(first_cell,past_cell-first_cell)
+	var regions: Array[Dictionary] = []
+	# One synchronous candidate list; retain last-region-wins order. Only
+	# ordinary positive integer rectangles may be excluded by the scan AABB.
+	for index in range(base_regions.size()-1,-1,-1):
+		var region: Dictionary = base_regions[index]
+		var area: Variant = region.area
+		if area is Rect2i and cell_area.size.x > 0 and cell_area.size.y > 0:
+			var ordinary: bool = area.size.x > 0 and area.size.y > 0 and int(area.position.x)+int(area.size.x) <= 2147483647 and int(area.position.y)+int(area.size.y) <= 2147483647
+			if ordinary and not area.intersects(cell_area): continue
+		regions.append(region)
+	for y in range(first_cell.y,past_cell.y):
+		for x in range(first_cell.x,past_cell.x):
 			var at := Vector2i(x, y)
 			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
 			if interval.x < 0: continue
-			var tile := cell(at)
+			var tile := _route_tile(at,regions)
 			if not str(tile.get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
 			var rule := _support_from_tile(tile, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
