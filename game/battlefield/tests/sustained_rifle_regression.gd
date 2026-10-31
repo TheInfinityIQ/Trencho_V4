@@ -21,8 +21,10 @@ func _initialize() -> void:
 		roster.append(id)
 	check(rear.military.add_initial_squad("sustain-squad","Rifle",roster,"sustain-company","sustain-platoon",rear.PLAYER).ok,"Actual full hierarchy")
 	check(rear.military.capability("sustain-squad").ok,"Thirty per person meets deployment gate")
+	check(rear.military._held(roster[0],"E01") == 1 and rear.military._held(roster[0],"E02") == 29 and rear.military._rounds(roster[0]) == 30,"Metadata counts preserve one rifle, twenty-nine loose rounds and one loaded round exactly once")
 	var full_strength: float = rear.orders._squad_strength("sustain-squad")
 	check(ledger.fire_loaded_round(roster[0]+"-rifle").ok,"One actual round expended")
+	check(rear.military._held(roster[0],"E02") == 29 and rear.military._rounds(roster[0]) == 29,"Actual shot changes loaded-plus-loose count without inventing a loose round")
 	check(not rear.military.capability("sustain-squad").ok,"Twenty-nine still fails a new deployment package")
 	check(rear.military.capability("sustain-squad","Sustained Execution").ok,"Twenty-nine does not end existing Rifle intent")
 	check(is_equal_approx(rear.orders._squad_strength("sustain-squad"),full_strength),"Actual reloadable member retains armed strength below deployment threshold")
@@ -45,6 +47,7 @@ func _initialize() -> void:
 	var last: String = roster[7]
 	check(ledger.add_stock("sustain-reload","E02",1,0.02,last,rear.PLAYER).ok,"Actual last local reload round")
 	check(rear.combat.request_reload(last,last+"-rifle","sustain-reload",1).ok,"Same operator commits its real reload")
+	check(ledger.inspect_entity("sustain-reload").available == 0 and rear.military._held(last,"E02") == 1 and rear.military._rounds(last) == 1,"Reserved local reload remains physical quantity even when availability is zero")
 	check(rear.military.rifle_can_fight(last),"Own committed reload does not oscillate armed strength to zero")
 	check(rear.combat.interrupt_reload(last+"-rifle").ok,"Actual reload released")
 	check(ledger.request_stock("unrelated-claim","sustain-reload",1,"other-task","Other physical commitment",rear.PLAYER).ok,"Last local round committed to unrelated task")

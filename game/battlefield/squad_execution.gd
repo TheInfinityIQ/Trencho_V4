@@ -81,7 +81,7 @@ func _clear_unavailable_motions() -> bool:
 func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var rear: RefCounted = _rear()
 	var destination: String = str(intent.constraints.destination)
-	var goal: Dictionary = rear.ledger.inspect_entity(destination)
+	var goal: Dictionary = rear.ledger.inspect_entity(destination,{},false)
 	if goal.get("kind","") != "PLACE": status[squad.id] = "Destination unavailable"; return
 	if not baseline.has(squad.id): baseline[squad.id] = squad.roster.size()
 	var active: Array[String] = rear.military._active_roster_members(squad)
@@ -119,7 +119,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		_report(squad.id,"Low Supply","Urgent local ammunition resupply",true)
 		if offensive: advance_allowed = false
 	var fallback_id: String = str(intent.constraints.get("fallback_place",destination))
-	var fallback: Dictionary = rear.ledger.inspect_entity(fallback_id)
+	var fallback: Dictionary = rear.ledger.inspect_entity(fallback_id,{},false)
 	if withdrawing and fallback.get("kind","") != "PLACE": status[squad.id] = "No safe declared fallback"; return
 	status[squad.id] = "Withdrawing" if withdrawing else ("Advancing" if advance_allowed else "Holding for capability or supply")
 	if assault_blocked and not withdrawing: status[squad.id] = "Holding for validated HQ assault preparation"
@@ -152,7 +152,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 			_walk(id,destination,goal.position+_offset(squad.roster.find(id)))
 		else: motions.erase(id)
 	if rear.objectives.objectives.has(destination) and not active.is_empty():
-		var leader: Dictionary = rear.ledger.inspect_entity(active[0])
+		var leader: Dictionary = rear.ledger.inspect_person_status(active[0])
 		if leader.position.distance_to(goal.position) <= 25 and rear.objectives.inspect(destination).owner == leader.owner:
 			_report(squad.id,"Complete","Captured "+destination)
 
@@ -198,16 +198,16 @@ func _strength(squad: Dictionary, targets: Array[Dictionary]) -> Dictionary:
 
 func _shoot(id: String, targets: Array[Dictionary], maximum_range: float) -> bool:
 	var rear: RefCounted = _rear()
-	for weapon in rear.ledger.entities_at(id,["WEAPON"]):
+	for weapon in rear.ledger.entities_at(id,["WEAPON"],false):
 		if not weapon.functional or not rear.combat.WEAPONS.has(weapon.design_type): continue
 		if weapon.loaded_rounds == 0:
-			for stock in rear.ledger.entities_at(id,["STOCK"]):
+			for stock in rear.ledger.entities_at(id,["STOCK"],false):
 				if stock.design_type == weapon.ammo_type and stock.available > 0:
 					motions.erase(id)
 					rear.combat.request_reload(id,weapon.id,stock.id,mini(int(stock.available),int(weapon.loaded_capacity)))
 					return true
 		for contact in targets:
-			var person: Dictionary = rear.ledger.inspect_entity(id)
+			var person: Dictionary = rear.ledger.inspect_person_status(id)
 			if person.position.distance_to(contact.position) > maximum_range: continue
 			var shot: Dictionary
 			if str(contact.get("class","")).begins_with("T"):
@@ -223,14 +223,14 @@ func _shoot(id: String, targets: Array[Dictionary], maximum_range: float) -> boo
 
 func _care(id: String) -> bool:
 	var rear: RefCounted = _rear()
-	var medic: Dictionary = rear.ledger.inspect_entity(id)
-	for patient in rear.ledger.snapshot().entities:
+	var medic: Dictionary = rear.ledger.inspect_person_status(id)
+	for patient in rear.ledger.snapshot(false).entities:
 		if patient.kind != "PERSON" or patient.owner != medic.owner or patient.assignment != "Wounded" or patient.health <= 0 or patient.position.distance_to(medic.position) > 60: continue
 		if medic.position.distance_to(patient.position) > 2:
 			_walk(id,patient.holder_id,patient.position+Vector2(1,0),true,"Care")
 			return true
 		motions.erase(id)
-		for stock in rear.ledger.entities_at(id,["STOCK"]):
+		for stock in rear.ledger.entities_at(id,["STOCK"],false):
 			if stock.design_type == "E12" and stock.available > 0: return rear.combat.start_care(id,patient.id,stock.id).ok
 	return false
 

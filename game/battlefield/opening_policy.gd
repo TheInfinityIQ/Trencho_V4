@@ -41,11 +41,11 @@ func _rear() -> RefCounted:
 
 func _add_trip(id: String, hull: String, squads: Array, side: String, index: int, reserve: bool) -> void:
 	var rear: RefCounted = _rear()
-	var actual: Dictionary = rear.ledger.inspect_entity(hull)
+	var actual: Dictionary = rear.ledger.inspect_entity(hull,{},false)
 	var destination: String = side+"-dismount-%d" % index
 	var route: Array = [actual.position]
 	route.append_array(points[side+"-front-route"])
-	route.append(rear.ledger.inspect_entity(destination).position)
+	route.append(rear.ledger.inspect_entity(destination,{},false).position)
 	var returning := route.duplicate()
 	returning.reverse()
 	trips[id] = {"hull":hull,"squads":squads,"board":actual.holder_id,"dismount":destination,"outbound":route,"return":returning,"reserve":reserve,"started":false,"admitted_at":-1.0,"dismounted":false,"job":"","blocker":""}
@@ -63,7 +63,7 @@ func tick() -> void:
 		for report in rear.orders.reports:
 			if report.current_at == army.root and report.kind == "Complete" and report.detail == "Captured "+first:
 				phases[owner] = "Probe" if side == "blue" else "Hold"
-		var commander: Dictionary = rear.ledger.inspect_entity(army.commander)
+		var commander: Dictionary = rear.ledger.inspect_person_status(army.commander)
 		if commander.get("health",0) <= 0: status[owner] = "Commander unavailable; received intent continues"; continue
 		var objective: String = "resource-centre-red" if phases[owner] == "Probe" else first
 		var version: String = str(phases[owner])+str(reserve_active if side == "red" else false)
@@ -95,7 +95,7 @@ func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	var side := "blue" if owner == "army-blue" else "red"
 	var role := "Medical" if id == army.medical else ("Support" if id == army.engineer else "Rifle")
 	if id == army.rifles[2]: return {"action":"Defend HQ","destination":side+"-guard-rally","fallback":side+"-guard-rally","role":"Guard"}
-	if side == "red" and id == army.rifles[1] and not reserve_active: return {"action":"Hold Area","destination":_rear().ledger.inspect_entity(army.hulls[1].id).holder_id,"fallback":army.staging,"role":"Reserve"}
+	if side == "red" and id == army.rifles[1] and not reserve_active: return {"action":"Hold Area","destination":_rear().ledger.inspect_entity(army.hulls[1].id,{},false).holder_id,"fallback":army.staging,"role":"Reserve"}
 	if side == "red" and id in [army.engineer,army.medical]: return {"action":"Hold Area","destination":side+"-"+("medical" if role == "Medical" else "support")+"-rally","fallback":army.staging,"role":role}
 	var fallback: String = army.staging
 	for trip in trips.values():
@@ -119,7 +119,7 @@ func _request_trips() -> void:
 				var squad: Dictionary = rear.military.squads[squad_id]
 				if not squad.vehicle.is_empty(): all_out = false
 				for person_id in rear.military._active_roster_members(squad):
-					if rear.ledger.inspect_entity(person_id).holder_id != trip.dismount: all_out = false
+					if rear.ledger.inspect_person_status(person_id).holder_id != trip.dismount: all_out = false
 			if all_out: trip.dismounted = true
 	# One potentially expensive physical admission per existing decision tick.
 	# Rotate even after a refusal so one invalid queued lift cannot starve others.
@@ -145,7 +145,7 @@ func _request_trips() -> void:
 func _reposition_supply_truck() -> void:
 	var rear: RefCounted = _rear()
 	if repositioned.has("blue-supply") or not rear.military.has_method("request_reposition"): return
-	var hull: Dictionary = rear.ledger.inspect_entity(armies["army-blue"].hulls[2].id)
+	var hull: Dictionary = rear.ledger.inspect_entity(armies["army-blue"].hulls[2].id,{},false)
 	var route: Array = [hull.position,Vector2(2000,650),Vector2(2100,650),Vector2(2100,450),points["blue-service"]]
 	var fallback := route.duplicate()
 	fallback.reverse()

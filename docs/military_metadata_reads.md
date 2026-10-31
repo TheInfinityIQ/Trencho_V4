@@ -1,0 +1,11 @@
+# Military metadata reads
+
+Remote profiling of 42d93af measured inspect_entity at 18.2 seconds, contents-mass work at 9.415 seconds over 39,556 calls, and child indexing at 9.003 seconds over 32,874 calls. Organization's held-count and round-count paths accounted for 2.29 and 1.59 seconds respectively. This change removes unused mass calculations at reviewed military readers; it introduces no inventory cache, count formula, policy or route-plan reuse.
+
+Organization uses metadata-only entity queries for held quantity, loaded-plus-loose E02 and sustained Rifle capability, and person status for package qualification, leader training and seated crew eligibility. All filters, quantity arithmetic, loaded rounds and reservation checks remain unchanged. Held physical quantity intentionally includes reserved stock; immediate usability still checks available stock or the existing operator's committed reload.
+
+SquadExecution uses metadata-only Place reads for destination/fallback, person status for capture/fire/care positioning, and metadata-only weapon/stock/patient queries before invoking unchanged combat admissions. Its advance_to status read was already present at the base revision. The foot-route _walk method retains its full person read and real contents_mass_kg. No payload, route, gross mass or service admission is altered.
+
+OpeningPolicy uses metadata-only hull/place position and holder reads for route construction and monitoring, and person status for commander health/dismount tracking. Its calls to physical transport services still cause those owners to read and validate actual current crew, fuel, payload, terrain, load and revision independently.
+
+Existing mass/query equivalence, Military, sustained Rifle, squad execution/safety, opening, troop transport and vehicle-execution regressions cover the affected boundaries. The sustained Rifle regression adds explicit count assertions for 29 loose plus one loaded round, actual shot expenditure and a reserved final local reload round. Verification is source-only under the resource restriction: no local engine/test/import launches. Runtime correctness and performance remain for remote CI and the lead's coordinated probe.

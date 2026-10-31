@@ -491,7 +491,7 @@ func vehicle_capability(hull_id: String, purpose: String) -> Dictionary:
 func _living_crew_id(hull: Dictionary, station: String) -> String:
 	if hull.is_empty() or not hull.has("crew_by_station") or not hull.crew_by_station.has(station): return ""
 	var id: String = hull.crew_by_station[station]
-	var person: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(id)
+	var person: Dictionary = _rear_ref.get_ref().ledger.inspect_person_status(id)
 	if person.is_empty() or person.health <= 0 or not person.basic_training or person.holder_id != hull.id or person.crew_station != station or person.assignment != "Formation Duty" or person.duty_id != "vehicle:"+hull.id: return ""
 	if person.qualification != "P08" and not (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04"): return ""
 	return id
@@ -848,7 +848,7 @@ func _package(kind: String, people: Array[String], squad_id: String = "") -> Dic
 	var other_ids: Array[String] = []
 	var special: String = str(SPECIALISTS[kind].keys()[0])
 	for id in people:
-		var p: Dictionary = rear.ledger.inspect_entity(id)
+		var p: Dictionary = rear.ledger.inspect_person_status(id)
 		if special != "None" and p.qualification == special: specialist_ids.append(id)
 		else: other_ids.append(id)
 	if kind != "Rifle" and specialist_ids.size() < int(SPECIALISTS[kind].values()[0]):
@@ -916,7 +916,7 @@ func _rifle_ready(id: String) -> bool:
 
 func _held(id: String, type: String) -> int:
 	var total := 0
-	for item in _rear_ref.get_ref().ledger.entities_at(id,["WEAPON","STOCK","HEAVY_OBJECT"]):
+	for item in _rear_ref.get_ref().ledger.entities_at(id,["WEAPON","STOCK","HEAVY_OBJECT"],false):
 		if item.holder_id == id and item.design_type == type and item.kind in ["WEAPON","STOCK","HEAVY_OBJECT"]: total += item.quantity
 	return total
 
@@ -928,7 +928,7 @@ func _held_any(ids: Array[String], type: String) -> int:
 func _rounds(id: String) -> int:
 	var total := _held(id,"E02")
 	var rear: RefCounted = _rear_ref.get_ref()
-	for item in rear.ledger.entities_at(id,["WEAPON"]):
+	for item in rear.ledger.entities_at(id,["WEAPON"],false):
 			if item.kind == "WEAPON" and item.holder_id == id and item.design_type in ["E01","E05","E19"]: total += int(item.loaded_rounds)
 	return total
 
@@ -1026,7 +1026,7 @@ func capability(id: String, purpose: String = "Deployment") -> Dictionary:
 	if not row.vehicle.is_empty(): return _fail("Mounted passengers cannot provide dismounted fire or capture until actual exit.")
 	var active: Array[String] = _active_roster_members(row)
 	if row.leader.is_empty() or row.leader not in active: return _fail("Squad has no living, physically assigned leader during replacement delay.")
-	var leader: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(row.leader)
+	var leader: Dictionary = _rear_ref.get_ref().ledger.inspect_person_status(row.leader)
 	if not leader.basic_training and not (row.kind == "Rifle" and row.acting): return _fail("Squad leader lacks the required training or Rifle acting exception.")
 	# Thirty rounds is the deployment package, not a per-shot whole-squad cutoff.
 	# Existing Rifle intent still needs the living minimum and a real armed member.
@@ -1042,10 +1042,10 @@ func capability(id: String, purpose: String = "Deployment") -> Dictionary:
 func rifle_can_fight(id: String) -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var ledger: RefCounted = rear.ledger
-	for weapon in ledger.entities_at(id,["WEAPON"]):
+	for weapon in ledger.entities_at(id,["WEAPON"],false):
 		if weapon.design_type != "E01" or not weapon.functional: continue
 		if weapon.loaded_rounds > 0: return true
-		for stock in ledger.entities_at(id,["STOCK"]):
+		for stock in ledger.entities_at(id,["STOCK"],false):
 			if stock.owner == weapon.owner and stock.design_type == weapon.ammo_type and stock.available > 0: return true
 		var reload: Dictionary = rear.combat.reloads.get(weapon.id,{})
 		if not reload.is_empty() and reload.operator == id and ledger.inspect_claim(reload.claim).get("reserved",0) > 0: return true
