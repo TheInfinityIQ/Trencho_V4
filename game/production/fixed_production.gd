@@ -87,9 +87,10 @@ func operators() -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var result: Array[String] = []
 	for id in rear.actors:
-		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		var actor: Dictionary = rear.actors[id]
-		if rear._eligible(person, _spec.duty) and person.assignment == "Rear Labour" and person.duty_id == _spec.duty and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and actor.phase == "Idle" and actor.load.is_empty() and person.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[_spec.duty].place,{},false).position):
+		if actor.phase != "Idle" or not actor.load.is_empty(): continue
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
+		if rear._eligible(person, _spec.duty) and person.assignment == "Rear Labour" and person.duty_id == _spec.duty and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and person.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[_spec.duty].place,{},false).position):
 			result.append(id)
 	return result
 

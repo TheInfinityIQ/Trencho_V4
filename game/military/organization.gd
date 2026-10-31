@@ -923,11 +923,7 @@ func _held_any(ids: Array[String], type: String) -> int:
 	return total
 
 func _rounds(id: String) -> int:
-	var total := _held(id,"E02")
-	var rear: RefCounted = _rear_ref.get_ref()
-	for item in rear.ledger.entities_at(id,["WEAPON"],false):
-			if item.kind == "WEAPON" and item.holder_id == id and item.design_type in ["E01","E05","E19"]: total += int(item.loaded_rounds)
-	return total
+	return _rear_ref.get_ref().ledger.ammunition_quantity_at(id,"E02",["E01","E05","E19"])
 
 func _rounds_any(ids: Array[String]) -> int:
 	var total := 0
