@@ -7,10 +7,12 @@ REVISION.txt identifies this exact build.
 Launch enters the paused Farmland and Towns game. Getting started shows help.
 Rear base and Battlefield share the same people, inventory and clock.
 Use Pause, 1x or 2x to control time. Start at 1x.
-For a first delivery, let the initial deployments proceed at 1x. Click Supply
-in the TOP BAR, then select the military T01, rifle ammunition (E02), and the forward
-stop. Choose a quantity and Preview route, load and fuel. Read any blocker;
-the truck, loader and destination Engineers must actually be available.
+For a first delivery, click Supply in the TOP BAR, then select the military T01,
+rifle ammunition (E02), and the forward stop. Choose a quantity and Preview route,
+load and fuel. You can preview while paused. The estimate starts at HQ and excludes
+the truck's travel to HQ; its current location and dispatch blocker are shown.
+Let initial deployments proceed at 1x. The truck, loader and destination Engineers
+must actually be available before starting a delivery.
 Start physical delivery when ready. Loading, travel, unloading and return take
 time. The army issues arrived ammunition; Diagnostics are not required.
 
