@@ -72,7 +72,9 @@ func cancel_planning() -> void:
 		planning_revision += 1
 		if request.kind == "Departure":
 			var row: Dictionary = jobs.get(request.job,{})
-			if not row.is_empty() and row.state == "Planning Route": _block_route(row,request.phase,request.message)
+			if not row.is_empty() and row.state == "Planning Route":
+				row.planning_state = ""
+				_block_route(row,request.phase,request.message)
 	_planning_fifo.clear()
 	_departure_requests.clear()
 
@@ -148,6 +150,11 @@ func _complete_planning_leg(request: Dictionary) -> bool:
 		request.state = "Ready"
 	if request.state == "Ready":
 		request.message = "Pure route plans ready; waiting for fresh running-state admission."
+		if request.kind == "Departure":
+			var row: Dictionary = jobs.get(request.job,{})
+			if not row.is_empty() and row.state == "Planning Route":
+				row.planning_state = "Ready"
+				row.blocker = "Route ready; awaiting physical departure."
 		planning_revision += 1
 	return false
 
@@ -166,6 +173,11 @@ func _reset_planning(request: Dictionary) -> void:
 	request.state = "Pending"
 	request.stage = "Capture"
 	request.message = "Waiting for fresh route capture."
+	if request.kind == "Departure":
+		var row: Dictionary = jobs.get(request.job,{})
+		if not row.is_empty() and row.state == "Planning Route":
+			row.planning_state = "Pending"
+			row.blocker = "Planning a fresh route; existing physical trip remains committed."
 	_drop_planning_work(request)
 	request.generation = _planning_generation
 
@@ -333,6 +345,7 @@ func _commit_planning(request: Dictionary) -> bool:
 		row.world_revision = request.revision
 		row.stopped_phase = ""
 		row.planning_phase = ""
+		row.planning_state = ""
 		row.planning_points = []
 		row.blocker = ""
 		_departure_requests.erase(row.id)
@@ -352,6 +365,7 @@ func _deny_planning(request: Dictionary, message: String) -> bool:
 	_departure_requests.erase(request.job)
 	var row: Dictionary = jobs.get(request.job,{})
 	if row.is_empty() or row.state != "Planning Route": return false
+	row.planning_state = ""
 	_block_route(row,request.phase,message)
 	return true
 
@@ -369,6 +383,7 @@ func _queue_departure(row: Dictionary, points: Array, phase: String) -> bool:
 	planning_revision += 1
 	row.state = "Planning Route"
 	row.planning_phase = phase
+	row.planning_state = "Pending"
 	row.planning_points = points.duplicate()
 	row.route_deadline = INF
 	row.blocker = "Planning a fresh route; existing physical trip remains committed."
@@ -380,6 +395,8 @@ func _discard_departure(job_id: String) -> void:
 	if request.is_empty(): return
 	request.state = "Cancelled"
 	request.message = "Private departure planning interrupted; physical trip retained."
+	var row: Dictionary = jobs.get(job_id,{})
+	if not row.is_empty(): row.planning_state = ""
 	_drop_planning_work(request)
 	planning_revision += 1
 	_departure_requests.erase(job_id)
