@@ -8,6 +8,12 @@ Keep full 4,000 by 6,000 metre scale, physical identity/conservation, hierarchy 
 The authorized transition adopts clear 2D overhead and Windows-first for this build, at existing 1280x720 development viewport. This permits connected-world implementation; D01 hardware/performance/native certification remains open and is not claimed.
 Designer records initial scenario/forces/resources and pacing checkpoints on #83 before dependent implementation. GDD proposed defaults remain baseline. Material deviations need explicit design resolution and human approval where they change agreed experience. The full engagement 30–50 simulated-minute target is a playtest objective, not a passed criterion or forced demo timeout.
 
+## First demo focus — 31 October 2026
+
+Dawson requested continued development until a playable demo. The Designer selects the infantry useful-supply and continuing resource-operation loop for this first handoff: ordinary paused launch, manage rear workers/production, deliberately send real HQ supplies forward, observe actual issue and continuing autonomous resource tasks, and respond to later need in the same session. Full starting forces, stocks and map scale remain unchanged. Starting HQ ammunition may support the first useful shipment; do not attribute its consequence to newly manufactured rounds.
+
+C30 manufacture-to-first-shot, tanks, all map families, campaign and full forecasting remain wider game requirements and are not prerequisites for this first demo. No unchanged long opening, observation matrix or regression suite is a new handoff gate. Brief checks of the actual new entry/actions and a Windows export provide bounded engineering evidence; full engagement pacing and native Windows responsiveness remain unverified. The parent delivery remains open for its broader obligations.
+
 ## Observable acceptance
 - Ordinary launch enters one persistent session. Rear/battlefield share time and identities; view switching does not pause/reset the other.
 - Acquisition, staffing, manufacture, loading, travel, unloading, actual issue and consumption connect through real entities.

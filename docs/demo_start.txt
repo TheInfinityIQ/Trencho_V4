@@ -16,7 +16,8 @@ time. The army issues arrived ammunition; Diagnostics are not required.
 
 In Battlefield, select your formations to inspect current orders, actual loads
 and shortages. Resource control earns income only while uncontested. You can
-switch views or pause while planning without replacing the session.
+switch views or pause while planning without replacing the session. Mouse wheel
+zooms the battlefield, middle-button drag pans, and left-click inspects a marker.
 
 For replenishment, use Rear base Work to select a munitions recipe and output
 target. Staff assigns actual workers. Haul ingredients to the required input
