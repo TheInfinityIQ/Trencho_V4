@@ -2,6 +2,7 @@ extends RefCounted
 ## Small explicit metre-cell world. No generator, renderer or world navigation owner.
 
 const Catalog = preload("res://game/terrain/terrain_catalog.gd")
+const RouteWork = preload("res://game/terrain/route_work.gd")
 const EPS := 0.0000001
 var bounds := Rect2i(0, 0, 900, 40)
 var cells: Dictionary = {}
@@ -228,6 +229,9 @@ func _cell_overlap_interval(entity: Dictionary, start: Vector2, finish: Vector2,
 			if high - low <= EPS: return Vector2(-1, -1)
 	return Vector2(low, high)
 
+
+func begin_route(entity: Dictionary, destination: Vector2) -> RefCounted:
+	return RouteWork.new(self,entity,destination)
 
 func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var start: Vector2 = entity.position
