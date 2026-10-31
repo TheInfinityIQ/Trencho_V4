@@ -24,7 +24,7 @@ Dawson subsequently requested focused GDUnit coverage of the unavailable Supply 
 
 Dawson's 31 October instruction takes precedence: until the main game is complete, do not write regression tests or run regression suites, broad scenarios, failure injection or coverage matrices. Only brief direct checks that the code just changed works are allowed. Preserve existing tests for later; do not rename a regression suite as a direct check.
 CI parses changed production scripts and can run one brief, explicitly supplied current-change demonstration; it does not run the old suites. See [current verification policy](docs/current_change_verification.md). Compilation is not gameplay acceptance; report the exact direct check and unverified behavior.
-Protect desktop resources: no local engine runs under the current restriction. Necessary direct new-code checks run briefly on GitHub; preserve the human editor and unrelated applications.
+Latest local-feedback instruction permits the named small SupplyComponent check through tools/run_local_current_change.ps1: one headless owned process, limited CPU/memory and a 20-second test deadline. Full opening/delivery checks stay on GitHub. Preserve the human editor and unrelated applications; other suites remain deferred.
 
 ## Repository care
 

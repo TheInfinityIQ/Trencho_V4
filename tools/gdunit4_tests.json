@@ -1,4 +1,10 @@
 {
+  "SupplyComponent": [
+    {
+      "path": "game/forward_supply/tests/gdunit/supply_component_test.gd",
+      "cases": ["test_ready_supply_preview_and_panel_delivery"]
+    }
+  ],
   "Demo": [
     {
       "path": "game/forward_supply/tests/gdunit/demo_route_preview_test.gd",

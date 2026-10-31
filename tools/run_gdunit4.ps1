@@ -1,14 +1,16 @@
 [CmdletBinding()]
 param(
     [string]$GodotPath = 'godot',
-    [ValidateSet('Domain', 'Input', 'Demo')][string]$Suite = 'Domain',
+    [ValidateSet('Domain', 'Input', 'Demo', 'SupplyComponent')][string]$Suite = 'Domain',
     [string]$ReportName = '',
-    [string]$CaseName = ''
+    [string]$CaseName = '',
+    [switch]$LocalResourceLimits
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $engine = (Get-Command $GodotPath -CommandType Application -ErrorAction Stop).Source
+if ($LocalResourceLimits -and (-not $IsWindows -or $Suite -ne 'SupplyComponent')) { throw 'The local resource guard permits only the focused Windows SupplyComponent case.' }
 if ($Suite -eq 'Input' -and $IsLinux -and -not $env:DISPLAY) {
     throw 'Scene input requires a display. Use: xvfb-run -a pwsh -File ./tools/check.ps1 -SceneInput -GodotPath <godot>'
 }
@@ -24,7 +26,7 @@ if (Test-Path -LiteralPath $xmlPath) { Remove-Item -LiteralPath $xmlPath }
 $manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'gdunit4_tests.json') -Raw | ConvertFrom-Json
 $suites = @($manifest.$Suite)
 $expectedCases = @($suites | ForEach-Object { $_.cases })
-if ($Suite -eq 'Demo') {
+if ($Suite -in @('Demo','SupplyComponent')) {
     if ($suites.Count -ne 1 -or $expectedCases.Count -ne 1) { throw 'Demo must declare exactly one suite and one case.' }
     $testSource = Get-Content -LiteralPath (Join-Path $projectRoot $suites[0].path) -Raw
     $declaredCases = @([regex]::Matches($testSource, '(?m)^[\t ]*func[\t ]+(test_[A-Za-z0-9_]+)[\t ]*\(') | ForEach-Object { $_.Groups[1].Value })
@@ -53,8 +55,15 @@ foreach ($suiteEntry in $suites) { $engineArguments += @('-a', ('res://' + $suit
 # the resulting JUnit names. An unexpected discovered case still fails validation.
 foreach ($ignored in $ignoredCases) { $engineArguments += @('-i', ($suites[0].path + ':' + $ignored)) }
 if ($Suite -ne 'Input') { $engineArguments += '--ignoreHeadlessMode' }
-& $engine @engineArguments | Out-Host
-$engineExit = $LASTEXITCODE
+if ($LocalResourceLimits) {
+    if (-not ('WindowsCurrentCheckProcess' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'windows_current_check_process.cs') }
+    $processLog = Join-Path $reportRoot 'process.log'
+    $engineExit = [WindowsCurrentCheckProcess]::Run($engine,$engineArguments,$projectRoot,$processLog,20000)
+    Get-Content -LiteralPath $processLog | Select-String -Pattern 'SUPPLY_COMPONENT_RESULT|LOCAL_CHECK_|Statistics:|Overall Summary:' | ForEach-Object { Write-Host $_.Line }
+} else {
+    & $engine @engineArguments | Out-Host
+    $engineExit = $LASTEXITCODE
+}
 if ($engineExit -ne 0) { throw "GdUnit4 $Suite failed (engine exit $engineExit). Reports: $reportRoot" }
 if (-not (Test-Path -LiteralPath $xmlPath)) { throw "Missing GdUnit4 JUnit report: $xmlPath" }
 [xml]$report = Get-Content -LiteralPath $xmlPath -Raw
