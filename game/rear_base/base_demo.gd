@@ -35,6 +35,12 @@ var source: OptionButton
 var destination: OptionButton
 var goods_type: OptionButton
 var haul_count: SpinBox
+var haul_category: OptionButton
+var haul_draft_status: Label
+var ingredient_checklist: VBoxContainer
+var ingredient_heading: Label
+var _ingredient_basis := ""
+var _haul_draft_dirty := false
 var facility: OptionButton
 var recipe: OptionButton
 var mode: OptionButton
@@ -239,6 +245,8 @@ func _start_session(refresh_rear_ui: bool = true) -> void:
 	simulation = preload("res://game/scenario/farmland_session.gd").create() if scenario.selected == 2 else Simulation.new(scenario.selected == 1, true)
 	if scenario.selected == 2: simulation.enable_live_planning()
 	_displayed_time = -INF
+	_haul_draft_dirty = false
+	if haul_draft_status != null: haul_draft_status.text = "Prepare an ingredient in Work, or choose a haul below. Click Order haul to submit it."
 	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
 	base_map.simulation = simulation
@@ -275,15 +283,25 @@ func _staff_panel(box: VBoxContainer) -> void:
 
 func _haul_panel(box: VBoxContainer) -> void:
 	_label(box, "Orders wait for real loose source goods")
-	source = _option(box, "Source", simulation.rear.stores.keys())
-	destination = _option(box, "Destination", simulation.rear.stores.keys())
+	haul_draft_status = _label(box,"Prepare an ingredient in Work, or choose a haul below. Click Order haul to submit it.")
+	haul_draft_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	source = _option(box, "Source", [])
+	destination = _option(box, "Destination", [])
+	_sync_haul_stores()
 	destination.select(1)
-	var category := _option(box, "Goods category", ["Materials", "Workshop output", "Munitions output", "Support output"])
+	haul_category = _option(box, "Goods category", ["Materials", "Workshop output", "Munitions output", "Support output"])
 	goods_type = _option(box, "Goods", [])
-	category.item_selected.connect(_load_haul_goods)
+	haul_category.item_selected.connect(_load_haul_goods)
 	_load_haul_goods(0)
 	haul_count = _spin(box, "Units", 10000, 1)
-	_button(box, "Order haul", func() -> void: _result(simulation.rear.request_haul(source.get_item_text(source.selected), destination.get_item_text(destination.selected), goods_type.get_item_text(goods_type.selected), int(haul_count.value))))
+	for option in [source,destination,haul_category,goods_type]:
+		option.item_selected.connect(func(_index: int) -> void: _mark_haul_draft_dirty())
+	haul_count.value_changed.connect(func(_value: float) -> void: _mark_haul_draft_dirty())
+	_button(box, "Order haul", _order_haul)
+	_button(box, "Clear haul draft", func() -> void:
+		_haul_draft_dirty = false
+		haul_count.set_value_no_signal(0)
+		haul_draft_status.text = "Draft cleared. Prepare an ingredient in Work or choose new haul fields.")
 	jobs = _list(box, 140)
 	jobs.item_selected.connect(func(index: int) -> void: _select("job", _job_ids[index], false))
 	_button(box, "Cancel selected haul", func() -> void:
@@ -292,15 +310,135 @@ func _haul_panel(box: VBoxContainer) -> void:
 func _load_haul_goods(category: int) -> void:
 	goods_type.clear()
 	if category == 0:
-		for id in ["M01", "M02", "M03", "M04", "M06", "M11", "M05", "M07", "M08", "M09", "M10"]: goods_type.add_item(id)
+		for id in ["M01", "M02", "M03", "M04", "M06", "M11", "M05", "M07", "M08", "M09", "M10"]:
+			goods_type.add_item(_material_label(id))
+			goods_type.set_item_metadata(goods_type.item_count-1,id)
 	else:
 		var duty: String = ["", "workshop", "munitions", "support"][category]
 		for spec in simulation.rear.production.RECIPES.values():
-			if spec.duty == duty: goods_type.add_item(spec.output_type)
+			if spec.duty == duty:
+				goods_type.add_item(spec.output_type)
+				goods_type.set_item_metadata(goods_type.item_count-1,spec.output_type)
+
+func _haul_choice(option: OptionButton) -> String:
+	return str(option.get_item_metadata(option.selected)) if option.selected >= 0 else ""
+
+func _mark_haul_draft_dirty() -> void:
+	_haul_draft_dirty = true
+	haul_draft_status.text = "Unsubmitted haul draft. Review the fields, then click Order haul; Clear haul draft lets you prepare another ingredient."
+
+func _sync_haul_stores() -> void:
+	var ids: Array = simulation.rear.stores.keys()
+	for option in [source,destination]:
+		var selected: String = _haul_choice(option)
+		var same: bool = option.item_count == ids.size()
+		if same:
+			for index in ids.size():
+				if option.get_item_metadata(index) != ids[index]: same = false; break
+		if same: continue
+		option.clear()
+		for id in ids:
+			option.add_item(str(id).capitalize())
+			option.set_item_metadata(option.item_count-1,id)
+		option.select(maxi(0,ids.find(selected)))
+
+func _order_haul() -> void:
+	var result: Dictionary = simulation.rear.request_haul(_haul_choice(source),_haul_choice(destination),_haul_choice(goods_type),int(haul_count.value))
+	if result.ok:
+		_haul_draft_dirty = false
+		haul_draft_status.text = "Haul ordered. The Haul list tracks actual deliveries; prepare another ingredient in Work when needed."
+	else: _haul_draft_dirty = true
+	_result(result)
+
+func _material_label(type: String) -> String:
+	return str(Catalog.MATERIALS[type].name) if Catalog.MATERIALS.has(type) else {"M06":"Explosives","M11":"Building Materials"}.get(type,type)
+
+func _input_hauls(input_store: String, type: String, rows: Array) -> Dictionary:
+	var result := {"open":0,"carried":0}
+	for job in rows:
+		if job.cancelled or job.destination != input_store or job.type != type: continue
+		result.open += maxi(0,int(job.requested)-int(job.delivered))
+		result.carried += int(job.get("in_flight",0))
+	return result
+
+func _prepare_ingredient_haul(type: String, expected_recipe: String, input_store: String) -> void:
+	if _haul_draft_dirty:
+		tabs.current_tab = 2
+		haul_draft_status.text = "Your unfinished haul draft was kept. Order it or click Clear haul draft before preparing another ingredient."
+		return
+	var current: Dictionary = _activity().snapshot()
+	if current.recipe != expected_recipe or current.input_store != input_store: return
+	var open: Dictionary = _input_hauls(input_store,type,simulation.rear.jobs)
+	var needed: int = maxi(0,int(current.missing_local.get(type,0))-int(open.open))
+	var source_id := ""
+	var available := 0
+	for id in simulation.rear.stores:
+		if id == input_store or not simulation.rear.stores[id].accessible: continue
+		var count: int = simulation.rear.ledger.available_stock_at(id,type)
+		if count > available: source_id = id; available = count
+	if needed <= 0 or source_id.is_empty():
+		_result({"ok":false,"inspection_only":true,"message":"No new haul is needed beyond existing orders." if needed <= 0 else "No accessible store has unreserved "+_material_label(type)+". Buy or manufacture it before preparing this haul."})
+		return
+	_sync_haul_stores()
+	for index in source.item_count:
+		if source.get_item_metadata(index) == source_id: source.select(index)
+	for index in destination.item_count:
+		if destination.get_item_metadata(index) == input_store: destination.select(index)
+	haul_category.select(0)
+	_load_haul_goods(0)
+	for index in goods_type.item_count:
+		if goods_type.get_item_metadata(index) == type: goods_type.select(index)
+	haul_count.set_value_no_signal(mini(needed,available))
+	_haul_draft_dirty = true
+	tabs.current_tab = 2
+	haul_draft_status.text = "Prepared %d %s: %s → %s. %d still missing locally; %d already ordered. Click Order haul to request real hauling." % [int(haul_count.value),_material_label(type),source_id.capitalize(),input_store.capitalize(),int(current.missing_local.get(type,0)),int(open.open)]
+	# Preparing edits UI only: no after_command, reservation, job or clock step.
+
+func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
+	if ingredient_checklist == null: return
+	var basis: String = str(current.recipe)+":"+str(current.input_store)
+	if current.get("selected_recipe",current.recipe) == "":
+		ingredient_heading.text = "Select a recipe to see its ingredient needs."
+		ingredient_checklist.hide()
+		return
+	ingredient_checklist.show()
+	ingredient_heading.text = "Ingredients for one new batch\nDeliver to %s. Physical stock and haul orders are separate." % str(current.input_store).capitalize()
+	if not current.batch.is_empty(): ingredient_heading.text += "\nThe current batch has consumed its ingredients; this checklist is for the next batch."
+	if _ingredient_basis != basis:
+		_ingredient_basis = basis
+		for child in ingredient_checklist.get_children():
+			ingredient_checklist.remove_child(child)
+			child.queue_free()
+		for type in current.inputs:
+			var row := VBoxContainer.new()
+			row.set_meta("type",type)
+			ingredient_checklist.add_child(row)
+			_label(row,"").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			_button(row,"Prepare haul: "+_material_label(type),_prepare_ingredient_haul.bind(str(type),str(current.recipe),str(current.input_store)))
+	for row in ingredient_checklist.get_children():
+		var type: String = str(row.get_meta("type"))
+		var physical := 0
+		var available: int = int(current.local_inputs.get(type,0))
+		for storage in rear_view.stores:
+			if storage.id != current.input_store: continue
+			for stock in storage.stocks:
+				if stock.design_type == type: physical += int(stock.quantity)
+		var open: Dictionary = _input_hauls(str(current.input_store),type,rear_view.jobs)
+		var missing: int = int(current.missing_local.get(type,0))
+		var new_units: int = maxi(0,missing-int(open.open))
+		var source_available := 0
+		for storage in rear_view.stores:
+			if storage.id == current.input_store or not storage.accessible: continue
+			for stock in storage.stocks:
+				if stock.design_type == type: source_available += int(stock.available)
+		row.get_child(0).text = "%s: %d required · %d physically here (%d available)\nMissing locally: %d · Open hauls: %d (%d being carried)\nNew haul needed: %d · Available elsewhere: %d" % [_material_label(type),int(current.inputs[type]),physical,available,missing,int(open.open),int(open.carried),new_units,source_available]
+		var button: Button = row.get_child(1)
+		button.disabled = new_units <= 0 or source_available <= 0
+		button.tooltip_text = "Existing haul orders cover the local shortage; arrival is still required." if new_units <= 0 and missing > 0 else ("Ingredients are locally available." if missing <= 0 else ("Buy or manufacture this material; no accessible source stock is available." if source_available <= 0 else "Prepare up to %d units beyond existing haul orders. Review the fields in Haul, then click Order haul." % new_units))
 
 func _production_panel(box: VBoxContainer) -> void:
 	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
-	facility.item_selected.connect(func(_index: int) -> void: _load_production())
+	facility.item_selected.connect(func(_index: int) -> void: _load_production(); _refresh())
 	recipe = _option(box, "Recipe / declared session access", [])
 	_button(box, "Select recipe", _change_recipe)
 	mode = _option(box, "Production mode", ["Stock target", "Continuous"])
@@ -309,6 +447,10 @@ func _production_panel(box: VBoxContainer) -> void:
 		var activity := _activity()
 		activity.set_stock_target(int(stock_target.value))
 		_result(activity.set_mode(mode.get_item_text(mode.selected))))
+	ingredient_heading = _label(box,"")
+	ingredient_heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ingredient_checklist = VBoxContainer.new()
+	box.add_child(ingredient_checklist)
 	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
 	_button(box, "Cancel consumed batch / stop", func() -> void: _result(_activity().cancel()))
 	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
@@ -793,8 +935,7 @@ func _refresh() -> void:
 	_displayed_planning_revision = simulation.planning_view_revision
 	base_map.queue_redraw()
 	var view: Dictionary = simulation.snapshot()
-	_sync_option(source,simulation.rear.stores.keys())
-	_sync_option(destination,simulation.rear.stores.keys())
+	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
 	_sync_option(construction_source,simulation.rear.stores.keys())
 	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
@@ -806,6 +947,7 @@ func _refresh() -> void:
 	for row in view.construction.rows:
 		if row.state == "Complete" and simulation.rear.construction.activities.has(row.id): production_ids.append(row.id)
 	_sync_option(facility,production_ids)
+	_refresh_ingredients(_activity().snapshot(),view.rear)
 	_fill(construction_rows,construction_ids,view.construction.rows,func(row: Dictionary) -> String:
 		return "%s %s %s | M11 %d | work %.1f/%.0f" % [row.id,row.kind,row.state,row.m11,row.progress,row.work])
 	var selected_site: String = _construction_site()
