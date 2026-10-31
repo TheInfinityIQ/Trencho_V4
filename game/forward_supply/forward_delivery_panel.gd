@@ -48,7 +48,7 @@ func _ready() -> void:
 	_separator()
 	army_issue_status = _note("Local army issue waits for actual arrived freight and a safe receipt point.")
 	issue_diagnostics = CheckButton.new()
-	issue_diagnostics.text = "Diagnostics: manual individual issue"
+	issue_diagnostics.text = "Diagnostics: individual issue and freight origins"
 	add_child(issue_diagnostics)
 	var manual_start := get_child_count()
 	_note("Issue arrived freight to a soldier")

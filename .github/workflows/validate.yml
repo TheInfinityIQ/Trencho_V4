@@ -41,7 +41,7 @@ jobs:
     name: Focused C30 connection checks (manual)
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'c30'
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -78,8 +78,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in observed_armour ui_refresh vehicle_execution opening_resupply_edges opening_rack_scheduling vehicle_deployment; do
-            timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script "res://game/battlefield/tests/${name}_regression.gd" > ".artifacts/c30/${name}.log" 2>&1
+          cases=(
+            game/battlefield/tests/observed_armour_regression.gd
+            game/battlefield/tests/ui_refresh_regression.gd
+            game/battlefield/tests/vehicle_execution_regression.gd
+            game/battlefield/tests/opening_resupply_edges_regression.gd
+            game/battlefield/tests/opening_rack_scheduling_regression.gd
+            game/battlefield/tests/vehicle_deployment_regression.gd
+            game/forward_supply/tests/forward_transport_regression.gd
+            game/forward_supply/tests/forward_delivery_ui_regression.gd
+          )
+          for script in "${cases[@]}"; do
+            name="${script##*/}"
+            name="${name%.gd}"
+            timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script "res://$script" > ".artifacts/c30/${name}.log" 2>&1
             tail -n 5 ".artifacts/c30/${name}.log"
             if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' ".artifacts/c30/${name}.log"; then exit 1; fi
           done

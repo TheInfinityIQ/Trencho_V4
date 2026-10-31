@@ -96,34 +96,26 @@ func _run() -> void:
 	if not empty_field_arrival: failures.append("APC did not reach the forward stop with an actually empty rack")
 	_mark("Same APC physically arrived at forward stop with empty rack; ammunition still withheld in rear")
 	_command(rear.dispatch.depart(ammo_manifest),"Release separately manufactured E26 after empty APC field arrival")
-	# Rear loading splits batches into real carry-sized identities. The current
-	# forward owner accepts one stack per trip; preserve those actual portions.
-	# Multiple trips still serve ONE initial allocation, not repeated demand.
-	while shipped_units < 200 and failures.is_empty():
-		var delivery := {"ok":false}
-		var attempt_delivery := func() -> bool:
-			if delivery.ok: return true
-			var loaders: Array = rear.dispatch.free_hq_handlers(4)
-			if loaders.is_empty(): return false
-			for stock in rear.ledger.entities_at("hq-stock",["STOCK"],false):
-				if stock.owner != rear.PLAYER or stock.design_type != "E26" or stock.available <= 0: continue
-				var route: Dictionary = rear.forward_supply.delivery_stops["blue-delivery"]
-				var quantity: int = mini(200-shipped_units,int(stock.available))
-				var result: Dictionary = rear.forward_supply.request_delivery("start-blue-vehicle-02",stock.id,quantity,"blue-delivery",route.outbound_points,route.return_points,loaders[0],"start-blue-squad-03-person-00")
-				if result.ok:
-					delivery.merge(result,true)
-					delivery["quantity"] = quantity
-					return true
-				blockers["forward_delivery"] = result.duplicate(true)
-			return false
-		if not await _until(attempt_delivery,"Waiting for actual HQ E26 and available military truck",1000):
-			await _finish(); return
-		forward_jobs.append(str(delivery.id))
-		_mark("Actual forward E26 trip admitted: "+str(delivery.id))
-		if not await _until(func() -> bool: return rear.forward_supply.transport.jobs[delivery.id].state == "Complete","Forward travel, unloading and return",1300):
-			await _finish(); return
-		shipped_units += int(delivery.quantity)
-		_mark("Actual forward E26 trip completed: "+str(delivery.id))
+	# One type/quantity load retains the real carry-sized portions and origins.
+	# Two R33 batches still serve ONE initial rack allocation, not repeated need.
+	var delivery := {"ok":false}
+	var attempt_delivery := func() -> bool:
+		if delivery.ok: return true
+		var loaders: Array = rear.dispatch.free_hq_handlers(4)
+		if loaders.is_empty(): return false
+		var route: Dictionary = rear.forward_supply.delivery_stops["blue-delivery"]
+		var result: Dictionary = rear.forward_supply.request_delivery_type("start-blue-vehicle-02","E26",200,"blue-delivery",route.outbound_points,route.return_points,loaders[0],"start-blue-squad-03-person-00")
+		if result.ok: delivery.merge(result,true); return true
+		blockers["forward_delivery"] = result.duplicate(true)
+		return false
+	if not await _until(attempt_delivery,"Waiting for 200 actual HQ E26 and an available military truck",1000):
+		await _finish(); return
+	forward_jobs.append(str(delivery.id))
+	_mark("One actual 200-round multi-portion E26 load admitted: "+str(delivery.id))
+	if not await _until(func() -> bool: return rear.forward_supply.transport.jobs[delivery.id].state == "Complete","Forward travel, physical unloading and return",1300):
+		await _finish(); return
+	shipped_units = 200
+	_mark("One actual multi-portion E26 load completed unloading and return")
 	if not await _until(func() -> bool: return fired,"Waiting for automatic issue, military support deployment and a legal delivered contact",1200):
 		await _finish(); return
 	_mark("First autonomous cannon release consumed separately manufactured R33 lineage")
@@ -184,6 +176,12 @@ func _save() -> void:
 	report["empty_field_arrival"] = empty_field_arrival
 	report["local_issue_origins"] = local_issue_origins
 	report["forward_units_completed"] = shipped_units
+	var deliveries: Array[Dictionary] = []
+	for id in forward_jobs:
+		var job: Dictionary = rear.forward_supply.transport.jobs.get(id,{})
+		if job.is_empty(): continue
+		deliveries.append({"id":id,"state":job.state,"type":job.type,"quantity":job.quantity,"loaded":job.loaded,"unloaded":job.unloaded,"sources":job.sources.duplicate(true),"loaded_items":job.loaded_items.duplicate(),"delivered_items":job.delivered_items.duplicate(),"return_completed":job.return_completed,"blocker":job.blocker})
+	report["forward_deliveries"] = deliveries
 	if not hull.is_empty(): report["actual_hull"] = rear.ledger.inspect_entity(hull,{},false)
 	var output := FileAccess.open(REPORT,FileAccess.WRITE)
 	if output == null:
