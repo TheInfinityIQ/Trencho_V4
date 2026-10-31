@@ -95,6 +95,9 @@ jobs:
             tail -n 5 ".artifacts/c30/${name}.log"
             if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' ".artifacts/c30/${name}.log"; then exit 1; fi
           done
+          timeout --signal=TERM --kill-after=5s 90s "$GODOT_BIN" --headless --path . --script res://game/vehicles/tests/vehicle_regression.gd -- repeated-fuel > .artifacts/c30/vehicle-repeated-fuel.log 2>&1
+          tail -n 5 .artifacts/c30/vehicle-repeated-fuel.log
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/c30/vehicle-repeated-fuel.log; then exit 1; fi
           timeout --signal=TERM --kill-after=5s 30s "$GODOT_BIN" --headless --path . --check-only --script res://game/scenario/tests/c30_connection_probe.gd > .artifacts/c30/connection-parse.log 2>&1
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/c30/connection-parse.log; then exit 1; fi
       - name: Observe ordinary C30 manufacturing, delivery and autonomous consequence

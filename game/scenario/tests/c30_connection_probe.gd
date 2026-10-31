@@ -44,6 +44,7 @@ func _run() -> void:
 	_command(rear.heavy_production.request_recipe("R30"),"Select R30")
 	_command(rear.heavy_production.set_mode("Continuous"),"Request one APC")
 	_command(rear.heavy_production.accept_order(),"Accept actual F10 order")
+	_command(rear.heavy_production.set_parking_destination(4),"Choose existing west F11 place 5 before manufacture")
 	for type in Fixed.RECIPES.R30.inputs:
 		_command(rear.request_haul("depot","vehicle_input",type,int(Fixed.RECIPES.R30.inputs[type])),"Haul actual R30 ingredient %d %s" % [int(Fixed.RECIPES.R30.inputs[type]),type])
 	for type in Fixed.RECIPES.R33.inputs:
@@ -60,15 +61,19 @@ func _run() -> void:
 		_command(rear.vehicles.assign_station(hull,"start-p08-%02d" % (index+3),["Driver","Gunner","Commander"][index]),"Report existing P08 to distinct APC station")
 	if not await _until(func() -> bool: return rear.ledger.inspect_entity(hull,{},false).crew.size() == 3,"Waiting for three existing crew",300):
 		await _finish(); return
-	while float(rear.ledger.inspect_entity(hull,{},false).fuel) < 80 and failures.is_empty():
+	# One ordinary carry fuels the rear/transfer leg; normal HQ handling may
+	# supply the later mission. Full eighty-unit rear filling is not a rule.
+	while float(rear.ledger.inspect_entity(hull,{},false).fuel) < 25 and failures.is_empty():
 		var worker := ""
 		for id in rear.actors:
 			var person: Dictionary = rear.ledger.inspect_person_status(id)
 			if person.health > 0 and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and person.carrying_weapon_id.is_empty(): worker = id; break
 		if worker.is_empty(): failures.append("No real free rear fuel carrier"); break
-		var units: int = mini(25,int(80-float(rear.ledger.inspect_entity(hull,{},false).fuel)))
+		var units: int = mini(25,int(25-float(rear.ledger.inspect_entity(hull,{},false).fuel)))
 		_command(rear.vehicles.request_refuel(hull,worker,units),"Carry real M08 into APC")
 		if not await _until(func() -> bool: return not rear.vehicles.fuel_jobs.has(worker),"Physical fuel carry",240): break
+	if not failures.is_empty():
+		await _finish(); return
 	_command(rear.vehicles.start_drive(hull),"Drive same APC to F11")
 	if not await _until(func() -> bool: return rear.vehicles.vehicles[hull].state == "Parked","Actual APC parking",180):
 		await _finish(); return
@@ -76,6 +81,11 @@ func _run() -> void:
 	_command(transferred,"Fleet Transfer actual empty APC")
 	hull_manifest = str(transferred.get("id",""))
 	if not await _until(func() -> bool: return rear.dispatch.manifests.get(hull_manifest,{}).get("state","") == "Loaded Waiting Dispatch","Staging APC manifest",300):
+		await _finish(); return
+	var route_preview: Dictionary = rear.dispatch.route_preview(hull_manifest)
+	journal.append({"time":rear.time,"action":"Actual Fleet Transfer fuel and reserve preview","ok":route_preview.get("ok",false),"distance":route_preview.get("distance",0),"required_fuel":route_preview.get("required_fuel",0),"tank_fuel":route_preview.get("tank_fuel",0)})
+	if not route_preview.get("ok",false) or not route_preview.get("fuel_ok",false):
+		failures.append("Actual Fleet Transfer route and 25 percent fuel reserve are not covered: "+str(route_preview.get("message","")))
 		await _finish(); return
 	_command(rear.dispatch.depart(hull_manifest),"Depart actual APC manifest")
 	var shipment: Dictionary = rear.dispatch.accept("start-vehicle-00","Strategic Delivery",[],{"E26":200})
@@ -126,6 +136,7 @@ func _until(predicate: Callable, label: String, maximum_sim: float) -> bool:
 	var deadline: float = rear.time+maximum_sim
 	while failures.is_empty() and rear.time < deadline and Time.get_ticks_msec()-started < 1150000:
 		_observe()
+		if not failures.is_empty(): break
 		if predicate.call(): _save(); return true
 		rear.advance_time(5)
 		if int(rear.time)%60 == 0: _save()
@@ -171,7 +182,7 @@ func _save() -> void:
 	var munitions: Dictionary = rear.munitions_production.snapshot()
 	if rear.time >= last_input_report+60:
 		last_input_report = rear.time
-		journal.append({"time":rear.time,"event":"Physical factory inputs","R30_local":heavy.local_inputs,"R30_missing":heavy.missing_local,"R33_local":munitions.local_inputs,"R33_missing":munitions.missing_local})
+		journal.append({"time":rear.time,"event":"Physical factory inputs","heavy_recipe":heavy.recipe,"heavy_local":heavy.local_inputs,"heavy_missing":heavy.missing_local,"munitions_recipe":munitions.recipe,"munitions_local":munitions.local_inputs,"munitions_missing":munitions.missing_local})
 	var report := {"revision":OS.get_environment("GITHUB_SHA"),"stage":stage,"simulation_seconds":rear.time,"wall_seconds":(Time.get_ticks_msec()-started)/1000.0,"hull":hull,"hull_manifest":hull_manifest,"ammo_manifest":ammo_manifest,"forward_jobs":forward_jobs,"manufactured_origins":origins,"first_rack_deposit":first_deposit,"first_manufactured_round_release":fired,"second_demand_passed":false,"journal":journal,"failures":failures,"blockers":blockers,"opening":rear.battlefield_operations.policy.snapshot(),"heavy":heavy,"munitions":munitions,"dispatch":rear.dispatch.snapshot()}
 	report["empty_field_arrival"] = empty_field_arrival
 	report["local_issue_origins"] = local_issue_origins
@@ -182,6 +193,10 @@ func _save() -> void:
 		if job.is_empty(): continue
 		deliveries.append({"id":id,"state":job.state,"type":job.type,"quantity":job.quantity,"loaded":job.loaded,"unloaded":job.unloaded,"sources":job.sources.duplicate(true),"loaded_items":job.loaded_items.duplicate(),"delivered_items":job.delivered_items.duplicate(),"return_completed":job.return_completed,"blocker":job.blocker})
 	report["forward_deliveries"] = deliveries
+	var hq_handling: Array[Dictionary] = []
+	for job in rear.hq.jobs.values():
+		if not hull.is_empty() and job.target == hull: hq_handling.append(job.duplicate(true))
+	report["actual_hq_vehicle_handling"] = hq_handling
 	if not hull.is_empty(): report["actual_hull"] = rear.ledger.inspect_entity(hull,{},false)
 	var output := FileAccess.open(REPORT,FileAccess.WRITE)
 	if output == null:

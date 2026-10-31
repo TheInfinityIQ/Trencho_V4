@@ -430,7 +430,7 @@ func _training_panel(box: VBoxContainer) -> void:
 
 func _vehicles_panel(box: VBoxContainer) -> void:
 	_label(box,"F10 produced hulls retain their identity through crew, fuel and F11 parking.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label(box,"C30 playtest: select R30 in Work, accept the order, then use Haul to move its listed ingredients from Depot to Vehicle Input. R33 autocannon rounds (E26) likewise need actual ingredients at Munitions Input. Board three existing P08 people at the APC's distinct stations, carry real M08 into its tank, then drive to parking and Fleet Transfer through Dispatch. Deliver separately made rounds through HQ and Supply; the army deploys the APC and assigns Engineers to fill its rack.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"C30: accept R30 in Work and choose F11 place 5 before completion. Haul its listed ingredients to Vehicle Input; R33 needs ingredients at Munitions Input. Seat three existing P08 crew at Driver, Gunner and Commander, carry real M08, then drive to parking and Fleet Transfer in Dispatch. Preview the route's actual fuel needs. Send separately made autocannon rounds (E26) through HQ and Supply. The army handles field deployment and rack issue.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vehicle_rows = _list(box,140)
 	vehicle_rows.item_selected.connect(func(_index: int) -> void: _load_vehicle_stations(); _refresh())
 	vehicle_person = _option(box,"Actual rear person",[])
