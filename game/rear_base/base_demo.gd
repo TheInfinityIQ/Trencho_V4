@@ -164,6 +164,8 @@ func _ready() -> void:
 	_load_production()
 	_load_store()
 	_load_vehicle_people()
+	tabs.tab_changed.connect(func(_index: int) -> void:
+		if is_node_ready() and is_visible_in_tree(): _refresh())
 	_refresh()
 
 func _process(delta: float) -> void:
@@ -959,7 +961,9 @@ func _refresh() -> void:
 	_displayed_speed = simulation.speed
 	_displayed_planning_revision = simulation.planning_view_revision
 	base_map.queue_redraw()
-	var view: Dictionary = simulation.snapshot()
+	var active_panel: String = str(tabs.get_tab_control(tabs.current_tab).name)
+	var diagnostics: bool = OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1"
+	var view: Dictionary = simulation.snapshot(diagnostics,diagnostics or active_panel == "Dispatch")
 	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
 	_sync_option(construction_source,simulation.rear.stores.keys())
@@ -981,8 +985,8 @@ func _refresh() -> void:
 		if row.id == selected_site:
 			var builders: String = "builders-"+row.id
 			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
-	_refresh_dispatch(view)
-	forward_delivery_panel.refresh()
+	if active_panel == "Dispatch": _refresh_dispatch(view)
+	if active_panel == "Supply": forward_delivery_panel.refresh()
 	_refresh_hq(view)
 	var offer: Dictionary = view.receiving.recovery_offer
 	recovery_button.visible = offer.available
@@ -997,11 +1001,14 @@ func _refresh() -> void:
 			if not row.person_id.is_empty():
 				var person: Dictionary = simulation.rear.ledger.inspect_entity(row.person_id)
 				training_status.text += "\nBasic completed: %s; specialist: %s\nActual position %s; duty %s" % [str(person.basic_training),person.qualification,str(person.position),person.duty_id if not person.duty_id.is_empty() else person.assignment]
-	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, simulation.receiving.rear_population(), simulation.receiving.incoming_people()]
+	var rear_population := 0
+	for person in view.rear.people:
+		if person.owner == simulation.rear.PLAYER and person.get("rear_place","None") in ["Occupied","Held Home"]: rear_population += 1
+	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, rear_population, simulation.receiving.incoming_people()]
 	_fill(orders, _order_ids, view.receiving.orders, func(o: Dictionary) -> String: return o.id + " " + o.state + " | " + o.blocked_reason)
 	var actual_people: Array = view.rear.people.filter(func(p: Dictionary) -> bool: return p.owner == "army-blue")
 	_fill(people, _person_ids, actual_people, func(p: Dictionary) -> String: return p.id + " | " + (p.duty_id if not p.duty_id.is_empty() else p.assignment) + " | " + p.phase)
-	_load_vehicle_people()
+	if active_panel == "Vehicles": _load_vehicle_people()
 	_fill(vehicle_rows,vehicle_ids,view.vehicles.rows,func(row: Dictionary) -> String: return "%s %s | %s | fuel %.1f/%.0f | F11 %d" % [row.id,row.hull.design_type,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,row.slot+1])
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:
 		vehicle_rows.select(0)
