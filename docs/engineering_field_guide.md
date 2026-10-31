@@ -1,5 +1,7 @@
 # Engineering field guide for Trencho V4
 
+**Current execution override — 31 October 2026:** Dawson directed the team to defer regression writing, suites and comprehensive matrices until the main game is complete. Only brief direct checks of code just changed are allowed; follow [current verification policy](current_change_verification.md). The research below remains reference material and does not authorize broader testing under the current instruction. Designer technical suggestions are advice; Lead and Principle Engineer own technical implementation, while Designer owns observable gameplay and experience.
+
 Research and application by the Lead Developer, 31 October 2026. This guide supports [team workflow](team_workflow.md), [foundation decisions](foundation.md) and the [current system map](c30_system_map.md). It does not change gameplay, engine version or delivery acceptance. Dawson requested deeper Godot, software-engineering and game-engineering research after repeated integration mistakes. The lead owns applying the findings to assignments and reviews.
 
 ## How to use this research
