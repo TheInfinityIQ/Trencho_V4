@@ -1,8 +1,9 @@
 extends SceneTree
-## Rendered opening/control probe. Extended warm-up belongs on GitHub, not the desktop.
+## Rendered mouse/control probe. Extended warm-up belongs on GitHub, not the desktop.
 const Main = preload("res://game/main/main.tscn")
 var main: Control
 var phase := "loading"
+var previous_phase := "loading"
 var frames: Dictionary = {}
 var actions: Array[Dictionary] = []
 var previous := 0
@@ -11,44 +12,71 @@ var finished := false
 var frame_budget := 0.0
 var warmup := 0.0
 var profile_live := false
+var report_path := "res://.artifacts/responsiveness.json"
 
 func _initialize() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--max-frame-ms="): frame_budget = argument.get_slice("=",1).to_float()
 		if argument.begins_with("--warmup="): warmup = argument.get_slice("=",1).to_float()
+		if argument.begins_with("--report-path="): report_path = argument.trim_prefix("--report-path=")
 		if argument == "--profile-live": profile_live = true
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
 
 func _process(_delta: float) -> bool:
+	_record_frame()
+	return false
+
+func _record_frame() -> void:
 	var at := Time.get_ticks_usec()
-	if previous > 0 and phase != "loading" and not finished:
+	# Attribute the whole interval to its starting phase. Transitions never erase
+	# a last expensive running frame or a synchronous view-switch handler.
+	if previous > 0 and previous_phase != "loading" and not finished:
 		var interval := (at-previous)/1000.0
-		if not frames.has(phase): frames[phase] = []
-		frames[phase].append(interval)
+		if not frames.has(previous_phase): frames[previous_phase] = []
+		frames[previous_phase].append(interval)
 		if frame_budget > 0 and interval > frame_budget:
-			failures.append("%s frame took %.3f ms" % [phase,interval])
+			failures.append("%s frame took %.3f ms" % [previous_phase,interval])
 			_finish.call_deferred()
 	previous = at
-	return false
+	previous_phase = phase
 
 func _phase(label: String) -> void:
 	phase = label
-	previous = 0
 	print("RESPONSIVENESS_PHASE ",phase," sim=",main.get("_base").simulation.rear.time)
 
-func _press(label: String) -> void:
+func _press(label: String) -> bool:
 	var matches: Array[Button] = []
 	for button in main.find_children("*","Button",true,false):
 		if button.text == label and button.is_visible_in_tree(): matches.append(button)
 	if matches.size() != 1:
 		failures.append("Expected one visible control: "+label)
-		return
+		_finish()
+		return false
+	var action := {"control":label,"input_to_response_ms":-1.0}
 	var started := Time.get_ticks_usec()
-	matches[0].pressed.emit()
-	var elapsed := (Time.get_ticks_usec()-started)/1000.0
-	actions.append({"control":label,"handler_ms":elapsed})
-	if label != "New playtest" and frame_budget > 0 and elapsed > frame_budget: failures.append("%s handler took %.3f ms" % [label,elapsed])
+	# Connect after the ordinary handler, so this includes its synchronous work.
+	matches[0].pressed.connect(func() -> void: action.input_to_response_ms = (Time.get_ticks_usec()-started)/1000.0,CONNECT_ONE_SHOT)
+	var down := InputEventMouseButton.new()
+	down.position = matches[0].get_global_rect().get_center()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.button_mask = MOUSE_BUTTON_MASK_LEFT
+	down.pressed = true
+	Input.parse_input_event(down)
+	await process_frame
+	var up := down.duplicate()
+	up.pressed = false
+	up.button_mask = 0
+	Input.parse_input_event(up)
+	await process_frame
+	actions.append(action)
+	if action.input_to_response_ms < 0:
+		failures.append("Mouse input did not activate "+label)
+		_finish()
+		return false
+	if label != "New playtest" and frame_budget > 0 and action.input_to_response_ms > frame_budget:
+		failures.append("%s mouse response took %.3f ms" % [label,action.input_to_response_ms])
+	return true
 
 func _run() -> void:
 	root.size = Vector2i(1280,720)
@@ -56,40 +84,48 @@ func _run() -> void:
 	main = Main.instantiate()
 	root.add_child(main)
 	await process_frame
-	_press("New playtest")
+	if not await _press("New playtest"): return
 	var base: RefCounted = main.get("_base").simulation
 	_check(base.rear.military.squads.size() == 10 and base.speed == 0,"Ordinary playtest starts with its actual paused armies")
+	if base.rear.battlefield_operations == null or base.rear.battlefield_operations.policy == null:
+		failures.append("New playtest did not create the opening policy")
+		_finish()
+		return
 	if warmup > 0:
 		print("RESPONSIVENESS_WARMUP_START ",warmup)
 		base.rear.advance_time(warmup)
 		print("RESPONSIVENESS_WARMUP_COMPLETE ",base.rear.time)
 	_phase("paused_battlefield")
 	await create_timer(0.5).timeout
-	_press("1x")
+	if not await _press("1x"): return
 	_check(base.speed == 1,"Ordinary1x control changes the shared clock")
 	_phase("running_1x")
 	if profile_live: EngineDebugger.profiler_enable("scripts",true)
 	await _wait_simulation(base.rear.time+9.0,60.0)
-	_press("Pause")
+	for id in ["blue-rifles","blue-support","red-forward"]:
+		_check(base.rear.battlefield_operations.policy.trips[id].started,"Observed the actual initial admission: "+id)
+	if not await _press("Pause"): return
 	var paused: float = base.rear.time
 	_phase("pause_response")
 	await create_timer(0.5).timeout
 	_check(base.speed == 0 and base.rear.time == paused,"Pause stops the shared simulation")
 	_phase("rear_switch")
-	_press("Rear base")
+	if not await _press("Rear base"): return
 	_check(main.get("_base").visible and not main.get("_battlefield").visible,"Rear view opens normally")
 	await create_timer(0.5).timeout
 	_phase("battlefield_switch")
-	_press("Battlefield")
+	if not await _press("Battlefield"): return
 	_check(main.get("_battlefield").simulation == base and base.rear.time == paused,"View changes retain paused identities and time")
 	await create_timer(0.5).timeout
-	_press("2x")
+	if not await _press("2x"): return
 	_check(base.speed == 2,"Ordinary2x control changes the shared clock")
 	_phase("running_2x")
 	await _wait_simulation(base.rear.time+6.0,40.0)
-	_press("Pause")
+	if not await _press("Pause"): return
 	_check(base.rear.time > paused,"The same session continues actual simulation at2x")
 	phase = "loading"
+	_record_frame()
+	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_check(base.audit().is_empty(),"The observed session preserves physical invariants")
 	_finish()
 
@@ -106,20 +142,26 @@ func _wait_simulation(target: float, wall_limit: float) -> void:
 
 func _finish() -> void:
 	if finished: return
+	_record_frame()
 	finished = true
-	main.get("_base").simulation.set_speed(0)
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
+	var base: RefCounted = main.get("_base").simulation if is_instance_valid(main) and is_instance_valid(main.get("_base")) else null
+	if base != null: base.set_speed(0)
 	var results := {}
 	for label in frames:
 		var values: Array = frames[label]
 		values.sort()
 		results[label] = {"frames":values.size(),"p95_ms":values[mini(values.size()-1,int(values.size()*0.95))],"max_ms":values[-1]}
 	var admissions := {}
-	for id in main.get("_base").simulation.rear.battlefield_operations.policy.trips:
-		var trip: Dictionary = main.get("_base").simulation.rear.battlefield_operations.policy.trips[id]
-		admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker}
-	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"actions":actions,"admissions":admissions,"sim_seconds":main.get("_base").simulation.rear.time,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
-	var file := FileAccess.open("res://.artifacts/responsiveness.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify(output,"\t"))
+	if base != null and base.rear.battlefield_operations != null and base.rear.battlefield_operations.policy != null:
+		for id in base.rear.battlefield_operations.policy.trips:
+			var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
+			admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker}
+	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
+	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
+	var file := FileAccess.open(report_path,FileAccess.WRITE)
+	if file == null:
+		failures.append("Cannot write responsiveness report: "+str(FileAccess.get_open_error()))
+	else: file.store_string(JSON.stringify(output,"\t"))
 	print("RESPONSIVENESS_RESULT ",JSON.stringify(output))
 	quit(0 if failures.is_empty() else 1)

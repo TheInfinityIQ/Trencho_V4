@@ -51,9 +51,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --profiling --script res://game/scenario/tests/responsiveness_probe.gd -- --profile-live > .artifacts/responsiveness.log 2>&1
+          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd > .artifacts/responsiveness.log 2>&1
           grep -E 'RESPONSIVENESS_' .artifacts/responsiveness.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness.log; then exit 1; fi
+      - name: Profile the same opening separately from response timing
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --profiling --script res://game/scenario/tests/responsiveness_probe.gd -- --profile-live --report-path=res://.artifacts/responsiveness-profile.json > .artifacts/responsiveness-profile.log 2>&1
+          grep -E 'RESPONSIVENESS_' .artifacts/responsiveness-profile.log
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness-profile.log; then exit 1; fi
+      - name: Retain early response timing and profile
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: godot-responsiveness-reports
+          path: .artifacts/responsiveness*
+          retention-days: 7
       - name: Verify existing suites and GdUnit4 domain pilot
         shell: pwsh
         run: ./tools/check.ps1 -GodotPath $env:GODOT_BIN
