@@ -301,7 +301,7 @@ func settle() -> bool:
 	for id in intents:
 		if not _rear().military.squads.has(id): continue
 		var squad: Dictionary = _rear().military.squads[id]
-		var leader: Dictionary = _rear().ledger.inspect_entity(str(squad.leader))
+		var leader: Dictionary = _rear().ledger.inspect_entity(str(squad.leader),{},false)
 		var missing: bool = leader.is_empty() or leader.get("assignment","") in ["Wounded","Dead"] or not leader.get("active",true)
 		if not missing:
 			leader_missing_since.erase(id)
@@ -438,7 +438,7 @@ func _squad_strength(squad_id: String, centre: Vector2 = Vector2.INF, radius: fl
 	var total := 0.0
 	for id in _rear().military._active_roster_members(squad):
 		if squad.kind == "Rifle" and (not _rear().military.rifle_can_fight(id) or _rear().combat.broken.has(id)): continue
-		var person: Dictionary = _rear().ledger.inspect_entity(id)
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
 		if centre.is_finite() and person.position.distance_to(centre) > radius: continue
 		var base := 1.5 if squad.kind == "Marksman" and _rear().military._held(id,"E19") > 0 else 1.0
 		var factor := float(person.health)/100.0 * (1.0-float(person.suppression)/200.0)

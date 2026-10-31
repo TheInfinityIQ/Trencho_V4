@@ -38,6 +38,12 @@ func _initialize() -> void:
 		return
 	var supply_playthrough: bool = "--supply-playthrough" in OS.get_cmdline_user_args()
 	var playthrough: bool = "--playthrough" in OS.get_cmdline_user_args() or supply_playthrough
+	var forward_rifle_weapons := {}
+	if supply_playthrough:
+		for squad_id in ["start-blue-squad-00","start-blue-squad-01"]:
+			for person_id in rear.military._active_roster_members(rear.military.squads[squad_id]):
+				for weapon in rear.ledger.entities_at(person_id,["WEAPON"],false):
+					if weapon.design_type == "E01": forward_rifle_weapons[weapon.id] = true
 	var delivery_id := ""
 	var first_issue_at := -1.0
 	var consumed_at_issue := 0
@@ -63,14 +69,16 @@ func _initialize() -> void:
 			while event_cursor < events.size():
 				var event: Dictionary = events[event_cursor]
 				event_cursor += 1
-				if not str(event.description).begins_with("One loaded round fired from start-blue-squad-0"): continue
+				var description: String = str(event.description)
+				if not description.begins_with("One loaded round fired from "): continue
+				if not forward_rifle_weapons.has(description.trim_prefix("One loaded round fired from ")): continue
 				if rear.ledger.inspect_entity(event.entity_id).get("origin_id","") == "start-blue-hq-E02": arrived_round_fired = true; print("SUPPLY DELIVERED ROUND FIRED ",event)
 		var trips: Array = rear.battlefield_operations.policy.snapshot().trips
 		if not playthrough or step%12 == 11:
 			print("Opening t=",rear.time," phase=",rear.battlefield_operations.policy.phases," consumed=",rear.ledger.snapshot().consumed.get("E02",0)," trips=",trips.map(func(trip: Dictionary) -> String: return trip.hull+": "+("Dismounted" if trip.dismounted else ("Started" if trip.started else trip.blocker))))
 			if supply_playthrough:
 				print("SUPPLY OBSERVE ",rear.battlefield_operations.policy.resupply.snapshot()," delivery=",rear.forward_supply.transport.jobs.get(delivery_id,{}).get("state","Not requested")," rifle_status=",rear.battlefield_operations.status)
-		if supply_playthrough and arrived_round_fired and rear.forward_supply.transport.jobs[delivery_id].state == "Complete": break
+		if supply_playthrough and arrived_round_fired and not delivery_id.is_empty() and rear.forward_supply.transport.jobs.get(delivery_id,{}).get("state","") == "Complete": break
 	var lift_count: int = rear.military.troop_transport.jobs.values().filter(func(job: Dictionary) -> bool: return job.kind == "Troop Trip").size()
 	check(lift_count >= 3 if playthrough else lift_count == (2 if refused_first else 3),"Delivered hierarchy orders start eligible initial troop trips; later reserve activation may add another")
 	var admission_times: Array = []
@@ -92,7 +100,7 @@ func _initialize() -> void:
 			for member in rear.military._active_roster_members(rear.military.squads[id]):
 				check(rear.ledger.inspect_entity(member).position.distance_to(Vector2(2000,5380)) <= 35,"Red Engineer/Medical hold their declared HQ support rallies")
 	if supply_playthrough:
-		check(not delivery_id.is_empty() and rear.forward_supply.transport.jobs[delivery_id].state == "Complete","Actual500E02 delivery and same-hull return completes")
+		check(not delivery_id.is_empty() and rear.forward_supply.transport.jobs.get(delivery_id,{}).get("state","") == "Complete","Actual500E02 delivery and same-hull return completes")
 		check(first_issue_at >= 0,"Natural combat need reaches physical autonomous Engineer issue")
 		check(arrived_round_fired,"Forward Rifle actually fires a round descended from the delivered HQ stock")
 	check(base.audit().is_empty(),"Active opening reconciles: "+str(base.audit()))
