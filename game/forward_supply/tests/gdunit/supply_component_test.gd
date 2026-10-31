@@ -5,6 +5,7 @@ const Base = preload("res://game/rear_base/base_simulation.gd")
 const DeliveryPanel = preload("res://game/forward_supply/forward_delivery_panel.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const Specs = preload("res://game/production/vehicle_specs.gd")
+const Diagnostics = preload("res://game/forward_supply/tests/gdunit/happy_path_diagnostics.gd")
 const HQ := Vector2(1640,91)
 const STOP := Vector2(1640,121)
 
@@ -66,6 +67,11 @@ func test_ready_supply_preview_and_panel_delivery(_timeout := 15000) -> void:
 	assert_bool(bool(request.get("ok",false))).is_true()
 	if not request.get("ok",false): return
 	var job: Dictionary = rear.forward_supply.transport.jobs[str(request.id)]
+	var before_inspection: Dictionary = ledger.snapshot()
+	var diagnostic: Dictionary = Diagnostics.capture(session,str(request.id))
+	assert_bool(bool(diagnostic.delivery_missing)).is_false()
+	assert_str(str(diagnostic.delivery.id)).is_equal(str(request.id))
+	assert_dict(ledger.snapshot()).is_equal(before_inspection)
 	assert_str(str(job.hull)).is_equal("component-t01")
 	assert_int(job.loaded).is_zero()
 	assert_int(job.unloaded).is_zero()

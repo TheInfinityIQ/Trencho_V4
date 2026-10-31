@@ -1,5 +1,6 @@
 extends GdUnitTestSuite
 ## Ordinary authored session and production UI/service; no replacement world or stock.
+const Diagnostics = preload("res://game/forward_supply/tests/gdunit/happy_path_diagnostics.gd")
 
 
 func test_ordinary_supply_preview_and_successful_delivery(_timeout := 320000) -> void:
@@ -156,6 +157,7 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 					starting_fuel = float(hull.fuel)
 					admitted = true
 					print("HAPPY_DELIVERY_ADMITTED ",JSON.stringify({"time":start_time,"job":job_id,"quantity":row.quantity,"sources":expected_sources}))
+					print("HAPPY_HANDOFF_ADMISSION ",JSON.stringify(Diagnostics.capture(session,job_id)))
 		if admitted and session.rear.forward_supply.transport.jobs[job_id].unloaded == 60: break
 		if admitted and session.rear.forward_supply.transport.jobs[job_id].state in ["Blocked Route","Stranded","Fuel Empty","Paused"]: break
 		if not admitted and session.rear.time >= 1800.0: break
@@ -166,6 +168,10 @@ func _successful_delivery(main: Control, base: Control, session: RefCounted, pan
 	assert_bool(admitted).override_failure_message("No successful ordinary Supply admission: "+state+" at "+str(session.rear.time)).is_true()
 	if not admitted: return
 	var completed: Dictionary = session.rear.forward_supply.transport.jobs[job_id]
+	var handoff: Dictionary = Diagnostics.capture(session,job_id)
+	print("HAPPY_HANDOFF_TERMINAL ",JSON.stringify(handoff))
+	var evidence := FileAccess.open("res://.artifacts/gdunit4/demo/handoff_diagnostics.json",FileAccess.WRITE)
+	if evidence != null: evidence.store_string(JSON.stringify(handoff,"\t")); evidence.close()
 	print("HAPPY_DELIVERY_RESULT ",JSON.stringify({"start":start_time,"time":session.rear.time,"loaded":completed.loaded,"unloaded":completed.unloaded,"state":completed.state,"blocker":completed.blocker,"delivered_items":completed.delivered_items,"deposits":deposits,"saw_outbound":saw_outbound,"saw_forward_hull":saw_forward_hull,"clock_ticks":clock_ticks,"tick_wall_seconds":tick_usec/1000000.0,"driver_wall_seconds":(Time.get_ticks_usec()-driver_started)/1000000.0}))
 	assert_int(completed.loaded).is_equal(60)
 	assert_int(completed.unloaded).is_equal(60)
