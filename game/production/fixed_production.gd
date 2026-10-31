@@ -193,7 +193,10 @@ func stock_coverage() -> Dictionary:
 
 
 func _target_satisfied() -> bool:
-	return mode == "Stock target" and stock_coverage().projected >= stock_target
+	if mode != "Stock target": return false
+	# Coverage is nonnegative: clamped available stock + positive relocation
+	# portions + a canonical positive batch yield (or zero). Zero needs no scan.
+	return stock_target == 0 or stock_coverage().projected >= stock_target
 
 
 func _can_work() -> bool:
