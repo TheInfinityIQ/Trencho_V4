@@ -44,6 +44,13 @@ func compare(ledger: RefCounted) -> void:
 		var label: String = Records.Kind.keys()[kind]
 		check(ledger.entities_of_kind(kind) == complete.entities.filter(func(row: Dictionary) -> bool: return row.kind == label),"Kind query preserves full membership, facts and insertion order for "+label)
 		check(ledger.entities_of_kind(kind,false) == metadata.entities.filter(func(row: Dictionary) -> bool: return row.kind == label),"Kind metadata query preserves non-mass facts and order for "+label)
+	for holder in ["worker-01","rear-store","retained-rifle","missing"]:
+		for type in ["E01","E02","M11","missing"]:
+			var quantity := 0
+			for row in complete.entities:
+				if row.holder_id == holder and row.design_type == type and row.kind in ["WEAPON","STOCK","HEAVY_OBJECT"]: quantity += int(row.quantity)
+			check(ledger.physical_quantity_at(holder,type,["WEAPON","STOCK","HEAVY_OBJECT"]) == quantity,"Physical quantity equals full inspection after real carry and weapon moves")
+			check(ledger.physical_quantity_at(holder,type,[]) == 0,"An empty kind filter admits no physical quantities")
 	for row in complete.entities:
 		check(row == ledger.inspect_entity(row.id),"Batched inspection equals independent raw facts for loaded rounds, carries and exact mass")
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")

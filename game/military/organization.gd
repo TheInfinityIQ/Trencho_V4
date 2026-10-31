@@ -915,10 +915,7 @@ func _rifle_ready(id: String) -> bool:
 	return _held(id,"E01") > 0 and _rounds(id) >= 30
 
 func _held(id: String, type: String) -> int:
-	var total := 0
-	for item in _rear_ref.get_ref().ledger.entities_at(id,["WEAPON","STOCK","HEAVY_OBJECT"],false):
-		if item.holder_id == id and item.design_type == type and item.kind in ["WEAPON","STOCK","HEAVY_OBJECT"]: total += item.quantity
-	return total
+	return _rear_ref.get_ref().ledger.physical_quantity_at(id,type,["WEAPON","STOCK","HEAVY_OBJECT"])
 
 func _held_any(ids: Array[String], type: String) -> int:
 	var total := 0

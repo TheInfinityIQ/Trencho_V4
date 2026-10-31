@@ -181,6 +181,15 @@ func entities_of_kind(kind: Records.Kind, include_mass: bool = true) -> Array[Di
 		if entity.kind == kind: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
+func physical_quantity_at(holder: String, type: String, kinds: Array) -> int:
+	# Quantity includes reserved portions, just as raw inspection does. This
+	# count needs neither recursive mass nor weapon/carry inspection details.
+	var total := 0
+	for entity in _entities.values():
+		if entity.holder_id == holder and entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds:
+			total += entity.quantity
+	return total
+
 
 func add_person(id: String, holder_id: String, owner: String,
 		initial_assignment: int = Records.Assignment.AVAILABLE,
