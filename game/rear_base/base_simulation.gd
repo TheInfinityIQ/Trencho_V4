@@ -198,10 +198,16 @@ func _pump_live() -> void:
 				break # At most one authoritative admission per returned frame.
 			if speed == 0: break # Preserve quiet paused preparation/Ready waits.
 		_refresh_trip_admissions()
+		_advance_live_quantum()
 		return
+	_advance_live_quantum()
+
+func _advance_live_quantum() -> void:
 	if speed == 0 or owed_simulation_seconds <= 0.0: return
 	var before: float = rear.time
-	rear.advance_time(minf(owed_simulation_seconds,LIVE_QUANTUM),true)
+	# A pending route holds its own transport action, not the whole world.
+	# Each pump and each event advance still runs at a settled boundary.
+	rear.advance_time(minf(owed_simulation_seconds,LIVE_QUANTUM),false)
 	owed_simulation_seconds = maxf(0.0,owed_simulation_seconds-(rear.time-before))
 	_refresh_trip_admissions()
 
@@ -260,14 +266,15 @@ func set_speed(value: int) -> Dictionary:
 	if _live_planning: rear.vehicle_departures_allowed = speed > 0
 	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed,"speed_change":true}
 
-func snapshot() -> Dictionary:
-	var view := {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,
+func snapshot(include_diagnostics: bool = true, include_battlefield: bool = true) -> Dictionary:
+	var view := {"rear": rear.snapshot(include_diagnostics), "receiving": receiving.snapshot(include_diagnostics), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),
 		"materials": rear.materials_production.snapshot(), "support": rear.support_production.snapshot(),
 		"training":rear.training.snapshot(), "heavy":rear.heavy_production.snapshot(),
 		"vehicles":rear.vehicles.snapshot(), "dispatch":rear.dispatch.snapshot(),
-		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(),
-		"military":rear.military.snapshot(rear.PLAYER), "combat":rear.combat.snapshot(rear.PLAYER), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot(), "expanded_catalogue": expanded_catalogue}
+		"hq":rear.hq.snapshot(), "construction":rear.construction.snapshot(), "expanded_catalogue": expanded_catalogue}
+	if include_battlefield:
+		view.merge({"military":rear.military.snapshot(rear.PLAYER), "combat":rear.combat.snapshot(rear.PLAYER), "orders":rear.orders.snapshot(), "objectives":rear.objectives.snapshot(), "forward_supply":rear.forward_supply.snapshot(), "field_structures":rear.field_structures.snapshot(), "bridges":rear.bridges.snapshot(), "demolition":rear.demolition.snapshot(), "mines":rear.mines.snapshot()})
 	view.rear.people = view.rear.people.filter(func(person: Dictionary) -> bool: return person.owner == rear.PLAYER)
 	view.rear.ledger.entities = view.rear.ledger.entities.filter(func(entity: Dictionary) -> bool: return entity.owner != "army-red")
 	return view

@@ -873,7 +873,7 @@ func _reconcile_relocation(source: String, destination: String, type: String, ph
 		return changed
 
 
-func snapshot() -> Dictionary:
+func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	var staffing: Array[Dictionary] = []
 	for r in requests.values():
 		var assigned := _assigned(r.id)
@@ -882,8 +882,9 @@ func snapshot() -> Dictionary:
 		staffing.append({"id": r.id, "target": r.target, "positions": r.positions,
 			"assigned": assigned, "pending_in": pending, "present": present, "reporting_or_active": assigned - present,
 			"shortage": maxi(0, r.target - _retaining(r.id) - pending), "priority": PRIORITIES[r.priority], "requested_at": r.created})
+	var ledger_view: Dictionary = ledger.snapshot(include_diagnostics)
 	var people: Array[Dictionary] = []
-	for entity in ledger.snapshot().entities:
+	for entity in ledger_view.entities:
 		if entity.kind != "PERSON": continue
 		var p: Dictionary = entity.duplicate(true)
 		p.phase = actors[p.id].phase if actors.has(p.id) else "External/away — ineligible"
@@ -910,8 +911,8 @@ func snapshot() -> Dictionary:
 		job.starved = job.emergency_contention_since >= 0.0 and job.emergency_wait_seconds >= 120.0
 		if job.starved: job.blocker = "Starved by explicit Emergency work for at least 120 seconds"
 	return {"time": time, "staffing": staffing, "people": people, "stores": storage,
-		"jobs": inspected_jobs, "workshop": workshop_readiness(), "yard": yard.snapshot(),
-		"audit": audit(), "ledger": ledger.snapshot(), "events": _events.duplicate(true)}
+		"jobs": inspected_jobs, "workshop": workshop_readiness() if include_diagnostics else {}, "yard": yard.snapshot(),
+		"audit": audit() if include_diagnostics else null, "ledger": ledger_view, "events": _events.duplicate(true)}
 
 
 func _refresh_contention() -> void:

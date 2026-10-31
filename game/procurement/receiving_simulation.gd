@@ -266,7 +266,7 @@ func rear_population() -> int:
 	# This bounded simulation owns rear people only. Forward/strategic membership
 	# is deliberately not inferred; the shared-world policy remains D03.
 	var count: int = 0
-	for entity in ledger.snapshot().entities:
+	for entity in ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if entity.kind == "PERSON" and entity.owner == PLAYER and entity.get("rear_place","None") in ["Occupied","Held Home"]:
 			count += 1
 	return count
@@ -308,7 +308,7 @@ func resource_counts(code: String) -> Dictionary:
 	return result
 
 
-func snapshot() -> Dictionary:
+func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	var orders: Array[Dictionary] = []
 	for order in _orders:
 		var view := order.duplicate(true)
@@ -317,7 +317,7 @@ func snapshot() -> Dictionary:
 	return {"time": _time, "money": _money, "income": _income, "spent": _spent, "refunds": _refunds,
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
 		"order_sequence": _order_sequence, "job_sequence": _job_sequence,
-		"events": _events.duplicate(true), "ledger": ledger.snapshot(), "recovery_offer":recovery_instructor_offer(),
+		"events": _events.duplicate(true), "ledger": ledger.snapshot() if include_diagnostics else null, "recovery_offer":recovery_instructor_offer(),
 		"freight_berths":freight_berths.duplicate(true),"freight_limit":freight_limit()}
 
 
