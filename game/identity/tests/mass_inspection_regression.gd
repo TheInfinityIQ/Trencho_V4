@@ -116,11 +116,20 @@ func compare(ledger: RefCounted) -> void:
 				if row.kind == "STOCK": row.blocked_reason = "Mutated query result"
 			check(ledger.entities_at(holder,kinds,false) == metadata_rows,"Single holder returns detached facts and recomputes after caller mutation")
 	for holders in [[],["missing"],["worker-01","rear-store"],["rear-store","worker-01","rear-store","missing"],["retained-rifle","person-03","retained-rifle"],[""]]:
-		for kinds in [[],["missing"],["PERSON"],["STOCK","WEAPON"],["STOCK","STOCK"],Records.Kind.keys()]:
+		for kinds in [[],["missing"],["PERSON"],["WEAPON"],["STOCK","WEAPON"],["STOCK","STOCK"],Records.Kind.keys()]:
 			var full_union: Array = complete.entities.filter(func(row: Dictionary) -> bool: return row.holder_id in holders and row.kind in kinds)
 			var metadata_union: Array = metadata.entities.filter(func(row: Dictionary) -> bool: return row.holder_id in holders and row.kind in kinds)
 			check(ledger.entities_at_any(holders,kinds) == full_union,"Batch holders preserve full snapshot-filter union, canonical order and exact quantities")
 			check(ledger.entities_at_any(holders,kinds,false) == metadata_union,"Batch holders preserve metadata union across empty, repeated, missing and moved holders/kinds")
+			var original_full: Array[Dictionary] = []
+			var original_metadata: Array[Dictionary] = []
+			# Independent original per-row reads do not receive any batch facts.
+			for entity in ledger._entities.values():
+				if entity.holder_id not in holders or Records.Kind.keys()[entity.kind] not in kinds: continue
+				original_full.append(ledger.inspect_entity(entity.id))
+				original_metadata.append(ledger.inspect_entity(entity.id,{},false))
+			check(ledger.entities_at_any(holders,kinds) == original_full,"Selected loaded/carry facts preserve independent raw full inspections")
+			check(ledger.entities_at_any(holders,kinds,false) == original_metadata,"Selected loaded/carry facts preserve independent raw metadata inspections")
 	for type in ["E01","E02","missing"]:
 		compare_rows(ledger.entities_of_type(type,["STOCK","WEAPON"]),ledger.entities_of_type(type,["STOCK","WEAPON"],false))
 	for kind in Records.Kind.values():

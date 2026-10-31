@@ -173,21 +173,28 @@ func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) ->
 	var ids: Array[String] = []
 	var needs_carried := false
 	var needs_loaded := false
+	# Loaded totals also mark selected weapons. Carry truth needs its own set.
+	var selected_stocks := {}
+	var loaded := {}
 	for entity in _entities.values():
 		if selected.has(entity.holder_id) and Records.Kind.keys()[entity.kind] in kinds:
 			ids.append(entity.id)
-			if entity.kind == Records.Kind.STOCK: needs_carried = true
-			if entity.kind == Records.Kind.WEAPON: needs_loaded = true
+			if entity.kind == Records.Kind.STOCK:
+				needs_carried = true
+				selected_stocks[entity.id] = true
+			if entity.kind == Records.Kind.WEAPON:
+				needs_loaded = true
+				loaded[entity.id] = 0
 	# Only selected stock/weapons need these synchronous facts. Missing holders
 	# and other-kind queries avoid the extra scan; nothing survives this call.
 	var facts := {}
 	if needs_carried: facts.carried = {}
-	if needs_loaded: facts.loaded = {}
+	if needs_loaded: facts.loaded = loaded
 	if needs_carried or needs_loaded:
 		for entity in _entities.values():
-			if needs_loaded and entity.kind == Records.Kind.STOCK:
+			if needs_loaded and entity.kind == Records.Kind.STOCK and loaded.has(entity.holder_id):
 				facts.loaded[entity.holder_id] = int(facts.loaded.get(entity.holder_id,0))+entity.quantity
-			if needs_carried and entity is Records.Person and not entity.carrying_stock_id.is_empty():
+			if needs_carried and entity is Records.Person and selected_stocks.has(entity.carrying_stock_id):
 				facts.carried[entity.carrying_stock_id] = true
 	for id in ids: result.append(inspect_entity(id,{},include_mass,facts))
 	return result
