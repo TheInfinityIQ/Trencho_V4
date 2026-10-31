@@ -167,6 +167,7 @@ func refresh() -> void:
 					army_issue_status.text += "\n%s · %s · %s\n%s" % ["Going to supply" if journey.get("leg","") == "Collect" else "Returning to duty",state,"On foot" if journey.get("mode","") == "Foot" else str(journey.get("hull","Choosing travel")),journey.get("blocker","")]
 					var eta: float = float(journey.get("eta",-1.0))
 					if is_finite(eta) and eta >= 0: army_issue_status.text += "\nJourney ETA: %.1f simulation seconds" % eta
+					else: army_issue_status.text += "\nArrival estimate updates when the current travel step is ready."
 			for person in refill.people:
 				army_issue_status.text += "\n%s: %d / %d actual rounds · needs %d · committed %d · %s" % [_member_label(person.person),person.rounds,person.target,person.needed,person.committed,person.blocker]
 		army_issue_status.text += "\n\nAPC RACK ISSUE\nAutocannon rounds (E26) available at the stop: %d\n%s" % [int(local.get("available_E26",0)),str(local.get("rack_status","Waiting for actual local ammunition need."))]

@@ -224,6 +224,7 @@ func _refresh() -> void:
 					detail += "\n%s · %s\nTravel destination: %s" % ["Going to supply" if journey.get("leg","") == "Collect" else "Returning to duty",travel_mode,journey.get("destination","")]
 					var eta: float = float(journey.get("eta",-1.0))
 					if is_finite(eta) and eta >= 0: detail += "\nJourney ETA: %.1f simulation seconds" % eta
+					else: detail += "\nArrival estimate updates when the current travel step is ready."
 				var motion: Dictionary = rear.battlefield_operations.motions.get(selected.id,{})
 				if motion.get("purpose","") in ["Supply","Supply Return"]: detail += "\nCurrent foot-leg ETA: %.1f simulation seconds" % maxf(0,float(motion.deadline)-rear.time)
 		if selected.kind == "CARRIER":
