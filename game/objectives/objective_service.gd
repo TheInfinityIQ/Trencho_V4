@@ -1,5 +1,6 @@
 extends RefCounted
 ## G18 control and income over the shared G01/G15/G16 physical state and clock.
+const Records = preload("res://game/identity/identity_records.gd")
 const EPS := 0.000001
 const RADIUS := 25.0
 const RESOURCE_INCOME := 1.5
@@ -111,9 +112,28 @@ func _refresh() -> bool:
 	var blue: Dictionary = {}
 	var red: Dictionary = {}
 	var blockers: Array[Dictionary] = []
-	var entities: Array = _rear().ledger.snapshot(false).entities
-	var by_id := {}
-	for item in entities: by_id[item.id] = item
+	var ledger: RefCounted = _rear().ledger
+	var people: Array[Dictionary] = []
+	var reasons := {}
+	var armed_candidates: Array[String] = []
+	for person in ledger.entities_of_kind(Records.Kind.PERSON,false):
+		if person.owner not in [_rear().PLAYER,"army-red"]: continue
+		var nearby := false
+		for row in objectives.values():
+			if person.position.distance_to(row.position) > RADIUS+EPS: continue
+			nearby = true
+			break
+		if not nearby: continue
+		people.append(person)
+		var reason := ""
+		if ledger.entity_kind(person.holder_id) != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
+		elif person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"]: reason = "Wounded, recovering or dead people cannot capture."
+		elif _rear().combat.broken.has(person.id): reason = "Broken morale requires regrouping."
+		reasons[person.id] = reason
+		if reason.is_empty(): armed_candidates.append(person.id)
+	# Inspect held goods only for nearby people whose earlier physical blockers
+	# permit an ammunition check. Both queries retain canonical ledger order.
+	var entities: Array = ledger.entities_at_any(armed_candidates,["WEAPON","STOCK"],false)
 	var held_weapons: Dictionary = {}
 	var held_rounds: Dictionary = {}
 	for item in entities:
@@ -123,14 +143,9 @@ func _refresh() -> bool:
 		elif item.kind == "STOCK" and item.available > 0:
 			if not held_rounds.has(item.holder_id): held_rounds[item.holder_id] = {}
 			held_rounds[item.holder_id][item.design_type] = int(held_rounds[item.holder_id].get(item.design_type,0))+int(item.available)
-	for person in entities:
-		if person.kind != "PERSON" or person.owner not in [_rear().PLAYER,"army-red"]: continue
-		var reason := ""
-		var holder: Dictionary = by_id.get(person.holder_id,{})
-		if holder.get("kind","") != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
-		elif person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"]: reason = "Wounded, recovering or dead people cannot capture."
-		elif _rear().combat.broken.has(person.id): reason = "Broken morale requires regrouping."
-		else:
+	for person in people:
+		var reason: String = reasons[person.id]
+		if reason.is_empty():
 			var armed := false
 			for weapon in held_weapons.get(person.id,[]):
 				if weapon.loaded_rounds > 0 or int(held_rounds.get(person.id,{}).get(weapon.ammo_type,0)) > 0: armed = true
