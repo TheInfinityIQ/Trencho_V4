@@ -238,7 +238,10 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var distance := start.distance_to(destination)
 	if distance <= EPS: return _blocked("Choose a distinct lane endpoint")
 	var direction := (destination - start) / distance
-	if absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: return _blocked("Declared straight lane requires current hull alignment; no turn planner")
+	# Callers can derive this exact lane heading from the same two positions.
+	# Avoid rejecting it through Vector2 normalization/angle roundoff. Other
+	# headings still retain the existing alignment rule; no turn is granted.
+	if entity.facing != (destination-start).angle() and absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: return _blocked("Declared straight lane requires current hull alignment; no turn planner")
 	for point in footprint(entity, start) + footprint(entity, destination):
 		if point.x < bounds.position.x - EPS or point.y < bounds.position.y - EPS or point.x > bounds.end.x + EPS or point.y > bounds.end.y + EPS: return _blocked("Whole footprint exceeds declared world")
 	for item in obstacles:

@@ -242,7 +242,9 @@ func _start() -> void:
 	distance = start.distance_to(destination)
 	if distance <= EPS: _blocked("Choose a distinct lane endpoint"); return
 	var direction: Vector2 = (destination-start)/distance
-	if absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: _blocked("Declared straight lane requires current hull alignment; no turn planner"); return
+	# Match the synchronous lane's exact-derived-heading acceptance, avoiding
+	# a false rejection from normalization/angle roundoff without granting turns.
+	if entity.facing != (destination-start).angle() and absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: _blocked("Declared straight lane requires current hull alignment; no turn planner"); return
 	for point in world.footprint(entity,start)+world.footprint(entity,destination):
 		if point.x < bounds.position.x-EPS or point.y < bounds.position.y-EPS or point.x > bounds.end.x+EPS or point.y > bounds.end.y+EPS: _blocked("Whole footprint exceeds declared world"); return
 	var minimum: Vector2 = start.min(destination)-Vector2(entity.size.length(),entity.size.length())*0.5

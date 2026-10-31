@@ -256,7 +256,7 @@ func _collect_ammunition(squad: Dictionary, intent: Dictionary, active: Array[St
 	var owner := _collection_owner()
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id,{},false)
 	if stop.get("kind","") != "PLACE" or stop_id != owner.stop_id:
-		_interrupt_collection(squad.id,"Declared rendezvous has no connected local issue service.")
+		_interrupt_collection(squad.id,"No local ammunition team serves the assigned rendezvous.")
 		status[squad.id] = row.blocker
 		return true
 	var requested: Dictionary = owner.request_squad_replenishment(squad.id,row.cycle,60)
@@ -442,7 +442,7 @@ func _collection_transport_exists(owner: String) -> bool:
 func _collection_transport_blocked(squad_id: String) -> void:
 	var row: Dictionary = rifle_collection.get(squad_id,{})
 	if row.is_empty(): return
-	row.blocker = "Journey exceeds 600 m and personnel transport exists; comparing arrival/trip ETA and obtaining a parent-approved collection lift remain unconnected."
+	row.blocker = "Collection journey exceeds 600 m. A passenger vehicle exists, but this build cannot yet arrange its collection trip."
 	row.state = "Awaiting transport reassessment"
 	status[squad_id] = row.blocker
 	_report(squad_id,"Inability",row.blocker,true)
