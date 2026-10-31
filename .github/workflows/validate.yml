@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 300s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd -- --warmup=180 --report-path=res://.artifacts/responsiveness-underway.json > .artifacts/responsiveness-underway.log 2>&1
+          timeout 300s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd -- --warmup=180 --capture --report-path=res://.artifacts/responsiveness-underway.json > .artifacts/responsiveness-underway.log 2>&1
           grep -E 'RESPONSIVENESS_' .artifacts/responsiveness-underway.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness-underway.log; then exit 1; fi
       - name: Retain early response timing and profile

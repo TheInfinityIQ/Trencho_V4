@@ -17,6 +17,7 @@ var run_seconds := 9.0
 var double_seconds := 6.0
 var heartbeat_path := ""
 var heartbeat_at := 0
+var capture := false
 
 func _initialize() -> void:
 	for argument in OS.get_cmdline_user_args():
@@ -27,6 +28,7 @@ func _initialize() -> void:
 		if argument.begins_with("--double-seconds="): double_seconds = maxf(6.0,argument.get_slice("=",1).to_float())
 		if argument.begins_with("--heartbeat-path="): heartbeat_path = argument.trim_prefix("--heartbeat-path=")
 		if argument == "--profile-live": profile_live = true
+		if argument == "--capture": capture = true
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
 
@@ -144,6 +146,11 @@ func _run() -> void:
 	_record_frame()
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_check(base.audit().is_empty(),"The observed session preserves physical invariants")
+	if capture:
+		await create_timer(0.25).timeout
+		await RenderingServer.frame_post_draw
+		var captured: Error = root.get_texture().get_image().save_png(report_path.trim_suffix(".json")+".png")
+		_check(captured == OK,"The exact observed candidate produces its review image")
 	_finish()
 
 func _check(ok: bool, message: String) -> void:
