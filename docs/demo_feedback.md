@@ -1,0 +1,19 @@
+# First demo feedback — 31 October 2026
+
+Dawson could not find Supply, observed time stop at6 seconds with the window still open, and saw a choppy Rear clock. He explicitly requested a hands-on computer-use check. Lead opened one existing7518f85 Windows demo, reproduced6.0 at1x while controls remained responsive, and needed six tiny tab-scroll-arrow clicks to expose Supply. That test instance was paused and closed; the editor and unrelated apps were preserved. This was specific authorization for a brief local check, not a general regression or local-engine exception for the team.
+
+## Corrections
+
+- Supply is a main-bar button opening the existing named panel in the same session. Both live views use one lightweight actual-time label and common Pause/1x/2x controls.
+- Preparing routes no longer secretly pauses the whole world. After bounded planning, actual shared time, production, income and other activity continue; the affected transport waits for valid admission. Pause still stops actual time and automatic physical activity. Computer preparation latency remains implementation-dependent, not a newly balanced military delay.
+- Small route-work calls fill the existing4ms planning deadline instead of yielding after one cheap128-unit call. A finite aggregate ceiling, fair owner rotation and at most one mutation-producing pump remain. No terrain, collision, range, fuel or capacity rules changed.
+- Ordinary Rear views skip unused diagnostic audits and hidden battlefield projections. Expensive hidden panel refreshes wait until their real panel is shown; paused tab entry obtains fresh facts. Metadata-only readers avoid recursive load-mass work. Complete diagnostic snapshot defaults and actual visible mass/capacity reads remain available. Unrun audit output is null, not a false pass.
+- Unissued resource proposals are freshly checked at the actual order boundary now that the world continues during preparation. Invalid private proposals restore existing issued authority and request review, rather than reverting to the opening target.
+
+## Bounded evidence and limits
+
+[Baseline profile41217862251](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/41217862251) observed real time reach6 and remain there through15 wall seconds while route work progressed without resets. Cheap chunks often took0.25–1.1ms. Rear refresh measured339ms versus1.2ms for Battlefield. A fill-only correction resumed eventually but still held6 until roughly23 wall seconds; it was not considered a sufficient repair.
+
+[Direct repair41219721742](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/41219721742) passed on b6bca37: the actual Supply button opened the real panel without replacing the session or creating work; both views retained the common clock; actual time and income advanced beyond6 while transport remained pending; Pause stopped actual time/income. The action reached10 simulation seconds. Rear refresh sampled130ms and light snapshot113ms, down from the earlier measured aggregate paths. These are remote samples, not controlled hardware or a frame-rate guarantee. Two subsequent source-reviewed metadata reads were measured separately in [41220083436](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/41220083436):118.6ms Rear,101.1ms light snapshot, with valid store positions, recovery offer and60 rear people. Some indivisible frame costs and Supply refresh costs remain.
+
+The initial remote measurements use the manual microsecond method described in [Godot's profiler documentation](https://docs.godotengine.org/en/4.7/tutorials/scripting/debug/the_profiler.html#measuring-manually-in-microseconds). No regression suites, old encounter replay, failure matrix or broad profiling ran. Full engagement pacing, native long-session responsiveness and unexercised interruption paths remain unverified. Passing entry/actions or packaging is not full-game acceptance.
