@@ -40,6 +40,335 @@ func request_trip_deferred(key: String, hull_id: String, squad_ids: Array, board
 	return status
 
 
+func supply_cohort_facts(hull_id: String, squad_id: String) -> Dictionary:
+	var rear: RefCounted = _rear()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+	var squad: Dictionary = _organization().squads.get(squad_id,{})
+	if hull.get("design_type","") != "T02" or hull.get("fleet_domain","") != "Military" or not _organization().vehicles.has(hull_id): return _fail("Select an actual attached military T02.")
+	if squad.get("kind","") != "Rifle" or squad.get("state","") != "Active" or squad.get("owner","") != hull.owner or _company_of(_organization().vehicles[hull_id].parent) != str(squad.get("company","")): return _fail("A same-army same-company active Rifle cohort is required.")
+	var capability: Dictionary = _organization().capability(squad_id,"Supply Collection")
+	if not capability.ok: return capability
+	var blocker := _supply_hull_error(hull_id,hull)
+	if not blocker.is_empty(): return _fail(blocker)
+	var people: Array[String] = _organization()._active_roster_members(squad)
+	var facts: Array[Dictionary] = []
+	var mass := 0.0
+	for id in people:
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if not _supply_person_free(id,person): return _fail("Each actual eligible passenger must finish its other physical work.")
+		var armed := false
+		for weapon in rear.ledger.entities_at(id,["WEAPON"],false):
+			if weapon.design_type == "E01" and weapon.get("functional",false) and weapon.get("health",0) > 0: armed = true; break
+		if not armed: return _fail("Each eligible Rifle carrier needs its actual functional rifle; ammunition is not required to collect supply.")
+		facts.append(_planning_person_facts(person))
+		mass += float(person.unit_mass_kg)+float(person.contents_mass_kg)
+	if people.is_empty() or people.size() > 8 or people.size() > int(hull.vehicle_spec.passenger_seats): return _fail("Current eligible cohort exceeds the actual available seats.")
+	var payload: float = float(hull.contents_mass_kg)+mass
+	if payload > float(hull.vehicle_spec.payload)+EPS: return _fail("Actual cohort and gear exceed the T02 payload.")
+	return {"ok":true,"message":"Actual eligible Rifle cohort fits this free same-company T02.","people":people,"person_facts":facts,"passenger_mass_kg":mass,"seats_used":people.size(),"payload_kg":payload}
+
+func request_reposition_deferred(key: String, hull_id: String, origin_place_id: String, destination_place_id: String,
+		points: Array, fallback: Array, authority: Dictionary) -> Dictionary:
+	return _request_supply(key,"Supply Reposition",hull_id,origin_place_id,destination_place_id,points,fallback,authority)
+
+func request_supply_trip_deferred(key: String, hull_id: String, squad_id: String, pickup_place_id: String, destination_place_id: String,
+		points: Array, fallback: Array, authority: Dictionary) -> Dictionary:
+	if authority.get("squad","") != squad_id: return _fail("Named transport and actual Rifle squad must match.")
+	return _request_supply(key,"Supply Admission",hull_id,pickup_place_id,destination_place_id,points,fallback,authority)
+
+func _request_supply(key: String, kind: String, hull: String, board: String, destination: String,
+		points: Array, fallback: Array, authority: Dictionary) -> Dictionary:
+	if key.is_empty(): return _fail("Supply transport requires a private request key.")
+	if _planning_requests.has(key):
+		var existing: Dictionary = _planning_requests[key]
+		if existing.kind != kind or existing.hull != hull or existing.get("authority",{}) != authority or existing.board != board or existing.dismount != destination or existing.out != points or existing.home != fallback: return _fail("An existing private key cannot be reused for another supply movement.")
+	else:
+		var request := _planning_descriptor(key,hull,[str(authority.get("squad",""))],board,destination,points,fallback,{})
+		request.kind = kind
+		request.phase = "Outbound"
+		request.authority = authority.duplicate(true)
+		_planning_requests[key] = request
+		_planning_fifo.append(request)
+		planning_revision += 1
+	var status := planning_status(key)
+	status.ok = true
+	status.request_id = key
+	status.pending = status.state in ["Pending","Ready"]
+	return status
+
+func cancel_planning_request(key: String) -> Dictionary:
+	var request: Dictionary = _planning_requests.get(key,{})
+	if request.is_empty(): return _fail("No such private planning request.")
+	if request.state == "Admitted": return _fail("An admitted physical job must be interrupted through its existing owner.")
+	if request.state in ["Pending","Ready"]:
+		request.state = "Cancelled"
+		request.message = "This private pure request was cancelled; physical custody is retained."
+		_drop_planning_work(request)
+		planning_revision += 1
+		if not str(request.job).is_empty():
+			var row: Dictionary = jobs.get(request.job,{})
+			if row.get("state","") == "Planning Route": _block_route(row,str(request.phase),request.message)
+	return {"ok":true,"message":request.message}
+
+func _company_of(parent: String) -> String:
+	if _organization().companies.has(parent): return parent
+	return str(_organization().platoons.get(parent,{}).get("company",""))
+
+func _supply_hull_error(id: String, hull: Dictionary, owned_job: String = "") -> String:
+	for row in jobs.values():
+		if row.hull == id and row.id != owned_job and row.state != "Complete": return "Another physical military activity owns this T02."
+	if _rear().forward_supply.hull_committed(id) or _rear().hq._target_busy(id): return "Freight or HQ handling owns this T02."
+	if not str(hull.get("towing","")).is_empty() or not str(hull.get("towed_by","")).is_empty(): return "A tow or recovery commitment excludes routine supply transport."
+	for item in _rear().ledger.entities_at(id,["STOCK","WEAPON","HEAVY_OBJECT"],false):
+		if item.quantity > 0: return "Actual freight must be resolved by its owner before personnel transport."
+	if owned_job.is_empty() and (not hull.get("passengers",[]).is_empty() or not _organization()._vehicle_squads(id).is_empty()): return "Existing passengers or squad places already own this T02."
+	return _movement_blocker(id,hull)
+
+func _supply_person_free(id: String, person: Dictionary) -> bool:
+	return _supply_person_available(id,person) and _rear().ledger.entity_kind(str(person.get("holder_id",""))) == "PLACE" and not person_committed(id)
+
+func _supply_person_available(id: String, person: Dictionary, require_stopped: bool = false) -> bool:
+	var rear: RefCounted = _rear()
+	if person.get("health",0) <= 0 or person.get("assignment","") != "Formation Duty" or person.get("pending_assignment","") != "None" or not str(person.get("crew_station","")).is_empty() or not str(person.get("carrying_stock_id","")).is_empty() or not str(person.get("carrying_weapon_id","")).is_empty(): return false
+	if rear.combat.pinned.has(id) or rear.combat.broken.has(id): return false
+	if rear.forward_supply.person_committed(id) or rear.forward_supply._other_busy(id): return false
+	return not require_stopped or rear.battlefield_operations == null or not rear.battlefield_operations.person_committed(id)
+
+func _supply_authority_error(hull_id: String, authority: Dictionary, physical: Dictionary = {}) -> String:
+	if authority.size() != 8: return "Supply movement requires the exact named authority fields."
+	for key in ["squad","cycle","leg","operation_intent","hull_intent","pickup","destination","cohort"]:
+		if not authority.has(key): return "Supply movement lacks named authority: "+key
+	if authority.leg not in ["Collect","Return"] or str(authority.cycle).is_empty(): return "Supply movement needs a named Collect or Return leg."
+	if not physical.is_empty():
+		for key in ["squad","cycle","leg"]:
+			if authority[key] != physical.supply_authority[key]: return "An interrupted job must retain its actual squad, cycle and journey leg."
+		if physical.kind == "Troop Trip" and authority.pickup != physical.board_place: return "The same loaded job retains its real original pickup."
+	var military: RefCounted = _organization()
+	var squad: Dictionary = military.squads.get(authority.squad,{})
+	var attachment: Dictionary = military.vehicles.get(hull_id,{})
+	var hull: Dictionary = _rear().ledger.inspect_entity(hull_id,{},false)
+	if squad.get("kind","") != "Rifle" or squad.get("state","") != "Active" or attachment.get("owner","") != squad.get("owner","missing") or hull.get("owner","") != squad.get("owner","missing") or _company_of(str(attachment.get("parent",""))) != str(squad.get("company","")): return "Current transport and Rifle parents must belong to the same actual army and company."
+	var parent: Dictionary = military.platoons.get(attachment.parent,military.companies.get(attachment.parent,{}))
+	var rifle_parent: Dictionary = military.platoons.get(squad.platoon,{})
+	if parent.is_empty() or rifle_parent.is_empty() or parent.get("owner",_rear().PLAYER) != hull.owner or rifle_parent.get("owner",_rear().PLAYER) != hull.owner or rifle_parent.get("company","") != squad.company: return "Both current actual parents must retain the same army and company ownership."
+	var operation: Dictionary = _rear().orders.intents.get(authority.squad,{})
+	if operation.get("id","") != authority.operation_intent or operation.get("state","") != "Acknowledged" or operation.get("parent","") != squad.platoon or operation.get("action","") == "Defend HQ": return "The current actual-parent Rifle operation must remain acknowledged and eligible for supply travel."
+	var destination: String = str(operation.get("constraints",{}).get("supply_rendezvous" if authority.leg == "Collect" else "destination",""))
+	if destination != authority.destination: return "The supply leg must match the current rendezvous or latest operational destination."
+	var intent: Dictionary = _rear().orders.intents.get(hull_id,{})
+	var named := authority.duplicate(true)
+	named.erase("hull_intent")
+	if intent.get("id","") != authority.hull_intent or intent.get("state","") != "Acknowledged" or intent.get("action","") != "Move by Transport" or intent.get("parent","") != attachment.get("parent","") or intent.get("constraints",{}).get("supply_transport",{}) != named: return "The actual vehicle parent must acknowledge this exact named hull movement."
+	if not str(squad.get("vehicle","")).is_empty() and (physical.get("kind","") != "Troop Trip" or squad.vehicle != hull_id): return "Another physical passenger owner holds this squad."
+	var members: Array[String] = military._active_roster_members(squad,not physical.is_empty())
+	if members != authority.cohort or members.size() < 4 or members.size() > 8: return "The current eligible physical Rifle cohort no longer matches the named movement."
+	if not physical.is_empty() and physical.kind == "Troop Trip" and physical.people != members: return "The same physical passenger manifest must be retained for reassessment."
+	if str(squad.get("leader","")) not in members: return "The actual living Rifle leader must remain in the eligible cohort."
+	var leader: Dictionary = _rear().ledger.inspect_person_status(squad.leader)
+	if not leader.get("basic_training",false) and not squad.get("acting",false): return "The actual Rifle leader must retain training or its existing acting exception."
+	for id in members:
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
+		if person.get("owner","") != hull.owner or not _supply_person_available(id,person,physical.get("kind","") == "Troop Trip"): return "A current cohort member is unavailable, pinned, broken, or committed to another activity; retain actual custody."
+	return ""
+
+func _supply_planning_guard(request: Dictionary) -> Dictionary:
+	var rear: RefCounted = _rear()
+	var hull: Dictionary = rear.ledger.inspect_entity(request.hull)
+	var row: Dictionary = jobs.get(request.job,{})
+	if hull.get("design_type","") != "T02" or hull.get("fleet_domain","") != "Military" or not _organization().vehicles.has(request.hull): return _fail("Select an actual attached military T02.")
+	if request.kind in ["Supply Departure","Supply Handling"] and (row.is_empty() or not row.get("supply_mode",false) or row.state != "Planning Route" or row.planning_phase != request.phase): return _fail("The same supply job must retain this queued physical continuation.")
+	var error := _supply_authority_error(request.hull,request.authority,row)
+	if error.is_empty(): error = _supply_hull_error(request.hull,hull,str(request.job))
+	if not error.is_empty(): return _fail(error)
+	var board: Dictionary = rear.ledger.inspect_entity(request.board,{},false)
+	var dismount: Dictionary = rear.ledger.inspect_entity(request.dismount,{},false)
+	if board.get("kind","") != "PLACE" or dismount.get("kind","") != "PLACE" or request.board == request.dismount: return _fail("A supply movement needs distinct real origin and destination markers.")
+	var people: Array = []
+	var mass := 0.0
+	if request.kind == "Supply Admission":
+		if request.board != request.authority.pickup or request.dismount != request.authority.destination: return _fail("The exact acknowledged pickup and destination are required.")
+		var facts := supply_cohort_facts(request.hull,str(request.authority.squad))
+		if not facts.ok: return facts
+		people = facts.people
+		mass = float(facts.passenger_mass_kg)
+		if not hull.position.is_equal_approx(board.position) or rear.ledger.entity_kind(hull.holder_id) != "PLACE": return _fail("The real stopped T02 must reach the named pickup position.")
+		for id in people:
+			var person: Dictionary = rear.ledger.inspect_entity(id)
+			if not _supply_person_available(id,person,true): return _fail("Actual admission requires each passenger to stop tactical foot movement and finish other work.")
+			if person.position.distance_to(hull.position) > LOCAL_RADIUS+EPS or not _foot_leg(person,hull.position).ok: return _fail("Every actual eligible passenger needs a safe local approach within 20 m of the stopped T02.")
+	elif request.kind == "Supply Reposition":
+		var facts := supply_cohort_facts(request.hull,str(request.authority.squad))
+		if not facts.ok: return facts
+		if request.dismount != request.authority.pickup or not hull.position.is_equal_approx(board.position) or rear.ledger.entity_kind(hull.holder_id) != "PLACE": return _fail("Empty reposition must start at the actual stopped hull and end at its acknowledged pickup.")
+	else:
+		people = row.people
+		error = _supply_custody_error(row,hull)
+		if not error.is_empty(): return _fail(error)
+		if request.kind == "Supply Handling":
+			var approach_seconds := 0.0
+			if request.phase not in ["Boarding","Dismounting"]: return _fail("No interrupted physical handling remains.")
+			if request.phase == "Boarding" and (not hull.position.is_equal_approx(board.position) or rear.ledger.entity_kind(hull.holder_id) != "PLACE"): return _fail("The same hull must retain the actual boarding stop.")
+			if request.phase == "Dismounting" and (hull.holder_id != row.dismount_place or not hull.position.is_equal_approx(rear.ledger.inspect_entity(row.dismount_place).position)): return _fail("Finish partial dismount at the actual old stop before reassessing the new destination.")
+			if not row.task.is_empty() and row.task.get("phase","") == "Approach":
+				var person: Dictionary = rear.ledger.inspect_entity(row.task.person)
+				if not person.position.is_equal_approx(row.task.expected): return _fail("The same passenger must retain the actual interrupted approach position.")
+				var leg: Dictionary = _foot_leg(person,hull.position)
+				if not leg.ok: return _fail("The remaining actual local boarding approach is unsafe.")
+				approach_seconds = float(leg.seconds)
+			return {"ok":true,"hull":hull,"people":people,"board":board,"dismount":dismount,"passenger_mass_kg":0.0,"approach_seconds":approach_seconds}
+		if request.phase != "Outbound": return _fail("A supply leg never invents an automatic empty return.")
+		if row.kind == "Troop Trip":
+			if request.dismount != request.authority.destination: return _fail("The resumed loaded leg must reach the latest acknowledged destination.")
+			error = _departure_manifest_error(row,hull,"Outbound")
+		else:
+			if request.dismount != request.authority.pickup or not hull.passengers.is_empty() or not _organization()._vehicle_squads(request.hull).is_empty(): error = "Empty reposition must retain an empty actual hull and its acknowledged pickup."
+		if not error.is_empty(): return _fail(error)
+	error = _validate_points(request.out,hull.position,dismount.position)
+	if error.is_empty(): error = _validate_points(request.home,dismount.position,board.position)
+	if not error.is_empty(): return _fail(error)
+	return {"ok":true,"hull":hull,"people":people,"board":board,"dismount":dismount,"passenger_mass_kg":mass}
+
+func _supply_custody_error(row: Dictionary, hull: Dictionary) -> String:
+	if row.kind != "Troop Trip":
+		return "Empty reposition cannot acquire passengers or squad places." if not hull.passengers.is_empty() or not _organization()._vehicle_squads(row.hull).is_empty() else ""
+	if row.boarded > row.people.size() or row.dismounted > row.boarded: return "Actual handling counters no longer match the retained manifest."
+	if _organization()._vehicle_squads(row.hull) != row.squads: return "The same physical squad place must remain reserved to the supply hull."
+	var aboard: Array = []
+	for index in row.people.size():
+		var id: String = row.people[index]
+		var person: Dictionary = _rear().ledger.inspect_entity(id)
+		if not _supply_person_available(id,person,true): return "A retained passenger is unavailable or committed to another activity; preserve actual custody."
+		if index >= int(row.dismounted) and index < int(row.boarded):
+			if person.holder_id != row.hull: return "A boarded passenger no longer occupies this same hull."
+			aboard.append(id)
+		elif index < int(row.dismounted):
+			if person.holder_id != row.dismount_place: return "A dismounted passenger no longer occupies the actual destination stop."
+		elif _rear().ledger.entity_kind(person.holder_id) != "PLACE" or person.position.distance_to(hull.position) > LOCAL_RADIUS+EPS:
+			return "An unboarded passenger left the actual local pickup."
+	if hull.passengers.size() != aboard.size(): return "The actual passenger count must match this job's boarded and dismounted identities."
+	for id in hull.passengers:
+		if id not in aboard: return "The actual passengers must match this job's boarded and dismounted identities."
+	return ""
+
+func _supply_live_error(row: Dictionary) -> String:
+	var error := _supply_authority_error(row.hull,row.supply_authority,row)
+	if error.is_empty(): error = _supply_hull_error(row.hull,_rear().ledger.inspect_entity(row.hull),row.id)
+	if error.is_empty(): error = _supply_custody_error(row,_rear().ledger.inspect_entity(row.hull))
+	return error
+
+func resume_supply_job_deferred(job_id: String, route_points: Array, fallback_points: Array, authority: Dictionary) -> Dictionary:
+	var row: Dictionary = jobs.get(job_id,{})
+	if row.is_empty() or not row.get("supply_mode",false) or row.state not in ["Paused","Blocked Route","Stranded","Planning Route"]: return _fail("Only the same interrupted supply job may resume through fresh named authority.")
+	var phase: String = row.paused_state if row.state == "Paused" else row.get("stopped_phase","")
+	if row.state == "Planning Route" or phase == "Planning Route": phase = str(row.get("planning_phase","Outbound"))
+	if phase not in ["Boarding","Dismounting","Outbound"]: return _fail("The same supply leg has no resumable physical phase.")
+	var error := _supply_authority_error(row.hull,authority,row)
+	if not error.is_empty(): return _fail(error)
+	var destination: String = str(authority.pickup if row.kind == "Reposition" else authority.destination)
+	# Partial dismount always finishes at its actual old stop, even with a new order.
+	if phase == "Dismounting": destination = row.dismount_place
+	_discard_departure(job_id)
+	return _queue_supply_continuation(row,route_points,fallback_points,authority,phase,destination)
+
+func _queue_supply_continuation(row: Dictionary, points: Array, fallback: Array, authority: Dictionary, phase: String, destination: String) -> Dictionary:
+	_planning_sequence += 1
+	var key := "supply-continuation-%d" % _planning_sequence
+	var request := _planning_descriptor(key,row.hull,row.squads,row.board_place,destination,points,fallback,{})
+	request.kind = "Supply Handling" if phase in ["Boarding","Dismounting"] else "Supply Departure"
+	request.authority = authority.duplicate(true)
+	request.job = row.id
+	request.phase = phase
+	_planning_requests[key] = request
+	_departure_requests[row.id] = request
+	_planning_fifo.append(request)
+	row.state = "Planning Route"
+	row.planning_phase = phase
+	row.planning_state = "Pending"
+	row.planning_points = points.duplicate()
+	row.route_deadline = INF
+	row.blocker = "Validating the same supply job; actual passenger custody is retained."
+	planning_revision += 1
+	return {"ok":true,"pending":true,"request_id":key,"job":row.id,"message":row.blocker}
+
+func _commit_supply_route(request: Dictionary, guarded: Dictionary) -> bool:
+	var row: Dictionary
+	if request.kind in ["Supply Admission","Supply Reposition"]:
+		var loaded: bool = request.kind == "Supply Admission"
+		if loaded:
+			var reserved: Dictionary = _organization()._reserve_transport_manifest(request.hull,request.squads)
+			if not reserved.ok: return _deny_planning(request,reserved.message)
+		_sequence += 1
+		var id := ("troop-trip-%04d" if loaded else "military-reposition-%04d") % _sequence
+		row = {"id":id,"kind":"Troop Trip" if loaded else "Reposition","hull":request.hull,"owner":guarded.hull.owner,
+			"squads":request.squads.duplicate() if loaded else [],"people":guarded.people.duplicate() if loaded else [],
+			"board_place":request.board,"dismount_place":request.dismount,"outbound_points":request.out.duplicate(),"return_points":request.home.duplicate(),
+			"boarded":0,"dismounted":0,"state":"Boarding" if loaded else "Outbound","task":{},"route_plan":{},"route_points":[],
+			"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,"route_expected":guarded.hull.position,
+			"world_revision":request.revision,"paused_state":"","stopped_phase":"","blocker":"","return_completed":false,
+			"return_required":false,"supply_mode":true,"supply_authority":request.authority.duplicate(true),"intent_ids":{}}
+		jobs[id] = row
+		request.job = id
+		if not loaded: _start_supply_route(row,request,guarded.hull)
+	else:
+		row = jobs[request.job]
+		row.supply_authority = request.authority.duplicate(true)
+		row.dismount_place = request.dismount
+		row.outbound_points = request.out.duplicate()
+		row.return_points = request.home.duplicate()
+		_start_supply_route(row,request,guarded.hull)
+	_admit_supply_request(request,"Same supply hull and actual cohort committed without an automatic empty return.")
+	return true
+
+func _start_supply_route(row: Dictionary, request: Dictionary, hull: Dictionary) -> void:
+	row.state = "Outbound"
+	row.route_plan = request.outward
+	row.route_points = request.out.duplicate()
+	row.route_started = _rear().time
+	row.route_deadline = _rear().time+float(request.outward.seconds)
+	row.route_distance = 0.0
+	row.route_fuel = 0.0
+	row.route_expected = hull.position
+	row.world_revision = request.revision
+	row.paused_state = ""
+	row.stopped_phase = ""
+	row.planning_phase = ""
+	row.planning_state = ""
+	row.planning_points = []
+	row.blocker = ""
+
+func _commit_supply_handling(request: Dictionary, guarded: Dictionary) -> bool:
+	var row: Dictionary = jobs[request.job]
+	row.supply_authority = request.authority.duplicate(true)
+	if request.phase == "Boarding":
+		row.dismount_place = request.dismount
+		row.outbound_points = request.out.duplicate()
+		row.return_points = request.home.duplicate()
+	if not row.task.is_empty():
+		var remaining: float = maxf(EPS,float(row.task.get("remaining_seconds",HANDLING_SECONDS)))
+		if row.task.get("phase","") == "Approach":
+			var person: Dictionary = _rear().ledger.inspect_entity(row.task.person)
+			remaining = maxf(EPS,float(guarded.approach_seconds))
+			row.task.from = person.position
+			row.task.started = _rear().time
+			row.task.expected = person.position
+		row.task.deadline = _rear().time+remaining
+	row.state = request.phase
+	row.paused_state = ""
+	row.stopped_phase = ""
+	row.planning_phase = ""
+	row.planning_state = ""
+	row.blocker = ""
+	_admit_supply_request(request,"The same actual partial handling resumed at its real stop.")
+	return true
+
+func _admit_supply_request(request: Dictionary, message: String) -> void:
+	request.state = "Admitted"
+	request.admitted_at = _rear().time
+	request.message = message
+	_departure_requests.erase(request.job)
+	_drop_planning_work(request)
+	planning_revision += 1
+
 func planning_status(key: String) -> Dictionary:
 	var request: Dictionary = _planning_requests.get(key,{})
 	if request.is_empty(): return {}
@@ -70,7 +399,7 @@ func cancel_planning() -> void:
 		request.message = "Pure route planning cancelled; existing physical ownership is retained."
 		_drop_planning_work(request)
 		planning_revision += 1
-		if request.kind == "Departure":
+		if not str(request.job).is_empty():
 			var row: Dictionary = jobs.get(request.job,{})
 			if not row.is_empty() and row.state == "Planning Route":
 				row.planning_state = ""
@@ -105,12 +434,18 @@ func pump_planning(allow_commit: bool, max_units: int = 128, budget_usec: int = 
 			request.world = _rear().combat.world
 			request.revision = request.world.revision
 			request.generation = _planning_generation
-			request.stage = "Outward"
+			if request.kind == "Supply Handling":
+				request.state = "Ready"
+				request.message = "Same physical handling captured; awaiting running-state continuation."
+				planning_revision += 1
+			else: request.stage = "Outward"
 			continue
 		if request.work == null:
 			units += 1
 			var points: Array = request.home if request.stage == "Homeward" else request.out
-			request.work = Routes.begin_plan(_rear().ledger,request.hull,points,{"world":request.world})
+			var profile: Dictionary = {"world":request.world}
+			if request.kind == "Supply Admission": profile.prospective_load_kg = request.capture.passenger_mass_kg
+			request.work = Routes.begin_plan(_rear().ledger,request.hull,points,profile)
 			continue
 		if request.work.done:
 			units += 1
@@ -193,6 +528,7 @@ func _drop_planning_work(request: Dictionary) -> void:
 
 
 func _planning_guard(request: Dictionary) -> Dictionary:
+	if request.has("authority"): return _supply_planning_guard(request)
 	var rear: RefCounted = _rear()
 	var organization: RefCounted = _organization()
 	var hull: Dictionary = rear.ledger.inspect_entity(request.hull)
@@ -276,7 +612,7 @@ func _planning_capture(request: Dictionary, guarded: Dictionary) -> Dictionary:
 	for key in ["owner","parent","passenger_squad","passenger_squads"]:
 		var value: Variant = _organization().vehicles[request.hull].get(key)
 		attachment[key] = value.duplicate() if value is Array else value
-	return {"people":people,"people_order":guarded.people.duplicate(),
+	return {"people":people,"people_order":guarded.people.duplicate(),"passenger_mass_kg":guarded.get("passenger_mass_kg",0.0),
 		"attachment":attachment,"board":{"kind":guarded.board.get("kind",""),"position":guarded.board.get("position",Vector2.INF)},
 		"dismount":{"kind":guarded.dismount.get("kind",""),"position":guarded.dismount.get("position",Vector2.INF)}}
 
@@ -305,6 +641,9 @@ func _commit_planning(request: Dictionary) -> bool:
 	if request.world != _rear().combat.world or request.revision != request.world.revision:
 		_reset_planning(request)
 		return false
+	if request.kind == "Supply Handling":
+		if _planning_capture(request,guarded) != request.capture: return _deny_planning(request,"The actual interrupted passengers or stop changed before continuation.")
+		return _commit_supply_handling(request,guarded)
 	if not _route_facts_match(request.out_facts,guarded.hull) or (not request.home_facts.is_empty() and not _route_facts_match(request.home_facts,guarded.hull)) or _planning_capture(request,guarded) != request.capture:
 		return _deny_planning(request,"Captured hull, load, crew, roster or endpoints changed; request fresh route planning.")
 	var error := ""
@@ -314,11 +653,15 @@ func _commit_planning(request: Dictionary) -> bool:
 	if error.is_empty() and request.kind == "Admission":
 		error = _known_route_danger(request.hull,request.outward.parts)
 		if error.is_empty(): error = _known_route_danger(request.hull,request.homeward.parts)
+	if error.is_empty() and request.has("authority"):
+		error = _known_route_danger(request.hull,request.outward.parts)
+		if error.is_empty() and not request.homeward.is_empty(): error = _known_route_danger(request.hull,request.homeward.parts)
 	if not error.is_empty(): return _deny_planning(request,error)
 	var required: float = float(request.outward.fuel)
 	if not request.homeward.is_empty(): required += float(request.homeward.fuel)
 	if float(guarded.hull.fuel)+EPS < required*1.25:
 		return _deny_planning(request,"Actual T02 tank cannot cover the full trip and 25 percent reserve." if request.kind == "Admission" else "Actual tank lacks travel fuel plus 25 percent reserve.")
+	if request.has("authority"): return _commit_supply_route(request,guarded)
 	if request.kind == "Admission":
 		var reserved: Dictionary = _organization()._reserve_transport_manifest(request.hull,request.squads)
 		if not reserved.ok: return _deny_planning(request,reserved.message)
@@ -361,7 +704,7 @@ func _deny_planning(request: Dictionary, message: String) -> bool:
 	request.message = message
 	_drop_planning_work(request)
 	planning_revision += 1
-	if request.kind != "Departure": return false
+	if str(request.job).is_empty(): return false
 	_departure_requests.erase(request.job)
 	var row: Dictionary = jobs.get(request.job,{})
 	if row.is_empty() or row.state != "Planning Route": return false
@@ -372,6 +715,9 @@ func _deny_planning(request: Dictionary, message: String) -> bool:
 
 func _queue_departure(row: Dictionary, points: Array, phase: String) -> bool:
 	_discard_departure(row.id)
+	if row.get("supply_mode",false):
+		_queue_supply_continuation(row,points,row.return_points,row.supply_authority,phase,row.dismount_place)
+		return true
 	_planning_sequence += 1
 	var request: Dictionary = _planning_descriptor("departure-%d" % _planning_sequence,row.hull,row.squads,row.board_place,row.dismount_place,points,row.return_points,
 		row.get("intent_ids",{}) if phase == "Outbound" else {})
@@ -505,6 +851,7 @@ func interrupt_trip(id: String) -> Dictionary:
 
 func resume_trip(id: String, route_points: Array = []) -> Dictionary:
 	var row: Dictionary = jobs.get(id,{})
+	if row.get("supply_mode",false): return _fail("Supply movement needs resume_supply_job_deferred with the current exact acknowledged authority.")
 	if row.is_empty() or row.state not in ["Paused","Blocked Route","Stranded"]:
 		return _fail("Only a paused or physically blocked trip can resume.")
 	var phase: String = row.paused_state if row.state == "Paused" else row.stopped_phase
@@ -545,6 +892,7 @@ func hull_committed(hull_id: String) -> bool:
 
 func person_committed(person_id: String) -> bool:
 	for row in jobs.values():
+		if row.get("supply_mode",false) and row.state != "Complete" and person_id in row.people: return true
 		if row.state == "Planning Route" and row.planning_phase == "Outbound" and person_id in row.people: return true
 		if row.state in ["Boarding","Dismounting","Paused"] and person_id in row.people: return true
 	return false
@@ -560,6 +908,12 @@ func next_boundary() -> float:
 
 func advance_to(at: float) -> void:
 	for row in jobs.values():
+		if row.get("supply_mode",false) and row.state in ["Boarding","Outbound","Dismounting"]:
+			var error := _supply_live_error(row)
+			if not error.is_empty():
+				if row.state == "Outbound": _block_route(row,row.state,error)
+				else: _pause_handling(row,error)
+				continue
 		if row.state in ["Outbound","Returning"]: _advance_route(row,at)
 		elif row.state == "Boarding" and row.task.get("phase","") == "Approach": _advance_boarder(row,at)
 
@@ -567,6 +921,13 @@ func advance_to(at: float) -> void:
 func settle() -> bool:
 	var changed := false
 	for row in jobs.values():
+		if row.get("supply_mode",false) and row.state in ["Boarding","Outbound","Dismounting"]:
+			var error := _supply_live_error(row)
+			if not error.is_empty():
+				if row.state == "Outbound": _block_route(row,row.state,error)
+				else: _pause_handling(row,error)
+				changed = true
+				continue
 		match row.state:
 			"Boarding":
 				if row.task.is_empty(): changed = _schedule_board(row) or changed
@@ -611,7 +972,9 @@ func _schedule_board(row: Dictionary) -> bool:
 		return true
 	var hull: Dictionary = _rear().ledger.inspect_entity(row.hull)
 	var person: Dictionary = _rear().ledger.inspect_entity(row.people[row.boarded])
-	if hull.holder_id != row.board_place or person.holder_id != row.board_place or person.position.distance_to(hull.position) > LOCAL_RADIUS+EPS or person.health <= 0:
+	var at_pickup: bool = hull.holder_id == row.board_place and person.holder_id == row.board_place
+	if row.get("supply_mode",false): at_pickup = _rear().ledger.entity_kind(hull.holder_id) == "PLACE" and _rear().ledger.entity_kind(person.holder_id) == "PLACE" and hull.position.is_equal_approx(_rear().ledger.inspect_entity(row.board_place).position)
+	if not at_pickup or person.position.distance_to(hull.position) > LOCAL_RADIUS+EPS or person.health <= 0:
 		_pause_handling(row,"Next named passenger or T02 moved before boarding.")
 		return true
 	var leg: Dictionary = _foot_leg(person,hull.position)
@@ -619,7 +982,7 @@ func _schedule_board(row: Dictionary) -> bool:
 	var walking: bool = float(leg.seconds) > EPS
 	row.task = {"person":person.id,"phase":"Approach" if walking else "Board","started":_rear().time,
 		"from":person.position,"to":hull.position,"expected":person.position,
-		"deadline":_rear().time+(float(leg.seconds) if walking else HANDLING_SECONDS)}
+		"holder":person.holder_id,"deadline":_rear().time+(float(leg.seconds) if walking else HANDLING_SECONDS)}
 	row.blocker = "Approaching and boarding actual passenger %d/%d." % [row.boarded+1,row.people.size()]
 	return true
 
@@ -628,7 +991,9 @@ func _finish_board(row: Dictionary) -> void:
 	var person_id: String = row.task.person
 	var hull: Dictionary = _rear().ledger.inspect_entity(row.hull)
 	var person: Dictionary = _rear().ledger.inspect_entity(person_id)
-	if hull.holder_id != row.board_place or person.holder_id != row.board_place or person.health <= 0 or not person.position.is_equal_approx(hull.position):
+	var at_pickup: bool = hull.holder_id == row.board_place and person.holder_id == row.board_place
+	if row.get("supply_mode",false): at_pickup = _rear().ledger.entity_kind(hull.holder_id) == "PLACE" and _rear().ledger.entity_kind(person.holder_id) == "PLACE" and hull.position.is_equal_approx(_rear().ledger.inspect_entity(row.board_place).position)
+	if not at_pickup or person.health <= 0 or not person.position.is_equal_approx(hull.position):
 		_pause_handling(row,"Passenger or T02 moved during timed boarding.")
 		return
 	if row.task.phase == "Approach":
@@ -645,13 +1010,16 @@ func _finish_board(row: Dictionary) -> void:
 func _advance_boarder(row: Dictionary, at: float) -> void:
 	var task: Dictionary = row.task
 	var person: Dictionary = _rear().ledger.inspect_entity(task.person)
-	if person.holder_id != row.board_place or person.health <= 0 or not person.position.is_equal_approx(task.expected):
+	var expected_holder: String = str(task.get("holder",row.board_place)) if row.get("supply_mode",false) else str(row.board_place)
+	if person.holder_id != expected_holder or person.health <= 0 or not person.position.is_equal_approx(task.expected):
 		_pause_handling(row,"Passenger changed position or activity during boarding approach.")
 		return
 	var fraction: float = clampf((at-float(task.started))/maxf(EPS,float(task.deadline)-float(task.started)),0.0,1.0)
 	var position: Vector2 = task.from.lerp(task.to,fraction)
 	var moved: Dictionary = _rear().ledger.move_entity(task.person,row.board_place,position)
-	if moved.ok: task.expected = _rear().ledger.inspect_entity(task.person).position
+	if moved.ok:
+		task.expected = _rear().ledger.inspect_entity(task.person).position
+		task.holder = row.board_place
 	else: _pause_handling(row,moved.message)
 
 
@@ -665,6 +1033,11 @@ func _foot_leg(person: Dictionary, destination: Vector2) -> Dictionary:
 func _schedule_dismount(row: Dictionary) -> bool:
 	if row.dismounted >= row.people.size():
 		for squad_id in row.squads: _organization()._release_transport_squad(row.hull,squad_id)
+		if row.get("supply_mode",false):
+			row.state = "Complete"
+			row.return_completed = false
+			row.blocker = "Actual cohort dismounted and squad place released at the real stop."
+			return true
 		_begin_route(row,row.return_points,"Returning")
 		return true
 	var hull: Dictionary = _rear().ledger.inspect_entity(row.hull)
@@ -692,6 +1065,7 @@ func _finish_dismount(row: Dictionary) -> void:
 
 func _begin_route(row: Dictionary, points: Array, phase: String) -> bool:
 	var rear: RefCounted = _rear()
+	if row.get("supply_mode",false): return _queue_departure(row,points,phase)
 	if incremental_planning and row.kind == "Troop Trip" and rear.ledger.entity_design_type(row.hull) == "T02": return _queue_departure(row,points,phase)
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var destination: Vector2 = rear.ledger.inspect_entity(row.dismount_place).position if phase == "Outbound" else rear.ledger.inspect_entity(row.board_place).position
@@ -767,7 +1141,7 @@ func _finish_route(row: Dictionary) -> void:
 	if not moved.ok: _block_route(row,row.state,moved.message); return
 	if row.kind == "Reposition":
 		row.state = "Complete"
-		row.return_completed = true
+		row.return_completed = not row.get("supply_mode",false)
 		row.blocker = ""
 	elif row.state == "Outbound":
 		row.state = "Dismounting"
@@ -884,7 +1258,7 @@ func _pause_handling(row: Dictionary, reason: String) -> void:
 	row.paused_state = row.state
 	row.state = "Paused"
 	if not row.task.is_empty():
-		row.task.remaining_seconds = HANDLING_SECONDS
+		row.task.remaining_seconds = maxf(0.0,float(row.task.deadline)-_rear().time) if row.get("supply_mode",false) else HANDLING_SECONDS
 		row.task.deadline = INF
 	row.blocker = reason
 
@@ -901,7 +1275,7 @@ func audit() -> Array[String]:
 	for row in jobs.values():
 		if row.boarded < 0 or row.dismounted < 0 or row.dismounted > row.boarded or row.boarded > row.people.size():
 			errors.append("Troop trip passenger counters exceed its actual roster: " + row.id)
-		if row.state == "Complete" and (row.dismounted != row.people.size() or not row.return_completed):
+		if row.state == "Complete" and (row.dismounted != row.people.size() or (row.get("return_required",true) and not row.return_completed)):
 			errors.append("Completed military movement lacks its exact destination or dismount: " + row.id)
 	return errors
 

@@ -51,6 +51,10 @@ static func plan(ledger: RefCounted, hull_id: String, points: Array, profile: Di
 	if float(hull.vehicle_spec.footprint.y) > width + EPS: return _blocked("Whole hull footprint is wider than the declared route clearance.")
 	var bridge: String = str(profile.get("bridge",""))
 	var gross: float = gross_kg(ledger,hull_id)
+	if profile.has("prospective_load_kg"):
+		var load_error: String = PlanWork.prospective_load_error(hull,profile.prospective_load_kg)
+		if not load_error.is_empty(): return _blocked(load_error)
+		gross += float(profile.prospective_load_kg)
 	if not towing.is_empty():
 		gross += gross_kg(ledger,towing) if tow.kind == "CARRIER" else float(tow.unit_mass_kg)+float(tow.contents_mass_kg)
 		if width < 20.0 and bool(profile.get("turning",false)): return _blocked("Tow combination requires twenty metres turn clearance.")

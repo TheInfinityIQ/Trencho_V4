@@ -1,5 +1,5 @@
 extends RefCounted
-## Request-local continuation of the ordinary T02 straight-lane calculation.
+## Request-local continuation of ordinary T02 and foot straight-lane calculation.
 ## No physical state is written. Every unit reads one captured world revision.
 ## The deadline is cooperative: bounded native allocation/hash operations cannot
 ## be preempted. Limits below bound their input sizes, not their measured latency.
@@ -166,7 +166,7 @@ func _input_error() -> String:
 	# Use the caller's captured dimensions in every geometry calculation.
 	if entity.size.x <= 0 or entity.size.y <= 0: return "Nonpositive footprint dimensions"
 	if entity.size.length() > 64.0: return "Footprint diagonal exceeds64m"
-	if typeof(entity.movement_class) != TYPE_INT or entity.movement_class != world.Catalog.VEHICLES.T02.class: return "Movement class differs from ordinary T02"
+	if typeof(entity.movement_class) != TYPE_INT or entity.movement_class not in [0,world.Catalog.VEHICLES.T02.class]: return "Movement class is outside bounded foot/T02 support"
 	for key in ["facing","base","rate","gross_mass_kg"]:
 		if key == "gross_mass_kg" and not entity.has(key): continue
 		if typeof(entity[key]) not in [TYPE_FLOAT,TYPE_INT] or not is_finite(float(entity[key])): return "Nonfinite or nonnumeric request fact: "+key
@@ -201,7 +201,7 @@ func _blocked(reason: String) -> void:
 	result = {"ok":false,"reason":reason}
 
 func _unsupported(reason: String) -> void:
-	_blocked("Bounded T02 route unsupported: "+reason)
+	_blocked("Bounded terrain route unsupported: "+reason)
 	result["unsupported"] = true
 
 func _unit() -> void:

@@ -154,6 +154,10 @@ func _admit() -> void:
 	if float(_hull.vehicle_spec.footprint.y) > _width+EPS: _block("Whole hull footprint is wider than the declared route clearance."); return
 	_bridge = str(_profile.get("bridge",""))
 	_gross = float(_hull.unit_mass_kg)+float(_hull.fuel)+float(_hull.contents_mass_kg)
+	if _profile.has("prospective_load_kg"):
+		var load_error: String = prospective_load_error(_hull,_profile.prospective_load_kg)
+		if not load_error.is_empty(): _block(load_error); return
+		_gross += float(_profile.prospective_load_kg)
 	if not _towing.is_empty():
 		_gross += float(_tow.unit_mass_kg)+float(_tow.fuel)+float(_tow.contents_mass_kg) if _tow.kind == "CARRIER" else float(_tow.unit_mass_kg)+float(_tow.contents_mass_kg)
 		if _width < 20.0 and bool(_profile.get("turning",false)): _block("Tow combination requires twenty metres turn clearance."); return
@@ -170,6 +174,12 @@ func _admit() -> void:
 	_fuel_factor = float(Terrain.SURFACES[_surface].fuel)
 	_strict_turns = bool(_profile.get("strict_turns",true))
 	_phase = Phase.LENGTH
+
+static func prospective_load_error(hull: Dictionary, value: Variant) -> String:
+	# A selection projection, never a goods transfer or departure permission.
+	if typeof(value) not in [TYPE_FLOAT,TYPE_INT] or not is_finite(float(value)) or float(value) < 0.0: return "Prospective load must be finite and nonnegative."
+	if float(hull.contents_mass_kg)+float(value) > float(hull.vehicle_spec.payload)+EPS: return "Actual contents plus prospective passengers exceed vehicle payload."
+	return ""
 
 func _measure_waypoint() -> void:
 	if _index >= _points.size():
