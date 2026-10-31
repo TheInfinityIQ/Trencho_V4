@@ -546,8 +546,7 @@ func _settle() -> void:
 		for id in stores.keys():
 			changed = _reconcile_store(id) or changed
 		for a in actors.values():
-			var p: Dictionary = ledger.inspect_person_status(a.id)
-			if a.phase == "Idle" and p.duty_id == "hauling":
+			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
 				changed = _start_job(a) or changed
 		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
@@ -576,8 +575,9 @@ func _sync_receiving_people() -> void:
 
 func _sync_receiving_staff() -> void:
 	for a in actors.values():
+		if a.phase != "Idle": continue
 		var p: Dictionary = ledger.inspect_person_status(a.id)
-		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None" and a.phase == "Idle":
+		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None":
 			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
 			a.phase = "Unloading"
 	receiving._pump()
