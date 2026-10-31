@@ -335,7 +335,7 @@ func _begin_route(row: Dictionary, points: Array, phase: String) -> bool:
 
 func _advance_route(row: Dictionary, at: float) -> void:
 	var rear: RefCounted = _rear()
-	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
+	var hull: Dictionary = rear.ledger.inspect_entity(row.hull,{},false)
 	var phase: String = row.state
 	var blocker: String = _movement_blocker(row.hull,hull)
 	if not hull.position.is_equal_approx(row.route_expected): blocker = "Military hull moved outside its owned route."
@@ -357,8 +357,8 @@ func _advance_route(row: Dictionary, at: float) -> void:
 	row.route_distance += distance_delta*fraction
 	var moved: Dictionary = rear.ledger.move_entity(row.hull,"troop-transit",point)
 	if not moved.ok: _block_route(row,phase,moved.message); return
-	row.route_expected = rear.ledger.inspect_entity(row.hull).position
-	var actual: Dictionary = rear.ledger.inspect_entity(row.hull)
+	var actual: Dictionary = rear.ledger.inspect_entity(row.hull,{},false)
+	row.route_expected = actual.position
 	if actual.health <= 0 or actual.get("damage_immobilized",false):
 		_block_route(row,phase,"Actual route damage immobilized this military hull with its real contents.","Stranded")
 	elif fraction < 1.0-EPS:
