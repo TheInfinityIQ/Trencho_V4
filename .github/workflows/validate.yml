@@ -17,11 +17,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'supply' || 'full' }}
+  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || '' }}
   cancel-in-progress: true
 
 jobs:
   validate:
+    # A manual observation must not emit a skipped check with the required name.
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'Full validation omitted for supply observation' || 'validate' }}
     if: github.event_name != 'workflow_dispatch' || inputs.mode != 'supply'
     runs-on: ubuntu-24.04
     timeout-minutes: 45

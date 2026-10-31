@@ -99,7 +99,7 @@ func _local_inputs() -> Dictionary:
 	var result: Dictionary = {}
 	for type in _spec.inputs:
 		var available := 0
-		for stock in rear._stock_at(_spec.input_store):
+		for stock in rear._stock_at(_spec.input_store,false):
 			if stock.design_type == type: available += stock.available
 		result[type] = available
 	return result
@@ -285,7 +285,7 @@ func cancel() -> Dictionary:
 func snapshot() -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var physical_output := 0
-	for stock in rear._stock_at(_spec.output_store):
+	for stock in rear._stock_at(_spec.output_store,false):
 		if stock.design_type == _spec.output_type: physical_output += stock.quantity
 	var status := "Working"
 	if not enabled: status = "No Recipe — stopped"
