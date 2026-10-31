@@ -2,6 +2,7 @@ extends RefCounted
 ## Local military issue for this opening; all movement/stock stays in ForwardSupply.
 const TRIGGER := 30
 const TARGET := 60
+const RACK_TARGET := 180
 var _rear_ref: WeakRef
 var rifle_squads: Array
 var engineer_squad: String
@@ -9,6 +10,11 @@ var stop_id: String
 var requests: Dictionary = {}
 var owned_jobs: Dictionary = {}
 var status := "Waiting for actual local ammunition need."
+var rack_requests: Dictionary = {}
+var rack_status := "Waiting for an initially empty local T04 rack."
+var _rack_seen: Dictionary = {}
+var _rack_jobs: Dictionary = {} # Owned job -> already credited physical deposits.
+var _rack_supplied: Dictionary = {}
 
 func _init(rear: RefCounted, rifles: Array, engineers: String, stop: String) -> void:
 	_rear_ref = weakref(rear)
@@ -20,6 +26,7 @@ func tick() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
 	if stop.get("kind","") != "PLACE": return
+	_tick_racks(stop)
 	for job_id in owned_jobs.keys():
 		var job: Dictionary = rear.forward_supply.jobs.get(job_id,{})
 		if job.is_empty() or job.state in ["Complete","Interrupted"]: owned_jobs.erase(job_id); continue
@@ -77,6 +84,81 @@ func tick() -> void:
 			status = issued.message
 		if not started: status = "Waiting for an eligible local Engineer courier and carry capacity."
 
+func _tick_racks(stop: Dictionary) -> void:
+	var rear: RefCounted = _rear_ref.get_ref()
+	for job_id in _rack_jobs.keys():
+		var job: Dictionary = rear.forward_supply.rack_issue.jobs.get(job_id,{})
+		if job.is_empty(): _rack_jobs.erase(job_id); continue
+		_rack_supplied[job.hull] = int(_rack_supplied.get(job.hull,0))+int(job.issued)-int(_rack_jobs[job_id])
+		_rack_jobs[job_id] = int(job.issued)
+		if job.state in ["Complete","Interrupted"]: _rack_jobs.erase(job_id); continue
+		var parent: String = str(rear.military.vehicles.get(job.hull,{}).get("parent",""))
+		if not _safe(parent,stop.position):
+			if job.state != "Interrupted Carry": rear.forward_supply.rack_issue.interrupt(job_id)
+			rack_status = "Delivered hostile fire stopped the local rack courier."
+			continue
+		if job.state == "Interrupted Carry":
+			var resumed: Dictionary = rear.forward_supply.rack_issue.resume(job_id)
+			rack_status = "Same Engineer resumes the existing E26 portion." if resumed.ok else resumed.message
+	for id in rear.military.vehicles:
+		if _rack_seen.has(id): continue
+		var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
+		if not _rack_at_stop(id,hull,stop): continue
+		_rack_seen[id] = true
+		if int(hull.ammunition.get("E26",0)) == 0:
+			rack_requests[id] = RACK_TARGET
+			_rack_supplied[id] = 0
+	for id in rack_requests.keys():
+		var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
+		var needed: int = _rack_needed(id,hull)
+		if needed <= 0:
+			rack_requests.erase(id)
+			rack_status = "Initial E26 allocation physically delivered."
+			continue
+		if not _rack_at_stop(id,hull,stop): rack_status = "Waiting for the same T04 at the local supply stop."; continue
+		needed -= _rack_committed(id)
+		if needed <= 0: rack_status = "Actual rack couriers own the initial E26 deficit."; continue
+		if rear.forward_supply.hull_committed(id): continue
+		var parent: String = str(rear.military.vehicles[id].parent)
+		if not _safe(parent,stop.position): rack_status = "Delivered hostile fire blocks safe rack receipt."; continue
+		var source := ""
+		for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
+			if stock.owner == rear.PLAYER and stock.design_type == "E26" and stock.available > 0: source = stock.id; break
+		if source.is_empty(): rack_status = "Local E26 is missing; manufacture and physically deliver freight."; continue
+		var engineers: Dictionary = rear.military.squads.get(engineer_squad,{})
+		if engineers.is_empty() or engineers.kind != "Engineer" or engineers.state != "Active" or engineers.get("owner",rear.PLAYER) != rear.PLAYER:
+			rack_status = "The actual Engineer courier element is unavailable."
+			continue
+		var started := false
+		for handler_id in rear.military._active_roster_members(engineers):
+			if not _free(handler_id): continue
+			var handler: Dictionary = rear.ledger.inspect_person_status(handler_id)
+			if not _at_stop(handler,stop): continue
+			var stock: Dictionary = rear.ledger.inspect_entity(source,{},false)
+			var amount: int = mini(needed,mini(int(stock.available),maxi(0,240-int(hull.ammunition.get("E26",0)))))
+			if amount <= 0: continue
+			var issued: Dictionary = rear.forward_supply.request_vehicle_rack_issue(source,id,handler_id,amount,stop_id)
+			if issued.ok:
+				_rack_jobs[issued.id] = 0
+				rack_status = "Engineer collecting actual E26 for the initially empty T04."
+				started = true
+				break
+			rack_status = issued.message
+		if not started: rack_status = "Waiting for an eligible local Engineer rack courier."
+
+func _rack_at_stop(id: String, hull: Dictionary, stop: Dictionary) -> bool:
+	return hull.get("owner","") == _rear_ref.get_ref().PLAYER and hull.get("design_type","") == "T04" and hull.get("fleet_domain","") == "Military" and hull.get("health",0) > 0 and _rear_ref.get_ref().military.vehicles.has(id) and hull.holder_id == stop_id and hull.position.distance_to(stop.position) <= 20.0
+
+func _rack_needed(id: String, hull: Dictionary) -> int:
+	# Deposited rounds count toward this one initial allocation even after firing.
+	return maxi(0,int(rack_requests[id])-maxi(int(hull.get("ammunition",{}).get("E26",0)),int(_rack_supplied.get(id,0))))
+
+func _rack_committed(id: String) -> int:
+	var total := 0
+	for job in _rear_ref.get_ref().forward_supply.rack_issue.jobs.values():
+		if job.hull == id and job.state not in ["Complete","Interrupted"]: total += int(job.quantity)-int(job.issued)
+	return total
+
 func _committed(recipient: String) -> int:
 	var total := 0
 	for job in _rear_ref.get_ref().forward_supply.jobs.values():
@@ -111,4 +193,10 @@ func snapshot() -> Dictionary:
 	var available := 0
 	for stock in rear.ledger.entities_at(stop_id,["STOCK"]):
 		if stock.owner == rear.PLAYER and stock.design_type == "E02": available += int(stock.available)
-	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad}
+	var racks: Array[Dictionary] = []
+	for id in rack_requests:
+		racks.append({"hull":id,"needed":_rack_needed(id,rear.ledger.inspect_entity(id,{},false)),"committed":_rack_committed(id)})
+	var available_e26 := 0
+	for stock in rear.ledger.entities_at(stop_id,["STOCK"],false):
+		if stock.owner == rear.PLAYER and stock.design_type == "E26": available_e26 += int(stock.available)
+	return {"requests":rows,"available_E02":available,"status":status,"engineer_squad":engineer_squad,"rack_requests":racks,"available_E26":available_e26,"rack_status":rack_status}
