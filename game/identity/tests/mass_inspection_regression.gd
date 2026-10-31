@@ -101,8 +101,20 @@ func compare(ledger: RefCounted) -> void:
 				summary.contents[type].quantity = -1
 				summary.contents[type].position = Vector2.INF
 			check(var_to_bytes(ledger.loose_stock_summary(holder,owner)) == var_to_bytes(expected),"Returned summary contents are detached from later physical reads")
-	for holder in ["worker-01","rear-store","retained-rifle","missing"]:
-		compare_rows(ledger.entities_at(holder,["PERSON","STOCK","WEAPON"]),ledger.entities_at(holder,["PERSON","STOCK","WEAPON"],false))
+	for holder in ["worker-01","rear-store","receiving","person-03","retained-rifle","missing",""]:
+		for kinds in [[],["missing"],["PERSON"],["STOCK"],["WEAPON"],["STOCK","STOCK"],["PERSON","STOCK","WEAPON"],Records.Kind.keys()]:
+			var full_rows: Array = complete.entities.filter(func(row: Dictionary) -> bool: return row.holder_id == holder and row.kind in kinds)
+			var metadata_rows: Array = metadata.entities.filter(func(row: Dictionary) -> bool: return row.holder_id == holder and row.kind in kinds)
+			check(ledger.entities_at(holder,kinds) == full_rows,"Single holder keeps independent full snapshot-filter results and default physical mass")
+			check(ledger.entities_at(holder,kinds) == legacy_entities_at(ledger,holder,kinds),"Single holder full query equals retained per-row inspection without shared carry or loaded facts")
+			var queried: Array[Dictionary] = ledger.entities_at(holder,kinds,false)
+			check(queried == metadata_rows,"Single holder metadata preserves canonical order, loaded rounds, carries and reservation facts")
+			check(queried == legacy_entities_at(ledger,holder,kinds,false),"Single holder metadata equals original independent per-row carry and loaded inspection")
+			for row in queried:
+				row.quantity = -1
+				if row.kind == "WEAPON": row.loaded_rounds = -1
+				if row.kind == "STOCK": row.blocked_reason = "Mutated query result"
+			check(ledger.entities_at(holder,kinds,false) == metadata_rows,"Single holder returns detached facts and recomputes after caller mutation")
 	for holders in [[],["missing"],["worker-01","rear-store"],["rear-store","worker-01","rear-store","missing"],["retained-rifle","person-03","retained-rifle"],[""]]:
 		for kinds in [[],["missing"],["PERSON"],["STOCK","WEAPON"],["STOCK","STOCK"],Records.Kind.keys()]:
 			var full_union: Array = complete.entities.filter(func(row: Dictionary) -> bool: return row.holder_id in holders and row.kind in kinds)
@@ -146,6 +158,13 @@ func compare(ledger: RefCounted) -> void:
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)
+func legacy_entities_at(ledger: RefCounted, holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	# Retained single-holder algorithm, without batch-query facts or delegation.
+	var result: Array[Dictionary] = []
+	for entity in ledger._entities.values():
+		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(ledger.inspect_entity(entity.id,{},include_mass))
+	return result
+
 func compare_available_people(ledger: RefCounted, complete: Dictionary) -> void:
 	for row in complete.entities:
 		if row.kind == "PERSON": check(ledger._entities[row.id] is Records.Person,"Canonical PERSON kind retains its typed assignment record")

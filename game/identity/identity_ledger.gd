@@ -161,10 +161,7 @@ func rear_fleet_status(owner: String) -> Dictionary:
 
 
 func entities_at(holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for entity in _entities.values():
-		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
-	return result
+	return entities_at_any([holder],kinds,include_mass)
 
 func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
