@@ -224,7 +224,7 @@ func _shoot(id: String, targets: Array[Dictionary], maximum_range: float) -> boo
 func _care(id: String) -> bool:
 	var rear: RefCounted = _rear()
 	var medic: Dictionary = rear.ledger.inspect_person_status(id)
-	for patient in rear.ledger.snapshot(false).entities:
+	for patient in rear.ledger.entities_of_kind(rear.ledger.Records.Kind.PERSON,false):
 		if patient.kind != "PERSON" or patient.owner != medic.owner or patient.assignment != "Wounded" or patient.health <= 0 or patient.position.distance_to(medic.position) > 60: continue
 		if medic.position.distance_to(patient.position) > 2:
 			_walk(id,patient.holder_id,patient.position+Vector2(1,0),true,"Care")

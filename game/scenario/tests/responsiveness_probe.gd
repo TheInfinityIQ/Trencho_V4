@@ -15,6 +15,8 @@ var profile_live := false
 var report_path := "res://.artifacts/responsiveness.json"
 var run_seconds := 9.0
 var double_seconds := 6.0
+var heartbeat_path := ""
+var heartbeat_at := 0
 
 func _initialize() -> void:
 	for argument in OS.get_cmdline_user_args():
@@ -23,12 +25,18 @@ func _initialize() -> void:
 		if argument.begins_with("--report-path="): report_path = argument.trim_prefix("--report-path=")
 		if argument.begins_with("--run-seconds="): run_seconds = maxf(9.0,argument.get_slice("=",1).to_float())
 		if argument.begins_with("--double-seconds="): double_seconds = maxf(6.0,argument.get_slice("=",1).to_float())
+		if argument.begins_with("--heartbeat-path="): heartbeat_path = argument.trim_prefix("--heartbeat-path=")
 		if argument == "--profile-live": profile_live = true
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
 
 func _process(_delta: float) -> bool:
 	_record_frame()
+	if not heartbeat_path.is_empty() and Time.get_ticks_msec() >= heartbeat_at:
+		heartbeat_at = Time.get_ticks_msec()+250
+		DirAccess.make_dir_recursive_absolute(heartbeat_path.get_base_dir())
+		var heartbeat := FileAccess.open(heartbeat_path,FileAccess.WRITE)
+		if heartbeat != null: heartbeat.store_string(phase)
 	return false
 
 func _record_frame() -> void:
