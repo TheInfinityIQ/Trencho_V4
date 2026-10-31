@@ -5,16 +5,24 @@ on:
     branches: [main, codex/dev]
   pull_request:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Full required validation or a separate physical supply observation
+        type: choice
+        options: [full, supply]
+        default: full
+        required: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}
+  group: validate-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && 'supply' || 'full' }}
   cancel-in-progress: true
 
 jobs:
   validate:
+    if: github.event_name != 'workflow_dispatch' || inputs.mode != 'supply'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -124,5 +132,74 @@ jobs:
         with:
           name: godot-check-reports
           path: .artifacts/
+          include-hidden-files: true
+          retention-days: 7
+
+  supply_observation:
+    name: Observe physical supply encounter (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'supply'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      EVALUATION_HEAD: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Record exact candidate for complete or partial evidence
+        shell: bash
+        run: |
+          mkdir -p .artifacts/supply
+          touch .artifacts/.gdignore
+          printf 'revision=%s\n' "$EVALUATION_HEAD" > .artifacts/supply/revision.txt
+          sha256sum game/scenario/tests/opening_regression.gd > .artifacts/supply/driver.sha256
+      - name: Download and verify pinned Godot
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < .godot-version)"
+          archive="Godot_v${version}-stable_linux.x86_64.zip"
+          release="https://github.com/godotengine/godot-builds/releases/download/${version}-stable"
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 "$release/$archive" --output "$archive"
+          curl --fail --location --retry 3 "$release/SHA512-SUMS.txt" --output SHA512-SUMS.txt
+          awk -v archive="$archive" '$2 == archive || $2 == "*" archive {print}' SHA512-SUMS.txt > selected-checksum.txt
+          test "$(wc -l < selected-checksum.txt)" -eq 1
+          sha512sum --check selected-checksum.txt
+          unzip -q "$archive"
+          chmod +x "Godot_v${version}-stable_linux.x86_64"
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Prepare the existing supply driver
+        timeout-minutes: 2
+        shell: pwsh
+        run: |
+          ./tools/setup_gdunit4.ps1
+          & timeout --signal=TERM --kill-after=5s 115s $env:GODOT_BIN --headless --path . --editor --import --log-file "$env:GITHUB_WORKSPACE/.artifacts/supply/import.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Supply driver import failed or exceeded two minutes.' }
+          if (Select-String -LiteralPath .artifacts/supply/import.log -Pattern '^\s*(SCRIPT ERROR:|ERROR:)') { throw 'Supply driver import reported engine errors.' }
+      - name: Observe natural need, actual issue, delivered-round use and return
+        timeout-minutes: 16
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'revision=%s\nstarted_utc=%s\nquantity_E02=500\nrequest_not_before_sim_seconds=420\nsimulation_limit_seconds=2400\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" > .artifacts/supply/run.txt
+          set +e
+          timeout --signal=TERM --kill-after=5s 895s "$GODOT_BIN" --headless --path . --audio-driver Dummy --log-file "$GITHUB_WORKSPACE/.artifacts/supply/engine.log" --script res://game/scenario/tests/opening_regression.gd -- --supply-playthrough > .artifacts/supply/playthrough.log 2>&1
+          result=$?
+          set -e
+          printf 'exit_code=%s\nfinished_utc=%s\n' "$result" "$(date -u +%FT%TZ)" >> .artifacts/supply/run.txt
+          grep -E 'SUPPLY ACTUAL REQUEST|SUPPLY ACTUAL ISSUE|SUPPLY DELIVERED ROUND FIRED|Opening regression:' .artifacts/supply/playthrough.log > .artifacts/supply/evidence.log || true
+          tail -n 100 .artifacts/supply/playthrough.log
+          if [ "$result" -ne 0 ]; then exit "$result"; fi
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/supply/playthrough.log .artifacts/supply/engine.log; then exit 1; fi
+          grep -q '^Opening regression: 0 failures' .artifacts/supply/playthrough.log
+      - name: Retain complete or partial supply observation
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: godot-supply-observation
+          path: .artifacts/supply/
           include-hidden-files: true
           retention-days: 7
