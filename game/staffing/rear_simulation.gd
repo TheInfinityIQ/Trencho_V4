@@ -548,7 +548,7 @@ func _settle() -> void:
 		for id in stores.keys():
 			changed = _reconcile_store(id) or changed
 		for a in actors.values():
-			var p: Dictionary = ledger.inspect_entity(a.id)
+			var p: Dictionary = ledger.inspect_person_status(a.id)
 			if a.phase == "Idle" and p.duty_id == "hauling":
 				changed = _start_job(a) or changed
 		if receiving != null: _sync_receiving_staff()
@@ -563,7 +563,7 @@ func _settle() -> void:
 func _sync_receiving_people() -> void:
 	var added := false
 	var released := false
-	for p in ledger.snapshot().entities:
+	for p in ledger.snapshot(false).entities:
 		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
 			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
 			added = true
@@ -578,7 +578,7 @@ func _sync_receiving_people() -> void:
 
 func _sync_receiving_staff() -> void:
 	for a in actors.values():
-		var p: Dictionary = ledger.inspect_entity(a.id)
+		var p: Dictionary = ledger.inspect_person_status(a.id)
 		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None" and a.phase == "Idle":
 			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
 			a.phase = "Unloading"

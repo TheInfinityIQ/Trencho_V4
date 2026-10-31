@@ -87,7 +87,7 @@ func operators() -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var result: Array[String] = []
 	for id in rear.actors:
-		var person: Dictionary = rear.ledger.inspect_entity(id)
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
 		var actor: Dictionary = rear.actors[id]
 		if rear._eligible(person, _spec.duty) and person.assignment == "Rear Labour" and person.duty_id == _spec.duty and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty() and actor.phase == "Idle" and actor.load.is_empty() and person.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[_spec.duty].place).position):
 			result.append(id)
@@ -155,7 +155,7 @@ func stock_coverage() -> Dictionary:
 	var stocks: Array[Dictionary] = []
 	var portions: Array[Dictionary] = []
 	var excluded: Array[Dictionary] = []
-	for stock in rear.ledger.entities_of_type(_spec.output_type,["STOCK","WEAPON"]):
+	for stock in rear.ledger.entities_of_type(_spec.output_type,["STOCK","WEAPON"],false):
 		if stock.kind not in ["STOCK", "WEAPON"] or stock.design_type != _spec.output_type or stock.quantity <= 0: continue
 		var usable: bool = stock.kind == "STOCK" or (_spec.output_type == "E01" and stock.functional and stock.loaded_rounds == 0)
 		if usable and stock.owner == rear.PLAYER and _eligible_store(stock.holder_id):

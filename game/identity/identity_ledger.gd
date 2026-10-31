@@ -160,19 +160,19 @@ func rear_fleet_status(owner: String) -> Dictionary:
 	return {"live":ids.size(),"reserved":claims.size(),"limit":REAR_FLEET_LIMIT,"live_ids":ids,"claims":claims}
 
 
-func entities_at(holder: String, kinds: Array) -> Array[Dictionary]:
+func entities_at(holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for entity in _entities.values():
-		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
+		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
 func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 
-func entities_of_type(type: String, kinds: Array) -> Array[Dictionary]:
+func entities_of_type(type: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for entity in _entities.values():
-		if entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
+		if entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
 
@@ -1270,16 +1270,19 @@ func inspect_claim(id: String) -> Dictionary:
 	}
 
 
-func snapshot() -> Dictionary:
+func snapshot(include_mass: bool = true) -> Dictionary:
+	# Metadata readers retain all facts except the explicitly omitted load mass.
+	# Physical admission/audit callers keep the complete default inspection.
 	var entities: Array[Dictionary] = []
 	var claims: Array[Dictionary] = []
 	# This inspection is synchronous. Compute aggregate masses once for this call;
 	# no cache survives a physical ledger change.
 	var masses := {}
-	var children: Dictionary = _children_by_holder()
-	for id in _entities: _indexed_contents_mass(id,children,masses)
+	if include_mass:
+		var children: Dictionary = _children_by_holder()
+		for id in _entities: _indexed_contents_mass(id,children,masses)
 	for id in _entities:
-		entities.append(inspect_entity(id,masses))
+		entities.append(inspect_entity(id,masses,include_mass))
 	for id in _claims:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,

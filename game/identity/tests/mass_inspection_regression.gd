@@ -26,7 +26,20 @@ func _initialize() -> void:
 	print("Mass inspection regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 func compare(ledger: RefCounted) -> void:
-	for row in ledger.snapshot().entities:
+	var complete: Dictionary = ledger.snapshot()
+	var metadata: Dictionary = ledger.snapshot(false)
+	for index in complete.entities.size():
+		var expected: Dictionary = complete.entities[index].duplicate(true)
+		expected.erase("contents_mass_kg")
+		check(metadata.entities[index] == expected,"Mixed metadata projection preserves every non-mass fact, including weapons, claims, holders and quantities")
+	var expected_summary: Dictionary = complete.duplicate(true)
+	expected_summary.entities = metadata.entities
+	check(metadata == expected_summary,"Metadata projection changes no account, claim or event summary")
+	for holder in ["worker-01","rear-store","retained-rifle","missing"]:
+		compare_rows(ledger.entities_at(holder,["PERSON","STOCK","WEAPON"]),ledger.entities_at(holder,["PERSON","STOCK","WEAPON"],false))
+	for type in ["E01","E02","missing"]:
+		compare_rows(ledger.entities_of_type(type,["STOCK","WEAPON"]),ledger.entities_of_type(type,["STOCK","WEAPON"],false))
+	for row in complete.entities:
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")
 		if row.kind == "PERSON":
 			var full: Dictionary = ledger.inspect_entity(row.id)
@@ -38,6 +51,12 @@ func compare(ledger: RefCounted) -> void:
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)
+func compare_rows(full: Array, projected: Array) -> void:
+	check(full.size() == projected.size(),"Filtered metadata query retains exact membership")
+	for index in full.size():
+		var expected: Dictionary = full[index].duplicate(true)
+		expected.erase("contents_mass_kg")
+		check(projected[index] == expected,"Filtered metadata query preserves exact non-mass facts and ordering")
 func legacy(ledger: RefCounted, holder: String) -> float:
 	var total := 0.0
 	for entity in ledger._entities.values():

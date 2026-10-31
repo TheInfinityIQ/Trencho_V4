@@ -101,7 +101,7 @@ func instructors() -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var result: Array[String] = []
 	for id in rear.actors:
-		var p: Dictionary = rear.ledger.inspect_entity(id)
+		var p: Dictionary = rear.ledger.inspect_person_status(id)
 		if p.owner == rear.PLAYER and p.basic_training and p.health > 0 and p.assignment == "Rear Labour" and p.pending_assignment == "None" and p.carrying_stock_id.is_empty() and p.crew_station.is_empty() and rear.actors[id].phase == "Idle" and rear.requests.has(p.duty_id) and p.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[p.duty_id].place).position) and _training_duty(p.duty_id):
 			result.append(id)
 	return result
@@ -114,7 +114,7 @@ func _training_duty(duty: String) -> bool:
 func _present(row: Dictionary) -> bool:
 	if row.person_id.is_empty(): return false
 	var rear: RefCounted = _rear_ref.get_ref()
-	var p: Dictionary = rear.ledger.inspect_entity(row.person_id)
+	var p: Dictionary = rear.ledger.inspect_person_status(row.person_id)
 	return p.assignment == "Training" and p.duty_id == "students" and p.pending_assignment == "None" and p.health > 0 and p.carrying_stock_id.is_empty() and rear.actors[p.id].phase == "Idle" and p.position.is_equal_approx(student_position(p.id))
 
 func _active() -> Array[Dictionary]:
@@ -122,7 +122,7 @@ func _active() -> Array[Dictionary]:
 	if not accessible: return result
 	var coverage: Dictionary = {}
 	for id in instructors():
-		var duty: String = _rear_ref.get_ref().ledger.inspect_entity(id).duty_id
+		var duty: String = _rear_ref.get_ref().ledger.inspect_person_status(id).duty_id
 		coverage[duty] = int(coverage.get(duty,0))+6
 	# Each actual instructor covers only students seated at that same F06.
 	for row in _unfinished():

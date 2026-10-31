@@ -111,7 +111,7 @@ func _refresh() -> bool:
 	var blue: Dictionary = {}
 	var red: Dictionary = {}
 	var blockers: Array[Dictionary] = []
-	var entities: Array = _rear().ledger.snapshot().entities
+	var entities: Array = _rear().ledger.snapshot(false).entities
 	var by_id := {}
 	for item in entities: by_id[item.id] = item
 	var held_weapons: Dictionary = {}
