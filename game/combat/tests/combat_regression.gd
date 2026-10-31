@@ -1,6 +1,7 @@
 extends SceneTree
 const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 var checks := 0
 var failures := 0
 
@@ -13,6 +14,7 @@ func _initialize() -> void:
 	_test_reload_commitment()
 	_test_field_gun_direct()
 	_test_cohesion_inspection_independence()
+	_test_cohesion_local_reads()
 	_test_stress_projection_parity()
 	print("G16 combat regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
@@ -316,3 +318,87 @@ func _test_cohesion_inspection_independence() -> void:
 	_expect(observed.rear.combat.squad_cohesion(observed_id).state == "Dispersed","frequent inspection reaches same Dispersed state")
 	_expect(is_equal_approx(float(quiet.rear.combat.dispersed_since[quiet_id]),quiet_started) and is_equal_approx(float(observed.rear.combat.dispersed_since[observed_id]),observed_started),"inspection never starts or resets the simulation-owned timer")
 	_expect(quiet.audit().is_empty() and observed.audit().is_empty(),"cohesion inspection independence preserves actual rosters")
+
+func _test_cohesion_local_reads() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	var ids: Array[String] = []
+	for index in 4:
+		var id := "cohesion-local-%d" % index
+		_expect(ledger.add_person(id,"hq-formation",rear.PLAYER,Records.Assignment.AVAILABLE,true,"None","None").ok,"actual local-read infantry")
+		_expect(ledger.add_weapon(id+"-rifle","E01",4.0,id,rear.PLAYER,"E02",30).ok and ledger.add_stock(id+"-rounds","E02",30,0.02,id,rear.PLAYER).ok,"real local-read package")
+		ids.append(id)
+	var formed: Dictionary = rear.military.add_initial_squad("cohesion-local","Rifle",ids,"cohesion-company","cohesion-platoon",rear.PLAYER)
+	_expect(formed.ok,"actual local-read squad")
+	if not formed.ok: return
+	var row: Dictionary = rear.military.squads[formed.id]
+	var leader: String = row.leader
+	_expect(ledger.add_initial_vehicle("cohesion-hull","T02","hq-formation",rear.PLAYER,Specs.TYPES.T02,40,"Military").ok,"real cohesion transport")
+	_expect(ledger.add_person("cohesion-driver","hq-formation",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok,"real cohesion driver")
+	_expect(ledger.assign_initial_vehicle_crew("cohesion-driver","cohesion-hull","Driver").ok and rear.military.attach_initial_vehicle("cohesion-hull","cohesion-platoon").ok,"actual staffed and attached cohesion hull")
+	_compare_cohesion(rear,formed.id)
+	_compare_cohesion(rear,"missing")
+	# Isolated query fixtures retain duplicate roster and absent/non-roster leaders.
+	row.roster.append(ids[0])
+	_compare_cohesion(rear,formed.id)
+	row.roster.pop_back()
+	for other in ["","missing","cohesion-driver"]:
+		row.leader = other
+		_compare_cohesion(rear,formed.id)
+	row.leader = leader
+	row.state = "Reporting"
+	_compare_cohesion(rear,formed.id)
+	row.state = "Active"
+	_expect(rear.military._reserve_transport_manifest("cohesion-hull",[formed.id]).ok,"real passenger commitment")
+	for id in ids:
+		_expect(ledger.board_formation_passenger(id,"cohesion-hull").ok,"actual sequential boarding")
+		_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "Boarded","all actual passengers retain boarded result")
+	_expect(rear.military.exit_squad(formed.id).ok,"actual dismount restores ground position")
+	_compare_cohesion(rear,formed.id)
+	var origin: Vector2 = ledger.inspect_person_status(leader).position
+	_expect(ledger.add_place("cohesion-local-split","Actual split position",origin+Vector2(45,0)).ok,"local-read separation place")
+	for id in ids:
+		if id != leader: _expect(ledger.move_entity(id,"cohesion-local-split",origin+Vector2(45,0)).ok,"actual dispersal")
+	_compare_cohesion(rear,formed.id)
+	rear.advance_time(10)
+	_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "Dispersed","existing real dispersal timer still reaches threshold")
+	_expect(rear.combat.injure(leader,100).code == "INCAPACITATED","leader becomes absent from active read set")
+	_compare_cohesion(rear,formed.id)
+	for id in ids:
+		if id != leader: _expect(rear.combat.injure(id,100).ok,"actual remaining incapacitation")
+	_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "No active infantry","empty active set retains prior result")
+
+func _compare_cohesion(rear: RefCounted, id: String) -> void:
+	var before: Dictionary = rear.combat.dispersed_since.duplicate(true)
+	var expected: Dictionary = _legacy_cohesion(rear,id)
+	var result: Dictionary = rear.combat.squad_cohesion(id)
+	_expect(var_to_bytes(result) == var_to_bytes(expected),"Cohesion fields exactly match retained original independent reads")
+	result.state = "Mutated result"
+	_expect(rear.combat.squad_cohesion(id) == expected and rear.combat.dispersed_since == before,"Cohesion result is detached and inspection preserves timer ownership")
+
+func _legacy_cohesion(rear: RefCounted, squad_id: String) -> Dictionary:
+	var row: Dictionary = rear.military.squads.get(squad_id,{})
+	if row.is_empty() or row.state != "Active": return {"cohesion":0.0,"state":"Unavailable","blocked_reason":"No active actual squad."}
+	var active: Array[String] = rear.military._active_roster_members(row,true)
+	var dismounted: Array[String] = []
+	var boarded := 0
+	for id in active:
+		if rear.combat._seated(rear.ledger.inspect_person_status(id)): boarded += 1
+		else: dismounted.append(id)
+	if boarded == active.size() and boarded > 0: return {"cohesion":1.0,"state":"Boarded","blocked_reason":"Dismount before infantry fire."}
+	if dismounted.is_empty(): return {"cohesion":0.0,"state":"No active infantry","blocked_reason":"No active dismounted people."}
+	var leader: Dictionary = rear.ledger.inspect_person_status(row.leader)
+	var near := 0
+	for id in dismounted:
+		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(rear.ledger.inspect_person_status(id).position) <= 30.0: near += 1
+	var value := float(near)/float(dismounted.size())
+	var state := "Coherent"
+	var reason := ""
+	if value < 0.5:
+		state = "Dispersed" if rear.combat.dispersed_since.has(squad_id) and rear.time-float(rear.combat.dispersed_since[squad_id]) >= 10.0 else "Regrouping"
+		reason = "Offensive coordination paused; regroup around actual leader."
+	return {"cohesion":value,"state":state,"blocked_reason":reason,"regroup_seconds":maxf(0.0,rear.time-float(rear.combat.dispersed_since[squad_id])) if rear.combat.dispersed_since.has(squad_id) else 0.0}

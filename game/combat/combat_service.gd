@@ -327,16 +327,19 @@ func squad_cohesion(squad_id: String) -> Dictionary:
 	if row.is_empty() or row.state != "Active": return {"cohesion":0.0,"state":"Unavailable","blocked_reason":"No active actual squad."}
 	var active: Array[String] = _rear().military._active_roster_members(row,true)
 	var dismounted: Array[String] = []
+	var people := {}
 	var boarded := 0
 	for id in active:
-		if _seated(_rear().ledger.inspect_person_status(id)): boarded += 1
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
+		people[id] = person
+		if _seated(person): boarded += 1
 		else: dismounted.append(id)
 	if boarded == active.size() and boarded > 0: return {"cohesion":1.0,"state":"Boarded","blocked_reason":"Dismount before infantry fire."}
 	if dismounted.is_empty(): return {"cohesion":0.0,"state":"No active infantry","blocked_reason":"No active dismounted people."}
-	var leader: Dictionary = _rear().ledger.inspect_person_status(row.leader)
+	var leader: Dictionary = people[row.leader] if people.has(row.leader) else _rear().ledger.inspect_person_status(row.leader)
 	var near := 0
 	for id in dismounted:
-		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(_rear().ledger.inspect_person_status(id).position) <= 30.0: near += 1
+		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(people[id].position) <= 30.0: near += 1
 	var value := float(near)/float(dismounted.size())
 	var state := "Coherent"
 	var reason := ""
