@@ -166,6 +166,18 @@ func entities_at(holder: String, kinds: Array, include_mass: bool = true) -> Arr
 		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
+func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if holders.is_empty() or kinds.is_empty(): return result
+	# Membership exists only for this synchronous query. Ledger iteration keeps
+	# canonical entity order and prevents repeated holders from duplicating goods.
+	var selected := {}
+	for holder in holders: selected[holder] = true
+	for entity in _entities.values():
+		if selected.has(entity.holder_id) and Records.Kind.keys()[entity.kind] in kinds:
+			result.append(inspect_entity(entity.id,{},include_mass))
+	return result
+
 func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 

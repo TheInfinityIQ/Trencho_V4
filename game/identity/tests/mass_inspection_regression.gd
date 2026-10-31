@@ -38,6 +38,12 @@ func compare(ledger: RefCounted) -> void:
 	check(metadata == expected_summary,"Metadata projection changes no account, claim or event summary")
 	for holder in ["worker-01","rear-store","retained-rifle","missing"]:
 		compare_rows(ledger.entities_at(holder,["PERSON","STOCK","WEAPON"]),ledger.entities_at(holder,["PERSON","STOCK","WEAPON"],false))
+	for holders in [[],["missing"],["worker-01","rear-store"],["rear-store","worker-01","rear-store","missing"],["retained-rifle","person-03","retained-rifle"],[""]]:
+		for kinds in [[],["missing"],["PERSON"],["STOCK","WEAPON"],["STOCK","STOCK"],Records.Kind.keys()]:
+			var full_union: Array = complete.entities.filter(func(row: Dictionary) -> bool: return row.holder_id in holders and row.kind in kinds)
+			var metadata_union: Array = metadata.entities.filter(func(row: Dictionary) -> bool: return row.holder_id in holders and row.kind in kinds)
+			check(ledger.entities_at_any(holders,kinds) == full_union,"Batch holders preserve full snapshot-filter union, canonical order and exact quantities")
+			check(ledger.entities_at_any(holders,kinds,false) == metadata_union,"Batch holders preserve metadata union across empty, repeated, missing and moved holders/kinds")
 	for type in ["E01","E02","missing"]:
 		compare_rows(ledger.entities_of_type(type,["STOCK","WEAPON"]),ledger.entities_of_type(type,["STOCK","WEAPON"],false))
 	for kind in Records.Kind.values():

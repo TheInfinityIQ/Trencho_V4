@@ -162,8 +162,10 @@ func stock_coverage(collect_excluded: bool = true) -> Dictionary:
 	else:
 		# Only these current holders can contribute available stock. Target checks
 		# need no inspection of issued/loaded/cargo goods for exclusion details.
+		var holders: Array[String] = []
 		for holder in rear.stores:
-			if _eligible_store(holder): candidates.append_array(rear.ledger.entities_at(holder,["STOCK","WEAPON"],false))
+			if _eligible_store(holder): holders.append(holder)
+		candidates = rear.ledger.entities_at_any(holders,["STOCK","WEAPON"],false)
 	for stock in candidates:
 		if stock.kind not in ["STOCK", "WEAPON"] or stock.design_type != _spec.output_type or stock.quantity <= 0: continue
 		var usable: bool = stock.kind == "STOCK" or (_spec.output_type == "E01" and stock.functional and stock.loaded_rounds == 0)
