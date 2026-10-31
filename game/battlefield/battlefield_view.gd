@@ -214,6 +214,12 @@ func _refresh() -> void:
 			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"],false):
 				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
 			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
+			if rear.battlefield_operations != null:
+				var collection: Dictionary = rear.battlefield_operations.rifle_collection.get(selected.get("duty_id",""),{})
+				if not collection.is_empty():
+					detail += "\nSupply collection: %s\nRendezvous: %s\n%s" % [collection.state,collection.stop,collection.blocker]
+				var motion: Dictionary = rear.battlefield_operations.motions.get(selected.id,{})
+				if motion.get("purpose","") in ["Supply","Supply Return"]: detail += "\nCurrent foot-leg ETA: %.1f simulation seconds" % maxf(0,float(motion.deadline)-rear.time)
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
 			if rear.military.vehicles.has(selected.id):

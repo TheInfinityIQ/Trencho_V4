@@ -103,9 +103,11 @@ func tick() -> void:
 				var desired: Dictionary = _squad_order(owner,squad_id,objective)
 				var current: Dictionary = rear.orders.intents.get(squad_id,{})
 				if not _may_issue_child(squad_id,str(platoon_intent.id),current): continue
-				var key: String = version+str(desired.action)+str(desired.destination)
+				var key: String = version+str(desired.action)+str(desired.destination)+str(desired.get("supply",""))
 				if current.get("constraints",{}).get("opening_key","") == key: continue
-				var sent: Dictionary = rear.orders.issue_order(platoon_id,squad_id,desired.action,"Perform the assigned opening role","Support the company objective",{"destination":desired.destination,"fallback_place":desired.fallback,"role":desired.role,"supported_squads":[army.rifles[0],army.rifles[1]],"opening_key":key},"Normal",desired.fallback)
+				var constraints := {"destination":desired.destination,"fallback_place":desired.fallback,"role":desired.role,"supported_squads":[army.rifles[0],army.rifles[1]],"opening_key":key}
+				if not str(desired.get("supply","")).is_empty(): constraints.supply_rendezvous = desired.supply
+				var sent: Dictionary = rear.orders.issue_order(platoon_id,squad_id,desired.action,"Perform the assigned opening role","Support the company objective",constraints,"Normal",desired.fallback)
 				_remember_child_attempt(squad_id,str(platoon_intent.id),current,sent)
 		status[owner] = str(phases[owner])+": "+objective if opening_owned else "Following the current parent operation."
 	_request_trips()
@@ -115,6 +117,9 @@ func tick() -> void:
 
 func settle_vehicle_departures() -> bool:
 	return deployments.settle_ready_departures()
+
+func squad_supply_owner() -> RefCounted:
+	return resupply
 
 func _owns_company_order(company_id: String, root_id: String, current: Dictionary) -> bool:
 	if not _company_order_ids.has(company_id):
@@ -179,7 +184,7 @@ func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	if side == "blue":
 		fallback = "blue-supply-rally"
 		if id == army.engineer: return {"action":"Hold Area","destination":"blue-delivery","fallback":fallback,"role":role}
-	return {"action":"Support Formation" if role != "Rifle" else ("Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective")),"destination":objective,"fallback":fallback,"role":role}
+	return {"action":"Support Formation" if role != "Rifle" else ("Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective")),"destination":objective,"fallback":fallback,"role":role,"supply":"blue-delivery" if side == "blue" and role == "Rifle" else ""}
 
 func _request_trips() -> void:
 	var rear: RefCounted = _rear()

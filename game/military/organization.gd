@@ -1040,7 +1040,7 @@ func readiness(id: String) -> float:
 	return clampf(minf(minf(float(active.size())/8.0,equipment),ammunition),0.0,1.0)
 
 func capability(id: String, purpose: String = "Deployment") -> Dictionary:
-	if purpose not in ["Deployment","Sustained Execution"]: return _fail("Unknown squad capability purpose.")
+	if purpose not in ["Deployment","Sustained Execution","Supply Collection"]: return _fail("Unknown squad capability purpose.")
 	var row: Dictionary = squads.get(id,{})
 	if row.is_empty() or row.state != "Active": return _fail("Only a physically reported active squad has capability.")
 	if not row.vehicle.is_empty(): return _fail("Mounted passengers cannot provide dismounted fire or capture until actual exit.")
@@ -1050,11 +1050,15 @@ func capability(id: String, purpose: String = "Deployment") -> Dictionary:
 	if not leader.basic_training and not (row.kind == "Rifle" and row.acting): return _fail("Squad leader lacks the required training or Rifle acting exception.")
 	# Thirty rounds is the deployment package, not a per-shot whole-squad cutoff.
 	# Existing Rifle intent still needs the living minimum and a real armed member.
-	if purpose == "Sustained Execution" and row.kind == "Rifle":
+	if purpose in ["Sustained Execution","Supply Collection"] and row.kind == "Rifle":
 		if active.size() < int(MINIMUM.Rifle): return _fail("Rifle execution needs its actual living minimum.")
+		# Empty matching ammunition is the reason to collect, not a movement ban.
+		# The shared living minimum, actual leader and training checks still apply.
+		if purpose == "Supply Collection": return {"ok":true,"message":"Actual Rifle roster and leader permit physical supply collection."}
 		for person_id in active:
 			if rifle_can_fight(person_id): return {"ok":true,"message":"Existing Rifle intent has actual armed capability; deployment package is assessed separately."}
 		return _fail("No active Rifle member has a functional rifle and actual matching rounds.")
+	if purpose == "Supply Collection": return _fail("Only Rifle squads use this collection capability.")
 	var package: Dictionary = _package(row.kind,active,id)
 	if not package.ok: return package
 	return {"ok":true,"message":"Type minimum, actual local package and leader permit this squad's G15 role."}
