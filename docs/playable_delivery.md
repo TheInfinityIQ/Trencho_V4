@@ -15,10 +15,10 @@ Designer records initial scenario/forces/resources and pacing checkpoints on #83
 - A second physical resupply cycle works; play continues.
 - A meaningful contested battlefield outcome and economic/logistical consequence is observable under existing rules.
 - Inspection explains shortages and useful player actions. Player manages logistics; military AI controls tactics.
-- Lead delivers exact build, launch instructions/controls, meaningful regressions, required integrated checks and actual gameplay observation.
+- Lead delivers exact build, launch instructions/controls and brief direct verification of changed behavior under [current verification policy](current_change_verification.md). Broader regression and integrated testing is deferred until the main game is complete.
 - Designer reviews fidelity, clarity/pacing; human feedback remains distinct from engineering acceptance.
 
 ## Execution and trial
 Lead inventories existing capabilities/missing connections, chooses the next runnable increment and implements with two supporting developers. No framework rewrite or catalogue-completion prerequisite.
-Repair person activity/occupancy, shared resource commitments and damage/movement boundaries where actual integration warrants it. Test interruption sequences, including boarding during movement/work and damage during towing.
+Repair person activity/occupancy, shared resource commitments and damage/movement boundaries where actual integration warrants it. Verify only the behavior just changed directly; defer regression sequences and matrices under the current human instruction.
 Record baseline and first working-day progress on #83. Review after three working days of active development: usable builds, fidelity, repeated defects, integration delays and human interventions. Review window is not a completion promise. No recurring automation is created implicitly.

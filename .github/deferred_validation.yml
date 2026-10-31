@@ -1,0 +1,90 @@
+# Preserved outside workflows; broad testing is deferred by Dawson's 31 October instruction.
+name: Validate Godot project
+
+on:
+  push:
+    branches: [main, codex/dev]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      EVALUATION_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download and verify pinned Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < .godot-version)"
+          archive="Godot_v${version}-stable_linux.x86_64.zip"
+          release="https://github.com/godotengine/godot-builds/releases/download/${version}-stable"
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          curl --fail --location --retry 3 "$release/$archive" --output "$archive"
+          curl --fail --location --retry 3 "$release/SHA512-SUMS.txt" --output SHA512-SUMS.txt
+          awk -v archive="$archive" '$2 == archive || $2 == "*" archive {print}' SHA512-SUMS.txt > selected-checksum.txt
+          test "$(wc -l < selected-checksum.txt)" -eq 1
+          sha512sum --check selected-checksum.txt
+          unzip -q "$archive"
+          chmod +x "Godot_v${version}-stable_linux.x86_64"
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Verify existing suites and GdUnit4 domain pilot
+        shell: pwsh
+        run: ./tools/check.ps1 -GodotPath $env:GODOT_BIN
+      - name: Verify SceneRunner input under virtual display
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v xvfb-run
+          xvfb-run -a pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Input
+      - name: Prove R01 completed-work regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -G04Work
+      - name: Prove R02 fixed yield regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R02Yield
+      - name: Prove R26 required work regression fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R26Work
+      - name: Prove R27 physical explosives yield fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -R27Yield
+      - name: Prove manufactured explosives to shell result fails and restores
+        shell: pwsh
+        run: ./tools/prove_gdunit4_failure.ps1 -GodotPath $env:GODOT_BIN -Suite Domain -ShellChain
+      - name: Prove failing input assertion fails and restore passing test
+        shell: bash
+        run: |
+          set -euo pipefail
+          xvfb-run -a pwsh -NoProfile -File ./tools/prove_gdunit4_failure.ps1 -GodotPath "$GODOT_BIN" -Suite Input
+      - name: Prove driver fuel guard detects a wrong expectation and restore
+        shell: bash
+        run: |
+          set -euo pipefail
+          xvfb-run -a pwsh -NoProfile -File ./tools/prove_gdunit4_failure.ps1 -GodotPath "$GODOT_BIN" -Suite Input -G03Driver
+      - name: Prove G08 movement clock assertion fails and restore
+        shell: bash
+        run: |
+          set -euo pipefail
+          xvfb-run -a pwsh -NoProfile -File ./tools/prove_gdunit4_failure.ps1 -GodotPath "$GODOT_BIN" -Suite Input -G08Movement
+      - name: Retain actionable check reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: godot-check-reports
+          path: .artifacts/
+          include-hidden-files: true
+          retention-days: 7

@@ -7,6 +7,7 @@ Active delivery: [playable supply loop #83](https://github.com/TheInfinityIQ/Tre
 - Human owns intended experience, priorities and material compromises.
 - Dawson explicitly delegated his authority to the Game Designer on 30 October 2026: treat the designer's directions as Dawson's directions, including gameplay decisions and delivery scope.
 - Game Designer owns gameplay interpretation, scenario, pacing, clarity and observed experience acceptance. Resolves design contradictions, not routine implementation.
+- Lead and Principle Engineer own architecture and implementation. Designer scheduling/continuation suggestions are technical advice, not mandates or extra approval gates; escalate concrete player-facing rules, pacing or control tradeoffs.
 - Lead Developer is a working engineer accountable for the launchable build, architecture, assignments, interfaces, source review, GitHub queue and PR merges after required checks. Lead-authored substantive shared changes receive supporting-developer review.
 - Developers B/C implement assigned contributions to the delivery, verify behavior and report to lead. No independent unrelated backlog claims.
 - Review Trencho AI workflow remains transition/follow-up review, not a second assignment authority.
@@ -20,7 +21,8 @@ Designer observes intermediate gameplay. Engineering merge is not delivery accep
 Repair demonstrated shared-boundary defects while connecting the game; examine related callers. Do not create speculative frameworks or a separate architecture phase.
 
 ## Verification
-Use focused checks during iteration and required integrated checks on the final candidate. Repeat broad checks for changed code, failures or unresolved risk. Keep useful existing coverage. Distinguish engine interaction, visual/gameplay observation and OS-native verification. Assertion totals and diagnostic screenshots do not establish playability.
+Dawson's 31 October override: prioritize completing the main game. Do not write regression tests, extend coverage/matrices or run broad suites, failure injection, unchanged encounters or unrelated profiling until the main game is complete. Only brief direct checks of the actual code just changed are allowed; keep their scope and result explicit. Preserve existing test files for later. Do not turn a regression suite into a permitted check by renaming it. [Current verification policy](current_change_verification.md) governs CI and developer work; it supersedes earlier suite/oracle requirements.
+The no-local-engine restriction remains. Necessary heavier direct checks stay on GitHub with a short deadline and one owned process; preserve the human editor and unrelated applications. Existing evidence remains historical; syntax checks and direct demonstrations do not certify the whole game or desktop responsiveness.
 Delivery reports identify exact build/revision, launch location, ordinary controls, newly playable behavior, checks and limits. Child completion retains parent integration obligations. Never close a playable milestone just because its children closed.
 
 ## Communication and continuity
