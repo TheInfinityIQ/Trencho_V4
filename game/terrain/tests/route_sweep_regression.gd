@@ -44,6 +44,19 @@ class CountedFoldWorld extends World:
 		scalar_checks += 1
 		return super._scalar_route_rule(rule)
 
+class CountedEquivalentWorld extends World:
+	var equivalence_checks := 0
+	var equivalent_queries := 0
+	var scalar_checks := 0
+	func _equivalent_route_rules(intervals: Array[Dictionary], cuts: Array[float]) -> bool:
+		equivalence_checks += 1
+		var accepted: bool = super._equivalent_route_rules(intervals,cuts)
+		if accepted: equivalent_queries += 1
+		return accepted
+	func _scalar_route_rule(rule: Dictionary) -> bool:
+		scalar_checks += 1
+		return super._scalar_route_rule(rule)
+
 func _initialize() -> void:
 	for spec in Fixtures.movement_cases():
 		var lane: RefCounted = Fixtures.lane(spec)
@@ -52,6 +65,7 @@ func _initialize() -> void:
 	_repeated_rules()
 	_homogeneous_cases()
 	_folded_scalars()
+	_equivalent_scalars()
 	_generated_lanes()
 	_long_lanes()
 	print("Route sweep regression: %d checks, %d failures" % [checks,failures])
@@ -77,7 +91,7 @@ func _compare_route(world: RefCounted, body: Dictionary, destination: Vector2, l
 	started = Time.get_ticks_usec()
 	var actual: Dictionary = world.route(body,destination)
 	var sweep_us := Time.get_ticks_usec()-started
-	_expect(actual == expected,label+": exact validity/reason and every ordered part/total")
+	_expect(var_to_bytes(actual) == var_to_bytes(expected),label+": byte-exact validity/reason and every ordered part/total")
 	if timed:
 		_expect(actual.ok,label+": long lane is supported")
 		print("BENCH ",label," legacy_us=",legacy_us," sweep_us=",sweep_us," parts=",actual.get("parts",[]).size()," seconds=",actual.get("seconds",0)," fuel=",actual.get("fuel",0))
@@ -174,7 +188,7 @@ func _homogeneous_cases() -> void:
 	_interval_case(touching,[0.0,1.0],"Midpoint exactly at two inclusive endpoints",true)
 	_interval_case([], [0.0,0.5,1.0],"Empty interval list retains empty spans",false)
 	var distinct: Array[Dictionary] = [{"from":0.0,"to":0.5,"rule":rule},{"from":0.5,"to":1.0,"rule":rule.duplicate()}]
-	_interval_case(distinct,[0.0,0.5,1.0],"Equal-valued distinct rule references use ordinary sweep",false)
+	_interval_case(distinct,[0.0,0.5,1.0],"Distinct rules retain initial ordinary selection before lazy scalar proof",false)
 	for bounds in [Vector2(0.5,0.5),Vector2(0.8,0.2),Vector2(-INF,1.0),Vector2(0.0,INF)]:
 		var intervals: Array[Dictionary] = [{"from":0.0,"to":1.0,"rule":rule},{"from":bounds.x,"to":bounds.y,"rule":rule}]
 		_interval_case(intervals,[0.0,0.25,0.5,0.75,1.0],"Degenerate/inverted/infinite bounds retain ordinary sweep",false)
@@ -241,10 +255,102 @@ func _folded_scalars() -> void:
 		actual = untouched._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,covered,[0.0,World.EPS*0.5])
 		_expect(var_to_bytes(actual) == var_to_bytes(expected) and untouched.scalar_checks == 0,"Only sub-EPS cuts never inspect malformed rule fields")
 
+func _equivalence_case(intervals: Array[Dictionary], cuts: Array[float], label: String, equivalent: bool) -> Dictionary:
+	var world := CountedEquivalentWorld.new()
+	var legacy := LegacyWorld.new()
+	var body := _body(Vector2.ZERO,Vector2(100,0))
+	var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	_expect(var_to_bytes(actual) == var_to_bytes(expected),label+": complete independent legacy packet bytes")
+	_expect(world.equivalence_checks == 1 and world.equivalent_queries == int(equivalent),label+": one lazy proof and conservative path selection")
+	return actual
+
+func _equivalent_scalars() -> void:
+	var rule := {"factor":0.8,"fuel":1.2,"slope":-0.0,"surface":"TR02"}
+	var equal: Dictionary = rule.duplicate()
+	var cuts: Array[float] = [0.0,0.1,0.2,0.3,0.4,0.5,0.5,0.50000001,0.6,0.7,0.8,0.9,1.0]
+	for spans in [[Vector2(0.1,0.4),Vector2(0.6,0.9)],[Vector2(0.4,0.8),Vector2(0,0.4),Vector2(0.3,0.7)],[Vector2(0,1),Vector2(0.2,0.3),Vector2(0.7,0.8)],[Vector2(0,0.5),Vector2(0.5,1)],[Vector2(0,1),Vector2(0.5,0.5000001)]]:
+		var intervals: Array[Dictionary] = []
+		for index in spans.size(): intervals.append({"from":spans[index].x,"to":spans[index].y,"rule":rule if index == 0 else equal})
+		_equivalence_case(intervals,cuts,"Equal distinct operands across gaps/nesting/overlap/touching/sub-EPS",true)
+	var ended: Array[Dictionary] = [{"from":0.0,"to":0.1,"rule":rule},{"from":0.2,"to":0.4,"rule":equal},{"from":0.6,"to":0.8,"rule":rule}]
+	_equivalence_case(ended,[0.0,0.5,0.6,0.7,0.8,1.0],"First occupied retained midpoint follows already-ended activated intervals",true)
+	var world := CountedEquivalentWorld.new()
+	var body := _body(Vector2.ZERO,Vector2(100,0))
+	var repeated: Array[Dictionary] = []
+	for operand in [rule,rule,equal,equal,rule]: repeated.append({"from":0.0,"to":1.0,"rule":operand})
+	world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,repeated,cuts.duplicate())
+	_expect(world.equivalence_checks == 1 and world.equivalent_queries == 1 and world.scalar_checks == 4,"Only three identity transitions inspect/serialize operands, then original first fold checks once")
+	var normalized: Dictionary = rule.duplicate()
+	normalized.speed_cap = INF
+	_equivalence_case([{"from":0.0,"to":1.0,"rule":rule},{"from":0.0,"to":1.0,"rule":normalized}],cuts,"Absent cap and explicit positive INF are identical effective inputs",true)
+	for field in ["factor","fuel","slope","speed_cap","surface"]:
+		var different: Dictionary = normalized.duplicate()
+		different[field] = "TR01" if field == "surface" else (2.0 if field == "speed_cap" else 0.7)
+		_equivalence_case([{"from":0.0,"to":1.0,"rule":normalized},{"from":0.2,"to":0.8,"rule":different}],cuts,"Different effective "+field+" retains ordinary fold",false)
+	for names in [["TR02","tr02"],["TR02","TR02 "],["é","é"]]:
+		_expect(names[0] != names[1],"Native-distinct String fixture inputs")
+		var first_surface: Dictionary = normalized.duplicate()
+		var second_surface: Dictionary = normalized.duplicate()
+		first_surface.surface = names[0]
+		second_surface.surface = names[1]
+		_equivalence_case([{"from":0.0,"to":1.0,"rule":first_surface},{"from":0.2,"to":0.8,"rule":second_surface}],cuts,"Native String equality preserves case/space/codepoint distinctions",false)
+	for field in ["factor","fuel","slope","speed_cap"]:
+		var precise: Dictionary = normalized.duplicate()
+		precise.speed_cap = 3.0
+		var nearby: Dictionary = precise.duplicate()
+		nearby[field] += 0.00000000000001
+		_equivalence_case([{"from":0.0,"to":1.0,"rule":precise},{"from":0.2,"to":0.8,"rule":nearby}],cuts,"Nearby float64 operands cannot use approximate equality for "+field,false)
+	for field in ["factor","fuel","slope","speed_cap"]:
+		var positive: Dictionary = normalized.duplicate()
+		var negative: Dictionary = normalized.duplicate()
+		positive[field] = 0.0
+		negative[field] = -0.0
+		_expect(var_to_bytes([positive[field]]) != var_to_bytes([negative[field]]),"Pinned primitive encoding retains signed-zero distinction for "+field)
+		_equivalence_case([{"from":0.0,"to":1.0,"rule":positive},{"from":0.2,"to":0.8,"rule":negative}],cuts,"Opposite signed zeros decline equivalence for "+field,false)
+		for value in [INF,-INF,NAN]:
+			var exceptional: Dictionary = normalized.duplicate()
+			exceptional[field] = value
+			_equivalence_case([{"from":0.0,"to":1.0,"rule":exceptional},{"from":0.2,"to":0.8,"rule":exceptional.duplicate()}],cuts,"Nonfinite distinct operands guarded for "+field,field == "speed_cap" and value == INF)
+	for fallback in [{"factor":1,"fuel":1.2,"slope":0.0,"surface":"TR02"},{"factor":0.8,"fuel":1.2,"slope":0.0,"surface":"TR02","speed_cap":2}]:
+		_equivalence_case([{"from":0.0,"to":1.0,"rule":fallback},{"from":0.2,"to":0.8,"rule":fallback.duplicate()}],cuts,"Lenient integer operands retain original distinct-rule fold",false)
+	for malformed in [{},{"factor":"bad","fuel":1.2,"slope":0.0,"surface":"TR02"},{"factor":[],"fuel":1.2,"slope":0.0,"surface":"TR02"},{"factor":0.8,"fuel":1.2,"slope":0.0,"surface":42},{"factor":0.8,"fuel":1.2,"slope":0.0,"surface":&"TR02"},{"factor":0.8,"fuel":1.2,"slope":0.0,"surface":"TR02","speed_cap":null}]:
+		var bad: Array[Dictionary] = [{"from":2.0,"to":3.0,"rule":malformed},{"from":4.0,"to":5.0,"rule":malformed.duplicate()}]
+		_expect(not World.new()._equivalent_route_rules(bad,[0.0,1.0]),"Malformed scalar guard rejects without conversion or serialization")
+		for spans in [[0.0,1.0],[2.0,2.0+World.EPS*0.5]]:
+			var lazy := CountedEquivalentWorld.new()
+			var legacy := LegacyWorld.new()
+			var retained_cuts: Array[float] = []
+			retained_cuts.assign(spans)
+			var actual: Dictionary = lazy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,bad,retained_cuts.duplicate())
+			var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,bad,retained_cuts.duplicate())
+			_expect(var_to_bytes(actual) == var_to_bytes(expected) and lazy.equivalence_checks == 0 and lazy.scalar_checks == 0,"Empty/sub-EPS retained output never reads even distinct malformed operands")
+	for bounds in [Vector2(0.5,0.5),Vector2(0.8,0.2),Vector2(-INF,1.0),Vector2(0.0,INF),Vector2(NAN,1.0)]:
+		var unsafe: Array[Dictionary] = [{"from":0.0,"to":1.0,"rule":rule},{"from":bounds.x,"to":bounds.y,"rule":equal}]
+		_expect(not World.new()._equivalent_route_rules(unsafe,cuts),"Bad bounds cannot certify distinct rule equivalence")
+		if not is_nan(bounds.x): _equivalence_case(unsafe,cuts,"Distinct rules with unsafe bounds retain prior packet",false)
+	var ordinary: Array[Dictionary] = [{"from":0.0,"to":1.0,"rule":rule},{"from":0.0,"to":1.0,"rule":equal}]
+	for bad_cut in [INF,-INF,NAN]:
+		_expect(not World.new()._equivalent_route_rules(ordinary,[0.0,bad_cut,1.0]),"Nonfinite cuts reject before scalar proof")
+	_expect(not World.new()._equivalent_route_rules([{"from":0,"to":1,"rule":rule},{"from":0.0,"to":1.0,"rule":equal}],cuts),"Integer interval bounds retain ordinary activation")
+	var legacy := LegacyWorld.new()
+	var first: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,ordinary,cuts.duplicate())
+	first.parts[0].surfaces.append("Detached copy")
+	_expect(first.parts[1].surfaces == ["TR02"],"Equivalent scalar reuse still allocates a fresh surfaces array per part")
+	equal.fuel = 2.5
+	var changed: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,ordinary,cuts.duplicate())
+	_expect(var_to_bytes(changed) == var_to_bytes(legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,ordinary,cuts.duplicate())),"Next query freshly rejects changed distinct operands")
+	rule.fuel = 2.5
+	var matched: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,ordinary,cuts.duplicate())
+	_expect(var_to_bytes(matched) == var_to_bytes(legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,ordinary,cuts.duplicate())),"Freshly equal changed operands requalify without cross-call cache")
+
 func _long_lanes() -> void:
-	var world := World.new()
+	var world := CountedEquivalentWorld.new()
 	Map.apply(world)
 	for endpoints in [[Vector2(3000,650),Vector2(3000,2300)],[Vector2(3000,2300),Vector2(3000,650)],[Vector2(2200,2850),Vector2(2380,2980)],[Vector2(1900,1450),Vector2(2250,2100)]]:
 		var start: Vector2 = endpoints[0]
 		var finish: Vector2 = endpoints[1]
+		var before: int = world.equivalent_queries
 		_compare_route(world,_body(start,finish),finish,"Authored Farmland %s -> %s" % [start,finish],true)
+		if start.x == 3000 and finish.x == 3000:
+			_expect(world.equivalent_queries == before+1,"Actual Farmland long road enables lazy equivalence in both travel directions")

@@ -335,9 +335,44 @@ func _scalar_route_rule(rule: Dictionary) -> bool:
 	return typeof(rule.get("factor")) == TYPE_FLOAT and typeof(rule.get("fuel")) == TYPE_FLOAT and typeof(rule.get("slope")) == TYPE_FLOAT and typeof(rule.get("surface")) == TYPE_STRING and (not rule.has("speed_cap") or typeof(rule.get("speed_cap")) == TYPE_FLOAT)
 
 
+func _equivalent_route_rules(intervals: Array[Dictionary], cuts: Array[float]) -> bool:
+	# Called lazily only after an occupied retained span, never for empty output.
+	if intervals.is_empty(): return false
+	for interval in intervals:
+		if typeof(interval.from) != TYPE_FLOAT or typeof(interval.to) != TYPE_FLOAT: return false
+		if not is_finite(interval.from) or not is_finite(interval.to) or interval.from >= interval.to: return false
+	for cut in cuts:
+		if not is_finite(cut): return false
+	var previous_rule: Dictionary = {}
+	var reference := PackedByteArray()
+	var reference_surface := ""
+	var have_reference := false
+	for interval in intervals:
+		var candidate: Variant = interval.get("rule")
+		if not candidate is Dictionary: return false
+		var rule: Dictionary = candidate
+		if is_same(rule,previous_rule): continue
+		if not _scalar_route_rule(rule): return false
+		if not is_finite(rule.factor) or not is_finite(rule.fuel) or not is_finite(rule.slope): return false
+		var cap: float = rule.get("speed_cap",INF)
+		if not is_finite(cap) and cap != INF: return false
+		if have_reference and rule.surface != reference_surface: return false
+		# Native string equality matches surface uniqueness; serialization is only
+		# for the numeric IEEE operands, preserving signed zero without coercion.
+		var signature := var_to_bytes([rule.factor,rule.fuel,rule.slope,cap])
+		if have_reference and signature != reference: return false
+		if not have_reference:
+			reference = signature
+			reference_surface = rule.surface
+			have_reference = true
+		previous_rule = rule
+	return true
+
+
 func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 	cuts.sort()
 	var homogeneous := _homogeneous_intervals(intervals,cuts)
+	var equivalence_checked := homogeneous
 	# Sweep starts once; only footprint cells still overlapping the current span
 	# participate. Keep original cell order so surface lists remain identical.
 	var pending: Array[int] = []
@@ -379,6 +414,16 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 				var id: int = pending[cursor]
 				if intervals[id].to >= middle: active.insert(active.bsearch(id),id)
 				cursor += 1
+			if not equivalence_checked and not active.is_empty():
+				equivalence_checked = true
+				if _equivalent_route_rules(intervals,cuts):
+					# Earlier ended intervals have end < middle; none can exceed
+					# this active maximum. Pending cursor/starts remain unchanged.
+					for id in active: furthest_end = maxf(furthest_end,intervals[id].to)
+					homogeneous = true
+					active.clear()
+					active.append(0) # all possible rules now have identical operands
+					fold_checked = false # perform/save the original first fold below
 		var factor := INF
 		var burn := 0.0
 		var surfaces: Array[String] = []
