@@ -55,7 +55,9 @@ func payloads(company_id: String) -> Dictionary:
 				"origin":"hq-berth","stop":SUPPLY_STOP,"state":"Awaiting deployment intent","blocker":"",
 				"transport_job":"","phase":"Supply","outbound":outbound,"fallback":fallback,"authority":{},
 				"cycle":"","phase_cycle":"","released_cycle":"","handoff_error":"","cycle_count":0,"completed_cycles":0,
+				"refill_seen_cycle":"","refill_seen_at":-INF,
 				"active_need":false,"reported_need":false,"registered_need":false,"refilled":false,"support_reached":false,
+				"last_attempt_time":-INF,"last_attempt_key":[],"last_ready_key":[],"tail_ready":false,
 				"support_outbound":[],"support_fallback":[],"repeat_state":"Initial allocation"}
 		var row: Dictionary = missions[id]
 		var platoon: Dictionary = rear.military.platoons.get(parent,{})
@@ -106,21 +108,29 @@ func _phase(row: Dictionary, phase: String, origin: String, stop: String, outbou
 	row.state = state
 	row.blocker = ""
 	row.handoff_error = ""
+	row.last_attempt_time = -INF
+	row.last_attempt_key = []
+	row.last_ready_key = []
+	row.tail_ready = false
 
 func _prepare_support(row: Dictionary, hull: Dictionary) -> void:
-	if not _completed_at(row,hull) or not _free(row) or int(hull.ammunition.get("E26",0)) < AMMO_TARGET: return
+	if not _completed_at(row,hull) or not _free(row): return
 	if row.phase == "Replenishment":
-		var error := _refill_error(row,hull)
-		if not error.is_empty(): row.blocker = error; return
+		# Receipt is recorded at the physical settle boundary. A later shot may
+		# leave179 before this strategic tick; that must not erase actual receipt
+		# or fabricate current readiness. Departure still requires180 afresh.
+		if row.refill_seen_cycle != row.cycle: row.blocker = "Waiting to observe this cycle's actual 180-round receipt and clear couriers."; return
 		row.refilled = true
 		row.repeat_state = "Refilled; awaiting support reassessment"
+	elif int(hull.ammunition.get("E26",0)) < AMMO_TARGET: return
 	var stop: Dictionary = _rear().ledger.inspect_entity(SUPPLY_STOP,{},false)
 	var support: Dictionary = _rear().ledger.inspect_entity(SUPPORT_STOP,{},false)
 	if support.get("kind","") != "PLACE": row.blocker = "Declared support destination is unavailable."; return
 	# The established route is retained as a proposal; transport reassesses its
 	# current geometry, danger and fuel and the actual parent must acknowledge it.
 	if row.support_outbound.is_empty():
-		row.support_outbound = [stop.position,Vector2(3000,2300),Vector2(3000,3000),support.position]
+		var authored: Array = _points.get("blue-support-route",[])
+		row.support_outbound = authored.duplicate() if not authored.is_empty() else [stop.position,Vector2(3000,2300),Vector2(3000,3000),support.position]
 		row.support_fallback = row.support_outbound.duplicate()
 		row.support_fallback.reverse()
 	_phase(row,"Support",SUPPLY_STOP,SUPPORT_STOP,row.support_outbound,row.support_fallback,"Awaiting support intent")
@@ -141,6 +151,95 @@ func _refill_error(row: Dictionary, hull: Dictionary) -> String:
 		var blocker: String = str(supply.get("blocker",""))
 		return blocker if not blocker.is_empty() else "Waiting for this physical refill and its couriers to finish."
 	return ""
+
+func _readiness_key(row: Dictionary, hull: Dictionary, intent: Dictionary) -> Array:
+	var rear := _rear()
+	# Suppress repeated denied route calculations, not physical validation or
+	# route results. Unkeyed/time-aging knowledge still retries on normal ticks.
+	return [row.phase_cycle,intent.id,rear.combat.world.get_instance_id(),rear.combat.world.revision,
+		hull.holder_id,hull.position,hull.fuel,hull.health,hull.get("damage_immobilized",false),
+		hull.get("towing",""),hull.get("towed_by",""),hull.ammunition.get("E26",0),
+		hull.crew_by_station.duplicate(),hull.passengers.duplicate(),rear.military.vehicles[row.hull].route_fuel]
+
+func settle_ready_departures() -> bool:
+	# The caller owns the running/paused clock boundary. This tail consumes only
+	# an existing acknowledged recurring Support phase: no new policy or demand.
+	var changed := false
+	for row in missions.values():
+		if row.phase == "Replenishment" and row.active_need and row.refill_seen_cycle != row.cycle:
+			var arrived: Dictionary = _rear().ledger.inspect_entity(row.hull,{},false)
+			if _parent_error(row).is_empty() and _completed_at(row,arrived) and _free(row) and _refill_error(row,arrived).is_empty():
+				row.refill_seen_cycle = row.cycle
+				row.refill_seen_at = _rear().time
+				changed = true
+			row.tail_ready = false
+			continue
+		if row.phase != "Support" or not row.active_need or row.origin != SUPPLY_STOP or not row.transport_job.is_empty():
+			row.tail_ready = false
+			continue
+		var intent := _acknowledged(row)
+		if intent.is_empty() or not _command_error(row).is_empty(): row.tail_ready = false; continue
+		var hull: Dictionary = _rear().ledger.inspect_entity(row.hull,{},false)
+		# Partial stock and any physical courier commitment remain incomplete.
+		if int(hull.get("ammunition",{}).get("E26",0)) < AMMO_TARGET or not _free(row): row.tail_ready = false; continue
+		changed = _try_admit(row,hull,intent,true) or changed
+	return changed
+
+func _try_admit(row: Dictionary, hull: Dictionary, intent: Dictionary, tail_only: bool = false) -> bool:
+	var rear := _rear()
+	if not rear.vehicle_departures_allowed:
+		row.blocker = "Paused; awaiting permission to depart on the running clock."
+		row.tail_ready = false
+		row.last_attempt_time = -INF
+		row.last_attempt_key = []
+		return false
+	var error := ""
+	var key: Array = []
+	if tail_only:
+		error = _ready_error(row,hull)
+		if not error.is_empty(): row.tail_ready = false; row.blocker = error; return false
+		key = _readiness_key(row,hull,intent)
+		var repeated_ready: bool = row.tail_ready and row.last_ready_key == key
+		row.tail_ready = true
+		row.last_ready_key = key
+		if (row.last_attempt_time == rear.time and row.last_attempt_key == key) or repeated_ready: return false
+	var changed := false
+	if row.intent.is_empty():
+		var accepted := request(row.hull,row.parent,str(intent.id),row.stop,row.outbound,row.fallback)
+		if not accepted.ok: row.blocker = str(accepted.message); return false
+		changed = true
+	row.intent = intent.id
+	if not tail_only:
+		error = _ready_error(row,hull)
+		if not error.is_empty(): row.tail_ready = false; row.blocker = error; return changed
+		key = _readiness_key(row,hull,intent)
+		if row.last_attempt_time == rear.time and row.last_attempt_key == key: return changed
+	row.last_attempt_time = rear.time
+	row.last_attempt_key = key
+	row.last_ready_key = key
+	row.tail_ready = true
+	# Legacy reposition still synchronously reassesses real route/fallback,
+	# danger and25% fuel reserve. No cached route result authorizes this move.
+	var requested: Dictionary = rear.military.request_reposition(row.hull,row.stop,row.outbound,row.fallback)
+	if not requested.ok: row.blocker = str(requested.message); return changed
+	row.transport_job = requested.id
+	if row.phase == "Support" and row.active_need and not row.cycle.is_empty():
+		# Keep the real job identity on an unexpected release denial.
+		var owner := _supply_owner()
+		var released: Dictionary = owner.release_rack_replenishment(row.hull,row.cycle) if owner != null else {"ok":false,"message":"Recurring rack supply owner is unavailable."}
+		if not released.get("ok",false):
+			var stopped: Dictionary = rear.military.interrupt_troop_trip(row.transport_job)
+			row.handoff_error = str(released.get("message","The admitted deployment could not release its named refill cycle."))
+			if not stopped.get("ok",false): row.handoff_error += " Transport stop refused: "+str(stopped.get("message",""))
+			row.state = "Refill handoff blocked"
+			row.repeat_state = row.state
+			row.blocker = row.handoff_error
+			return true
+		row.released_cycle = row.cycle
+	row.state = "Outbound"
+	if row.active_need: row.repeat_state = "Returning to supply" if row.phase == "Replenishment" else "Redeploying to support"
+	row.blocker = ""
+	return true
 
 func _need(row: Dictionary, hull: Dictionary) -> void:
 	var owner := _supply_owner()
@@ -272,36 +371,7 @@ func tick() -> bool:
 		if intent.is_empty():
 			row.blocker = "Waiting for the named deployment at the acknowledged actual parent."
 			continue
-		if row.intent.is_empty():
-			var accepted := request(row.hull,row.parent,str(intent.id),row.stop,row.outbound,row.fallback)
-			if not accepted.ok: row.blocker = str(accepted.message); continue
-			changed = true
-		# A revised command must finish its normal acknowledgement before admission.
-		row.intent = intent.id
-		var error := _ready_error(row,hull)
-		if not error.is_empty(): row.blocker = error; continue
-		var requested: Dictionary = rear.military.request_reposition(row.hull,row.stop,row.outbound,row.fallback)
-		if not requested.ok: row.blocker = str(requested.message); continue
-		row.transport_job = requested.id
-		if row.phase == "Support" and row.active_need and not row.cycle.is_empty():
-			# Keep the real job identity even if an unexpected handoff denial needs
-			# its existing transport owner to stop. Never erase a physical claim.
-			var owner := _supply_owner()
-			var released: Dictionary = owner.release_rack_replenishment(row.hull,row.cycle) if owner != null else {"ok":false,"message":"Recurring rack supply owner is unavailable."}
-			if not released.get("ok",false):
-				var stopped: Dictionary = rear.military.interrupt_troop_trip(row.transport_job)
-				row.handoff_error = str(released.get("message","The admitted deployment could not release its named refill cycle."))
-				if not stopped.get("ok",false): row.handoff_error += " Transport stop refused: "+str(stopped.get("message",""))
-				row.state = "Refill handoff blocked"
-				row.repeat_state = row.state
-				row.blocker = row.handoff_error
-				changed = true
-				continue
-			row.released_cycle = row.cycle
-		row.state = "Outbound"
-		if row.active_need: row.repeat_state = "Returning to supply" if row.phase == "Replenishment" else "Redeploying to support"
-		row.blocker = ""
-		changed = true
+		changed = _try_admit(row,hull,intent) or changed
 	return changed
 
 func snapshot() -> Array[Dictionary]:
@@ -313,5 +383,6 @@ func snapshot() -> Array[Dictionary]:
 			"phase":row.phase,"origin":row.origin,"stop":row.stop,"supply_stop":SUPPLY_STOP,"state":row.state,
 			"blocker":row.blocker,"transport_job":row.transport_job,"cycle":row.cycle,"phase_cycle":row.phase_cycle,
 			"released_cycle":row.released_cycle,"cycle_count":row.cycle_count,"completed_cycles":row.completed_cycles,
+			"refill_seen_cycle":row.refill_seen_cycle,"refill_seen_at":row.refill_seen_at,
 			"active_need":row.active_need,"repeat_state":row.repeat_state})
 	return result
