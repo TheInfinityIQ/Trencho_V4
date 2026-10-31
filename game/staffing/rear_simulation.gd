@@ -12,6 +12,7 @@ const EPS := 0.000001
 var ledger := Ledger.new()
 var yard: RefCounted
 var time: float = 0.0
+var vehicle_departures_allowed := true # Explicit-time callers own their clock; live Base gates Pause.
 var stores: Dictionary = {}
 var requests: Dictionary = {}
 var actors: Dictionary = {}
@@ -35,6 +36,7 @@ var recovery: RefCounted # G24 physical repair, towing and once-only destruction
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
 var forward_supply: RefCounted # Timed local issue from arrived forward stock to an active formation.
+var battlefield_operations: RefCounted # Delivered squad intent, movement and local action on this clock.
 var field_structures: RefCounted # G19 local engineer projects and field services.
 var bridges: RefCounted # G20 constructed crossing, traffic and repair owner.
 var mines: RefCounted # G22 field devices, knowledge and clearance.
@@ -237,11 +239,9 @@ func _reconcile_store(id: String) -> bool:
 	var changed := false
 	var needed_types: Array = []
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
-	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
-	var contents: Dictionary = {}
-	for stock in _stock_at(id):
-		if not contents.has(stock.design_type): contents[stock.design_type] = {"quantity": 0, "mass": stock.unit_mass_kg, "position": stock.position}
-		contents[stock.design_type].quantity += stock.quantity
+	var summary: Dictionary = ledger.loose_stock_summary(id,PLAYER)
+	var excess := maxf(0.0, float(summary.mass) - float(stores[id].capacity))
+	var contents: Dictionary = summary.contents
 	for type in contents:
 		var stock: Dictionary = contents[type]
 		var disallowed: bool = not stores[id].filter.is_empty() and type not in stores[id].filter
@@ -289,11 +289,13 @@ func gun_owner(gun_id: String) -> RefCounted:
 	return null
 
 
-func advance_time(seconds: float) -> Dictionary:
+func advance_time(seconds: float, stop_on_planning: bool = false) -> Dictionary:
 	if not is_finite(seconds) or seconds < 0.0:
 		return _result(false, "Time must be finite and nonnegative.")
 	var target := time + seconds
 	_settle()
+	if stop_on_planning and _transport_planning_pending():
+		return _result(true, "Transport planning is waiting at the settled clock boundary.")
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
@@ -307,6 +309,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
 		if forward_supply != null: next = minf(next,forward_supply.next_boundary())
+		if battlefield_operations != null: next = minf(next,battlefield_operations.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
 		if bridges != null: next = minf(next,bridges.next_boundary())
 		if mines != null: next = minf(next,mines.next_boundary())
@@ -337,6 +340,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if hq != null: hq.advance_to(next)
 		if construction != null: construction.advance_to(next)
 		if military != null: military.advance_to(next)
+		if battlefield_operations != null: battlefield_operations.advance_to(next)
 		if combat != null: combat.advance_to(next)
 		if orders != null: orders.advance_to(next)
 		if objectives != null: objectives.advance_to(next)
@@ -351,7 +355,12 @@ func advance_time(seconds: float) -> Dictionary:
 		if recovery != null: recovery.advance_to(next)
 		if receiving != null: receiving.advance_clock_to(next)
 		_settle()
+		if stop_on_planning and _transport_planning_pending(): break
 	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
+
+
+func _transport_planning_pending() -> bool:
+	return military != null and military.troop_transport.has_planning_work()
 
 
 func effective_priority(job: Dictionary) -> int:
@@ -462,15 +471,15 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 
 func _any_eligible(ids: Array, duty: String) -> bool:
 	for id in ids:
-		if _eligible(ledger.inspect_entity(id), duty): return true
+		if _eligible(ledger.inspect_person_status(id), duty): return true
 	return false
 
 
 func _choose_person(ids: Array, duty: String) -> String:
-	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_entity(id), duty))
+	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_person_status(id), duty))
 	candidates.sort_custom(func(a: String, b: String) -> bool:
-		var first: Dictionary = ledger.inspect_entity(a)
-		var second: Dictionary = ledger.inspect_entity(b)
+		var first: Dictionary = ledger.inspect_person_status(a)
+		var second: Dictionary = ledger.inspect_person_status(b)
 		var rank_a := (2 if first.qualification != "None" else (1 if first.basic_training else 0))
 		var rank_b := (2 if second.qualification != "None" else (1 if second.basic_training else 0))
 		if (first.duty_id == duty) != (second.duty_id == duty): return first.duty_id == duty
@@ -527,6 +536,7 @@ func _settle() -> void:
 		if orders != null: changed = orders.settle() or changed
 		if objectives != null: changed = objectives.settle() or changed
 		if forward_supply != null: changed = forward_supply.settle() or changed
+		if battlefield_operations != null: changed = battlefield_operations.settle() or changed
 		if field_structures != null: changed = field_structures.settle() or changed
 		if bridges != null: changed = bridges.settle() or changed
 		if mines != null: changed = mines.settle() or changed
@@ -544,8 +554,7 @@ func _settle() -> void:
 		for id in stores.keys():
 			changed = _reconcile_store(id) or changed
 		for a in actors.values():
-			var p: Dictionary = ledger.inspect_entity(a.id)
-			if a.phase == "Idle" and p.duty_id == "hauling":
+			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
 				changed = _start_job(a) or changed
 		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
@@ -559,9 +568,9 @@ func _settle() -> void:
 func _sync_receiving_people() -> void:
 	var added := false
 	var released := false
-	for p in ledger.snapshot().entities:
-		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
-			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
+	for id in ledger.available_person_ids(PLAYER):
+		if not actors.has(id):
+			actors[id] = {"id": id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
 			added = true
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
@@ -574,8 +583,9 @@ func _sync_receiving_people() -> void:
 
 func _sync_receiving_staff() -> void:
 	for a in actors.values():
-		var p: Dictionary = ledger.inspect_entity(a.id)
-		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None" and a.phase == "Idle":
+		if a.phase != "Idle": continue
+		var p: Dictionary = ledger.inspect_person_status(a.id)
+		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None":
 			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
 			a.phase = "Unloading"
 	receiving._pump()
@@ -642,13 +652,19 @@ func _finish_phase(a: Dictionary) -> void:
 
 
 func _start_job(a: Dictionary) -> bool:
-	var person: Dictionary = ledger.inspect_entity(a.id)
+	var person: Dictionary = ledger.inspect_person_status(a.id)
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
+	var inspected_load := false
 	for job in jobs:
 		if job.cancelled or job.delivered + _in_flight(job.id) >= job.requested:
 			continue
+		# Idle haulers need only status. Read the actual retained load immediately
+		# before considering real freight; all capacity checks below stay exact.
+		if not inspected_load:
+			person = ledger.inspect_entity(a.id)
+			inspected_load = true
 		var option := _job_option(job, person)
 		if option.is_empty():
 			continue
@@ -682,7 +698,7 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 	for source_id in source_ids:
 		if not stores.has(source_id) or not stores[source_id].accessible or source_id == job.destination:
 			continue
-		for stock in _stock_at(source_id):
+		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
 			var count := mini(stock.available, job.requested - job.delivered - _in_flight(job.id))
@@ -819,8 +835,8 @@ func _release_load(a: Dictionary) -> void:
 	a.blocked_since = -1.0
 
 
-func _stock_at(holder: String) -> Array:
-	return ledger.snapshot().entities.filter(func(e: Dictionary) -> bool: return e.kind == "STOCK" and e.owner == PLAYER and e.holder_id == holder and e.quantity > 0)
+func _stock_at(holder: String, include_mass: bool = true) -> Array:
+	return ledger.entities_at(holder,["STOCK"],include_mass).filter(func(e: Dictionary) -> bool: return e.owner == PLAYER and e.quantity > 0)
 
 
 func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> bool:
@@ -949,21 +965,21 @@ func audit() -> Array[String]:
 func _assigned(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty: count += 1
+		if ledger.inspect_person_status(id).duty_id == duty: count += 1
 	return count
 
 
 func _committed(duty: String) -> int:
 	var count := _assigned(duty)
 	for id in actors:
-		if ledger.inspect_entity(id).pending_duty == duty: count += 1
+		if ledger.inspect_person_status(id).pending_duty == duty: count += 1
 	return count
 
 
 func _pending_in(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.inspect_person_status(id)
 		if p.pending_assignment != "None" and p.pending_duty == duty: count += 1
 	return count
 
@@ -971,7 +987,7 @@ func _pending_in(duty: String) -> int:
 func _retaining(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.inspect_person_status(id)
 		if p.duty_id == duty and (p.pending_assignment == "None" or p.pending_duty == duty): count += 1
 	return count
 
@@ -979,7 +995,7 @@ func _retaining(duty: String) -> int:
 func _present(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
+		if ledger.inspect_person_status(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
 	return count
 
 

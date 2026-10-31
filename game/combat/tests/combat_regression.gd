@@ -1,6 +1,7 @@
 extends SceneTree
 const Base = preload("res://game/rear_base/base_simulation.gd")
 const Records = preload("res://game/identity/identity_records.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 var checks := 0
 var failures := 0
 
@@ -9,10 +10,13 @@ func _initialize() -> void:
 	_test_vehicle_occupant_drop()
 	_test_a26()
 	_test_a27()
+	_test_exclusive_care()
 	_test_fire_gates_and_stress()
 	_test_reload_commitment()
 	_test_field_gun_direct()
 	_test_cohesion_inspection_independence()
+	_test_cohesion_local_reads()
+	_test_stress_projection_parity()
 	print("G16 combat regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -21,6 +25,59 @@ func _expect(ok: bool, message: String) -> void:
 	if not ok:
 		failures += 1
 		push_error(message)
+
+func _test_stress_projection_parity() -> void:
+	var current := Base.new(true)
+	var legacy := Base.new(true)
+	for base in [current,legacy]:
+		var ledger: RefCounted = base.rear.ledger
+		_expect(ledger.add_place("stress-safe","Safe stress fixture",Vector2(1000,1000)).ok,"safe stress place")
+		_expect(ledger.add_place("stress-near","Exposed stress fixture",Vector2(1300,1000)).ok,"exposed stress place")
+		_expect(ledger.add_place("stress-hostile","Visible hostile",Vector2(1350,1000)).ok,"hostile stress place")
+		for id in ["stress-trained","stress-untrained","stress-exposed","stress-broken","stress-dead"]:
+			var holder := "stress-hostile" if id == "stress-dead" else ("stress-near" if id == "stress-exposed" else "stress-safe")
+			_expect(ledger.add_person(id,holder,"army-blue",Records.Assignment.AVAILABLE,id != "stress-untrained").ok,"stress person "+id)
+			base.rear.combat._apply_stress(id,-2,5,true)
+			base.rear.combat.last_casualty[id] = 0.0
+		_expect(ledger.add_person("stress-enemy","stress-hostile","army-red").ok,"real hostile inhibits nearby recovery")
+		base.rear.combat._apply_stress("stress-broken",-40,60,false)
+		_expect(base.rear.combat.injure("stress-dead",100).code == "INCAPACITATED","actual casualty before death")
+		_expect(base.rear.combat.injure("stress-dead",1).code == "DEAD","actual death is excluded from stress tick")
+		# Keep nested goods in the snapshot oracle; stress must ignore their mass.
+		_expect(ledger.add_stock("stress-gear","E03",1,1.0,"stress-trained","army-blue").ok,"real retained gear")
+	for at in [2.0,3.0,10.0,11.0]:
+		for base in [current,legacy]:
+			var delta: float = at-base.rear.time
+			base.rear.ledger.advance_time(delta)
+			base.rear.time = at
+		current.rear.combat._stress_tick()
+		_legacy_stress_tick(legacy.rear)
+		_expect(current.rear.ledger.snapshot() == legacy.rear.ledger.snapshot(),"Person projection preserves exact full-ledger stress outcomes at "+str(at))
+		for field in ["last_incoming","last_casualty","pinned","broken"]:
+			_expect(current.rear.combat.get(field) == legacy.rear.combat.get(field),"Stress projection preserves "+field+" transitions")
+	_expect(current.rear.ledger.inspect_entity("stress-trained").morale == 60 and not current.rear.combat.last_incoming.has("stress-trained"),"Safe trained recovery clears incoming history")
+	_expect(current.rear.ledger.inspect_entity("stress-exposed").morale == 58 and current.rear.combat.last_incoming.has("stress-exposed"),"Visible hostile keeps exposed morale and incoming history unresolved")
+
+func _legacy_stress_tick(rear: RefCounted) -> void:
+	# Retained pre-projection algorithm: take a complete snapshot before mutation.
+	var combat: RefCounted = rear.combat
+	for item in rear.ledger.snapshot().entities:
+		if item.kind != "PERSON" or item.assignment == "Dead": continue
+		var since_fire: float = rear.time-float(combat.last_incoming.get(item.id,-INF))
+		var since_casualty: float = rear.time-float(combat.last_casualty.get(item.id,-INF))
+		var suppression_delta := -5 if since_fire >= 3.0-0.000001 and item.suppression > 0 else 0
+		var morale_delta := 0
+		if since_fire >= 10.0-0.000001 and since_casualty >= 10.0-0.000001 and item.morale < 60:
+			var hostile := false
+			for other in rear.ledger.snapshot().entities:
+				if other.kind == "PERSON" and other.owner != item.owner and other.assignment not in ["Wounded","Dead"] and other.position.distance_to(item.position) <= 100.0:
+					if combat.world.observe(item.position,other.position).visible: hostile = true; break
+			if not hostile: morale_delta = mini(60-item.morale,2 if item.basic_training else 1)
+		if suppression_delta != 0 or morale_delta != 0: combat._apply_stress(item.id,morale_delta,suppression_delta,false)
+		var person: Dictionary = rear.ledger.inspect_entity(item.id)
+		if person.suppression == 0 and person.morale >= 60 and since_fire >= 10.0-0.000001 and since_casualty >= 10.0-0.000001:
+			combat.last_incoming.erase(item.id)
+			combat.last_casualty.erase(item.id)
 
 func _person(base: RefCounted, id: String, holder: String, owner: String, qualification: String = "None") -> void:
 	_expect(base.rear.ledger.add_person(id,holder,owner,Records.Assignment.HQ_RESERVE if holder == "hq-reserve" else Records.Assignment.AVAILABLE,true,qualification,"None").ok,"add actual person "+id)
@@ -111,6 +168,57 @@ func _test_a27() -> void:
 	_expect(not base.rear.combat.injure("a27-bleeder",1).ok,"A27 no duplicate death after bleed-out")
 	_expect(base.audit().is_empty(),"A27 care and loss audit: "+str(base.audit()))
 
+func _test_exclusive_care() -> void:
+	for patients in [["care-a","care-b"],["care-b","care-a"]]:
+		var base := Base.new(true)
+		var rear: RefCounted = base.rear
+		var ledger: RefCounted = rear.ledger
+		var combat: RefCounted = rear.combat
+		for id in ["care-medic","care-relief"]:
+			_person(base,id,"hq-reserve",rear.PLAYER,"P03")
+			_expect(ledger.add_stock(id+"-kit","E11",1,4.0,id,rear.PLAYER).ok,"Each actual P03 holds a reusable kit")
+		_expect(ledger.add_stock("care-packs","E12",2,1.0,"care-medic",rear.PLAYER).ok,"Only two actual treatment packs exist")
+		for id in patients:
+			_person(base,id,"hq-reserve",rear.PLAYER)
+			_expect(combat.injure(id,100).code == "INCAPACITATED","Actual friendly patient is wounded near medic")
+		var first: String = patients[0]
+		var second: String = patients[1]
+		_expect(combat.start_care("care-medic",first,"care-packs").ok,"Either patient can receive the first commitment")
+		rear.advance_time(4)
+		var before_care: Dictionary = combat.care.duplicate(true)
+		var before_ledger: Dictionary = ledger.snapshot()
+		_expect(combat.start_care("care-medic",first).ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Same active patient resumes without reset, extra pack or claims")
+		var denied: Dictionary = combat.start_care("care-medic",second,"care-packs")
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Second live episode is denied without changing progress, stock or claims")
+		if denied.ok: return
+		rear.advance_time(1)
+		_expect(combat.care[first].progress == 5.0 and not combat.care.has(second) and ledger.inspect_entity(second).bleed_remaining == 55.0,"Only selected patient accumulates care; untreated patient keeps bleeding")
+		_expect(combat.start_care("care-relief",first).ok,"Free qualified relief can take over an existing episode without a pack")
+		_expect(combat.start_care("care-medic",second,"care-packs").ok,"Relieved medic is free to commit the remaining pack to the other patient")
+		rear.advance_time(2)
+		before_care = combat.care.duplicate(true)
+		before_ledger = ledger.snapshot()
+		denied = combat.start_care("care-medic",first)
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Busy medic cannot take over another committed episode or displace its relief")
+		if denied.ok: return
+		_expect(combat.interrupt_care(second).ok,"Explicit interruption releases medic while preserving second patient's work")
+		_expect(combat.start_care("care-medic",first).ok,"Released medic can take back the first existing episode")
+		before_care = combat.care.duplicate(true)
+		before_ledger = ledger.snapshot()
+		denied = combat.start_care("care-medic",second)
+		_expect(not denied.ok and combat.care == before_care and ledger.snapshot() == before_ledger,"Existing interrupted episode cannot resume while its medic treats another patient")
+		if denied.ok: return
+		rear.advance_time(3)
+		_expect(ledger.inspect_entity(first).assignment == "Recovery" and not combat.care.has(first),"First episode completes after exactly ten cumulative seconds across medics")
+		_expect(combat.care[second].progress == 2.0 and not combat.care[second].active,"Interrupted second episode gains no concurrent work")
+		_expect(combat.start_care("care-medic",second).ok,"Same medic resumes interrupted patient using its already consumed pack")
+		rear.advance_time(7.5)
+		_expect(ledger.inspect_entity(second).assignment == "Wounded" and combat.care[second].progress == 9.5,"Resumed treatment cannot finish before ten cumulative seconds")
+		rear.advance_time(0.5)
+		_expect(ledger.inspect_entity(second).assignment == "Recovery" and combat.care.is_empty(),"Second episode completes once at ten cumulative seconds")
+		_expect(ledger.snapshot().consumed.get("E12",0) == 2 and ledger.total_stock("E12") == 0 and ledger.total_stock("E11") == 2,"Handoffs and resumes consume no extra packs and retain both reusable kits")
+		_expect(base.audit().is_empty(),"Exclusive care, reassignment and resume preserve common invariants")
+
 func _test_fire_gates_and_stress() -> void:
 	var base := Base.new(true)
 	var ledger: RefCounted = base.rear.ledger
@@ -121,6 +229,16 @@ func _test_fire_gates_and_stress() -> void:
 	_expect(not base.rear.combat.inspect_fire("gate-shooter","gate-shooter","gate-rifle").ok,"friendly fire withheld")
 	var clear: Dictionary = base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle")
 	_expect(clear.ok and clear.chance > 0.05 and clear.chance < 0.55,"visible legal range yields factored chance")
+	_expect(ledger.add_place("gate-intercept","Actual friendly interception",Vector2(1670,91)).ok,"firing-line place")
+	_person(base,"gate-friend","gate-intercept",base.rear.PLAYER)
+	_expect(base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle").get("blocked_reason","") == "Friendly person or vehicle intersects the direct firing line.","Actual friendly person intercepts the shot")
+	_expect(ledger.move_entity("gate-friend","gate-intercept",Vector2(1670,96)).ok,"same friendly person physically clears the shot")
+	_expect(base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle") == clear,"Fresh query observes the actual person leaving the firing line")
+	_expect(ledger.add_initial_vehicle("gate-friendly-hull","T02","gate-intercept",base.rear.PLAYER,Specs.TYPES.T02,0.0,"Military").ok,"actual friendly transport hull")
+	_expect(ledger.entities_of_kinds([Records.Kind.PERSON,Records.Kind.CARRIER],false) == ledger.snapshot(false).entities.filter(func(row: Dictionary) -> bool: return row.kind in ["PERSON","CARRIER"]),"Friendly-fire candidates retain full current vehicle geometry and person fields in canonical order")
+	_expect(base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle").get("blocked_reason","") == "Friendly person or vehicle intersects the direct firing line.","Actual friendly hull intercepts the shot")
+	_expect(ledger.move_entity("gate-friendly-hull","gate-intercept",Vector2(1670,101)).ok,"same hull physically clears the shot")
+	_expect(base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle") == clear,"Fresh query observes the actual hull leaving the firing line")
 	base.rear.combat.world.paint(Rect2i(1690,91,1,1),"TR06")
 	var covered: Dictionary = base.rear.combat.inspect_fire("gate-shooter","gate-target","gate-rifle")
 	_expect(covered.ok and covered.chance < clear.chance and is_equal_approx(covered.cover.hit,0.5),"actual dense-forest cover halves direct hit chance")
@@ -262,3 +380,87 @@ func _test_cohesion_inspection_independence() -> void:
 	_expect(observed.rear.combat.squad_cohesion(observed_id).state == "Dispersed","frequent inspection reaches same Dispersed state")
 	_expect(is_equal_approx(float(quiet.rear.combat.dispersed_since[quiet_id]),quiet_started) and is_equal_approx(float(observed.rear.combat.dispersed_since[observed_id]),observed_started),"inspection never starts or resets the simulation-owned timer")
 	_expect(quiet.audit().is_empty() and observed.audit().is_empty(),"cohesion inspection independence preserves actual rosters")
+
+func _test_cohesion_local_reads() -> void:
+	var base := Base.new(true)
+	var rear: RefCounted = base.rear
+	var ledger: RefCounted = rear.ledger
+	var ids: Array[String] = []
+	for index in 4:
+		var id := "cohesion-local-%d" % index
+		_expect(ledger.add_person(id,"hq-formation",rear.PLAYER,Records.Assignment.AVAILABLE,true,"None","None").ok,"actual local-read infantry")
+		_expect(ledger.add_weapon(id+"-rifle","E01",4.0,id,rear.PLAYER,"E02",30).ok and ledger.add_stock(id+"-rounds","E02",30,0.02,id,rear.PLAYER).ok,"real local-read package")
+		ids.append(id)
+	var formed: Dictionary = rear.military.add_initial_squad("cohesion-local","Rifle",ids,"cohesion-company","cohesion-platoon",rear.PLAYER)
+	_expect(formed.ok,"actual local-read squad")
+	if not formed.ok: return
+	var row: Dictionary = rear.military.squads[formed.id]
+	var leader: String = row.leader
+	_expect(ledger.add_initial_vehicle("cohesion-hull","T02","hq-formation",rear.PLAYER,Specs.TYPES.T02,40,"Military").ok,"real cohesion transport")
+	_expect(ledger.add_person("cohesion-driver","hq-formation",rear.PLAYER,Records.Assignment.AVAILABLE,true,"P08","None").ok,"real cohesion driver")
+	_expect(ledger.assign_initial_vehicle_crew("cohesion-driver","cohesion-hull","Driver").ok and rear.military.attach_initial_vehicle("cohesion-hull","cohesion-platoon").ok,"actual staffed and attached cohesion hull")
+	_compare_cohesion(rear,formed.id)
+	_compare_cohesion(rear,"missing")
+	# Isolated query fixtures retain duplicate roster and absent/non-roster leaders.
+	row.roster.append(ids[0])
+	_compare_cohesion(rear,formed.id)
+	row.roster.pop_back()
+	for other in ["","missing","cohesion-driver"]:
+		row.leader = other
+		_compare_cohesion(rear,formed.id)
+	row.leader = leader
+	row.state = "Reporting"
+	_compare_cohesion(rear,formed.id)
+	row.state = "Active"
+	_expect(rear.military._reserve_transport_manifest("cohesion-hull",[formed.id]).ok,"real passenger commitment")
+	for id in ids:
+		_expect(ledger.board_formation_passenger(id,"cohesion-hull").ok,"actual sequential boarding")
+		_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "Boarded","all actual passengers retain boarded result")
+	_expect(rear.military.exit_squad(formed.id).ok,"actual dismount restores ground position")
+	_compare_cohesion(rear,formed.id)
+	var origin: Vector2 = ledger.inspect_person_status(leader).position
+	_expect(ledger.add_place("cohesion-local-split","Actual split position",origin+Vector2(45,0)).ok,"local-read separation place")
+	for id in ids:
+		if id != leader: _expect(ledger.move_entity(id,"cohesion-local-split",origin+Vector2(45,0)).ok,"actual dispersal")
+	_compare_cohesion(rear,formed.id)
+	rear.advance_time(10)
+	_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "Dispersed","existing real dispersal timer still reaches threshold")
+	_expect(rear.combat.injure(leader,100).code == "INCAPACITATED","leader becomes absent from active read set")
+	_compare_cohesion(rear,formed.id)
+	for id in ids:
+		if id != leader: _expect(rear.combat.injure(id,100).ok,"actual remaining incapacitation")
+	_compare_cohesion(rear,formed.id)
+	_expect(rear.combat.squad_cohesion(formed.id).state == "No active infantry","empty active set retains prior result")
+
+func _compare_cohesion(rear: RefCounted, id: String) -> void:
+	var before: Dictionary = rear.combat.dispersed_since.duplicate(true)
+	var expected: Dictionary = _legacy_cohesion(rear,id)
+	var result: Dictionary = rear.combat.squad_cohesion(id)
+	_expect(var_to_bytes(result) == var_to_bytes(expected),"Cohesion fields exactly match retained original independent reads")
+	result.state = "Mutated result"
+	_expect(rear.combat.squad_cohesion(id) == expected and rear.combat.dispersed_since == before,"Cohesion result is detached and inspection preserves timer ownership")
+
+func _legacy_cohesion(rear: RefCounted, squad_id: String) -> Dictionary:
+	var row: Dictionary = rear.military.squads.get(squad_id,{})
+	if row.is_empty() or row.state != "Active": return {"cohesion":0.0,"state":"Unavailable","blocked_reason":"No active actual squad."}
+	var active: Array[String] = rear.military._active_roster_members(row,true)
+	var dismounted: Array[String] = []
+	var boarded := 0
+	for id in active:
+		if rear.combat._seated(rear.ledger.inspect_person_status(id)): boarded += 1
+		else: dismounted.append(id)
+	if boarded == active.size() and boarded > 0: return {"cohesion":1.0,"state":"Boarded","blocked_reason":"Dismount before infantry fire."}
+	if dismounted.is_empty(): return {"cohesion":0.0,"state":"No active infantry","blocked_reason":"No active dismounted people."}
+	var leader: Dictionary = rear.ledger.inspect_person_status(row.leader)
+	var near := 0
+	for id in dismounted:
+		if not leader.is_empty() and leader.assignment == "Formation Duty" and leader.position.distance_to(rear.ledger.inspect_person_status(id).position) <= 30.0: near += 1
+	var value := float(near)/float(dismounted.size())
+	var state := "Coherent"
+	var reason := ""
+	if value < 0.5:
+		state = "Dispersed" if rear.combat.dispersed_since.has(squad_id) and rear.time-float(rear.combat.dispersed_since[squad_id]) >= 10.0 else "Regrouping"
+		reason = "Offensive coordination paused; regroup around actual leader."
+	return {"cohesion":value,"state":state,"blocked_reason":reason,"regroup_seconds":maxf(0.0,rear.time-float(rear.combat.dispersed_since[squad_id])) if rear.combat.dispersed_since.has(squad_id) else 0.0}

@@ -6,7 +6,9 @@ const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
 const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
+const ForwardDeliveryPanel = preload("res://game/forward_supply/forward_delivery_panel.gd")
 var simulation := Simulation.new(false, true)
+var forward_delivery_panel: VBoxContainer
 var construction_kind: OptionButton
 var construction_x: SpinBox
 var construction_y: SpinBox
@@ -33,6 +35,12 @@ var source: OptionButton
 var destination: OptionButton
 var goods_type: OptionButton
 var haul_count: SpinBox
+var haul_category: OptionButton
+var haul_draft_status: Label
+var ingredient_checklist: VBoxContainer
+var ingredient_heading: Label
+var _ingredient_basis := ""
+var _haul_draft_dirty := false
 var facility: OptionButton
 var recipe: OptionButton
 var mode: OptionButton
@@ -92,11 +100,16 @@ var declaration: Label
 var _selected_kind := "building"
 var _selected_id := "terminal"
 var _refresh_elapsed := 0.0
+var _displayed_time := -INF
+var _displayed_speed := -1
+var _displayed_planning_revision := -1
 var _order_ids: Array[String] = []
 var _person_ids: Array[String] = []
 var _job_ids: Array[String] = []
 
 func _ready() -> void:
+	visibility_changed.connect(func() -> void:
+		if is_visible_in_tree(): _refresh())
 	var layout := VBoxContainer.new()
 	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layout)
@@ -129,6 +142,9 @@ func _ready() -> void:
 	_vehicles_panel(_panel("Vehicles"))
 	_dispatch_panel(_panel("Dispatch"))
 	_construction_panel(_panel("Build"))
+	forward_delivery_panel = ForwardDeliveryPanel.new(simulation)
+	_panel("Supply").add_child(forward_delivery_panel)
+	forward_delivery_panel.result_reported.connect(_result)
 	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
 	feedback = _label(layout, "Buy resources and people in Orders; set actual staff in Staff; request physical routes in Haul; set output targets in Work.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -144,8 +160,9 @@ func _ready() -> void:
 	_refresh()
 
 func _process(delta: float) -> void:
-	simulation.tick(delta)
-	base_map.queue_redraw()
+	simulation.tick_live(delta)
+	if not is_visible_in_tree(): return
+	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed and simulation.planning_view_revision == _displayed_planning_revision: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
@@ -182,7 +199,7 @@ func _spin(parent: Node, title: String, maximum: int, value: int = 0) -> SpinBox
 	spin.min_value = 0
 	spin.max_value = maximum
 	spin.step = 1
-	spin.value = value
+	spin.set_value_no_signal(value)
 	spin.custom_minimum_size.x = 100
 	row.add_child(spin)
 	return spin
@@ -220,28 +237,37 @@ func _orders_panel(box: VBoxContainer) -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 
 	_label(box, "New session resets the base; inspection never does.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue"])
+	scenario = _option(box, "Access at session creation", ["Essential recipes", "Expanded production catalogue", "Farmland and Towns playtest"])
 	_button(box, "Start new session", _start_session)
 
-func _start_session() -> void:
-	simulation = Simulation.new(scenario.selected == 1, true)
+func _start_session(refresh_rear_ui: bool = true) -> void:
+	simulation.cancel_live_planning()
+	simulation = preload("res://game/scenario/farmland_session.gd").create() if scenario.selected == 2 else Simulation.new(scenario.selected == 1, true)
+	if scenario.selected == 2: simulation.enable_live_planning()
+	_displayed_time = -INF
+	_haul_draft_dirty = false
+	if haul_draft_status != null: haul_draft_status.text = "Prepare an ingredient in Work, or choose a haul below. Click Order haul to submit it."
+	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
 	base_map.simulation = simulation
 	base_map.reset_camera()
 	_pending_activity = null
 	_pending_token = -1
-	for spin in cart.values(): spin.value = 0
-	for spin in targets.values(): spin.value = 0
-	instructor_count.set_value_no_signal(0)
-	training_access.set_pressed_no_signal(true)
+	for spin in cart.values(): spin.set_value_no_signal(0)
+	for duty in targets: targets[duty].set_value_no_signal(int(simulation.rear.requests[duty].target))
+	instructor_count.set_value_no_signal(int(simulation.rear.requests.training.target))
+	training_access.set_pressed_no_signal(simulation.rear.training.accessible)
 	_load_courses()
 	facility.select(0)
 	_selected_kind = "building"
 	_selected_id = "terminal"
 	_load_production()
+	_sync_option(store,simulation.rear.stores.keys())
 	_load_store()
-	declaration.text = ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
-	_result({"ok": true, "message": "New paused session. Recipe access was declared at creation; actual cards remain separate."})
+	declaration.text = "Farmland and Towns | Declared starting armies and rear | Selected free card: C30 (APC and E26 recipes)." if scenario.selected == 2 else ("Expanded production catalogue" if simulation.expanded_catalogue else "Essential session") + " | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods."
+	var message := "New paused Farmland opening. Buildings block sight and movement; entry and damage are pending." if scenario.selected == 2 else "New paused session. Recipe access was declared at creation; actual cards remain separate."
+	if refresh_rear_ui: _result({"ok":true,"message":message})
+	elif feedback != null: feedback.text = message
 
 func _staff_panel(box: VBoxContainer) -> void:
 	_label(box, "Count targets share the same real people")
@@ -257,15 +283,25 @@ func _staff_panel(box: VBoxContainer) -> void:
 
 func _haul_panel(box: VBoxContainer) -> void:
 	_label(box, "Orders wait for real loose source goods")
-	source = _option(box, "Source", simulation.rear.stores.keys())
-	destination = _option(box, "Destination", simulation.rear.stores.keys())
+	haul_draft_status = _label(box,"Prepare an ingredient in Work, or choose a haul below. Click Order haul to submit it.")
+	haul_draft_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	source = _option(box, "Source", [])
+	destination = _option(box, "Destination", [])
+	_sync_haul_stores()
 	destination.select(1)
-	var category := _option(box, "Goods category", ["Materials", "Workshop output", "Munitions output", "Support output"])
+	haul_category = _option(box, "Goods category", ["Materials", "Workshop output", "Munitions output", "Support output"])
 	goods_type = _option(box, "Goods", [])
-	category.item_selected.connect(_load_haul_goods)
+	haul_category.item_selected.connect(_load_haul_goods)
 	_load_haul_goods(0)
 	haul_count = _spin(box, "Units", 10000, 1)
-	_button(box, "Order haul", func() -> void: _result(simulation.rear.request_haul(source.get_item_text(source.selected), destination.get_item_text(destination.selected), goods_type.get_item_text(goods_type.selected), int(haul_count.value))))
+	for option in [source,destination,haul_category,goods_type]:
+		option.item_selected.connect(func(_index: int) -> void: _mark_haul_draft_dirty())
+	haul_count.value_changed.connect(func(_value: float) -> void: _mark_haul_draft_dirty())
+	_button(box, "Order haul", _order_haul)
+	_button(box, "Clear haul draft", func() -> void:
+		_haul_draft_dirty = false
+		haul_count.set_value_no_signal(0)
+		haul_draft_status.text = "Draft cleared. Prepare an ingredient in Work or choose new haul fields.")
 	jobs = _list(box, 140)
 	jobs.item_selected.connect(func(index: int) -> void: _select("job", _job_ids[index], false))
 	_button(box, "Cancel selected haul", func() -> void:
@@ -274,15 +310,135 @@ func _haul_panel(box: VBoxContainer) -> void:
 func _load_haul_goods(category: int) -> void:
 	goods_type.clear()
 	if category == 0:
-		for id in ["M01", "M02", "M03", "M04", "M06", "M11", "M05", "M07", "M08", "M09", "M10"]: goods_type.add_item(id)
+		for id in ["M01", "M02", "M03", "M04", "M06", "M11", "M05", "M07", "M08", "M09", "M10"]:
+			goods_type.add_item(_material_label(id))
+			goods_type.set_item_metadata(goods_type.item_count-1,id)
 	else:
 		var duty: String = ["", "workshop", "munitions", "support"][category]
 		for spec in simulation.rear.production.RECIPES.values():
-			if spec.duty == duty: goods_type.add_item(spec.output_type)
+			if spec.duty == duty:
+				goods_type.add_item(spec.output_type)
+				goods_type.set_item_metadata(goods_type.item_count-1,spec.output_type)
+
+func _haul_choice(option: OptionButton) -> String:
+	return str(option.get_item_metadata(option.selected)) if option.selected >= 0 else ""
+
+func _mark_haul_draft_dirty() -> void:
+	_haul_draft_dirty = true
+	haul_draft_status.text = "Unsubmitted haul draft. Review the fields, then click Order haul; Clear haul draft lets you prepare another ingredient."
+
+func _sync_haul_stores() -> void:
+	var ids: Array = simulation.rear.stores.keys()
+	for option in [source,destination]:
+		var selected: String = _haul_choice(option)
+		var same: bool = option.item_count == ids.size()
+		if same:
+			for index in ids.size():
+				if option.get_item_metadata(index) != ids[index]: same = false; break
+		if same: continue
+		option.clear()
+		for id in ids:
+			option.add_item(str(id).capitalize())
+			option.set_item_metadata(option.item_count-1,id)
+		option.select(maxi(0,ids.find(selected)))
+
+func _order_haul() -> void:
+	var result: Dictionary = simulation.rear.request_haul(_haul_choice(source),_haul_choice(destination),_haul_choice(goods_type),int(haul_count.value))
+	if result.ok:
+		_haul_draft_dirty = false
+		haul_draft_status.text = "Haul ordered. The Haul list tracks actual deliveries; prepare another ingredient in Work when needed."
+	else: _haul_draft_dirty = true
+	_result(result)
+
+func _material_label(type: String) -> String:
+	return str(Catalog.MATERIALS[type].name) if Catalog.MATERIALS.has(type) else {"M06":"Explosives","M11":"Building Materials"}.get(type,type)
+
+func _input_hauls(input_store: String, type: String, rows: Array) -> Dictionary:
+	var result := {"open":0,"carried":0}
+	for job in rows:
+		if job.cancelled or job.destination != input_store or job.type != type: continue
+		result.open += maxi(0,int(job.requested)-int(job.delivered))
+		result.carried += int(job.get("in_flight",0))
+	return result
+
+func _prepare_ingredient_haul(type: String, expected_recipe: String, input_store: String) -> void:
+	if _haul_draft_dirty:
+		tabs.current_tab = 2
+		haul_draft_status.text = "Your unfinished haul draft was kept. Order it or click Clear haul draft before preparing another ingredient."
+		return
+	var current: Dictionary = _activity().snapshot()
+	if current.recipe != expected_recipe or current.input_store != input_store: return
+	var open: Dictionary = _input_hauls(input_store,type,simulation.rear.jobs)
+	var needed: int = maxi(0,int(current.missing_local.get(type,0))-int(open.open))
+	var source_id := ""
+	var available := 0
+	for id in simulation.rear.stores:
+		if id == input_store or not simulation.rear.stores[id].accessible: continue
+		var count: int = simulation.rear.ledger.available_stock_at(id,type)
+		if count > available: source_id = id; available = count
+	if needed <= 0 or source_id.is_empty():
+		_result({"ok":false,"inspection_only":true,"message":"No new haul is needed beyond existing orders." if needed <= 0 else "No accessible store has unreserved "+_material_label(type)+". Buy or manufacture it before preparing this haul."})
+		return
+	_sync_haul_stores()
+	for index in source.item_count:
+		if source.get_item_metadata(index) == source_id: source.select(index)
+	for index in destination.item_count:
+		if destination.get_item_metadata(index) == input_store: destination.select(index)
+	haul_category.select(0)
+	_load_haul_goods(0)
+	for index in goods_type.item_count:
+		if goods_type.get_item_metadata(index) == type: goods_type.select(index)
+	haul_count.set_value_no_signal(mini(needed,available))
+	_haul_draft_dirty = true
+	tabs.current_tab = 2
+	haul_draft_status.text = "Prepared %d %s: %s → %s. %d still missing locally; %d already ordered. Click Order haul to request real hauling." % [int(haul_count.value),_material_label(type),source_id.capitalize(),input_store.capitalize(),int(current.missing_local.get(type,0)),int(open.open)]
+	# Preparing edits UI only: no after_command, reservation, job or clock step.
+
+func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
+	if ingredient_checklist == null: return
+	var basis: String = str(current.recipe)+":"+str(current.input_store)
+	if current.get("selected_recipe",current.recipe) == "":
+		ingredient_heading.text = "Select a recipe to see its ingredient needs."
+		ingredient_checklist.hide()
+		return
+	ingredient_checklist.show()
+	ingredient_heading.text = "Ingredients for one new batch\nDeliver to %s. Physical stock and haul orders are separate." % str(current.input_store).capitalize()
+	if not current.batch.is_empty(): ingredient_heading.text += "\nThe current batch has consumed its ingredients; this checklist is for the next batch."
+	if _ingredient_basis != basis:
+		_ingredient_basis = basis
+		for child in ingredient_checklist.get_children():
+			ingredient_checklist.remove_child(child)
+			child.queue_free()
+		for type in current.inputs:
+			var row := VBoxContainer.new()
+			row.set_meta("type",type)
+			ingredient_checklist.add_child(row)
+			_label(row,"").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			_button(row,"Prepare haul: "+_material_label(type),_prepare_ingredient_haul.bind(str(type),str(current.recipe),str(current.input_store)))
+	for row in ingredient_checklist.get_children():
+		var type: String = str(row.get_meta("type"))
+		var physical := 0
+		var available: int = int(current.local_inputs.get(type,0))
+		for storage in rear_view.stores:
+			if storage.id != current.input_store: continue
+			for stock in storage.stocks:
+				if stock.design_type == type: physical += int(stock.quantity)
+		var open: Dictionary = _input_hauls(str(current.input_store),type,rear_view.jobs)
+		var missing: int = int(current.missing_local.get(type,0))
+		var new_units: int = maxi(0,missing-int(open.open))
+		var source_available := 0
+		for storage in rear_view.stores:
+			if storage.id == current.input_store or not storage.accessible: continue
+			for stock in storage.stocks:
+				if stock.design_type == type: source_available += int(stock.available)
+		row.get_child(0).text = "%s: %d required · %d physically here (%d available)\nMissing locally: %d · Open hauls: %d (%d being carried)\nNew haul needed: %d · Available elsewhere: %d" % [_material_label(type),int(current.inputs[type]),physical,available,missing,int(open.open),int(open.carried),new_units,source_available]
+		var button: Button = row.get_child(1)
+		button.disabled = new_units <= 0 or source_available <= 0
+		button.tooltip_text = "Existing haul orders cover the local shortage; arrival is still required." if new_units <= 0 and missing > 0 else ("Ingredients are locally available." if missing <= 0 else ("Buy or manufacture this material; no accessible source stock is available." if source_available <= 0 else "Prepare up to %d units beyond existing haul orders. Review the fields in Haul, then click Order haul." % new_units))
 
 func _production_panel(box: VBoxContainer) -> void:
 	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
-	facility.item_selected.connect(func(_index: int) -> void: _load_production())
+	facility.item_selected.connect(func(_index: int) -> void: _load_production(); _refresh())
 	recipe = _option(box, "Recipe / declared session access", [])
 	_button(box, "Select recipe", _change_recipe)
 	mode = _option(box, "Production mode", ["Stock target", "Continuous"])
@@ -291,6 +447,10 @@ func _production_panel(box: VBoxContainer) -> void:
 		var activity := _activity()
 		activity.set_stock_target(int(stock_target.value))
 		_result(activity.set_mode(mode.get_item_text(mode.selected))))
+	ingredient_heading = _label(box,"")
+	ingredient_heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ingredient_checklist = VBoxContainer.new()
+	box.add_child(ingredient_checklist)
 	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
 	_button(box, "Cancel consumed batch / stop", func() -> void: _result(_activity().cancel()))
 	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
@@ -344,6 +504,7 @@ func _construction_panel(box: VBoxContainer) -> void:
 		var plan: Dictionary = simulation.rear.construction.preview(_construction_kind(),_construction_point(),construction_turn.button_pressed)
 		base_map.placement_preview = plan
 		base_map.queue_redraw()
+		plan["inspection_only"] = true
 		_result(plan))
 	_button(box,"Place physical site",func() -> void:
 		_result(simulation.rear.construction.place(_construction_kind(),_construction_point(),construction_turn.button_pressed)))
@@ -406,7 +567,7 @@ func _training_panel(box: VBoxContainer) -> void:
 		if not training_rows.get_selected_items().is_empty(): _result(simulation.rear.training.withdraw(training_ids[training_rows.get_selected_items()[0]])))
 	training_access = CheckBox.new()
 	training_access.text = "Training facility accessible"
-	training_access.button_pressed = true
+	training_access.set_pressed_no_signal(true)
 	box.add_child(training_access)
 	training_access.toggled.connect(func(value: bool) -> void: _result(simulation.rear.training.set_access(value)))
 	training_status = _label(box,"")
@@ -415,6 +576,7 @@ func _training_panel(box: VBoxContainer) -> void:
 
 func _vehicles_panel(box: VBoxContainer) -> void:
 	_label(box,"F10 produced hulls retain their identity through crew, fuel and F11 parking.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"C30: accept R30 in Work and choose F11 place 5 before completion. Haul its listed ingredients to Vehicle Input; R33 needs ingredients at Munitions Input. Seat three existing P08 crew at Driver, Gunner and Commander, carry real M08, then drive to parking and Fleet Transfer in Dispatch. Preview the route's actual fuel needs. Send separately made autocannon rounds (E26) through HQ and Supply. The army handles field deployment and rack issue.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vehicle_rows = _list(box,140)
 	vehicle_rows.item_selected.connect(func(_index: int) -> void: _load_vehicle_stations(); _refresh())
 	vehicle_person = _option(box,"Actual rear person",[])
@@ -474,7 +636,7 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 	_button(box,"Preview measured route and gross load",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty():
 			var plan: Dictionary = simulation.rear.dispatch.route_preview(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())
-			_result({"ok":plan.ok,"message":("%.1f m, %.1f s, %.2f travel fuel, %.2f required with reserve, %.2f in tank, gross %.1f kg" % [plan.distance,plan.seconds,plan.fuel,plan.required_fuel,plan.tank_fuel,plan.gross_kg]) if plan.ok else plan.message}))
+			_result({"ok":plan.ok,"inspection_only":true,"message":("%.1f m, %.1f s, %.2f travel fuel, %.2f required with reserve, %.2f in tank, gross %.1f kg" % [plan.distance,plan.seconds,plan.fuel,plan.required_fuel,plan.tank_fuel,plan.gross_kg]) if plan.ok else plan.message}))
 	_button(box,"Apply measured route before departure",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.set_route_profile(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())))
 	_button(box,"Change selected manifest mode before departure",func() -> void:
@@ -560,8 +722,8 @@ func _load_vehicle_people() -> void:
 	if vehicle_person == null: return
 	var selected: String = str(vehicle_person.get_item_metadata(vehicle_person.selected)) if vehicle_person.selected >= 0 else ""
 	var ids: Array[String] = []
-	for p in simulation.rear.snapshot().people:
-		if p.owner == "army-blue": ids.append(p.id)
+	for p in simulation.rear.ledger.snapshot(false).entities:
+		if p.kind == "PERSON" and p.owner == "army-blue": ids.append(p.id)
 	if vehicle_person.item_count == ids.size():
 		var same := true
 		for index in ids.size():
@@ -609,10 +771,10 @@ func _activity() -> RefCounted:
 func _load_production() -> void:
 	var activity := _activity()
 	heavy_controls.visible = activity.has_method("accept_order")
-	bay_access.button_pressed = activity.bay_accessible if activity.has_method("accept_order") else true
-	parking_access.button_pressed = activity.parking_accessible if activity.has_method("accept_order") else true
+	bay_access.set_pressed_no_signal(activity.bay_accessible if activity.has_method("accept_order") else true)
+	parking_access.set_pressed_no_signal(activity.parking_accessible if activity.has_method("accept_order") else true)
 	mode.select(0 if activity.mode == "Stock target" else 1)
-	stock_target.value = activity.stock_target
+	stock_target.set_value_no_signal(activity.stock_target)
 	var view: Dictionary = activity.snapshot()
 	var choices: Array = view.get("recipe_choices", [view.recipe])
 	recipe.clear()
@@ -626,8 +788,8 @@ func _load_production() -> void:
 
 func _load_store() -> void:
 	var entry: Dictionary = simulation.rear.stores[store.get_item_text(store.selected)]
-	capacity.value = entry.capacity
-	accessible.button_pressed = entry.accessible
+	capacity.set_value_no_signal(entry.capacity)
+	accessible.set_pressed_no_signal(entry.accessible)
 
 func _change_recipe() -> void:
 	var activity := _activity()
@@ -644,6 +806,7 @@ func _change_recipe() -> void:
 	_load_production()
 
 func _result(result: Dictionary) -> void:
+	if not result.get("speed_change",false) and not result.get("inspection_only",false): simulation.after_command()
 	if feedback != null: feedback.text = result.get("message", str(result))
 	if is_node_ready(): _refresh()
 
@@ -767,9 +930,12 @@ func _refresh_dispatch(view: Dictionary) -> void:
 
 func _refresh() -> void:
 	if orders == null: return
+	_displayed_time = simulation.rear.time
+	_displayed_speed = simulation.speed
+	_displayed_planning_revision = simulation.planning_view_revision
+	base_map.queue_redraw()
 	var view: Dictionary = simulation.snapshot()
-	_sync_option(source,simulation.rear.stores.keys())
-	_sync_option(destination,simulation.rear.stores.keys())
+	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
 	_sync_option(construction_source,simulation.rear.stores.keys())
 	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
@@ -781,6 +947,7 @@ func _refresh() -> void:
 	for row in view.construction.rows:
 		if row.state == "Complete" and simulation.rear.construction.activities.has(row.id): production_ids.append(row.id)
 	_sync_option(facility,production_ids)
+	_refresh_ingredients(_activity().snapshot(),view.rear)
 	_fill(construction_rows,construction_ids,view.construction.rows,func(row: Dictionary) -> String:
 		return "%s %s %s | M11 %d | work %.1f/%.0f" % [row.id,row.kind,row.state,row.m11,row.progress,row.work])
 	var selected_site: String = _construction_site()
@@ -790,6 +957,7 @@ func _refresh() -> void:
 			var builders: String = "builders-"+row.id
 			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
 	_refresh_dispatch(view)
+	forward_delivery_panel.refresh()
 	_refresh_hq(view)
 	var offer: Dictionary = view.receiving.recovery_offer
 	recovery_button.visible = offer.available
@@ -813,10 +981,10 @@ func _refresh() -> void:
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:
 		vehicle_rows.select(0)
 		_load_vehicle_stations()
-	vehicle_status.text = "No F10-produced hull yet. Manufacture R25/R28 or expanded T03–T05, then use actual trained people and purchased M08."
+	vehicle_status.text = "No F10-produced hull yet. Select an accessible recipe in Work, then use actual trained people and M08. The C30 playtest provides R30 and R33 access alongside essential recipes."
 	for row in view.vehicles.rows:
 		if row.id != _vehicle_id(): continue
-		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Actual HQ transfer and firing are later systems." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
+		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Fleet Transfer preserves this hull at HQ; inspect military deployment on Battlefield and actual E26 issue in Supply." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
 	_fill(jobs, _job_ids, view.rear.jobs, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 	var lines: Array[String] = []
 	for activity in [view.production, view.munitions, view.materials, view.support]:

@@ -2,9 +2,12 @@ extends RefCounted
 ## Small explicit metre-cell world. No generator, renderer or world navigation owner.
 
 const Catalog = preload("res://game/terrain/terrain_catalog.gd")
+const RouteWork = preload("res://game/terrain/route_work.gd")
 const EPS := 0.0000001
 var bounds := Rect2i(0, 0, 900, 40)
 var cells: Dictionary = {}
+var base_regions: Array[Dictionary] = []
+var scenario: Dictionary = {}
 var obstacles: Array[Dictionary] = []
 var shields: Array[Dictionary] = []
 var field_effects: Array[Dictionary] = []
@@ -23,7 +26,23 @@ func paint(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
 
 
 func cell(at: Vector2i) -> Dictionary:
-	return cells.get(at, {"terrain": "TR01"})
+	if cells.has(at): return cells[at]
+	for index in range(base_regions.size()-1,-1,-1):
+		if base_regions[index].area.has_point(at): return base_regions[index].tile
+	return {"terrain": "TR01"}
+
+func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
+	if cells.has(at): return cells[at]
+	for region in regions:
+		if region.area.has_point(at): return region.tile
+	return {"terrain": "TR01"}
+
+func add_base_region(area: Rect2i, terrain: String, properties: Dictionary = {}) -> void:
+	assert(bounds.encloses(area) and Catalog.SURFACES.has(terrain))
+	var tile := properties.duplicate(true)
+	tile.terrain = terrain
+	base_regions.append({"area":area,"tile":tile})
+	revision += 1
 
 func set_bridge_surface(id: String, deck_cells: Array, approach_cells: Array, code: String, load_kg: float, speed_cap: float, width: float, classes: Array, complete: bool) -> Dictionary:
 	if id.is_empty(): return _blocked("Bridge surface needs an actual project identity.")
@@ -114,6 +133,11 @@ func obstacle(id: String, rectangle: Rect2, bottom: float, top: float, solid: bo
 func support(at: Vector2i, movement_class: int) -> Dictionary:
 	if not bounds.has_point(at): return _blocked("Outside declared world")
 	var tile := cell(at)
+	return _support_from_tile(tile,movement_class)
+
+
+func _support_from_tile(tile: Dictionary, movement_class: int) -> Dictionary:
+	# A fresh rule is required: route applies cell-local field effects and caps.
 	var surface: String = tile.terrain
 	var overlay: Dictionary = tile.get("overlay", {})
 	var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
@@ -168,12 +192,56 @@ func _overlap_interval(entity: Dictionary, start: Vector2, finish: Vector2, rect
 	return Vector2(low, high)
 
 
+func _cell_overlap_context(entity: Dictionary, start: Vector2, finish: Vector2) -> Array[Dictionary]:
+	var context: Array[Dictionary] = []
+	var size: Vector2 = entity.size
+	if not size.is_finite() or not is_finite(entity.facing) or not start.is_finite() or not finish.is_finite(): return context
+	var along := Vector2.from_angle(entity.facing)
+	var across := along.orthogonal()
+	var half: Vector2 = entity.size * 0.5
+	var cell_size := Vector2.ONE
+	for axis in [Vector2.RIGHT, Vector2.DOWN, along, across]:
+		# Preserve the original expression, including each unit-size multiply.
+		# Dictionary floats retain the original double precision; Vector2/4
+		# packing here would round radius/velocity to engine real precision.
+		var radius: float = absf(axis.dot(along)) * half.x + absf(axis.dot(across)) * half.y + absf(axis.x) * cell_size.x * 0.5 + absf(axis.y) * cell_size.y * 0.5
+		var velocity: float = axis.dot(finish - start)
+		context.append({"axis":axis,"radius":radius,"velocity":velocity})
+	return context
+
+
+func _cell_overlap_interval(entity: Dictionary, start: Vector2, finish: Vector2, rectangle: Rect2, context: Array[Dictionary]) -> Vector2:
+	if context.is_empty() or rectangle.size != Vector2.ONE: return _overlap_interval(entity,start,finish,rectangle)
+	var low := 0.0
+	var high := 1.0
+	for entry in context:
+		var axis: Vector2 = entry.axis
+		var radius: float = entry.radius
+		var origin: float = axis.dot(start - rectangle.get_center())
+		var velocity: float = entry.velocity
+		if absf(velocity) < EPS:
+			if absf(origin) >= radius - EPS: return Vector2(-1, -1)
+		else:
+			var first: float = (-radius - origin) / velocity
+			var last: float = (radius - origin) / velocity
+			low = maxf(low, minf(first, last))
+			high = minf(high, maxf(first, last))
+			if high - low <= EPS: return Vector2(-1, -1)
+	return Vector2(low, high)
+
+
+func begin_route(entity: Dictionary, destination: Vector2) -> RefCounted:
+	return RouteWork.new(self,entity,destination)
+
 func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var start: Vector2 = entity.position
 	var distance := start.distance_to(destination)
 	if distance <= EPS: return _blocked("Choose a distinct lane endpoint")
 	var direction := (destination - start) / distance
-	if absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: return _blocked("Declared straight lane requires current hull alignment; no turn planner")
+	# Callers can derive this exact lane heading from the same two positions.
+	# Avoid rejecting it through Vector2 normalization/angle roundoff. Other
+	# headings still retain the existing alignment rule; no turn is granted.
+	if entity.facing != (destination-start).angle() and absf(direction.cross(Vector2.from_angle(entity.facing))) > EPS: return _blocked("Declared straight lane requires current hull alignment; no turn planner")
 	for point in footprint(entity, start) + footprint(entity, destination):
 		if point.x < bounds.position.x - EPS or point.y < bounds.position.y - EPS or point.x > bounds.end.x + EPS or point.y > bounds.end.y + EPS: return _blocked("Whole footprint exceeds declared world")
 	for item in obstacles:
@@ -183,20 +251,40 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var intervals: Array[Dictionary] = []
 	var occupied_cells: Dictionary = {}
 	var cuts: Array[float] = [0.0, 1.0]
-	for y in range(maxi(bounds.position.y, int(floor(minimum.y))), mini(bounds.end.y, int(ceil(maximum.y)))):
-		for x in range(maxi(bounds.position.x, int(floor(minimum.x))), mini(bounds.end.x, int(ceil(maximum.x)))):
+	var previous_tile: Dictionary = {}
+	var previous_rule: Dictionary = {}
+	var previous_shareable := false
+	var first_cell := Vector2i(maxi(bounds.position.x,int(floor(minimum.x))),maxi(bounds.position.y,int(floor(minimum.y))))
+	var past_cell := Vector2i(mini(bounds.end.x,int(ceil(maximum.x))),mini(bounds.end.y,int(ceil(maximum.y))))
+	var cell_area := Rect2i(first_cell,past_cell-first_cell)
+	var regions: Array[Dictionary] = []
+	# One synchronous candidate list; retain last-region-wins order. Only
+	# ordinary positive integer rectangles may be excluded by the scan AABB.
+	for index in range(base_regions.size()-1,-1,-1):
+		var region: Dictionary = base_regions[index]
+		var area: Variant = region.area
+		if area is Rect2i and cell_area.size.x > 0 and cell_area.size.y > 0:
+			var ordinary: bool = area.size.x > 0 and area.size.y > 0 and int(area.position.x)+int(area.size.x) <= 2147483647 and int(area.position.y)+int(area.size.y) <= 2147483647
+			if ordinary and not area.intersects(cell_area): continue
+		regions.append(region)
+	var overlap_context := _cell_overlap_context(entity,start,destination)
+	for y in range(first_cell.y,past_cell.y):
+		for x in range(first_cell.x,past_cell.x):
 			var at := Vector2i(x, y)
-			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
+			var interval := _cell_overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE),overlap_context)
 			if interval.x < 0: continue
-			if not str(cell(at).get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
-			var rule := support(at, entity.movement_class)
+			var tile := _route_tile(at,regions)
+			if not str(tile.get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
+			var rule := _support_from_tile(tile, entity.movement_class)
 			if not rule.ok: return _blocked("Cell %s: %s" % [at, rule.reason])
+			var shareable := true
 			for effect in field_effects:
 				if not effect.area.has_point(Vector2(at)+Vector2(0.5,0.5)): continue
+				shareable = false
 				if effect.code == "S02" and entity.movement_class == 0: rule.factor *= 0.8
 				if effect.code == "S05" and entity.movement_class == 0: rule.factor *= 0.7
 				if effect.code == "S04" and entity.movement_class == 2: rule.factor *= 0.25
-			var overlay: Dictionary = cell(at).get("overlay",{})
+			var overlay: Dictionary = tile.get("overlay",{})
 			if overlay.get("complete",false) and overlay.get("kind","") == "causeway" and entity.has("gross_mass_kg") and float(entity.gross_mass_kg) > float(overlay.get("load_kg",8000.0))+EPS:
 				return _blocked("Causeway gross-load limit excludes this actual body and contents")
 			if overlay.get("complete",false) and overlay.get("kind","") == "crossing" and overlay.has("code"):
@@ -204,10 +292,19 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 				if entity.size.y > float(overlay.width)+EPS: return _blocked("%s deck is narrower than the actual footprint" % overlay.code)
 				rule["speed_cap"] = float(overlay.speed_cap)
 			elif bridge_approaches.has(at):
+				shareable = false
 				var approach_cap := INF
 				for cap in bridge_approaches[at].values(): approach_cap = minf(approach_cap,float(cap))
 				rule["speed_cap"] = approach_cap
-			occupied_cells[at] = true
+			# Finalize every fresh rule first. Only adjacent occupied cells with
+			# the identical raw tile and no cell-local modifier may share it.
+			if shareable and previous_shareable and is_same(tile,previous_tile): rule = previous_rule
+			previous_tile = tile
+			previous_rule = rule
+			previous_shareable = shareable
+			# Only this synchronous route owns these read-only tile references.
+			# Keep insertion order for the existing first height-edge refusal.
+			occupied_cells[at] = tile
 			intervals.append({"from": interval.x, "to": interval.y, "rule": rule})
 			cuts.append(interval.x)
 			cuts.append(interval.y)
@@ -216,31 +313,114 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	for at in occupied_cells:
 		for offset in [Vector2i.RIGHT, Vector2i.DOWN]:
 			if not occupied_cells.has(at + offset): continue
+			var here: Dictionary = occupied_cells[at]
+			var there: Dictionary = occupied_cells[at + offset]
+			# The identical raw tile has identical pure height at either edge
+			# point. Distinct dictionaries still take every original check.
+			if is_same(here,there): continue
 			var edge := Vector2(at + offset)
 			var tangent := Vector2.DOWN if offset == Vector2i.RIGHT else Vector2.RIGHT
 			for point in [edge, edge + tangent]:
-				if absf(_tile_height(cell(at), point) - _tile_height(cell(at + offset), point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
+				if absf(_tile_height(here, point) - _tile_height(there, point)) > 0.00001: return _blocked("Disconnected height support at %s" % at)
+	return _route_parts(entity, start, destination, distance, intervals, cuts)
+
+
+func _homogeneous_intervals(intervals: Array[Dictionary], cuts: Array[float]) -> bool:
+	if intervals.is_empty(): return false
+	var rule: Dictionary = intervals[0].rule
+	for interval in intervals:
+		if not is_same(interval.rule,rule): return false
+		# Only ordinary finite floating-point SAT bounds use the shortcut.
+		if typeof(interval.from) != TYPE_FLOAT or typeof(interval.to) != TYPE_FLOAT: return false
+		if not is_finite(interval.from) or not is_finite(interval.to) or interval.from >= interval.to: return false
+	for cut in cuts:
+		if not is_finite(cut): return false
+	return true
+
+
+func _scalar_route_rule(rule: Dictionary) -> bool:
+	return typeof(rule.get("factor")) == TYPE_FLOAT and typeof(rule.get("fuel")) == TYPE_FLOAT and typeof(rule.get("slope")) == TYPE_FLOAT and typeof(rule.get("surface")) == TYPE_STRING and (not rule.has("speed_cap") or typeof(rule.get("speed_cap")) == TYPE_FLOAT)
+
+
+func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 	cuts.sort()
+	var homogeneous := _homogeneous_intervals(intervals,cuts)
+	# Sweep starts once; only footprint cells still overlapping the current span
+	# participate. Keep original cell order so surface lists remain identical.
+	var pending: Array[int] = []
+	for index in intervals.size(): pending.append(index)
+	pending.sort_custom(func(a: int, b: int) -> bool: return intervals[a].from < intervals[b].from)
+	var cursor := 0
+	var active: Array[int] = []
+	var furthest_end := -INF
 	var parts: Array[Dictionary] = []
 	var seconds := 0.0
 	var fuel := 0.0
+	var fold_checked := not homogeneous
+	var reuse_fold := false
+	var fold_ready := false
+	var saved_factor := INF
+	var saved_burn := 0.0
+	var saved_slope := 0.0
+	var saved_cap := INF
+	var saved_surface := ""
 	for index in range(cuts.size() - 1):
 		var begin: float = cuts[index]
 		var end: float = cuts[index + 1]
 		if end - begin <= EPS: continue
 		var middle := (begin + end) * 0.5
+		if homogeneous:
+			while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
+				furthest_end = maxf(furthest_end,intervals[pending[cursor]].to)
+				cursor += 1
+			# Activated starts are <= this monotone midpoint. Their maximum end
+			# reaches it iff some interval covers it, including touching ends.
+			# Index zero represents only the common rule, never assumed coverage.
+			if cursor > 0 and furthest_end >= middle:
+				if active.is_empty(): active.append(0)
+			else: active.clear()
+		else:
+			for index_active in range(active.size()-1,-1,-1):
+				if intervals[active[index_active]].to < middle: active.remove_at(index_active)
+			while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
+				var id: int = pending[cursor]
+				if intervals[id].to >= middle: active.insert(active.bsearch(id),id)
+				cursor += 1
 		var factor := INF
 		var burn := 0.0
 		var surfaces: Array[String] = []
 		var max_slope := 0.0
 		var speed_cap := INF
-		for interval in intervals:
-			if middle < interval.from or middle > interval.to: continue
-			factor = minf(factor, interval.rule.factor)
-			burn = maxf(burn, interval.rule.fuel)
-			max_slope = maxf(max_slope, interval.rule.slope)
-			speed_cap = minf(speed_cap,float(interval.rule.get("speed_cap",INF)))
-			if interval.rule.surface not in surfaces: surfaces.append(interval.rule.surface)
+		# Do not inspect a rule's fields until an occupied retained span.
+		if not fold_checked and not active.is_empty():
+			fold_checked = true
+			reuse_fold = _scalar_route_rule(intervals[0].rule)
+		if reuse_fold and fold_ready and not active.is_empty():
+			factor = saved_factor
+			burn = saved_burn
+			max_slope = saved_slope
+			speed_cap = saved_cap
+			surfaces.append(saved_surface) # every part still owns a fresh array
+		else:
+			var previous_rule: Dictionary = {}
+			for id in active:
+				var rule: Dictionary = intervals[id].rule
+				# Repeating the same consecutive min/max operand and surface is
+				# idempotent. Never skip across a differing active rule.
+				if is_same(rule,previous_rule): continue
+				previous_rule = rule
+				factor = minf(factor, rule.factor)
+				burn = maxf(burn, rule.fuel)
+				max_slope = maxf(max_slope, rule.slope)
+				speed_cap = minf(speed_cap,float(rule.get("speed_cap",INF)))
+				if rule.surface not in surfaces: surfaces.append(rule.surface)
+			if reuse_fold and not fold_ready and not active.is_empty():
+				saved_factor = factor
+				saved_burn = burn
+				saved_slope = max_slope
+				saved_cap = speed_cap
+				saved_surface = surfaces[0]
+				fold_ready = true
 		var length := (end - begin) * distance
 		var speed: float = minf(entity.base * factor,speed_cap)
 		var used: float = length * entity.rate * burn / 1000.0
@@ -288,6 +468,67 @@ func _volume_interval(start: Vector3, finish: Vector3, item: Dictionary) -> Vect
 	return Vector2(low, high)
 
 
+func _probe_regions(segments: Array[Dictionary]) -> Array[Dictionary]:
+	var regions: Array[Dictionary] = []
+	if segments.is_empty() or base_regions.is_empty(): return regions
+	var first: Vector2i = segments[0].cell
+	var last := first
+	# These are the original ray's actual integer cells, including any rounding
+	# at grid edges. No replacement ray or approximate coordinate bound is used.
+	for segment in segments:
+		first = first.min(segment.cell)
+		last = last.max(segment.cell)
+	var cell_area := Rect2i(first,last-first+Vector2i.ONE)
+	var filterable: bool = cell_area.size.x > 0 and cell_area.size.y > 0 and last.x < 2147483647 and last.y < 2147483647
+	for index in range(base_regions.size()-1,-1,-1):
+		var region: Dictionary = base_regions[index]
+		var area: Variant = region.get("area")
+		if filterable and area is Rect2i:
+			var ordinary: bool = area.size.x > 0 and area.size.y > 0 and int(area.position.x)+int(area.size.x) <= 2147483647 and int(area.position.y)+int(area.size.y) <= 2147483647
+			if ordinary and not area.intersects(cell_area): continue
+		regions.append(region)
+	return regions
+
+
+func _probe_corridor_clear(start: Vector2, finish: Vector2, a: Vector3, b: Vector3) -> bool:
+	# This proof applies only to the production lookup/traversal implementations.
+	var script: Script = get_script()
+	if script == null or script.resource_path != "res://game/terrain/terrain_world.gd": return false
+	if not cells.is_empty() or base_regions.size() > 256: return false
+	if not start.is_finite() or not finish.is_finite() or not (finish-start).is_finite(): return false
+	if not a.is_finite() or not b.is_finite() or not (b-a).is_finite(): return false
+	# Bound the computed lerps, not the authored finish: cancellation at weight 1
+	# can change its value. Vector2 bounds ray_cells; Vector3 bounds probe heights.
+	var xy_first := start.lerp(finish,0.0)
+	var xy_last := start.lerp(finish,1.0)
+	var xyz_first := a.lerp(b,0.0)
+	var xyz_last := a.lerp(b,1.0)
+	if not xy_first.is_finite() or not xy_last.is_finite() or not xyz_first.is_finite() or not xyz_last.is_finite(): return false
+	if minf(xyz_first.z,xyz_last.z) <= 0.0: return false
+	var left: float = floor(minf(xy_first.x,xy_last.x))
+	var top: float = floor(minf(xy_first.y,xy_last.y))
+	var right: float = floor(maxf(xy_first.x,xy_last.x))
+	var bottom: float = floor(maxf(xy_first.y,xy_last.y))
+	# Include both endpoint cells; keep Rect2i's size and exclusive end representable.
+	if left < -2147483648.0 or top < -2147483648.0 or right >= 2147483647.0 or bottom >= 2147483647.0: return false
+	var width: float = right-left+1.0
+	var height: float = bottom-top+1.0
+	if width <= 0.0 or height <= 0.0 or width > 2147483647.0 or height > 2147483647.0: return false
+	var area := Rect2i(int(left),int(top),int(width),int(height))
+	for region in base_regions:
+		var rectangle: Variant = region.get("area")
+		if not rectangle is Rect2i: return false
+		if rectangle.size.x <= 0 or rectangle.size.y <= 0: return false
+		if int(rectangle.position.x)+int(rectangle.size.x) > 2147483647 or int(rectangle.position.y)+int(rectangle.size.y) > 2147483647: return false
+		if not rectangle.intersects(area): continue
+		var tile: Variant = region.get("tile")
+		if not tile is Dictionary: return false
+		# All potential winners, including shadowed regions, must use the exact
+		# original flat-zero defaults. Never interpret or coerce custom values.
+		if tile.has("height") or tile.has("gradient") or tile.has("overlay") or tile.has("vegetation_height"): return false
+	return true
+
+
 func probe(start: Vector2, finish: Vector2, start_height: float, target_height: float, maximum: float, drone: bool = false) -> Dictionary:
 	var distance := start.distance_to(finish)
 	var a := Vector3(start.x, start.y, ground(start) + start_height)
@@ -308,50 +549,53 @@ func probe(start: Vector2, finish: Vector2, start_height: float, target_height: 
 			reason = "Opaque volume"
 			blocker = item.id
 	var budget := 0.0
-	for segment in ray_cells(start, finish):
-		var tile := cell(segment.cell)
-		var first: float = segment.from
-		var last: float = segment.to
-		var from := a.lerp(b, first)
-		var to := a.lerp(b, last)
-		var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
-		var base: float = tile.get("height", 0.0)
-		var overlay: Dictionary = tile.get("overlay", {})
-		if overlay.get("complete", false) and overlay.has("height"):
-			base = overlay.height
-			gradient = Vector2.ZERO
-		var low: float = from.z - (base + gradient.dot(Vector2(from.x, from.y)))
-		var high: float = to.z - (base + gradient.dot(Vector2(to.x, to.y)))
-		if minf(low, high) <= 0.0:
-			var hit: float = first if low <= 0.0 else lerpf(first, last, low / (low - high))
-			if hit < stop:
-				stop = hit
-				reason = "Terrain height"
+	if not _probe_corridor_clear(start,finish,a,b):
+		var segments := ray_cells(start, finish)
+		var regions := _probe_regions(segments)
+		for segment in segments:
+			var tile := _route_tile(segment.cell,regions)
+			var first: float = segment.from
+			var last: float = segment.to
+			var from := a.lerp(b, first)
+			var to := a.lerp(b, last)
+			var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
+			var base: float = tile.get("height", 0.0)
+			var overlay: Dictionary = tile.get("overlay", {})
+			if overlay.get("complete", false) and overlay.has("height"):
+				base = overlay.height
+				gradient = Vector2.ZERO
+			var low: float = from.z - (base + gradient.dot(Vector2(from.x, from.y)))
+			var high: float = to.z - (base + gradient.dot(Vector2(to.x, to.y)))
+			if minf(low, high) <= 0.0:
+				var hit: float = first if low <= 0.0 else lerpf(first, last, low / (low - high))
+				if hit < stop:
+					stop = hit
+					reason = "Terrain height"
+					blocker = str(segment.cell)
+			var top: float = tile.get("vegetation_height", 0.0)
+			var vegetation_from := first
+			var vegetation_to := last
+			if minf(low, high) >= top: continue
+			if low > top: vegetation_from = lerpf(first, last, (low - top) / (low - high))
+			if high > top: vegetation_to = lerpf(first, last, (top - low) / (high - low))
+			if drone and tile.terrain == "TR06" and tile.get("canopy", false):
+				if vegetation_from < stop:
+					stop = vegetation_from
+					reason = "Dense canopy"
+					blocker = str(segment.cell)
+			var cost: float = Catalog.SURFACES[tile.terrain].sight
+			if drone and tile.terrain in ["TR03", "TR04"]: cost = 0.0
+			var metres: float = maxf(0, minf(vegetation_to, stop) - vegetation_from) * distance
+			if metres <= EPS or cost == 0: continue
+			var spent := metres * cost
+			result.segments.append({"cell": segment.cell, "terrain": tile.terrain, "metres": metres, "cost": cost, "spent": spent})
+			if budget + spent >= 100.0 - EPS:
+				stop = vegetation_from + (100.0 - budget) / cost / maxf(distance, EPS)
+				reason = "Vegetation budget"
 				blocker = str(segment.cell)
-		var top: float = tile.get("vegetation_height", 0.0)
-		var vegetation_from := first
-		var vegetation_to := last
-		if minf(low, high) >= top: continue
-		if low > top: vegetation_from = lerpf(first, last, (low - top) / (low - high))
-		if high > top: vegetation_to = lerpf(first, last, (top - low) / (high - low))
-		if drone and tile.terrain == "TR06" and tile.get("canopy", false):
-			if vegetation_from < stop:
-				stop = vegetation_from
-				reason = "Dense canopy"
-				blocker = str(segment.cell)
-		var cost: float = Catalog.SURFACES[tile.terrain].sight
-		if drone and tile.terrain in ["TR03", "TR04"]: cost = 0.0
-		var metres: float = maxf(0, minf(vegetation_to, stop) - vegetation_from) * distance
-		if metres <= EPS or cost == 0: continue
-		var spent := metres * cost
-		result.segments.append({"cell": segment.cell, "terrain": tile.terrain, "metres": metres, "cost": cost, "spent": spent})
-		if budget + spent >= 100.0 - EPS:
-			stop = vegetation_from + (100.0 - budget) / cost / maxf(distance, EPS)
-			reason = "Vegetation budget"
-			blocker = str(segment.cell)
-			budget = 100.0
-			break
-		budget += spent
+				budget = 100.0
+				break
+			budget += spent
 	result.budget = budget
 	result.clear = is_inf(stop)
 	result.reason = "Clear" if result.clear else reason
@@ -363,6 +607,12 @@ func probe(start: Vector2, finish: Vector2, start_height: float, target_height: 
 		var location := Vector2(point.x, point.y)
 		result.block_cell = cell(Vector2i(floor(location.x), floor(location.y))).duplicate(true)
 	return result
+
+
+func is_visible(observer: Vector2, target: Vector2, role: String = "ordinary") -> bool:
+	assert(Catalog.ROLES.has(role))
+	var profile: Dictionary = Catalog.ROLES[role]
+	return probe(observer,target,profile.eye,1.7,profile.range,role == "drone").clear
 
 
 func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzzle: float = 1.5, weapon_range: float = 160.0) -> Dictionary:

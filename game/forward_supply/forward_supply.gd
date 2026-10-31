@@ -3,6 +3,7 @@ extends RefCounted
 ## The ledger owns all stock and holder changes; this service owns only commitments.
 
 const ForwardTransport = preload("res://game/forward_supply/forward_transport.gd")
+const VehicleRackIssue = preload("res://game/forward_supply/vehicle_rack_issue.gd")
 const EPS := 0.000001
 const LOCAL_RADIUS := 20.0
 const HANDOFF_RADIUS := 0.75
@@ -10,17 +11,57 @@ const HANDLING_SECONDS := 2.0
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var transport: RefCounted
+var rack_issue: RefCounted
+var delivery_stops: Dictionary = {}
 var _sequence := 0
 
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	transport = ForwardTransport.new(rear)
+	rack_issue = VehicleRackIssue.new(rear)
+
+func request_vehicle_rack_issue(stock_id: String, hull_id: String, handler_id: String, quantity: int, stop_id: String) -> Dictionary:
+	return rack_issue.request(stock_id,hull_id,handler_id,quantity,stop_id)
+
+
+func register_delivery_stop(stop_id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
+	var stop: Dictionary = _rear().ledger.inspect_entity(stop_id)
+	var hq: Vector2 = _rear().ledger.inspect_entity("hq-berth").position
+	if stop.get("kind","") != "PLACE" or stop.position.distance_to(hq) <= LOCAL_RADIUS:
+		return _fail("Declare a real forward place outside the HQ issue area.")
+	if outbound_points.is_empty() != return_points.is_empty():
+		return _fail("Declare both physical route directions or use the previewed direct candidate.")
+	if not outbound_points.is_empty():
+		if outbound_points.size() < 2 or return_points.size() < 2:
+			return _fail("Each authored route needs actual origin and destination waypoints.")
+		for point in outbound_points + return_points:
+			if typeof(point) != TYPE_VECTOR2 or not (point as Vector2).is_finite():
+				return _fail("Every authored waypoint must be a finite metre position.")
+		if not (outbound_points[0] as Vector2).is_equal_approx(hq) or not (outbound_points[-1] as Vector2).is_equal_approx(stop.position) or not (return_points[0] as Vector2).is_equal_approx(stop.position) or not (return_points[-1] as Vector2).is_equal_approx(hq):
+			return _fail("Authored routes must connect actual HQ and this stop in both directions.")
+	delivery_stops[stop_id] = {"outbound_points":outbound_points.duplicate(),"return_points":return_points.duplicate()}
+	return {"ok":true,"message":"Physical forward stop and its route candidate declared."}
 
 
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
 	return transport.request_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func request_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.request_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func preview_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return transport.preview_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
 
 
 func resume_delivery(id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
@@ -32,7 +73,7 @@ func interrupt_delivery(id: String) -> Dictionary:
 
 
 func hull_committed(id: String) -> bool:
-	return transport.hull_committed(id)
+	return transport.hull_committed(id) or rack_issue.hull_committed(id)
 
 
 func start_issue(stock_id: String, recipient_id: String, handler_id: String, quantity: int, stop_id: String) -> Dictionary:
@@ -48,6 +89,10 @@ func start_issue(stock_id: String, recipient_id: String, handler_id: String, qua
 		return _fail("Only unreserved friendly stock actually arrived in a carrier or at this stop can be issued.")
 	if handler_id == recipient_id or not _active_member(recipient_id) or not _active_member(handler_id):
 		return _fail("Recipient and distinct handler must be active actual squad members.")
+	if rear.battlefield_operations != null and (rear.battlefield_operations.person_committed(recipient_id) or rear.battlefield_operations.person_committed(handler_id)):
+		return _fail("Both people must stop tactical movement before local issue.")
+	if rear.military != null and (rear.military.person_committed(recipient_id) or rear.military.person_committed(handler_id)):
+		return _fail("Timed troop boarding or dismount already owns one of these people.")
 	if not _on_foot(recipient) or not _on_foot(handler) or _other_busy(recipient_id) or _other_busy(handler_id):
 		return _fail("Both people must be healthy, dismounted and free of conflicting work.")
 	if person_committed(recipient_id) or person_committed(handler_id):
@@ -91,6 +136,10 @@ func resume_issue(id: String) -> Dictionary:
 	var stop: Dictionary = rear.ledger.inspect_entity(row.stop)
 	if carried.get("holder_id","") != row.handler or carried.quantity != row.quantity or not _active_member(row.handler) or not _active_member(row.recipient):
 		return _fail("The same real portion and active members must still exist; no stock is recreated.")
+	if rear.battlefield_operations != null and (rear.battlefield_operations.person_committed(row.recipient) or rear.battlefield_operations.person_committed(row.handler)):
+		return _fail("Both people must stop tactical movement before local issue.")
+	if rear.military != null and (rear.military.person_committed(row.handler) or rear.military.person_committed(row.recipient)):
+		return _fail("Timed troop boarding or dismount already owns one of these people.")
 	if not _on_foot(handler) or not _on_foot(recipient) or _other_busy(row.handler) or _other_busy(row.recipient):
 		return _fail("Handler and recipient must be dismounted and free of conflicting work.")
 	if handler.position.distance_to(stop.position) > LOCAL_RADIUS + EPS or recipient.position.distance_to(stop.position) > LOCAL_RADIUS + EPS:
@@ -104,6 +153,7 @@ func resume_issue(id: String) -> Dictionary:
 
 
 func person_committed(person_id: String) -> bool:
+	if rack_issue.person_committed(person_id): return true
 	if transport.person_committed(person_id): return true
 	for row in jobs.values():
 		if row.state == "Interrupted Carry":
@@ -117,7 +167,7 @@ func handler_committed(person_id: String) -> bool:
 
 
 func next_boundary() -> float:
-	var next: float = transport.next_boundary()
+	var next: float = minf(transport.next_boundary(),rack_issue.next_boundary())
 	for row in jobs.values():
 		if row.state in ["Walking Source","Pickup","Walking Recipient","Drop"]: next = minf(next,float(row.deadline))
 	return next
@@ -125,6 +175,7 @@ func next_boundary() -> float:
 
 func advance_to(at: float) -> void:
 	transport.advance_to(at)
+	rack_issue.advance_to(at)
 	for row in jobs.values():
 		if row.state not in ["Walking Source","Walking Recipient"]: continue
 		var handler: Dictionary = _rear().ledger.inspect_entity(row.handler)
@@ -141,6 +192,7 @@ func advance_to(at: float) -> void:
 func settle() -> bool:
 	var rear: RefCounted = _rear()
 	var changed: bool = transport.settle()
+	changed = rack_issue.settle() or changed
 	for row in jobs.values():
 		if row.state not in ["Walking Source","Pickup","Walking Recipient","Drop"] or row.deadline > rear.time + EPS: continue
 		var handler: Dictionary = rear.ledger.inspect_entity(row.handler)
@@ -254,7 +306,7 @@ func _active_member(id: String) -> bool:
 
 func _on_foot(person: Dictionary) -> bool:
 	if person.get("kind","") != "PERSON" or person.health <= 0 or person.pending_assignment != "None" or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty(): return false
-	return _rear().ledger.inspect_entity(person.holder_id).get("kind","") == "PLACE"
+	return _rear().ledger.entity_kind(person.holder_id) == "PLACE"
 
 
 func _other_busy(id: String) -> bool:
@@ -282,11 +334,12 @@ func _leg(person: Dictionary, destination: Vector2) -> Dictionary:
 func snapshot() -> Dictionary:
 	var rows: Array[Dictionary] = []
 	for row in jobs.values(): rows.append(row.duplicate(true))
-	return {"rows":rows,"transport":transport.snapshot()}
+	return {"rows":rows,"transport":transport.snapshot(),"rack_issue":rack_issue.snapshot()}
 
 
 func audit() -> Array[String]:
 	var errors: Array[String] = transport.audit()
+	errors.append_array(rack_issue.audit())
 	for row in jobs.values():
 		var carried: Dictionary = _rear().ledger.inspect_entity(row.carried_stock)
 		if row.state in ["Walking Recipient","Drop"] and (carried.is_empty() or carried.holder_id != row.handler or carried.quantity != row.quantity):

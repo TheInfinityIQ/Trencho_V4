@@ -50,20 +50,49 @@ func add_carrier(id: String, holder_id: String, owner: String, controller: Strin
 	return _ok("Carrier registered.", id)
 
 
-func add_initial_vehicle(id: String, type: String, holder: String, owner: String, properties: Dictionary, fuel: float) -> Dictionary:
+func add_initial_vehicle(id: String, type: String, holder: String, owner: String, properties: Dictionary, fuel: float, domain: String = "Rear") -> Dictionary:
 	var canonical: Dictionary = preload("res://game/production/vehicle_specs.gd").TYPES
 	var fleet := rear_fleet_status(owner)
-	if _time != 0.0 or not _free_id(id) or not _is_place(holder) or owner.is_empty() or not canonical.has(type) or properties != canonical[type] or not is_finite(fuel) or fuel < 0.0 or fuel > float(properties.get("tank_capacity",-1)) or fleet.live+fleet.reserved >= REAR_FLEET_LIMIT:
+	var military_count := 0
+	for existing in _entities.values():
+		if existing.kind == Records.Kind.CARRIER and existing.owner == owner and existing.fleet_domain == "Military" and existing.health > 0: military_count += 1
+	if _time != 0.0 or not _free_id(id) or not _is_place(holder) or owner not in ["army-blue","army-red"] or domain not in ["Rear","Military"] or not canonical.has(type) or properties != canonical[type] or not is_finite(fuel) or fuel < 0.0 or fuel > float(properties.get("tank_capacity",-1)) or (domain == "Rear" and fleet.live+fleet.reserved >= REAR_FLEET_LIMIT) or (domain == "Military" and military_count >= 24):
 		return _reject("INVALID_INITIAL_VEHICLE","Initial vehicles require time zero, canonical properties, bounded fuel and a free rear fleet place.")
 	var entity := _new_entity(id,Records.Kind.CARRIER,type,owner,owner,holder,"Declared starting scenario vehicle")
 	entity.vehicle_spec = properties.duplicate(true)
 	entity.unit_mass_kg = properties.mass
 	entity.health = properties.health
 	entity.max_health = properties.health
-	entity.fleet_domain = "Rear"
+	entity.fleet_domain = domain
+	if domain == "Military": entity.controller = owner+"-hq"
 	entity.fuel = fuel
 	_fuel_initial += fuel
 	return _ok("Initial vehicle and tank fuel recorded once.",id)
+
+
+func assign_initial_vehicle_crew(person_id: String, hull_id: String, station: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(hull_id)
+	if _time != 0.0 or person == null or hull == null or hull.kind != Records.Kind.CARRIER or hull.health <= 0 or hull.fleet_domain != "Military" or station not in hull.vehicle_spec.get("stations",[]) or person.owner != hull.owner or person.health <= 0 or not person.basic_training or person.rear_place != "None" or person.assignment != Records.Assignment.AVAILABLE or person.pending_assignment != -1 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not _colocated(person_id,hull_id):
+		return _reject("INVALID_INITIAL_CREW","A time-zero military station requires its same-army qualified free person at the hull.")
+	if person.qualification != "P08" and not (hull.design_type == "T03" and station == "Gunner" and person.qualification == "P04"):
+		return _reject("UNQUALIFIED_INITIAL_CREW","The actual station requires P08, or P04 for a technical gunner.")
+	for other in _entities.values():
+		if other is Records.Person and other.holder_id == hull_id and other.crew_station == station: return _reject("STATION_OCCUPIED","Initial station already has its real occupant.")
+	person.holder_id = hull_id
+	person.position = Vector2.ZERO
+	person.crew_station = station
+	person.controller = hull.controller
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,"vehicle:"+hull_id)
+	return _ok("Initial crew station occupied by the same real person.",person_id)
+
+
+func add_initial_hq_person(id: String, place: String, owner: String, assignment: int, qualification: String = "None") -> Dictionary:
+	if _time != 0.0 or owner not in ["army-blue","army-red"] or assignment not in [Records.Assignment.HQ_DUTY,Records.Assignment.HQ_RESERVE] or not _is_place(place): return _reject("INVALID_INITIAL_HQ_PERSON","Initial HQ staff require a declared physical place and army at time zero.")
+	var result := add_person(id,place,owner,Records.Assignment.AVAILABLE,true,qualification,"None")
+	if not result.ok: return result
+	_set_assignment(_person(id),assignment,"fixed-hq" if assignment == Records.Assignment.HQ_DUTY else "")
+	return _ok("Initial HQ person registered once at their actual staging place.",id)
 
 
 func create_heavy_output(admission: String, claimant: String, id: String, type: String, holder: String, owner: String, properties: Dictionary) -> Dictionary:
@@ -131,11 +160,127 @@ func rear_fleet_status(owner: String) -> Dictionary:
 	return {"live":ids.size(),"reserved":claims.size(),"limit":REAR_FLEET_LIMIT,"live_ids":ids,"claims":claims}
 
 
-func entities_at(holder: String, kinds: Array) -> Array[Dictionary]:
+func entities_at(holder: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	return entities_at_any([holder],kinds,include_mass)
+
+func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if holders.is_empty() or kinds.is_empty(): return result
+	# Membership exists only for this synchronous query. Ledger iteration keeps
+	# canonical entity order and prevents repeated holders from duplicating goods.
+	var selected := {}
+	for holder in holders: selected[holder] = true
+	var ids: Array[String] = []
+	var needs_carried := false
+	var needs_loaded := false
+	# Loaded totals also mark selected weapons. Carry truth needs its own set.
+	var selected_stocks := {}
+	var loaded := {}
+	for entity in _entities.values():
+		if selected.has(entity.holder_id) and Records.Kind.keys()[entity.kind] in kinds:
+			ids.append(entity.id)
+			if entity.kind == Records.Kind.STOCK:
+				needs_carried = true
+				selected_stocks[entity.id] = true
+			if entity.kind == Records.Kind.WEAPON:
+				needs_loaded = true
+				loaded[entity.id] = 0
+	# Only selected stock/weapons need these synchronous facts. Missing holders
+	# and other-kind queries avoid the extra scan; nothing survives this call.
+	var facts := {}
+	if needs_carried: facts.carried = {}
+	if needs_loaded: facts.loaded = loaded
+	if needs_carried or needs_loaded:
+		for entity in _entities.values():
+			if needs_loaded and entity.kind == Records.Kind.STOCK and loaded.has(entity.holder_id):
+				facts.loaded[entity.holder_id] = int(facts.loaded.get(entity.holder_id,0))+entity.quantity
+			if needs_carried and entity is Records.Person and selected_stocks.has(entity.carrying_stock_id):
+				facts.carried[entity.carrying_stock_id] = true
+	for id in ids: result.append(inspect_entity(id,{},include_mass,facts))
+	return result
+
+func entity_kind(id: String) -> String:
+	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
+
+func entity_design_type(id: String) -> String:
+	return _entities[id].design_type if _entities.has(id) else ""
+
+func entities_of_type(type: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for entity in _entities.values():
-		if entity.holder_id == holder and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id))
+		if entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
+
+func entities_of_kind(kind: Records.Kind, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.kind == kind: result.append(inspect_entity(entity.id,{},include_mass))
+	return result
+
+func entities_of_kinds(kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.kind in kinds: result.append(inspect_entity(entity.id,{},include_mass))
+	return result
+
+func persons_near_any(points: Array, radius: float, owners: Array, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if points.is_empty() or owners.is_empty(): return result
+	for entity in _entities.values():
+		if entity.kind != Records.Kind.PERSON or entity.owner not in owners: continue
+		var position := _world_position(entity.id)
+		for point in points:
+			if position.distance_to(point) > radius: continue
+			result.append(inspect_entity(entity.id,{},include_mass))
+			break
+	return result
+
+func available_person_ids(owner: String) -> Array[String]:
+	var result: Array[String] = []
+	for entity in _entities.values():
+		if entity.kind != Records.Kind.PERSON or entity.owner != owner: continue
+		# Canonical PERSON records are created as Records.Person by add_person.
+		var person := entity as Records.Person
+		if person != null and person.assignment == Records.Assignment.AVAILABLE: result.append(person.id)
+	return result
+
+func owned_inventory_at(holder: String, owner: String) -> Dictionary:
+	# A fresh direct-holder inventory count; no eligibility or load admission.
+	var quantities := {}
+	var reservations := {}
+	var weapons: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.holder_id != holder or entity.owner != owner or entity.quantity <= 0: continue
+		if entity.kind == Records.Kind.STOCK:
+			quantities[entity.design_type] = int(quantities.get(entity.design_type,0))+available(entity.id)
+			reservations[entity.design_type] = int(reservations.get(entity.design_type,0))+reserved(entity.id)
+		elif entity.kind == Records.Kind.WEAPON:
+			weapons.append({"id":entity.id,"design_type":entity.design_type})
+	return {"available":quantities,"reserved":reservations,"weapons":weapons}
+
+func physical_quantity_at(holder: String, type: String, kinds: Array) -> int:
+	# Quantity includes reserved portions, just as raw inspection does. This
+	# count needs neither recursive mass nor weapon/carry inspection details.
+	var total := 0
+	for entity in _entities.values():
+		if entity.holder_id == holder and entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds:
+			total += entity.quantity
+	return total
+
+
+func ammunition_quantity_at(holder: String, loose_type: String, weapon_types: Array) -> int:
+	# Count physical loose portions and the contents of the selected held weapons
+	# in one synchronous scan. Reservations, ownership and weapon health do not
+	# change a physical count; no eligibility or availability is implied here.
+	var total := 0
+	for entity in _entities.values():
+		if entity.holder_id == holder and entity.design_type == loose_type and entity.kind in [Records.Kind.STOCK,Records.Kind.WEAPON,Records.Kind.HEAVY_OBJECT]:
+			total += entity.quantity
+		if entity.kind != Records.Kind.STOCK: continue
+		var parent: Records.Entity = _entities.get(entity.holder_id)
+		if parent != null and parent.kind == Records.Kind.WEAPON and parent.holder_id == holder and parent.design_type in weapon_types:
+			total += entity.quantity
+	return total
 
 
 func add_person(id: String, holder_id: String, owner: String,
@@ -463,6 +608,14 @@ func request_assignment(person_id: String, assignment: int, duty_id: String) -> 
 		return _ok("Duty requested. Finish safe deposit or park and vacate the driver station first.", person_id)
 	_set_assignment(person, assignment, duty_id)
 	return _ok("Exclusive duty changed.", person_id)
+
+
+func assign_initial_formation(person_id: String, squad_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if _time != 0.0 or person == null or squad_id.is_empty() or person.rear_place != "None" or person.assignment != Records.Assignment.AVAILABLE or person.pending_assignment != -1 or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not _is_place(person.holder_id):
+		return _reject("INVALID_INITIAL_FORMATION","An uncommitted living person on foot may begin in a declared formation only at time zero.")
+	_set_assignment(person,Records.Assignment.FORMATION_DUTY,squad_id)
+	return _ok("Initial formation duty recorded on the same person.",person_id)
 
 
 func cancel_assignment_request(person_id: String) -> Dictionary:
@@ -1123,7 +1276,15 @@ func loaded_rounds(weapon_id: String) -> int:
 	return total
 
 
-func inspect_entity(id: String) -> Dictionary:
+func inspect_person_status(id: String) -> Dictionary:
+	if not _entities.has(id) or not (_entities[id] is Records.Person): return {}
+	return inspect_entity(id,{},false)
+
+func person_has_duty(id: String, duty: String) -> bool:
+	var person := _entities.get(id) as Records.Person
+	return person != null and person.duty_id == duty
+
+func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: bool = true, snapshot_facts: Dictionary = {}) -> Dictionary:
 	if not _entities.has(id):
 		return {}
 	var entity := _entities[id]
@@ -1133,8 +1294,9 @@ func inspect_entity(id: String) -> Dictionary:
 		"holder_id": entity.holder_id, "position": _world_position(id), "state": entity.state,
 		"created_at": entity.created_at, "state_entered_at": entity.state_entered_at,
 		"quantity": entity.quantity, "unit_mass_kg": entity.unit_mass_kg,
-		"contents_mass_kg": _contents_mass(id), "origin_id": entity.origin_id,
+		"origin_id": entity.origin_id,
 	}
+	if include_mass: result.contents_mass_kg = snapshot_masses[id] if snapshot_masses.has(id) else _contents_mass(id)
 	if entity.kind == Records.Kind.HEAVY_OBJECT:
 		result.health = entity.health
 		result.max_health = entity.max_health
@@ -1175,7 +1337,7 @@ func inspect_entity(id: String) -> Dictionary:
 		result.available = available(id)
 		result.loaded = _entities[entity.holder_id].kind == Records.Kind.WEAPON
 		result.blocked_reason = "Unload weapon before allocating these rounds" if result.loaded else (
-			"Finish the active carry before allocating this freight" if _is_active_carry(id) else "")
+			"Finish the active carry before allocating this freight" if (snapshot_facts.carried.has(id) if snapshot_facts.has("carried") else _is_active_carry(id)) else "")
 	if entity is Records.Person:
 		var person := entity as Records.Person
 		result.assignment = Records.ASSIGNMENT_NAMES[person.assignment]
@@ -1197,7 +1359,7 @@ func inspect_entity(id: String) -> Dictionary:
 		result.bleed_remaining = maxf(0.0, person.bleed_until - _time) if person.assignment == Records.Assignment.WOUNDED else 0.0
 		result.loss_recorded = person.loss_recorded
 	if entity.kind == Records.Kind.WEAPON:
-		result.loaded_rounds = loaded_rounds(id)
+		result.loaded_rounds = int(snapshot_facts.loaded.get(id,0)) if snapshot_facts.has("loaded") else loaded_rounds(id)
 		result.loaded_capacity = entity.loaded_capacity
 		result.ammo_type = entity.ammo_type
 		result.functional = entity.health > 0
@@ -1219,11 +1381,27 @@ func inspect_claim(id: String) -> Dictionary:
 	}
 
 
-func snapshot() -> Dictionary:
+func snapshot(include_mass: bool = true) -> Dictionary:
+	# Metadata readers retain all facts except the explicitly omitted load mass.
+	# Physical admission/audit callers keep the complete default inspection.
 	var entities: Array[Dictionary] = []
 	var claims: Array[Dictionary] = []
+	# This inspection is synchronous. Compute aggregate masses once for this call;
+	# no cache survives a physical ledger change.
+	var masses := {}
+	var facts := {"loaded":{},"carried":{}}
+	# This synchronous read sees one ledger state. Summing integer stock counts
+	# and carry IDs once preserves the raw inspection semantics, including
+	# interrupted carries. Nothing is cached across a ledger mutation.
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK:
+			facts.loaded[entity.holder_id] = int(facts.loaded.get(entity.holder_id,0))+entity.quantity
+		if entity is Records.Person and not entity.carrying_stock_id.is_empty(): facts.carried[entity.carrying_stock_id] = true
+	if include_mass:
+		var children: Dictionary = _children_by_holder()
+		for id in _entities: _indexed_contents_mass(id,children,masses)
 	for id in _entities:
-		entities.append(inspect_entity(id))
+		entities.append(inspect_entity(id,masses,include_mass,facts))
 	for id in _claims:
 		claims.append(inspect_claim(id))
 	return {"time": _time, "entities": entities, "claims": claims,
@@ -1232,10 +1410,10 @@ func snapshot() -> Dictionary:
 		"rear_hull_promises":_rear_hull_promises.duplicate(true), "events": _events.duplicate(true)}
 
 
-func total_stock(type: String) -> int:
+func total_stock(type: String, owner: String = "") -> int:
 	var total: int = 0
 	for entity in _entities.values():
-		if entity.design_type == type and entity.kind in [Records.Kind.STOCK, Records.Kind.WEAPON]:
+		if entity.design_type == type and entity.kind in [Records.Kind.STOCK, Records.Kind.WEAPON] and (owner.is_empty() or entity.owner == owner):
 			total += entity.quantity
 	return total
 
@@ -1246,6 +1424,20 @@ func loose_stock_mass_at(holder_id: String) -> float:
 		if entity.kind == Records.Kind.STOCK and entity.holder_id == holder_id:
 			total += entity.quantity * entity.unit_mass_kg
 	return total
+
+func loose_stock_summary(holder_id: String, owner: String) -> Dictionary:
+	var total: float = 0.0
+	var contents := {}
+	for entity in _entities.values():
+		if entity.kind != Records.Kind.STOCK or entity.holder_id != holder_id: continue
+		# Capacity counts every physical stock row, in the original addition order.
+		total += entity.quantity * entity.unit_mass_kg
+		# Relocation retains the caller's owned, positive-stock selection.
+		if entity.owner != owner or entity.quantity <= 0: continue
+		if not contents.has(entity.design_type):
+			contents[entity.design_type] = {"quantity":0,"mass":entity.unit_mass_kg,"position":_world_position(entity.id)}
+		contents[entity.design_type].quantity += entity.quantity
+	return {"mass":total,"contents":contents}
 
 
 func available_stock_at(holder_id: String, type: String) -> int:
@@ -1395,10 +1587,25 @@ func _fill_entity(entity: Records.Entity, id: String, kind: Records.Kind, type: 
 
 
 func _contents_mass(holder_id: String) -> float:
-	var total: float = 0.0
+	# Stock is a leaf: all legal physical holders are places, carriers, people
+	# or (for loaded rounds) weapons.
+	if _entities.has(holder_id) and _entities[holder_id].kind == Records.Kind.STOCK: return 0.0
+	return _indexed_contents_mass(holder_id,_children_by_holder(),{})
+
+func _children_by_holder() -> Dictionary:
+	var children := {}
 	for entity in _entities.values():
-		if entity.holder_id == holder_id:
-			total += entity.unit_mass_kg * entity.quantity + _contents_mass(entity.id)
+		if not children.has(entity.holder_id): children[entity.holder_id] = []
+		children[entity.holder_id].append(entity)
+	return children
+
+func _indexed_contents_mass(holder_id: String, children: Dictionary, masses: Dictionary) -> float:
+	if masses.has(holder_id): return masses[holder_id]
+	var total: float = 0.0
+	# Original subtree/insertion addition order is preserved at exact carry limits.
+	for entity in children.get(holder_id,[]):
+		total += entity.unit_mass_kg*entity.quantity+_indexed_contents_mass(entity.id,children,masses)
+	masses[holder_id] = total
 	return total
 
 

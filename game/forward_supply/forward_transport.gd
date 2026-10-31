@@ -23,22 +23,90 @@ func _init(rear: RefCounted) -> void:
 
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _request_delivery(hull_id,_plan_sources("",quantity,stock_id),quantity,stop_id,outbound_points,return_points,loader_id,unloader_id,true)
+
+
+func request_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _request_delivery(hull_id,_plan_sources(type,quantity),quantity,stop_id,outbound_points,return_points,loader_id,unloader_id,false)
+
+
+func _plan_sources(type: String, quantity: int, stock_id: String = "") -> Dictionary:
+	var ledger: RefCounted = _rear().ledger
+	var candidates: Array = [ledger.inspect_entity(stock_id)] if not stock_id.is_empty() else ledger.entities_at("hq-stock",["STOCK"],false)
+	var sources: Array[Dictionary] = []
+	var remaining: int = quantity
+	var mass := 0.0
+	for stock in candidates:
+		if quantity <= 0 or stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != _rear().PLAYER or stock.available <= 0: continue
+		if stock_id.is_empty() and (type.is_empty() or stock.design_type != type): continue
+		var count: int = mini(remaining,int(stock.available))
+		sources.append({"stock":stock.id,"quantity":count,"unit_mass_kg":stock.unit_mass_kg,"origin_id":stock.origin_id,"loaded":0,"claim":""})
+		mass += count*float(stock.unit_mass_kg)
+		remaining -= count
+		if remaining == 0: break
+	if quantity <= 0 or remaining != 0: return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
+	return {"ok":true,"sources":sources,"type":type if stock_id.is_empty() else str(candidates[0].design_type),"mass":mass}
+
+
+func _request_delivery(hull_id: String, plan: Dictionary, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String, single_source: bool) -> Dictionary:
+	var preview: Dictionary = _preview_delivery(hull_id,plan,stop_id,outbound_points,return_points,loader_id,unloader_id)
+	if not preview.ok: return preview
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	var stock: Dictionary = rear.ledger.inspect_entity(stock_id)
+	_sequence += 1
+	var id := "forward-delivery-%04d" % _sequence
+	var claimed_ids: Array[String] = []
+	for index in plan.sources.size():
+		var source: Dictionary = plan.sources[index]
+		var stock: Dictionary = rear.ledger.inspect_entity(source.stock)
+		var valid: bool = _source_matches(stock,source,plan.type)
+		var claim: String = id if single_source else id+"-source-%04d" % (index+1)
+		var result: Dictionary = rear.ledger.request_stock(claim,source.stock,int(source.quantity),id,"Forward T01 delivery",rear.PLAYER) if valid else {"ok":false}
+		if result.ok: claimed_ids.append(claim)
+		if not result.ok or rear.ledger.inspect_claim(claim).get("reserved",0) != source.quantity:
+			for own_claim in claimed_ids: rear.ledger.release_claim(own_claim)
+			return _fail("Exact HQ freight could not be committed without competing claims.")
+		source.claim = claim
+	jobs[id] = {"id":id,"hull":hull_id,"stock":plan.sources[0].stock,"type":plan.type,"quantity":quantity,"sources":plan.sources,
+		"stop":stop_id,"loader":loader_id,"unloader":unloader_id,"outbound_points":outbound_points.duplicate(),
+		"return_points":return_points.duplicate(),"claim":plan.sources[0].claim,"loaded":0,"unloaded":0,"loaded_items":[],
+		"delivered_items":[],"state":"Loading","task":{},"route_plan":{},"route_points":[],
+		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
+		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
+	jobs[id].return_completed = false
+	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
+
+
+func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _preview_delivery(hull_id,_plan_sources("",quantity,stock_id),stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func preview_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _preview_delivery(hull_id,_plan_sources(type,quantity),stop_id,outbound_points,return_points,loader_id,unloader_id)
+
+
+func _preview_delivery(hull_id: String, plan: Dictionary, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	var rear: RefCounted = _rear()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
 	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
-	if hull_committed(hull_id): return _fail("This physical hull already has an unfinished forward delivery.")
+	if hull_committed(hull_id) or (rear.military != null and rear.military.hull_committed(hull_id)):
+		return _fail("This physical hull already has an unfinished forward or troop delivery.")
 	var ready: String = _hq_hull_blocker(hull_id,hull)
 	if not ready.is_empty(): return _fail(ready)
-	if stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or quantity <= 0 or stock.available < quantity:
-		return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
+	if not plan.ok: return plan
 	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
 		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
-	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id):
+	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id) or (rear.military != null and rear.military.person_committed(loader_id)):
 		return _fail("The named actual HQ logistics loader is unavailable.")
 	if not _active_member(unloader_id): return _fail("Name one actual active formation member to unload at the destination.")
+	if rear.military != null and rear.military.person_committed(unloader_id): return _fail("This destination handler is committed to troop boarding or dismount.")
 	if not _empty_freight_hull(hull_id): return _fail("This one-type mission requires an empty T01 freight hold before loading.")
-	if float(quantity)*float(stock.unit_mass_kg) > float(hull.vehicle_spec.payload)+EPS:
+	if float(plan.mass) > float(hull.vehicle_spec.payload)+EPS:
 		return _fail("The requested physical freight exceeds the T01 payload.")
 	var route_error: String = _validate_points(outbound_points,hull.position,stop.position)
 	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,hq_position)
@@ -52,20 +120,10 @@ func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	if not danger.is_empty(): return _fail(danger)
 	if float(hull.fuel)+EPS < 1.25*(float(outward.fuel)+float(home.fuel)):
 		return _fail("Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve.")
-	_sequence += 1
-	var id := "forward-delivery-%04d" % _sequence
-	var claimed: Dictionary = rear.ledger.request_stock(id,stock_id,quantity,id,"Forward T01 delivery",rear.PLAYER)
-	if not claimed.ok or rear.ledger.inspect_claim(id).reserved != quantity:
-		if claimed.ok: rear.ledger.release_claim(id)
-		return _fail("Exact HQ freight could not be committed without competing claims.")
-	jobs[id] = {"id":id,"hull":hull_id,"stock":stock_id,"type":stock.design_type,"quantity":quantity,
-		"stop":stop_id,"loader":loader_id,"unloader":unloader_id,"outbound_points":outbound_points.duplicate(),
-		"return_points":return_points.duplicate(),"claim":id,"loaded":0,"unloaded":0,"loaded_items":[],
-		"delivered_items":[],"state":"Loading","task":{},"route_plan":{},"route_points":[],
-		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
-		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
-	jobs[id].return_completed = false
-	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
+	return {"ok":true,"message":"Measured round trip is available.","distance":float(outward.distance)+float(home.distance),
+		"seconds":float(outward.seconds)+float(home.seconds),"fuel":float(outward.fuel)+float(home.fuel),
+		"required_fuel":1.25*(float(outward.fuel)+float(home.fuel)),"tank_fuel":float(hull.fuel),
+		"gross_kg":float(outward.gross_kg)+float(plan.mass)}
 
 
 func interrupt_delivery(id: String) -> Dictionary:
@@ -154,19 +212,27 @@ func settle() -> bool:
 
 func _schedule_load(row: Dictionary) -> bool:
 	if row.loaded >= row.quantity:
-		_rear().ledger.release_claim(row.claim)
+		for source in row.sources: _rear().ledger.release_claim(source.claim)
 		_begin_route(row,row.outbound_points,"Outbound")
 		return true
 	if not _loader_free(row.loader) or _rear().forward_supply.person_committed(row.loader):
 		row.blocker = "Waiting for the named actual HQ loader."
 		return false
-	var stock: Dictionary = _rear().ledger.inspect_entity(row.stock)
+	var index := 0
+	while index < row.sources.size() and row.sources[index].loaded >= row.sources[index].quantity: index += 1
+	if index >= row.sources.size(): row.blocker = "Actual source quotas no longer cover the requested load."; return false
+	var source: Dictionary = row.sources[index]
+	var stock: Dictionary = _rear().ledger.inspect_entity(source.stock)
+	var claim: Dictionary = _rear().ledger.inspect_claim(source.claim)
+	if not _source_matches(stock,source,row.type) or claim.get("source_id","") != source.stock or claim.get("claimant","") != row.id or int(claim.get("reserved",0)) != int(source.quantity)-int(source.loaded):
+		row.blocker = "The same reserved HQ source and exact remaining quota are required."
+		return false
 	var loader: Dictionary = _rear().ledger.inspect_entity(row.loader)
-	var portion: int = mini(row.quantity-row.loaded,int(floorf((25.0-float(loader.contents_mass_kg))/float(stock.unit_mass_kg))))
+	var portion: int = mini(int(source.quantity)-int(source.loaded),int(floorf((25.0-float(loader.contents_mass_kg))/float(stock.unit_mass_kg))))
 	if portion <= 0:
 		row.blocker = "HQ loader cannot carry one whole unit within 25 kg."
 		return false
-	row.task = {"phase":"Load Pickup","actor":row.loader,"source":row.stock,"portion":portion,"carry":"","deadline":_rear().time+HANDLING_SECONDS}
+	row.task = {"phase":"Load Pickup","actor":row.loader,"source":source.stock,"source_index":index,"claim":source.claim,"portion":portion,"carry":"","deadline":_rear().time+HANDLING_SECONDS}
 	row.blocker = "Named HQ loader handling actual reserved freight."
 	return true
 
@@ -178,21 +244,32 @@ func _finish_load(row: Dictionary) -> void:
 	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position): _pause_task(row,"Hull moved during physical HQ loading."); return
 	if task.phase == "Load Pickup":
 		if not _loader_free(row.loader): _pause_task(row,"Named HQ loader became unavailable before pickup."); return
-		var stock: Dictionary = rear.ledger.inspect_entity(row.stock)
-		if stock.holder_id != "hq-stock": _pause_task(row,"Reserved HQ source moved before pickup."); return
-		var picked: Dictionary = rear.ledger.begin_carry(row.loader,row.stock,task.portion,row.claim)
+		var stock: Dictionary = rear.ledger.inspect_entity(task.source)
+		var pickup_source: Dictionary = row.sources[task.source_index]
+		if not _source_matches(stock,pickup_source,row.type): _pause_task(row,"Reserved HQ source changed before pickup."); return
+		var picked: Dictionary = rear.ledger.begin_carry(row.loader,task.source,task.portion,task.claim)
 		if not picked.ok: _pause_task(row,picked.message); return
 		task.carry = picked.entity_id
 		task.phase = "Load Drop"
 		task.deadline = rear.time+HANDLING_SECONDS
 		return
 	if not _task_actor_valid(row,row.loader): _pause_task(row,"HQ loader interrupted while holding real freight."); return
+	var source: Dictionary = row.sources[task.source_index]
+	var carried: Dictionary = rear.ledger.inspect_entity(task.carry)
+	if carried.get("holder_id","") != row.loader or carried.get("quantity",0) != task.portion or carried.get("design_type","") != row.type or carried.get("origin_id","") != source.origin_id or carried.get("unit_mass_kg",0) != source.unit_mass_kg:
+		_pause_task(row,"The exact planned portion must remain with its named loader.")
+		return
 	var loaded: Dictionary = rear.ledger.finish_carry_to_carrier(row.loader,row.hull)
 	if not loaded.ok: _pause_task(row,loaded.message); return
 	row.loaded_items.append(loaded.entity_id)
+	source.loaded += int(task.portion)
 	row.loaded += int(task.portion)
 	row.task = {}
 	row.blocker = ""
+
+
+func _source_matches(stock: Dictionary, source: Dictionary, type: String) -> bool:
+	return stock.get("kind","") == "STOCK" and stock.holder_id == "hq-stock" and stock.owner == _rear().PLAYER and stock.design_type == type and stock.unit_mass_kg == source.unit_mass_kg and stock.origin_id == source.origin_id
 
 
 func _schedule_unload(row: Dictionary) -> bool:
@@ -203,6 +280,12 @@ func _schedule_unload(row: Dictionary) -> bool:
 	var stop: Dictionary = _rear().ledger.inspect_entity(row.stop)
 	if hull.holder_id != row.stop or not hull.position.is_equal_approx(stop.position): row.blocker = "Same loaded hull must be stopped at the declared destination."; return false
 	var handler: Dictionary = _rear().ledger.inspect_entity(row.unloader)
+	if _rear().military != null and _rear().military.person_committed(row.unloader):
+		row.blocker = "Named unloader is committed to troop transport handling."
+		return false
+	if _rear().battlefield_operations != null and _rear().battlefield_operations.person_committed(row.unloader):
+		row.blocker = "Named unloader must stop tactical foot movement."
+		return false
 	if not _active_member(row.unloader) or not _on_foot(handler) or handler.position.distance_to(stop.position) > LOCAL_RADIUS+EPS or _rear().forward_supply.person_committed(row.unloader) or _other_work(row.unloader):
 		row.blocker = "Waiting for the named active dismounted destination handler within 20 m."
 		return false
@@ -478,6 +561,9 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 	for target_id in rear.orders.contacts.get(company,{}):
 		var contact: Dictionary = rear.orders.contact(company,target_id)
 		if contact.is_empty() or float(contact.confidence) <= EPS or not contact.position.is_finite(): continue
+		# Public objectives and unarmed transport hulls do not supply hostile
+		# effective fire. Unknown people/armed contacts retain the conservative margin.
+		if contact.get("class","") in ["Resource","Route Hub","Observation","T01","T02"]: continue
 		var radius: float = float(THREAT_RANGE.get(str(contact.get("class","")),300.0))+float(contact.uncertainty_m)
 		for part in parts:
 			var from: Vector2 = part.from
@@ -497,6 +583,13 @@ func snapshot() -> Dictionary:
 func audit() -> Array[String]:
 	var errors: Array[String] = []
 	for row in jobs.values():
+		var planned := 0
+		var loaded := 0
+		for source in row.sources:
+			planned += int(source.quantity)
+			loaded += int(source.loaded)
+			if source.loaded < 0 or source.loaded > source.quantity: errors.append("Forward source quota exceeds its actual plan: " + row.id)
+		if planned != row.quantity or loaded != row.loaded: errors.append("Forward source totals disagree with manifest: " + row.id)
 		if row.loaded < 0 or row.unloaded < 0 or row.unloaded > row.loaded or row.loaded > row.quantity:
 			errors.append("Forward transport counters exceed their actual manifest: " + row.id)
 		if row.state == "Complete" and (row.unloaded != row.quantity or not row.return_completed):

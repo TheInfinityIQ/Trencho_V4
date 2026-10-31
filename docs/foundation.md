@@ -1,5 +1,21 @@
 # Foundation decisions
 
+## APC observation boundary — 31 October 2026
+
+The existing military vehicle element now supplies its own observation through the actual living qualified seated T04 Commander, using the accepted 450-metre / three-metre-eye profile. A surviving qualified seated Gunner or Driver supplies ordinary 220-metre fallback when the Commander capability is absent. The order service reuses its half-second local share and one-second actual-parent links, preserving original observation time, source loss and confidence aging; attachment/army changes cannot lend an old report to a new command chain. The existing foot-squad sampler remains independent.
+
+Mounted observation and its separate firing-line probe use the actual available eye role and accepted three-metre vehicle muzzle. A delivered contact still cannot bypass sight, crew, physical ammunition, aim, range or friendly-fire checks. Diagnostic ground truth is confined to the remote C30 observer and never feeds military knowledge. This connects the existing GDD §9.3 / §12.1 / §14.2 capabilities; it adds no target, wave, chase operation, sensor framework or encounter-balance change. It does not establish that a legal target existed in the earlier no-shot observation.
+
+## Connected session and performance
+
+The authored opening composes the existing ledger, military transport, orders, terrain and objective owners under the rear clock; scenario policy creates intent, and squad execution consumes delivered intent. HQ marker affiliation is relative to the observing army, so a formation never reports its own HQ as hostile. Player panels filter own physical formations; enemies remain delivered reports.
+
+Opening profiling exposed repeated full-ledger inspection and nested mass recomputation. Snapshot masses are now aggregated once per synchronous inspection, without a persistent cache; existing holder/type queries restrict reads to their actual candidates. Snapshot/live recursive mass equivalence and retained physical regressions protect the change. Terrain route aggregation separately uses the measured exact-output [interval sweep](route_sweep.md). These measurements do not settle full-map performance acceptance.
+
+Roster, cohesion and motion status reads use `inspect_person_status`, which returns detached person facts with no contents-mass field. Carry, route load, payload and complete inspection still use the full live mass calculation. This removes unused inventory aggregation from measured status queries while preserving exact mass arithmetic at admission boundaries.
+
+After Dawson reported near-freezing during local play/tests, a single lower-priority paused-session probe measured a battlefield refresh at2889ms because it requested the complete rear snapshot solely for requisition. The view now reads a scalar account query; the same probe measured19ms. Hidden views skip automatic presentation work, paused unchanged-time/speed frames skip refreshes, and explicit actions, visibility changes and camera controls still invalidate their views. The hidden rear continues owning the shared clock. Status-only staffing quota, eligibility and sorting helpers use the detached person projection without changing their ranking or physical admissions. The complete snapshot fell from2841ms to794ms and initial construction from7608ms to3093ms in the same bounded probe. These are local timings, not full-map frame-rate certification or proof that live simulation is fast enough; initial construction and the full rear refresh retain noticeable costs. Rendering is capped at30FPS and the worker pool at4threads to reserve desktop resources.
+
 Current engineering authority is [team workflow](team_workflow.md). Before shared changes identify state owner, valid transitions, affected callers and interaction coverage. Reuse existing ownership; repair concrete occupancy/activity and damage/movement weaknesses without speculative frameworks. Historical entry-scene reports below are not current delivery status.
 
 G24 adds scene-owned [vehicle destruction and recovery](g24_vehicle_recovery.md), synchronously resolving one ledger destruction outcome across armour, demolition and bridge collapse, with paid repairs and physical tow coupling on the common clock.

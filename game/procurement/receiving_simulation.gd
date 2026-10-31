@@ -54,6 +54,10 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
 
+func requisition_balance() -> float:
+	return _money
+
+
 func quote_resources(cart: Dictionary) -> Dictionary:
 	var quote := Catalog.quote(cart, freight_limit())
 	if quote.ok:
@@ -521,7 +525,7 @@ func _finish_worker_phase(id: String) -> void:
 
 func _sync_workers() -> void:
 	for id in _workers.keys():
-		var person := ledger.inspect_entity(id)
+		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:

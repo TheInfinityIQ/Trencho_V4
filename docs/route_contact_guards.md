@@ -1,0 +1,7 @@
+# Reported route threats
+
+TroopTransport and ForwardTransport keep using only contacts actually delivered to the vehicle's company. Resource, Route Hub and Observation markers, plus unarmed T01/T02 hull classes, no longer create hostile-fire exclusion circles. Actual person/unknown contacts, armed T03/T04/T05 and hostile HQ markers retain the existing conservative range and aged uncertainty expansion. No hidden entity, crew or ammunition inspection is added to determine whether a reported target is dangerous.
+
+The focused `route_contact_regression.gd` declares public scenario markers and actual hostile transport hulls, observes them with real squad members and waits for command links to deliver reports. It checks accepted reposition/delivery, physical travel/consumption/arrival, refusal for person/armed vehicle/HQ reports, aged uncertainty and normal expiry. The explicit public marker declarations are fixture setup, not injected contacts. Current Farmland's Objectives registration does not itself add those three classes to Orders' marker declarations, so this work does not establish that an objective marker already blocked the ordinary playthrough. T01/T02 hulls are sampled by the existing ordinary observation path.
+
+The lead ran one coordinated lower-priority headless check after the resource pause:385checks passed in5.6seconds. Broad integrated validation remains on GitHub CI. No APC movement policy is included.

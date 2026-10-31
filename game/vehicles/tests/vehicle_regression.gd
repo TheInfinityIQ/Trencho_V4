@@ -13,6 +13,7 @@ func _initialize() -> void:
 		_test_interruptions()
 		_test_damage_stops_lane()
 	if selected in ["all","connected"]: _test_connected_session()
+	if selected in ["all","repeated-fuel"]: _test_repeated_fuel_and_declared_parking()
 	print("G07 vehicle regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 
@@ -200,6 +201,86 @@ func _test_damage_stops_lane() -> void:
 	_expect(after.position.is_equal_approx(before.position) and is_equal_approx(float(after.fuel),float(before.fuel)),"damaged hull consumes no further fuel and stays at hit position")
 	_expect(rear.heavy_production.bay_occupant == id and rear.yard.reserved[rear.vehicles.vehicles[id].slot] == id,"stranded lane hull retains original bay and promised parking claims")
 	_expect(f.base.audit().is_empty(),"damaged lane hull remains accounted for: " + str(f.base.audit()))
+
+func _starting_parked(rear: RefCounted) -> Dictionary:
+	var result := {}
+	for id in ["start-vehicle-00","start-vehicle-01","start-vehicle-02"]:
+		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		result[id] = {"holder":hull.holder_id,"position":hull.position,"fuel":hull.fuel,"crew":hull.crew_by_station}
+	return result
+
+func _finish_fuel_carry(rear: RefCounted, worker: String) -> void:
+	# Follow the actual report/pickup/walk/deposit boundaries, stopping at deposit
+	# so the second request starts from the real bay rather than a later idle move.
+	for _boundary in 12:
+		if not rear.vehicles.fuel_jobs.has(worker): return
+		var deadline: float = rear.actors[worker].deadline
+		if not is_finite(deadline):
+			_expect(false,"Actual fuel job has a reachable timed handling boundary")
+			return
+		rear.advance_time(maxf(0.0,deadline-rear.time))
+	_expect(not rear.vehicles.fuel_jobs.has(worker),"Actual fuel handling finishes within its finite report/pickup/carry/deposit phases")
+
+func _test_repeated_fuel_and_declared_parking() -> void:
+	var base := Base.new(false,false,true,Vector2(1640,91),false,{"heavy":["R30"]})
+	var rear: RefCounted = base.rear
+	var heavy: RefCounted = rear.heavy_production
+	var parked := _starting_parked(rear)
+	_expect(rear.yard.PARKING_POSITIONS[4] == Vector2(74,141) and rear.yard.occupied[4].is_empty(),"Declared initial Westpark has a real free fifth place")
+	_expect(heavy.request_recipe("R30").ok and heavy.set_mode("Continuous").ok and heavy.accept_order().ok,"Actual R30 accepted under declared access")
+	var order: String = heavy._order.id
+	_expect(heavy._order.parking_slot == 3 and rear.yard.reserved[3] == order,"Original accepted promise uses free rear-row slot behind occupied first place")
+	_expect(heavy.set_parking_destination(4).ok and rear.yard.reserved[4] == order and rear.yard.reserved[3].is_empty(),"Ordinary accepted-order edit secures Westpark promise before releasing old one")
+	for type in Fixed.RECIPES.R30.inputs:
+		_expect(rear.request_haul("depot","vehicle_input",type,int(Fixed.RECIPES.R30.inputs[type])).ok,"Real initial inputs have an ordinary haul request: "+type)
+	rear.advance_time(1000)
+	var id: String = heavy.bay_occupant
+	_expect(not id.is_empty(),"Actually hauled R30 inputs complete one physical APC")
+	if id.is_empty(): return
+	var hull: Dictionary = rear.ledger.inspect_entity(id)
+	_expect(hull.design_type == "T04" and hull.fuel == 0.0 and hull.ammunition.is_empty() and rear.vehicles.vehicles[id].slot == 4,"Same new empty APC retains selected Westpark promise")
+	for station in ["Driver","Gunner","Commander"]:
+		var person: String = {"Driver":"start-p08-03","Gunner":"start-p08-04","Commander":"start-p08-05"}[station]
+		_expect(rear.vehicles.assign_station(id,person,station).ok,"Existing qualified P08 reports to actual "+station)
+	rear.advance_time(180)
+	hull = rear.ledger.inspect_entity(id)
+	_expect(hull.crew_by_station.size() == 3,"All three existing P08s physically occupy APC stations")
+	var worker := "start-p00-00"
+	_expect(rear.ledger.inspect_entity("start-depot-M08").quantity == 200,"Declared real M08 remains200 before carries")
+	_expect(not rear.vehicles.request_refuel(id,worker,26).ok,"Carry request above25 units remains refused")
+	for trip in 2:
+		var accepted: Dictionary = rear.vehicles.request_refuel(id,worker,25)
+		_expect(accepted.ok,"Same worker can request actual25M08 carry %d: %s" % [trip+1,accepted.message])
+		if not accepted.ok: return
+		_expect(not rear.vehicles.request_refuel(id,worker,1).ok,"Existing physical carry cannot be double-booked")
+		_finish_fuel_carry(rear,worker)
+		var person: Dictionary = rear.ledger.inspect_entity(worker)
+		hull = rear.ledger.inspect_entity(id)
+		_expect(not rear.vehicles.fuel_jobs.has(worker) and person.carrying_stock_id.is_empty() and person.position.is_equal_approx(hull.position),"Actual carry deposits at same F10 hull with no pending replacement carry")
+		_expect(hull.fuel == float((trip+1)*25) and rear.ledger.inspect_entity("start-depot-M08").quantity == 200-(trip+1)*25,"Each actual25carry increases same tank and decreases same source once")
+		_expect(base.audit().is_empty(),"Completed carry retains ledger/staff/stock invariants")
+	var claims := 0
+	for claim in rear.ledger.snapshot().claims:
+		if claim.purpose == "Refuel "+id:
+			claims += 1
+			_expect(claim.reserved == 0 and claim.fulfilled == 25,"Each exact fuel claim was physically fulfilled once")
+	_expect(claims == 2 and hull.fuel == 50.0 and hull.vehicle_spec.tank_capacity == 80.0,"Two same-worker trips supply50 within80 tank with exactly two real claims")
+	var capacity: float = rear.stores.depot.capacity
+	_expect(rear.set_store("depot",false,capacity).ok,"Real source access can close")
+	_expect(not rear.vehicles.request_refuel(id,worker,25).ok and rear.ledger.inspect_entity(id).fuel == 50.0,"Closed source remains refused without a free tank refill")
+	_expect(rear.set_store("depot",true,capacity).ok,"Same source reopens")
+	_expect(rear.vehicles._route(id,3).is_empty(),"Original lane to rear slot3 remains blocked by untouched starting slot0 hull")
+	_expect(not rear.vehicles._route(id,4).is_empty(),"Existing construction path and full footprint checks admit selected Westpark route")
+	var driven: Dictionary = rear.vehicles.start_drive(id)
+	_expect(driven.ok,"Same staffed fuelled APC starts its actual reserved Westpark drive: "+str(driven.message))
+	if not driven.ok: return
+	_expect(heavy.bay_occupant == id and rear.yard.reserved[4] == id,"Moving output retains bay and own parking promise until physical completion")
+	rear.advance_time(float(rear.vehicles.vehicles[id].deadline)-rear.time+0.1)
+	hull = rear.ledger.inspect_entity(id)
+	_expect(rear.vehicles.vehicles[id].state == "Parked" and hull.position == rear.yard.PARKING_POSITIONS[4] and heavy.bay_occupant.is_empty(),"Actual APC reaches selected fifth place before F10 releases it")
+	_expect(hull.fuel < 50.0 and hull.fuel > 0.0 and rear.ledger.inspect_entity("start-depot-M08").quantity == 150,"Drive burns real tank fuel without changing source or granting fuel")
+	_expect(var_to_bytes(_starting_parked(rear)) == var_to_bytes(parked),"All three starting hulls, drivers, positions and tanks remain unchanged")
+	_expect(base.audit().is_empty(),"Repeated fuel and ordinary Westpark handoff preserve common audit")
 
 func _test_connected_session() -> void:
 	var base := Base.new()

@@ -151,6 +151,11 @@ func _spin_target(runner: GdUnitSceneRunner, demo: Control, increase: bool) -> v
 
 
 func _press(runner: GdUnitSceneRunner, root: Node, title: String) -> void:
+	if title.begins_with("G"):
+		var hidden := false
+		for node in root.find_children("*", "Button", true, false):
+			if node.text == title and not node.is_visible_in_tree(): hidden = true
+		if hidden: await _press(runner,root,"Diagnostics")
 	var matches: Array[Button] = []
 	for node in root.find_children("*", "Button", true, false):
 		if node.text == title and node.is_visible_in_tree(): matches.append(node)

@@ -4,6 +4,50 @@ const Rear = preload("res://game/staffing/rear_simulation.gd")
 const Rifle = preload("res://game/production/r01_production.gd")
 const Rounds = preload("res://game/production/r02_production.gd")
 
+class CountedRounds extends Rounds:
+	var detailed_calls := 0
+	var projected_calls := 0
+	func stock_coverage(collect_excluded: bool = true) -> Dictionary:
+		if collect_excluded: detailed_calls += 1
+		else: projected_calls += 1
+		return super.stock_coverage(collect_excluded)
+
+
+func test_positive_target_ignores_issued_and_loaded_rounds_but_reports_them() -> void:
+	var rear := _local(0,0)
+	var production := CountedRounds.new(rear)
+	rear.munitions_production = production
+	production.set_mode("Stock target")
+	production.set_stock_target(150)
+	rear.ledger.add_stock("target-rounds","E02",200,0.02,"depot",rear.PLAYER)
+	rear.ledger.request_stock("target-outbound","target-rounds",80,"shipment","actual outbound claim",rear.PLAYER)
+	var before: Dictionary = production.stock_coverage(false)
+	rear.ledger.add_stock("issued-rounds","E02",100,0.02,"munitions-0",rear.PLAYER)
+	rear.ledger.add_weapon("issued-rifle","E01",4,"munitions-0",rear.PLAYER,"E02",30)
+	assert_bool(rear.ledger.load_rounds("issued-rifle","issued-rounds",30).ok).is_true()
+	rear.ledger.add_carrier("military-cargo","rear",rear.PLAYER,rear.PLAYER)
+	rear.ledger.add_stock("hull-rounds","E02",500,0.02,"military-cargo",rear.PLAYER)
+	var fast: Dictionary = production.stock_coverage(false)
+	for key in ["available","planned","projected","eligible_physical","eligible_reserved","internal_relocation","internal_carried","batch_forecast"]:
+		assert_int(fast[key]).is_equal(before[key])
+	_coverage(rear,120,0)
+	var report: Dictionary = production.stock_coverage()
+	assert_bool(report.excluded.any(func(row: Dictionary) -> bool: return row.holder == "munitions-0")).is_true()
+	assert_bool(report.excluded.any(func(row: Dictionary) -> bool: return row.holder == "issued-rifle")).is_true()
+	assert_bool(report.excluded.any(func(row: Dictionary) -> bool: return row.holder == "military-cargo")).is_true()
+	assert_array(fast.excluded).is_empty()
+	assert_dict(report).is_equal(production.stock_coverage(true))
+	production.detailed_calls = 0
+	production.projected_calls = 0
+	assert_bool(production._target_satisfied()).is_false()
+	assert_int(production.projected_calls).is_equal(1)
+	assert_int(production.detailed_calls).is_zero()
+	rear.ledger.add_stock("actual-arrival","E02",100,0.02,"receiving",rear.PLAYER)
+	assert_bool(production._target_satisfied()).is_true()
+	_coverage(rear,220,0)
+	assert_dict(production.batch).is_empty()
+	assert_dict(rear.ledger.snapshot().consumed).is_empty()
+
 
 func _local(metal: int = 1, powder: int = 1, operators: int = 2) -> RefCounted:
 	var rear := Rear.new("Empty")
@@ -24,6 +68,10 @@ func _target(rear: RefCounted, minimum: int) -> void:
 
 func _coverage(rear: RefCounted, available: int, planned: int) -> void:
 	var view: Dictionary = rear.munitions_production.stock_coverage()
+	var projected: Dictionary = rear.munitions_production.stock_coverage(false)
+	for key in ["available","planned","projected","eligible_physical","eligible_reserved","internal_relocation","internal_carried","batch_forecast"]:
+		assert_int(projected[key]).is_equal(view[key])
+	assert_str(projected.batch_id).is_equal(view.batch_id)
 	assert_int(view.available).is_equal(available)
 	assert_int(view.planned).is_equal(planned)
 	assert_int(view.projected).is_equal(available + planned)

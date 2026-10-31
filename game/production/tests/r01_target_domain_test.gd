@@ -3,6 +3,49 @@ extends GdUnitTestSuite
 const Rear = preload("res://game/staffing/rear_simulation.gd")
 const Production = preload("res://game/production/r01_production.gd")
 
+class CountedProduction extends Production:
+	var coverage_calls := 0
+	func stock_coverage(collect_excluded: bool = true) -> Dictionary:
+		coverage_calls += 1
+		return super.stock_coverage(collect_excluded)
+
+
+func test_zero_target_skips_coverage_but_finishes_existing_physical_batch() -> void:
+	var rear := _rear(0,6,3)
+	var production := CountedProduction.new(rear)
+	rear.production = production
+	production.set_mode("Stock target")
+	for repeat in 5:
+		production.set_stock_target(0)
+		rear.advance_time(0)
+	assert_int(production.coverage_calls).is_zero()
+	assert_dict(production.batch).is_empty()
+	assert_dict(rear.ledger.snapshot().consumed).is_empty()
+	assert_dict(rear._output_promises).is_empty()
+	production.set_stock_target(1)
+	assert_int(production.coverage_calls).is_greater(0)
+	rear.advance_time(5)
+	var active: Dictionary = production.batch.duplicate(true)
+	var promise: Dictionary = rear._output_promises[active.id].duplicate(true)
+	var consumed: Dictionary = rear.ledger.snapshot().consumed
+	production.coverage_calls = 0
+	production.set_stock_target(0)
+	assert_dict(production.batch).is_equal(active)
+	assert_dict(rear._output_promises[active.id]).is_equal(promise)
+	rear.advance_time(15)
+	assert_int(production.coverage_calls).is_zero()
+	assert_dict(production.batch).is_empty()
+	assert_int(production.history.size()).is_equal(1)
+	assert_int(rear.ledger.total_stock("E01")).is_equal(1)
+	assert_dict(rear.ledger.snapshot().consumed).is_equal(consumed)
+	assert_dict(rear._output_promises).is_empty()
+	var coverage: Dictionary = production.stock_coverage()
+	assert_int(coverage.available).is_equal(1)
+	assert_int(coverage.planned).is_zero()
+	assert_int(coverage.projected).is_equal(1)
+	assert_int(production.coverage_calls).is_equal(1)
+	assert_array(rear.audit()).is_empty()
+
 
 func _rear(target: int = 0, metal: int = 0, components: int = 0) -> RefCounted:
 	var rear := Rear.new("Empty")
@@ -19,6 +62,10 @@ func _rear(target: int = 0, metal: int = 0, components: int = 0) -> RefCounted:
 
 func _coverage(rear: RefCounted, available: int, planned: int) -> void:
 	var view: Dictionary = rear.production.stock_coverage()
+	var projected: Dictionary = rear.production.stock_coverage(false)
+	for key in ["available","planned","projected","eligible_physical","eligible_reserved","internal_relocation","internal_carried","batch_forecast"]:
+		assert_int(projected[key]).is_equal(view[key])
+	assert_str(projected.batch_id).is_equal(view.batch_id)
 	assert_int(view.available).is_equal(available)
 	assert_int(view.planned).is_equal(planned)
 	assert_int(view.projected).is_equal(available + planned)

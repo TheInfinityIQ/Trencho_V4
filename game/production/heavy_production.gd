@@ -187,7 +187,7 @@ func set_parking_destination(slot: int) -> Dictionary:
 	rear._settle()
 	return _result(true,"Own replacement parking promise secured before releasing the old one.")
 
-func stock_coverage() -> Dictionary:
+func stock_coverage(_collect_excluded: bool = true) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var available := 0
 	if _spec.output_type == "E13":

@@ -5,7 +5,7 @@ const ACTIONS: Array[String] = ["Defend HQ","Hold Area","Seize Objective","Probe
 const REPORTS: Array[String] = ["Contact","Progress","Complete","Inability","Casualties","Lost Capability","Low Supply","Blocked Route","Mine Hazard","Threatened Crossing","Opportunity"]
 var _rear_ref: WeakRef
 var watch_squads: Dictionary = {} # actual active squad ID -> last sampling time
-var visible: Dictionary = {} # squad -> target -> current direct sight result
+var visible: Dictionary = {} # squad or vehicle element -> target -> current direct sight result
 var contacts: Dictionary = {} # echelon -> target -> last observed report, never hidden state
 var reports: Array[Dictionary] = []
 var pending: Array[Dictionary] = [] # actual link deliveries, including sharing and acknowledgments
@@ -15,6 +15,7 @@ var failed_since: Dictionary = {} # local unsolved reason key -> first detection
 var decisions: Dictionary = {} # platoon -> next two-second local review
 var leader_missing_since: Dictionary = {} # ordered squad -> first actual missing-leader sample
 var objective_markers: Dictionary = {} # scenario-declared physical places, never contacts by registration alone
+var objective_affiliations: Dictionary = {} # HQ ownership makes the marker hostile only to the opposing army.
 var preparation_demands: Dictionary = {} # company -> physical requirements for §16.3
 var _next_observation := INF
 var _sequence := 0
@@ -38,13 +39,14 @@ func unwatch(squad_id: String) -> Dictionary:
 	if not watch_squads.has(squad_id): return _block("This squad has no active observation assignment.")
 	watch_squads.erase(squad_id)
 	visible.erase(squad_id)
-	if watch_squads.is_empty(): _next_observation = INF
+	if watch_squads.is_empty() and not _has_apc_elements(): _next_observation = INF
 	return {"ok":true,"message":"Observation assignment ended; old contacts age from their original sighting."}
 
-func register_enemy_hq(place_id: String) -> Dictionary:
+func register_enemy_hq(place_id: String, owner: String = "army-red") -> Dictionary:
 	var place: Dictionary = _rear().ledger.inspect_entity(place_id)
-	if place.get("kind","") != "PLACE" or objective_markers.has(place_id): return _block("An actual unique scenario enemy-HQ place is required.")
+	if place.get("kind","") != "PLACE" or objective_markers.has(place_id) or owner not in ["army-blue","army-red"]: return _block("An actual unique scenario enemy-HQ place and army affiliation are required.")
 	objective_markers[place_id] = "Enemy HQ"
+	objective_affiliations[place_id] = owner
 	return {"ok":true,"message":"Physical enemy HQ marker declared; command has no contact until a real observer sees it."}
 
 func contact(echelon_id: String, target_id: String) -> Dictionary:
@@ -59,6 +61,9 @@ func contact(echelon_id: String, target_id: String) -> Dictionary:
 	# One half-second squad share plus up to three one-second command links.
 	# The original observer must still have direct sight at the current sample.
 	result.current = result.age <= 4.0+EPS and _source_current(result.source,target_id)
+	if result.has("observer_element"):
+		var observer: Dictionary = _apc_observer(result.observer_element)
+		result.current = result.current and not observer.is_empty() and observer.get("source","") == result.source and observer.get("parent","") == result.observer_parent and observer.get("role","") == result.observer_role
 	return result
 
 func current_contact(echelon_id: String, target_id: String) -> bool:
@@ -217,7 +222,7 @@ func assess_hq_assault(company_id: String, enemy_hq_id: String, route_ok: bool) 
 	var attackers := 0.0
 	for squad_id in squads:
 		readiness = minf(readiness,_rear().military.readiness(squad_id))
-		attackers += _squad_strength(squad_id)
+		attackers += _squad_strength(squad_id,Vector2.INF,INF,"Deployment")
 		var squad: Dictionary = _rear().military.squads[squad_id]
 		if squad.kind not in ["Rifle","Marksman"]: continue
 		for person_id in _rear().military._active_roster_members(squad):
@@ -261,6 +266,7 @@ func _current_recon_of_hq(company_id: String, enemy_hq_id: String) -> bool:
 
 func next_boundary() -> float:
 	var next: float = _next_observation
+	if _has_apc_elements(): next = minf(next,_rear().time+1.0)
 	for row in pending: next = minf(next,float(row.due))
 	for id in decisions: next = minf(next,float(decisions[id]))
 	if not intents.is_empty(): next = minf(next,_rear().time+1.0)
@@ -275,9 +281,11 @@ func advance_to(_at: float) -> void:
 func settle() -> bool:
 	var changed := false
 	var now: float = _rear().time
-	if _next_observation <= now+EPS:
-		for id in watch_squads.keys(): _sample_squad(id)
-		_next_observation = now+1.0 if not watch_squads.is_empty() else INF
+	if _next_observation <= now+EPS or (is_inf(_next_observation) and _has_apc_elements()):
+		var entities: Array = _rear().ledger.snapshot(false).entities if not watch_squads.is_empty() or _has_apc_elements() else []
+		for id in watch_squads.keys(): _sample_squad(id,entities)
+		_sample_apc_elements(entities)
+		_next_observation = now+1.0 if not watch_squads.is_empty() or _has_apc_elements() else INF
 		changed = true
 	for entry in pending.duplicate():
 		if float(entry.due) > now+EPS: continue
@@ -298,7 +306,7 @@ func settle() -> bool:
 	for id in intents:
 		if not _rear().military.squads.has(id): continue
 		var squad: Dictionary = _rear().military.squads[id]
-		var leader: Dictionary = _rear().ledger.inspect_entity(str(squad.leader))
+		var leader: Dictionary = _rear().ledger.inspect_entity(str(squad.leader),{},false)
 		var missing: bool = leader.is_empty() or leader.get("assignment","") in ["Wounded","Dead"] or not leader.get("active",true)
 		if not missing:
 			leader_missing_since.erase(id)
@@ -328,23 +336,42 @@ func audit() -> Array[String]:
 		if row.fixing == row.flanking or _parent(row.fixing) != id or _parent(row.flanking) != id: failures.append("G17 flank lacks distinct actual platoon squads: "+id)
 	return failures
 
-func _sample_squad(squad_id: String) -> void:
+func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 	var squad: Dictionary = _rear().military.squads.get(squad_id,{})
 	if squad.is_empty() or squad.state != "Active":
 		unwatch(squad_id)
 		return
 	var seen := {}
 	var ledger: RefCounted = _rear().ledger
+	var entities: Array = ledger.snapshot(false).entities if sampled_entities.is_empty() else sampled_entities
+	var world: RefCounted = _rear().combat.world
+	var maximum: float = float(world.Catalog.ROLES.ordinary.range)+float(world.EPS)
+	var candidates_by_owner := {}
 	for person_id in _rear().military._active_roster_members(squad):
-		var observer: Dictionary = ledger.inspect_entity(person_id)
-		for target in ledger.snapshot().entities:
-			if target.kind not in ["PERSON","CARRIER"] or target.owner == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
-			if _rear().combat.world.observe(observer.position,target.position).visible:
+		var observer: Dictionary = ledger.inspect_person_status(person_id)
+		# Classification uses immutable metadata from this synchronous sample.
+		# Key by each actual observer owner, not the formation's affiliation.
+		if not candidates_by_owner.has(observer.owner):
+			var candidates: Array[Dictionary] = []
+			for target in entities:
+				var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
+				if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("assignment","") in ["Wounded","Dead"]: continue
+				candidates.append(target)
+			candidates_by_owner[observer.owner] = candidates
+		for target in candidates_by_owner[observer.owner]:
+			# The exact ordinary sight-range bound cannot produce a contact.
+			# Reject it before terrain heights/rays or protected-hull inspection.
+			if observer.position.distance_to(target.position) > maximum: continue
+			# Protected occupants are observed through their hull, not as exposed people.
+			if target.kind == "PERSON" and ledger.entity_kind(target.holder_id) == "CARRIER" and not _rear().vehicle_combat._exposed_gunner(target): continue
+			if world.is_visible(observer.position,target.position):
 				var estimated_strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))
 				seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":estimated_strength,"source":person_id,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown")}
 		for objective_id in objective_markers:
-			var place: Dictionary = ledger.inspect_entity(objective_id)
-			if _rear().combat.world.observe(observer.position,place.position).visible:
+			if objective_affiliations.get(objective_id,"") == observer.owner: continue
+			var place: Dictionary = ledger.inspect_entity(objective_id,{},false)
+			if observer.position.distance_to(place.position) > maximum: continue
+			if world.is_visible(observer.position,place.position):
 				seen[objective_id] = {"target":objective_id,"class":objective_markers[objective_id],"position":place.position,"observed_count":1,"observed_strength":0.0,"source":person_id,"observed_at":_rear().time,"visible_facing":"Unknown"}
 	visible[squad_id] = seen
 	for target_id in seen:
@@ -352,11 +379,55 @@ func _sample_squad(squad_id: String) -> void:
 		pending.append({"due":_rear().time+0.5,"kind":"Contact","destination":squad_id,"report":row})
 	watch_squads[squad_id] = _rear().time
 
+func _has_apc_elements() -> bool:
+	for id in _rear().military.vehicles:
+		if _rear().ledger.entity_design_type(id) == "T04": return true
+	return false
+
+func _apc_observer(id: String) -> Dictionary:
+	var rear: RefCounted = _rear()
+	if rear.ledger.entity_design_type(id) != "T04": return {}
+	var attachment: Dictionary = rear.military.vehicles.get(id,{})
+	var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
+	if attachment.is_empty() or hull.get("owner","") != attachment.owner: return {}
+	var parent: String = str(attachment.parent)
+	var formation: Dictionary = rear.military.platoons.get(parent,rear.military.companies.get(parent,{}))
+	if formation.is_empty() or formation.get("owner","") != hull.owner: return {}
+	var company: Dictionary = rear.military.companies.get(str(formation.get("company",parent)),{})
+	if company.get("owner","") != hull.owner or company.get("army_id","") != ("army" if hull.owner == rear.PLAYER else hull.owner): return {}
+	var observer: Dictionary = rear.vehicle_combat.observation_station(hull)
+	if observer.is_empty(): return {}
+	return {"source":observer.source,"role":observer.role,"parent":parent,"owner":hull.owner,"position":hull.position}
+
+func _sample_apc_elements(entities: Array) -> void:
+	# A vehicle element reports through its actual attachment, never a nearby squad.
+	for id in visible.keys():
+		if not _rear().military.squads.has(id): visible.erase(id)
+	for id in _rear().military.vehicles:
+		var observer: Dictionary = _apc_observer(id)
+		if observer.is_empty(): continue
+		var seen := {}
+		var world: RefCounted = _rear().combat.world
+		var maximum: float = float(world.Catalog.ROLES[observer.role].range)+EPS
+		for target in entities:
+			var affiliation: String = str(target.controller).trim_suffix("-hq") if target.kind == "CARRIER" else str(target.owner)
+			if target.kind not in ["PERSON","CARRIER"] or affiliation not in ["army-blue","army-red"] or affiliation == observer.owner or target.get("health",0) <= 0 or target.get("assignment","") in ["Wounded","Recovery","Dead"]: continue
+			if observer.position.distance_to(target.position) > maximum: continue
+			if target.kind == "PERSON" and _rear().ledger.entity_kind(target.holder_id) == "CARRIER" and not _rear().vehicle_combat._exposed_gunner(target): continue
+			if not world.is_visible(observer.position,target.position,observer.role): continue
+			var strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))
+			seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":strength,"source":observer.source,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown"),"observer_element":id,"observer_parent":observer.parent,"observer_role":observer.role}
+		visible[id] = seen
+		for row in seen.values(): pending.append({"due":_rear().time+0.5,"kind":"Contact","destination":id,"report":row})
+
 func _deliver(entry: Dictionary) -> void:
 	match entry.kind:
 		"Contact":
 			var destination: String = entry.destination
 			var report: Dictionary = entry.report
+			if report.has("observer_element"):
+				var observer: Dictionary = _apc_observer(report.observer_element)
+				if observer.is_empty() or observer.parent != report.observer_parent: return
 			var prior: Dictionary = contacts.get(destination,{}).get(report.target,{})
 			if prior.is_empty() or float(report.observed_at) >= float(prior.observed_at):
 				if not contacts.has(destination): contacts[destination] = {}
@@ -376,7 +447,7 @@ func _deliver(entry: Dictionary) -> void:
 			var row: Dictionary = entry.report
 			row.current_at = entry.destination
 			row.path.append(entry.destination)
-			if entry.destination == "army":
+			if entry.destination in ["army","army-red"]:
 				row.state = "Delivered to Commander"
 				reports.append(row)
 			else: _push_up(row,entry.destination)
@@ -391,8 +462,8 @@ func _review_flank(platoon_id: String) -> void:
 	var plan: Dictionary = responsibilities[platoon_id]
 	var ammo: Dictionary = _fixing_ammunition(plan.fixing,plan.target)
 	var contact_now: Dictionary = contact(platoon_id,plan.target)
-	var fixing: Dictionary = _rear().military.capability(plan.fixing)
-	var flanking: Dictionary = _rear().military.capability(plan.flanking)
+	var fixing: Dictionary = _rear().military.capability(plan.fixing,"Sustained Execution")
+	var flanking: Dictionary = _rear().military.capability(plan.flanking,"Sustained Execution")
 	var cohesion: Dictionary = _rear().combat.squad_cohesion(plan.flanking)
 	if ammo.ok and fixing.ok and flanking.ok and contact_now.current and cohesion.state == "Coherent": return
 	plan.state = "Paused"
@@ -418,12 +489,14 @@ func _fixing_ammunition(squad_id: String, target_id: String) -> Dictionary:
 	if target.is_empty(): return _block("Observed target identity no longer exists.")
 	return _block("Fixing squad has no eligible loaded matching weapon with a current legal firing line; flank must pause and request local E02.")
 
-func _squad_strength(squad_id: String) -> float:
+func _squad_strength(squad_id: String, centre: Vector2 = Vector2.INF, radius: float = INF, purpose: String = "Sustained Execution") -> float:
 	var squad: Dictionary = _rear().military.squads.get(squad_id,{})
-	if squad.is_empty() or not _rear().military.capability(squad_id).ok: return 0.0
+	if squad.is_empty() or not _rear().military.capability(squad_id,purpose).ok: return 0.0
 	var total := 0.0
 	for id in _rear().military._active_roster_members(squad):
-		var person: Dictionary = _rear().ledger.inspect_entity(id)
+		if squad.kind == "Rifle" and (not _rear().military.rifle_can_fight(id) or _rear().combat.broken.has(id)): continue
+		var person: Dictionary = _rear().ledger.inspect_person_status(id)
+		if centre.is_finite() and person.position.distance_to(centre) > radius: continue
 		var base := 1.5 if squad.kind == "Marksman" and _rear().military._held(id,"E19") > 0 else 1.0
 		var factor := float(person.health)/100.0 * (1.0-float(person.suppression)/200.0)
 		var cover: Dictionary = _rear().combat.world.cover(person.position,Vector2.INF)
@@ -455,14 +528,20 @@ func _flank_geometry(fixing_id: String, flanking_id: String, target: Vector2) ->
 
 func _parent(id: String) -> String:
 	if id == "army": return ""
+	if _rear().military.vehicles.has(id): return str(_rear().military.vehicles[id].parent)
 	if _rear().military.squads.has(id): return str(_rear().military.squads[id].platoon)
 	if _rear().military.platoons.has(id): return str(_rear().military.platoons[id].company)
-	if _rear().military.companies.has(id): return "army"
+	if _rear().military.companies.has(id): return str(_rear().military.companies[id].get("army_id","army"))
 	return ""
 
 func _source_current(source_id: String, target_id: String) -> bool:
 	for id in visible:
-		if visible[id].has(target_id) and visible[id][target_id].source == source_id: return true
+		if visible[id].has(target_id) and visible[id][target_id].source == source_id:
+			var report: Dictionary = visible[id][target_id]
+			if report.has("observer_element"):
+				var observer: Dictionary = _apc_observer(id)
+				if observer.is_empty() or observer.source != source_id or observer.parent != report.observer_parent or observer.role != report.observer_role: continue
+			return true
 	return false
 
 func _block(message: String) -> Dictionary:
