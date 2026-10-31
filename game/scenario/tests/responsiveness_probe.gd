@@ -1,7 +1,7 @@
 extends SceneTree
 ## Rendered mouse/control probe. Extended warm-up belongs on GitHub, not the desktop.
 ## Opt-in --seek-combat --warmup=1200 seeks natural fire up to that maximum,
-## then samples fixed 20-simulation-second 1x and 10-second 2x live windows.
+## then samples bounded 1x/2x live windows (defaults 9/6 simulation seconds).
 const Main = preload("res://game/main/main.tscn")
 const OpeningDiagnostics = preload("res://game/scenario/tests/opening_regression.gd")
 var main: Control
@@ -26,21 +26,21 @@ var seek_combat := false
 var combat_observation: Dictionary = {}
 
 func _initialize() -> void:
-	for argument in OS.get_cmdline_user_args():
+	var arguments := OS.get_cmdline_user_args()
+	seek_combat = "--seek-combat" in arguments
+	for argument in arguments:
 		if argument.begins_with("--max-frame-ms="): frame_budget = argument.get_slice("=",1).to_float()
 		if argument.begins_with("--warmup="): warmup = argument.get_slice("=",1).to_float()
 		if argument.begins_with("--report-path="): report_path = argument.trim_prefix("--report-path=")
-		if argument.begins_with("--run-seconds="): run_seconds = maxf(9.0,argument.get_slice("=",1).to_float())
-		if argument.begins_with("--double-seconds="): double_seconds = maxf(6.0,argument.get_slice("=",1).to_float())
+		if argument.begins_with("--run-seconds="):
+			var requested: float = argument.get_slice("=",1).to_float()
+			run_seconds = requested if seek_combat else maxf(9.0,requested)
+		if argument.begins_with("--double-seconds="):
+			var requested: float = argument.get_slice("=",1).to_float()
+			double_seconds = requested if seek_combat else maxf(6.0,requested)
 		if argument.begins_with("--heartbeat-path="): heartbeat_path = argument.trim_prefix("--heartbeat-path=")
 		if argument == "--profile-live": profile_live = true
 		if argument == "--capture": capture = true
-		if argument == "--seek-combat": seek_combat = true
-	if seek_combat:
-		# This opt-in mode uses fixed live sample lengths; warmup is a maximum
-		# simulation timestamp, not an unconditional advance to that timestamp.
-		run_seconds = 20.0
-		double_seconds = 10.0
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
 
@@ -108,6 +108,10 @@ func _press(label: String) -> bool:
 func _run() -> void:
 	if seek_combat and (not is_finite(warmup) or warmup <= 0.0 or warmup > 1200.0):
 		failures.append("--seek-combat requires a finite --warmup maximum in (0,1200] simulation seconds")
+		_finish()
+		return
+	if seek_combat and (not is_finite(run_seconds) or run_seconds < 9.0 or run_seconds > 20.0 or not is_finite(double_seconds) or double_seconds < 6.0 or double_seconds > 10.0):
+		failures.append("--seek-combat requires finite --run-seconds in [9,20] and --double-seconds in [6,10] simulation seconds")
 		_finish()
 		return
 	root.size = Vector2i(1280,720)
@@ -259,6 +263,7 @@ func _finish() -> void:
 	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"phase_transitions":phase_transitions,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
 	if seek_combat:
 		output["seek_combat"] = true
+		output["requested_windows_sim"] = {"running_1x":run_seconds if is_finite(run_seconds) else str(run_seconds),"running_2x":double_seconds if is_finite(double_seconds) else str(double_seconds)}
 		output["combat_observation"] = combat_observation
 		if not is_finite(warmup): output["warmup_seconds"] = null
 	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
