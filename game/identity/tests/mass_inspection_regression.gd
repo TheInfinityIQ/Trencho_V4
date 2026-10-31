@@ -1,5 +1,6 @@
 extends SceneTree
 const Fixture = preload("res://game/identity/identity_fixture.gd")
+const Records = preload("res://game/identity/identity_records.gd")
 var failures := 0
 var checks := 0
 func _initialize() -> void:
@@ -39,6 +40,10 @@ func compare(ledger: RefCounted) -> void:
 		compare_rows(ledger.entities_at(holder,["PERSON","STOCK","WEAPON"]),ledger.entities_at(holder,["PERSON","STOCK","WEAPON"],false))
 	for type in ["E01","E02","missing"]:
 		compare_rows(ledger.entities_of_type(type,["STOCK","WEAPON"]),ledger.entities_of_type(type,["STOCK","WEAPON"],false))
+	for kind in Records.Kind.values():
+		var label: String = Records.Kind.keys()[kind]
+		check(ledger.entities_of_kind(kind) == complete.entities.filter(func(row: Dictionary) -> bool: return row.kind == label),"Kind query preserves full membership, facts and insertion order for "+label)
+		check(ledger.entities_of_kind(kind,false) == metadata.entities.filter(func(row: Dictionary) -> bool: return row.kind == label),"Kind metadata query preserves non-mass facts and order for "+label)
 	for row in complete.entities:
 		check(row == ledger.inspect_entity(row.id),"Batched inspection equals independent raw facts for loaded rounds, carries and exact mass")
 		check(ledger.entity_kind(row.id) == row.kind,"Kind-only query equals the authoritative inspection kind")

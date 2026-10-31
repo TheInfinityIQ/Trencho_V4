@@ -63,6 +63,14 @@ jobs:
           grep -E 'RESPONSIVENESS_' .artifacts/responsiveness-profile.log
           grep -q 'BEGIN PROFILING' .artifacts/responsiveness-profile.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness-profile.log; then exit 1; fi
+      - name: Observe response after actual troop departures on GitHub
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 300s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd -- --warmup=180 --report-path=res://.artifacts/responsiveness-underway.json > .artifacts/responsiveness-underway.log 2>&1
+          grep -E 'RESPONSIVENESS_' .artifacts/responsiveness-underway.log
+          if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness-underway.log; then exit 1; fi
       - name: Retain early response timing and profile
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

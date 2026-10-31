@@ -175,6 +175,12 @@ func entities_of_type(type: String, kinds: Array, include_mass: bool = true) -> 
 		if entity.design_type == type and Records.Kind.keys()[entity.kind] in kinds: result.append(inspect_entity(entity.id,{},include_mass))
 	return result
 
+func entities_of_kind(kind: Records.Kind, include_mass: bool = true) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.kind == kind: result.append(inspect_entity(entity.id,{},include_mass))
+	return result
+
 
 func add_person(id: String, holder_id: String, owner: String,
 		initial_assignment: int = Records.Assignment.AVAILABLE,

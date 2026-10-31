@@ -99,6 +99,11 @@ func _run() -> void:
 		print("RESPONSIVENESS_WARMUP_START ",warmup)
 		base.rear.advance_time(warmup)
 		print("RESPONSIVENESS_WARMUP_COMPLETE ",base.rear.time)
+		if warmup >= 180.0:
+			for id in ["blue-rifles","blue-support","red-forward"]:
+				var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
+				var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
+				_check(job.get("state","") in ["Outbound","Dismounting","Returning","Complete"],"Actual initial lift departed before the later observation: "+id)
 	_phase("paused_battlefield")
 	await create_timer(0.5).timeout
 	if not await _press("1x"): return
@@ -160,7 +165,8 @@ func _finish() -> void:
 	if base != null and base.rear.battlefield_operations != null and base.rear.battlefield_operations.policy != null:
 		for id in base.rear.battlefield_operations.policy.trips:
 			var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
-			admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker}
+			var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
+			admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker,"state":job.get("state","Not requested"),"boarded":job.get("boarded",0),"people":job.get("people",[]).size()}
 	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
 	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
 	var file := FileAccess.open(report_path,FileAccess.WRITE)

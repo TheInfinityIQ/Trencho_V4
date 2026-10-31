@@ -120,12 +120,14 @@ func _present(row: Dictionary) -> bool:
 func _active() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if not accessible: return result
+	var unfinished := _unfinished()
+	if unfinished.is_empty(): return result
 	var coverage: Dictionary = {}
 	for id in instructors():
 		var duty: String = _rear_ref.get_ref().ledger.inspect_person_status(id).duty_id
 		coverage[duty] = int(coverage.get(duty,0))+6
 	# Each actual instructor covers only students seated at that same F06.
-	for row in _unfinished():
+	for row in unfinished:
 		if row.seat < 0 or not _present(row) or not course_accessible(row.course): continue
 		var duty: String = training_sites[int(row.seat / STUDENT_LIMIT)].duty
 		if int(coverage.get(duty,0)) <= 0: continue

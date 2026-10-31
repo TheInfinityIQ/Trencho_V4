@@ -563,8 +563,8 @@ func _settle() -> void:
 func _sync_receiving_people() -> void:
 	var added := false
 	var released := false
-	for p in ledger.snapshot(false).entities:
-		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
+	for p in ledger.entities_of_kind(Records.Kind.PERSON,false):
+		if p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
 			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
 			added = true
 	for a in actors.values():
@@ -646,13 +646,19 @@ func _finish_phase(a: Dictionary) -> void:
 
 
 func _start_job(a: Dictionary) -> bool:
-	var person: Dictionary = ledger.inspect_entity(a.id)
+	var person: Dictionary = ledger.inspect_person_status(a.id)
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
+	var inspected_load := false
 	for job in jobs:
 		if job.cancelled or job.delivered + _in_flight(job.id) >= job.requested:
 			continue
+		# Idle haulers need only status. Read the actual retained load immediately
+		# before considering real freight; all capacity checks below stay exact.
+		if not inspected_load:
+			person = ledger.inspect_entity(a.id)
+			inspected_load = true
 		var option := _job_option(job, person)
 		if option.is_empty():
 			continue
