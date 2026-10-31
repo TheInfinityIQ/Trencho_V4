@@ -375,7 +375,7 @@ func settle() -> bool:
 			row.state = "Stopped on lane"
 			row.deadline = INF
 			changed = true
-		var hull: Dictionary = rear.ledger.inspect_entity(id)
+		var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
 		if row.state == "Moving to F11" and (hull.health <= 0 or hull.get("damage_immobilized",false)):
 			row.state = "Stopped on lane"
 			row.deadline = INF

@@ -758,7 +758,7 @@ func _candidate_people(kind: String) -> Array[String]:
 	var specialists: Array[String] = []
 	var guards: Array[String] = []
 	for id in ids:
-		var p: Dictionary = rear.ledger.inspect_entity(id)
+		var p: Dictionary = rear.ledger.inspect_person_status(id)
 		if p.is_empty() or p.assignment != "HQ Reserve" or p.holder_id != "hq-reserve" or p.health <= 0 or p.pending_assignment != "None" or rear.hq._target_busy(id): continue
 		if kind == "Rifle":
 			if p.qualification == "None" and _rifle_ready(id): guards.append(id)
