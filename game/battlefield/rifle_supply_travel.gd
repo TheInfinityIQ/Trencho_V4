@@ -535,6 +535,9 @@ func _has_owned_walk(row: Dictionary) -> bool:
 func _remaining_eta(row: Dictionary) -> float:
 	# Quotes remain available as foot_eta/lift_eta. Do not present the original
 	# full-trip quote as a live forecast once ACK/physical handling has begun.
+	if row.mode == "Transport" and row.state not in ["Blocked","Interrupted","AwaitingACK"] and not row.retask:
+		var trip: Dictionary = _transport().jobs.get(_observed_job(row,"trip"),{})
+		if not trip.is_empty(): return _loaded_eta(row,trip)
 	if row.state == "Ready": return float(row.eta)
 	if row.state != "Walking" or not _has_owned_walk(row): return -1.0
 	var remaining := 0.0
@@ -546,6 +549,24 @@ func _remaining_eta(row: Dictionary) -> float:
 			var person: Dictionary = _rear().ledger.inspect_person_status(id)
 			if person.get("holder_id","") != row.destination or person.position.distance_to(row.goals[id]) > 1.0: return -1.0
 	return remaining
+
+func _loaded_eta(row: Dictionary, trip: Dictionary) -> float:
+	if not _command_error(row).is_empty() or trip.get("kind","") != "Troop Trip" or trip.get("hull","") != row.hull or trip.get("dismount_place","") != row.destination or trip.get("people",[]) != row.cohort: return -1.0
+	var people: Array = trip.people
+	var dismounted: int = int(trip.get("dismounted",-1))
+	if int(trip.get("boarded",-1)) != people.size() or dismounted < 0 or dismounted > people.size(): return -1.0
+	var remaining: int = people.size()-dismounted
+	if trip.state == "Outbound":
+		var deadline: float = float(trip.get("route_deadline",INF))
+		if not is_finite(deadline): return -1.0
+		return maxf(0.0,deadline-_rear().time)+HANDLING_SECONDS*remaining
+	if trip.state == "Dismounting":
+		var task: Dictionary = trip.get("task",{})
+		if task.is_empty(): return HANDLING_SECONDS*remaining
+		var deadline: float = float(task.get("deadline",INF))
+		if remaining <= 0 or not is_finite(deadline) or task.get("person","") != people[dismounted]: return -1.0
+		return maxf(0.0,deadline-_rear().time)+HANDLING_SECONDS*(remaining-1)
+	return -1.0
 
 func _reject_candidate(row: Dictionary, reason: String) -> void:
 	row.notes.append(reason)
