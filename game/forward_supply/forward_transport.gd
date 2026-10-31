@@ -499,6 +499,9 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 	for target_id in rear.orders.contacts.get(company,{}):
 		var contact: Dictionary = rear.orders.contact(company,target_id)
 		if contact.is_empty() or float(contact.confidence) <= EPS or not contact.position.is_finite(): continue
+		# Public objectives and unarmed transport hulls do not supply hostile
+		# effective fire. Unknown people/armed contacts retain the conservative margin.
+		if contact.get("class","") in ["Resource","Route Hub","Observation","T01","T02"]: continue
 		var radius: float = float(THREAT_RANGE.get(str(contact.get("class","")),300.0))+float(contact.uncertainty_m)
 		for part in parts:
 			var from: Vector2 = part.from
