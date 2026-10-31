@@ -372,22 +372,14 @@ func _free_handler() -> String:
 	return available[0] if not available.is_empty() else ""
 
 func _stock_counts() -> Dictionary:
-	# Automatic selection needs the same raw ownership/claim counts as the UI,
-	# without copying issue jobs or evaluating the depot's recursive load mass.
 	var rear: RefCounted = _rear_ref.get_ref()
-	var available: Dictionary = {}
-	var reserved: Dictionary = {}
+	var inventory: Dictionary = rear.ledger.owned_inventory_at("hq-stock",rear.PLAYER)
 	var weapons_available: Dictionary = {}
 	var weapons_promised: Dictionary = {}
-	for stock in rear.ledger.entities_at("hq-stock",["STOCK","WEAPON"],false):
-		if stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or stock.quantity <= 0: continue
-		if stock.kind == "STOCK":
-			available[stock.design_type] = int(available.get(stock.design_type,0))+int(stock.available)
-			reserved[stock.design_type] = int(reserved.get(stock.design_type,0))+int(stock.reserved)
-		elif stock.kind == "WEAPON":
-			var bucket: Dictionary = weapons_promised if weapon_promises.has(stock.id) else weapons_available
-			bucket[stock.design_type] = int(bucket.get(stock.design_type,0))+1
-	return {"available":available,"reserved":reserved,"weapons_available":weapons_available,"weapons_promised":weapons_promised}
+	for weapon in inventory.weapons:
+		var bucket: Dictionary = weapons_promised if weapon_promises.has(weapon.id) else weapons_available
+		bucket[weapon.design_type] = int(bucket.get(weapon.design_type,0))+1
+	return {"available":inventory.available,"reserved":inventory.reserved,"weapons_available":weapons_available,"weapons_promised":weapons_promised}
 
 func snapshot() -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()

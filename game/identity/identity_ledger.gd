@@ -216,6 +216,20 @@ func available_person_ids(owner: String) -> Array[String]:
 		if person != null and person.assignment == Records.Assignment.AVAILABLE: result.append(person.id)
 	return result
 
+func owned_inventory_at(holder: String, owner: String) -> Dictionary:
+	# A fresh direct-holder inventory count; no eligibility or load admission.
+	var quantities := {}
+	var reservations := {}
+	var weapons: Array[Dictionary] = []
+	for entity in _entities.values():
+		if entity.holder_id != holder or entity.owner != owner or entity.quantity <= 0: continue
+		if entity.kind == Records.Kind.STOCK:
+			quantities[entity.design_type] = int(quantities.get(entity.design_type,0))+available(entity.id)
+			reservations[entity.design_type] = int(reservations.get(entity.design_type,0))+reserved(entity.id)
+		elif entity.kind == Records.Kind.WEAPON:
+			weapons.append({"id":entity.id,"design_type":entity.design_type})
+	return {"available":quantities,"reserved":reservations,"weapons":weapons}
+
 func physical_quantity_at(holder: String, type: String, kinds: Array) -> int:
 	# Quantity includes reserved portions, just as raw inspection does. This
 	# count needs neither recursive mass nor weapon/carry inspection details.
