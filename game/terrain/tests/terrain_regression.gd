@@ -148,8 +148,12 @@ class LegacySightWorld extends World:
 
 class CountedProbeWorld extends World:
 	var preparations := 0
+	var probe_calls := 0
 	var lookup_cells: Array[Vector2i] = []
 	var candidates: Array[Dictionary] = []
+	func probe(start: Vector2, finish: Vector2, start_height: float, target_height: float, maximum: float, drone: bool = false) -> Dictionary:
+		probe_calls += 1
+		return super.probe(start,finish,start_height,target_height,maximum,drone)
 	func _probe_regions(segments: Array[Dictionary]) -> Array[Dictionary]:
 		preparations += 1
 		candidates = super._probe_regions(segments)
@@ -396,6 +400,7 @@ func _probe_parity(world: RefCounted, start: Vector2, finish: Vector2, eye: floa
 	var expected: Dictionary = legacy.probe(start,finish,eye,target_height,maximum,drone)
 	var actual: Dictionary = world.probe(start,finish,eye,target_height,maximum,drone)
 	_check(var_to_bytes(actual) == var_to_bytes(expected),label+": complete prior probe fields/ordered segments/budget/first blocker match exactly")
+	_check(world.is_visible(start,finish) == legacy.observe(start,finish).visible,label+": ordinary boolean API matches independent prior observe visibility")
 	_check(_sight_state(world) == before,label+": probe does not mutate world or raw region tiles")
 	return actual
 
@@ -405,6 +410,7 @@ func _sight_parity(world: RefCounted, start: Vector2, finish: Vector2, role: Str
 	var expected: Dictionary = legacy.observe(start,finish,role,muzzle,weapon_range)
 	var actual: Dictionary = world.observe(start,finish,role,muzzle,weapon_range)
 	_check(var_to_bytes(actual) == var_to_bytes(expected),label+": complete prior observe result including independent eye/muzzle matches exactly")
+	_check(world.is_visible(start,finish,role) == expected.visible,label+": role boolean API matches independent prior observe visibility")
 	_check(_sight_state(world) == before,label+": observation does not mutate world")
 	var profile: Dictionary = Catalog.ROLES[role]
 	_probe_parity(world,start,finish,profile.eye,1.7,profile.range,role == "drone",label+" direct call")
@@ -431,6 +437,12 @@ func _sight_read_reuse() -> void:
 	_check(result.clear and world.preparations == 1,"One fresh region candidate list for a supported direct probe")
 	_check(world.candidates.size() == 3 and is_same(world.candidates[0],world.base_regions[6]) and is_same(world.candidates[1],world.base_regions[5]) and is_same(world.candidates[2],world.base_regions[0]),"Exact ray-cell bounds exclude four outside-touching regions while retaining descending identity/order")
 	_check(world.lookup_cells.size() == world.ray_cells(a,b).size(),"Clear ray still resolves every original segment in order")
+	for role in Catalog.ROLES:
+		for target in [b,Vector2(1000,20.5)]:
+			var calls: int = world.probe_calls
+			var visible: bool = world.is_visible(a,target,role)
+			_check(world.probe_calls == calls+1,"Boolean visibility invokes exactly one real probe for "+role)
+			_check(visible == _legacy_sight(world).observe(a,target,role).visible,"Single-probe visibility retains prior eye rules in/out of range for "+role)
 	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Layered half-open base regions")
 	world.base_regions[1].area = Rect2i(150,20,1,1)
 	_check(not _probe_parity(world,a,b,1.7,1.7,220.0,false,"Previously excluded region moves into ray").clear,"Next query sees actual changed region height")

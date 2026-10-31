@@ -532,6 +532,12 @@ func probe(start: Vector2, finish: Vector2, start_height: float, target_height: 
 	return result
 
 
+func is_visible(observer: Vector2, target: Vector2, role: String = "ordinary") -> bool:
+	assert(Catalog.ROLES.has(role))
+	var profile: Dictionary = Catalog.ROLES[role]
+	return probe(observer,target,profile.eye,1.7,profile.range,role == "drone").clear
+
+
 func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzzle: float = 1.5, weapon_range: float = 160.0) -> Dictionary:
 	assert(Catalog.ROLES.has(role))
 	var profile: Dictionary = Catalog.ROLES[role]
