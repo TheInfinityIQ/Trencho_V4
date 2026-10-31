@@ -1,4 +1,12 @@
 {
+  "Demo": [
+    {
+      "path": "game/forward_supply/tests/gdunit/demo_route_preview_test.gd",
+      "cases": [
+        "test_ordinary_supply_preview_becomes_available_without_dispatching"
+      ]
+    }
+  ],
   "Domain": [
     {
       "path": "game/procurement/tests/gdunit/receiving_domain_test.gd",
