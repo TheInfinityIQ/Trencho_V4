@@ -12,12 +12,17 @@ on:
         options: [full, supply, combat]
         default: full
         required: true
+      combat_profile:
+        description: Profile combat observation only (adds overhead; uses 9/6-second samples)
+        type: boolean
+        default: false
+        required: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}
+  group: validate-${{ github.ref }}${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'supply' && '-supply' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && inputs.combat_profile && '-combat-profile' || github.event_name == 'workflow_dispatch' && inputs.mode == 'combat' && '-combat' || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -213,6 +218,9 @@ jobs:
     timeout-minutes: 20
     env:
       EVALUATION_HEAD: ${{ github.sha }}
+      COMBAT_PROFILE: ${{ inputs.combat_profile && 'true' || 'false' }}
+      COMBAT_RUN_SECONDS: ${{ inputs.combat_profile && '9' || '20' }}
+      COMBAT_DOUBLE_SECONDS: ${{ inputs.combat_profile && '6' || '10' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -223,6 +231,7 @@ jobs:
           mkdir -p .artifacts/combat
           touch .artifacts/.gdignore
           printf 'revision=%s\n' "$EVALUATION_HEAD" > .artifacts/combat/revision.txt
+          printf 'combat_profile=%s\nrun_seconds=%s\ndouble_seconds=%s\n' "$COMBAT_PROFILE" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" >> .artifacts/combat/revision.txt
           sha256sum game/scenario/tests/responsiveness_probe.gd > .artifacts/combat/driver.sha256
       - name: Download and verify pinned Godot
         timeout-minutes: 2
@@ -256,22 +265,29 @@ jobs:
         run: |
           set -euo pipefail
           command -v xvfb-run
-          printf 'revision=%s\nstarted_utc=%s\nsimulation_seek_limit_seconds=1200\nrun_seconds=20\ndouble_seconds=10\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" > .artifacts/combat/run.txt
+          printf 'revision=%s\nstarted_utc=%s\nsimulation_seek_limit_seconds=1200\ncombat_profile=%s\nrun_seconds=%s\ndouble_seconds=%s\nprocess_limit_seconds=900\n' "$EVALUATION_HEAD" "$(date -u +%FT%TZ)" "$COMBAT_PROFILE" "$COMBAT_RUN_SECONDS" "$COMBAT_DOUBLE_SECONDS" > .artifacts/combat/run.txt
+          engine_flags=()
+          probe_flags=()
+          if [ "$COMBAT_PROFILE" = true ]; then
+            engine_flags=(--debug --ignore-error-breaks --profiling)
+            probe_flags=(--profile-live)
+          fi
           set +e
-          timeout --signal=TERM --kill-after=5s 895s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --log-file "$GITHUB_WORKSPACE/.artifacts/combat/engine.log" --script res://game/scenario/tests/responsiveness_probe.gd -- --seek-combat --warmup=1200 --run-seconds=20 --double-seconds=10 --capture --report-path=res://.artifacts/combat/responsiveness.json > .artifacts/combat/probe.log 2>&1
+          timeout --signal=TERM --kill-after=5s 895s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy "${engine_flags[@]}" --log-file "$GITHUB_WORKSPACE/.artifacts/combat/engine.log" --script res://game/scenario/tests/responsiveness_probe.gd -- --seek-combat --warmup=1200 --run-seconds="$COMBAT_RUN_SECONDS" --double-seconds="$COMBAT_DOUBLE_SECONDS" "${probe_flags[@]}" --capture --report-path=res://.artifacts/combat/responsiveness.json > .artifacts/combat/probe.log 2>&1
           result=$?
           set -e
           printf 'exit_code=%s\nfinished_utc=%s\n' "$result" "$(date -u +%FT%TZ)" >> .artifacts/combat/run.txt
           grep -E 'RESPONSIVENESS_' .artifacts/combat/probe.log > .artifacts/combat/evidence.log || true
           tail -n 100 .artifacts/combat/probe.log
           if [ "$result" -ne 0 ]; then exit "$result"; fi
+          if [ "$COMBAT_PROFILE" = true ]; then grep -q 'BEGIN PROFILING' .artifacts/combat/probe.log; fi
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/combat/probe.log .artifacts/combat/engine.log; then exit 1; fi
           test -s .artifacts/combat/responsiveness.json
       - name: Retain complete or partial combat observation
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: godot-combat-observation
+          name: ${{ inputs.combat_profile && 'godot-combat-profile' || 'godot-combat-observation' }}
           path: .artifacts/combat/
           include-hidden-files: true
           retention-days: 7
