@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd > .artifacts/responsiveness.log 2>&1
+          timeout 300s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://game/scenario/tests/responsiveness_probe.gd -- --run-seconds=45 --double-seconds=12 > .artifacts/responsiveness.log 2>&1
           grep -E 'RESPONSIVENESS_' .artifacts/responsiveness.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness.log; then exit 1; fi
       - name: Profile the same opening separately from response timing
@@ -59,8 +59,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --profiling --script res://game/scenario/tests/responsiveness_probe.gd -- --profile-live --report-path=res://.artifacts/responsiveness-profile.json > .artifacts/responsiveness-profile.log 2>&1
+          timeout 120s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --debug --ignore-error-breaks --profiling --script res://game/scenario/tests/responsiveness_probe.gd -- --profile-live --report-path=res://.artifacts/responsiveness-profile.json > .artifacts/responsiveness-profile.log 2>&1
           grep -E 'RESPONSIVENESS_' .artifacts/responsiveness-profile.log
+          grep -q 'BEGIN PROFILING' .artifacts/responsiveness-profile.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/responsiveness-profile.log; then exit 1; fi
       - name: Retain early response timing and profile
         if: always()
@@ -68,6 +69,7 @@ jobs:
         with:
           name: godot-responsiveness-reports
           path: .artifacts/responsiveness*
+          include-hidden-files: true
           retention-days: 7
       - name: Verify existing suites and GdUnit4 domain pilot
         shell: pwsh

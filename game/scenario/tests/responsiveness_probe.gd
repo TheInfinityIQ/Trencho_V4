@@ -13,12 +13,16 @@ var frame_budget := 0.0
 var warmup := 0.0
 var profile_live := false
 var report_path := "res://.artifacts/responsiveness.json"
+var run_seconds := 9.0
+var double_seconds := 6.0
 
 func _initialize() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--max-frame-ms="): frame_budget = argument.get_slice("=",1).to_float()
 		if argument.begins_with("--warmup="): warmup = argument.get_slice("=",1).to_float()
 		if argument.begins_with("--report-path="): report_path = argument.trim_prefix("--report-path=")
+		if argument.begins_with("--run-seconds="): run_seconds = maxf(9.0,argument.get_slice("=",1).to_float())
+		if argument.begins_with("--double-seconds="): double_seconds = maxf(6.0,argument.get_slice("=",1).to_float())
 		if argument == "--profile-live": profile_live = true
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_run.call_deferred()
@@ -101,7 +105,7 @@ func _run() -> void:
 	_check(base.speed == 1,"Ordinary1x control changes the shared clock")
 	_phase("running_1x")
 	if profile_live: EngineDebugger.profiler_enable("scripts",true)
-	await _wait_simulation(base.rear.time+9.0,60.0)
+	await _wait_simulation(base.rear.time+run_seconds,maxf(60.0,run_seconds*6.0))
 	for id in ["blue-rifles","blue-support","red-forward"]:
 		_check(base.rear.battlefield_operations.policy.trips[id].started,"Observed the actual initial admission: "+id)
 	if not await _press("Pause"): return
@@ -120,7 +124,7 @@ func _run() -> void:
 	if not await _press("2x"): return
 	_check(base.speed == 2,"Ordinary2x control changes the shared clock")
 	_phase("running_2x")
-	await _wait_simulation(base.rear.time+6.0,40.0)
+	await _wait_simulation(base.rear.time+double_seconds,maxf(40.0,double_seconds*4.0))
 	if not await _press("Pause"): return
 	_check(base.rear.time > paused,"The same session continues actual simulation at2x")
 	phase = "loading"
