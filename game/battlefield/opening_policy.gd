@@ -1,7 +1,8 @@
 extends RefCounted
 const Resupply = preload("res://game/battlefield/opening_resupply.gd")
 const Deployment = preload("res://game/battlefield/vehicle_deployment.gd")
-## Declared playtest opening only; broad commander operation scoring is deferred.
+const ResourceOperations = preload("res://game/battlefield/resource_operations.gd")
+## Authored deployment followed by bounded, knowledge-based resource proposals.
 var _rear_ref: WeakRef
 var armies: Dictionary
 var points: Dictionary
@@ -12,6 +13,8 @@ var status: Dictionary = {}
 var repositioned: Dictionary = {}
 var resupply: RefCounted
 var deployments: RefCounted
+var resource_operations: RefCounted
+var _resource_reported: Dictionary = {}
 var _trip_admission_cursor := 0
 var _last_trip_attempt := -INF
 var _trip_request_sequence := 0
@@ -26,6 +29,7 @@ func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> vo
 	points = waypoints
 	resupply = Resupply.new(rear,armies["army-blue"].rifles.slice(0,2),armies["army-blue"].engineer,"blue-delivery")
 	deployments = Deployment.new(rear,points,resupply)
+	resource_operations = ResourceOperations.new(rear,armies)
 	for side in ["blue","red"]:
 		var owner: String = "army-"+side
 		phases[owner] = "Opening"
@@ -64,17 +68,29 @@ func tick() -> void:
 		for id in rear.orders.contacts.get("army-red",{}):
 			var contact: Dictionary = rear.orders.contact("army-red",id)
 			if contact.get("confidence",0) > 0 and contact.get("observed_strength",0) > 0: reserve_active = true; break
+	var enabled := {}
+	var available := {}
+	for owner in armies:
+		var army: Dictionary = armies[owner]
+		enabled[owner] = _owns_company_order(army.company,army.root,rear.orders.intents.get(army.company,{})) and rear.ledger.inspect_person_status(army.commander).get("health",0) > 0
+		available[owner] = _resource_squads(army)
+	resource_operations.tick(armies,available,enabled)
+	var observation: Dictionary = resource_operations.observation()
+	if not observation.is_empty():
+		var report: Dictionary = rear.orders.report(observation.source,"Progress",observation.detail)
+		if report.ok: resource_operations.record_observed(observation.key,observation.affiliation)
 	for owner in armies:
 		var army: Dictionary = armies[owner]
 		var side := "blue" if owner == "army-blue" else "red"
 		var first := "resource-centre-"+side
-		for report in rear.orders.reports:
-			if report.current_at == army.root and report.kind == "Complete" and report.detail == "Captured "+first:
-				phases[owner] = "Probe" if side == "blue" else "Hold"
 		var commander: Dictionary = rear.ledger.inspect_person_status(army.commander)
 		if commander.get("health",0) <= 0: status[owner] = "Commander unavailable; received intent continues"; continue
-		var objective: String = "resource-centre-red" if phases[owner] == "Probe" else first
+		var operation: Dictionary = resource_operations.proposal(owner)
+		if not operation.is_empty(): phases[owner] = str(operation.phase)
+		var objective: String = str(operation.get("objective",first))
+		var action: String = str(operation.get("action","Seize Objective"))
 		var version: String = str(phases[owner])+str(reserve_active if side == "red" else false)
+		if not operation.is_empty(): version += str(operation.version)
 		var company_intent: Dictionary = rear.orders.intents.get(army.company,{})
 		var opening_owned: bool = _owns_company_order(army.company,army.root,company_intent)
 		var vehicle_deployments: Dictionary = deployments.payloads(army.company) if opening_owned and owner == rear.PLAYER else {}
@@ -85,10 +101,13 @@ func tick() -> void:
 		if not vehicle_deployments.is_empty(): version += str(deployment_versions)
 		if opening_owned and company_intent.get("constraints",{}).get("opening_version","") != version:
 			var constraints := {"opening_version":version,"objective":objective}
+			if not operation.is_empty(): constraints.resource_operation = operation.duplicate(true)
 			if not vehicle_deployments.is_empty(): constraints.vehicle_deployments = vehicle_deployments
-			var sent: Dictionary = rear.orders.issue_order(army.root,army.company,"Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective"),"Secure the declared central approach","Opening supply and objective playtest",constraints,"Emergency" if reserve_active and side == "red" else "Normal","Own HQ staging")
+			var sent: Dictionary = rear.orders.issue_order(army.root,army.company,action,"Secure the declared resource operation","Continue useful resource operations with actual supply and capability",constraints,"Emergency" if reserve_active and side == "red" else "Normal",str(operation.get("fallback",army.staging)))
 			if not sent.ok: status[owner] = sent.message
-			else: _company_order_ids[army.company] = sent.id
+			else:
+				_company_order_ids[army.company] = sent.id
+				if not operation.is_empty(): resource_operations.record_issued(owner,str(operation.version),str(sent.id))
 			company_intent = rear.orders.intents.get(army.company,{})
 		if company_intent.get("state","") != "Acknowledged": continue
 		# A denied update cannot authorize new scenario instructions under the old
@@ -111,10 +130,26 @@ func tick() -> void:
 				var sent: Dictionary = rear.orders.issue_order(platoon_id,squad_id,desired.action,"Perform the assigned opening role","Support the company objective",constraints,"Normal",desired.fallback)
 				_remember_child_attempt(squad_id,str(platoon_intent.id),current,sent)
 		status[owner] = str(phases[owner])+": "+objective if opening_owned else "Following the current parent operation."
+		var resource_blocker: String = resource_operations.blocker(owner)
+		if opening_owned and not resource_blocker.is_empty():
+			status[owner] += " · "+resource_blocker
+			if resource_blocker.begins_with("No feasible") or resource_blocker.begins_with("Resource operation needs"):
+				if _resource_reported.get(owner,"") != resource_blocker:
+					var reported: Dictionary = rear.orders.report(army.company,"Inability",resource_blocker)
+					if reported.ok: _resource_reported[owner] = resource_blocker
 	_request_trips()
 	_reposition_supply_truck()
 	resupply.tick()
 	deployments.tick()
+
+func _resource_squads(army: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	for id in army.rifles.slice(0,2):
+		var released := false
+		for trip in trips.values():
+			if id in trip.squads and trip.dismounted: released = true; break
+		if released: result.append(id)
+	return result
 
 func settle_vehicle_departures() -> bool:
 	return deployments.settle_ready_departures()
@@ -212,7 +247,8 @@ func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 	if side == "blue":
 		fallback = "blue-supply-rally"
 		if id == army.engineer: return {"action":"Hold Area","destination":"blue-delivery","fallback":fallback,"role":role}
-	return {"action":"Support Formation" if role != "Rifle" else ("Probe" if phases[owner] == "Probe" else ("Hold Area" if phases[owner] == "Hold" else "Seize Objective")),"destination":objective,"fallback":fallback,"role":role,"supply":"blue-delivery" if side == "blue" and role == "Rifle" else ""}
+	var operation: Dictionary = resource_operations.proposal(owner)
+	return {"action":"Support Formation" if role != "Rifle" else str(operation.get("action","Seize Objective")),"destination":objective,"fallback":fallback,"role":role,"supply":"blue-delivery" if side == "blue" and role == "Rifle" else ""}
 
 func _request_trips() -> void:
 	var rear: RefCounted = _rear()
@@ -297,4 +333,4 @@ func snapshot() -> Dictionary:
 	var own_trips: Array[Dictionary] = []
 	for id in trips:
 		if id.begins_with("blue"): own_trips.append(trips[id].duplicate(true))
-	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips,"resupply":resupply.snapshot(),"deployments":deployments.snapshot()}
+	return {"phase":phases.get("army-blue","Opening"),"status":status.get("army-blue","Awaiting command delivery"),"trips":own_trips,"resupply":resupply.snapshot(),"deployments":deployments.snapshot(),"resource_operations":resource_operations.snapshot("army-blue")}
