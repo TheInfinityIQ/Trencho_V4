@@ -6,6 +6,7 @@ var phase := "loading"
 var previous_phase := "loading"
 var frames: Dictionary = {}
 var actions: Array[Dictionary] = []
+var phase_transitions: Array[Dictionary] = []
 var previous := 0
 var failures: Array[String] = []
 var finished := false
@@ -57,6 +58,7 @@ func _record_frame() -> void:
 
 func _phase(label: String) -> void:
 	phase = label
+	phase_transitions.append({"phase":phase,"wall_msec":Time.get_ticks_msec(),"sim_seconds":main.get("_base").simulation.rear.time})
 	print("RESPONSIVENESS_PHASE ",phase," sim=",main.get("_base").simulation.rear.time)
 
 func _press(label: String) -> bool:
@@ -142,11 +144,13 @@ func _run() -> void:
 	await _wait_simulation(base.rear.time+double_seconds,maxf(40.0,double_seconds*4.0))
 	if not await _press("Pause"): return
 	_check(base.rear.time > paused,"The same session continues actual simulation at2x")
-	phase = "loading"
+	_check(base.speed == 0,"The final Pause stops the same session after2x")
+	_phase("loading")
 	_record_frame()
 	if profile_live: EngineDebugger.profiler_enable("scripts",false)
 	_check(base.audit().is_empty(),"The observed session preserves physical invariants")
 	if capture:
+		DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
 		await create_timer(0.25).timeout
 		await RenderingServer.frame_post_draw
 		var captured: Error = root.get_texture().get_image().save_png(report_path.trim_suffix(".json")+".png")
@@ -175,14 +179,16 @@ func _finish() -> void:
 	for label in frames:
 		var values: Array = frames[label]
 		values.sort()
-		results[label] = {"frames":values.size(),"p95_ms":values[mini(values.size()-1,int(values.size()*0.95))],"max_ms":values[-1]}
+		var wall_ms := 0.0
+		for interval in values: wall_ms += float(interval)
+		results[label] = {"frames":values.size(),"p95_ms":values[mini(values.size()-1,int(values.size()*0.95))],"max_ms":values[-1],"wall_seconds":wall_ms/1000.0}
 	var admissions := {}
 	if base != null and base.rear.battlefield_operations != null and base.rear.battlefield_operations.policy != null:
 		for id in base.rear.battlefield_operations.policy.trips:
 			var trip: Dictionary = base.rear.battlefield_operations.policy.trips[id]
 			var job: Dictionary = base.rear.military.troop_transport.jobs.get(trip.job,{})
 			admissions[id] = {"started":trip.started,"admitted_at":trip.admitted_at,"blocker":trip.blocker,"state":job.get("state","Not requested"),"boarded":job.get("boarded",0),"people":job.get("people",[]).size()}
-	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
+	var output := {"revision":OS.get_environment("EVALUATION_HEAD"),"engine":Engine.get_version_info().string,"failures":failures,"profiled":profile_live,"warmup_seconds":warmup,"frame_budget_ms":frame_budget,"phases":results,"phase_transitions":phase_transitions,"actions":actions,"admissions":admissions,"sim_seconds":base.rear.time if base != null else 0.0,"engine_static_mib":Performance.get_monitor(Performance.MEMORY_STATIC)/1048576.0}
 	DirAccess.make_dir_recursive_absolute(report_path.get_base_dir())
 	var file := FileAccess.open(report_path,FileAccess.WRITE)
 	if file == null:

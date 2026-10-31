@@ -240,7 +240,7 @@ func _reconcile_store(id: String) -> bool:
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
 	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
 	var contents: Dictionary = {}
-	for stock in _stock_at(id):
+	for stock in _stock_at(id,false):
 		if not contents.has(stock.design_type): contents[stock.design_type] = {"quantity": 0, "mass": stock.unit_mass_kg, "position": stock.position}
 		contents[stock.design_type].quantity += stock.quantity
 	for type in contents:
@@ -692,7 +692,7 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 	for source_id in source_ids:
 		if not stores.has(source_id) or not stores[source_id].accessible or source_id == job.destination:
 			continue
-		for stock in _stock_at(source_id):
+		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
 			var count := mini(stock.available, job.requested - job.delivered - _in_flight(job.id))
@@ -829,8 +829,8 @@ func _release_load(a: Dictionary) -> void:
 	a.blocked_since = -1.0
 
 
-func _stock_at(holder: String) -> Array:
-	return ledger.entities_at(holder,["STOCK"]).filter(func(e: Dictionary) -> bool: return e.owner == PLAYER and e.quantity > 0)
+func _stock_at(holder: String, include_mass: bool = true) -> Array:
+	return ledger.entities_at(holder,["STOCK"],include_mass).filter(func(e: Dictionary) -> bool: return e.owner == PLAYER and e.quantity > 0)
 
 
 func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> bool:
