@@ -58,7 +58,7 @@ func supply_cohort_facts(hull_id: String, squad_id: String) -> Dictionary:
 		if not _supply_person_free(id,person): return _fail("Each actual eligible passenger must finish its other physical work.")
 		var armed := false
 		for weapon in rear.ledger.entities_at(id,["WEAPON"],false):
-			if weapon.design_type == "E01" and weapon.get("functional",false) and weapon.get("health",0) > 0: armed = true; break
+			if weapon.design_type == "E01" and weapon.get("functional",false): armed = true; break
 		if not armed: return _fail("Each eligible Rifle carrier needs its actual functional rifle; ammunition is not required to collect supply.")
 		facts.append(_planning_person_facts(person))
 		mass += float(person.unit_mass_kg)+float(person.contents_mass_kg)
