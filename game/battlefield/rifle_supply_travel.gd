@@ -6,6 +6,7 @@ extends RefCounted
 const Routes = preload("res://game/routes/route_planner.gd")
 const HANDLING_SECONDS := 2.0
 const LOCAL_RADIUS := 20.0
+const GATHER_DECISION_SECONDS := 1.0 # Execution admits one new walk per normal decision.
 var planning_revision: int = 0
 var _rear_ref: WeakRef
 var _authorize: Callable
@@ -32,6 +33,7 @@ func request_journey(squad_id: String, cycle_key: String, leg: String, destinati
 	var retained := {}
 	if not previous.is_empty():
 		_sync_jobs(previous)
+		_stop_gathering(previous)
 		_cancel_pure(previous)
 		for job_id in [previous.pickup_job,previous.trip_job]:
 			var job: Dictionary = _transport().jobs.get(job_id,{})
@@ -48,7 +50,7 @@ func request_journey(squad_id: String, cycle_key: String, leg: String, destinati
 		"foot_ok":true,"foot_reason":"","foot_index":0,"fleet":[],"fleet_index":0,"choices":[],"candidate":{},
 		"hull":"","pickup_job":"","trip_job":"","pickup_key":"","trip_key":"","resume_pending":false,
 		"pickup":"rifle-pickup-%d-%d" % [get_instance_id(),_sequence],"origin_marker":"rifle-origin-%d-%d" % [get_instance_id(),_sequence],
-		"anchor":Vector2.ZERO,"goal":Vector2.ZERO,"authority":{},"selected":{},"notes":[],"retask":false,"attempt":0,"queued":false,"planning_error":false,"selection_started":false}
+		"anchor":Vector2.ZERO,"goal":Vector2.ZERO,"authority":{},"selected":{},"notes":[],"retask":false,"attempt":0,"queued":false,"planning_error":false,"selection_started":false,"gather_started":{}}
 	_journeys[squad_id] = row
 	planning_revision += 1
 	if not retained.is_empty():
@@ -68,8 +70,9 @@ func journey_status(squad_id: String) -> Dictionary:
 	var arrived: bool = _arrived(row)
 	var pickup_job: String = _observed_job(row,"pickup")
 	var trip_job: String = _observed_job(row,"trip")
+	var gathering: float = _gather_eta(row)
 	return {"key":row.key,"cycle":row.cycle,"leg":row.leg,"state":"Arrived" if arrived else row.state,"mode":row.mode,
-		"destination":row.destination,"arrival":arrived,"eta":0.0 if arrived else _remaining_eta(row),"foot_eta":row.foot_eta,"lift_eta":row.lift_eta,
+		"destination":row.destination,"arrival":arrived,"eta":0.0 if arrived else _remaining_eta(row,gathering),"gather_eta":gathering,"foot_eta":row.foot_eta,"lift_eta":row.lift_eta,
 		"hull":row.hull,"pickup":row.pickup,"pickup_position":row.anchor,"pickup_job":pickup_job,"trip_job":trip_job,"blocker":"" if arrived else row.blocker,"intent":row.intent}
 
 func has_planning_work() -> bool:
@@ -126,10 +129,97 @@ func walk_routes(squad_id: String) -> Dictionary:
 	_set_state(row,"Walking","")
 	return result
 
+func gathering_routes(squad_id: String) -> Dictionary:
+	var row: Dictionary = _journeys.get(squad_id,{})
+	if row.is_empty() or row.state != "Gathering" or not _rear().vehicle_departures_allowed: return {}
+	if not _gather_error(row).is_empty(): _reset(row); return {}
+	# A single admitted motion at a time makes the conservative serial quote
+	# executable. Completed people stay at their actual pickup positions.
+	for id in row.cohort:
+		if _owns_gather_motion(row,id): return {}
+	for id in row.cohort:
+		if not row.selected.gathers.has(id) or row.gather_started.has(id): continue
+		var person: Dictionary = row.people[id]
+		row.gather_started[id] = true
+		var result := {}
+		result[id] = {"plan":row.selected.gathers[id],"captured_position":person.position,"captured_mass":float(person.unit_mass_kg)+float(person.contents_mass_kg),
+			"world_revision":row.revision,"world_id":row.world.get_instance_id(),"intent":row.intent,"destination":row.anchor,"place":row.pickup,
+			"gather_journey":row.key,"gather_attempt":row.attempt}
+		return result
+	return {}
+
+func gathering_motion_valid(person: Dictionary, motion: Dictionary) -> bool:
+	var row: Dictionary = _journeys.get(str(motion.get("squad","")),{})
+	return not row.is_empty() and row.state == "Gathering" and _owns_gather_motion(row,str(person.get("id",""))) and _gather_error(row).is_empty()
+
+func _owns_gather_motion(row: Dictionary, id: String) -> bool:
+	var execution: RefCounted = _rear().battlefield_operations
+	if execution == null: return false
+	var motion: Dictionary = execution.motions.get(id,{})
+	return motion.get("gather_journey","") == row.key and int(motion.get("gather_attempt",-1)) == row.attempt and motion.get("squad","") == row.squad and motion.get("intent","") == row.intent and motion.get("place","") == row.pickup and motion.get("destination",Vector2.INF) == row.anchor and motion.get("purpose","") in ["Supply","Supply Return"]
+
+func _gather_error(row: Dictionary) -> String:
+	var error: String = _command_error(row)
+	if not error.is_empty(): return error
+	var rear: RefCounted = _rear()
+	if row.world != rear.combat.world or row.revision != row.world.revision or rear.ledger.inspect_entity(row.destination,{},false).get("position",Vector2.INF) != row.goal: return "Gathering route inputs changed."
+	var marker: Dictionary = rear.ledger.inspect_entity(row.pickup,{},false)
+	var hull: Dictionary = rear.ledger.inspect_entity(row.hull,{},false)
+	if marker.get("kind","") != "PLACE" or marker.position != row.anchor or not hull.get("position",Vector2.INF).is_equal_approx(row.anchor) or rear.ledger.entity_kind(str(hull.get("holder_id",""))) != "PLACE": return "Gathering requires its actual stopped pickup."
+	var hull_order: Dictionary = rear.orders.intents.get(row.hull,{})
+	var named: Dictionary = row.authority.duplicate(true)
+	named.erase("hull_intent")
+	if hull_order.get("id","") != row.authority.get("hull_intent","") or hull_order.get("state","") != "Acknowledged" or hull_order.get("action","") != "Move by Transport" or hull_order.get("parent","") != rear.military.vehicles.get(row.hull,{}).get("parent","") or hull_order.get("constraints",{}).get("supply_transport",{}) != named: return "Gathering requires the same current actual-parent hull acknowledgement."
+	var facts: Dictionary = _transport().supply_cohort_facts(row.hull,row.squad)
+	if not facts.get("ok",false): return str(facts.get("message","Actual pickup cohort is unavailable."))
+	if facts.people != row.cohort: return "Gathering cohort changed."
+	for id in row.cohort:
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		var captured: Dictionary = row.people[id]
+		for key in ["owner","assignment","duty_id","health","pending_assignment","crew_station","contents_mass_kg","unit_mass_kg"]:
+			if person.get(key) != captured.get(key): return "Actual gathering member or load changed."
+		if _owns_gather_motion(row,id):
+			var motion: Dictionary = rear.battlefield_operations.motions[id]
+			if not row.gather_started.has(id) or not person.position.is_equal_approx(motion.expected): return "Actual gathering movement diverged."
+			if person.holder_id != row.pickup and (person.holder_id != captured.holder_id or not person.position.is_equal_approx(captured.position)): return "Actual gathering holder changed."
+		elif not _free(id): return "Another activity owns a gathering member."
+		elif row.gather_started.has(id):
+			if person.holder_id != row.pickup or person.position.distance_to(row.anchor) > 1.0: return "Gathering stopped before actual arrival."
+		elif person.position != captured.position or person.holder_id != captured.holder_id: return "An unstarted gathering member moved."
+		if not _safe_foot(person,row.anchor): return "Delivered hostile fire excludes gathering."
+	return ""
+
+func _gathered(row: Dictionary) -> bool:
+	for id in row.selected.gathers:
+		if not row.gather_started.has(id) or _owns_gather_motion(row,id): return false
+	return true
+
+func _stop_gathering(row: Dictionary) -> void:
+	if _rear().battlefield_operations == null: return
+	for id in row.cohort:
+		if _owns_gather_motion(row,id): _rear().battlefield_operations.motions.erase(id)
+
+func _gather_eta(row: Dictionary) -> float:
+	if row.state != "Gathering" or not _gather_error(row).is_empty(): return -1.0
+	var remaining := 0.0
+	var pending := 0
+	for id in row.selected.gathers:
+		if _owns_gather_motion(row,id):
+			var motion: Dictionary = _rear().battlefield_operations.motions[id]
+			var deadline: float = float(motion.deadline)
+			if not is_finite(deadline): return -1.0
+			remaining += maxf(0.0,deadline-_rear().time)
+			pending += 1
+		elif not row.gather_started.has(id):
+			remaining += float(row.selected.gathers[id].seconds)
+			pending += 1
+	return remaining+GATHER_DECISION_SECONDS*(pending+1) if pending > 0 else 0.0
+
 func interrupt_journey(squad_id: String, cycle_key: String, reason: String = "Collection travel interrupted.") -> void:
 	var row: Dictionary = _journeys.get(squad_id,{})
 	if row.is_empty() or row.cycle != cycle_key: return
 	_sync_jobs(row)
+	_stop_gathering(row)
 	_cancel_pure(row)
 	for job_id in [row.pickup_job,row.trip_job]:
 		var job: Dictionary = _transport().jobs.get(job_id,{})
@@ -140,6 +230,9 @@ func interrupt_journey(squad_id: String, cycle_key: String, reason: String = "Co
 func invalidate_planning() -> void:
 	for row in _journeys.values():
 		_sync_jobs(row)
+		if row.state == "Gathering":
+			if not _gather_error(row).is_empty(): _reset(row)
+			continue
 		if row.state == "Walking" and not _has_owned_walk(row) and not _arrived(row):
 			_reset(row)
 			continue
@@ -149,6 +242,7 @@ func invalidate_planning() -> void:
 func cancel_planning() -> void:
 	for row in _journeys.values():
 		_sync_jobs(row)
+		_stop_gathering(row)
 		_cancel_pure(row)
 		row.work = null
 		row.queued = false
@@ -204,11 +298,7 @@ func _candidate(row: Dictionary) -> void:
 	if not facts.get("ok",false): row.notes.append(str(facts.get("message","T02 is not currently eligible."))); return
 	if facts.people != row.cohort: row.notes.append("T02 quote does not match the exact current eligible cohort."); return
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	var candidate := {"hull":hull_id,"facts":facts,"body":hull,"approach":0,"approach_seconds":0.0,"route_index":0,"plans":[]}
-	for person in facts.person_facts:
-		if person.position.distance_to(row.anchor) > LOCAL_RADIUS:
-			row.notes.append("Cohort is outside the real pickup's local boarding radius; a lift cannot assume instant gathering.")
-			return
+	var candidate := {"hull":hull_id,"facts":facts,"body":hull,"approach":0,"approach_seconds":0.0,"gather_seconds":0.0,"gathers":{},"route_index":0,"plans":[]}
 	row.candidate = candidate
 	row.phase = "Approach"
 
@@ -233,7 +323,11 @@ func _begin_vehicle(row: Dictionary) -> void:
 		var proposal := {"hull":candidate.hull,"parent":_rear().military.vehicles[candidate.hull].parent,"authority":authority}
 		var approval: Dictionary = _authorize.call(proposal,false) if _authorize.is_valid() else {"ok":false,"message":"No actual-parent authorization owner is available."}
 		if not approval.get("ok",false): _reject_candidate(row,str(approval.get("message","The actual parent has not made this T02 available."))); return
-		candidate.eta = float(pickup.seconds)+float(candidate.approach_seconds)+HANDLING_SECONDS*row.cohort.size()+float(loaded.seconds)+HANDLING_SECONDS*row.cohort.size()+maxf(0.0,float(approval.get("delay_seconds",2.0)))
+		# Approach seconds includes complete serial gathering to the anchor, then
+		# the unchanged local members' serial approaches owned by transport. No
+		# parallel gathering/pickup or offset-to-hull distance is assumed free.
+		var handoffs: float = GATHER_DECISION_SECONDS*(candidate.gathers.size()+1) if not candidate.gathers.is_empty() else 0.0
+		candidate.eta = float(pickup.seconds)+float(candidate.approach_seconds)+handoffs+HANDLING_SECONDS*row.cohort.size()+float(loaded.seconds)+HANDLING_SECONDS*row.cohort.size()+maxf(0.0,float(approval.get("delay_seconds",2.0)))
 		row.choices.append(candidate)
 		row.candidate = {}
 		row.phase = "Candidates"
@@ -265,6 +359,10 @@ func _finish_work(row: Dictionary) -> void:
 	elif row.phase == "Approach":
 		if not plan.get("ok",false): _reject_candidate(row,"No actual boarding approach: "+str(plan.get("reason","Unsupported approach"))); return
 		row.candidate.approach_seconds += float(plan.seconds)
+		var id: String = row.cohort[row.candidate.approach]
+		if row.people[id].position.distance_to(row.anchor) > LOCAL_RADIUS:
+			row.candidate.gathers[id] = plan
+			row.candidate.gather_seconds += float(plan.seconds)
 		row.candidate.approach += 1
 	else:
 		if not plan.get("ok",false): _reject_candidate(row,str(plan.get("reason","No supported T02 route."))); return
@@ -363,6 +461,14 @@ func _continue(row: Dictionary) -> void:
 		_set_state(row,"Pickup","Real pickup is queued with the existing transport owner.")
 		return
 	if not at_pickup: _set_state(row,"Blocked","The actual stopped hull must retain its pickup position."); return
+	if not row.selected.is_empty() and not row.selected.gathers.is_empty():
+		var gathering_error: String = _gather_error(row)
+		if not gathering_error.is_empty():
+			_reset(row)
+			return
+		if not _gathered(row):
+			_set_state(row,"Gathering","Walking dispersed members to the actual stopped pickup one at a time before boarding.")
+			return
 	# Execution may still be gathering the actual cohort. Do not enqueue a request
 	# that C would permanently deny while these owned short walks are in progress.
 	for id in row.cohort:
@@ -470,6 +576,7 @@ func _free(id: String) -> bool:
 func _reset(row: Dictionary) -> void:
 	_sync_jobs(row)
 	if _has_physical_job(row): return # Never replace an admitted physical owner with a fresh proposal.
+	_stop_gathering(row)
 	_cancel_pure(row)
 	row.attempt += 1
 	row.pickup_key = ""
@@ -480,6 +587,7 @@ func _reset(row: Dictionary) -> void:
 	row.selection_started = false
 	row.retask = false
 	row.authority = {}
+	row.gather_started = {}
 	# Old immutable markers remain historical metadata; a recapture gets new IDs.
 	row.pickup = "rifle-pickup-%d-%s-%d" % [get_instance_id(),row.key,row.attempt]
 	row.origin_marker = "rifle-origin-%d-%s-%d" % [get_instance_id(),row.key,row.attempt]
@@ -532,9 +640,12 @@ func _has_owned_walk(row: Dictionary) -> bool:
 		if motion.get("intent","") == row.intent and motion.get("place","") == row.destination and motion.get("purpose","") in ["Supply","Supply Return"]: return true
 	return false
 
-func _remaining_eta(row: Dictionary) -> float:
+func _remaining_eta(row: Dictionary, gathering: float) -> float:
 	# Quotes remain available as foot_eta/lift_eta. Do not present the original
 	# full-trip quote as a live forecast once ACK/physical handling has begun.
+	if row.state == "Gathering":
+		if gathering < 0.0: return -1.0
+		return gathering+float(row.selected.approach_seconds)-float(row.selected.gather_seconds)+HANDLING_SECONDS*row.cohort.size()*2+float(row.selected.plans[2].seconds)
 	if row.mode == "Transport" and row.state not in ["Blocked","Interrupted","AwaitingACK"] and not row.retask:
 		var trip: Dictionary = _transport().jobs.get(_observed_job(row,"trip"),{})
 		if not trip.is_empty(): return _loaded_eta(row,trip)

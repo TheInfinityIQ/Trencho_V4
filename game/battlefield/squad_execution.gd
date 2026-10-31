@@ -361,15 +361,7 @@ func _drive_supply_journey(squad: Dictionary, intent: Dictionary, collection: Di
 	if mode == "Foot":
 		_install_supply_walks(squad,intent,supply_travel.walk_routes(squad.id),"Supply" if leg == "Collect" else "Supply Return")
 	elif mode == "Transport" and squad.vehicle.is_empty():
-		var pickup_id: String = str(journey.get("pickup",""))
-		var pickup: Dictionary = rear.ledger.inspect_entity(pickup_id,{},false)
-		if pickup.get("kind","") == "PLACE":
-			for id in active:
-				var person: Dictionary = rear.ledger.inspect_person_status(id)
-				if _busy(id) or rear.combat.pinned.has(id) or rear.combat.broken.has(id): continue
-				if person.position.distance_to(pickup.position) > 18:
-					_walk(id,pickup_id,pickup.position+_offset(squad.roster.find(id)),true,"Supply")
-				elif motions.has(id) and motions[id].purpose in ["Supply","Supply Return"]: motions.erase(id)
+		_install_supply_walks(squad,intent,supply_travel.gathering_routes(squad.id),"Supply" if leg == "Collect" else "Supply Return")
 	return true
 
 func _install_supply_walks(squad: Dictionary, intent: Dictionary, routes: Dictionary, purpose: String) -> void:
@@ -378,15 +370,18 @@ func _install_supply_walks(squad: Dictionary, intent: Dictionary, routes: Dictio
 	for id in routes:
 		var route: Dictionary = routes[id]
 		var person: Dictionary = rear.ledger.inspect_entity(id)
-		if motions.has(id) and motions[id].get("intent","") == intent.id and motions[id].purpose == purpose: continue
+		if motions.has(id) and motions[id].get("intent","") == intent.id and motions[id].purpose == purpose and motions[id].place == route.place and motions[id].destination == route.destination: continue
 		if person.get("kind","") == "PERSON" and person.position.distance_to(route.destination) <= 1: continue
-		if not _on_foot(person) or _busy(id) or rear.combat.pinned.has(id) or rear.combat.broken.has(id) or person.duty_id != squad.id or route.intent != intent.id or rear.combat.world.get_instance_id() != int(route.world_id) or rear.combat.world.revision != int(route.world_revision) or not person.position.is_equal_approx(route.captured_position) or absf(float(person.unit_mass_kg)+float(person.contents_mass_kg)-float(route.captured_mass)) > EPS or not _fallback_safe(person,route.destination):
+		if (route.has("gather_journey") and not rear.vehicle_departures_allowed) or not _on_foot(person) or _busy(id) or rear.combat.pinned.has(id) or rear.combat.broken.has(id) or person.duty_id != squad.id or route.intent != intent.id or rear.combat.world.get_instance_id() != int(route.world_id) or rear.combat.world.revision != int(route.world_revision) or not person.position.is_equal_approx(route.captured_position) or absf(float(person.unit_mass_kg)+float(person.contents_mass_kg)-float(route.captured_mass)) > EPS or not _fallback_safe(person,route.destination):
 			supply_travel.invalidate_planning()
 			return
 		ready[id] = route
 	for id in ready:
 		var route: Dictionary = ready[id]
 		motions[id] = {"place":route.place,"destination":route.destination,"started":rear.time,"deadline":rear.time+float(route.plan.seconds),"plan":route.plan,"expected":route.captured_position,"revision":route.world_revision,"allow_unarmed":purpose == "Supply","purpose":purpose,"squad":squad.id,"intent":intent.id}
+		if route.has("gather_journey"):
+			motions[id].gather_journey = route.gather_journey
+			motions[id].gather_attempt = route.gather_attempt
 
 func _collection_threat(active: Array[String], targets: Array[Dictionary]) -> bool:
 	for id in active:
@@ -399,7 +394,8 @@ func _supply_motion_valid(person: Dictionary, motion: Dictionary) -> bool:
 	if motion.purpose not in ["Supply","Supply Return"]: return true
 	var intent: Dictionary = _rear().orders.intents.get(motion.squad,{})
 	var squad: Dictionary = _rear().military.squads.get(motion.squad,{})
-	return not squad.is_empty() and person.get("duty_id","") == motion.squad and intent.get("parent","") == squad.platoon and intent.get("state","") == "Acknowledged" and intent.get("id","") == motion.intent
+	if squad.is_empty() or person.get("duty_id","") != motion.squad or intent.get("parent","") != squad.platoon or intent.get("state","") != "Acknowledged" or intent.get("id","") != motion.intent: return false
+	return not motion.has("gather_journey") or supply_travel.gathering_motion_valid(person,motion)
 
 func _support_goal(squad: Dictionary, objective: Dictionary, supported_squads: Array) -> Dictionary:
 	var centre := Vector2.ZERO
