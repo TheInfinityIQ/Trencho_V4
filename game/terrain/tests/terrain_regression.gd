@@ -8,6 +8,155 @@ var checks: int = 0
 var failures: int = 0
 var cases: int = 0
 
+class LegacySightWorld extends World:
+	# Complete pre-change lookup/traversal/height/probe/observe oracle from a7b5792.
+	func cell(at: Vector2i) -> Dictionary:
+		if cells.has(at): return cells[at]
+		for index in range(base_regions.size()-1,-1,-1):
+			if base_regions[index].area.has_point(at): return base_regions[index].tile
+		return {"terrain": "TR01"}
+
+	func ground(point: Vector2) -> float:
+		var tile := cell(Vector2i(floor(point.x), floor(point.y)))
+		return _tile_height(tile, point)
+
+	func _tile_height(tile: Dictionary, point: Vector2) -> float:
+		var overlay: Dictionary = tile.get("overlay", {})
+		if overlay.get("complete", false) and overlay.has("height"): return float(overlay.height)
+		return float(tile.get("height", 0.0)) + Vector2(tile.get("gradient", Vector2.ZERO)).dot(point)
+
+	func ray_cells(start: Vector2, finish: Vector2) -> Array[Dictionary]:
+		var cuts: Array[float] = [0.0, 1.0]
+		var delta := finish - start
+		for axis in [0, 1]:
+			if absf(delta[axis]) < EPS: continue
+			for coordinate in range(int(floor(minf(start[axis], finish[axis]))) + 1, int(ceil(maxf(start[axis], finish[axis])))):
+				var fraction: float = (coordinate - start[axis]) / delta[axis]
+				if fraction > 0 and fraction < 1: cuts.append(fraction)
+		cuts.sort()
+		var result: Array[Dictionary] = []
+		for index in range(cuts.size() - 1):
+			var first := cuts[index]
+			var last := cuts[index + 1]
+			if last - first <= EPS: continue
+			var point := start.lerp(finish, (first + last) * 0.5)
+			result.append({"cell": Vector2i(floor(point.x), floor(point.y)), "from": first, "to": last})
+		return result
+
+	func _volume_interval(start: Vector3, finish: Vector3, item: Dictionary) -> Vector2:
+		var low := 0.0
+		var high := 1.0
+		var rectangle: Rect2 = item.rect
+		var minimum := Vector3(rectangle.position.x, rectangle.position.y, item.bottom)
+		var maximum := Vector3(rectangle.end.x, rectangle.end.y, item.top)
+		for axis in 3:
+			var delta: float = finish[axis] - start[axis]
+			if absf(delta) < EPS:
+				if start[axis] <= minimum[axis] or start[axis] >= maximum[axis]: return Vector2(-1, -1)
+			else:
+				var first: float = (minimum[axis] - start[axis]) / delta
+				var last: float = (maximum[axis] - start[axis]) / delta
+				low = maxf(low, minf(first, last))
+				high = minf(high, maxf(first, last))
+				if high - low <= EPS: return Vector2(-1, -1)
+		return Vector2(low, high)
+
+	func probe(start: Vector2, finish: Vector2, start_height: float, target_height: float, maximum: float, drone: bool = false) -> Dictionary:
+		var distance := start.distance_to(finish)
+		var a := Vector3(start.x, start.y, ground(start) + start_height)
+		var b := Vector3(finish.x, finish.y, ground(finish) + target_height)
+		var result := {"clear": false, "reason": "Out of range", "distance": distance, "range": maximum, "from": a, "to": b, "budget": 0.0, "limit": 100.0, "segments": [], "blocker": ""}
+		if distance > maximum + EPS: return result
+		if not Rect2(bounds).has_point(start) or not Rect2(bounds).has_point(finish):
+			result.reason = "Outside declared world"
+			return result
+		var stop := INF
+		var reason := ""
+		var blocker := ""
+		for item in obstacles:
+			if not item.opaque: continue
+			var interval := _volume_interval(a, b, item)
+			if interval.x >= 0 and interval.x < stop:
+				stop = interval.x
+				reason = "Opaque volume"
+				blocker = item.id
+		var budget := 0.0
+		for segment in ray_cells(start, finish):
+			var tile := cell(segment.cell)
+			var first: float = segment.from
+			var last: float = segment.to
+			var from := a.lerp(b, first)
+			var to := a.lerp(b, last)
+			var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
+			var base: float = tile.get("height", 0.0)
+			var overlay: Dictionary = tile.get("overlay", {})
+			if overlay.get("complete", false) and overlay.has("height"):
+				base = overlay.height
+				gradient = Vector2.ZERO
+			var low: float = from.z - (base + gradient.dot(Vector2(from.x, from.y)))
+			var high: float = to.z - (base + gradient.dot(Vector2(to.x, to.y)))
+			if minf(low, high) <= 0.0:
+				var hit: float = first if low <= 0.0 else lerpf(first, last, low / (low - high))
+				if hit < stop:
+					stop = hit
+					reason = "Terrain height"
+					blocker = str(segment.cell)
+			var top: float = tile.get("vegetation_height", 0.0)
+			var vegetation_from := first
+			var vegetation_to := last
+			if minf(low, high) >= top: continue
+			if low > top: vegetation_from = lerpf(first, last, (low - top) / (low - high))
+			if high > top: vegetation_to = lerpf(first, last, (top - low) / (high - low))
+			if drone and tile.terrain == "TR06" and tile.get("canopy", false):
+				if vegetation_from < stop:
+					stop = vegetation_from
+					reason = "Dense canopy"
+					blocker = str(segment.cell)
+			var cost: float = Catalog.SURFACES[tile.terrain].sight
+			if drone and tile.terrain in ["TR03", "TR04"]: cost = 0.0
+			var metres: float = maxf(0, minf(vegetation_to, stop) - vegetation_from) * distance
+			if metres <= EPS or cost == 0: continue
+			var spent := metres * cost
+			result.segments.append({"cell": segment.cell, "terrain": tile.terrain, "metres": metres, "cost": cost, "spent": spent})
+			if budget + spent >= 100.0 - EPS:
+				stop = vegetation_from + (100.0 - budget) / cost / maxf(distance, EPS)
+				reason = "Vegetation budget"
+				blocker = str(segment.cell)
+				budget = 100.0
+				break
+			budget += spent
+		result.budget = budget
+		result.clear = is_inf(stop)
+		result.reason = "Clear" if result.clear else reason
+		result.blocker = blocker
+		result.block_distance = stop * distance if not result.clear else -1.0
+		result.block_point = a.lerp(b, stop) if not result.clear else Vector3.ZERO
+		if reason in ["Terrain height", "Dense canopy", "Vegetation budget"]:
+			var point: Vector3 = result.block_point
+			var location := Vector2(point.x, point.y)
+			result.block_cell = cell(Vector2i(floor(location.x), floor(location.y))).duplicate(true)
+		return result
+
+	func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzzle: float = 1.5, weapon_range: float = 160.0) -> Dictionary:
+		assert(Catalog.ROLES.has(role))
+		var profile: Dictionary = Catalog.ROLES[role]
+		var eye := probe(observer, target, profile.eye, 1.7, profile.range, role == "drone")
+		var firing := probe(observer, target, muzzle, 1.7, weapon_range)
+		return {"visible": eye.clear, "eye": eye, "muzzle": firing, "role": role, "weapon_range": weapon_range, "firing_line_clear": firing.clear}
+
+
+
+class CountedProbeWorld extends World:
+	var preparations := 0
+	var lookup_cells: Array[Vector2i] = []
+	var candidates: Array[Dictionary] = []
+	func _probe_regions(segments: Array[Dictionary]) -> Array[Dictionary]:
+		preparations += 1
+		candidates = super._probe_regions(segments)
+		return candidates
+	func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
+		lookup_cells.append(at)
+		return super._route_tile(at,regions)
 
 func _initialize() -> void:
 	_run("all13 surfaces produce actual class movement/time/fuel", _surfaces)
@@ -29,6 +178,7 @@ func _initialize() -> void:
 	_run("completed exposed support preserves independently valid structures", _overlay_structure_cover)
 	_run("detached inspection preserves authoritative movement", _detached)
 	_run("rotated hull sweep and directional ray integration", _rotated)
+	_run("independent complete probe/observe parity and fresh region context", _sight_read_reuse)
 	print("G08 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -231,6 +381,100 @@ func _observation(name: String) -> Dictionary:
 	var fixture := Fixtures.sight(name)
 	return fixture.world.observe(fixture.observer, fixture.target, fixture.role, fixture.muzzle, fixture.weapon_range)
 
+
+func _legacy_sight(world: RefCounted) -> RefCounted:
+	var legacy := LegacySightWorld.new()
+	for key in ["bounds","cells","base_regions","scenario","obstacles","shields","field_effects","bridge_approaches","revision"]: legacy.set(key,world.get(key))
+	return legacy
+
+func _sight_state(world: RefCounted) -> Dictionary:
+	return {"bounds":world.bounds,"cells":world.cells.duplicate(true),"regions":world.base_regions.duplicate(true),"obstacles":world.obstacles.duplicate(true),"shields":world.shields.duplicate(true),"revision":world.revision}
+
+func _probe_parity(world: RefCounted, start: Vector2, finish: Vector2, eye: float, target_height: float, maximum: float, drone: bool, label: String) -> Dictionary:
+	var legacy := _legacy_sight(world)
+	var before := _sight_state(world)
+	var expected: Dictionary = legacy.probe(start,finish,eye,target_height,maximum,drone)
+	var actual: Dictionary = world.probe(start,finish,eye,target_height,maximum,drone)
+	_check(var_to_bytes(actual) == var_to_bytes(expected),label+": complete prior probe fields/ordered segments/budget/first blocker match exactly")
+	_check(_sight_state(world) == before,label+": probe does not mutate world or raw region tiles")
+	return actual
+
+func _sight_parity(world: RefCounted, start: Vector2, finish: Vector2, role: String, muzzle: float, weapon_range: float, label: String) -> void:
+	var legacy := _legacy_sight(world)
+	var before := _sight_state(world)
+	var expected: Dictionary = legacy.observe(start,finish,role,muzzle,weapon_range)
+	var actual: Dictionary = world.observe(start,finish,role,muzzle,weapon_range)
+	_check(var_to_bytes(actual) == var_to_bytes(expected),label+": complete prior observe result including independent eye/muzzle matches exactly")
+	_check(_sight_state(world) == before,label+": observation does not mutate world")
+	var profile: Dictionary = Catalog.ROLES[role]
+	_probe_parity(world,start,finish,profile.eye,1.7,profile.range,role == "drone",label+" direct call")
+
+func _sight_read_reuse() -> void:
+	for name in Fixtures.sight_cases():
+		var fixture: Dictionary = Fixtures.sight(name)
+		_sight_parity(fixture.world,fixture.observer,fixture.target,fixture.role,fixture.muzzle,fixture.weapon_range,name)
+	var plain := World.new()
+	for distance in [0.0,World.EPS*0.5,World.EPS,World.EPS*2.0,1.0]:
+		for maximum in [0.0,distance-World.EPS*0.5,distance,distance+World.EPS]:
+			_probe_parity(plain,Vector2.ZERO,Vector2(distance,0),1.7,1.7,maximum,false,"Near/zero distance and range EPS")
+	_probe_parity(plain,Vector2(-0.25,20),Vector2(2,20),1.7,1.7,1.0,false,"Range rejection still precedes outside-world refusal")
+	_probe_parity(plain,Vector2(-0.25,20),Vector2(2,20),1.7,1.7,10.0,false,"Outside-world direct-call fallback fields")
+	var world := CountedProbeWorld.new()
+	world.bounds = Rect2i(0,0,300,80)
+	world.add_base_region(world.bounds,"TR01")
+	for area in [Rect2i(0,20,10,1),Rect2i(211,20,20,1),Rect2i(10,19,201,1),Rect2i(10,21,201,1)]: world.add_base_region(area,"TR11",{"height":9.0})
+	world.add_base_region(Rect2i(60,20,20,1),"TR05",{"vegetation_height":12.0})
+	world.add_base_region(Rect2i(110,20,10,1),"TR06",{"vegetation_height":18.0,"canopy":true})
+	var a := Vector2(10.5,20.5)
+	var b := Vector2(210.5,20.5)
+	var result: Dictionary = world.probe(a,b,1.7,1.7,220.0)
+	_check(result.clear and world.preparations == 1,"One fresh region candidate list for a supported direct probe")
+	_check(world.candidates.size() == 3 and is_same(world.candidates[0],world.base_regions[6]) and is_same(world.candidates[1],world.base_regions[5]) and is_same(world.candidates[2],world.base_regions[0]),"Exact ray-cell bounds exclude four outside-touching regions while retaining descending identity/order")
+	_check(world.lookup_cells.size() == world.ray_cells(a,b).size(),"Clear ray still resolves every original segment in order")
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Layered half-open base regions")
+	world.base_regions[1].area = Rect2i(150,20,1,1)
+	_check(not _probe_parity(world,a,b,1.7,1.7,220.0,false,"Previously excluded region moves into ray").clear,"Next query sees actual changed region height")
+	world.paint(Rect2i(150,20,1,1),"TR01")
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Explicit cell overrides changed region")
+	world.add_base_region(world.bounds,"TR03",{"height":2.0,"gradient":Vector2(0.02,0.01),"vegetation_height":2.5})
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"New last region with continuous nonzero ground plane")
+	world.paint(Rect2i(10,20,1,1),"TR11",{"height":99.0,"overlay":{"complete":true,"height":6.0}})
+	world.paint(Rect2i(210,20,1,1),"TR11",{"height":99.0,"overlay":{"complete":true,"height":8.0}})
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Endpoint overlay ground and independent eye/muzzle heights")
+	world.obstacle("first-volume",Rect2(90,19,2,3),0,12)
+	world.obstacle("second-volume",Rect2(90,19,2,3),0,12)
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Equal-distance volume first-blocker order")
+	world.obstacles.reverse()
+	_sight_parity(world,a,b,"drone",1.5,220.0,"Changed obstacle order and drone/ground muzzle independence")
+	world.obstacles.clear()
+	world.base_regions.append({"area":Rect2(180.25,20,0.5,1),"tile":{"terrain":"TR01","height":20.0}})
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Fractional region between integer ray cells")
+	world.base_regions[-1].area = Rect2(180,20,0.25,1)
+	_check(not _probe_parity(world,a,b,1.7,1.7,220.0,false,"Fractional region now contains integer ray cell").clear,"Non-integer areas retain original membership semantics")
+	world.base_regions.append({"area":Rect2i(0,0,0,1),"tile":{"terrain":"TR11"}})
+	world.base_regions.append({"area":Rect2i(0,0,-1,1),"tile":{"terrain":"TR11"}})
+	world.base_regions.append({"area":Rect2i(2147483640,20,20,1),"tile":{"terrain":"TR11"}})
+	world.add_base_region(world.bounds,"TR01") # shadows unsupported negative-size point membership
+	_sight_parity(world,a,b,"ordinary",1.5,220.0,"Unusual region candidates retained conservatively")
+	_check(world.candidates.size() == world.base_regions.size()-3,"Fractional/zero/negative areas retained; moved and remaining outside-touching regions handled freshly")
+	var extreme_segments: Array[Dictionary] = [{"cell":Vector2i(2147483647,20)}]
+	_check(world._probe_regions(extreme_segments).size() == world.base_regions.size(),"Unrepresentable exclusive ray-cell end conservatively retains all regions")
+	var forest := CountedProbeWorld.new()
+	forest.bounds = world.bounds
+	forest.add_base_region(forest.bounds,"TR05",{"vegetation_height":12.0})
+	result = forest.probe(a,b,1.7,1.7,220.0)
+	_check(result.reason == "Vegetation budget" and forest.lookup_cells.size() < forest.ray_cells(a,b).size() and forest.lookup_cells[-1] == result.segments[-1].cell,"Budget stop retains original last tile read without resolving later ray cells")
+	_sight_parity(forest,a,b,"ordinary",1.5,220.0,"Shared forest budget reaches exact original blocker")
+	forest.obstacle("near-opaque",Rect2(50,19,1,3),0,8)
+	_sight_parity(forest,a,b,"ordinary",1.5,220.0,"Opaque stop truncates vegetation before budget exhaustion")
+	forest.obstacles.clear()
+	forest.base_regions[0].tile.vegetation_height = 0.0
+	_sight_parity(forest,a,b,"ordinary",1.5,220.0,"Same world sees changed vegetation on next probe")
+	var rotated := World.new()
+	rotated.bounds = Rect2i(-60,-60,320,160)
+	rotated.add_base_region(rotated.bounds,"TR05",{"vegetation_height":12.0,"gradient":Vector2(0.01,0.01)})
+	for ends in [[Vector2(-20.5,-20.5),Vector2(90.5,40.5)],[Vector2(90.5,40.5),Vector2(-20.5,-20.5)],[Vector2(-20,0),Vector2(90,0)]]:
+		_sight_parity(rotated,ends[0],ends[1],"ordinary",1.5,220.0,"Negative/rotated/grid-edge ray traversal")
 
 func _ranges() -> void:
 	_check(_observation("Ordinary at 220m").visible, "Ordinary220 inclusive")

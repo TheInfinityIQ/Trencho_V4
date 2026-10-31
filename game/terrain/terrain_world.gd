@@ -431,6 +431,28 @@ func _volume_interval(start: Vector3, finish: Vector3, item: Dictionary) -> Vect
 	return Vector2(low, high)
 
 
+func _probe_regions(segments: Array[Dictionary]) -> Array[Dictionary]:
+	var regions: Array[Dictionary] = []
+	if segments.is_empty() or base_regions.is_empty(): return regions
+	var first: Vector2i = segments[0].cell
+	var last := first
+	# These are the original ray's actual integer cells, including any rounding
+	# at grid edges. No replacement ray or approximate coordinate bound is used.
+	for segment in segments:
+		first = first.min(segment.cell)
+		last = last.max(segment.cell)
+	var cell_area := Rect2i(first,last-first+Vector2i.ONE)
+	var filterable: bool = cell_area.size.x > 0 and cell_area.size.y > 0 and last.x < 2147483647 and last.y < 2147483647
+	for index in range(base_regions.size()-1,-1,-1):
+		var region: Dictionary = base_regions[index]
+		var area: Variant = region.get("area")
+		if filterable and area is Rect2i:
+			var ordinary: bool = area.size.x > 0 and area.size.y > 0 and int(area.position.x)+int(area.size.x) <= 2147483647 and int(area.position.y)+int(area.size.y) <= 2147483647
+			if ordinary and not area.intersects(cell_area): continue
+		regions.append(region)
+	return regions
+
+
 func probe(start: Vector2, finish: Vector2, start_height: float, target_height: float, maximum: float, drone: bool = false) -> Dictionary:
 	var distance := start.distance_to(finish)
 	var a := Vector3(start.x, start.y, ground(start) + start_height)
@@ -451,8 +473,10 @@ func probe(start: Vector2, finish: Vector2, start_height: float, target_height: 
 			reason = "Opaque volume"
 			blocker = item.id
 	var budget := 0.0
-	for segment in ray_cells(start, finish):
-		var tile := cell(segment.cell)
+	var segments := ray_cells(start, finish)
+	var regions := _probe_regions(segments)
+	for segment in segments:
+		var tile := _route_tile(segment.cell,regions)
 		var first: float = segment.from
 		var last: float = segment.to
 		var from := a.lerp(b, first)
