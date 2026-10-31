@@ -4,6 +4,7 @@ extends SceneTree
 const Fixture = preload("res://game/identity/identity_fixture.gd")
 const Ledger = preload("res://game/identity/identity_ledger.gd")
 const Records = preload("res://game/identity/identity_records.gd")
+const Specs = preload("res://game/production/vehicle_specs.gd")
 
 var _failures: int = 0
 var _checks: int = 0
@@ -24,6 +25,7 @@ func _initialize() -> void:
 	_run_case("consumption and loss reconcile with physical counts", _removals)
 	_run_case("remote ownership is not local delivery", _physical_location)
 	_run_case("inspection cannot mutate authoritative state", _detached_inspection)
+	_run_case("fresh type reads match inspection without changing state", _design_type_read)
 	_run_case("fixed-seed mixed transitions preserve every invariant", _mixed_transitions)
 	print("G01 regression: %d cases, %d checks, %d failures" % [_cases, _checks, _failures])
 	quit(0 if _failures == 0 else 1)
@@ -274,6 +276,30 @@ func _detached_inspection() -> void:
 	snapshot.events.clear()
 	snapshot.created["E02 Round"] = 999
 	_check(ledger.snapshot() == before, "UI inspection copies cannot mutate holdings, events, claims or created counts")
+
+
+func _design_type_read() -> void:
+	var f := _fresh()
+	var ledger := f.ledger
+	_check(ledger.entity_design_type("type-apc") == "", "Missing future hull has no type")
+	_success(ledger.add_initial_vehicle("type-apc","T04","rear-store","army-blue",Specs.TYPES.T04,0))
+	_success(ledger.create_heavy_output("","","type-gun","E13","rear-store","army-blue",{"mass":180.0,"health":300}))
+	var before := ledger.snapshot(false)
+	var kinds := {}
+	for entity in before.entities:
+		kinds[entity.kind] = true
+		_check(ledger.entity_design_type(entity.id) == ledger.inspect_entity(entity.id,{},false).get("design_type",""), "Fresh read matches expanded inspection for "+entity.id)
+	for kind in Records.Kind.keys(): _check(kinds.has(kind), "Type equivalence covers real "+kind)
+	for id in ["","missing-type"]:
+		_check(ledger.entity_design_type(id) == ledger.inspect_entity(id,{},false).get("design_type",""), "Unknown ID matches empty inspection type")
+	_check(ledger.snapshot(false) == before, "Repeated type reads preserve entities claims events accounting and clock")
+	_check(ledger.entity_design_type("person-02") == "P00", "Actual untrained person starts with current P00 type")
+	_success(ledger.request_assignment("person-02",Records.Assignment.TRAINING,"students"))
+	_success(ledger.complete_training("person-02","P01"))
+	_check(ledger.entity_design_type("person-02") == "P01", "Same person's completed basic qualification is read fresh")
+	_success(ledger.complete_training("person-02","P08"))
+	_check(ledger.entity_design_type("person-02") == "P08" and ledger.entity_design_type("person-02") == ledger.inspect_entity("person-02",{},false).design_type, "Same person's specialist type remains equivalent after change")
+	_check(ledger.audit().is_empty(), "Fresh type query fixture reconciles")
 
 
 func _mixed_transitions() -> void:

@@ -202,6 +202,9 @@ func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) ->
 func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 
+func entity_design_type(id: String) -> String:
+	return _entities[id].design_type if _entities.has(id) else ""
+
 func entities_of_type(type: String, kinds: Array, include_mass: bool = true) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for entity in _entities.values():

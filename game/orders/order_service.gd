@@ -381,11 +381,12 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 
 func _has_apc_elements() -> bool:
 	for id in _rear().military.vehicles:
-		if _rear().ledger.inspect_entity(id,{},false).get("design_type","") == "T04": return true
+		if _rear().ledger.entity_design_type(id) == "T04": return true
 	return false
 
 func _apc_observer(id: String) -> Dictionary:
 	var rear: RefCounted = _rear()
+	if rear.ledger.entity_design_type(id) != "T04": return {}
 	var attachment: Dictionary = rear.military.vehicles.get(id,{})
 	var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
 	if attachment.is_empty() or hull.get("owner","") != attachment.owner: return {}
