@@ -18,7 +18,7 @@ var _collection_sequence := 0
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	vehicle_execution = Vehicles.new(rear)
-	var execution_ref := weakref(self)
+	var execution_ref: WeakRef = weakref(self)
 	supply_travel = SupplyTravel.new(rear,func(proposal: Dictionary, allow_issue: bool) -> Dictionary:
 		var execution: RefCounted = execution_ref.get_ref()
 		return execution._authorize_supply_transport(proposal,allow_issue) if execution != null else {"ok":false,"message":"The originating session is unavailable."})
