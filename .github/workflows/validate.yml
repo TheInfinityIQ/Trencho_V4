@@ -13,7 +13,7 @@ on:
         default: full
         required: true
       combat_profile:
-        description: Profile combat observation only (adds overhead; uses 9/6-second samples)
+        description: Profile combat observation only (adds overhead; includes 20/10-second combat and post-contact samples)
         type: boolean
         default: false
         required: false
@@ -219,8 +219,8 @@ jobs:
     env:
       EVALUATION_HEAD: ${{ github.sha }}
       COMBAT_PROFILE: ${{ inputs.combat_profile && 'true' || 'false' }}
-      COMBAT_RUN_SECONDS: ${{ inputs.combat_profile && '9' || '20' }}
-      COMBAT_DOUBLE_SECONDS: ${{ inputs.combat_profile && '6' || '10' }}
+      COMBAT_RUN_SECONDS: '20'
+      COMBAT_DOUBLE_SECONDS: '10'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
