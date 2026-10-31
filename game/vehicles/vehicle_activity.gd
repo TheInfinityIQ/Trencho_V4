@@ -150,7 +150,7 @@ func request_refuel(id: String, person_id: String, units: int) -> Dictionary:
 	for store in rear.stores.values():
 		if not store.accessible: continue
 		for stock in rear._stock_at(store.id):
-			if stock.design_type == "M08" and stock.available >= units and not Layout.path(person.position,stock.position).is_empty():
+			if stock.design_type == "M08" and stock.available >= units and not _walk_from(person.position,stock.position).is_empty():
 				if source.is_empty() or person.position.distance_to(stock.position) < person.position.distance_to(source.position): source = stock
 	if source.is_empty(): return _result(false,"No accessible local unreserved purchased M08 stack has those units.")
 	_sequence += 1
