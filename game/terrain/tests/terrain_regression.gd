@@ -4,6 +4,7 @@ const Catalog = preload("res://game/terrain/terrain_catalog.gd")
 const World = preload("res://game/terrain/terrain_world.gd")
 const Lane = preload("res://game/terrain/lane_simulation.gd")
 const Fixtures = preload("res://game/terrain/terrain_fixtures.gd")
+const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var checks: int = 0
 var failures: int = 0
 var cases: int = 0
@@ -146,6 +147,12 @@ class LegacySightWorld extends World:
 
 
 
+class RouteHookWorld extends World:
+	var lookups: Array[Vector2i] = []
+	func _route_tile(at: Vector2i, _regions: Array[Dictionary]) -> Dictionary:
+		lookups.append(at)
+		return {"terrain":"TR01","height":10.0}
+
 class CountedProbeWorld extends World:
 	var preparations := 0
 	var probe_calls := 0
@@ -183,6 +190,7 @@ func _initialize() -> void:
 	_run("detached inspection preserves authoritative movement", _detached)
 	_run("rotated hull sweep and directional ray integration", _rotated)
 	_run("independent complete probe/observe parity and fresh region context", _sight_read_reuse)
+	_run("bounded production-only corridor certificate and independent fallback parity", _sight_corridor)
 	print("G08 regression: %d cases, %d checks, %d failures" % [cases, checks, failures])
 	quit(0 if failures == 0 else 1)
 
@@ -487,6 +495,125 @@ func _sight_read_reuse() -> void:
 	rotated.add_base_region(rotated.bounds,"TR05",{"vegetation_height":12.0,"gradient":Vector2(0.01,0.01)})
 	for ends in [[Vector2(-20.5,-20.5),Vector2(90.5,40.5)],[Vector2(90.5,40.5),Vector2(-20.5,-20.5)],[Vector2(-20,0),Vector2(90,0)]]:
 		_sight_parity(rotated,ends[0],ends[1],"ordinary",1.5,220.0,"Negative/rotated/grid-edge ray traversal")
+
+func _corridor_accepts(world: RefCounted, start: Vector2, finish: Vector2, eye: float = 1.7, target_height: float = 1.7) -> bool:
+	return world._probe_corridor_clear(start,finish,Vector3(start.x,start.y,world.ground(start)+eye),Vector3(finish.x,finish.y,world.ground(finish)+target_height))
+
+func _sight_corridor() -> void:
+	var world := World.new()
+	world.bounds = Rect2i(-300,-100,800,300)
+	world.add_base_region(world.bounds,"TR06",{"canopy":true})
+	world.add_base_region(Rect2i(60,19,30,4),"TR03")
+	world.add_base_region(Rect2i(65,19,20,4),"TR04")
+	var a := Vector2(10.5,20.5)
+	var b := Vector2(210.5,20.5)
+	_check(_corridor_accepts(world,a,b),"Canonical World certifies overlapping flat default tiles including dense canopy")
+	for ends in [[a,b],[b,a],[Vector2(-20.5,-20.5),Vector2(90.5,40.5)],[Vector2(90.5,40.5),Vector2(-20.5,-20.5)],[Vector2(-20,0),Vector2(90,0)],[a,a],[Vector2.ZERO,Vector2(World.EPS*0.5,0)],[Vector2(10,20),Vector2(210,20)]]:
+		_check(_corridor_accepts(world,ends[0],ends[1]),"Finite zero/near/grid/reversed/negative ray receives certificate")
+		_probe_parity(world,ends[0],ends[1],1.7,1.7,220.0,false,"Certified traversal boundary")
+	for role in Catalog.ROLES:
+		_sight_parity(world,a,b,role,1.5,220.0,"Certified flat ray role "+role)
+	# These unsafe tiles touch only the exclusive outside edges of the cell AABB.
+	world.add_base_region(Rect2i(9,20,1,1),"TR01",{"height":9.0})
+	world.add_base_region(Rect2i(211,20,1,1),"TR01",{"height":9.0})
+	world.add_base_region(Rect2i(10,19,201,1),"TR01",{"height":9.0})
+	world.add_base_region(Rect2i(10,21,201,1),"TR01",{"height":9.0})
+	_check(_corridor_accepts(world,a,b),"Unsafe outside-touching tiles do not enter the conservative integer cell corridor")
+	_probe_parity(world,a,b,1.7,1.7,220.0,false,"Outside-touching regions")
+	world.base_regions[-1].area = Rect2i(100,20,1,1)
+	_check(not _corridor_accepts(world,a,b),"Previously excluded region moved into ray is re-read without revision cache")
+	_check(not _probe_parity(world,a,b,1.7,1.7,220.0,false,"Moved height blocker").clear,"Changed intersecting height blocks original ray")
+	world.base_regions.resize(3)
+	world.obstacle("first-opaque",Rect2(90,19,2,3),0,100)
+	world.obstacle("second-opaque",Rect2(90,19,2,3),0,100)
+	_check(_corridor_accepts(world,a,b),"Opaque volumes remain independent of flat tile certificate")
+	var blocked := _probe_parity(world,a,b,1.7,1.7,220.0,false,"Certified opaque tie")
+	_check(blocked.reason == "Opaque volume" and blocked.blocker == "first-opaque","Certificate preserves original first equal-distance opaque blocker")
+	world.obstacles.reverse()
+	_check(_probe_parity(world,a,b,40.0,1.7,220.0,true,"Certified reversed opaque tie/drone").blocker == "second-opaque","Reversed equal-distance opaque order survives certification")
+	_sight_parity(world,a,b,"drone",1.5,220.0,"Certified eye/muzzle opaque packets")
+	world.obstacles.clear()
+	for spec in [{"key":"height","value":0.0},{"key":"gradient","value":Vector2.ZERO},{"key":"gradient","value":Vector2(0.01,0.0)},{"key":"overlay","value":{}},{"key":"overlay","value":{"complete":true,"height":2.0}},{"key":"overlay","value":{"complete":false,"height":20.0}},{"key":"vegetation_height","value":0.0},{"key":"vegetation_height","value":12.0}]:
+		world.base_regions[0].tile[spec.key] = spec.value
+		_check(not _corridor_accepts(world,a,b),"Any authored numeric/overlay field rejects certificate, including valid zero/default values")
+		_sight_parity(world,a,b,"drone",1.5,220.0,"Custom field fallback "+spec.key)
+		world.base_regions[0].tile.erase(spec.key)
+	_check(_corridor_accepts(world,a,b),"Erasing custom fields restores certificate on the same world")
+	world.base_regions[0].tile.vegetation_height = 12.0
+	_check(_probe_parity(world,a,b,1.7,1.7,220.0,false,"Fresh forest budget fallback").reason == "Vegetation budget","Mutated raw vegetation retains exact budget stop")
+	_check(_probe_parity(world,a,b,40.0,1.7,220.0,true,"Fresh canopy fallback").reason == "Dense canopy","Mutated raw dense canopy retains drone block")
+	world.base_regions[0].tile.erase("vegetation_height")
+	world.paint(Rect2i(100,20,1,1),"TR01",{"height":10.0})
+	_check(not _corridor_accepts(world,a,b),"One explicit cell immediately rejects corridor certificate")
+	_check(not _probe_parity(world,a,b,1.7,1.7,220.0,false,"Explicit mid-ray height override").clear,"Explicit override preserves original terrain block and block-cell packet")
+	world.cells.clear()
+	_check(_corridor_accepts(world,a,b),"Clearing explicit overrides restores per-call certification")
+	for heights in [[0.0,1.7],[-1.0,1.7],[1.7,0.0],[33554432.0,1.0],[33554432.0,3.0],[1.7,40.0]]:
+		var z_first := Vector3(a.x,a.y,heights[0])
+		var z_last := Vector3(b.x,b.y,heights[1])
+		var lower: float = minf(z_first.lerp(z_last,0.0).z,z_first.lerp(z_last,1.0).z)
+		_check(_corridor_accepts(world,a,b,heights[0],heights[1]) == (lower > 0.0),"Height certificate uses computed native endpoint including cancellation, strict zero and descending ray")
+		_probe_parity(world,a,b,heights[0],heights[1],220.0,false,"Height/cancellation endpoint parity")
+	_check(Vector3(0,0,33554432.0).lerp(Vector3(0,0,1.0),1.0).z == 0.0,"Cancellation fixture actually differs from authored positive endpoint")
+	_check(Vector3(0,0,33554432.0).lerp(Vector3(0,0,3.0),1.0).z == 4.0,"Positive rounded endpoint fixture also differs from authored endpoint")
+	_sight_corridor_guards(a,b)
+	var hooked := RouteHookWorld.new()
+	_check(not _corridor_accepts(hooked,a,b),"Derived custom lookup cannot receive production-only certificate")
+	var hook_result: Dictionary = hooked.probe(a,b,1.7,1.7,220.0)
+	_check(hook_result.reason == "Terrain height" and hooked.lookups.size() == hooked.ray_cells(a,b).size(),"Derived callback still runs for every original segment and controls resulting blocker")
+	var counted := CountedProbeWorld.new()
+	_check(not _corridor_accepts(counted,a,b),"Instrumentation subclass deliberately stays on original fallback")
+	counted.probe(a,b,1.7,1.7,220.0)
+	_check(counted.preparations == 1 and counted.lookup_cells.size() == counted.ray_cells(a,b).size(),"Derived original candidate and lookup trace invariants retained")
+	var farmland := World.new()
+	Farmland.apply(farmland)
+	_check(farmland.cells.is_empty() and farmland.base_regions.size() == 143,"Actual Farmland authoring remains compact143 regions and no explicit cells")
+	for ends in [[Vector2(2002,3281),Vector2(2000,3400)],[Vector2(1440,2370),Vector2(1480,2370)],[Vector2(3000,2600),Vector2(3000,2800)]]:
+		_check(_corridor_accepts(farmland,ends[0],ends[1]),"Actual Farmland clear/opaque/road ray is eligible without terrain-label assumptions")
+		_sight_parity(farmland,ends[0],ends[1],"ordinary",1.5,220.0,"Actual authored Farmland corridor")
+
+func _sight_corridor_guards(a: Vector2, b: Vector2) -> void:
+	var world := World.new()
+	world.bounds = Rect2i(-300,-100,800,300)
+	var p := Vector3(a.x,a.y,1.7)
+	var q := Vector3(b.x,b.y,1.7)
+	for row in [{},{"area":null},{"area":7},{"area":Rect2(10,20,200,1),"tile":{}},{"area":Rect2i(0,0,0,1),"tile":{}},{"area":Rect2i(0,0,-1,1),"tile":{}},{"area":Rect2i(2147483640,0,20,1),"tile":{}},{"area":Rect2i(0,2147483640,1,20),"tile":{}},{"area":Rect2i(10,20,200,1)},{"area":Rect2i(10,20,200,1),"tile":null},{"area":Rect2i(10,20,200,1),"tile":7}]:
+		world.base_regions.assign([row])
+		_check(not world._probe_corridor_clear(a,b,p,q),"Unknown/malformed/fractional/zero/negative/wrapped candidate safely rejects without coercion")
+	world.base_regions.clear()
+	for spec in [{"key":"height","value":"bad"},{"key":"gradient","value":null},{"key":"overlay","value":7},{"key":"vegetation_height","value":NAN}]:
+		var tile: Dictionary = {}
+		tile[spec.key] = spec.value
+		world.base_regions.append({"area":world.bounds,"tile":tile})
+		_check(not world._probe_corridor_clear(a,b,p,q),"Malformed numeric/overlay fields reject without evaluating original error-prone prefix")
+		world.base_regions.clear()
+	for area in [Rect2(100.25,20,0.5,1),Rect2i(0,0,0,1),Rect2i(0,0,-1,1),Rect2i(2147483640,20,20,1)]:
+		world.base_regions.append({"area":area,"tile":{"terrain":"TR01","height":10.0}})
+		world.add_base_region(world.bounds,"TR01")
+		_check(not _corridor_accepts(world,a,b),"Even shadowed unusual region rejects whole-corridor certificate")
+		_probe_parity(world,a,b,1.7,1.7,220.0,false,"Safe original fallback for shadowed unusual area")
+		world.base_regions.clear()
+	for _index in 256: world.add_base_region(world.bounds,"TR01")
+	_check(_corridor_accepts(world,a,b),"Exactly256 base regions fit bounded certificate work budget")
+	_probe_parity(world,a,b,1.7,1.7,220.0,false,"Certificate at region cap")
+	world.add_base_region(world.bounds,"TR01")
+	_check(not _corridor_accepts(world,a,b),"257 regions reject before candidate gathering")
+	_probe_parity(world,a,b,1.7,1.7,220.0,false,"Original fallback above cap")
+	world.base_regions.clear()
+	for ends in [[Vector2(INF,0),b],[a,Vector2(0,NAN)],[Vector2(3.0e38,0),Vector2(-3.0e38,0)],[Vector2(2147483648.0,0),Vector2(2147483648.0,1)],[Vector2(-2147483904.0,0),Vector2(-2147483904.0,1)],[Vector2(-1000000000.0,0),Vector2(1500000000.0,0)]]:
+		_check(not world._probe_corridor_clear(ends[0],ends[1],p,q),"Nonfinite/overflowed xy delta or unrepresentable inclusive cell bounds reject without allocating a ray")
+	for ends in [[Vector3(0,0,INF),q],[p,Vector3(0,0,NAN)],[Vector3(0,0,3.0e38),Vector3(0,0,-3.0e38)]]:
+		_check(not world._probe_corridor_clear(a,b,ends[0],ends[1]),"Nonfinite/overflowed native xyz endpoints reject certificate")
+	# Huge-coordinate cases exercise only the bounded helper, never million-cell rays.
+	var large_start := Vector2(-33554432.0,20.5)
+	var small_finish := Vector2(-0.5,20.5)
+	_check(large_start.lerp(small_finish,1.0).x == 0.0,"XY cancellation really reaches a cell beyond authored finish floor")
+	_check(world._probe_corridor_clear(large_start,small_finish,p,q),"Finite computed XY endpoint corridor can be certified without allocating ray cells")
+	world.base_regions.append({"area":Rect2i(0,20,1,1),"tile":{"height":10.0}})
+	_check(not world._probe_corridor_clear(large_start,small_finish,p,q),"Computed XY endpoint spill includes unsafe cell that authored endpoint AABB would miss")
+	world.base_regions.clear()
+	world.base_regions.append({"area":Rect2i(-1,20,1,1),"tile":{"height":10.0}})
+	_check(not world._probe_corridor_clear(large_start,small_finish,p,q),"Full computed corridor also retains intermediate cells, independent of endpoint labels")
 
 func _ranges() -> void:
 	_check(_observation("Ordinary at 220m").visible, "Ordinary220 inclusive")

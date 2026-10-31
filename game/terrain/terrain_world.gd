@@ -483,6 +483,45 @@ func _probe_regions(segments: Array[Dictionary]) -> Array[Dictionary]:
 	return regions
 
 
+func _probe_corridor_clear(start: Vector2, finish: Vector2, a: Vector3, b: Vector3) -> bool:
+	# This proof applies only to the production lookup/traversal implementations.
+	var script: Script = get_script()
+	if script == null or script.resource_path != "res://game/terrain/terrain_world.gd": return false
+	if not cells.is_empty() or base_regions.size() > 256: return false
+	if not start.is_finite() or not finish.is_finite() or not (finish-start).is_finite(): return false
+	if not a.is_finite() or not b.is_finite() or not (b-a).is_finite(): return false
+	# Bound the computed lerps, not the authored finish: cancellation at weight 1
+	# can change its value. Vector2 bounds ray_cells; Vector3 bounds probe heights.
+	var xy_first := start.lerp(finish,0.0)
+	var xy_last := start.lerp(finish,1.0)
+	var xyz_first := a.lerp(b,0.0)
+	var xyz_last := a.lerp(b,1.0)
+	if not xy_first.is_finite() or not xy_last.is_finite() or not xyz_first.is_finite() or not xyz_last.is_finite(): return false
+	if minf(xyz_first.z,xyz_last.z) <= 0.0: return false
+	var left: float = floor(minf(xy_first.x,xy_last.x))
+	var top: float = floor(minf(xy_first.y,xy_last.y))
+	var right: float = floor(maxf(xy_first.x,xy_last.x))
+	var bottom: float = floor(maxf(xy_first.y,xy_last.y))
+	# Include both endpoint cells; keep Rect2i's size and exclusive end representable.
+	if left < -2147483648.0 or top < -2147483648.0 or right >= 2147483647.0 or bottom >= 2147483647.0: return false
+	var width: float = right-left+1.0
+	var height: float = bottom-top+1.0
+	if width <= 0.0 or height <= 0.0 or width > 2147483647.0 or height > 2147483647.0: return false
+	var area := Rect2i(int(left),int(top),int(width),int(height))
+	for region in base_regions:
+		var rectangle: Variant = region.get("area")
+		if not rectangle is Rect2i: return false
+		if rectangle.size.x <= 0 or rectangle.size.y <= 0: return false
+		if int(rectangle.position.x)+int(rectangle.size.x) > 2147483647 or int(rectangle.position.y)+int(rectangle.size.y) > 2147483647: return false
+		if not rectangle.intersects(area): continue
+		var tile: Variant = region.get("tile")
+		if not tile is Dictionary: return false
+		# All potential winners, including shadowed regions, must use the exact
+		# original flat-zero defaults. Never interpret or coerce custom values.
+		if tile.has("height") or tile.has("gradient") or tile.has("overlay") or tile.has("vegetation_height"): return false
+	return true
+
+
 func probe(start: Vector2, finish: Vector2, start_height: float, target_height: float, maximum: float, drone: bool = false) -> Dictionary:
 	var distance := start.distance_to(finish)
 	var a := Vector3(start.x, start.y, ground(start) + start_height)
@@ -503,52 +542,53 @@ func probe(start: Vector2, finish: Vector2, start_height: float, target_height: 
 			reason = "Opaque volume"
 			blocker = item.id
 	var budget := 0.0
-	var segments := ray_cells(start, finish)
-	var regions := _probe_regions(segments)
-	for segment in segments:
-		var tile := _route_tile(segment.cell,regions)
-		var first: float = segment.from
-		var last: float = segment.to
-		var from := a.lerp(b, first)
-		var to := a.lerp(b, last)
-		var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
-		var base: float = tile.get("height", 0.0)
-		var overlay: Dictionary = tile.get("overlay", {})
-		if overlay.get("complete", false) and overlay.has("height"):
-			base = overlay.height
-			gradient = Vector2.ZERO
-		var low: float = from.z - (base + gradient.dot(Vector2(from.x, from.y)))
-		var high: float = to.z - (base + gradient.dot(Vector2(to.x, to.y)))
-		if minf(low, high) <= 0.0:
-			var hit: float = first if low <= 0.0 else lerpf(first, last, low / (low - high))
-			if hit < stop:
-				stop = hit
-				reason = "Terrain height"
+	if not _probe_corridor_clear(start,finish,a,b):
+		var segments := ray_cells(start, finish)
+		var regions := _probe_regions(segments)
+		for segment in segments:
+			var tile := _route_tile(segment.cell,regions)
+			var first: float = segment.from
+			var last: float = segment.to
+			var from := a.lerp(b, first)
+			var to := a.lerp(b, last)
+			var gradient: Vector2 = tile.get("gradient", Vector2.ZERO)
+			var base: float = tile.get("height", 0.0)
+			var overlay: Dictionary = tile.get("overlay", {})
+			if overlay.get("complete", false) and overlay.has("height"):
+				base = overlay.height
+				gradient = Vector2.ZERO
+			var low: float = from.z - (base + gradient.dot(Vector2(from.x, from.y)))
+			var high: float = to.z - (base + gradient.dot(Vector2(to.x, to.y)))
+			if minf(low, high) <= 0.0:
+				var hit: float = first if low <= 0.0 else lerpf(first, last, low / (low - high))
+				if hit < stop:
+					stop = hit
+					reason = "Terrain height"
+					blocker = str(segment.cell)
+			var top: float = tile.get("vegetation_height", 0.0)
+			var vegetation_from := first
+			var vegetation_to := last
+			if minf(low, high) >= top: continue
+			if low > top: vegetation_from = lerpf(first, last, (low - top) / (low - high))
+			if high > top: vegetation_to = lerpf(first, last, (top - low) / (high - low))
+			if drone and tile.terrain == "TR06" and tile.get("canopy", false):
+				if vegetation_from < stop:
+					stop = vegetation_from
+					reason = "Dense canopy"
+					blocker = str(segment.cell)
+			var cost: float = Catalog.SURFACES[tile.terrain].sight
+			if drone and tile.terrain in ["TR03", "TR04"]: cost = 0.0
+			var metres: float = maxf(0, minf(vegetation_to, stop) - vegetation_from) * distance
+			if metres <= EPS or cost == 0: continue
+			var spent := metres * cost
+			result.segments.append({"cell": segment.cell, "terrain": tile.terrain, "metres": metres, "cost": cost, "spent": spent})
+			if budget + spent >= 100.0 - EPS:
+				stop = vegetation_from + (100.0 - budget) / cost / maxf(distance, EPS)
+				reason = "Vegetation budget"
 				blocker = str(segment.cell)
-		var top: float = tile.get("vegetation_height", 0.0)
-		var vegetation_from := first
-		var vegetation_to := last
-		if minf(low, high) >= top: continue
-		if low > top: vegetation_from = lerpf(first, last, (low - top) / (low - high))
-		if high > top: vegetation_to = lerpf(first, last, (top - low) / (high - low))
-		if drone and tile.terrain == "TR06" and tile.get("canopy", false):
-			if vegetation_from < stop:
-				stop = vegetation_from
-				reason = "Dense canopy"
-				blocker = str(segment.cell)
-		var cost: float = Catalog.SURFACES[tile.terrain].sight
-		if drone and tile.terrain in ["TR03", "TR04"]: cost = 0.0
-		var metres: float = maxf(0, minf(vegetation_to, stop) - vegetation_from) * distance
-		if metres <= EPS or cost == 0: continue
-		var spent := metres * cost
-		result.segments.append({"cell": segment.cell, "terrain": tile.terrain, "metres": metres, "cost": cost, "spent": spent})
-		if budget + spent >= 100.0 - EPS:
-			stop = vegetation_from + (100.0 - budget) / cost / maxf(distance, EPS)
-			reason = "Vegetation budget"
-			blocker = str(segment.cell)
-			budget = 100.0
-			break
-		budget += spent
+				budget = 100.0
+				break
+			budget += spent
 	result.budget = budget
 	result.clear = is_inf(stop)
 	result.reason = "Clear" if result.clear else reason
