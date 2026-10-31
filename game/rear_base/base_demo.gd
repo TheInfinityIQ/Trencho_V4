@@ -96,6 +96,7 @@ var _selected_id := "terminal"
 var _refresh_elapsed := 0.0
 var _displayed_time := -INF
 var _displayed_speed := -1
+var _displayed_planning_revision := -1
 var _order_ids: Array[String] = []
 var _person_ids: Array[String] = []
 var _job_ids: Array[String] = []
@@ -153,9 +154,9 @@ func _ready() -> void:
 	_refresh()
 
 func _process(delta: float) -> void:
-	simulation.tick(delta)
+	simulation.tick_live(delta)
 	if not is_visible_in_tree(): return
-	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed: return
+	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed and simulation.planning_view_revision == _displayed_planning_revision: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
@@ -234,7 +235,9 @@ func _orders_panel(box: VBoxContainer) -> void:
 	_button(box, "Start new session", _start_session)
 
 func _start_session(refresh_rear_ui: bool = true) -> void:
+	simulation.cancel_live_planning()
 	simulation = preload("res://game/scenario/farmland_session.gd").create() if scenario.selected == 2 else Simulation.new(scenario.selected == 1, true)
+	if scenario.selected == 2: simulation.enable_live_planning()
 	_displayed_time = -INF
 	forward_delivery_panel.bind(simulation)
 	session_changed.emit(simulation)
@@ -359,6 +362,7 @@ func _construction_panel(box: VBoxContainer) -> void:
 		var plan: Dictionary = simulation.rear.construction.preview(_construction_kind(),_construction_point(),construction_turn.button_pressed)
 		base_map.placement_preview = plan
 		base_map.queue_redraw()
+		plan["inspection_only"] = true
 		_result(plan))
 	_button(box,"Place physical site",func() -> void:
 		_result(simulation.rear.construction.place(_construction_kind(),_construction_point(),construction_turn.button_pressed)))
@@ -490,7 +494,7 @@ func _dispatch_panel(box: VBoxContainer) -> void:
 	_button(box,"Preview measured route and gross load",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty():
 			var plan: Dictionary = simulation.rear.dispatch.route_preview(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())
-			_result({"ok":plan.ok,"message":("%.1f m, %.1f s, %.2f travel fuel, %.2f required with reserve, %.2f in tank, gross %.1f kg" % [plan.distance,plan.seconds,plan.fuel,plan.required_fuel,plan.tank_fuel,plan.gross_kg]) if plan.ok else plan.message}))
+			_result({"ok":plan.ok,"inspection_only":true,"message":("%.1f m, %.1f s, %.2f travel fuel, %.2f required with reserve, %.2f in tank, gross %.1f kg" % [plan.distance,plan.seconds,plan.fuel,plan.required_fuel,plan.tank_fuel,plan.gross_kg]) if plan.ok else plan.message}))
 	_button(box,"Apply measured route before departure",func() -> void:
 		if not dispatch_rows.get_selected_items().is_empty(): _result(simulation.rear.dispatch.set_route_profile(dispatch_ids[dispatch_rows.get_selected_items()[0]],_dispatch_profile())))
 	_button(box,"Change selected manifest mode before departure",func() -> void:
@@ -660,6 +664,7 @@ func _change_recipe() -> void:
 	_load_production()
 
 func _result(result: Dictionary) -> void:
+	if not result.get("speed_change",false) and not result.get("inspection_only",false): simulation.after_command()
 	if feedback != null: feedback.text = result.get("message", str(result))
 	if is_node_ready(): _refresh()
 
@@ -785,6 +790,7 @@ func _refresh() -> void:
 	if orders == null: return
 	_displayed_time = simulation.rear.time
 	_displayed_speed = simulation.speed
+	_displayed_planning_revision = simulation.planning_view_revision
 	base_map.queue_redraw()
 	var view: Dictionary = simulation.snapshot()
 	_sync_option(source,simulation.rear.stores.keys())

@@ -204,6 +204,7 @@ func _preview() -> void:
 		route_status.text = "%s: %.0f m round trip, about %.0f s travel plus handling. Fuel %.2f needed with reserve / %.2f in tank. Loaded mass about %.0f kg." % [route.name,preview.distance,preview.seconds,preview.required_fuel,preview.tank_fuel,preview.gross_kg]
 	else:
 		route_status.text = "%s refused: %s" % [route.name,preview.message]
+	preview["inspection_only"] = true
 	_emit(preview)
 
 

@@ -13,6 +13,7 @@ var _dragging := false
 var _refresh_elapsed := 0.0
 var _displayed_time := -INF
 var _displayed_speed := -1
+var _displayed_planning_revision := -1
 var _inspector: Label
 
 func bind(next_simulation: RefCounted) -> void:
@@ -53,7 +54,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if not is_visible_in_tree() or simulation == null: return
-	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed: return
+	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed and simulation.planning_view_revision == _displayed_planning_revision: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
@@ -176,7 +177,9 @@ func _site_label(id: String) -> String:
 	return id
 
 func _unit_label(entity: Dictionary) -> String:
-	if entity.kind == "CARRIER": return str(entity.design_type)+" · "+str(int(str(entity.id).get_slice("-",3))+1) if str(entity.id).begins_with("start-blue-vehicle-") else str(entity.design_type)
+	if entity.kind == "CARRIER":
+		var label := "APC (T04)" if entity.design_type == "T04" else str(entity.design_type)
+		return label+" · "+str(int(str(entity.id).get_slice("-",3))+1) if str(entity.id).begins_with("start-blue-vehicle-") else label
 	if str(entity.id).begins_with("start-blue-squad-"):
 		var number := int(str(entity.id).get_slice("-",3))
 		var role: String = "Rifle %d" % (number+1) if number < 3 else ("Engineer" if number == 3 else "Medical")
@@ -192,6 +195,7 @@ func _refresh() -> void:
 	var rear: RefCounted = simulation.rear
 	_displayed_time = rear.time
 	_displayed_speed = simulation.speed
+	_displayed_planning_revision = simulation.planning_view_revision
 	var selected: Dictionary = Presentation.inspect(rear,selected_id)
 	if selected.is_empty():
 		selected_id = _default_objective()
@@ -213,11 +217,16 @@ func _refresh() -> void:
 		if selected.kind == "CARRIER":
 			detail += "\nCrew: %d seated | Passengers: %d\nFuel: %.1f | Health: %d" % [selected.get("crew",[]).size(),selected.get("passengers",[]).size(),selected.get("fuel",0),selected.get("health",0)]
 			if selected.design_type == "T04":
-				detail += "\nE26 aboard: %d / 240 maximum (includes loaded rounds)" % int(selected.get("ammunition",{}).get("E26",0))
+				detail += "\nAutocannon rounds (E26): %d / 240 maximum (includes loaded rounds)" % int(selected.get("ammunition",{}).get("E26",0))
 			if rear.battlefield_operations != null:
-				detail += "\nMounted action: "+str(rear.battlefield_operations.vehicle_execution.status.get(selected.id,"Awaiting actual military capability and delivered contact."))
+				var action: String = str(rear.battlefield_operations.vehicle_execution.status.get(selected.id,"Waiting for crew, supply and a usable enemy report."))
+				if action == "Waiting for a current compatible contact delivered to the actual parent.": action = "Waiting for a usable enemy report."
+				detail += "\nMounted action: "+action
 			for job in rear.military.troop_transport.jobs.values():
-				if job.hull == selected.id: detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [job.state,job.boarded,job.people.size(),job.dismounted,job.blocker]
+				if job.hull == selected.id:
+					var movement: String = str(job.state)
+					if movement == "Complete": movement = "Support move: complete" if job.kind == "Reposition" and job.dismount_place == "observation-central" else "Vehicle move: complete"
+					detail += "\n%s\nBoarded %d/%d · Dismounted %d\n%s" % [movement,job.boarded,job.people.size(),job.dismounted,job.blocker]
 			for station in selected.get("crew_by_station",{}):
 				var crew: Dictionary = rear.ledger.inspect_person_status(selected.crew_by_station[station])
 				detail += "\n%s · %s · Health %d" % [station,crew.qualification,crew.health]

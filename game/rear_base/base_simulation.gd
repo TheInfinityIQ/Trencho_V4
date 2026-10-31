@@ -30,6 +30,13 @@ var receiving: RefCounted
 var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
+var owed_simulation_seconds := 0.0
+var planning_view_revision := 0
+var _live_planning := false
+var _live_wall_clock := true
+var _live_wall_usec := -1
+var _transport_view_revision := -1
+const LIVE_QUANTUM := 0.1
 
 func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}) -> void:
 	rear = Rear.new("Empty",not initial_rear)
@@ -107,12 +114,87 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	rear.advance_time(0)
 
 func tick(real_seconds: float) -> void:
+	if _live_planning:
+		if _live_wall_clock:
+			push_error("A live wall-clock session uses tick_live, not explicitly supplied elapsed time.")
+			return
+		if not is_finite(real_seconds) or real_seconds < 0.0: return
+		owed_simulation_seconds += real_seconds*speed
+		_pump_live()
+		return
 	if speed > 0: rear.advance_time(real_seconds * speed)
+
+func enable_live_planning(use_wall_clock: bool = true) -> void:
+	if _live_planning or rear.battlefield_operations == null: return
+	_live_planning = true
+	_live_wall_clock = use_wall_clock
+	_live_wall_usec = Time.get_ticks_usec() if _live_wall_clock else -1
+	rear.military.troop_transport.incremental_planning = true
+
+func cancel_live_planning() -> void:
+	if not _live_planning: return
+	rear.military.troop_transport.cancel_planning()
+	rear.military.troop_transport.incremental_planning = false
+	owed_simulation_seconds = 0.0
+	_live_planning = false
+	_live_wall_usec = -1
+
+func tick_live(real_seconds: float) -> void:
+	if not _live_planning:
+		tick(real_seconds)
+		return
+	if not _live_wall_clock:
+		push_error("An explicit elapsed-time session uses tick, not the live wall clock.")
+		return
+	_accrue_live_wall_time()
+	_pump_live()
+
+func _accrue_live_wall_time() -> void:
+	if not _live_wall_clock: return
+	var now: int = Time.get_ticks_usec()
+	if _live_wall_usec >= 0:
+		owed_simulation_seconds += float(now-_live_wall_usec)/1000000.0*speed
+	_live_wall_usec = now
+
+func _pump_live() -> void:
+	var transport: RefCounted = rear.military.troop_transport
+	if transport.has_planning_work():
+		# Pure work can reach Ready while paused. Only the running clock admits
+		# real work. No authoritative advance/settle/commit yields; pure route
+		# work emits no session mutations, so callbacks receive settled state.
+		if transport.pump_planning(speed > 0,128,4000): rear.advance_time(0.0,true)
+		_refresh_trip_admissions()
+		return
+	if speed == 0 or owed_simulation_seconds <= 0.0: return
+	var before: float = rear.time
+	rear.advance_time(minf(owed_simulation_seconds,LIVE_QUANTUM),true)
+	owed_simulation_seconds = maxf(0.0,owed_simulation_seconds-(rear.time-before))
+	_refresh_trip_admissions()
+
+func after_command() -> void:
+	if not _live_planning: return
+	# Management callbacks receive the same settled t. Apply their immediate
+	# effects in receipt order before recapturing private planning inputs.
+	_accrue_live_wall_time()
+	rear.military.troop_transport.invalidate_planning()
+	rear.advance_time(0.0,true)
+	_refresh_trip_admissions()
+	planning_view_revision += 1
+
+func _refresh_trip_admissions() -> void:
+	var revision: int = rear.military.troop_transport.planning_revision
+	if revision == _transport_view_revision: return
+	_transport_view_revision = revision
+	planning_view_revision += 1
+	if rear.battlefield_operations == null: return
+	var policy: RefCounted = rear.battlefield_operations.policy
+	if policy != null and policy.has_method("refresh_trip_admissions"): policy.refresh_trip_admissions()
 
 func set_speed(value: int) -> Dictionary:
 	if value not in [0, 1, 2]: return {"ok": false, "message": "Choose Pause, 1x or 2x."}
+	if _live_planning: _accrue_live_wall_time()
 	speed = value
-	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed}
+	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed,"speed_change":true}
 
 func snapshot() -> Dictionary:
 	var view := {"rear": rear.snapshot(), "receiving": receiving.snapshot(), "speed": speed,

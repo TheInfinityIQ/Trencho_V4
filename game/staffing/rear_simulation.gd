@@ -288,11 +288,13 @@ func gun_owner(gun_id: String) -> RefCounted:
 	return null
 
 
-func advance_time(seconds: float) -> Dictionary:
+func advance_time(seconds: float, stop_on_planning: bool = false) -> Dictionary:
 	if not is_finite(seconds) or seconds < 0.0:
 		return _result(false, "Time must be finite and nonnegative.")
 	var target := time + seconds
 	_settle()
+	if stop_on_planning and _transport_planning_pending():
+		return _result(true, "Transport planning is waiting at the settled clock boundary.")
 	while time < target - EPS:
 		var next := minf(target, yard.deadline)
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
@@ -352,7 +354,12 @@ func advance_time(seconds: float) -> Dictionary:
 		if recovery != null: recovery.advance_to(next)
 		if receiving != null: receiving.advance_clock_to(next)
 		_settle()
+		if stop_on_planning and _transport_planning_pending(): break
 	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
+
+
+func _transport_planning_pending() -> bool:
+	return military != null and military.troop_transport.has_planning_work()
 
 
 func effective_priority(job: Dictionary) -> int:

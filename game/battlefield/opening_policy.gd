@@ -14,6 +14,7 @@ var resupply: RefCounted
 var deployments: RefCounted
 var _trip_admission_cursor := 0
 var _last_trip_attempt := -INF
+var _trip_request_sequence := 0
 
 func _init(rear: RefCounted, army_data: Dictionary, waypoints: Dictionary) -> void:
 	_rear_ref = weakref(rear)
@@ -51,7 +52,7 @@ func _add_trip(id: String, hull: String, squads: Array, side: String, index: int
 	route.append(rear.ledger.inspect_entity(destination,{},false).position)
 	var returning := route.duplicate()
 	returning.reverse()
-	trips[id] = {"hull":hull,"squads":squads,"board":actual.holder_id,"dismount":destination,"outbound":route,"return":returning,"reserve":reserve,"started":false,"admitted_at":-1.0,"dismounted":false,"job":"","blocker":""}
+	trips[id] = {"id":id,"hull":hull,"squads":squads,"board":actual.holder_id,"dismount":destination,"outbound":route,"return":returning,"reserve":reserve,"started":false,"admitted_at":-1.0,"dismounted":false,"job":"","request":"","blocker":""}
 
 func tick() -> void:
 	var rear: RefCounted = _rear()
@@ -122,6 +123,7 @@ func _squad_order(owner: String, id: String, objective: String) -> Dictionary:
 func _request_trips() -> void:
 	var rear: RefCounted = _rear()
 	if not rear.military.has_method("request_troop_trip"): return
+	refresh_trip_admissions()
 	var ordered: Array = trips.values()
 	for trip in ordered:
 		if trip.reserve and not reserve_active: continue
@@ -139,20 +141,52 @@ func _request_trips() -> void:
 	for offset in ordered.size():
 		var index: int = (_trip_admission_cursor+offset)%ordered.size()
 		var trip: Dictionary = ordered[index]
-		if trip.started or (trip.reserve and not reserve_active): continue
+		if trip.started or not str(trip.request).is_empty() or (trip.reserve and not reserve_active): continue
 		var acknowledged := true
+		var intent_ids := {}
 		for squad_id in trip.squads:
 			var intent: Dictionary = rear.orders.intents.get(squad_id,{})
 			if intent.get("state","") != "Acknowledged" or intent.action != "Move by Transport": acknowledged = false
+			intent_ids[squad_id] = str(intent.get("id",""))
 		if not acknowledged: continue
 		_trip_admission_cursor = (index+1)%ordered.size()
 		_last_trip_attempt = rear.time
 		var members: Array[String] = []
 		members.assign(trip.squads)
+		var transport: RefCounted = rear.military.troop_transport
+		if transport.incremental_planning:
+			_trip_request_sequence += 1
+			var key: String = "%s:%d" % [trip.id,_trip_request_sequence]
+			var queued: Dictionary = transport.request_trip_deferred(key,trip.hull,members,trip.board,trip.dismount,trip.outbound,trip["return"],intent_ids)
+			if queued.ok:
+				trip.request = key
+				trip.blocker = "Planning transport route; passengers are not committed."
+			else: trip.blocker = str(queued.get("message","Transport planning unavailable"))
+			return
 		var requested: Dictionary = rear.military.request_troop_trip(trip.hull,members,trip.board,trip.dismount,trip.outbound,trip["return"])
 		if requested.ok: trip.started = true; trip.job = requested.id; trip.admitted_at = rear.time; trip.blocker = ""
 		else: trip.blocker = str(requested.get("message",requested.get("blocked_reason","Transport unavailable")))
 		return
+
+func refresh_trip_admissions() -> void:
+	var rear: RefCounted = _rear()
+	var transport: RefCounted = rear.military.troop_transport
+	if not transport.incremental_planning: return
+	for trip in trips.values():
+		if str(trip.request).is_empty(): continue
+		var admission: Dictionary = transport.planning_status(trip.request)
+		match str(admission.get("state","")):
+			"Pending": trip.blocker = "Planning transport route; passengers are not committed."
+			"Ready": trip.blocker = "Route ready; passengers are not committed."
+			"Admitted":
+				trip.started = true
+				trip.job = str(admission.job)
+				trip.admitted_at = float(admission.get("admitted_at",rear.time))
+				trip.blocker = ""
+				trip.request = ""
+			"Blocked", "Cancelled":
+				trip.blocker = str(admission.get("message","Transport planning stopped."))
+				trip.request = ""
 
 func _reposition_supply_truck() -> void:
 	var rear: RefCounted = _rear()
