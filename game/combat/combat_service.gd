@@ -441,7 +441,7 @@ func _stress_tick() -> void:
 func _visible_hostile_near(person: Dictionary) -> bool:
 	for item in _rear().ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if item.kind == "PERSON" and item.owner != person.owner and item.assignment not in ["Wounded","Dead"] and item.position.distance_to(person.position) <= 100.0:
-			if world.observe(person.position,item.position).visible: return true
+			if world.is_visible(person.position,item.position): return true
 	return false
 
 func _record_demand(id: String, ammo_type: String) -> void:

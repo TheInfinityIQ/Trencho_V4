@@ -4,9 +4,9 @@ const World = preload("res://game/terrain/terrain_world.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 class CountedWorld extends World:
 	var sampled: Array[Vector2] = []
-	func observe(observer: Vector2, target: Vector2, role: String = "ordinary", muzzle: float = 1.5, weapon_range: float = 160.0) -> Dictionary:
+	func is_visible(observer: Vector2, target: Vector2, role: String = "ordinary") -> bool:
 		sampled.append(target)
-		return super.observe(observer,target,role,muzzle,weapon_range)
+		return super.is_visible(observer,target,role)
 var checks := 0
 var failures := 0
 func _initialize() -> void:
@@ -38,7 +38,7 @@ func _initialize() -> void:
 	check(rear.orders.contact("range-squad","range-hq").get("current",false),"Exact-range objective marker still uses real sight and command sharing")
 	check(rear.orders.contact("range-squad","range-outside").is_empty() and rear.orders.contact("range-squad","range-distant").is_empty(),"Out-of-range physical people produce no contact")
 	check(not world.sampled.has(Vector2(2220.01,500)) and not world.sampled.has(Vector2(3200,500)),"Impossible out-of-range contacts do no terrain height or ray work")
-	check(world.sampled.has(Vector2(2219,500)) and world.sampled.has(Vector2(2220,500)),"Feasible contacts still pass through full terrain observation")
+	check(world.sampled.has(Vector2(2219,500)) and world.sampled.has(Vector2(2220,500)),"Feasible contacts still pass through actual terrain sight")
 	check(base.audit().is_empty(),"Range filtering changes no physical person, weapon or round")
 	print("Observation range regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)

@@ -351,14 +351,14 @@ func _sample_squad(squad_id: String, sampled_entities: Array = []) -> void:
 			if observer.position.distance_to(target.position) > maximum: continue
 			# Protected occupants are observed through their hull, not as exposed people.
 			if target.kind == "PERSON" and ledger.entity_kind(target.holder_id) == "CARRIER" and not _rear().vehicle_combat._exposed_gunner(target): continue
-			if _rear().combat.world.observe(observer.position,target.position).visible:
+			if world.is_visible(observer.position,target.position):
 				var estimated_strength := 10.0 if target.design_type == "T05" else (6.0 if target.design_type == "T04" else (3.0 if target.design_type == "T03" else 1.0))
 				seen[target.id] = {"target":target.id,"class":target.design_type,"position":target.position,"observed_count":1,"observed_strength":estimated_strength,"source":person_id,"observed_at":_rear().time,"visible_facing":target.get("facing","Unknown")}
 		for objective_id in objective_markers:
 			if objective_affiliations.get(objective_id,"") == observer.owner: continue
 			var place: Dictionary = ledger.inspect_entity(objective_id,{},false)
 			if observer.position.distance_to(place.position) > maximum: continue
-			if _rear().combat.world.observe(observer.position,place.position).visible:
+			if world.is_visible(observer.position,place.position):
 				seen[objective_id] = {"target":objective_id,"class":objective_markers[objective_id],"position":place.position,"observed_count":1,"observed_strength":0.0,"source":person_id,"observed_at":_rear().time,"visible_facing":"Unknown"}
 	visible[squad_id] = seen
 	for target_id in seen:
