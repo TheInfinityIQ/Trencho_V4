@@ -30,6 +30,59 @@ func _init(rear: RefCounted, armies: Dictionary) -> void:
 func proposal(owner: String) -> Dictionary:
 	return _rows.get(owner,{}).get("operation",{}).duplicate(true)
 
+func proposal_for_issue(owner: String, army: Dictionary, available: Array) -> Dictionary:
+	var row: Dictionary = _rows[owner]
+	var operation: Dictionary = row.operation
+	# Issued operations retain their actual order authority. This gate admits
+	# only a new proposal; it does not cancel/reinterpret an existing mission.
+	if operation.is_empty() or not str(operation.get("intent","")).is_empty(): return {"ok":true,"operation":operation.duplicate(true)}
+	var error := _proposal_issue_error(row,operation,army,available,owner)
+	if error.is_empty(): return {"ok":true,"operation":operation.duplicate(true)}
+	row.operation = row.issued_operation.duplicate(true)
+	row.search = {}
+	row.trigger = row.active
+	row.next_review = _rear().time
+	row.blocker = "Resource proposal needs fresh review: "+error+" Existing issued operation continues."
+	planning_revision += 1
+	return {"ok":false,"message":row.blocker}
+
+func _proposal_issue_error(row: Dictionary, operation: Dictionary, army: Dictionary, available: Array, owner: String) -> String:
+	var evidence: Dictionary = operation.get("route_evidence",{})
+	var rear: RefCounted = _rear()
+	if evidence.get("world_id",-1) != rear.combat.world.get_instance_id() or evidence.get("revision",-1) != rear.combat.world.revision: return "Terrain changed after the route proposal."
+	if rear.orders._parent(str(army.company)) != army.root or rear.military.companies.get(army.company,{}).get("owner","") != owner: return "The actual army command parent changed."
+	var force := _force(army,available,owner)
+	if force.squads != operation.squads or force.squads.is_empty(): return "Current eligible assigned Rifle squads changed."
+	var captured: Array = evidence.get("leaders",[])
+	if force.leaders.size() != captured.size(): return "Current eligible leaders changed."
+	for index in force.leaders.size():
+		var leader: Dictionary = force.leaders[index]
+		var prior: Dictionary = captured[index]
+		if leader.id != prior.id or leader.members != prior.members or absf(float(leader.mass)-float(prior.mass)) > EPS: return "Actual leader, eligible roster or route load changed."
+	# Ordinary movement does not invalidate a whole strategic search. These
+	# estimates never install a walk; Execution admits fresh physical movement.
+	if _ownership_facts(row) != evidence.get("ownership",{}): return "Delivered resource ownership knowledge changed."
+	var contacts := _contacts(army.root)
+	var threats := _threatened(row,contacts)
+	if threats != evidence.get("threats",[]): return "Delivered resource threats changed."
+	var context := _candidate_context(row,str(operation.objective),owner,contacts,force,threats)
+	if not context.ok or context.action != operation.action: return "Current capability, ownership, armour or ordinary attack ratio no longer permits this resource operation."
+	for item in [[operation.objective,evidence.get("resource_position",Vector2.INF)],[operation.supply,evidence.get("supply_position",Vector2.INF)],[operation.fallback,evidence.get("fallback_position",Vector2.INF)]]:
+		var place: Dictionary = rear.ledger.inspect_entity(str(item[0]),{},false)
+		if place.get("kind","") != "PLACE" or place.position != item[1]: return "A real resource, supply or fallback endpoint changed."
+	var legs: Array = evidence.get("legs",[])
+	if legs.is_empty(): return "The proposal lacks its captured route evidence."
+	for leg in legs:
+		var hazard := _hazard(owner,[leg.from,leg.to])
+		if not hazard.is_empty(): return hazard
+		if leg.safe and not _safe_segment(leg.from,leg.to,contacts): return "Current delivered fire excludes the supply or fallback corridor."
+	return ""
+
+func _ownership_facts(row: Dictionary) -> Dictionary:
+	var result := {}
+	for id in row.known: result[id] = row.known[id].owner
+	return result
+
 func blocker(owner: String) -> String:
 	return str(_rows.get(owner,{}).get("blocker",""))
 
@@ -332,7 +385,10 @@ func _choose(row: Dictionary, army: Dictionary, available: Array, owner: String)
 	row.operation = {"objective":best.objective,"action":best.action,"phase":"Protect Resource" if best.action == "Hold Area" else ("Seize Resource" if best.action == "Seize Objective" else "Probe Resource"),
 		"version":"resource-%d" % row.generation,"reason":"Protect reported ownership" if best.action == "Hold Area" else ("Seize a locally reported neutral resource" if best.action == "Seize Objective" else "Probe an unconfirmed resource approach"),
 		"score":best.score,"travel_seconds":best.seconds,"supply":best.supply,"fallback":best.fallback,
-		"squads":force.squads.duplicate(),"intent":"","issued_at":INF}
+		"squads":force.squads.duplicate(),"intent":"","issued_at":INF,
+		"route_evidence":{"world_id":search.world.get_instance_id(),"revision":search.revision,"leaders":search.force.leaders.duplicate(true),
+			"ownership":_ownership_facts(row),"threats":threats.duplicate(),"resource_position":_resources[best.objective],
+			"fallback_position":best.legs[-2].to,"supply_position":best.legs[-1].to,"legs":best.legs.duplicate(true)}}
 	row.completed = false
 	row.blocker = ""
 

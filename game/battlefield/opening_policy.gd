@@ -85,13 +85,15 @@ func tick() -> void:
 		var first := "resource-centre-"+side
 		var commander: Dictionary = rear.ledger.inspect_person_status(army.commander)
 		if commander.get("health",0) <= 0: status[owner] = "Commander unavailable; received intent continues"; continue
-		var operation: Dictionary = resource_operations.proposal(owner)
-		if not operation.is_empty(): phases[owner] = str(operation.phase)
-		var objective: String = str(operation.get("objective",first))
-		var action: String = str(operation.get("action","Seize Objective"))
-		var version: String = str(phases[owner])+str(reserve_active if side == "red" else false)
-		if not operation.is_empty(): version += str(operation.version)
 		var company_intent: Dictionary = rear.orders.intents.get(army.company,{})
+		var operation: Dictionary = resource_operations.proposal(owner)
+		# An invalidated proposal must not turn into an initial scenario fallback.
+		# Until a new operation is admitted, retain the actual current parent goal.
+		var objective: String = str(operation.get("objective",company_intent.get("constraints",{}).get("objective",first)))
+		var action: String = str(operation.get("action",company_intent.get("action","Seize Objective")))
+		var proposed_phase: String = str(operation.get("phase",phases[owner]))
+		var version: String = proposed_phase+str(reserve_active if side == "red" else false)
+		if not operation.is_empty(): version += str(operation.version)
 		var opening_owned: bool = _owns_company_order(army.company,army.root,company_intent)
 		var vehicle_deployments: Dictionary = deployments.payloads(army.company) if opening_owned and owner == rear.PLAYER else {}
 		var deployment_versions: Array[String] = []
@@ -100,6 +102,11 @@ func tick() -> void:
 			deployment_versions.append(str([hull_id,rear.dispatch.military_hulls[hull_id],payload]))
 		if not vehicle_deployments.is_empty(): version += str(deployment_versions)
 		if opening_owned and company_intent.get("constraints",{}).get("opening_version","") != version:
+			var fresh: Dictionary = resource_operations.proposal_for_issue(owner,army,available.get(owner,[]))
+			if not fresh.ok:
+				status[owner] = str(fresh.message)
+				continue # No root/child order, marker, movement or custody change.
+			operation = fresh.operation
 			var constraints := {"opening_version":version,"objective":objective}
 			if not operation.is_empty(): constraints.resource_operation = operation.duplicate(true)
 			if not vehicle_deployments.is_empty(): constraints.vehicle_deployments = vehicle_deployments
@@ -107,7 +114,9 @@ func tick() -> void:
 			if not sent.ok: status[owner] = sent.message
 			else:
 				_company_order_ids[army.company] = sent.id
-				if not operation.is_empty(): resource_operations.record_issued(owner,str(operation.version),str(sent.id))
+				if not operation.is_empty():
+					phases[owner] = str(operation.phase)
+					resource_operations.record_issued(owner,str(operation.version),str(sent.id))
 			company_intent = rear.orders.intents.get(army.company,{})
 		if company_intent.get("state","") != "Acknowledged": continue
 		# A denied update cannot authorize new scenario instructions under the old
