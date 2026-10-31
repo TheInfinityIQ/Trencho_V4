@@ -525,7 +525,7 @@ func _finish_worker_phase(id: String) -> void:
 
 func _sync_workers() -> void:
 	for id in _workers.keys():
-		var person := ledger.inspect_entity(id)
+		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
