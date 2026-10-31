@@ -267,15 +267,18 @@ func physical_quantity_at(holder: String, type: String, kinds: Array) -> int:
 
 func ammunition_quantity_at(holder: String, loose_type: String, weapon_types: Array) -> int:
 	# Count physical loose portions and the contents of the selected held weapons
-	# in one synchronous scan. Reservations, ownership and weapon health do not
+	# in one synchronous query. Reservations, ownership and weapon health do not
 	# change a physical count; no eligibility or availability is implied here.
+	var weapons := {}
+	if not weapon_types.is_empty():
+		for entity in _entities.values():
+			if entity.kind == Records.Kind.WEAPON and entity.holder_id == holder and entity.design_type in weapon_types:
+				weapons[entity.id] = true
 	var total := 0
 	for entity in _entities.values():
 		if entity.holder_id == holder and entity.design_type == loose_type and entity.kind in [Records.Kind.STOCK,Records.Kind.WEAPON,Records.Kind.HEAVY_OBJECT]:
 			total += entity.quantity
-		if entity.kind != Records.Kind.STOCK: continue
-		var parent: Records.Entity = _entities.get(entity.holder_id)
-		if parent != null and parent.kind == Records.Kind.WEAPON and parent.holder_id == holder and parent.design_type in weapon_types:
+		if entity.kind == Records.Kind.STOCK and weapons.has(entity.holder_id):
 			total += entity.quantity
 	return total
 
