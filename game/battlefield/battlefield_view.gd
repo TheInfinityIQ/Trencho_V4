@@ -125,7 +125,7 @@ func _draw() -> void:
 			var label := _site_label(entity.id)
 			if entity.id in ["route-hub-west","route-hub-east"]: colour = Color("8bd5ca")
 			elif entity.id == "observation-central": colour = Color("d6b8ef")
-			_draw_marker(entity.position, colour, label, font,entity.id)
+			_draw_marker(entity.position, colour, label, font,entity.id,false,entity.get("ownership_colour",Color.TRANSPARENT))
 		elif entity.kind == "CONTACT":
 			_draw_marker(entity.position, Color("e4a47c"), "Contact", font,entity.id)
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
@@ -137,10 +137,13 @@ func _draw() -> void:
 	draw_string(font, area.position + Vector2(16, area.size.y - 30), "1 km", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 
 
-func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "", carrier: bool = false) -> void:
+func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "", carrier: bool = false, ownership_colour: Color = Color.TRANSPARENT) -> void:
 	var point := _screen(position)
 	if not _map_rect().grow(-10).has_point(point): return
 	var id := entity_id if not entity_id.is_empty() else title
+	if ownership_colour.a > 0:
+		draw_arc(point,8.0,0.0,TAU,32,Color("172633"),4.0)
+		draw_arc(point,8.0,0.0,TAU,32,ownership_colour,2.0)
 	if carrier:
 		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),colour)
 		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),Color("172633"),false,1)
@@ -196,7 +199,7 @@ func _refresh() -> void:
 	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
-	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s\n\nSelected\n%s\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money, _site_label(objective_id), objective.get("control", 0.0), objective.get("owner", "Neutral") if not str(objective.get("owner", "")).is_empty() else "Neutral", objective.get("income_rate", 0.0), blocked, detail]
+	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money, _site_label(objective_id), objective.get("control", 0.0), Presentation.ownership_label(str(objective.get("owner", "")),rear.PLAYER), objective.get("income_rate", 0.0), blocked, detail]
 	if not rear.combat.world.scenario.is_empty(): _inspector.text += "\n\nTERRAIN KEY\nTan: fields and crops\nGreen: forest (dark = dense)\nGrey: rock; pale grey: towns\nBlue: water; teal: swamp\nCream lines: roads"
 	if rear.battlefield_operations != null and rear.battlefield_operations.policy != null:
 		var opening: Dictionary = rear.battlefield_operations.policy.snapshot()

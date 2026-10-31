@@ -8,6 +8,10 @@ static func markers(rear: RefCounted) -> Array[Dictionary]:
 	for entity in entities: kinds[entity.id] = entity.kind
 	for entity in entities:
 		if entity.kind == "PLACE":
+			if rear.objectives.objectives.has(entity.id):
+				var owner: String = str(rear.objectives.objectives[entity.id].owner)
+				entity["ownership_label"] = ownership_label(owner,rear.PLAYER)
+				entity["ownership_colour"] = ownership_colour(owner,rear.PLAYER)
 			if entity.id == "hq-berth" or rear.objectives.objectives.has(entity.id) or rear.orders.objective_markers.has(entity.id): rows.append(entity)
 		elif entity.kind in ["PERSON","CARRIER"]:
 			var affiliation: String = str(entity.controller).trim_suffix("-hq") if entity.kind == "CARRIER" else str(entity.owner)
@@ -26,3 +30,14 @@ static func inspect(rear: RefCounted, id: String) -> Dictionary:
 	for row in markers(rear):
 		if row.id == id: return row
 	return {}
+
+static func ownership_label(owner: String, player: String = "army-blue") -> String:
+	if owner == player: return "Friendly"
+	if owner in ["army-blue","army-red"]: return "Enemy"
+	return "Neutral"
+
+static func ownership_colour(owner: String, player: String = "army-blue") -> Color:
+	match ownership_label(owner,player):
+		"Friendly": return Color("74c8ed")
+		"Enemy": return Color("e48378")
+	return Color("f0c565")

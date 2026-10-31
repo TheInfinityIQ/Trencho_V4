@@ -82,6 +82,7 @@ Invoke-GodotCheck -Name 'battlefield-session-regression' -EngineArguments @('--s
 Invoke-GodotCheck -Name 'hq-location-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/hq_location_regression.gd')
 Invoke-GodotCheck -Name 'army-hierarchy-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/army_hierarchy_regression.gd')
 Invoke-GodotCheck -Name 'battlefield-presentation-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/presentation_regression.gd')
+Invoke-GodotCheck -Name 'objective-ownership-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/objective_ownership_regression.gd')
 Invoke-GodotCheck -Name 'squad-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/squad_execution_regression.gd')
 Invoke-GodotCheck -Name 'vehicle-execution-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/vehicle_execution_regression.gd')
 Invoke-GodotCheck -Name 'execution-safety-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/execution_safety_regression.gd')
