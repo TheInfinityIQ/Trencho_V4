@@ -100,6 +100,10 @@ class CountedWorld extends World:
 	var rules: Array[Dictionary] = []
 	var candidates: Array[Dictionary] = []
 	var homogeneous := false
+	var overlap_context_builds := 0
+	func _cell_overlap_context(entity: Dictionary, start: Vector2, finish: Vector2) -> Array[Dictionary]:
+		overlap_context_builds += 1
+		return super._cell_overlap_context(entity,start,finish)
 	func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
 		resolutions[at] = int(resolutions.get(at,0))+1
 		candidates = regions
@@ -116,6 +120,7 @@ class CountedWorld extends World:
 		return super._route_parts(entity,start,destination,distance,intervals,cuts)
 
 func _initialize() -> void:
+	_cell_overlap_cases()
 	for spec in Fixtures.movement_cases():
 		var lane: RefCounted = Fixtures.lane(spec)
 		_compare(lane.world,lane.entity,lane.destination,spec.name)
@@ -159,11 +164,59 @@ func _compare(source: RefCounted, body: Dictionary, finish: Vector2, label: Stri
 	_expect(new_calls <= old_calls,label+": no extra cell resolutions")
 	if actual.ok: _expect(old_calls >= new_calls*3,label+": removes repeated support/overlay/height lookup")
 	if actual.ok: _expect(actual_world.support_calls == new_calls,label+": every occupied cell still computes fresh support")
+	if actual.ok: _expect(actual_world.overlap_context_builds == 1,label+": exactly one fresh unit-cell SAT context per route")
 	if report: print("LOOKUPS ",label," old=",old_calls," new=",new_calls," parts=",actual.get("parts",[]).size())
 	return actual
 
 func _body(start: Vector2, finish: Vector2, movement_class: int = 1) -> Dictionary:
 	return {"position":start,"facing":(finish-start).angle(),"size":Vector2(6.0,2.5),"movement_class":movement_class,"base":8.0,"rate":3.0,"gross_mass_kg":7000.0}
+
+func _cell_overlap_cases() -> void:
+	var world := World.new()
+	var start := Vector2(-3.5,2.5)
+	for facing in [0.0,PI/2.0,PI/4.0,-PI/3.0,PI,TAU+0.17]:
+		for size in [Vector2(0.6,0.6),Vector2(6,2.5),Vector2.ZERO,Vector2(0,2),Vector2(2,0),Vector2(-1,2)]:
+			var body := {"facing":facing,"size":size}
+			for delta in [Vector2.ZERO,Vector2(10,0),Vector2(-10,-8),Vector2(0.00000001,-0.00000001)]:
+				var finish: Vector2 = start+delta
+				var context: Array[Dictionary] = world._cell_overlap_context(body,start,finish)
+				_expect(context.size() == 4,"Finite rotated/degenerate body keeps the original four SAT axes")
+				for at in [Vector2i(-5,0),Vector2i(-4,1),Vector2i(-3,2),Vector2i(-2,3),Vector2i(-1,4),Vector2i(0,5),Vector2i(5,10)]:
+					_cell_interval_parity(world,body,start,finish,Rect2(Vector2(at),Vector2.ONE),context,"Rotated/negative/zero/degenerate interval")
+	var body := {"facing":0.0,"size":Vector2.ONE}
+	for offset in [-2.0*World.EPS,-World.EPS,-0.5*World.EPS,-0.0,0.0,0.5*World.EPS,World.EPS,2.0*World.EPS]:
+		start = Vector2(-0.5+offset,0.5)
+		for delta in [Vector2.ZERO,Vector2(0.5*World.EPS,0),Vector2(World.EPS,0),Vector2(2.0*World.EPS,0),Vector2(1,0)]:
+			var finish: Vector2 = start+delta
+			var context: Array[Dictionary] = world._cell_overlap_context(body,start,finish)
+			_cell_interval_parity(world,body,start,finish,Rect2(Vector2.ZERO,Vector2.ONE),context,"Interior edge and EPS velocity/overlap threshold")
+	start = Vector2(-3.5,2.5)
+	for change in [{"facing":0.17,"size":Vector2(7.5,3),"finish":Vector2(8,10)},{"facing":-PI/2.0,"size":Vector2(0.6,0.6),"finish":Vector2(-3.5,-8)}]:
+		body.facing = change.facing
+		body.size = change.size
+		var finish: Vector2 = change.finish
+		var context: Array[Dictionary] = world._cell_overlap_context(body,start,finish)
+		_cell_interval_parity(world,body,start,finish,Rect2(Vector2(-4,2),Vector2.ONE),context,"Same world and mutated body/finish rebuild fresh constants")
+		for rectangle in [Rect2(0,0,2,3),Rect2(-2,-1,0,1),Rect2(0,0,-1,1)]:
+			_cell_interval_parity(world,body,start,finish,rectangle,context,"Non-unit rectangles retain original helper")
+	for size in [Vector2(NAN,1),Vector2(INF,1)]:
+		body.size = size
+		body.facing = 0.0
+		var finish := Vector2(8,10)
+		var context: Array[Dictionary] = world._cell_overlap_context(body,start,finish)
+		_expect(context.is_empty(),"Nonfinite body conservatively declines SAT hoisting")
+		_cell_interval_parity(world,body,start,finish,Rect2(Vector2.ZERO,Vector2.ONE),context,"Nonfinite size preserves original supported arithmetic")
+	body.size = Vector2.ONE
+	for facing in [NAN,INF,-INF]:
+		body.facing = facing
+		_expect(world._cell_overlap_context(body,start,Vector2.ZERO).is_empty(),"Nonfinite facing declines context before trigonometry")
+	body.facing = 0.0
+	_expect(world._cell_overlap_context(body,Vector2.INF,Vector2.ZERO).is_empty() and world._cell_overlap_context(body,Vector2.ZERO,Vector2.INF).is_empty(),"Nonfinite endpoints retain direct helper fallback")
+
+func _cell_interval_parity(world: RefCounted, body: Dictionary, start: Vector2, finish: Vector2, rectangle: Rect2, context: Array[Dictionary], label: String) -> void:
+	var expected: Vector2 = world._overlap_interval(body,start,finish,rectangle)
+	var actual: Vector2 = world._cell_overlap_interval(body,start,finish,rectangle,context)
+	_expect(var_to_bytes(actual) == var_to_bytes(expected),label+": exact interval bits and rejection")
 
 func _regions_and_mutations() -> void:
 	var world := World.new()

@@ -191,6 +191,44 @@ func _overlap_interval(entity: Dictionary, start: Vector2, finish: Vector2, rect
 	return Vector2(low, high)
 
 
+func _cell_overlap_context(entity: Dictionary, start: Vector2, finish: Vector2) -> Array[Dictionary]:
+	var context: Array[Dictionary] = []
+	var size: Vector2 = entity.size
+	if not size.is_finite() or not is_finite(entity.facing) or not start.is_finite() or not finish.is_finite(): return context
+	var along := Vector2.from_angle(entity.facing)
+	var across := along.orthogonal()
+	var half: Vector2 = entity.size * 0.5
+	var cell_size := Vector2.ONE
+	for axis in [Vector2.RIGHT, Vector2.DOWN, along, across]:
+		# Preserve the original expression, including each unit-size multiply.
+		# Dictionary floats retain the original double precision; Vector2/4
+		# packing here would round radius/velocity to engine real precision.
+		var radius: float = absf(axis.dot(along)) * half.x + absf(axis.dot(across)) * half.y + absf(axis.x) * cell_size.x * 0.5 + absf(axis.y) * cell_size.y * 0.5
+		var velocity: float = axis.dot(finish - start)
+		context.append({"axis":axis,"radius":radius,"velocity":velocity})
+	return context
+
+
+func _cell_overlap_interval(entity: Dictionary, start: Vector2, finish: Vector2, rectangle: Rect2, context: Array[Dictionary]) -> Vector2:
+	if context.is_empty() or rectangle.size != Vector2.ONE: return _overlap_interval(entity,start,finish,rectangle)
+	var low := 0.0
+	var high := 1.0
+	for entry in context:
+		var axis: Vector2 = entry.axis
+		var radius: float = entry.radius
+		var origin: float = axis.dot(start - rectangle.get_center())
+		var velocity: float = entry.velocity
+		if absf(velocity) < EPS:
+			if absf(origin) >= radius - EPS: return Vector2(-1, -1)
+		else:
+			var first: float = (-radius - origin) / velocity
+			var last: float = (radius - origin) / velocity
+			low = maxf(low, minf(first, last))
+			high = minf(high, maxf(first, last))
+			if high - low <= EPS: return Vector2(-1, -1)
+	return Vector2(low, high)
+
+
 func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	var start: Vector2 = entity.position
 	var distance := start.distance_to(destination)
@@ -222,10 +260,11 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 			var ordinary: bool = area.size.x > 0 and area.size.y > 0 and int(area.position.x)+int(area.size.x) <= 2147483647 and int(area.position.y)+int(area.size.y) <= 2147483647
 			if ordinary and not area.intersects(cell_area): continue
 		regions.append(region)
+	var overlap_context := _cell_overlap_context(entity,start,destination)
 	for y in range(first_cell.y,past_cell.y):
 		for x in range(first_cell.x,past_cell.x):
 			var at := Vector2i(x, y)
-			var interval := _overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE))
+			var interval := _cell_overlap_interval(entity, start, destination, Rect2(Vector2(at), Vector2.ONE),overlap_context)
 			if interval.x < 0: continue
 			var tile := _route_tile(at,regions)
 			if not str(tile.get("closed_project","")).is_empty(): return _blocked("Active project closes this segment to traffic")
