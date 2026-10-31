@@ -257,7 +257,7 @@ func _need(row: Dictionary, hull: Dictionary) -> void:
 		row.refilled = false
 		row.repeat_state = "Urgent ammunition need"
 	if not row.reported_need:
-		var report: Dictionary = _rear().orders.report(row.parent,"Low Supply","APC %s has %d/%d E26 rounds; urgent resupply %s at %s." % [row.hull,aboard,AMMO_TARGET,row.cycle,SUPPLY_STOP],true)
+		var report: Dictionary = _rear().orders.report(row.hull,"Low Supply","APC %s has %d/%d E26 rounds; urgent resupply %s at %s." % [row.hull,aboard,AMMO_TARGET,row.cycle,SUPPLY_STOP],true)
 		row.reported_need = report.get("ok",false)
 	if not row.registered_need:
 		var requested: Dictionary = owner.request_rack_replenishment(row.hull,row.cycle,AMMO_TARGET)
