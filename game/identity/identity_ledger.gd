@@ -1377,6 +1377,20 @@ func loose_stock_mass_at(holder_id: String) -> float:
 			total += entity.quantity * entity.unit_mass_kg
 	return total
 
+func loose_stock_summary(holder_id: String, owner: String) -> Dictionary:
+	var total: float = 0.0
+	var contents := {}
+	for entity in _entities.values():
+		if entity.kind != Records.Kind.STOCK or entity.holder_id != holder_id: continue
+		# Capacity counts every physical stock row, in the original addition order.
+		total += entity.quantity * entity.unit_mass_kg
+		# Relocation retains the caller's owned, positive-stock selection.
+		if entity.owner != owner or entity.quantity <= 0: continue
+		if not contents.has(entity.design_type):
+			contents[entity.design_type] = {"quantity":0,"mass":entity.unit_mass_kg,"position":_world_position(entity.id)}
+		contents[entity.design_type].quantity += entity.quantity
+	return {"mass":total,"contents":contents}
+
 
 func available_stock_at(holder_id: String, type: String) -> int:
 	var total: int = 0

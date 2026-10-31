@@ -48,6 +48,17 @@ func _initialize() -> void:
 	compare(ledger)
 	check(ledger.request_assignment("worker-01",Records.Assignment.REAR_LABOUR,"query-next-duty").ok,"Actual assignment changes current duty without a cache")
 	check(ledger.person_has_duty("worker-01","query-next-duty") and not ledger.person_has_duty("worker-01","haul-fixture"),"Duty query immediately observes the physical assignment transition")
+	check(ledger.add_stock("summary-zero","Summary",1,0.5,"receiving","army-blue").ok,"Create first summary row for real depletion")
+	check(ledger.add_stock("summary-foreign","Summary",2,3.0,"receiving","army-red").ok,"Foreign stock contributes capacity before owned rows")
+	check(ledger.add_stock("summary-light","Summary",3,0.1,"receiving","army-blue").ok and ledger.add_stock("summary-heavy","Summary",4,1.1,"receiving","army-blue").ok,"Same type retains heterogeneous unit masses")
+	# Distinct authored offsets prove relocation keeps the first eligible position.
+	ledger._entities["summary-light"].position = Vector2(2,3)
+	ledger._entities["summary-heavy"].position = Vector2(4,5)
+	check(ledger.request_stock("summary-reserved","summary-heavy",2,"query-fixture","Reserved stock remains physical","army-blue").ok,"Reserve physical summary stock")
+	var held_summary: Dictionary = ledger.loose_stock_summary("receiving","army-blue")
+	var summary_copy: Dictionary = held_summary.duplicate(true)
+	check(ledger.record_consumption("summary-zero",1,"Summary depletion regression").ok,"Real consumption leaves first row depleted")
+	check(held_summary == summary_copy and ledger.loose_stock_summary("receiving","army-blue") != held_summary,"Summary stays detached and new call observes depletion and new first positive row")
 	compare(ledger)
 	check(ledger.audit().is_empty(),"Mass inspections preserve all ledger invariants")
 	print("Mass inspection regression: %d checks, %d failures" % [checks,failures])
@@ -62,6 +73,23 @@ func compare(ledger: RefCounted) -> void:
 	var expected_summary: Dictionary = complete.duplicate(true)
 	expected_summary.entities = metadata.entities
 	check(metadata == expected_summary,"Metadata projection changes no account, claim or event summary")
+	for holder in ["worker-01","rear-store","receiving","person-03","retained-rifle","missing",""]:
+		for owner in ["army-blue","army-red","missing",""]:
+			var mass: float = 0.0
+			var contents := {}
+			for row in complete.entities:
+				if row.kind != "STOCK" or row.holder_id != holder: continue
+				mass += row.quantity * row.unit_mass_kg
+				if row.owner != owner or row.quantity <= 0: continue
+				if not contents.has(row.design_type): contents[row.design_type] = {"quantity":0,"mass":row.unit_mass_kg,"position":row.position}
+				contents[row.design_type].quantity += row.quantity
+			var expected := {"mass":mass,"contents":contents}
+			var summary: Dictionary = ledger.loose_stock_summary(holder,owner)
+			check(var_to_bytes(summary) == var_to_bytes(expected),"Loose-stock summary exactly matches independent full inspection order, mass and owned positive contents")
+			for type in summary.contents:
+				summary.contents[type].quantity = -1
+				summary.contents[type].position = Vector2.INF
+			check(var_to_bytes(ledger.loose_stock_summary(holder,owner)) == var_to_bytes(expected),"Returned summary contents are detached from later physical reads")
 	for holder in ["worker-01","rear-store","retained-rifle","missing"]:
 		compare_rows(ledger.entities_at(holder,["PERSON","STOCK","WEAPON"]),ledger.entities_at(holder,["PERSON","STOCK","WEAPON"],false))
 	for holders in [[],["missing"],["worker-01","rear-store"],["rear-store","worker-01","rear-store","missing"],["retained-rifle","person-03","retained-rifle"],[""]]:

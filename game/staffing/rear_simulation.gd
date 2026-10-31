@@ -238,11 +238,9 @@ func _reconcile_store(id: String) -> bool:
 	var changed := false
 	var needed_types: Array = []
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
-	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
-	var contents: Dictionary = {}
-	for stock in _stock_at(id,false):
-		if not contents.has(stock.design_type): contents[stock.design_type] = {"quantity": 0, "mass": stock.unit_mass_kg, "position": stock.position}
-		contents[stock.design_type].quantity += stock.quantity
+	var summary: Dictionary = ledger.loose_stock_summary(id,PLAYER)
+	var excess := maxf(0.0, float(summary.mass) - float(stores[id].capacity))
+	var contents: Dictionary = summary.contents
 	for type in contents:
 		var stock: Dictionary = contents[type]
 		var disallowed: bool = not stores[id].filter.is_empty() and type not in stores[id].filter
