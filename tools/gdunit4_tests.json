@@ -23,6 +23,7 @@
     },
     {
       "cases": [
+        "test_zero_target_skips_coverage_but_finishes_existing_physical_batch",
         "test_zero_equal_target_and_active_forecast_prevent_duplicate_consumption",
         "test_target_and_mode_edits_keep_partial_receipt_promise_and_explicit_cancel_owner",
         "test_reserved_stock_200_minus_80_requires_thirty_real_r01_batches",
@@ -39,6 +40,7 @@
     {
       "path": "game/production/tests/r02_domain_test.gd",
       "cases": [
+        "test_positive_target_ignores_issued_and_loaded_rounds_but_reports_them",
         "test_exact_local_r02_consumption_work_yield_and_mass_complete_once",
         "test_foreign_remote_carried_and_other_reserved_inputs_cannot_start",
         "test_complete_output_capacity_and_filter_edits_protect_independent_claims",

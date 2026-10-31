@@ -140,7 +140,7 @@ func _eligible_store(id: String) -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if not rear.stores.has(id): return false
 	var store: Dictionary = rear.stores[id]
-	return not store.pile and store.accessible and (store.filter.is_empty() or _spec.output_type in store.filter) and rear.ledger.inspect_entity(id).get("kind") == "PLACE"
+	return not store.pile and store.accessible and (store.filter.is_empty() or _spec.output_type in store.filter) and rear.ledger.entity_kind(id) == "PLACE"
 
 
 func stock_coverage(collect_excluded: bool = true) -> Dictionary:
