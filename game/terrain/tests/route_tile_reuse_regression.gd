@@ -99,6 +99,7 @@ class CountedWorld extends World:
 	var support_calls := 0
 	var rules: Array[Dictionary] = []
 	var candidates: Array[Dictionary] = []
+	var homogeneous := false
 	func _route_tile(at: Vector2i, regions: Array[Dictionary]) -> Dictionary:
 		resolutions[at] = int(resolutions.get(at,0))+1
 		candidates = regions
@@ -111,6 +112,7 @@ class CountedWorld extends World:
 		return super._support_from_tile(tile,movement_class)
 	func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 		for interval in intervals: rules.append(interval.rule)
+		homogeneous = _homogeneous_intervals(intervals,cuts)
 		return super._route_parts(entity,start,destination,distance,intervals,cuts)
 
 func _initialize() -> void:
@@ -297,6 +299,7 @@ func _rule_identity() -> void:
 	var counted := CountedWorld.new()
 	_copy(world,counted)
 	_expect(counted.route(body,finish).ok,"Capture supported shared rules")
+	_expect(counted.homogeneous,"Unmodified shared base tile selects homogeneous aggregation")
 	_expect(counted.support_calls == counted.rules.size(),"Sharing occurs only after every fresh support evaluation")
 	for index in range(1,counted.rules.size()):
 		_expect(is_same(counted.rules[index-1],counted.rules[index]),"Unmodified consecutive same tile shares finalized rule")
@@ -309,6 +312,7 @@ func _rule_identity() -> void:
 	counted = CountedWorld.new()
 	_copy(world,counted)
 	_expect(counted.route(body,finish).ok,"Capture modified rules")
+	_expect(not counted.homogeneous,"Field/approach/explicit-cell rule differences keep ordinary aggregation")
 	var cells: Array = counted.resolutions.keys()
 	for x in [40,41,42,45,46,60,61,62,65,66,70,71,72]:
 		var index := cells.find(Vector2i(x,15))
@@ -321,6 +325,7 @@ func _rule_identity() -> void:
 	counted = CountedWorld.new()
 	_copy(world,counted)
 	_expect(counted.route(body,finish).ok,"Capture crossing rules")
+	_expect(counted.homogeneous,"Finalized common crossing cap selects homogeneous aggregation")
 	_expect(counted.rules.size() > 1 and is_same(counted.rules[0],counted.rules[1]) and counted.rules[0].speed_cap == 2.0,"Same crossing shares only after cap finalization")
 	world.base_regions[-1].tile.overlay.speed_cap = 0.75
 	_expect(_compare(world,body,finish,"Changed crossing cap recomputed on next query").ok,"No rule reference persists between routes")

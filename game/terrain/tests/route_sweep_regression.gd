@@ -44,6 +44,7 @@ func _initialize() -> void:
 		_compare_route(lane.world,lane.entity,lane.destination,spec.name)
 	_generated_intervals()
 	_repeated_rules()
+	_homogeneous_cases()
 	_generated_lanes()
 	_long_lanes()
 	print("Route sweep regression: %d checks, %d failures" % [checks,failures])
@@ -151,6 +152,50 @@ func _repeated_rules() -> void:
 			var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 			var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
 			_expect(var_to_bytes(actual) == var_to_bytes(expected),"Exceptional %s=%s preserves legacy result" % [key,value])
+
+func _homogeneous_cases() -> void:
+	var rule := {"factor":0.6,"fuel":1.3,"slope":-0.0,"speed_cap":3.0,"surface":"TR03"}
+	for spans in [[Vector2(0.2,0.4),Vector2(0.6,0.8)],[Vector2(0.4,0.8),Vector2(0,0.4),Vector2(0.3,0.7)],[Vector2(0,1),Vector2(0.2,0.3),Vector2(0.7,0.8)],[Vector2(0.5,0.5000001),Vector2(0.8,0.9)]]:
+		var intervals: Array[Dictionary] = []
+		var cuts: Array[float] = [0.0,1.0,0.25,0.5,0.5,0.50000001,0.75]
+		for span in spans:
+			intervals.append({"from":span.x,"to":span.y,"rule":rule})
+			cuts.append(span.x)
+			cuts.append(span.y)
+		_interval_case(intervals,cuts,"Homogeneous gaps/overlap/nesting/touching/sub-EPS",true)
+	var touching: Array[Dictionary] = [{"from":0.0,"to":0.5,"rule":rule},{"from":0.5,"to":1.0,"rule":rule}]
+	_interval_case(touching,[0.0,1.0],"Midpoint exactly at two inclusive endpoints",true)
+	_interval_case([], [0.0,0.5,1.0],"Empty interval list retains empty spans",false)
+	var distinct: Array[Dictionary] = [{"from":0.0,"to":0.5,"rule":rule},{"from":0.5,"to":1.0,"rule":rule.duplicate()}]
+	_interval_case(distinct,[0.0,0.5,1.0],"Equal-valued distinct rule references use ordinary sweep",false)
+	for bounds in [Vector2(0.5,0.5),Vector2(0.8,0.2),Vector2(-INF,1.0),Vector2(0.0,INF)]:
+		var intervals: Array[Dictionary] = [{"from":0.0,"to":1.0,"rule":rule},{"from":bounds.x,"to":bounds.y,"rule":rule}]
+		_interval_case(intervals,[0.0,0.25,0.5,0.75,1.0],"Degenerate/inverted/infinite bounds retain ordinary sweep",false)
+	var integer_bounds: Array[Dictionary] = [{"from":0,"to":1,"rule":rule}]
+	_interval_case(integer_bounds,[0.0,1.0],"Non-float bounds conservatively retain ordinary sweep",false)
+	var world := World.new()
+	for bounds in [Vector2(NAN,1.0),Vector2(0.0,NAN)]:
+		var intervals: Array[Dictionary] = [{"from":bounds.x,"to":bounds.y,"rule":rule}]
+		_expect(not world._homogeneous_intervals(intervals,[0.0,1.0]),"NaN bounds cannot select homogeneous shortcut")
+	for bad_cut in [NAN,INF,-INF]:
+		_expect(not world._homogeneous_intervals(touching,[0.0,bad_cut,1.0]),"Nonfinite cuts cannot select homogeneous shortcut")
+	# Every common-rule operand still enters the original min/max body once
+	# per occupied span. Empty gaps keep its untouched empty accumulators.
+	for key in ["factor","fuel","slope","speed_cap"]:
+		for value in [-0.0,0.0,INF,-INF,NAN]:
+			var exceptional: Dictionary = rule.duplicate()
+			exceptional[key] = value
+			var intervals: Array[Dictionary] = [{"from":0.0,"to":0.4,"rule":exceptional},{"from":0.6,"to":1.0,"rule":exceptional}]
+			_interval_case(intervals,[0.0,0.2,0.4,0.5,0.6,0.8,1.0],"Shared exceptional %s=%s with empty gaps" % [key,value],true)
+
+func _interval_case(intervals: Array[Dictionary], cuts: Array[float], label: String, homogeneous: bool) -> void:
+	var world := World.new()
+	var legacy := LegacyWorld.new()
+	var body := _body(Vector2.ZERO,Vector2(100,0))
+	_expect(world._homogeneous_intervals(intervals,cuts) == homogeneous,label+": guarded path selection")
+	var actual: Dictionary = world._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	var expected: Dictionary = legacy._route_parts(body,Vector2.ZERO,Vector2(100,0),100.0,intervals,cuts.duplicate())
+	_expect(var_to_bytes(actual) == var_to_bytes(expected),label+": exact legacy bytes for every part/total")
 
 func _long_lanes() -> void:
 	var world := World.new()

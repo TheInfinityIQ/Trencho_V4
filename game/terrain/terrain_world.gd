@@ -279,8 +279,22 @@ func route(entity: Dictionary, destination: Vector2) -> Dictionary:
 	return _route_parts(entity, start, destination, distance, intervals, cuts)
 
 
+func _homogeneous_intervals(intervals: Array[Dictionary], cuts: Array[float]) -> bool:
+	if intervals.is_empty(): return false
+	var rule: Dictionary = intervals[0].rule
+	for interval in intervals:
+		if not is_same(interval.rule,rule): return false
+		# Only ordinary finite floating-point SAT bounds use the shortcut.
+		if typeof(interval.from) != TYPE_FLOAT or typeof(interval.to) != TYPE_FLOAT: return false
+		if not is_finite(interval.from) or not is_finite(interval.to) or interval.from >= interval.to: return false
+	for cut in cuts:
+		if not is_finite(cut): return false
+	return true
+
+
 func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, distance: float, intervals: Array[Dictionary], cuts: Array[float]) -> Dictionary:
 	cuts.sort()
+	var homogeneous := _homogeneous_intervals(intervals,cuts)
 	# Sweep starts once; only footprint cells still overlapping the current span
 	# participate. Keep original cell order so surface lists remain identical.
 	var pending: Array[int] = []
@@ -288,6 +302,7 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 	pending.sort_custom(func(a: int, b: int) -> bool: return intervals[a].from < intervals[b].from)
 	var cursor := 0
 	var active: Array[int] = []
+	var furthest_end := -INF
 	var parts: Array[Dictionary] = []
 	var seconds := 0.0
 	var fuel := 0.0
@@ -296,12 +311,23 @@ func _route_parts(entity: Dictionary, start: Vector2, destination: Vector2, dist
 		var end: float = cuts[index + 1]
 		if end - begin <= EPS: continue
 		var middle := (begin + end) * 0.5
-		for index_active in range(active.size()-1,-1,-1):
-			if intervals[active[index_active]].to < middle: active.remove_at(index_active)
-		while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
-			var id: int = pending[cursor]
-			if intervals[id].to >= middle: active.insert(active.bsearch(id),id)
-			cursor += 1
+		if homogeneous:
+			while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
+				furthest_end = maxf(furthest_end,intervals[pending[cursor]].to)
+				cursor += 1
+			# Activated starts are <= this monotone midpoint. Their maximum end
+			# reaches it iff some interval covers it, including touching ends.
+			# Index zero represents only the common rule, never assumed coverage.
+			if cursor > 0 and furthest_end >= middle:
+				if active.is_empty(): active.append(0)
+			else: active.clear()
+		else:
+			for index_active in range(active.size()-1,-1,-1):
+				if intervals[active[index_active]].to < middle: active.remove_at(index_active)
+			while cursor < pending.size() and intervals[pending[cursor]].from <= middle:
+				var id: int = pending[cursor]
+				if intervals[id].to >= middle: active.insert(active.bsearch(id),id)
+				cursor += 1
 		var factor := INF
 		var burn := 0.0
 		var surfaces: Array[String] = []
