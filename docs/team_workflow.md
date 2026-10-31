@@ -21,6 +21,8 @@ Designer observes intermediate gameplay. Engineering merge is not delivery accep
 Repair demonstrated shared-boundary defects while connecting the game; examine related callers. Do not create speculative frameworks or a separate architecture phase.
 
 ## Verification
+
+Dawson reported near-freezing during local game/tests on30October. Coordinate one local Godot process across the team; do not run local suites alongside play or another developer's engine. Prefer short headless checks, lower process priority and a hard time limit; use GitHub CI for broad checks. Stop owned runs promptly if desktop responsiveness suffers. Do not restart long playthroughs until measured resource use is acceptable. Idle/hidden UI work and rendering must respect desktop resources without changing physical simulation rules.
 Use focused checks during iteration and required integrated checks on the final candidate. Repeat broad checks for changed code, failures or unresolved risk. Keep useful existing coverage. Distinguish engine interaction, visual/gameplay observation and OS-native verification. Assertion totals and diagnostic screenshots do not establish playability.
 Delivery reports identify exact build/revision, launch location, ordinary controls, newly playable behavior, checks and limits. Child completion retains parent integration obligations. Never close a playable milestone just because its children closed.
 

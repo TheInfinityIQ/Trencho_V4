@@ -54,6 +54,10 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
 
+func requisition_balance() -> float:
+	return _money
+
+
 func quote_resources(cart: Dictionary) -> Dictionary:
 	var quote := Catalog.quote(cart, freight_limit())
 	if quote.ok:

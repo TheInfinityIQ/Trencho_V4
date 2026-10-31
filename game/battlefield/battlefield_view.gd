@@ -11,6 +11,8 @@ var pan := Vector2.ZERO
 var selected_id := ""
 var _dragging := false
 var _refresh_elapsed := 0.0
+var _displayed_time := -INF
+var _displayed_speed := -1
 var _inspector: Label
 
 func bind(next_simulation: RefCounted) -> void:
@@ -29,6 +31,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	resized.connect(queue_redraw)
+	visibility_changed.connect(func() -> void:
+		if is_visible_in_tree(): _refresh(); queue_redraw())
 	var panel := PanelContainer.new()
 	panel.set_anchors_and_offsets_preset(Control.PRESET_RIGHT_WIDE)
 	panel.offset_left = -PANEL_WIDTH
@@ -48,6 +52,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if not is_visible_in_tree() or simulation == null: return
+	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
@@ -181,7 +187,8 @@ func _unit_label(entity: Dictionary) -> String:
 func _refresh() -> void:
 	if _inspector == null or simulation == null: return
 	var rear: RefCounted = simulation.rear
-	var view: Dictionary = simulation.snapshot()
+	_displayed_time = rear.time
+	_displayed_speed = simulation.speed
 	var selected: Dictionary = Presentation.inspect(rear,selected_id)
 	if selected.is_empty():
 		selected_id = _default_objective()
@@ -216,7 +223,7 @@ func _refresh() -> void:
 		objective_detail = "%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s" % [_site_label(objective_id),objective.control,Presentation.ownership_label(str(objective.owner),rear.PLAYER),objective.income_rate,blocked]
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
-	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, view.receiving.money,objective_detail,detail]
+	_inspector.text = "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, simulation.receiving.requisition_balance(),objective_detail,detail]
 	if not rear.combat.world.scenario.is_empty(): _inspector.text += "\n\nTERRAIN KEY\nTan: fields and crops\nGreen: forest (dark = dense)\nGrey: rock; pale grey: towns\nBlue: water; teal: swamp\nCream lines: roads"
 	if rear.battlefield_operations != null and rear.battlefield_operations.policy != null:
 		var opening: Dictionary = rear.battlefield_operations.policy.snapshot()

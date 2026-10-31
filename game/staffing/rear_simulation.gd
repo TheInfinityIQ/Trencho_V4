@@ -953,21 +953,21 @@ func audit() -> Array[String]:
 func _assigned(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty: count += 1
+		if ledger.inspect_person_status(id).duty_id == duty: count += 1
 	return count
 
 
 func _committed(duty: String) -> int:
 	var count := _assigned(duty)
 	for id in actors:
-		if ledger.inspect_entity(id).pending_duty == duty: count += 1
+		if ledger.inspect_person_status(id).pending_duty == duty: count += 1
 	return count
 
 
 func _pending_in(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.inspect_person_status(id)
 		if p.pending_assignment != "None" and p.pending_duty == duty: count += 1
 	return count
 
@@ -975,7 +975,7 @@ func _pending_in(duty: String) -> int:
 func _retaining(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.inspect_person_status(id)
 		if p.duty_id == duty and (p.pending_assignment == "None" or p.pending_duty == duty): count += 1
 	return count
 
@@ -983,7 +983,7 @@ func _retaining(duty: String) -> int:
 func _present(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
+		if ledger.inspect_person_status(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
 	return count
 
 

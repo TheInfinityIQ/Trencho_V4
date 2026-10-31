@@ -79,6 +79,7 @@ Invoke-GodotCheck -Name 'route-sweep-regression' -EngineArguments @('--script', 
 Invoke-GodotCheck -Name 'terrain-ui' -EngineArguments @('--script', 'res://game/terrain/tests/terrain_ui_regression.gd')
 Invoke-GodotCheck -Name 'world-data-probe' -EngineArguments @('--script', 'res://game/world_probe/full_size_probe.gd')
 Invoke-GodotCheck -Name 'battlefield-session-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/session_regression.gd')
+Invoke-GodotCheck -Name 'ui-refresh-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/ui_refresh_regression.gd')
 Invoke-GodotCheck -Name 'hq-location-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/hq_location_regression.gd')
 Invoke-GodotCheck -Name 'army-hierarchy-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/army_hierarchy_regression.gd')
 Invoke-GodotCheck -Name 'battlefield-presentation-regression' -EngineArguments @('--script', 'res://game/battlefield/tests/presentation_regression.gd')

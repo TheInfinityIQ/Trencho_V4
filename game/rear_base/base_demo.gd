@@ -94,11 +94,15 @@ var declaration: Label
 var _selected_kind := "building"
 var _selected_id := "terminal"
 var _refresh_elapsed := 0.0
+var _displayed_time := -INF
+var _displayed_speed := -1
 var _order_ids: Array[String] = []
 var _person_ids: Array[String] = []
 var _job_ids: Array[String] = []
 
 func _ready() -> void:
+	visibility_changed.connect(func() -> void:
+		if is_visible_in_tree(): _refresh())
 	var layout := VBoxContainer.new()
 	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layout)
@@ -150,7 +154,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	simulation.tick(delta)
-	base_map.queue_redraw()
+	if not is_visible_in_tree(): return
+	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed: return
 	_refresh_elapsed += delta
 	if _refresh_elapsed >= 0.2:
 		_refresh_elapsed = 0.0
@@ -773,6 +778,9 @@ func _refresh_dispatch(view: Dictionary) -> void:
 
 func _refresh() -> void:
 	if orders == null: return
+	_displayed_time = simulation.rear.time
+	_displayed_speed = simulation.speed
+	base_map.queue_redraw()
 	var view: Dictionary = simulation.snapshot()
 	_sync_option(source,simulation.rear.stores.keys())
 	_sync_option(destination,simulation.rear.stores.keys())
