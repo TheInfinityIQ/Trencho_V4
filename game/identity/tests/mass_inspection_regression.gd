@@ -60,11 +60,22 @@ func _initialize() -> void:
 	check(ledger.record_consumption("summary-zero",1,"Summary depletion regression").ok,"Real consumption leaves first row depleted")
 	check(held_summary == summary_copy and ledger.loose_stock_summary("receiving","army-blue") != held_summary,"Summary stays detached and new call observes depletion and new first positive row")
 	compare(ledger)
+	var held_ids: Array[String] = ledger.available_person_ids("army-blue")
+	var ids_copy: Array[String] = held_ids.duplicate()
+	check(ledger.request_assignment("worker-01",Records.Assignment.AVAILABLE,"").ok,"Actual duty release makes the worker discoverable")
+	check(held_ids == ids_copy and ledger.available_person_ids("army-blue").has("worker-01"),"ID lists stay detached and fresh calls observe release")
+	check(ledger.add_person("query-arrival","receiving","supplier",Records.Assignment.PASSENGER).ok,"Real incoming passenger begins unavailable")
+	compare_available_people(ledger,ledger.snapshot())
+	check(ledger.move_entity("query-arrival","rear-store",Vector2.ZERO).ok and ledger.complete_person_arrival("query-arrival","rear-store","army-red").ok,"Physical receiving boundary changes owner and availability")
+	compare_available_people(ledger,ledger.snapshot())
+	check(ledger.request_assignment("query-arrival",Records.Assignment.TRAINING,"query-course").ok,"Real training assignment withdraws an available ID")
+	compare_available_people(ledger,ledger.snapshot())
 	check(ledger.audit().is_empty(),"Mass inspections preserve all ledger invariants")
 	print("Mass inspection regression: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures == 0 else 1)
 func compare(ledger: RefCounted) -> void:
 	var complete: Dictionary = ledger.snapshot()
+	compare_available_people(ledger,complete)
 	var metadata: Dictionary = ledger.snapshot(false)
 	for index in complete.entities.size():
 		var expected: Dictionary = complete.entities[index].duplicate(true)
@@ -135,6 +146,18 @@ func compare(ledger: RefCounted) -> void:
 		var expected: float = legacy(ledger,row.id)
 		check(float(row.contents_mass_kg) == expected,"Snapshot keeps legacy exact subtree arithmetic for "+row.id)
 		check(float(ledger.inspect_entity(row.id).contents_mass_kg) == expected,"Raw inspection keeps legacy exact subtree arithmetic for "+row.id)
+func compare_available_people(ledger: RefCounted, complete: Dictionary) -> void:
+	for row in complete.entities:
+		if row.kind == "PERSON": check(ledger._entities[row.id] is Records.Person,"Canonical PERSON kind retains its typed assignment record")
+	for owner in ["army-blue","army-red","supplier","missing",""]:
+		var expected: Array[String] = []
+		for row in complete.entities:
+			if row.kind == "PERSON" and row.owner == owner and row.assignment == "Available": expected.append(row.id)
+		var ids: Array[String] = ledger.available_person_ids(owner)
+		check(ids == expected,"Available IDs equal independent full snapshot selection in canonical order")
+		ids.clear()
+		check(ledger.available_person_ids(owner) == expected,"Mutating returned ID arrays cannot change fresh available-person discovery")
+
 func compare_rows(full: Array, projected: Array) -> void:
 	check(full.size() == projected.size(),"Filtered metadata query retains exact membership")
 	for index in full.size():

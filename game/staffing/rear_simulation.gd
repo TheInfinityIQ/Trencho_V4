@@ -560,9 +560,9 @@ func _settle() -> void:
 func _sync_receiving_people() -> void:
 	var added := false
 	var released := false
-	for p in ledger.entities_of_kind(Records.Kind.PERSON,false):
-		if p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
-			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
+	for id in ledger.available_person_ids(PLAYER):
+		if not actors.has(id):
+			actors[id] = {"id": id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
 			added = true
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
