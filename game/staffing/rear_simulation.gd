@@ -893,7 +893,7 @@ func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	var storage: Array[Dictionary] = []
 	for store in stores.values():
 		var row: Dictionary = store.duplicate(true)
-		row.position = ledger.inspect_entity(store.id).position
+		row.position = ledger.inspect_entity(store.id,{},false).position
 		row.physical_kg = ledger.loose_stock_mass_at(store.id)
 		row.reserved_inbound_kg = _reserved_space(store.id, "", false)
 		row.reserved_output_kg = _reserved_space(store.id) - row.reserved_inbound_kg

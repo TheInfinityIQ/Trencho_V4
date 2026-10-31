@@ -100,7 +100,7 @@ func buy_people() -> Dictionary:
 
 
 func recovery_instructor_offer() -> Dictionary:
-	for person in ledger.snapshot().entities:
+	for person in ledger.entities_of_kind(Records.Kind.PERSON,false):
 		if person.kind == "PERSON" and person.owner == PLAYER and person.basic_training and person.health > 0 and Rect2(0,0,240,180).has_point(person.position):
 			return {"available":false,"message":"A basic-trained person remains in the rear; assign an actual instructor."}
 	for order in _orders:
