@@ -19,6 +19,10 @@ func _local(metal: int = 2, powder: int = 10, count: int = 2) -> RefCounted:
 
 func _coverage(rear: RefCounted, available: int, planned: int) -> void:
 	var coverage: Dictionary = rear.munitions_production.stock_coverage()
+	var projected: Dictionary = rear.munitions_production.stock_coverage(false)
+	for key in ["available","planned","projected","eligible_physical","eligible_reserved","internal_relocation","internal_carried","batch_forecast"]:
+		assert_int(projected[key]).is_equal(coverage[key])
+	assert_str(projected.batch_id).is_equal(coverage.batch_id)
 	assert_int(coverage.available).is_equal(available)
 	assert_int(coverage.planned).is_equal(planned)
 	assert_int(coverage.projected).is_equal(available + planned)

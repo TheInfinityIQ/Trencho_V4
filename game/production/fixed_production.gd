@@ -143,9 +143,10 @@ func _eligible_store(id: String) -> bool:
 	return not store.pile and store.accessible and (store.filter.is_empty() or _spec.output_type in store.filter) and rear.ledger.inspect_entity(id).get("kind") == "PLACE"
 
 
-func stock_coverage() -> Dictionary:
+func stock_coverage(collect_excluded: bool = true) -> Dictionary:
 	# A detached query, never a second inventory. Each reserved/carry portion is
 	# identified by the existing actor, matching ledger claim and actual holder.
+	# Target checks can omit excluded rows; the public detailed report is default.
 	var rear: RefCounted = _rear_ref.get_ref()
 	var available := 0
 	var physical := 0
@@ -155,7 +156,15 @@ func stock_coverage() -> Dictionary:
 	var stocks: Array[Dictionary] = []
 	var portions: Array[Dictionary] = []
 	var excluded: Array[Dictionary] = []
-	for stock in rear.ledger.entities_of_type(_spec.output_type,["STOCK","WEAPON"],false):
+	var candidates: Array[Dictionary] = []
+	if collect_excluded:
+		candidates = rear.ledger.entities_of_type(_spec.output_type,["STOCK","WEAPON"],false)
+	else:
+		# Only these current holders can contribute available stock. Target checks
+		# need no inspection of issued/loaded/cargo goods for exclusion details.
+		for holder in rear.stores:
+			if _eligible_store(holder): candidates.append_array(rear.ledger.entities_at(holder,["STOCK","WEAPON"],false))
+	for stock in candidates:
 		if stock.kind not in ["STOCK", "WEAPON"] or stock.design_type != _spec.output_type or stock.quantity <= 0: continue
 		var usable: bool = stock.kind == "STOCK" or (_spec.output_type == "E01" and stock.functional and stock.loaded_rounds == 0)
 		if usable and stock.owner == rear.PLAYER and _eligible_store(stock.holder_id):
@@ -164,7 +173,7 @@ func stock_coverage() -> Dictionary:
 			physical += stock.quantity
 			reserved += committed
 			stocks.append({"id": stock.id, "kind": stock.kind, "holder": stock.holder_id, "physical": stock.quantity, "reserved": committed, "available": maxi(0, stock.quantity - committed)})
-		else:
+		elif collect_excluded:
 			excluded.append({"id": stock.id, "holder": stock.holder_id, "quantity": stock.quantity, "reason": "Foreign, issued/loaded/broken/cargo/pile or inaccessible/type-ineligible storage"})
 	for actor in rear.actors.values():
 		var load: Dictionary = actor.load
@@ -196,7 +205,7 @@ func _target_satisfied() -> bool:
 	if mode != "Stock target": return false
 	# Coverage is nonnegative: clamped available stock + positive relocation
 	# portions + a canonical positive batch yield (or zero). Zero needs no scan.
-	return stock_target == 0 or stock_coverage().projected >= stock_target
+	return stock_target == 0 or stock_coverage(false).projected >= stock_target
 
 
 func _can_work() -> bool:

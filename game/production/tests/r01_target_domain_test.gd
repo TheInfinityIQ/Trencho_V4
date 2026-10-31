@@ -5,9 +5,9 @@ const Production = preload("res://game/production/r01_production.gd")
 
 class CountedProduction extends Production:
 	var coverage_calls := 0
-	func stock_coverage() -> Dictionary:
+	func stock_coverage(collect_excluded: bool = true) -> Dictionary:
 		coverage_calls += 1
-		return super.stock_coverage()
+		return super.stock_coverage(collect_excluded)
 
 
 func test_zero_target_skips_coverage_but_finishes_existing_physical_batch() -> void:
@@ -62,6 +62,10 @@ func _rear(target: int = 0, metal: int = 0, components: int = 0) -> RefCounted:
 
 func _coverage(rear: RefCounted, available: int, planned: int) -> void:
 	var view: Dictionary = rear.production.stock_coverage()
+	var projected: Dictionary = rear.production.stock_coverage(false)
+	for key in ["available","planned","projected","eligible_physical","eligible_reserved","internal_relocation","internal_carried","batch_forecast"]:
+		assert_int(projected[key]).is_equal(view[key])
+	assert_str(projected.batch_id).is_equal(view.batch_id)
 	assert_int(view.available).is_equal(available)
 	assert_int(view.planned).is_equal(planned)
 	assert_int(view.projected).is_equal(available + planned)
