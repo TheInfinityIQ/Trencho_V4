@@ -67,7 +67,9 @@ func _ready() -> void:
 	add_child(manual_issue)
 	for node in manual_nodes: node.reparent(manual_issue)
 	manual_issue.hide()
-	issue_diagnostics.toggled.connect(func(open: bool) -> void: manual_issue.visible = open)
+	issue_diagnostics.toggled.connect(func(open: bool) -> void:
+		manual_issue.visible = open
+		refresh())
 	stop_choice.item_selected.connect(func(_index: int) -> void: refresh())
 	hull_choice.item_selected.connect(func(_index: int) -> void: refresh())
 	freight_choice.item_selected.connect(func(_index: int) -> void: refresh())
@@ -105,7 +107,7 @@ func refresh() -> void:
 					break
 	for type in freight_types:
 		var stock: Dictionary = freight_types[type]
-		freight.append({"id":type,"label":"%s | %d available across %d portions" % [type,stock.available,stock.portions]})
+		freight.append({"id":type,"label":"%s | %d available across %d portions" % [_freight_label(type),stock.available,stock.portions]})
 	var stops: Array[Dictionary] = []
 	for id in rear.forward_supply.delivery_stops:
 		var place: Dictionary = ledger.inspect_entity(id)
@@ -246,11 +248,17 @@ func _resume_issue() -> void:
 func _delivery_detail(row: Dictionary, ledger: RefCounted) -> String:
 	var hull: Dictionary = ledger.inspect_entity(row.hull)
 	var message := "%s | %s at %s | fuel %.2f | loaded %d/%d | unloaded %d/%d" % [row.id,row.state,str(hull.position),hull.fuel,row.loaded,row.quantity,row.unloaded,row.quantity]
+	message += "\n%s | %d requested across %d source portions" % [_freight_label(row.type),row.quantity,row.get("sources",[]).size()]
 	if row.state in ["Outbound","Returning"]: message += " | route %.0f/%.0f m" % [row.route_distance,row.route_plan.distance]
-	for source in row.get("sources",[]):
-		message += "\n%s · origin %s · loaded %d/%d" % [source.stock,source.origin_id,source.loaded,source.quantity]
+	if issue_diagnostics.button_pressed:
+		for source in row.get("sources",[]):
+			message += "\n%s · origin %s · loaded %d/%d" % [source.stock,source.origin_id,source.loaded,source.quantity]
 	if not str(row.blocker).is_empty(): message += "\n" + str(row.blocker)
 	return message
+
+
+func _freight_label(type: String) -> String:
+	return "Autocannon rounds (E26)" if type == "E26" else type
 
 
 func _freight_limit(entities: Array, hull: Dictionary, type: String) -> int:

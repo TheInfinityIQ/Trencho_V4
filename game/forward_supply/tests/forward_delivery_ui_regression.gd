@@ -76,6 +76,12 @@ func _test_player_controls() -> void:
 	rear.advance_time(3)
 	panel.refresh()
 	_check(panel.delivery_status.text.contains("loaded") and panel.delivery_status.text.contains("fuel"),"panel shows live loading and fuel state")
+	_check(panel.delivery_status.text.contains("E02 | 60 requested across 2 source portions") and not panel.delivery_status.text.contains("ui-hq-freight") and not panel.delivery_status.text.contains("origin "),"ordinary delivery detail shows type, quantity and source count without source IDs or origins")
+	var paused_time: float = rear.time
+	panel.issue_diagnostics.set_pressed(true)
+	_check(panel.delivery_status.text.contains("ui-hq-freight · origin ui-hq-freight") and panel.delivery_status.text.contains("ui-hq-second · origin ui-hq-second") and rear.time == paused_time,"Diagnostics immediately reveals exact source lineage without advancing simulation")
+	panel.issue_diagnostics.set_pressed(false)
+	_check(not panel.delivery_status.text.contains("ui-hq-freight") and not panel.delivery_status.text.contains("origin "),"closing Diagnostics immediately hides lineage while simulation stays paused")
 	rear.advance_time(150)
 	panel.refresh()
 	var delivery: Dictionary = rear.forward_supply.transport.jobs.values()[0]
@@ -94,6 +100,10 @@ func _test_player_controls() -> void:
 	panel.refresh()
 	_press(panel,"Preview route, load and fuel")
 	_check(panel.route_status.text.contains("Scenario route"),"player preview identifies authored route candidate")
+	_check(ledger.add_stock("ui-autocannon","E26",10,0.5,"hq-stock",rear.PLAYER).ok,"actual autocannon freight for player label")
+	panel.refresh()
+	var autocannon_index: int = panel.freight_choice.item_count-1
+	_check(str(panel.freight_choice.get_item_metadata(autocannon_index)) == "E26" and panel.freight_choice.get_item_text(autocannon_index).begins_with("Autocannon rounds (E26) |"),"grouped autocannon freight has a readable label and unchanged E26 metadata")
 	_check(base.audit().is_empty(),"player supply flow preserves common physical invariants")
 	panel.queue_free()
 	var demo: Control = RearDemo.instantiate()
