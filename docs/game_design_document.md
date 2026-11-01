@@ -2,6 +2,8 @@
 
 Version 0.2 | Gameplay baseline preserved; delivery transition 30 October 2026
 
+Human core-loop amendment, 1 November 2026: [core loop and UI](core_loop_and_ui.md) supersedes the menu-only/prebuilt opening and routine player-dispatch premises in this document. The intended game starts with a WASD-controlled rear character, building placement and purchased-worker job allocation; onward supply transport is automatic. Existing worker purchase, physical handling and delivery rules remain unless explicitly changed. Starting-state/bootstrap and automated shipping policy details require reconciliation; the prototype is not the intended core experience.
+
 Current delivery authority: [playable delivery](playable_delivery.md) and [team workflow](team_workflow.md), authorized by Dawson on 30 October. They supersede historical assignment/merge and sequencing restrictions only for the connected representative-first delivery. All gameplay rules, final scope and acceptance obligations below remain. Clear 2D overhead/Windows-first is adopted for this build; D01 performance/hardware/native certification remains open. Historical production-presentation gating does not prohibit this scoped implementation.
 
 Trencho v4 is a logistics management game in which the player supplies an autonomous military hierarchy. Industrial decisions become physical people, equipment, vehicles, and supplies; those assets determine what the army can actually do. The player should be able to trace a successful crossing or a failed attack back through that chain.

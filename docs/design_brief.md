@@ -1,5 +1,9 @@
 # Design brief
 
+## Core-loop correction — 1 November 2026
+
+Dawson clarified the intended experience: an empty-field opening, a WASD-controlled rear character, building placement, purchased workers assigned from a common pool, raw-resource production and automatic onward logistics. He requested an interface overhaul so the challenge is base building and worker management rather than navigating menus. Follow [core loop and UI](core_loop_and_ui.md), including the retained worker purchase/assignment rules. This supersedes the prebuilt/menu-operated prototype and routine player-dispatch premises below where they conflict; existing physical services and unchanged game rules remain useful.
+
 ## Current delivery — 30 October 2026
 
 Follow [playable delivery](playable_delivery.md), [team workflow](team_workflow.md) and [handoff](team_handoff.md). Dawson authorized a fresh designer/lead/two-developer team and one representative full-scale connected supply-to-battlefield delivery first. Gameplay requirements below remain; dated entry-scene and assignment statements are history. 2D overhead/Windows-first is authorized for this build; D01 certification remains open. The lead owns technical assignments and merges; the designer owns gameplay and experience acceptance.
@@ -8,7 +12,7 @@ Updated 26 October 2026. Project: Trencho V4; repository: Trencho_V4. The Game D
 
 ## Established design scope
 
-Trencho V4 is a logistics management game supplying an autonomous battlefield. The player controls acquisition, rear facilities, staffing, production, training, shipment composition, dispatch and doctrine. The military AI controls organization, equipment issue, operations, tactical movement, engineering and combat. The player must be able to trace battlefield capability and failures back to physical people, supply and industrial decisions.
+Trencho V4 is a base-building and logistics management game supplying an autonomous battlefield. The player controls a rear character, acquisition, building placement, worker allocation, production, training and doctrine. Routine onward supply transport is automated through the Logistics Centre; the player can trace actual delivery and shortages. The military AI controls organization, equipment issue, operations, tactical movement, engineering and combat. Battlefield capability and failures must be understandable consequences of physical people, supply and industrial decisions.
 
 - Physical continuity: reservations do not move goods; production does not deliver them; HQ stock does not refill a distant unit. People have one identity, location and exclusive duty, competing between labour, training, crew duties and military service.
 - Delegated execution: Commander, Company, Platoon, Squad and individual roles retain distinct responsibilities. Orders travel down, observations and inability reports travel up. Vehicle and service elements use real personnel.

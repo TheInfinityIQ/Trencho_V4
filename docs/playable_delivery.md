@@ -1,5 +1,7 @@
 # First connected playable delivery
 
+Current player-experience correction, 1 November 2026: [core loop and UI](core_loop_and_ui.md) governs the intended empty-field, character-controlled, base-building/worker-management game with automatic onward logistics. The prebuilt/manual-shipping demo described below is historical delivery scope, not completion of that corrected core loop. Preserve its reusable physical services.
+
 Authorized transition 30 October 2026. Live tracking: [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83).
 
 ## Experience and scope
