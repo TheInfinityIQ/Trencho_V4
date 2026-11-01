@@ -18,7 +18,34 @@ The Designer owns these observable gameplay requirements. The Lead and Principle
 6. Finished supplies enter the Logistics Centre's onward supply process. Actual workers and vehicles load, travel and unload automatically; the player can see demand, delivery progress and blockers.
 7. Battlefield capability and resource income reflect the supplies and people actually received. The player responds by changing the base, workforce and production.
 
-Player decisions concern what to build, what to purchase and produce, and how to allocate scarce labour and resources. Routine transport execution is automated. Specific shipping priorities, load thresholds and starting-state/bootstrap quantities still need a concrete design definition; this document does not invent those values or grant goods.
+Player decisions concern what to build, what to purchase and produce, and how to allocate scarce labour and resources. Routine transport execution is automated. Dawson approved the opening package and army-request shipping policy below in direct answers on 1 November 2026.
+
+## Approved empty-field opening
+
+- One controllable rear character, using WASD.
+- 2,500 requisition.
+- 500 actual Building Materials (M11) at the accessible starter supply point.
+- No hired workers and no workshops. The player purchases the first workers; the old prebuilt sixty-worker/facility package is not applied.
+- A Supply Table and arrival point at the field's edge, giving access to resource and worker purchases.
+- The first eight workers cost 140 requisition and arrive after 90 seconds, then physically disembark into the available worker pool.
+
+The fixed purchase/arrival access must function without constructing a Receiving Bay first. Purchased ordinary workers can take initial construction jobs and use the declared materials without first needing a Construction Office or a working Materials Plant. This removes a circular opening requirement; it does not provide invisible builders or free construction. Later resource freight still needs actual unloading/handling and accessible physical storage. The character's presence does not implicitly provide a hired worker, trained instructor, qualified crew or hidden labour.
+
+No extra rear inventory, trained staff or transport fleet is implied by this package. Real purchases, training and manufacture retain their applicable requirements. Preserve legitimate recovery access, including the existing instructor offer when no trained instructor remains. Existing battlefield forces/stocks are not changed by this rear-opening decision.
+
+## Approved automatic onward shipping
+
+Dawson selected **fulfil army supply requests automatically**, with actual physical loading, transport and unloading. The Logistics Centre is the player's understandable point for viewing and satisfying those requests; ordinary goods shipments do not require manual manifest composition or a Depart action.
+
+- A request identifies the needed item, quantity, destination, priority and consequence of the shortage. Existing GDD military priorities apply; this is not permission to invent demand to make the factory appear useful.
+- Distinguish outstanding need from stock already available at its destination and supply already committed or in transit to that same need. Do not dispatch the same quantity repeatedly merely because unloading has not finished.
+- When actual requested stock and an eligible staffed/fuelled transport are available, logistics arranges a useful valid shipment automatically. A large request can be served through separate capacity-valid shipments; it does not require a full truck before useful supply can leave. Each actual shipment still stages and loads its declared quantity before departing.
+- Workers collect and load real goods, the actual vehicle travels, and HQ staff physically unload. Arrival alone does not count as issue to a rifle or remote vehicle. Existing route, fuel/reserve, capacity and exclusive-person requirements remain.
+- Missing stock, workers, transport, crew, fuel, safe access or receiving space produces an actionable waiting state. Automation creates neither goods nor transport capacity and does not silently change the player's production recipe or staffing choices.
+- After receipt or changed military need, the displayed outstanding request updates. Genuine later demand can produce a later shipment in the same session. Finished goods without an applicable request remain stored rather than being shipped indiscriminately.
+- Goods-shipping automation does not silently enlist industrial workers or permanently transfer ownership/control of rear vehicles. Ordinary returning supply transport and an explicit permanent military commitment remain distinct.
+
+The default display shows the requested amount, available goods, committed/on-the-way quantity, actual received amount and current blocker or delivery progress, with direct access to the relevant workshop or job allocation. Backend shipment detail remains optional inspection.
 
 ## Existing worker rules retained
 
@@ -32,7 +59,7 @@ The following are the existing GDD baseline, not new balance changes:
 - Reassignment finishes an existing carry or deposits goods safely. One person cannot simultaneously build, haul, operate a workshop, train or crew a vehicle.
 - Training and qualifications persist; specialist work still needs the actual required qualification. Ordinary rear construction does not require military engineer training.
 
-The UI should preserve these rules while removing unnecessary interaction steps. Exact starting worker and building/material packages must be reconciled with the empty-field opening; the old prebuilt package is not an instruction to bypass that opening. Resolve construction bootstrap without silently granting materials or creating an impossible first workshop.
+The UI should preserve these rules while removing unnecessary interaction steps. They govern new purchases and assignments in the approved empty-field opening above; the old prebuilt worker/facility package does not bypass that opening.
 
 ## Interface requirements
 
@@ -55,5 +82,6 @@ Existing physical identity, capacity, stock, qualification and safe-handling rul
 ## Sources and reconciliation
 
 - Dawson's two direct messages in the Game Designer chat, 1 November 2026: core-loop correction and worker/UI clarification.
+- Dawson's direct answers, 1 November 2026: "Use the proposed opening" (character, 2,500 requisition, 500 Building Materials, no hired workers/workshops, edge Supply Table/arrival access; purchase first eight for 140/90 seconds) and "Fulfil army supply requests automatically".
 - [GDD sections 5.2, 7.2 and 8.2](game_design_document.md): worker purchases, assignment, staffing and physical work.
 - GDD sections 10.1, 18 and 20 contain the older manual-dispatch/menu/prebuilt premises; the human direction above governs where they conflict. Preserve unchanged physical delivery rules while reconciling the player experience.

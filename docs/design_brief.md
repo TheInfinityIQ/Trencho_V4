@@ -4,6 +4,8 @@
 
 Dawson clarified the intended experience: an empty-field opening, a WASD-controlled rear character, building placement, purchased workers assigned from a common pool, raw-resource production and automatic onward logistics. He requested an interface overhaul so the challenge is base building and worker management rather than navigating menus. Follow [core loop and UI](core_loop_and_ui.md), including the retained worker purchase/assignment rules. This supersedes the prebuilt/menu-operated prototype and routine player-dispatch premises below where they conflict; existing physical services and unchanged game rules remain useful.
 
+He then approved the starting package: character, 2,500 requisition, 500 Building Materials, no hired workers/workshops, and a Supply Table/arrival point at the field's edge; purchase the first eight workers for 140 with a 90-second arrival. He selected automatic fulfilment of army supply requests for Logistics Centre to HQ shipping. The detailed opening and observable delivery behaviour are recorded in the same brief.
+
 ## Current delivery — 30 October 2026
 
 Follow [playable delivery](playable_delivery.md), [team workflow](team_workflow.md) and [handoff](team_handoff.md). Dawson authorized a fresh designer/lead/two-developer team and one representative full-scale connected supply-to-battlefield delivery first. Gameplay requirements below remain; dated entry-scene and assignment statements are history. 2D overhead/Windows-first is authorized for this build; D01 certification remains open. The lead owns technical assignments and merges; the designer owns gameplay and experience acceptance.
