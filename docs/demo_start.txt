@@ -26,7 +26,8 @@ First workshop:
 
 Supplies also lists purchasable raw resources with the full price and transport
 fee. The resource display distinguishes local stock, reservations and deliveries.
-More panels exposes the retained detailed controls.
+Supplies separates Purchase from Deliveries. More systems in the command rail
+opens additional management panels and clearly labelled supply prototypes.
 
 This candidate demonstrates the corrected opening and first construction.
 Routine production hauling and automatic Logistics Centre-to-HQ shipping are
@@ -35,5 +36,6 @@ Manufacturing, repeated construction, onward logistics and full-game completion
 are not certified by the opening check. Battlefield retains the authored forces
 and shares the same clock; switching views does not start a new game.
 
-Use New game only to replace the current session. Start at 1x. The project retains
+Session > New game asks before replacing the current session. Start at 1x.
+The project retains
 30 FPS and four worker-thread limits; full Windows responsiveness is unverified.
