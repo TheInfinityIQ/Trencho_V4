@@ -1,5 +1,13 @@
 # Current-change verification
 
+## Active opening increment — 1 November 2026
+
+The current human workspace instruction prohibits local engine runs. Run necessary brief checks on GitHub; preserve the editor and other applications. This supersedes the local exception recorded below for this increment.
+
+The corrected empty-field opening is new production work. Its demo gate uses one new, named `CoreOpening` GDUnit case for the actual opening controls and a clearly identified rear-only first-construction component. It checks the declared package, panel navigation, character movement, non-consuming placement preview/cancellation, worker purchase and physical arrival, actual material hauling, first workshop completion and builder release. Check the 140 purchase debit before elapsed-time income changes the balance. Keep it brief and bounded; retain exact JUnit/HTML and engine errors. The previously verified ordinary Supply scenario and all other old suites remain preserved and deferred. Do not rerun that scenario merely to export this new opening.
+
+These checks do not certify native responsiveness, authored-battlefield pacing, manufacturing, automatic onward shipping or completion of the main game. The older Supply-specific requirements below describe the previous increment.
+
 ## Focused demo exception — 31 October 2026
 
 Latest local-feedback instruction: Dawson asked for local GDUnit reports before GitHub. Run the new named SupplyComponent case through tools/run_local_current_change.ps1 with the exact project Godot executable. It verifies actual preview/Start/loading/travel/unloading against a small explicit component fixture, not the full authored opening. The wrapper permits only this current case, retains JUnit/HTML/engine logs at .artifacts/gdunit4/local-supply, and rejects missing, skipped or failed results. One owned headless process uses Idle priority, two logical CPUs, a 15-percent CPU hard cap and 1 GB job-memory cap; launch requires 2 GB free memory and a running reserve of 1 GB. Version/import/test launches are sequential with 5/30/20-second limits. The Windows job is attached immediately after native process startup; that short startup interval precedes its limits. Old test directories are excluded only during import and restored afterward. No human editor or unrelated process is stopped. The full ordinary opening/delivery remains a GitHub-only integration check, and other suites stay deferred.

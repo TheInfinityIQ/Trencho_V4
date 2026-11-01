@@ -1,37 +1,39 @@
-Trencho V4 - Windows demo candidate
+Trencho V4 - Empty-field opening candidate
 
-Extract the entire downloaded ZIP into a folder. Keep TrenchoDemo.exe and
-TrenchoDemo.pck together. Run TrenchoDemo.exe; Godot's editor is not required.
-REVISION.txt identifies this exact build.
+Keep TrenchoDemo.exe and TrenchoDemo.pck together. Run TrenchoDemo.exe;
+the Godot editor is not required. REVISION.txt identifies this build.
 
-Launch enters the paused Farmland and Towns game. Getting started shows help.
-Rear base and Battlefield share the same people, inventory and clock.
-Use Pause, 1x or 2x to control time. Start at 1x.
-For a first delivery, click Supply in the TOP BAR, then select the military T01,
-rifle ammunition (E02), and the forward stop. Choose a quantity and Preview route,
-load and fuel. You can preview while paused. The estimate starts at HQ and excludes
-the truck's travel to HQ; its current location and dispatch blocker are shown.
-Let initial deployments proceed at 1x. The truck, loader and destination Engineers
-must actually be available before starting a delivery.
-Start physical delivery when ready. Loading, travel, unloading and return take
-time. The army issues arrived ammunition; Diagnostics are not required.
+You start paused on a rear field with a blue player character, 2500 requisition,
+500 Building Materials at the edge Supply Table, and no hired workers.
+Use 1x to start time. WASD moves the character; Pause stops movement and time.
+The mouse wheel zooms; middle-button drag pans; Fit base resets the camera.
 
-In Battlefield, select your formations to inspect current orders, actual loads
-and shortages. Resource control earns income only while uncontested. You can
-switch views or pause while planning without replacing the session. Mouse wheel
-zooms the battlefield, middle-button drag pans, and left-click inspects a marker.
+First workshop:
+1. Open Supplies or Workers / Jobs. Hire eight workers for 140 requisition.
+   Their transport takes 90 seconds, followed by actual disembarkation.
+   Purchased workers are not available immediately. The supplier driver leaves.
+2. Once the eight workers have joined the pool, open Workers / Jobs and request
+   four Hauling workers. Counts distinguish requested, assigned and present.
+3. Open Build, choose Workshop, and move the preview onto clear field space.
+   A location near the upper-left field, around 60 metres east / 45 south,
+   is suitable. Click to place; R rotates; Esc or right-click cancels the draft.
+   A red preview explains why placement is blocked. Preview/cancel spends nothing.
+4. In Workers / Jobs request four Builders for the newly placed site.
+   The site automatically requests its real Building Materials. Haulers carry
+   them from the Supply Table; the builders must walk to the site and work.
+5. The completed workshop consumes 150 Building Materials. Its builders are
+   released, and selecting the workshop opens its production and staffing panel.
 
-For replenishment, use Rear base Work to select a munitions recipe and output
-target. Staff assigns actual workers. Haul ingredients to the required input
-store; production does not pull distant depot stock automatically. Dispatch
-sends completed rear goods to HQ; Supply sends available HQ stock forward.
-Supplies still on a truck or courier are not ammunition already in a rifle.
-The army controls its own tactical movement and firing. New game deliberately
-replaces the current session with a fresh paused game.
+Supplies also lists purchasable raw resources with the full price and transport
+fee. The resource display distinguishes local stock, reservations and deliveries.
+More panels exposes the retained detailed controls.
 
-The top clock and Pause/1x/2x controls are shared by both views. Preparing
-transport routes means the affected transport is waiting for a valid plan;
-the rest of the game continues at the selected speed. Pause stops game time.
+This candidate demonstrates the corrected opening and first construction.
+Routine production hauling and automatic Logistics Centre-to-HQ shipping are
+still being connected. Army supply remains the earlier manual prototype.
+Manufacturing, repeated construction, onward logistics and full-game completion
+are not certified by the opening check. Battlefield retains the authored forces
+and shares the same clock; switching views does not start a new game.
 
-The game keeps the project's 30 FPS and four-worker limits. Full-session Windows
-responsiveness remains unverified. Export success alone is not gameplay acceptance.
+Use New game only to replace the current session. Start at 1x. The project retains
+30 FPS and four worker-thread limits; full Windows responsiveness is unverified.
