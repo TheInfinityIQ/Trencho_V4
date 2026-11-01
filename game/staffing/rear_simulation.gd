@@ -53,6 +53,8 @@ func _init(fixture: String = "A05", include_yard_fixture: bool = true, empty_fie
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
 	for id in Layout.FACILITIES:
+		# Dormant templates preserve recipe/diagnostic callers; only the edge
+		# Supply Table has positions/storage until real construction completes.
 		var f: Array = Layout.FACILITIES[id]
 		var at: Vector2 = SUPPLY_TABLE if empty_field and id in ["receiving","personnel","depot"] else f[4]
 		ledger.add_place("duty-" + id, f[0] + " staff entrance", at)
@@ -237,7 +239,7 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 				a.phase = "Pickup"
 				a.deadline = time + a.blocked_remaining
 			else:
-				_move(a, "Approach", Layout.path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.source).position), 1.5)
+				_move(a, "Approach", walk_path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.source).position), 1.5)
 			a.blocked_since = -1.0
 		elif a.phase in ["Approach", "Pickup"] and not _valid_destination(a.load.destination, a.load.type, a.load.mass, a.id):
 			_release_load(a)
@@ -395,13 +397,18 @@ func workshop_readiness() -> Dictionary:
 		"work": 0, "consumed": 0, "output": 0, "complete_A05_passed": false}
 
 
+func walk_path(origin: Vector2, destination: Vector2) -> Array:
+	if empty_field_opening:
+		return construction.walking_path(origin,destination) if construction != null else [origin,destination]
+	return Layout.path(origin,destination)
+
 func _rebalance() -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
 	# incumbents within those counts before requesting any safe transfers.
 	var pool: Array = []
 	for id in actors:
 		var p: Dictionary = ledger.inspect_entity(id)
-		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and not p.duty_id.begins_with("builders-"):
+		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and (empty_field_opening or not p.duty_id.begins_with("builders-")):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
@@ -514,9 +521,9 @@ func _report(a: Dictionary) -> void:
 		var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
 		if heavy_production != null and heavy_production.bay_occupant != "" and p.position.is_equal_approx(ledger.inspect_entity(heavy_production.bay_occupant).position):
 			path = [p.position,Layout.door("vehicle_works")]
-			var outward: Array = Layout.path(Layout.door("vehicle_works"),destination)
+			var outward: Array = walk_path(Layout.door("vehicle_works"),destination)
 			if not outward.is_empty(): path.append_array(outward.slice(1))
-		else: path = Layout.path(p.position,destination)
+		else: path = walk_path(p.position,destination)
 	_move(a, "Reporting", path, 1.5)
 
 
@@ -649,7 +656,7 @@ func _finish_phase(a: Dictionary) -> void:
 			else:
 				a.load.carried = result.entity_id
 				a.load.claim = ""
-				_move(a, "Carry", Layout.path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.destination).position), 1.2)
+				_move(a, "Carry", walk_path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.destination).position), 1.2)
 		"Carry":
 			a.phase = "Drop"
 			a.deadline = time + 2.0
@@ -716,8 +723,8 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 			count = mini(count, int(floor(_free_space(job.destination) / stock.unit_mass_kg)))
 			if count <= 0 or not _valid_destination(job.destination, job.type, count * stock.unit_mass_kg):
 				continue
-			var approach: Array = Layout.path(person.position, stock.position)
-			var carry: Array = Layout.path(stock.position, ledger.inspect_entity(job.destination).position)
+			var approach: Array = walk_path(person.position, stock.position)
+			var carry: Array = walk_path(stock.position, ledger.inspect_entity(job.destination).position)
 			if approach.is_empty() or carry.is_empty():
 				continue
 			var distance := Layout.length(approach) + Layout.length(carry)
@@ -786,7 +793,7 @@ func _nearest_storage(origin: Vector2, type: String, mass: float, excluded: Stri
 	for id in stores:
 		if id == excluded or stores[id].pile or not _valid_destination(id, type, mass, person):
 			continue
-		var route: Array = Layout.path(origin, ledger.inspect_entity(id).position)
+		var route: Array = walk_path(origin, ledger.inspect_entity(id).position)
 		if route.is_empty(): continue
 		var length := Layout.length(route)
 		if length < distance - EPS or (is_equal_approx(length, distance) and (selected.is_empty() or id < selected)):
@@ -805,7 +812,7 @@ func _reroute(a: Dictionary) -> void:
 		stores[destination] = {"id": destination, "capacity": a.load.mass, "accessible": true, "filter": [a.load.type], "pile": true}
 	a.load.destination = destination
 	_job(a.load.job).blocker = "Destination changed; safe delivery to " + destination + ", original demand remains"
-	_move(a, "Carry", Layout.path(origin, ledger.inspect_entity(destination).position), 1.2)
+	_move(a, "Carry", walk_path(origin, ledger.inspect_entity(destination).position), 1.2)
 
 
 func _deposit(a: Dictionary) -> void:

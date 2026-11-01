@@ -56,7 +56,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	receiving.route = Layout.path
 	if empty_field:
 		receiving.configure_supply_table()
-		receiving.route = func(origin: Vector2, destination: Vector2) -> Array: return [origin,destination]
+		receiving.route = rear.walk_path
 	var rear_ref: WeakRef = weakref(rear)
 	receiving.receiving_room = func(slot: int) -> float:
 		var owner: RefCounted = rear_ref.get_ref()
