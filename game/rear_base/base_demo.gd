@@ -242,6 +242,7 @@ func use_shared_navigation() -> void:
 	_local_clock_controls.hide()
 	_standalone_session_actions.hide()
 	declaration.hide()
+	feedback.hide()
 	if _fit_base_button.get_parent() != base_map: _fit_base_button.reparent(base_map)
 	_fit_base_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	_fit_base_button.offset_left = 12
@@ -428,7 +429,10 @@ func _bind_started_session(refresh_rear_ui: bool) -> void:
 	if simulation.get("empty_field_opening"):
 		message = "Paused empty field. Hire eight workers in Supplies, use 1x for their arrival, then Build and assign real jobs."
 	if refresh_rear_ui: _result({"ok":true,"message":message})
-	elif feedback != null: feedback.text = message
+	elif feedback != null:
+		feedback.text = message
+		feedback.show()
+	if _uses_shared_navigation and feedback != null: feedback.hide()
 
 func _staff_panel(box: VBoxContainer) -> void:
 	workforce_panel = WorkforcePanel.new(simulation)
@@ -879,7 +883,9 @@ func preview_build_at(point: Vector2) -> void:
 		plan.footprint = Rect2(point-size/2.0,size)
 	base_map.placement_preview = plan
 	base_map.queue_redraw()
-	if feedback != null: feedback.text = str(plan.message)
+	if feedback != null:
+		feedback.text = str(plan.message)
+		feedback.visible = not feedback.text.is_empty()
 
 func confirm_build_at(point: Vector2) -> void:
 	var result: Dictionary = simulation.rear.construction.place(_construction_kind(),point,construction_turn.button_pressed)
@@ -1172,7 +1178,9 @@ func _change_recipe() -> void:
 
 func _result(result: Dictionary) -> void:
 	if not result.get("speed_change",false) and not result.get("inspection_only",false): simulation.after_command()
-	if feedback != null: feedback.text = result.get("message", str(result))
+	if feedback != null:
+		feedback.text = str(result.get("message", str(result)))
+		feedback.visible = not feedback.text.is_empty()
 	if is_node_ready(): _refresh()
 
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
