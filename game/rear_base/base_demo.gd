@@ -543,8 +543,13 @@ func _refresh_production_context(view: Dictionary) -> void:
 	if not production_controls.visible: context_status.text = "No workshop built. Open Build to place one, then assign workers after construction."
 	for row in view.rear.staffing:
 		if row.id == _context_duty(): context_status.text += "\n%d present · %d assigned · %d requested · %d vacancies" % [row.present,row.assigned,row.target,row.shortage]
-	var spec: Dictionary = ConstructionCatalog.SPECS[_construction_kind()]
-	construction_description.text = "%s\n%d Building Materials · %.0f work seconds\nFootprint %s metres · needs a clear entrance and physical materials at the site.\nClick the field to place · R rotates · Esc / right-click cancels." % [BUILD_PURPOSES.get(_construction_kind(),""),spec.m11,spec.work,str(ConstructionCatalog.footprint(_construction_kind(),construction_turn.button_pressed))]
+	_refresh_build_description()
+
+func _refresh_build_description() -> void:
+	if construction_description == null or construction_turn == null: return
+	var kind: String = _construction_kind()
+	var spec: Dictionary = ConstructionCatalog.SPECS[kind]
+	construction_description.text = "%s\n%d Building Materials · %.0f work seconds\nFootprint %s metres · needs a clear entrance and physical materials at the site.\nClick the field to place · R rotates · Esc / right-click cancels." % [BUILD_PURPOSES.get(kind,""),spec.m11,spec.work,str(ConstructionCatalog.footprint(kind,construction_turn.button_pressed))]
 
 func _named_quantities(values: Dictionary) -> String:
 	var result: Array[String] = []
@@ -814,6 +819,7 @@ func _construction_panel(box: VBoxContainer) -> void:
 	construction_turn.text = "Turn footprint 90 degrees"
 	box.add_child(construction_turn)
 	construction_turn.toggled.connect(func(_turned: bool) -> void:
+		_refresh_build_description()
 		if _placing_building: preview_build_at(_construction_point()))
 	_button(coordinates,"Preview legal site",func() -> void: preview_build_at(_construction_point()))
 	_button(coordinates,"Place physical site",func() -> void: confirm_build_at(_construction_point()))
@@ -847,6 +853,7 @@ func select_build_kind(kind: String) -> void:
 	if not ConstructionCatalog.SPECS.has(kind) or ConstructionCatalog.SPECS[kind].get("fixed",false): return
 	for index in construction_kind.item_count:
 		if str(construction_kind.get_item_metadata(index)) == kind: construction_kind.select(index)
+	_refresh_build_description()
 	_placing_building = true
 	base_map.begin_placement()
 
