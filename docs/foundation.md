@@ -1,5 +1,11 @@
 # Foundation decisions
 
+## Supplies timer presentation — 1 November 2026
+
+Dawson's recording showed an uneven timer in the rear Supplies view while the desktop remained responsive. A bounded, paused-session GitHub profile on 5ea6ede measured three rear refresh calls at 68.864/68.808/68.235 ms, versus 0.608/0.592/0.554 ms for Battlefield; reading the shared clock took 0.004–0.029 ms. The rear refresh requested every rear service snapshot and rebuilt hidden people, training, production and other panels. Both maps' metadata enumeration was common work and was not blamed for the difference.
+
+Supplies now requests fresh detached purchasing/local-stock facts and updates only its visible HUD, quote, orders, recovery offer and population status. Other panels refresh when opened; map selection refreshes the destination panel before resolving a newly completed site's controls. The same measurement on 32d8d19 returned 4.137/4.152/4.134 ms for Supplies. The direct check retained the paused clock, verified read-only refresh and fresh purchase/order data, and opened the worker board successfully. Baseline [41355997460](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/41355997460) and changed [41356318079](https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/41356318079) retain evidence. No simulation, route budget, clock quantum, ownership or stock rule changed; no interpolated display time or persistent state cache was added. These GitHub timings do not certify native Windows frame pacing or other rear panels.
+
 ## APC observation boundary — 31 October 2026
 
 The existing military vehicle element now supplies its own observation through the actual living qualified seated T04 Commander, using the accepted 450-metre / three-metre-eye profile. A surviving qualified seated Gunner or Driver supplies ordinary 220-metre fallback when the Commander capability is absent. The order service reuses its half-second local share and one-second actual-parent links, preserving original observation time, source loss and confidence aging; attachment/army changes cannot lend an old report to a new command chain. The existing foot-squad sampler remains independent.
