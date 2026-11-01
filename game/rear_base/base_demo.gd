@@ -220,7 +220,7 @@ func show_panel(title: String) -> bool:
 	title = {"Staff":"Workers/Jobs","Orders":"Supplies"}.get(title,title)
 	for index in tabs.get_tab_count():
 		var panel: Control = tabs.get_tab_control(index)
-		if str(panel.name) != title: continue
+		if str(panel.get_meta("panel_title", panel.name)) != title: continue
 		tabs.current_tab = index
 		if panel is ScrollContainer: panel.scroll_vertical = 0
 		if title == "Build": select_build_kind(_construction_kind())
@@ -230,9 +230,11 @@ func show_panel(title: String) -> bool:
 
 func _panel(title: String) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
-	scroll.name = title
+	scroll.name = title.replace("/", "_")
+	scroll.set_meta("panel_title", title)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	tabs.add_child(scroll)
+	tabs.set_tab_title(tabs.get_tab_count()-1, title)
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(box)
