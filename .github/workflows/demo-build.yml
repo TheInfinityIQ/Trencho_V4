@@ -10,10 +10,12 @@ on:
       - 'tools/setup_gdunit4.ps1'
       - 'tools/gdunit4.lock.json'
       - 'tools/gdunit4_tests.json'
-      - 'game/forward_supply/tests/gdunit/demo_route_preview_test.gd'
       - 'game/forward_supply/**'
-      - 'game/rear_base/base_demo.gd'
-      - 'game/rear_base/base_simulation.gd'
+      - 'game/rear_base/**'
+      - 'game/construction/**'
+      - 'game/staffing/**'
+      - 'game/procurement/**'
+      - 'game/scenario/**'
       - 'game/main/**'
 
 permissions:
@@ -71,7 +73,7 @@ jobs:
           mkdir -p .artifacts/gdunit4/demo
           touch .artifacts/.gdignore
           pwsh -NoProfile -File ./tools/setup_gdunit4.ps1 2>&1 | tee .artifacts/gdunit4/demo/setup.log
-      - name: Import the project and pinned GDUnit for the Demo case
+      - name: Import the project and pinned GDUnit for the current opening case
         timeout-minutes: 2
         shell: bash
         run: |
@@ -80,18 +82,19 @@ jobs:
           if grep -Eq '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/gdunit4/demo/import.log; then
             exit 1
           fi
-      - name: Pass the named Supply preview and successful delivery case
+      - name: Pass the named current opening and first workshop case
         id: demo-test
-        timeout-minutes: 8
+        timeout-minutes: 1
         shell: bash
         run: |
           set -euo pipefail
-          # Only this single-case manifest is authorized. Do not call check.ps1,
-          # Domain/Input suites, old scenarios or failure-control scripts.
+          # Only this NEW current-change case is active. Preserve the old test
+          # files/manifests for later; do not execute Demo, SupplyComponent,
+          # Domain/Input, check.ps1, old scenarios or failure-control scripts.
           # GNU timeout uses its own process group by default (no --foreground),
           # so TERM/KILL also stop the child Godot process, not just PowerShell.
-          timeout --signal=TERM --kill-after=5s 450s pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite Demo -ReportName demo -CaseName test_ordinary_supply_preview_and_successful_delivery 2>&1 | tee .artifacts/gdunit4/demo/runner.log
-      - name: Retain focused Demo JUnit HTML and logs
+          timeout --signal=TERM --kill-after=5s 45s pwsh -NoProfile -File ./tools/run_gdunit4.ps1 -GodotPath "$GODOT_BIN" -Suite CoreOpening -ReportName demo -CaseName test_empty_opening_and_first_workshop_current_change 2>&1 | tee .artifacts/gdunit4/demo/runner.log
+      - name: Retain current opening JUnit HTML and logs
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
@@ -100,7 +103,7 @@ jobs:
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 14
-      - name: Export only after the focused Demo case passes
+      - name: Export only after the current opening case passes
         id: export
         if: steps.demo-test.outcome == 'success'
         timeout-minutes: 4

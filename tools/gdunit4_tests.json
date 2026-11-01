@@ -1,4 +1,10 @@
 {
+  "CoreOpening": [
+    {
+      "path": "game/rear_base/tests/gdunit/core_opening_current_change_test.gd",
+      "cases": ["test_empty_opening_and_first_workshop_current_change"]
+    }
+  ],
   "SupplyComponent": [
     {
       "path": "game/forward_supply/tests/gdunit/supply_component_test.gd",

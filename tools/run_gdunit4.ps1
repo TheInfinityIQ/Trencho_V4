@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$GodotPath = 'godot',
-    [ValidateSet('Domain', 'Input', 'Demo', 'SupplyComponent')][string]$Suite = 'Domain',
+    [ValidateSet('Domain', 'Input', 'Demo', 'SupplyComponent', 'CoreOpening')][string]$Suite = 'Domain',
     [string]$ReportName = '',
     [string]$CaseName = '',
     [switch]$LocalResourceLimits
@@ -26,11 +26,11 @@ if (Test-Path -LiteralPath $xmlPath) { Remove-Item -LiteralPath $xmlPath }
 $manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'gdunit4_tests.json') -Raw | ConvertFrom-Json
 $suites = @($manifest.$Suite)
 $expectedCases = @($suites | ForEach-Object { $_.cases })
-if ($Suite -in @('Demo','SupplyComponent')) {
-    if ($suites.Count -ne 1 -or $expectedCases.Count -ne 1) { throw 'Demo must declare exactly one suite and one case.' }
+if ($Suite -in @('Demo','SupplyComponent','CoreOpening')) {
+    if ($suites.Count -ne 1 -or $expectedCases.Count -ne 1) { throw "$Suite must declare exactly one suite and one case." }
     $testSource = Get-Content -LiteralPath (Join-Path $projectRoot $suites[0].path) -Raw
     $declaredCases = @([regex]::Matches($testSource, '(?m)^[\t ]*func[\t ]+(test_[A-Za-z0-9_]+)[\t ]*\(') | ForEach-Object { $_.Groups[1].Value })
-    if ($declaredCases.Count -ne 1 -or $declaredCases[0] -cne $expectedCases[0]) { throw 'Demo source must contain only the exact named manifest test; no other cases may run.' }
+    if ($declaredCases.Count -ne 1 -or $declaredCases[0] -cne $expectedCases[0]) { throw "$Suite source must contain only the exact named manifest test; no other cases may run." }
 }
 $ignoredCases = @()
 if ($CaseName) {
