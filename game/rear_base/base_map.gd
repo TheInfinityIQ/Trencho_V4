@@ -8,6 +8,42 @@ var pan := Vector2.ZERO
 var selection := ""
 var placement_preview: Dictionary = {}
 var _dragging := false
+## The player is a scene-owned avatar, never a free member of the worker pool.
+var character_enabled := false
+var character_position := Vector2(16, 90)
+const CHARACTER_SPEED := 5.0
+
+func enable_character(enabled: bool) -> void:
+	character_enabled = enabled
+	character_position = Vector2(16, 90)
+	queue_redraw()
+
+func _process(delta: float) -> void:
+	if not character_enabled or not is_visible_in_tree() or simulation == null: return
+	# Global key state ignores GUI consumption: never walk while editing a field.
+	var focused := get_viewport().gui_get_focus_owner()
+	if focused is LineEdit or focused is TextEdit or not get_window().has_focus(): return
+	var direction := Vector2(
+		float(Input.is_physical_key_pressed(KEY_D))-float(Input.is_physical_key_pressed(KEY_A)),
+		float(Input.is_physical_key_pressed(KEY_S))-float(Input.is_physical_key_pressed(KEY_W)))
+	if direction.is_zero_approx() or simulation.speed == 0: return
+	move_character(direction, minf(delta, 0.1)*simulation.speed)
+
+func move_character(direction: Vector2, seconds: float) -> void:
+	if not character_enabled or not is_finite(seconds) or seconds <= 0.0: return
+	var step := direction.limit_length()*CHARACTER_SPEED*minf(seconds, 0.2)
+	# Resolve axes separately to slide along built footprints without crossing them.
+	for offset in [Vector2(step.x, 0), Vector2(0, step.y)]:
+		var candidate: Vector2 = character_position+offset
+		if not Rect2(0.5, 0.5, 239, 179).has_point(candidate): continue
+		var blocked := false
+		for row in simulation.rear.construction.instances.values():
+			if row.state in ["Cancelled", "Dismantled"]: continue
+			if Rect2(row.center-row.size/2.0, row.size).grow(0.5).has_point(candidate):
+				blocked = true
+				break
+		if not blocked: character_position = candidate
+	queue_redraw()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -60,7 +96,10 @@ func _gui_input(event: InputEvent) -> void:
 						selected.emit("site",row.id)
 						hit_site = true
 						break
-				if not hit_site:
+				if character_enabled and point.distance_to(Vector2(10,90)) <= 5.0:
+					selection = "terminal"
+					selected.emit("building", "terminal")
+				elif not hit_site and not character_enabled:
 					for id in Layout.FACILITIES:
 						var f: Array = Layout.FACILITIES[id]
 						if Rect2(f[1] - f[2] / 2, f[2]).grow(2).has_point(point):
@@ -80,6 +119,7 @@ func _draw() -> void:
 	for y in range(0, 181, 20): draw_line(map_point(Vector2(0, y)), map_point(Vector2(240, y)), Color("2d4846"))
 	var font := ThemeDB.fallback_font
 	for id in Layout.FACILITIES:
+		if character_enabled: continue
 		var f: Array = Layout.FACILITIES[id]
 		var box := Rect2(map_point(f[1] - f[2] / 2), f[2] * scale)
 		draw_rect(box, Color("506574"))
@@ -113,6 +153,16 @@ func _draw() -> void:
 		draw_circle(point, 4.0, Color("82e3b0") if entity.owner == "army-blue" else Color("dba274"))
 		if not entity.carrying_stock_id.is_empty(): draw_rect(Rect2(point + Vector2(4, -5), Vector2(6, 6)), Color("ffd37c"))
 		if entity.id == selection: draw_arc(point, 8, 0, TAU, 20, Color.WHITE, 2)
+	if character_enabled:
+		var table := map_point(Vector2(10,90))
+		draw_rect(Rect2(table-Vector2(6,4),Vector2(12,8)),Color("ddbd72"))
+		draw_string(font,table+Vector2(10,-8),"Supply Table / arrivals",HORIZONTAL_ALIGNMENT_LEFT,-1,14)
+		var player := map_point(character_position)
+		draw_circle(player,7,Color("80caff"))
+		draw_arc(player,10,0,TAU,24,Color.WHITE,2)
+		draw_string(font,player+Vector2(12,-8),"You",HORIZONTAL_ALIGNMENT_LEFT,-1,14)
+		draw_string(font,Vector2(12,size.y-32),"WASD move at 1x / 2x | wheel zoom | middle-drag pan",HORIZONTAL_ALIGNMENT_LEFT,-1,14)
+		return
 	var ledger: RefCounted = simulation.rear.ledger
 	if simulation.expanded_catalogue:
 		var totals: Array[String] = []

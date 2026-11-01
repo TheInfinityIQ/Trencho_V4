@@ -44,8 +44,16 @@ func _ready() -> void:
 	home.tooltip_text = "Return to the same live rear session."
 	home.pressed.connect(_show_base)
 	controls.add_child(home)
+	for action in [["Build", "Build"], ["Workers / Jobs", "Workers/Jobs"], ["Supplies", "Supplies"]]:
+		var shortcut := Button.new()
+		shortcut.text = action[0]
+		var panel_title: String = action[1]
+		shortcut.pressed.connect(func() -> void:
+			_base.show_panel(panel_title)
+			_show_base())
+		controls.add_child(shortcut)
 	var supply_button := Button.new()
-	supply_button.text = "Supply"
+	supply_button.text = "Army supply"
 	supply_button.tooltip_text = "Open forward deliveries and the army's actual supply needs."
 	supply_button.pressed.connect(_show_supply)
 	controls.add_child(supply_button)
@@ -55,7 +63,7 @@ func _ready() -> void:
 	controls.add_child(field_button)
 	var playtest := Button.new()
 	playtest.text = "New game"
-	playtest.tooltip_text = "Replace the current session with a fresh paused Farmland and Towns game."
+	playtest.tooltip_text = "Start a fresh paused field with 2500 requisition, 500 Building Materials and no hired workers."
 	playtest.pressed.connect(_start_playtest)
 	controls.add_child(playtest)
 	_field_clock = HBoxContainer.new()
@@ -91,7 +99,7 @@ func _ready() -> void:
 	layout.add_child(help)
 	var guide := Label.new()
 	guide.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	guide.text = "Keep the army supplied as it contests resources. The game starts paused; use 1x to begin.\nRear base: manage workers, haul ingredients and manufacture ammunition in Work. Supply: send existing HQ ammunition forward first, then replenish through rear production and Dispatch. Battlefield: inspect current orders, shortages and delivery progress; the army moves and fights autonomously.\nOwned, uncontested resources earn requisition. Withheld ammunition can stop an advance. Rear base and Battlefield share one continuing session; New game replaces it."
+	guide.text = "Build your base and manage its workers. Start with 2500 requisition and 500 Building Materials on an empty rear field.\nUse 1x to begin and WASD to move your character. Supplies lets you buy the first eight workers for 140 requisition; arrival takes 90 seconds. Build places facilities; Workers / Jobs allocates actual people to work.\nRear base and Battlefield share one session. The army acts autonomously. Automatic onward supply is still being connected; the Army supply panel is the existing manual prototype. New game replaces the session."
 	help.add_child(guide)
 	help_button.toggled.connect(func(open: bool) -> void: help.visible = open)
 	_host = Control.new()
@@ -104,9 +112,8 @@ func _ready() -> void:
 	_battlefield = Battlefield.instantiate()
 	_battlefield.simulation = _base.simulation
 	_host.add_child(_battlefield)
-	# Ordinary launch uses the same authored game and normal session binding as
-	# the New game action. Existing declared forces, stock and paused clock stay
-	# authoritative; no demonstration-only grants or initial freight departure.
+	# Launch and New game share the approved empty rear opening; battlefield
+	# forces remain authored by the scenario, independent of the rear workforce.
 	_start_playtest()
 
 
@@ -155,9 +162,8 @@ func _on_session_changed(next_simulation: RefCounted) -> void:
 
 func _start_playtest() -> void:
 	_base.hide()
-	_base.scenario.select(2)
-	_base._start_session(false)
-	_show_battlefield()
+	_base.start_empty_field_session(false)
+	_show_base()
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(_base) and _field_clock.visible:
