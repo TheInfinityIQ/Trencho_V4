@@ -18,6 +18,9 @@ var _sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	if rear.empty_field_opening:
+		office_desired.clear()
+		return
 	for kind in Layout.FACILITIES:
 		var f: Array = Layout.FACILITIES[kind]
 		var id: String = "initial-"+str(kind)

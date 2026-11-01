@@ -22,6 +22,9 @@ func _init(rear: RefCounted, access: Callable) -> void:
 	_rear_ref = weakref(rear)
 	_recipe_access = access
 	rear.requests.students = {"id":"students","target":0,"positions":12,"priority":1,"created":0.0,"order":rear._next(),"place":"duty-training"}
+	if rear.empty_field_opening:
+		training_sites.clear()
+		rear.requests.students.positions = 0
 
 func add_training_site(id: String, center: Vector2, duty: String) -> void:
 	training_sites.append({"id":id,"center":center,"duty":duty,"active":true})

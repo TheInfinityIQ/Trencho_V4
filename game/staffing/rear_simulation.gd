@@ -10,6 +10,8 @@ const PLAYER := "army-blue"
 const EPS := 0.000001
 
 var ledger := Ledger.new()
+const SUPPLY_TABLE := Vector2(10,90)
+var empty_field_opening := false
 var yard: RefCounted
 var time: float = 0.0
 var vehicle_departures_allowed := true # Explicit-time callers own their clock; live Base gates Pause.
@@ -46,20 +48,28 @@ var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
 
-func _init(fixture: String = "A05", include_yard_fixture: bool = true) -> void:
+func _init(fixture: String = "A05", include_yard_fixture: bool = true, empty_field: bool = false) -> void:
+	empty_field_opening = empty_field
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
 	for id in Layout.FACILITIES:
 		var f: Array = Layout.FACILITIES[id]
-		ledger.add_place("duty-" + id, f[0] + " staff entrance", f[4])
-		requests[id] = {"id": id, "target": 0, "positions": f[3], "priority": 1, "created": 0.0, "order": _next(), "place": "duty-" + id}
+		var at: Vector2 = SUPPLY_TABLE if empty_field and id in ["receiving","personnel","depot"] else f[4]
+		ledger.add_place("duty-" + id, f[0] + " staff entrance", at)
+		requests[id] = {"id": id, "target": 0, "positions": (4 if id == "receiving" else 0) if empty_field else f[3], "priority": 1, "created": 0.0, "order": _next(), "place": "duty-" + id}
 	requests.hauling = {"id": "hauling", "target": 0, "positions": 120, "priority": 1, "created": 0.0, "order": _next(), "place": "duty-depot"}
 	requests.yard = {"id": "yard", "target": 0, "positions": 1, "priority": 1, "created": 0.0, "order": _next(), "place": "yard-start"}
+	if empty_field: requests.yard.positions = 0
 	for id in Layout.STORES:
 		var definition: Array = Layout.STORES[id]
-		ledger.add_place(id, id + " physical storage", Layout.door(definition[0]))
-		stores[id] = {"id": id, "capacity": float(definition[1]), "accessible": true, "filter": [], "pile": false}
-	yard = Yard.new(ledger,include_yard_fixture)
+		var at: Vector2 = SUPPLY_TABLE if empty_field and id == "receiving" else Layout.door(definition[0])
+		ledger.add_place(id, id + " physical storage", at)
+		var active: bool = not empty_field or id == "receiving"
+		stores[id] = {"id": id, "capacity": float(definition[1]) if active else 0.0, "accessible": active, "filter": [], "pile": false}
+	yard = Yard.new(ledger,include_yard_fixture and not empty_field)
+	if empty_field:
+		yard.active_parking.fill(false)
+		return
 	if fixture == "Empty":
 		return
 	for i in range(1, 5):

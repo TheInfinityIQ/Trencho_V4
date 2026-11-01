@@ -7,7 +7,13 @@ const Execution = preload("res://game/battlefield/squad_execution.gd")
 const Opening = preload("res://game/battlefield/opening_policy.gd")
 
 static func create() -> RefCounted:
-	var base := Base.new(false,true,true,Vector2(2000,450),false,{"heavy":["R30"],"munitions":["R33"]})
+	return _create(false)
+
+static func create_empty_field() -> RefCounted:
+	return _create(true)
+
+static func _create(empty_field: bool) -> RefCounted:
+	var base := Base.new(false,true,true,Vector2(2000,450),false,{"heavy":["R30"],"munitions":["R33"]},empty_field)
 	var rear: RefCounted = base.rear
 	Map.apply(rear.combat.world)
 	for objective in Map.OBJECTIVES:

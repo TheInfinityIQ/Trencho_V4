@@ -30,6 +30,7 @@ var receiving: RefCounted
 var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
+var empty_field_opening: bool = false
 var owed_simulation_seconds := 0.0
 var planning_view_revision := 0
 var _live_planning := false
@@ -44,14 +45,18 @@ const PLANNING_FRAME_USEC := 4000
 const PLANNING_CHUNK_UNITS := 128
 const PLANNING_FRAME_UNITS := 4096
 
-func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}) -> void:
-	rear = Rear.new("Empty",not initial_rear)
+func _init(expanded: bool = false, world_session: bool = false, initial_rear: bool = false, hq_at: Vector2 = Vector2(1640,91), declare_scaffold_markers: bool = true, declared_access: Dictionary = {}, empty_field: bool = false) -> void:
+	empty_field_opening = empty_field
+	rear = Rear.new("Empty",not initial_rear,empty_field)
 	expanded_catalogue = expanded
 	connected_world = world_session
 	# G02 deposits at the same accepted G03 store/entrance.
-	rear.ledger.add_place("personnel", "F08 shared arrival entrance", Layout.door("personnel"))
+	rear.ledger.add_place("personnel", "Supply Table arrival point" if empty_field else "F08 shared arrival entrance", Rear.SUPPLY_TABLE if empty_field else Layout.door("personnel"))
 	receiving = Receiving.new(rear.ledger)
 	receiving.route = Layout.path
+	if empty_field:
+		receiving.configure_supply_table()
+		receiving.route = func(origin: Vector2, destination: Vector2) -> Array: return [origin,destination]
 	var rear_ref: WeakRef = weakref(rear)
 	receiving.receiving_room = func(slot: int) -> float:
 		var owner: RefCounted = rear_ref.get_ref()
@@ -87,7 +92,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	receiving.external_rear_reservations = func() -> int:
 		var owner: RefCounted = dispatch_rear_ref.get_ref()
 		return owner.dispatch.return_places.size() if owner != null else 0
-	if not initial_rear:
+	if not initial_rear and not empty_field:
 		for i in range(12): rear.add_person("base-person-%02d" % (i + 1))
 	var workshop_access: Array[String] = []
 	var munitions_access: Array[String] = []
@@ -116,7 +121,11 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	rear.training = Training.new(rear,access)
 	# Begin idle; the player sets staff, material orders and production targets.
 	for activity in rear._production_activities(): activity.set_mode("Stock target")
-	if initial_rear: RearStart.apply(self)
+	if empty_field:
+		var stock: Dictionary = rear.ledger.add_stock("start-supply-table-M11","M11",500,1.0,"receiving",rear.PLAYER)
+		assert(stock.ok,str(stock))
+	elif initial_rear:
+		RearStart.apply(self)
 	rear.advance_time(0)
 
 func tick(real_seconds: float) -> void:

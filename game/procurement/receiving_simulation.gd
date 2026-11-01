@@ -23,6 +23,7 @@ var ledger := Ledger.new()
 var receiving_position := RECEIVING
 var freight_berths: Array[Dictionary] = [{"store":"receiving","berth":FREIGHT_BERTH,"receiving_position":RECEIVING,"duty":"receiving","site":"initial-receiving"}]
 var personnel_position := PERSONNEL
+var supply_table_access := false
 var route: Callable
 # Optional shared-store contract: returns currently legal free kilograms.
 var receiving_room: Callable
@@ -53,6 +54,13 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
+
+func configure_supply_table() -> void:
+	# Same purchase/admission/handling service, with no F02/F08 prerequisite.
+	assert(_time == 0.0 and _orders.is_empty())
+	supply_table_access = true
+	freight_berths[0].berth = receiving_position + Vector2(0,-10)
+	freight_berths[0].site = "supply-table"
 
 func requisition_balance() -> float:
 	return _money
@@ -615,14 +623,17 @@ func _set_state(order: Dictionary, state: String) -> void:
 
 
 func _gate(order: Dictionary) -> Vector2:
+	if supply_table_access: return Vector2(0,receiving_position.y-10 if order.kind == "Freight" else personnel_position.y+10)
 	return FREIGHT_GATE if order.kind == "Freight" else Vector2(0, 100)
 
 
 func _berth(order: Dictionary) -> Vector2:
+	if supply_table_access and order.kind != "Freight": return personnel_position+Vector2(6+order.slot*8,10)
 	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 
 
 func _exit(order: Dictionary) -> Vector2:
+	if supply_table_access: return _gate(order)-Vector2(12,0)
 	return FREIGHT_EXIT if order.kind == "Freight" else Vector2(-12, 100)
 
 

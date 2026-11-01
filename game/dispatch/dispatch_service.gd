@@ -36,6 +36,7 @@ var dispatch_sites: Dictionary = {"dispatch":{"store":"dispatch","duty":"dispatc
 
 func _init(rear: RefCounted, at: Vector2 = HQ) -> void:
 	_rear_ref = weakref(rear)
+	if rear.empty_field_opening: dispatch_sites.clear()
 	hq_position = at
 	queue_position = at + (HQ_QUEUE - HQ)
 	rear.ledger.add_place("dispatch-berth","F07 real dispatch vehicle berth",Layout.door("dispatch"))
