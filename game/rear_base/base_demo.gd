@@ -46,6 +46,8 @@ var purchase_quote: Label
 var purchase_button: Button
 var delivery_status: Label
 var delivery_progress: ProgressBar
+var delivery_cancel_button: Button
+var delivery_cancel_reason: Label
 var construction_description: Label
 var context_staff: SpinBox
 var context_priority: OptionButton
@@ -307,9 +309,17 @@ func _list(parent: Node, height: float = 120) -> ItemList:
 	return list
 
 func _orders_panel(box: VBoxContainer) -> void:
-	var hiring: VBoxContainer = _section(box,"Hire workers","Eight untrained workers · 120 requisition + 20 transport. Reserve eight rear places; workers join the pool after disembarking. The supplier vehicle and driver leave.")
+	var views := TabContainer.new()
+	box.add_child(views)
+	var purchase := VBoxContainer.new()
+	purchase.name = "Purchase"
+	views.add_child(purchase)
+	var deliveries_view := VBoxContainer.new()
+	deliveries_view.name = "Deliveries"
+	views.add_child(deliveries_view)
+	var hiring: VBoxContainer = _section(purchase,"Hire workers","Eight rear places reserved. Workers join after disembarking; the supplier driver leaves.")
 	_button(hiring,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()),true)
-	var deliveries: VBoxContainer = _section(box,"Deliveries","Select an order to inspect its actual arrival or unloading state.")
+	var deliveries: VBoxContainer = _section(deliveries_view,"Deliveries","Select an order to inspect its actual arrival or unloading state.")
 	orders = _list(deliveries,112)
 	orders.item_selected.connect(func(index: int) -> void: _select("order", _order_ids[index], false))
 	delivery_status = _label(deliveries,"")
@@ -319,11 +329,20 @@ func _orders_panel(box: VBoxContainer) -> void:
 	delivery_progress.show_percentage = false
 	delivery_progress.custom_minimum_size.y = 6
 	deliveries.add_child(delivery_progress)
-	_button(deliveries, "Cancel selected undispatched order", func() -> void:
+	delivery_cancel_button = _button(deliveries, "Cancel selected undispatched order", func() -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
-	var catalogue: VBoxContainer = _section(box,"Raw supplies","Choose whole kilograms. The quote includes every vehicle's transport fee; receiving workers must physically unload the delivery.")
+	delivery_cancel_reason = _label(deliveries,"")
+	delivery_cancel_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var catalogue: VBoxContainer = _section(purchase,"Raw supplies","Whole kilograms · price per kg shown beside each material")
+	var catalogue_scroll := ScrollContainer.new()
+	catalogue_scroll.custom_minimum_size.y = 160
+	catalogue_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	catalogue.add_child(catalogue_scroll)
+	var quantities := VBoxContainer.new()
+	quantities.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	catalogue_scroll.add_child(quantities)
 	for code in Catalog.MATERIALS:
-		cart[code] = _spin(catalogue, Catalog.MATERIALS[code].name + " · " + str(Catalog.MATERIALS[code].price)+" req/kg", 55000)
+		cart[code] = _spin(quantities, Catalog.MATERIALS[code].name + " · " + str(Catalog.MATERIALS[code].price)+" req/kg", 55000)
 		cart[code].value_changed.connect(func(_value: float) -> void: _refresh_purchase_quote())
 	purchase_quote = _label(catalogue,"")
 	purchase_quote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -332,12 +351,18 @@ func _orders_panel(box: VBoxContainer) -> void:
 		for code in cart:
 			if cart[code].value > 0: request[code] = int(cart[code].value)
 		_result(simulation.receiving.buy_resources(request)),true)
-	var recovery: VBoxContainer = _section(box,"Specialist recovery","")
+	var recovery_toggle := CheckButton.new()
+	recovery_toggle.text = "Specialist recovery details"
+	purchase.add_child(recovery_toggle)
+	var recovery: VBoxContainer = _section(purchase,"Specialist recovery","")
+	var recovery_card := recovery.get_parent() as Control
+	recovery_card.hide()
+	recovery_toggle.toggled.connect(recovery_card.set_visible)
 	recovery_button = _button(recovery,"Buy recovery instructor · 120 requisition",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
 	recovery_status = _label(recovery,"")
 	recovery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_standalone_session_actions = VBoxContainer.new()
-	box.add_child(_standalone_session_actions)
+	purchase.add_child(_standalone_session_actions)
 	_button(_standalone_session_actions,"Start new empty-field game",start_empty_field_session)
 	var diagnostics := VBoxContainer.new()
 	_standalone_session_actions.add_child(diagnostics)
@@ -410,9 +435,14 @@ func _refresh_purchase_quote() -> void:
 	var request := {}
 	for code in cart:
 		if cart[code].value > 0: request[code] = int(cart[code].value)
-	var quote: Dictionary = Catalog.quote(request,simulation.receiving.freight_limit())
-	purchase_quote.text = "%d kg · %d vehicles · %d requisition total (includes %d transport)\n60 s travel, then real unloading; purchased goods are not yet local stock." % [quote.mass_kg,quote.vehicle_count,quote.cost,quote.transport_fees] if quote.ok else str(quote.message)
-	purchase_button.disabled = request.is_empty() or not quote.ok
+	var quote: Dictionary = simulation.receiving.quote_resources(request)
+	purchase_quote.text = str(quote.message)
+	if quote.ok:
+		var balance: float = simulation.receiving.requisition_balance()
+		purchase_quote.text = "%d kg · %d vehicles · %d requisition total\nIncludes %d transport · Balance %.0f\n60 s travel, then physical unloading." % [quote.mass_kg,quote.vehicle_count,quote.cost,quote.transport_fees,balance]
+		if balance < float(quote.cost): purchase_quote.text += "\nNeeds %.0f more requisition." % (float(quote.cost)-balance)
+		if int(quote.vehicle_count) > int(quote.free_vehicle_places): purchase_quote.text += "\nWaiting for supplier vehicle clearance: %d free places, %d needed." % [quote.free_vehicle_places,quote.vehicle_count]
+	purchase_button.disabled = request.is_empty() or not quote.ok or not quote.get("can_commit",false)
 
 func _order_summary(order: Dictionary) -> String:
 	var contents: String = _named_quantities(order.cargo) if order.kind == "Freight" else "%d workers" % int(order.expected_people)
@@ -420,6 +450,9 @@ func _order_summary(order: Dictionary) -> String:
 	return "%s · %s · %d requisition" % [contents,order.state,int(order.cost)]
 
 func _refresh_delivery_status(receiving: Dictionary) -> void:
+	orders.visible = not receiving.orders.is_empty()
+	delivery_cancel_button.disabled = true
+	delivery_cancel_reason.text = "Select a booked order. Only its first five undispatched seconds allow a full refund."
 	var selected := ""
 	if not orders.get_selected_items().is_empty(): selected = _order_ids[orders.get_selected_items()[0]]
 	var current: Dictionary = {}
@@ -433,6 +466,10 @@ func _refresh_delivery_status(receiving: Dictionary) -> void:
 	if current.is_empty():
 		delivery_status.text = "No deliveries booked. Worker and raw-supply purchases appear here."
 		return
+	if current.id == selected:
+		var cancellable: bool = current.state == "Ordered" and float(receiving.time) < float(current.purchased_at)+5.0
+		delivery_cancel_button.disabled = not cancellable
+		delivery_cancel_reason.text = "Full refund available before dispatch." if cancellable else "This order has dispatched or closed; it can no longer be refunded."
 	var detail: String = _order_summary(current)
 	if current.state == "Incoming":
 		var duration: float = float(current.arrival_at)-float(current.state_entered_at)
