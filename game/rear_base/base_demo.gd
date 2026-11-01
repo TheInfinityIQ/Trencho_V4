@@ -381,6 +381,10 @@ func _refresh_purchase_quote() -> void:
 func _refresh_core_ui(view: Dictionary) -> void:
 	workforce_panel.refresh(view)
 	_refresh_purchase_quote()
+	_refresh_resource_hud(view)
+	_refresh_production_context(view)
+
+func _refresh_resource_hud(view: Dictionary) -> void:
 	var stock_totals := {"M11":{"physical":0,"reserved":0}}
 	for storage in view.rear.stores:
 		for stock in storage.stocks:
@@ -402,6 +406,8 @@ func _refresh_core_ui(view: Dictionary) -> void:
 	for type in outstanding:
 		if outstanding[type] > 0: incoming.append("%s %d" % [_material_label(type),outstanding[type]])
 	resource_hud.text = "Requisition %.0f · Local stock: %s\nOrdered / in delivery: %s" % [view.receiving.money," · ".join(physical),", ".join(incoming) if not incoming.is_empty() else "none"]
+
+func _refresh_production_context(view: Dictionary) -> void:
 	var staff: Dictionary = simulation.rear.requests.get(_context_duty(),{})
 	context_staff.editable = not staff.is_empty()
 	context_priority.disabled = staff.is_empty()
@@ -1028,6 +1034,17 @@ func _result(result: Dictionary) -> void:
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
 	_selected_kind = kind
 	_selected_id = id
+	if open_panel:
+		var target := "Info"
+		if kind == "building" and id == "terminal": target = "Supplies"
+		elif kind == "site" and not simulation.rear.construction.activities.has(id): target = "Build"
+		elif kind == "building" or (kind == "site" and simulation.rear.construction.activities.has(id)): target = "Work"
+		var previous_tab: int = tabs.current_tab
+		show_panel(target)
+		# Hidden controls can be old while Supplies is open. Refresh the target
+		# before resolving its selection; tab_changed handles a visible new tab.
+		if previous_tab == tabs.current_tab or not is_visible_in_tree(): _refresh()
+		if target == "Build": _cancel_placement()
 	if kind == "site":
 		var site_index: int = construction_ids.find(id)
 		if site_index >= 0: construction_rows.select(site_index)
@@ -1038,21 +1055,15 @@ func _select(kind: String, id: String, open_panel: bool = true) -> void:
 			store.select(index)
 			_load_store()
 	if open_panel:
-		if kind == "building" and id == "terminal": show_panel("Supplies")
-		elif kind == "site" and not simulation.rear.construction.activities.has(id):
-			show_panel("Build")
-			_cancel_placement()
-		elif kind == "building" or (kind == "site" and simulation.rear.construction.activities.has(id)):
+		if (kind == "building" and id != "terminal") or (kind == "site" and simulation.rear.construction.activities.has(id)):
 			var found := false
 			for index in facility.item_count:
 				if str(facility.get_item_metadata(index)) == id:
 					facility.select(index)
 					_load_production()
-					show_panel("Work")
 					found = true
 					break
 			if not found: show_panel("Info")
-		else: show_panel("Info")
 	_refresh()
 
 func _fill(list: ItemList, ids: Array[String], entries: Array, make_text: Callable) -> void:
@@ -1166,6 +1177,9 @@ func _refresh() -> void:
 	base_map.queue_redraw()
 	var active_panel: String = str(tabs.get_tab_control(tabs.current_tab).name)
 	var diagnostics: bool = OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1"
+	if active_panel == "Supplies" and not diagnostics:
+		_refresh_purchasing()
+		return
 	var view: Dictionary = simulation.snapshot(diagnostics,diagnostics or active_panel == "Dispatch")
 	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
@@ -1280,3 +1294,14 @@ func _refresh() -> void:
 			for order in view.receiving.orders:
 				if order.id == _selected_id: info += "%s %s\nCargo %s\nUnloaded %s\n%s" % [order.kind, order.state, str(order.cargo), str(order.unloaded), order.blocked_reason]
 	inspection.text = info
+
+func _refresh_purchasing() -> void:
+	var view: Dictionary = simulation.purchasing_view()
+	_refresh_resource_hud(view)
+	_refresh_purchase_quote()
+	var offer: Dictionary = view.receiving.recovery_offer
+	recovery_button.visible = offer.available
+	recovery_status.text = offer.message
+	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money,view.rear_population,simulation.receiving.incoming_people()]
+	_fill(orders,_order_ids,view.receiving.orders,func(order: Dictionary) -> String:
+		return order.id+" "+order.state+" | "+order.blocked_reason)

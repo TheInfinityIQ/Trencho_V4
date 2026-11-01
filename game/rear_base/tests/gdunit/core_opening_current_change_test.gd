@@ -60,6 +60,7 @@ func _first_workshop(deadline: int) -> void:
 	session.rear.advance_time(120.0)
 	if not _require(session.rear.actors.size() == 8 and session.receiving.incoming_people() == 0,"Eight real workers must disembark and join the pool."): return
 	if not _require(session.receiving.rear_population() == 8,"Supplier driver must not join the rear population."): return
+	view.show_panel("Workers/Jobs")
 	view._refresh()
 	var workforce: VBoxContainer = view.get("workforce_panel")
 	workforce.controls.hauling.count.value = 4
@@ -70,6 +71,7 @@ func _first_workshop(deadline: int) -> void:
 	var duty := "builders-"+id
 	if not _require(workforce.controls.has(duty),"New site must expose its pooled builder target."): return
 	workforce.controls[duty].count.value = 4
+	view.show_panel("Supplies")
 	var finish_by: float = session.rear.time+600.0
 	var steps := 0
 	while session.rear.time < finish_by and Time.get_ticks_msec() < deadline and session.rear.construction.instances[id].state != "Complete":
@@ -83,7 +85,10 @@ func _first_workshop(deadline: int) -> void:
 	if not _require(session.rear.requests[duty].target == 0 and session.rear.requests[duty].positions == 0,"Completed site must release its builder request."): return
 	if not _require(session.rear._assigned(duty) == 0,"Completed site must release actual builder assignments."): return
 	if not _require(session.rear.construction.activities.has(id),"Completed workshop must register its real production activity."): return
-	view._refresh()
+	# Supplies deliberately leaves hidden selectors untouched. Clicking the
+	# newly completed site must refresh Work before resolving that selection.
+	view._select("site",id)
+	if not _require(str(view.tabs.get_tab_control(view.tabs.current_tab).name) == "Work" and view._context_duty() == id,"Selecting a workshop after waiting in Supplies must open its current production context."): return
 	if not _require(not workforce.controls.has(duty),"Retired builder job must leave the worker board."): return
 	print("CURRENT_FIRST_BUILD_PASS: rear-only component, actual eight-worker purchase/disembark, UI hauling/builders, real150 Building Materials consumed, workshop completed and builders released. Production, shipping, authored battlefield timing and native FPS remain unverified.")
 

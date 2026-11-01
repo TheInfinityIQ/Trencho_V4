@@ -275,6 +275,15 @@ func set_speed(value: int) -> Dictionary:
 	if _live_planning: rear.vehicle_departures_allowed = speed > 0
 	return {"ok": true, "message": "Paused" if speed == 0 else "%dx simulation speed" % speed,"speed_change":true}
 
+func purchasing_view() -> Dictionary:
+	# Supplies displays local stock and purchases, not production, military or
+	# complete person/vehicle inspections. Return fresh detached facts only.
+	var storage: Array[Dictionary] = []
+	for id in rear.stores:
+		storage.append({"id":id,"stocks":rear._stock_at(id,false)})
+	return {"rear":{"stores":storage},"receiving":receiving.snapshot(false),
+		"rear_population":receiving.rear_population()}
+
 func snapshot(include_diagnostics: bool = true, include_battlefield: bool = true) -> Dictionary:
 	var view := {"rear": rear.snapshot(include_diagnostics), "receiving": receiving.snapshot(include_diagnostics), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),
