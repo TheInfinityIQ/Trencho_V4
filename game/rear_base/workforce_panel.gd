@@ -27,11 +27,13 @@ func _ready() -> void:
 	var hire := Button.new()
 	hire.text = "Hire 8 workers · 140 requisition · 90 s travel"
 	hire.theme_type_variation = "Primary"
+	hire.tooltip_text = "120 requisition + 20 transport. Reserves eight rear places; the supplier carrier and driver leave."
 	hire.pressed.connect(func() -> void: result_reported.emit(simulation.receiving.buy_people()))
 	pool.add_child(hire)
-	_label(pool,"120 requisition + 20 transport. Eight rear places are reserved now; workers join the pool after disembarking. The carrier and service driver leave.")
+	_label(pool,"Workers join after disembarking.")
 	arrivals = _label(_section(self,"Arrivals","Only workers who finish disembarking and walking join the pool."), "")
-	var allocation: VBoxContainer = _section(self,"Jobs and priorities","Request workers from the shared pool. Assigned people must report before they are present; a carry finishes or is deposited safely before reassignment.")
+	var allocation: VBoxContainer = _section(self,"Jobs and priorities","Request workers and set priority from the shared pool.")
+	allocation.tooltip_text = "Assigned people must report before they are present. A carry finishes or is deposited safely before reassignment."
 	rows = VBoxContainer.new()
 	allocation.add_child(rows)
 
@@ -98,6 +100,7 @@ func _add_row(id: String) -> void:
 	_label(row,"Requested")
 	var count := SpinBox.new()
 	count.step = 1
+	count.tooltip_text = "Requested staffing; workers must report before becoming present. Existing carries finish or deposit safely before reassignment."
 	row.add_child(count)
 	var priority := OptionButton.new()
 	for value in simulation.rear.PRIORITIES: priority.add_item(value)

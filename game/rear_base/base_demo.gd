@@ -33,6 +33,8 @@ var _standalone_clock_row: HBoxContainer
 var _standalone_actions: HBoxContainer
 var _standalone_session_actions: VBoxContainer
 var _fit_base_button: Button
+var _advanced_panels: CheckButton
+var _uses_shared_navigation := false
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -156,6 +158,7 @@ func _ready() -> void:
 		var action := _button(actions,title,func() -> void: show_panel(title))
 		action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var advanced := CheckButton.new()
+	_advanced_panels = advanced
 	advanced.text = "Advanced panels"
 	advanced.toggled.connect(func(enabled: bool) -> void: tabs.tabs_visible = enabled)
 	resource_hud = _label(layout, "")
@@ -233,16 +236,21 @@ func use_shared_clock() -> void:
 
 func use_shared_navigation() -> void:
 	# Main's command shell owns the one persistent navigation and clock surface.
+	_uses_shared_navigation = true
 	_standalone_actions.hide()
 	_standalone_clock_row.hide()
 	_local_clock_controls.hide()
 	_standalone_session_actions.hide()
+	declaration.hide()
 	if _fit_base_button.get_parent() != base_map: _fit_base_button.reparent(base_map)
 	_fit_base_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	_fit_base_button.offset_left = 12
 	_fit_base_button.offset_top = -92
 	_fit_base_button.offset_right = 112
 	_fit_base_button.offset_bottom = -50
+	_advanced_panels.hide()
+	tabs.tabs_visible = false
+	_refresh()
 
 func show_panel(title: String) -> bool:
 	title = {"Staff":"Workers/Jobs","Orders":"Supplies"}.get(title,title)
@@ -317,8 +325,11 @@ func _orders_panel(box: VBoxContainer) -> void:
 	var deliveries_view := VBoxContainer.new()
 	deliveries_view.name = "Deliveries"
 	views.add_child(deliveries_view)
-	var hiring: VBoxContainer = _section(purchase,"Hire workers","Eight rear places reserved. Workers join after disembarking; the supplier driver leaves.")
-	_button(hiring,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()),true)
+	var hiring: VBoxContainer = UIKit.card(purchase)
+	UIKit.label(hiring,"WORKERS",11,UIKit.ACCENT)
+	var hire: Button = _button(hiring,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()),true)
+	hire.tooltip_text = "120 requisition + 20 transport. Reserves eight rear places; the supplier carrier and driver leave."
+	UIKit.label(hiring,"Workers join after disembarking.",14,UIKit.MUTED,true)
 	var deliveries: VBoxContainer = _section(deliveries_view,"Deliveries","Select an order to inspect its actual arrival or unloading state.")
 	orders = _list(deliveries,112)
 	orders.item_selected.connect(func(index: int) -> void: _select("order", _order_ids[index], false))
@@ -333,7 +344,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 	delivery_cancel_reason = _label(deliveries,"")
 	delivery_cancel_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var catalogue: VBoxContainer = _section(purchase,"Raw supplies","Whole kilograms · price per kg shown beside each material")
+	var catalogue: VBoxContainer = _section(purchase,"Raw supplies","Whole kg · price per kg")
 	var catalogue_scroll := ScrollContainer.new()
 	catalogue_scroll.custom_minimum_size.y = 160
 	catalogue_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -526,7 +537,9 @@ func _refresh_resource_hud(view: Dictionary) -> void:
 	var incoming: Array[String] = []
 	for type in outstanding:
 		if outstanding[type] > 0: incoming.append("%s %d" % [_material_label(type),outstanding[type]])
-	resource_hud.text = "Requisition %.0f · Local stock: %s\nOrdered / in delivery: %s" % [view.receiving.money," · ".join(physical),", ".join(incoming) if not incoming.is_empty() else "none"]
+	var money: String = "" if _uses_shared_navigation else "Requisition %.0f · " % view.receiving.money
+	var separator: String = " · " if _uses_shared_navigation else "\n"
+	resource_hud.text = "%sLocal stock: %s%sOrdered / in delivery: %s" % [money," · ".join(physical),separator,", ".join(incoming) if not incoming.is_empty() else "none"]
 
 func _refresh_production_context(view: Dictionary) -> void:
 	var staff: Dictionary = simulation.rear.requests.get(_context_duty(),{})
