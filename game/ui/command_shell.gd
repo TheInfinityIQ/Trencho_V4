@@ -7,7 +7,8 @@ signal modal_visibility_changed(visible: bool)
 
 const UI = preload("res://game/ui/ui_kit.gd")
 const NAVIGATION := [["rear", "Rear base"], ["Build", "Build"], ["Workers/Jobs", "Workers / Jobs"], ["Supplies", "Supplies"], ["Work", "Production"]]
-const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "Battlefield": "BATTLEFIELD", "ArmySupply": "ARMY SUPPLY / PROTOTYPE", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
+const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "Battlefield": "BATTLEFIELD", "Haul": "HAULING", "Info": "INSPECTION", "Train": "TRAINING", "Vehicles": "VEHICLES", "ArmySupply": "ARMY SUPPLY / PROTOTYPE", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
+const MORE_ACTIONS := ["Haul", "Info", "Train", "Vehicles", "ArmySupply", "Dispatch", "Diagnostics"]
 
 var content_host: Control
 var _navigation_buttons: Dictionary = {}
@@ -124,16 +125,21 @@ func _build_navigation(parent: Node) -> void:
 	UI.label(rail, "OBSERVE", 11, UI.MUTED)
 	_navigation_button(rail, "Battlefield", "Battlefield  ↗")
 	var advanced := MenuButton.new()
-	advanced.text = "Advanced / prototypes"
+	advanced.text = "More systems"
 	advanced.custom_minimum_size.y = 38
-	advanced.tooltip_text = "Retained detailed tools and unfinished manual supply interfaces."
+	advanced.tooltip_text = "Additional management panels and retained supply prototypes."
 	rail.add_child(advanced)
-	advanced.get_popup().add_item("Army supply · prototype", 0)
-	advanced.get_popup().add_item("Dispatch · prototype", 1)
+	advanced.get_popup().add_item("Hauling", 0)
+	advanced.get_popup().add_item("Inspection", 1)
+	advanced.get_popup().add_item("Training", 2)
+	advanced.get_popup().add_item("Vehicles", 3)
 	advanced.get_popup().add_separator()
-	advanced.get_popup().add_item("Diagnostics", 2)
+	advanced.get_popup().add_item("Army supply · prototype", 4)
+	advanced.get_popup().add_item("Dispatch · prototype", 5)
+	advanced.get_popup().add_separator()
+	advanced.get_popup().add_item("Diagnostics", 6)
 	advanced.get_popup().id_pressed.connect(func(id: int) -> void:
-		if id >= 0 and id < 3: navigation_requested.emit(["ArmySupply", "Dispatch", "Diagnostics"][id]))
+		if id >= 0 and id < MORE_ACTIONS.size(): navigation_requested.emit(MORE_ACTIONS[id]))
 	UI.button(rail, "Getting started", func() -> void: _help.visible = not _help.visible)
 	UI.label(rail, "The army acts\nautonomously.", 12, UI.MUTED)
 
