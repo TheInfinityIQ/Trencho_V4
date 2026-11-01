@@ -40,6 +40,7 @@ func _ready() -> void:
 	_host.add_child(_base)
 	_base.use_shared_navigation()
 	_base.session_changed.connect(_on_session_changed)
+	_base.panel_changed.connect(_on_panel_changed)
 	_battlefield = Battlefield.instantiate()
 	_battlefield.simulation = _base.simulation
 	_host.add_child(_battlefield)
@@ -114,6 +115,10 @@ func _clear_review() -> void:
 func _on_session_changed(next_simulation: RefCounted) -> void:
 	_battlefield.bind(next_simulation)
 	_refresh_clock()
+
+func _on_panel_changed(title: String) -> void:
+	if _base.is_visible_in_tree():
+		_shell.set_navigation("ArmySupply" if title == "Supply" else title)
 
 func _start_playtest() -> void:
 	_base.hide()
