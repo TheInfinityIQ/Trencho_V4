@@ -1,6 +1,7 @@
 extends Control
 ## One live scene, persistent panels, physical map and player commands.
 signal session_changed(next_simulation: RefCounted)
+signal panel_changed(title: String)
 const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const Map = preload("res://game/rear_base/base_map.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
@@ -8,6 +9,7 @@ const Fixed = preload("res://game/production/fixed_production.gd")
 const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
 const ForwardDeliveryPanel = preload("res://game/forward_supply/forward_delivery_panel.gd")
 const WorkforcePanel = preload("res://game/rear_base/workforce_panel.gd")
+const UIKit = preload("res://game/ui/ui_kit.gd")
 const BUILD_PURPOSES := {"receiving":"Unload purchased supplies", "depot":"Store raw supplies", "workshop":"Manufacture infantry equipment", "munitions":"Manufacture ammunition", "training":"Train workers and specialists", "dispatch":"Send finished supplies onward", "support":"Manufacture support equipment", "vehicle_works":"Build vehicles", "park":"Park finished vehicles", "construction":"Organize construction crews", "materials":"Manufacture Building Materials"}
 var simulation := Simulation.new(false, true)
 var forward_delivery_panel: VBoxContainer
@@ -27,6 +29,10 @@ var tabs: TabContainer
 var status: Label
 var _local_clock_controls: HBoxContainer
 var _local_clock_status: Label
+var _standalone_clock_row: HBoxContainer
+var _standalone_actions: HBoxContainer
+var _standalone_session_actions: VBoxContainer
+var _fit_base_button: Button
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -38,6 +44,8 @@ var workforce_panel: VBoxContainer
 var resource_hud: Label
 var purchase_quote: Label
 var purchase_button: Button
+var delivery_status: Label
+var delivery_progress: ProgressBar
 var construction_description: Label
 var context_staff: SpinBox
 var context_priority: OptionButton
@@ -121,12 +129,14 @@ var _person_ids: Array[String] = []
 var _job_ids: Array[String] = []
 
 func _ready() -> void:
+	theme = UIKit.make_theme()
 	visibility_changed.connect(func() -> void:
 		if is_visible_in_tree(): _refresh())
 	var layout := VBoxContainer.new()
 	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layout)
 	var clock := HBoxContainer.new()
+	_standalone_clock_row = clock
 	layout.add_child(clock)
 	_local_clock_controls = HBoxContainer.new()
 	clock.add_child(_local_clock_controls)
@@ -135,17 +145,17 @@ func _ready() -> void:
 			simulation.set_speed(value)
 			_local_clock_status.text = clock_text())
 	_local_clock_status = _label(_local_clock_controls,clock_text())
-	_button(clock, "Fit base", func() -> void: base_map.reset_camera())
+	_fit_base_button = _button(clock, "Fit base", func() -> void: base_map.reset_camera())
 	status = _label(clock, "")
 	var actions := HBoxContainer.new()
+	_standalone_actions = actions
 	layout.add_child(actions)
 	for title in ["Build","Workers/Jobs","Supplies"]:
 		var action := _button(actions,title,func() -> void: show_panel(title))
 		action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var advanced := CheckButton.new()
-	advanced.text = "More panels"
+	advanced.text = "Advanced panels"
 	advanced.toggled.connect(func(enabled: bool) -> void: tabs.tabs_visible = enabled)
-	actions.add_child(advanced)
 	resource_hud = _label(layout, "")
 	resource_hud.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	declaration = _label(layout, "Essential session | Prebuilt: 12 ordinary people, 2500 requisition, no starting goods.")
@@ -181,6 +191,7 @@ func _ready() -> void:
 	_panel("Supply").add_child(forward_delivery_panel)
 	forward_delivery_panel.result_reported.connect(_result)
 	if OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1": _hq_panel(_panel("HQ Diagnostics"))
+	layout.add_child(advanced)
 	feedback = _label(layout, "WASD: move your rear character. Build: place workshops. Workers/Jobs: hire and assign workers. Supplies: purchase raw resources.")
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	confirmation = ConfirmationDialog.new()
@@ -193,6 +204,8 @@ func _ready() -> void:
 	_load_store()
 	_load_vehicle_people()
 	tabs.tab_changed.connect(func(_index: int) -> void:
+		var panel: Control = tabs.get_tab_control(tabs.current_tab)
+		panel_changed.emit(str(panel.get_meta("panel_title",panel.name)))
 		if is_node_ready() and is_visible_in_tree():
 			if str(tabs.get_tab_control(tabs.current_tab).name) != "Build" and _placing_building: _cancel_placement()
 			_refresh())
@@ -215,6 +228,19 @@ func clock_text() -> String:
 
 func use_shared_clock() -> void:
 	_local_clock_controls.hide()
+
+func use_shared_navigation() -> void:
+	# Main's command shell owns the one persistent navigation and clock surface.
+	_standalone_actions.hide()
+	_standalone_clock_row.hide()
+	_local_clock_controls.hide()
+	_standalone_session_actions.hide()
+	if _fit_base_button.get_parent() != base_map: _fit_base_button.reparent(base_map)
+	_fit_base_button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_fit_base_button.offset_left = 12
+	_fit_base_button.offset_top = -92
+	_fit_base_button.offset_right = 112
+	_fit_base_button.offset_bottom = -50
 
 func show_panel(title: String) -> bool:
 	title = {"Staff":"Workers/Jobs","Orders":"Supplies"}.get(title,title)
@@ -241,17 +267,17 @@ func _panel(title: String) -> VBoxContainer:
 	return box
 
 func _label(parent: Node, text: String) -> Label:
-	var label := Label.new()
-	label.text = text
-	parent.add_child(label)
-	return label
+	return UIKit.label(parent,text)
 
-func _button(parent: Node, text: String, action: Callable) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.pressed.connect(action)
-	parent.add_child(button)
-	return button
+func _section(parent: Node, title: String, description: String) -> VBoxContainer:
+	var body: VBoxContainer = UIKit.card(parent)
+	UIKit.label(body,title,20)
+	if not description.is_empty():
+		UIKit.label(body,description,14,UIKit.MUTED,true)
+	return body
+
+func _button(parent: Node, text: String, action: Callable, primary: bool = false) -> Button:
+	return UIKit.button(parent,text,action,primary)
 
 func _spin(parent: Node, title: String, maximum: int, value: int = 0) -> SpinBox:
 	var row := HBoxContainer.new()
@@ -281,34 +307,44 @@ func _list(parent: Node, height: float = 120) -> ItemList:
 	return list
 
 func _orders_panel(box: VBoxContainer) -> void:
-	_button(box,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()))
-	_label(box,"Workers cost 120 + 20 transport and reserve eight rear places. They join the pool after disembarking; the carrier and service driver leave.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label(box, "Raw supplies · whole kilograms")
+	var hiring: VBoxContainer = _section(box,"Hire workers","Eight untrained workers · 120 requisition + 20 transport. Reserve eight rear places; workers join the pool after disembarking. The supplier vehicle and driver leave.")
+	_button(hiring,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()),true)
+	var deliveries: VBoxContainer = _section(box,"Deliveries","Select an order to inspect its actual arrival or unloading state.")
+	orders = _list(deliveries,112)
+	orders.item_selected.connect(func(index: int) -> void: _select("order", _order_ids[index], false))
+	delivery_status = _label(deliveries,"")
+	delivery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	delivery_progress = ProgressBar.new()
+	delivery_progress.max_value = 1.0
+	delivery_progress.show_percentage = false
+	delivery_progress.custom_minimum_size.y = 6
+	deliveries.add_child(delivery_progress)
+	_button(deliveries, "Cancel selected undispatched order", func() -> void:
+		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
+	var catalogue: VBoxContainer = _section(box,"Raw supplies","Choose whole kilograms. The quote includes every vehicle's transport fee; receiving workers must physically unload the delivery.")
 	for code in Catalog.MATERIALS:
-		cart[code] = _spin(box, Catalog.MATERIALS[code].name + " · " + str(Catalog.MATERIALS[code].price)+" req/kg", 55000)
+		cart[code] = _spin(catalogue, Catalog.MATERIALS[code].name + " · " + str(Catalog.MATERIALS[code].price)+" req/kg", 55000)
 		cart[code].value_changed.connect(func(_value: float) -> void: _refresh_purchase_quote())
-	purchase_quote = _label(box,"")
+	purchase_quote = _label(catalogue,"")
 	purchase_quote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	purchase_button = _button(box, "Buy resources", func() -> void:
+	purchase_button = _button(catalogue, "Buy resources", func() -> void:
 		var request := {}
 		for code in cart:
 			if cart[code].value > 0: request[code] = int(cart[code].value)
-		_result(simulation.receiving.buy_resources(request)))
-	recovery_button = _button(box,"Buy recovery instructor (120)",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
-	recovery_status = _label(box,"")
+		_result(simulation.receiving.buy_resources(request)),true)
+	var recovery: VBoxContainer = _section(box,"Specialist recovery","")
+	recovery_button = _button(recovery,"Buy recovery instructor · 120 requisition",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
+	recovery_status = _label(recovery,"")
 	recovery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	orders = _list(box, 150)
-	orders.item_selected.connect(func(index: int) -> void: _select("order", _order_ids[index], false))
-	_button(box, "Cancel selected undispatched order", func() -> void:
-		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
-
-	_button(box,"Start new empty-field game",start_empty_field_session)
+	_standalone_session_actions = VBoxContainer.new()
+	box.add_child(_standalone_session_actions)
+	_button(_standalone_session_actions,"Start new empty-field game",start_empty_field_session)
 	var diagnostics := VBoxContainer.new()
-	box.add_child(diagnostics)
+	_standalone_session_actions.add_child(diagnostics)
 	diagnostics.hide()
 	var detail := CheckButton.new()
 	detail.text = "Legacy session options"
-	box.add_child(detail)
+	_standalone_session_actions.add_child(detail)
 	detail.toggled.connect(diagnostics.set_visible)
 	_label(diagnostics, "New session resets the base; inspection never does.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	scenario = _option(diagnostics, "Diagnostic session", ["Essential recipes", "Expanded production catalogue", "Farmland and Towns playtest"])
@@ -377,6 +413,54 @@ func _refresh_purchase_quote() -> void:
 	var quote: Dictionary = Catalog.quote(request,simulation.receiving.freight_limit())
 	purchase_quote.text = "%d kg · %d vehicles · %d requisition total (includes %d transport)\n60 s travel, then real unloading; purchased goods are not yet local stock." % [quote.mass_kg,quote.vehicle_count,quote.cost,quote.transport_fees] if quote.ok else str(quote.message)
 	purchase_button.disabled = request.is_empty() or not quote.ok
+
+func _order_summary(order: Dictionary) -> String:
+	var contents: String = _named_quantities(order.cargo) if order.kind == "Freight" else "%d workers" % int(order.expected_people)
+	if order.get("recovery_instructor",false): contents = "Recovery instructor"
+	return "%s · %s · %d requisition" % [contents,order.state,int(order.cost)]
+
+func _refresh_delivery_status(receiving: Dictionary) -> void:
+	var selected := ""
+	if not orders.get_selected_items().is_empty(): selected = _order_ids[orders.get_selected_items()[0]]
+	var current: Dictionary = {}
+	for order in receiving.orders:
+		if order.id == selected:
+			current = order
+			break
+		if current.is_empty() and order.state not in ["Complete","Cancelled"]: current = order
+	if current.is_empty() and not receiving.orders.is_empty(): current = receiving.orders.back()
+	delivery_progress.hide()
+	if current.is_empty():
+		delivery_status.text = "No deliveries booked. Worker and raw-supply purchases appear here."
+		return
+	var detail: String = _order_summary(current)
+	if current.state == "Incoming":
+		var duration: float = float(current.arrival_at)-float(current.state_entered_at)
+		var remaining: float = maxf(0.0,float(current.arrival_at)-float(receiving.time))
+		if duration > 0.0:
+			delivery_progress.value = clampf((float(receiving.time)-float(current.state_entered_at))/duration,0.0,1.0)
+			delivery_progress.show()
+		detail += "\nTravel · %.0f s until scheduled arrival" % ceilf(remaining)
+	elif current.state == "Ordered":
+		detail += "\nBooked · dispatch due in %.0f s" % ceilf(maxf(0.0,float(current.next_at)-float(receiving.time)))
+	elif current.state != "Cancelled":
+		if current.kind == "Freight":
+			var requested := 0
+			var unloaded := 0
+			for type in current.cargo:
+				requested += int(current.cargo[type])
+				unloaded += int(current.unloaded.get(type,0))
+			if requested > 0:
+				delivery_progress.value = clampf(float(unloaded)/float(requested),0.0,1.0)
+				delivery_progress.show()
+			detail += "\nPhysically unloaded · %d / %d kg" % [unloaded,requested]
+		else:
+			var expected: int = current.expected_people
+			if expected > 0:
+				delivery_progress.value = clampf(float(current.people_arrived)/float(expected),0.0,1.0)
+				delivery_progress.show()
+			detail += "\n%d / %d joined the worker pool · %d disembarked" % [current.people_arrived,expected,current.people_exited]
+	delivery_status.text = detail+"\n"+str(current.blocked_reason)
 
 func _refresh_core_ui(view: Dictionary) -> void:
 	workforce_panel.refresh(view)
@@ -666,20 +750,19 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
 
 func _construction_panel(box: VBoxContainer) -> void:
-	_label(box,"Choose a building, then click the field. Materials and builders must physically reach the site.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	construction_office = _spin(box,"Construction crew requested",4)
-	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
+	var parent := box
+	box = _section(parent,"Build a facility","Choose its purpose and footprint, then click the field. Previewing or cancelling does not spend materials.")
 	var kinds: Array = []
 	for kind in ConstructionCatalog.SPECS:
 		if not ConstructionCatalog.SPECS[kind].get("fixed",false): kinds.append(kind)
-	construction_kind = _option(box,"F-series facility",kinds)
+	construction_kind = _option(box,"Facility",kinds)
 	for index in kinds.size():
 		construction_kind.set_item_metadata(index,kinds[index])
 		construction_kind.set_item_text(index,WorkforcePanel.job_name(kinds[index],simulation))
 	construction_description = _label(box,"")
 	construction_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	construction_kind.item_selected.connect(func(_index: int) -> void: select_build_kind(_construction_kind()); _refresh())
-	_button(box,"Place on field",func() -> void: select_build_kind(_construction_kind()))
+	_button(box,"Place on field",func() -> void: select_build_kind(_construction_kind()),true)
 	_button(box,"Cancel placement",_cancel_placement)
 	var coordinates := VBoxContainer.new()
 	box.add_child(coordinates)
@@ -697,8 +780,11 @@ func _construction_panel(box: VBoxContainer) -> void:
 		if _placing_building: preview_build_at(_construction_point()))
 	_button(coordinates,"Preview legal site",func() -> void: preview_build_at(_construction_point()))
 	_button(coordinates,"Place physical site",func() -> void: confirm_build_at(_construction_point()))
-	construction_rows = _list(box,180)
+	box = _section(parent,"Selected site","Choose a site below or click it on the field. Its materials and workers must physically arrive before construction progresses.")
+	construction_rows = _list(box,120)
 	construction_rows.item_selected.connect(func(index: int) -> void: _select("site",construction_ids[index],false))
+	construction_status = _label(box,"")
+	construction_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	construction_source = _option(box,"Building Materials source",simulation.rear.stores.keys())
 	construction_builders = _spin(box,"Builder target (max four)",4)
 	construction_staff = _spin(box,"Completed facility staff target",8)
@@ -709,12 +795,13 @@ func _construction_panel(box: VBoxContainer) -> void:
 	_button(box,"Set facility staff",func() -> void:
 		var id: String = _construction_site()
 		_result(simulation.rear.set_target(id,int(construction_staff.value)) if simulation.rear.requests.has(id) else {"ok":false,"message":"Select a completed facility with staff positions."}))
+	construction_office = _spin(box,"Construction Office staff requested",4)
+	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
+	box = _section(parent,"Remove a site","Unfinished sites can be cancelled. Completed facilities require physical clearing and dismantling.")
 	_button(box,"Cancel unfinished site",func() -> void:
 		_result(simulation.rear.construction.cancel(_construction_site())))
 	_button(box,"Dismantle completed facility",func() -> void:
 		_result(simulation.rear.construction.request_dismantle(_construction_site())))
-	construction_status = _label(box,"")
-	construction_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func _construction_kind() -> String:
 	return str(construction_kind.get_item_metadata(construction_kind.selected))
@@ -1186,6 +1273,7 @@ func _refresh() -> void:
 	_sync_option(construction_source,simulation.rear.stores.keys())
 	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
 	construction_office.editable = simulation.rear.requests.has("construction") and int(simulation.rear.requests.construction.positions) > 0
+	(construction_office.get_parent() as Control).visible = construction_office.editable
 	var parking_labels: Array = []
 	for index in simulation.rear.yard.PARKING_POSITIONS.size():
 		parking_labels.append("F11 place %d%s" % [index+1,"" if simulation.rear.yard.active_parking[index] else " (retired)"])
@@ -1200,13 +1288,15 @@ func _refresh() -> void:
 	_refresh_core_ui(view)
 	_refresh_ingredients(_activity().snapshot(),view.rear)
 	_fill(construction_rows,construction_ids,view.construction.rows,func(row: Dictionary) -> String:
-		return "%s %s %s | M11 %d | work %.1f/%.0f" % [row.id,row.kind,row.state,row.m11,row.progress,row.work])
+		return "%s · %s · %d Building Materials" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),row.m11])
 	var selected_site: String = _construction_site()
 	construction_status.text = "Select a site or building to inspect its physical work."
 	for row in view.construction.rows:
 		if row.id == selected_site:
 			var builders: String = "builders-"+row.id
-			construction_status.text = "%s %s: %s\nM11 at site %d/%d; builders present %d/4; %.1f/%.0f work seconds\n%s" % [row.id,row.kind,row.state,simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,simulation.rear._present(builders) if simulation.rear.requests.has(builders) else 0,row.progress,row.work,row.blocker]
+			construction_status.text = "%s · %s\nBuilding Materials at site %d / %d\nConstruction %.1f / %.0f work seconds\n%s" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,row.progress,row.work,str(row.blocker).replace("M11","Building Materials")]
+			for staff in view.rear.staffing:
+				if staff.id == builders: construction_status.text += "\nBuilders: %d present · %d assigned · %d requested" % [staff.present,staff.assigned,staff.target]
 	if active_panel == "Dispatch": _refresh_dispatch(view)
 	if active_panel == "Supply": forward_delivery_panel.refresh()
 	_refresh_hq(view)
@@ -1227,7 +1317,8 @@ func _refresh() -> void:
 	for person in view.rear.people:
 		if person.owner == simulation.rear.PLAYER and person.get("rear_place","None") in ["Occupied","Held Home"]: rear_population += 1
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, rear_population, simulation.receiving.incoming_people()]
-	_fill(orders, _order_ids, view.receiving.orders, func(o: Dictionary) -> String: return o.id + " " + o.state + " | " + o.blocked_reason)
+	_fill(orders, _order_ids, view.receiving.orders, _order_summary)
+	_refresh_delivery_status(view.receiving)
 	var actual_people: Array = view.rear.people.filter(func(p: Dictionary) -> bool: return p.owner == "army-blue")
 	_fill(people, _person_ids, actual_people, func(p: Dictionary) -> String: return p.id + " | " + (p.duty_id if not p.duty_id.is_empty() else p.assignment) + " | " + p.phase)
 	if active_panel == "Vehicles": _load_vehicle_people()
@@ -1303,5 +1394,5 @@ func _refresh_purchasing() -> void:
 	recovery_button.visible = offer.available
 	recovery_status.text = offer.message
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money,view.rear_population,simulation.receiving.incoming_people()]
-	_fill(orders,_order_ids,view.receiving.orders,func(order: Dictionary) -> String:
-		return order.id+" "+order.state+" | "+order.blocked_reason)
+	_fill(orders,_order_ids,view.receiving.orders,_order_summary)
+	_refresh_delivery_status(view.receiving)

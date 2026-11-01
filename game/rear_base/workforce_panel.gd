@@ -1,6 +1,7 @@
 extends VBoxContainer
 ## Reads the shared worker pool; all allocation remains with the rear owner.
 signal result_reported(result: Dictionary)
+const UIKit = preload("res://game/ui/ui_kit.gd")
 const JOB_NAMES := {
 	"receiving":"Supply unloading", "hauling":"Hauling", "workshop":"Workshop",
 	"munitions":"Munitions workshop", "materials":"Building Materials workshop",
@@ -21,16 +22,18 @@ func _init(session: RefCounted) -> void:
 
 
 func _ready() -> void:
-	summary = _label(self, "")
+	var pool: VBoxContainer = _section(self,"Worker pool","")
+	summary = _label(pool, "")
 	var hire := Button.new()
 	hire.text = "Hire 8 workers · 140 requisition · 90 s travel"
+	hire.theme_type_variation = "Primary"
 	hire.pressed.connect(func() -> void: result_reported.emit(simulation.receiving.buy_people()))
-	add_child(hire)
-	_label(self,"120 requisition + 20 transport. Eight rear places are reserved now; workers join the pool after disembarking. The carrier and service driver leave.")
-	arrivals = _label(self, "")
-	_label(self,"Set requested workers and priority below. Assigned workers must report to become present. Reassignment finishes or safely deposits an existing carry.")
+	pool.add_child(hire)
+	_label(pool,"120 requisition + 20 transport. Eight rear places are reserved now; workers join the pool after disembarking. The carrier and service driver leave.")
+	arrivals = _label(_section(self,"Arrivals","Only workers who finish disembarking and walking join the pool."), "")
+	var allocation: VBoxContainer = _section(self,"Jobs and priorities","Request workers from the shared pool. Assigned people must report before they are present; a carry finishes or is deposited safely before reassignment.")
 	rows = VBoxContainer.new()
-	add_child(rows)
+	allocation.add_child(rows)
 
 
 func bind(session: RefCounted) -> void:
@@ -58,15 +61,22 @@ func refresh(view: Dictionary) -> void:
 	var occupied: int = simulation.receiving.rear_population()
 	var returning := 0
 	if simulation.receiving.external_rear_reservations.is_valid(): returning = int(simulation.receiving.external_rear_reservations.call())
-	summary.text = "Workers\n%d available · %d assigned / committed · %d arriving\n%d requested · %d vacancies\nRear places: %d occupied + %d arriving + %d held for return / 120" % [available,assigned,incoming,requested,vacancies,occupied,incoming,returning]
+	summary.text = "%d available · %d assigned / committed\n%d arriving · %d requested · %d vacancies\nRear places: %d occupied + %d arriving + %d held for return / 120" % [available,assigned,incoming,requested,vacancies,occupied,incoming,returning]
 	var arrival_lines: Array[String] = []
 	for order in view.receiving.orders:
 		if order.kind != "Personnel" or order.state in ["Complete","Cancelled"]: continue
 		arrival_lines.append("%s · %d/%d workers joined · %s" % [order.state,order.people_arrived,order.expected_people,order.blocked_reason])
+		if order.state == "Incoming": arrival_lines.append("Scheduled arrival in %.0f s" % ceilf(maxf(0.0,float(order.arrival_at)-float(view.receiving.time))))
 	arrivals.text = "\n".join(arrival_lines) if not arrival_lines.is_empty() else "No worker arrivals pending."
-	if controls.keys() != current_ids:
-		_clear_rows()
-		for id in current_ids: _add_row(id)
+	# Keep existing controls while another job appears, preserving focused edits.
+	for id in controls.keys():
+		if id in current_ids: continue
+		var block: Control = controls[id].block
+		rows.remove_child(block)
+		block.queue_free()
+		controls.erase(id)
+	for id in current_ids:
+		if not controls.has(id): _add_row(id)
 	for row in view.rear.staffing:
 		if not controls.has(row.id): continue
 		var widgets: Dictionary = controls[row.id]
@@ -97,7 +107,7 @@ func _add_row(id: String) -> void:
 		result_reported.emit(simulation.rear.set_target(id,int(value),priority.selected)))
 	priority.item_selected.connect(func(value: int) -> void:
 		result_reported.emit(simulation.rear.set_target(id,int(count.value),value)))
-	controls[id] = {"count":count,"priority":priority,"status":_label(block,"")}
+	controls[id] = {"block":block,"count":count,"priority":priority,"status":_label(block,"")}
 
 
 func _clear_rows() -> void:
@@ -118,9 +128,11 @@ static func job_name(id: String, session: RefCounted) -> String:
 
 
 func _label(parent: Node, text: String) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(label)
-	return label
+	return UIKit.label(parent,text,14,UIKit.INK,true)
+
+
+func _section(parent: Node, title: String, description: String) -> VBoxContainer:
+	var body: VBoxContainer = UIKit.card(parent)
+	UIKit.label(body,title,20)
+	if not description.is_empty(): UIKit.label(body,description,14,UIKit.MUTED,true)
+	return body
