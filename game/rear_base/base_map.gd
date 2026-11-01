@@ -1,6 +1,10 @@
 extends Control
 ## Draw/hit testing transforms only authoritative metre positions, never simulated icons.
 signal selected(kind: String, id: String)
+signal placement_hovered(world_position: Vector2)
+signal placement_requested(world_position: Vector2)
+signal placement_cancelled()
+signal placement_rotated()
 const Layout = preload("res://game/staffing/rear_layout.gd")
 var simulation: RefCounted
 var zoom: float = 1.0
@@ -8,12 +12,36 @@ var pan := Vector2.ZERO
 var selection := ""
 var placement_preview: Dictionary = {}
 var _dragging := false
+var placement_active := false
 ## The player is a scene-owned avatar, never a free member of the worker pool.
 var character_enabled := false
 var character_position := Vector2(16, 90)
 const CHARACTER_SPEED := 5.0
 
+func begin_placement() -> void:
+	placement_active = true
+	grab_focus()
+	placement_hovered.emit(_world(get_local_mouse_position()))
+
+func end_placement() -> void:
+	placement_active = false
+	placement_preview = {}
+	queue_redraw()
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not placement_active or not is_visible_in_tree(): return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_ESCAPE:
+			end_placement()
+			placement_cancelled.emit()
+		elif event.physical_keycode == KEY_R:
+			placement_rotated.emit()
+			placement_hovered.emit(_world(get_local_mouse_position()))
+		else: return
+		get_viewport().set_input_as_handled()
+
 func enable_character(enabled: bool) -> void:
+	end_placement()
 	character_enabled = enabled
 	character_position = Vector2(16, 90)
 	queue_redraw()
@@ -47,6 +75,7 @@ func move_character(direction: Vector2, seconds: float) -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	focus_mode = Control.FOCUS_ALL
 	clip_contents = true
 	custom_minimum_size = Vector2(340, 250)
 	resized.connect(queue_redraw)
@@ -66,12 +95,26 @@ func reset_camera() -> void:
 	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
+	if placement_active:
+		if event is InputEventMouseMotion:
+			placement_hovered.emit(_world(event.position))
+		if event is InputEventMouseButton and event.pressed:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				placement_requested.emit(_world(event.position))
+				accept_event()
+				return
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				end_placement()
+				placement_cancelled.emit()
+				accept_event()
+				return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_MIDDLE: _dragging = event.pressed
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			var before := _world(event.position)
 			zoom = clampf(zoom * (1.2 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 / 1.2), 0.65, 4.0)
 			pan += event.position - map_point(before)
+			if placement_active: placement_hovered.emit(_world(event.position))
 			queue_redraw()
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			var point := _world(event.position)
@@ -108,6 +151,7 @@ func _gui_input(event: InputEvent) -> void:
 			queue_redraw()
 	if event is InputEventMouseMotion and _dragging:
 		pan += event.relative
+		if placement_active: placement_hovered.emit(_world(event.position))
 		queue_redraw()
 
 func _draw() -> void:
@@ -134,10 +178,11 @@ func _draw() -> void:
 		draw_rect(box,Color("ffd37c") if row.id == selection else Color("a8d7b2"),false,2)
 		draw_circle(map_point(row.door),3,Color("b3d69a"))
 		draw_string(font,box.position+Vector2(0,-4),row.kind+" "+row.id,HORIZONTAL_ALIGNMENT_LEFT,-1,12)
-	if placement_preview.get("ok",false):
+	if placement_preview.has("footprint"):
 		var ghost: Rect2 = placement_preview.footprint
-		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(0.3,0.8,0.7,0.3))
-		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color("90e2bf"),false,2)
+		var tint := Color("90e2bf") if placement_preview.get("ok",false) else Color("ff817c")
+		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(tint,0.3))
+		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),tint,false,2)
 	for entity in simulation.rear.ledger.snapshot(false).entities:
 		if entity.owner == "army-red": continue
 		var point := map_point(entity.position)
