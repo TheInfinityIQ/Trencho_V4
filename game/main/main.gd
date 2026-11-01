@@ -49,6 +49,8 @@ func _ready() -> void:
 		_base.simulation.set_speed(value)
 		_refresh_clock())
 	_shell.new_session_requested.connect(_start_playtest)
+	_shell.modal_visibility_changed.connect(func(blocked: bool) -> void:
+		_base.base_map.input_blocked = blocked)
 	_start_playtest()
 
 func _navigate(action: String) -> void:

@@ -13,6 +13,7 @@ var selection := ""
 var placement_preview: Dictionary = {}
 var _dragging := false
 var placement_active := false
+var input_blocked := false
 ## The player is a scene-owned avatar, never a free member of the worker pool.
 var character_enabled := false
 var character_position := Vector2(16, 90)
@@ -29,7 +30,7 @@ func end_placement() -> void:
 	queue_redraw()
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if not placement_active or not is_visible_in_tree(): return
+	if input_blocked or not placement_active or not is_visible_in_tree(): return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
 			end_placement()
@@ -47,7 +48,7 @@ func enable_character(enabled: bool) -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if not character_enabled or not is_visible_in_tree() or simulation == null: return
+	if input_blocked or not character_enabled or not is_visible_in_tree() or simulation == null: return
 	# Global key state ignores GUI consumption: never walk while editing a field.
 	var focused := get_viewport().gui_get_focus_owner()
 	if focused is LineEdit or focused is TextEdit or not get_window().has_focus(): return
@@ -95,6 +96,7 @@ func reset_camera() -> void:
 	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
+	if input_blocked: return
 	if placement_active:
 		if event is InputEventMouseMotion:
 			placement_hovered.emit(_world(event.position))
