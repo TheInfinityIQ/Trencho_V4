@@ -978,10 +978,14 @@ func _waiting_job_viable(job: Dictionary) -> bool:
 	# missing staff/access/capacity. Active freight is removed only from this
 	# detached eligibility view, never from the actual personal holder.
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
 		var actor: Dictionary = actors[id]
-		if p.duty_id != "hauling" or actor.load.is_empty() or actor.phase == "Source blocked" or p.pending_assignment != "None" or _job(actor.load.job).priority != 3:
+		if actor.load.is_empty() or actor.phase == "Source blocked": continue
+		if _job(actor.load.job).get("priority",-1) != 3: continue
+		var status: Dictionary = ledger.inspect_person_status(id)
+		if status.duty_id != "hauling" or status.pending_assignment != "None":
 			continue
+		# Only an actual Emergency contender needs its fresh retained/carry mass.
+		var p: Dictionary = ledger.inspect_entity(id)
 		if not p.carrying_stock_id.is_empty():
 			var freight: Dictionary = ledger.inspect_entity(p.carrying_stock_id)
 			p.contents_mass_kg -= freight.quantity * freight.unit_mass_kg
