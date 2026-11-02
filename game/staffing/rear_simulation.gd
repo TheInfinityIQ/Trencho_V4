@@ -677,15 +677,9 @@ func _start_job(a: Dictionary) -> bool:
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
-	var inspected_load := false
 	for job in jobs:
 		if job.cancelled or job.delivered + _in_flight(job.id) >= job.requested:
 			continue
-		# Idle haulers need only status. Read the actual retained load immediately
-		# before considering real freight; all capacity checks below stay exact.
-		if not inspected_load:
-			person = ledger.inspect_entity(a.id)
-			inspected_load = true
 		var option := _job_option(job, person)
 		if option.is_empty():
 			continue
@@ -722,13 +716,17 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
+			# A shortage needs no carried-mass traversal. Inspect fresh mass only
+			# once real freight is eligible; Emergency callers' detached adjusted
+			# mass remains intact, and every physical reservation still rechecks.
+			if not person.has("contents_mass_kg"): person = ledger.inspect_entity(person.id)
 			var count := mini(stock.available, job.requested - job.delivered - _in_flight(job.id))
 			count = mini(count, int(floor((25.0 - person.contents_mass_kg) / stock.unit_mass_kg)))
 			count = mini(count, int(floor(_free_space(job.destination) / stock.unit_mass_kg)))
 			if count <= 0 or not _valid_destination(job.destination, job.type, count * stock.unit_mass_kg):
 				continue
 			var approach: Array = walk_path(person.position, stock.position)
-			var carry: Array = walk_path(stock.position, ledger.inspect_entity(job.destination).position)
+			var carry: Array = walk_path(stock.position, ledger.inspect_entity(job.destination,{},false).position)
 			if approach.is_empty() or carry.is_empty():
 				continue
 			var distance := Layout.length(approach) + Layout.length(carry)
