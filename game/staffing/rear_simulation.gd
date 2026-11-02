@@ -405,16 +405,18 @@ func walk_path(origin: Vector2, destination: Vector2) -> Array:
 func _rebalance() -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
 	# incumbents within those counts before requesting any safe transfers.
+	var facts := {}
+	for id in actors: facts[id] = ledger.inspect_person_status(id)
 	var pool: Array = []
 	for id in actors:
-		var p: Dictionary = ledger.inspect_person_status(id)
+		var p: Dictionary = facts[id]
 		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and (empty_field_opening or not p.duty_id.begins_with("builders-")):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
 	# the person still physically serves the old duty until safe completion.
 	for id in actors:
-		var person: Dictionary = ledger.inspect_person_status(id)
+		var person: Dictionary = facts[id]
 		if person.pending_assignment != "None" and requests.has(person.pending_duty):
 			pending[person.pending_duty] = int(pending.get(person.pending_duty, 0)) + 1
 	var quotas: Dictionary = pending.duplicate()
@@ -424,13 +426,13 @@ func _rebalance() -> void:
 		var best: Dictionary = {}
 		for r in requests.values():
 			if r.get("manual",false): continue
-			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id):
+			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id, facts):
 				continue
 			if best.is_empty() or _staff_before(r, best, quotas):
 				best = r
 		if best.is_empty():
 			break
-		var candidate := _choose_person(remaining, best.id)
+		var candidate := _choose_person(remaining, best.id, facts)
 		remaining.erase(candidate)
 		planned[candidate] = best.id
 		quotas[best.id] = int(quotas.get(best.id, 0)) + 1
@@ -439,7 +441,7 @@ func _rebalance() -> void:
 	var keep: Dictionary = pending.duplicate()
 	var free: Array = []
 	for id in pool:
-		var duty: String = ledger.inspect_person_status(id).duty_id
+		var duty: String = facts[id].duty_id
 		if not duty.is_empty() and planned.get(id, "") == duty and int(keep.get(duty, 0)) < int(quotas.get(duty, 0)):
 			keep[duty] = int(keep.get(duty, 0)) + 1
 		else:
@@ -486,24 +488,26 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 	return true
 
 
-func _any_eligible(ids: Array, duty: String) -> bool:
+func _any_eligible(ids: Array, duty: String, facts: Dictionary = {}) -> bool:
 	for id in ids:
-		if _eligible(ledger.inspect_person_status(id), duty): return true
+		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if _eligible(person,duty): return true
 	return false
 
-
-func _choose_person(ids: Array, duty: String) -> String:
-	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_person_status(id), duty))
-	candidates.sort_custom(func(a: String, b: String) -> bool:
-		var first: Dictionary = ledger.inspect_person_status(a)
-		var second: Dictionary = ledger.inspect_person_status(b)
-		var rank_a := (2 if first.qualification != "None" else (1 if first.basic_training else 0))
-		var rank_b := (2 if second.qualification != "None" else (1 if second.basic_training else 0))
-		if (first.duty_id == duty) != (second.duty_id == duty): return first.duty_id == duty
-		if (first.assignment == "Available") != (second.assignment == "Available"): return first.assignment == "Available"
-		if rank_a != rank_b: return rank_a < rank_b
-		return a < b)
-	return candidates[0]
+func _choose_person(ids: Array, duty: String, facts: Dictionary = {}) -> String:
+	# Same lexicographic preference as the former sort, with one pass. Facts
+	# are supplied only during pure quota planning, never across reassignment.
+	var best := ""
+	var best_rank := 100
+	for id in ids:
+		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if not _eligible(person,duty): continue
+		var qualification := 2 if person.qualification != "None" else (1 if person.basic_training else 0)
+		var rank: int = (0 if person.duty_id == duty else 6)+(0 if person.assignment == "Available" else 3)+qualification
+		if rank < best_rank or (rank == best_rank and str(id) < best):
+			best = id
+			best_rank = rank
+	return best
 
 
 func _report(a: Dictionary) -> void:
