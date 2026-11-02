@@ -37,5 +37,6 @@ are not certified by the opening check. Battlefield retains the authored forces
 and shares the same clock; switching views does not start a new game.
 
 Session > New game asks before replacing the current session. Start at 1x.
-The project retains
-30 FPS and four worker-thread limits; full Windows responsiveness is unverified.
+Rendering is uncapped, with V-Sync disabled. The engine chooses its worker-pool
+size. Simulation updates use fixed engine callbacks rather than render callbacks;
+full Windows responsiveness is unverified.

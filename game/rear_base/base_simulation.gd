@@ -284,6 +284,11 @@ func purchasing_view() -> Dictionary:
 	return {"rear":{"stores":storage},"receiving":receiving.snapshot(false),
 		"rear_population":receiving.rear_population()}
 
+func workforce_view() -> Dictionary:
+	var view := purchasing_view()
+	view.rear.merge(rear.workforce_snapshot())
+	return view
+
 func snapshot(include_diagnostics: bool = true, include_battlefield: bool = true) -> Dictionary:
 	var view := {"rear": rear.snapshot(include_diagnostics), "receiving": receiving.snapshot(include_diagnostics), "speed": speed,
 		"production": rear.production.snapshot(), "munitions": rear.munitions_production.snapshot(),

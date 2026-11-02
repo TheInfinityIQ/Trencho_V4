@@ -5,7 +5,7 @@ config_version=5
 
 config/name="Trencho V4"
 run/main_scene="res://game/main/main.tscn"
-run/max_fps=30
+run/max_fps=0
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
@@ -13,6 +13,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
+window/vsync/vsync_mode=0
 
 [rendering]
 
@@ -22,4 +23,4 @@ environment/defaults/default_clear_color=Color(0.055, 0.065, 0.08, 1)
 
 [threading]
 
-worker_pool/max_threads=4
+worker_pool/max_threads=-1

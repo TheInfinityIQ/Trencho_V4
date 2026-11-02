@@ -216,8 +216,12 @@ func _ready() -> void:
 			_refresh())
 	_refresh()
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	# Authoritative wall-clock accumulation runs on fixed engine updates,
+	# independently of the requested rendering rate.
 	simulation.tick_live(delta)
+
+func _process(delta: float) -> void:
 	if not is_visible_in_tree(): return
 	if _local_clock_controls.visible: _local_clock_status.text = clock_text()
 	if simulation.rear.time == _displayed_time and simulation.speed == _displayed_speed and simulation.planning_view_revision == _displayed_planning_revision: return
@@ -1332,6 +1336,9 @@ func _refresh() -> void:
 	if active_panel == "Supplies" and not diagnostics:
 		_refresh_purchasing()
 		return
+	if active_panel == "Workers_Jobs" and not diagnostics:
+		_refresh_workforce()
+		return
 	var view: Dictionary = simulation.snapshot(diagnostics,diagnostics or active_panel == "Dispatch")
 	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
@@ -1461,3 +1468,11 @@ func _refresh_purchasing() -> void:
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money,view.rear_population,simulation.receiving.incoming_people()]
 	_fill(orders,_order_ids,view.receiving.orders,_order_summary)
 	_refresh_delivery_status(view.receiving)
+
+func _refresh_workforce() -> void:
+	var view: Dictionary = simulation.workforce_view()
+	_refresh_resource_hud(view)
+	workforce_panel.refresh(view)
+	_sync_option(person_duty,["Available"]+simulation.rear.requests.keys())
+	_fill(people,_person_ids,view.rear.people,func(person: Dictionary) -> String:
+		return person.id+" | "+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+" | "+person.phase)

@@ -120,7 +120,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 	r.priority = priority
 	var pending_allowed := maxi(0, count - _retaining(id))
 	for person_id in actors:
-		var p: Dictionary = ledger.inspect_entity(person_id)
+		var p: Dictionary = ledger.inspect_person_status(person_id)
 		if p.pending_assignment != "None" and p.pending_duty == id:
 			if pending_allowed > 0:
 				pending_allowed -= 1
@@ -407,14 +407,14 @@ func _rebalance() -> void:
 	# incumbents within those counts before requesting any safe transfers.
 	var pool: Array = []
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.inspect_person_status(id)
 		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and (empty_field_opening or not p.duty_id.begins_with("builders-")):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
 	# the person still physically serves the old duty until safe completion.
 	for id in actors:
-		var person: Dictionary = ledger.inspect_entity(id)
+		var person: Dictionary = ledger.inspect_person_status(id)
 		if person.pending_assignment != "None" and requests.has(person.pending_duty):
 			pending[person.pending_duty] = int(pending.get(person.pending_duty, 0)) + 1
 	var quotas: Dictionary = pending.duplicate()
@@ -439,7 +439,7 @@ func _rebalance() -> void:
 	var keep: Dictionary = pending.duplicate()
 	var free: Array = []
 	for id in pool:
-		var duty: String = ledger.inspect_entity(id).duty_id
+		var duty: String = ledger.inspect_person_status(id).duty_id
 		if not duty.is_empty() and planned.get(id, "") == duty and int(keep.get(duty, 0)) < int(quotas.get(duty, 0)):
 			keep[duty] = int(keep.get(duty, 0)) + 1
 		else:
@@ -457,7 +457,7 @@ func _rebalance() -> void:
 			reassign_person(id, r.id)
 			keep[r.id] = int(keep.get(r.id, 0)) + 1
 	for id in free:
-		if ledger.inspect_entity(id).assignment != "Available":
+		if ledger.inspect_person_status(id).assignment != "Available":
 			reassign_person(id, "Available")
 
 
@@ -889,6 +889,34 @@ func _reconcile_relocation(source: String, destination: String, type: String, ph
 		existing.requested = requested
 		return changed
 
+
+func workforce_snapshot() -> Dictionary:
+	# One synchronous read of the real rear pool; no shared-world ledger export
+	# or retained cache. Counts use the same assignment/pending predicates.
+	var people: Array[Dictionary] = []
+	var counts := {}
+	for id in actors:
+		var person: Dictionary = ledger.inspect_person_status(id)
+		person.phase = actors[id].phase
+		people.append(person)
+		var duty: String = person.duty_id
+		if not counts.has(duty): counts[duty] = {"assigned":0,"present":0,"pending":0,"retaining":0}
+		counts[duty].assigned += 1
+		if actors[id].phase in ["Idle","Unloading"]: counts[duty].present += 1
+		if person.pending_assignment == "None" or person.pending_duty == duty: counts[duty].retaining += 1
+		if person.pending_assignment != "None":
+			var destination: String = person.pending_duty
+			if not counts.has(destination): counts[destination] = {"assigned":0,"present":0,"pending":0,"retaining":0}
+			counts[destination].pending += 1
+	var staffing: Array[Dictionary] = []
+	for request in requests.values():
+		var row: Dictionary = counts.get(request.id,{"assigned":0,"present":0,"pending":0,"retaining":0})
+		staffing.append({"id":request.id,"target":request.target,"positions":request.positions,
+			"assigned":row.assigned,"present":row.present,"pending_in":row.pending,
+			"reporting_or_active":row.assigned-row.present,
+			"shortage":maxi(0,request.target-row.retaining-row.pending),
+			"priority":PRIORITIES[request.priority],"requested_at":request.created})
+	return {"people":people,"staffing":staffing}
 
 func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	var staffing: Array[Dictionary] = []

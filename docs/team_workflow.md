@@ -1,5 +1,7 @@
 # Team workflow
 
+Current human override, 1 November: Dawson removed the other developers. The lead is now the sole game developer and owns research, implementation, review and integration. Do not delegate developer work or revive archived developer chats. Earlier multi-developer assignments and peer-review requirements below are historical; verify focused changes directly and record their limits.
+
 Effective 30 October 2026 under Dawson's authorized transition. Replaces previous assignment, review, merge and private-handoff policies. Gameplay rules remain in the GDD; newer explicit human instructions govern.
 
 ## Accountability
