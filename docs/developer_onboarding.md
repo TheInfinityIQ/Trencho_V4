@@ -1,13 +1,15 @@
 # Developer onboarding
 
-Effective 30 October 2026. Previous scoped assignments and archived-chat reporting routes are superseded by [team_workflow.md](team_workflow.md).
-Read AGENTS.md, [design brief](design_brief.md), [playable delivery](playable_delivery.md), [handoff](team_handoff.md), then relevant GDD/foundation sections.
+Updated 5 November 2026. Read AGENTS.md, [design brief](design_brief.md), [GDD](game_design_document.md), [playable delivery](playable_delivery.md), [team workflow](team_workflow.md) and [current integration state](team_integration_state.json).
 
-Baseline main ecac1f16dc77f81191aa30f1d32fd9fad0015046 contains PRs #77, #80, #81 and #82. Root is deliberately stale with a human project.godot edit: never reset, stash or overwrite it. Use your own isolated checkout from current main.
+The Developer owns systems, technical decisions, testing, integration and publication. The Game Designer owns vision and player-facing requirements. Consult UI/UX for interaction/menu flow and the Artist for sourced assets. Historical team rosters and assignments do not reactivate automatically.
 
-Lead assigns work under [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83), owns engineering and merges. Designer owns intended behavior. Historical tasks do not automatically resume.
-First work is a bounded playable/diagnostic/missing-connections inventory, then the shortest runnable increment. Reuse existing identity, clock, dispatch, organization, combat and other services. Do not rebuild the project.
-Before shared changes, identify state owner, transitions, affected callers and meaningful interaction coverage. Holder/seat, work commitment and movement must agree. Damage resolves once; motion respects interruptions.
+Work from the dedicated published review source and exact revision identified by the current Developer. `main` alone may be older. Inspect and preserve unrelated local changes; do not reset, clean, stash or switch the shared checkout to solve a task. Coordinate ownership before editing shared files.
 
-Follow [current verification policy](current_change_verification.md): no new regression tests or suite runs until the main game is complete; only brief direct checks of the code just changed. Do not run tools/check.ps1 under this temporary policy. Report actual interaction and unverified behavior; compilation is not gameplay proof. Keep engine runs off the human computer under the current resource restriction.
-Report readiness/blockers to lead and material gameplay ambiguity to designer with a recommendation. Continue independent work where possible and leave a compact factual handoff.
+The current outcomes are the ordinary self-sustaining factory, first useful automatic army supply and repeat replenishment. Build on existing services and identify the actual missing connection. A catalogue entry or a passing standalone component is not the connected outcome.
+
+Use [agent workflow](agent_workflow.md) for a bounded objective and current AGENTS.md for planned diagrams, applicable engineering lessons, living-map queries/purpose reviews and UI-flow maintenance. The Designer specifies the intended behaviour rather than the architecture or test framework.
+
+Gameplay features take priority. Polishing, optimization and benchmark-driven work are paused; keep known defects and performance limits visible. Use brief direct checks of changed behaviour when needed, without routine full suites or new coverage infrastructure. Routine checks must not take desktop focus or move the OS cursor. Fix state corruption and defects that block the current gameplay increment.
+
+Publish authorized work to the dedicated review branch and hand back Objective, Outcome and Next task, exact branch/commit, checks and honest limits. Only the Developer integrates and manages the current review PR; a published commit is not gameplay acceptance.
