@@ -649,11 +649,21 @@ func _safe(squad_id: String, at: Vector2) -> bool:
 	return true
 
 func rifle_supply_view() -> Dictionary:
-	# Report only this owner's named rifle needs. Do not rerun eligibility,
-	# create demand, or perform a whole-ledger read separately for each person.
+	# Project current requests and actual receipts indexed by each current named cycle.
 	var rear: RefCounted = _rear_ref.get_ref()
 	var ids: Array[String] = []
 	ids.assign(requests.keys())
+	var issued := {}
+	var person_squads := {}
+	for squad_id in _squad_replenishments:
+		var cycle: Dictionary = _squad_replenishments[squad_id]
+		for job_id in cycle.jobs:
+			var job: Dictionary = rear.forward_supply.jobs.get(job_id,{})
+			if job.is_empty() or job.type != "E02" or job.state != "Complete" or str(job.get("issued_stock","")).is_empty(): continue
+			var recipient := str(job.recipient)
+			issued[recipient] = int(issued.get(recipient,0)) + int(job.quantity)
+			person_squads[recipient] = squad_id
+			if recipient not in ids: ids.append(recipient)
 	var rounds: Dictionary = rear.military.personal_round_counts(ids) if not ids.is_empty() else {}
 	var committed := {}
 	for job in rear.forward_supply.jobs.values():
@@ -665,12 +675,23 @@ func rifle_supply_view() -> Dictionary:
 		var roster: Array = squad.get("roster",[])
 		for member_index in roster.size():
 			labels[roster[member_index]] = "Rifle %d · %d" % [squad_index+1,member_index+1]
+			if not person_squads.has(roster[member_index]): person_squads[roster[member_index]] = rifle_squads[squad_index]
 	var rows: Array[Dictionary] = []
 	for id in ids:
 		var carried := int(rounds.get(id,0))
-		var needed := maxi(0,int(requests[id])-carried)
+		var reported := requests.has(id)
+		var needed := maxi(0,int(requests[id])-carried) if reported else 0
 		var promised := int(committed.get(id,0))
-		rows.append({"id":id,"label":str(labels.get(id,"Reported rifle recipient")),"carried":carried,"needed":needed,"committed":promised,"remaining":maxi(0,needed-promised)})
+		var receipt := int(issued.get(id,0))
+		var detail := "%d rounds issued in the current named cycle; carried rounds are current possession." % receipt if receipt > 0 else "Current reported request; no completed issue in this named cycle."
+		var operations: RefCounted = rear.battlefield_operations
+		if operations != null:
+			var squad_id: String = str(person_squads.get(id,""))
+			var collection: Dictionary = operations.rifle_collection.get(squad_id,{})
+			if not collection.is_empty(): detail += " Collection: %s. %s" % [str(collection.get("state","Unknown")),str(collection.get("blocker",""))]
+			var activity := str(operations.status.get(squad_id,""))
+			if not activity.is_empty(): detail += " Activity: " + activity
+		rows.append({"id":id,"label":str(labels.get(id,"Reported rifle recipient")),"carried":carried,"needed":needed,"committed":promised,"remaining":maxi(0,needed-promised),"reported":reported,"issued":receipt,"detail":detail})
 	return {"recipients":rows,"stop_id":stop_id,"status":status,"freight_status":freight_status,"automatic":automatic_deliveries}
 
 func snapshot() -> Dictionary:

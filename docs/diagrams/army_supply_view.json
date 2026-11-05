@@ -16,12 +16,13 @@
     "view": {
       "title": "Human-readable supply title",
       "summary": "Human-readable current real need and supply context",
-      "recipients": "Array of {id,label,needed,carried,committed,remaining}; all are real reported friendly recipients.",
+      "recipients": "Array of {id,label,needed,carried,committed,remaining,reported,issued,detail}: current reported needs plus actual personal receipts indexed by the latest named refill. Current possession, reported deficit and past issued quantity are separate.",
       "stages": "Array of {label,quantity_text,detail}; rear stock, HQ receipt, forward freight and actual issue are separate facts, never a fabricated one-to-one shipment trace.",
       "requests": "Array of {id,label,state,requested,delivered,blocker,cancelled}; quantities describe actual rear requests/HQ receipt.",
       "blockers": "Array of readable causes; avoid technical codes in primary text.",
       "held": "Boolean owner-provided automatic resupply cancellation intent.",
-      "actions": "Array of {id,label,enabled,panel,facility_id,building_kind,request_id}; semantic ids produce/build, workers, rear_requests, observe, resume_automatic. Observe adds current selected entity_id when available. Disabled/absent actions do not execute."
+      "actions": "Array of {id,label,enabled,panel,facility_id,building_kind,request_id}; semantic ids produce/build, workers, rear_requests, observe, resume_automatic. Observe adds current selected entity_id when available. Disabled/absent actions do not execute.",
+      "rear_shortage": "Current military supply shortfall after local/forward commitments/HQ coverage; not by itself an instruction to manufacture this amount because rear stock and rear deliveries may already cover it."
     }
   },
   "events": [
@@ -30,7 +31,7 @@
     "RearLogistics.changed",
     "Panel visibility_changed"
   ],
-  "lifecycle": "Coalesce finite signal bursts into one deferred visible read. Hidden panels retain dirty state without reading. Rebinding/exit disconnect all old subscribers and discard old selections/actions. Deferred work resolves the current session; replacement disables old actions immediately.",
+  "lifecycle": "Coalesce finite signal bursts into one deferred visible read. Hidden panels retain dirty state without reading. Rebinding/exit disconnect all old subscribers and discard old selections/actions. Deferred work resolves the current session; replacement disables old actions immediately. Latest named-cycle personal receipts remain followable after request removal; later cycles replace prior receipt context. See refill_continuity.json.",
   "no_polling": "No new process/physics callback, timer or time_advanced subscription. Use current owner indexes/batched rounds once per actual visible update; no world snapshot or per-member whole-ledger export.",
   "resume_semantics": "Only explicit player action clears a type's automatic hold. Repeated resume is harmless. It does not uncancel an old request, credit cargo, create a manual amount, rewind departure or bypass Pause. The next existing owned resupply event publishes freshly computed need.",
   "navigation": "Add an ordinary Army needs rear tab/navigation entry. Existing expert forward controls remain available and distinct. Production links resolve the real selected munitions facility; observation never creates an order or guarantees battle success.",

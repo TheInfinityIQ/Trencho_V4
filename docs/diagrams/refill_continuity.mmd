@@ -1,0 +1,17 @@
+%% Prospective design: no new military decision, receipt or analytics owner.
+flowchart TD
+    Need[Current reported rifle requests] --> Query[Existing rifle_supply_view]
+    Cycle[Latest named squad refill: existing job IDs] --> Query
+    Jobs[Actual completed local issue jobs] --> Query
+    Activity[Existing collection / return / operation status] --> Query
+    Query --> Batch[One batched current ammunition read; one grouped commitment pass]
+    Batch --> Rows[Active need plus recipients of this latest completed named refill]
+    Rows --> Reader[Existing ArmySupplyView]
+    Stock[Actual local/HQ stock and committed incoming freight] --> Coverage[Explain military shortfall alongside available rear stock]
+    Reader --> Coverage
+    Coverage --> Panel[Existing coalesced visible panel]
+    Panel --> Stable[Retain selected recipient by stable ID after its request clears]
+    Stable --> Observe[Observe current friendly recipient; no new order]
+    Cycle -->|new cycle| Replace[Follow current cycle and active requests; no growing history store]
+    Session[Session replacement] -->|existing lifecycle| Clear[Discard prior rows, actions and selection]
+    Receipt[Physical receipt] -. does not imply .-> Victory[Combat success or all other capability restored]

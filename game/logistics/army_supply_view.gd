@@ -30,11 +30,14 @@ static func view(session: Node) -> Dictionary:
 	var forward_loaded := 0
 	var forward_unloaded := 0
 	var active_freight := 0
+	var incoming := 0
 	for job in rear.forward_supply.transport.jobs.values():
 		if job.type != "E02" or job.stop != rifle.stop_id: continue
 		forward_loaded += int(job.loaded)
 		forward_unloaded += int(job.unloaded)
-		if job.state != "Complete": active_freight += 1
+		if job.state != "Complete":
+			active_freight += 1
+			incoming += maxi(0,int(job.quantity)-int(job.unloaded))
 	var need := 0
 	var remaining := 0
 	var carried := 0
@@ -44,14 +47,14 @@ static func view(session: Node) -> Dictionary:
 		remaining += int(row.remaining)
 		carried += int(row.carried)
 		committed += int(row.committed)
-	var summary: String = "%d reported recipients · %d rounds needed · %d committed to couriers · %d remaining before stock coverage." % [rifle.recipients.size(),need,committed,remaining]
-	if rifle.recipients.is_empty(): summary = "No rifle-ammunition need is currently reported. HQ holds %d available rounds; automatic supply responds to actual military need." % stock.hq
+	var rear_shortage := maxi(0,remaining-int(stock.forward)-incoming-int(stock.hq))
+	var summary: String = "%d rounds reported needed · %d committed to couriers · %d remaining before stock coverage. Available forward stock: %d; committed forward freight: %d; available HQ stock: %d. Military shortfall beyond those supplies: %d rounds. Rear stores already hold %d available rounds; check existing deliveries before producing more." % [need,committed,remaining,stock.forward,incoming,stock.hq,rear_shortage,stock.rear]
 	var stages: Array[Dictionary] = [
 		{"label":"Available rear stock","quantity_text":"%d rounds" % stock.rear,"detail":"Accessible rear stores, excluding reserved stock. Production creates goods here; they are not yet at HQ."},
 		{"label":"Available at HQ","quantity_text":"%d rounds" % stock.hq,"detail":"Actual unreserved HQ stock, including the approved starting ammunition. Rear requests below count only physical HQ receipts."},
 		{"label":"HQ → forward freight","quantity_text":"%d loaded · %d unloaded" % [forward_loaded,forward_unloaded],"detail":"Cumulative handling across actual rifle-freight jobs; %d unfinished. This is separate from rear-to-HQ shipments. %s" % [active_freight,str(rifle.freight_status).replace("E02","rifle ammunition")]},
 		{"label":"Available at forward stop","quantity_text":"%d rounds" % stock.forward,"detail":"Unreserved loose rounds at the military's actual local supply stop. Courier commitments are listed separately."},
-		{"label":"Carried by reported recipients","quantity_text":"%d rounds" % carried,"detail":"Current loose and loaded ammunition on the reported people; this is not a cumulative delivered or combat-success counter. " + str(rifle.status)}
+		{"label":"Carried by followed recipients","quantity_text":"%d rounds" % carried,"detail":"Current loose and loaded ammunition on the followed people. Completed named-refill recipients remain followable; receipt history and current possession are separate. " + str(rifle.status)}
 	]
 	var facility := _munitions_site(rear)
 	var actions: Array[Dictionary] = [
@@ -61,7 +64,7 @@ static func view(session: Node) -> Dictionary:
 		{"id":"observe","label":"Observe selected recipient","enabled":not rifle.recipients.is_empty(),"panel":"Battlefield"}
 	]
 	if intent.held: actions.append({"id":"resume_automatic","label":"Resume automatic rifle supply","enabled":true})
-	return {"title":"Army needs · Rifle ammunition","summary":summary,"recipients":rifle.recipients,"stages":stages,"requests":requests,"blockers":blockers,"held":bool(intent.held),"actions":actions,"stock":stock}
+	return {"title":"Army needs · Rifle ammunition","summary":summary,"recipients":rifle.recipients,"stages":stages,"requests":requests,"blockers":blockers,"held":bool(intent.held),"actions":actions,"stock":stock,"rear_shortage":rear_shortage}
 
 static func _munitions_site(rear: RefCounted) -> Dictionary:
 	var chosen := {}

@@ -710,7 +710,7 @@
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",
-    "game/logistics/army_supply_panel.gd": "90dcb65153b5ad53a0e66be5e0073a9fbc1109c5abc5969b05cada584f64a60e"
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e"
   },
   "limits": "Source obligations plus concrete runtime instances in prepared profiles. A dynamic factory match is not proof of every possible argument or gameplay state."
 }

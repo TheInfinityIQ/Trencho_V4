@@ -68,6 +68,12 @@
       "status": "implemented_direct_change_verified",
       "purpose": "Expose actual rifle-ammunition need and physical supply stages, plus explicit cancellation recovery in ordinary Army needs navigation.",
       "acceptance_limit": "Useful ordinary full delivery/replenishment remains open; this is not the multi-resource planner."
+    },
+    {
+      "id": "P7",
+      "status": "implemented_physical_component_verified",
+      "purpose": "Keep actual latest named-refill recipients and their current operation followable after requests clear, with truthful stock coverage.",
+      "acceptance_limit": "Arranged physical courier component passes; ordinary natural refill/return/repeated need and full useful rear production loop remain open."
     }
   ],
   "verification": [
@@ -186,9 +192,13 @@
     {
       "path": "logs/agent-workflow/20261105-175814-c8d41b12",
       "result": "New Army needs opening/read/intent/lifecycle/navigation demonstration and both map checks pass headlessly. No full delivery/FPS certification."
+    },
+    {
+      "path": "logs/agent-workflow/20261105-181512-fb8e7ed6",
+      "result": "Named refill continuity: actual courier receipt, cleared requests, selected recipient/Observe retention, next-cycle receipt reset and pure read/audit pass. Both maps pass; arranged component scope only."
     }
   ],
-  "next_action": "Complete a useful physical supply delivery and repeated replenishment through ordinary controls; retain the approved opening and show actual demand truthfully.",
+  "next_action": "Follow a naturally arising Rifle refill through its current feasible operation and later need, then establish the useful rear-production path when genuine demand requires it. Preserve the approved opening and report any pacing limitation.",
   "limitations": [
     "Prototype completion and 60 FPS compliance are not established.",
     "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
@@ -198,7 +208,7 @@
     "Latest dedicated native pointer/query run: eleven of twelve pass; sustained motion has an unresolved invalid-preview/coordinate contract failure. Older full-suite performance failures remain recorded. Background omissions do not satisfy native acceptance."
   ],
   "evidence": "docs/evidence/prototype_menu_performance.json",
-  "latest_evidence": "docs/evidence/army_supply_view.json",
+  "latest_evidence": "docs/evidence/refill_continuity.json",
   "current_declared_default_cases": 60,
   "current_declared_foreground_cases": 76,
   "current_opt_in_endurance_cases": 1,

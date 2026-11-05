@@ -50,7 +50,7 @@ func _ready() -> void:
 	_blockers = UIKit.label(overview, "", 14, UIKit.BAD, true)
 	_blockers.hide()
 	var recipients := UIKit.card(self, true)
-	UIKit.label(recipients, "Reported recipient", 14, UIKit.MUTED)
+	UIKit.label(recipients, "Follow a recipient", 14, UIKit.MUTED)
 	_recipients = OptionButton.new()
 	_recipients.custom_minimum_size.y = 38
 	_recipients.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -223,6 +223,8 @@ func _render_recipient() -> void:
 	var text := "Select a reported recipient to inspect its actual ammunition."
 	if not row.is_empty():
 		text = "Carried: %s · Reported need: %s\nCommitted to issue: %s · Remaining: %s" % [row.get("carried", "—"), row.get("needed", "—"), row.get("committed", "—"), row.get("remaining", "—")]
+		var detail := str(row.get("detail", ""))
+		if not detail.is_empty(): text += "\n" + detail
 	_set_text(_recipient_detail, text)
 
 func _sync_actions(rows: Array) -> void:

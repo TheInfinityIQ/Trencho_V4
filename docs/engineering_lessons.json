@@ -55,6 +55,11 @@
       "failure": "A locally current source map failed required Linux CI because Python3.12 and3.13 ast.unparse formatted nested f-string quotes differently, despite identical original source and reviewed hashes.",
       "evidence": "docs/evidence/system_map_portability.json",
       "rule": "Persist original source-span facts for reproducible documentation; formatter output is not an authoritative cross-version serialization. Keep strict checks and verify the actual remote environment instead of assuming a local pass proves publication."
+    },
+    {
+      "failure": "Two draft refill checker arrangements failed before testing the requested continuity: a top-level Panel alias collided with a Godot class, then a distant local stock transfer correctly failed co-location. Both owned runs were stopped before changing protected inputs.",
+      "evidence": "docs/evidence/refill_continuity.json; logs/refill-continuity/checker-correction.json; logs/refill-continuity/local-transfer-correction.json",
+      "rule": "Use non-conflicting preload names and read physical admission contracts before arranging a component. Preserve invalid fixtures/failures, correct a reviewed new contract, and never weaken correct custody/distance guards to make it pass."
     }
   ],
   "design_review": [

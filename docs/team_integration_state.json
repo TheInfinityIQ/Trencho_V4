@@ -33,7 +33,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Guided factory and first-class rifle-ammunition Army needs are implemented and directly checked. Lead integrated UI82dfdf5 as ae020de with the real reader/commands/navigation. Next is the connected useful physical delivery/replenishment loop; designer vision and scoped UI/art handoffs remain authoritative.",
+  "current_work": "Guided factory, Army needs and latest named-refill follow-up are implemented with bounded direct evidence. Native worker supplied the continuity slice; lead owns reviewed integration, maps, current publication and ordinary refill/return/replenishment follow-through. Game Designer remains responsible for vision/pacing; no6000-round change.",
   "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -47,5 +47,25 @@
     "An eventual independent logistics/battlefield event/timer migration remains unfinished; historical shared-clock prose is superseded by user direction.",
     "The demo is not complete, and strict 60 FPS is not certified.",
     "Consultants report in their own chats; the lead reads results and controls integration. No archived developer assignment is implicitly resumed."
-  ]
+  ],
+  "github_delivery_structure": {
+    "source": "Game Designer current-state cleanup, receipts logs/github-current-view-20261105,5 November2026",
+    "current_milestone": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/9",
+    "current_open_goals": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "board": "https://github.com/users/TheInfinityIQ/projects/3",
+    "default_view": "Current demo",
+    "current_status": {
+      "83": "In Progress",
+      "90": "In Progress",
+      "91": "In Progress",
+      "92": "Backlog"
+    },
+    "wider_scope": "Eight open later milestones;26 later issues labelled delivery:later and shown as Backlog. Native future dependencies and closed history preserved.",
+    "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
+  }
 }

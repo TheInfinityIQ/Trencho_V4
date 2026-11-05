@@ -2,6 +2,8 @@
 
 Updated 5 November 2026. Parent: [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83). Current review: [PR #89](https://github.com/TheInfinityIQ/Trencho_V4/pull/89), `codex/gameplay-demo-integration`. Design: [current GDD](game_design_document.md). Developer publication/status: [team integration state](team_integration_state.json), [implemented features](implemented_features.json) and [prototype completion](prototype_completion.json).
 
+The four current delivery goals #83/#90/#91/#92 are grouped in [demo milestone #9](https://github.com/TheInfinityIQ/Trencho_V4/milestone/9) and the Project #3 **Current demo** view. Wider requirements remain in the eight later milestones and **Later backlog**; retaining them does not make each one a present demo blocker.
+
 ## Intended experience
 
 Start in the approved empty field as a controllable character. Buy workers and raw materials, place buildings, allocate jobs and produce useful goods. The Logistics Centre automatically fulfils actual army requests through physical loading, transport and HQ receipt. The autonomous army collects and uses supply, continues feasible resource operations and generates later needs in the same session.
