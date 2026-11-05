@@ -108,6 +108,21 @@ func unrelated():
         self.assertEqual(set(functions[1]['calls_raw']), {'hidden'})
         self.assertEqual(set(functions[2]['calls_raw']), {'nested'})
 
+    def test_python_expression_metadata_is_formatter_independent(self):
+        """Keep nested f-string facts identical across formatter/runtime quote choices."""
+        source = '''def value(result):
+    note = "λ"
+    result.get("error", "inspect stderr")
+    return finish("blocked", f"Worker stopped: {result.get('error', 'inspect stderr')}")
+'''
+        with mock.patch.object(mapper.ast, 'unparse', return_value='formatted by Python 3.12'):
+            first = mapper.python_functions('tool.py', source)
+        with mock.patch.object(mapper.ast, 'unparse', return_value='formatted by Python 3.13'):
+            second = mapper.python_functions('tool.py', source)
+        self.assertEqual(first, second)
+        self.assertEqual(set(first[0]['calls_raw']), {'result.get', 'finish'})
+        self.assertEqual(first[0]['returns'], ['finish("blocked", f"Worker stopped: {result.get(\'error\', \'inspect stderr\')}")'])
+
     def test_crlf_and_lf_have_identical_source_fingerprints(self):
         """Keep source fingerprints stable across Windows and Linux checkouts."""
         with tempfile.TemporaryDirectory(dir=self.temp_root) as directory:

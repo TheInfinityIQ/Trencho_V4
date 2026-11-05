@@ -274,6 +274,13 @@ def python_functions(path: str, source: str) -> list[dict]:
     result: list[dict] = []
     counters: collections.Counter = collections.Counter()
 
+    def expression(node: ast.AST) -> str:
+        """Retain authoritative source text rather than version-dependent unparse formatting."""
+        segment = ast.get_source_segment(source, node)
+        if segment is None:
+            raise RuntimeError('Missing Python expression source positions: ' + path)
+        return segment
+
     def own(node: ast.AST) -> Any:
         """Yield a Python implementation's nodes while excluding nested implementations."""
         yield node
@@ -290,8 +297,8 @@ def python_functions(path: str, source: str) -> list[dict]:
             name = f'{owner}/<lambda#{counters[owner]}>' if is_lambda else '.'.join(filter(None, [owner, node.name]))
             code = ast.get_source_segment(source, node) or ''
             owned = list(own(node))
-            calls = {ast.unparse(child.func): child.lineno for child in owned if isinstance(child, ast.Call)}
-            returns = [compact(ast.unparse(child.value)) for child in owned if isinstance(child, ast.Return) and child.value is not None]
+            calls = {expression(child.func): child.lineno for child in owned if isinstance(child, ast.Call)}
+            returns = [compact(expression(child.value)) for child in owned if isinstance(child, ast.Return) and child.value is not None]
             result.append({'id': path + '::' + name, 'name': name, 'kind': 'lambda' if is_lambda else 'function',
                            'line': node.lineno, 'end_line': node.end_lineno, 'signature': compact(code.splitlines()[0]),
                            'code_sha256': digest(code), 'calls_raw': calls, 'source': code, 'writes': [],

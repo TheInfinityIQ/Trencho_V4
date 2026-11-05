@@ -50,6 +50,11 @@
       "failure": "A draft Army needs checker reused the disconnected factory model, which has no authored battlefield policy or approved HQ stock. Source review caught the mismatch before its first execution.",
       "evidence": "logs/army-supply/fixture-review.json; docs/evidence/army_supply_view.json",
       "rule": "Choose the actual authored context required by the feature. Preserve a mistaken fixture and document corrections; a disconnected component cannot establish connected-opening behaviour, and source review is not an executed pass."
+    },
+    {
+      "failure": "A locally current source map failed required Linux CI because Python3.12 and3.13 ast.unparse formatted nested f-string quotes differently, despite identical original source and reviewed hashes.",
+      "evidence": "docs/evidence/system_map_portability.json",
+      "rule": "Persist original source-span facts for reproducible documentation; formatter output is not an authoritative cross-version serialization. Keep strict checks and verify the actual remote environment instead of assuming a local pass proves publication."
     }
   ],
   "design_review": [
