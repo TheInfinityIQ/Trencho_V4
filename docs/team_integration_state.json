@@ -15,13 +15,13 @@
   },
   "consultants": [
     {
-      "title": "Trencho — Game Designer",
+      "title": "Trencho â€” Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
       "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
     },
     {
-      "title": "Trencho — UI/UX developer",
+      "title": "Trencho â€” UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
       "scope": "Player interactions, menus, required information and reusable presentation handoffs."
@@ -33,13 +33,14 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Read-only gameplay/UI/art consultations. Lead assembles the next feature milestone; no parallel project edits assigned.",
+  "current_work": "Guided factory feature implemented and directly checked. Lead integrates the reviewed design alignment and owns the next diagrammed army-needs/supply feature. Game Designer owns vision; UI/UX and art handoffs remain scoped.",
   "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
     "branch": "codex/gameplay-demo-integration",
     "commit_resolution": "Use the exact commit sent by the lead; refs/heads/codex/gameplay-demo-integration is the current published review head. A future local edit is not reviewed until pushed.",
-    "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded."
+    "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded.",
+    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89"
   },
   "scope_limits": [
     "The existing GDD gameplay scope remains; feature priorities do not establish implementation or acceptance.",

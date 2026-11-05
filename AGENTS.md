@@ -77,3 +77,14 @@ gameplay acceptance.
 
 Use a task briefing in progress and completion messages: Objective, Outcome and
 Next task. Say Completed only for the specific result actually verified.
+
+# Design before implementation
+
+Before building or materially changing a system, save its planned flow diagram
+and ownership/event contract under `docs/diagrams/`. Identify authoritative
+state, commands, signals, timed work, cancellation, replacement and failure
+paths. Read `docs/engineering_lessons.json` and explain applicable safeguards.
+Update the diagram when the implementation changes its contract. A diagram is
+a design record, not evidence of execution. Keep implementation increments
+bounded and the remaining gameplay backlog explicit; do not call the whole
+game finished after completing one slice.

@@ -1,0 +1,58 @@
+{
+  "status": "planned_before_implementation",
+  "diagram": "docs/diagrams/factory_plan.mmd",
+  "scope": "A guided ordinary factory task inside the existing Production view; reuse existing physical game services and controls.",
+  "player_outcome": "Know the next useful step from an empty field to actual manufactured Building Materials and rifle ammunition, with workforce and missing-input causes linked to existing actions.",
+  "interfaces": {
+    "projection": "FactoryPlan.view(simulation) returns detached workers, facilities, steps, next_action and complete facts without changing the model.",
+    "panel": "FactoryPlanPanel.bind(session) subscribes to current committed-state/replacement events and exposes its current detached view; action_requested(action) delegates navigation to the existing rear controller.",
+    "steps": [
+      "workers",
+      "materials",
+      "munitions",
+      "materials_output",
+      "ammunition_output"
+    ],
+    "step_status": [
+      "todo",
+      "active",
+      "complete"
+    ],
+    "next_action": "A detached dictionary with panel, building_kind, facility_id, label and reason; navigation drafts never purchase, place or manufacture automatically. Optional focus names an existing field; revisiting the already selected facility preserves unsubmitted drafts.",
+    "complete": "Only true when actual Completed R26 and R02 batches exist in current authoritative production history. Starting M11, unrelated output or Cancelled batches do not establish completion."
+  },
+  "ownership": {
+    "authoritative": "Existing receiving, rear staffing, construction, production and ledger owners.",
+    "projection": "Narrow read-only facts; no copied authoritative inventory or persistent completion flags.",
+    "presentation": "One scene-owned panel, existing UIKit, retained selection and current-session signal subscriptions.",
+    "integration": "Current lead; worker cannot publish or change gameplay defaults."
+  },
+  "events": [
+    "GameSession.state_changed",
+    "GameSession.simulation_changed",
+    "Panel visibility_changed"
+  ],
+  "scheduling": "Coalesce a finite signal burst into one deferred visible refresh. No new process/physics callback, timer, time_advanced subscription, repeated idle scan or full-world export. Elapsed work animation remains in existing production controls.",
+  "lifecycle": "A hidden panel retains dirty state without reading the model; showing it reads fresh state. Replacement resolves the current model at refresh time. Rebinding and exit disconnect old subscriptions; obsolete deferred work cannot write a departed session.",
+  "principles": [
+    "Observer pattern through Godot signals",
+    "Single authoritative owner and command/query separation",
+    "Scoped reads and explicit lifecycle",
+    "Reuse real commands rather than synthetic progress or resource grants"
+  ],
+  "failure_paths": [
+    "No workers or arrivals yet",
+    "Facility missing, building, cancelled or destroyed",
+    "Missing receiving/hauling/operator labour",
+    "Missing ingredients or pending physical transport",
+    "Paused, stopped, inaccessible or output-blocked production",
+    "Session replaced during deferred refresh",
+    "An output stock minimum is already covered by starting, existing or valid committed stock; that does not establish newly completed manufacture."
+  ],
+  "unchanged_rules": "Starting stock, prices, recipes, capacities, timings, physical output, consumption and military AI remain unchanged.",
+  "references": [
+    "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "https://docs.godotengine.org/en/stable/classes/class_object.html#class-object-method-call-deferred"
+  ],
+  "verification_limit": "A brief direct check of this new projection, panel lifecycle and physical factory completion is not full-game, native-input or FPS acceptance."
+}

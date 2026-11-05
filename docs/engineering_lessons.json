@@ -1,0 +1,58 @@
+{
+  "scope": "Concrete project failures and safeguards to apply before each new system; observations do not imply every caller or scenario is fixed.",
+  "lessons": [
+    {
+      "failure": "Repeated broad entity/world reads multiplied work during UI and placement interactions.",
+      "evidence": "docs/evidence/cohesion_placement_fix.json",
+      "rule": "Read the smallest authoritative facts needed, once per real update; scope invalidation and keep preview queries read-only. A high call count alone does not identify cost or establish a fix."
+    },
+    {
+      "failure": "Expensive initial settlement exhausted a cooperative allowance before any positive clock interval, starving simulation indefinitely.",
+      "evidence": "docs/evidence/clock_stall_308.json",
+      "rule": "Separate liveness from work allowance; preserve complete atomic consequences and unadvanced elapsed debt. Measure remaining costs honestly rather than skipping simulation to satisfy a budget."
+    },
+    {
+      "failure": "Native test scene setup foregrounded its window and warped the user's actual cursor.",
+      "evidence": "docs/evidence/background_test_policy.json",
+      "rule": "Routine direct checks are headless; foreground native input requires a reported issue that needs it. A minimized window alone does not prevent cursor takeover."
+    },
+    {
+      "failure": "Catalogue presence, source reachability and handler receipts were mistaken for complete gameplay outcomes.",
+      "evidence": "docs/prototype_completion.json",
+      "rule": "Describe actual physical outcomes separately from implemented services, synthetic arrangements, static diagrams and unverified ordinary play. Never turn an unresolved failure into a passing claim."
+    },
+    {
+      "failure": "Cancellation and automatic demand could recreate player-cancelled work or overpromise existing freight.",
+      "evidence": "docs/evidence/prototype_regression_followup.json",
+      "rule": "Keep player intent separate from automatic demand, reconcile against real custody, and invalidate/reopen intent explicitly. Idempotent repeated/late events must not create another physical result."
+    },
+    {
+      "failure": "Deferred UI work and old sessions can retain stale references or duplicate refreshes.",
+      "evidence": "docs/evidence/training_read_slice.json",
+      "rule": "Use scene-owned subscriptions, one finite pending wakeup, current-session lookup or generation guards, safe disconnects and fresh reads when a hidden view becomes visible. Do not add idle polling as a substitute for lifecycle ownership."
+    },
+    {
+      "failure": "The bounded agent runner hashed old generated .artifacts worktrees and builds during startup despite documenting their exclusion, delaying any worker progress.",
+      "evidence": "logs/factory-plan/fingerprint-fix.json; tools/tests/test_agent_task.py::test_snapshot_excludes_generated_builds_and_artifacts_but_tracks_source",
+      "rule": "Make documented fingerprint exclusions executable and check generated-output churn separately from retained first-party source. Stop a stalled owned run before changing its protected controller; review a fresh contract rather than silently mutating an active experiment."
+    },
+    {
+      "failure": "The first factory direct check treated900 simulated seconds as enough for two sites sharing two haulers, even though construction still had30 real M11 in flight.",
+      "evidence": "logs/factory-plan/direct-check-correction.json",
+      "rule": "Base direct-check waiting on actual travel, handling, workforce and queue semantics. When a verifier assumes an unsupported gameplay deadline, retain the failure and diagnose physical state before reviewing a new contract. Never accelerate recipes, grant resources or weaken performance limits to satisfy it."
+    },
+    {
+      "failure": "The factory walkthrough requested a100-unit M11 stock minimum while140 starting M11 already remained. Production correctly did not start, but the initial guidance could suggest missing ingredients instead of the already-covered target.",
+      "evidence": "logs/factory-plan/stock-target-correction.json",
+      "rule": "Distinguish a minimum stock target from a new-manufacture quantity, existing coverage from physical availability, and historical production from present storage. Explain the authoritative no-work cause before suggesting purchases or extra labour."
+    }
+  ],
+  "design_review": [
+    "What owns the authoritative state?",
+    "Which actual event or command causes each update?",
+    "Why is each repeated/continuous callback necessary?",
+    "What happens on cancellation, replacement, destruction or a late duplicate event?",
+    "What observable player outcome demonstrates this increment?"
+  ],
+  "current_priority": "Gameplay/features first. Polishing, optimization and benchmark campaigns remain paused; fix defects that block the current feature or corrupt physical state."
+}

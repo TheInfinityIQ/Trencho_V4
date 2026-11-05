@@ -1,0 +1,25 @@
+%% Planned before implementation, 2026-11-05. Design flow, not a runtime trace.
+flowchart TD
+    Player[Player opens Production / factory plan] --> Panel[Scene-owned factory plan panel]
+    Session[Current GameSession] -->|state_changed / simulation_changed| Dirty[Mark presentation dirty]
+    Panel -->|visibility changed to visible| Dirty
+    Dirty --> Gate{Visible and no refresh pending?}
+    Gate -->|yes| Deferred[One deferred refresh]
+    Gate -->|hidden| Retain[Retain dirty state until shown]
+    Deferred --> Guard{Still bound, visible and inside scene tree?}
+    Guard -->|yes| Query[Pure narrow FactoryPlan.view of current model]
+    Guard -->|no| Stop[Discard obsolete callback]
+    Query --> Facts[Actual workers, construction instances, selected activity inputs and completed batch history]
+    Facts --> Steps[Workers / Materials Plant / Munitions / real material output / real ammunition output]
+    Steps --> UI[Truthful step states and next useful action]
+    UI -->|player chooses contextual action| Nav[Existing rear navigation and selection]
+    Nav --> Controls[Existing Build / Workers / Supplies / Production controls]
+    Controls --> Commands[Existing authoritative purchase, placement, staffing and production commands]
+    Commands --> Owners[Receiving / Construction / Rear / Production owners]
+    Owners -->|committed state event| Session
+    Session -->|replacement| Rebind[Clear stale view and read current model]
+    Panel -->|exit or bind different session| Disconnect[Disconnect old subscriptions]
+    Retain -->|shown| Dirty
+    Rebind --> Dirty
+    classDef authoritative fill:#d5e7d4,stroke:#456b43
+    class Session,Owners,Facts authoritative

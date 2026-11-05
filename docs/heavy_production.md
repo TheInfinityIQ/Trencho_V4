@@ -1,6 +1,6 @@
 # Vehicle Works heavy manufacturing foundation
 
-[Designer scope](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6455906108), accepted PR71/main `35f8ea70`. GDD6.1/6.3/8/10/[23.6](game_design_document.md#236-production-targets-output-promises-and-heavy-output-staging---26-october-2026) and [D03 hull admissions](d03_people_capacity.md#5-hull-and-external-service-domains-o8) govern. Related #12; no automatic issue closure.
+[Designer scope](https://github.com/TheInfinityIQ/Trencho_V4/issues/12#issuecomment-6455906108), accepted PR71/main `35f8ea70`. GDD6.1/6.3/8/10/[23.6](reference/gameplay_specification_v0_2.md#236-production-targets-output-promises-and-heavy-output-staging---26-october-2026) and [D03 hull admissions](d03_people_capacity.md#5-hull-and-external-service-domains-o8) govern. Related #12; no automatic issue closure.
 
 F10 now owns one heavy-object/vehicle bay, using the existing eight real operator positions and 5000kg local input store. The six heavy recipes join the retained 23, for all29 catalogue rows. Exact inputs/work and physical outputs are canonical:
 

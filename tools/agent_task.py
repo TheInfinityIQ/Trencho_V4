@@ -133,7 +133,8 @@ def revision(workspace, seconds=3):
 
 def snapshot(workspace, deadline=None):
     """Hash non-generated workspace files to detect changes outside the declared edit scope."""
-    ignored = {'.git', '.godot', '.tools', 'logs', '__pycache__', 'node_modules', '.venv'}
+    ignored = {'.git', '.godot', '.tools', '.artifacts', 'builds', 'logs',
+               '__pycache__', 'node_modules', '.venv'}
     files = {}
     for folder, dirs, names in os.walk(workspace, followlinks=False):
         if deadline is not None and time.monotonic() >= deadline:

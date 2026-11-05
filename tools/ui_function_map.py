@@ -28,7 +28,8 @@ MAP = 'game/rear_base/base_map.gd'
 CONSTRUCTION = 'game/construction/construction_service.gd'
 REAR = 'game/staffing/rear_simulation.gd'
 SIMULATION = 'game/rear_base/base_simulation.gd'
-UI_FILES = [SHELL, BASE, 'game/rear_base/workforce_panel.gd', 'game/forward_supply/forward_delivery_panel.gd']
+UI_FILES = [SHELL, BASE, 'game/rear_base/workforce_panel.gd', 'game/forward_supply/forward_delivery_panel.gd',
+            'game/rear_base/factory_plan_panel.gd']
 PANEL_NAMES = {
     '_construction_panel': 'Build', '_orders_panel': 'Supplies', '_staff_panel': 'Workers / Jobs',
     '_haul_panel': 'Hauling', '_production_panel': 'Production', '_refresh_ingredients': 'Production',

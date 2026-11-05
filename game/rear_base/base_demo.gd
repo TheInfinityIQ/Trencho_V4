@@ -11,6 +11,7 @@ const Fixed = preload("res://game/production/fixed_production.gd")
 const ConstructionCatalog = preload("res://game/construction/construction_catalogue.gd")
 const ForwardDeliveryPanel = preload("res://game/forward_supply/forward_delivery_panel.gd")
 const WorkforcePanel = preload("res://game/rear_base/workforce_panel.gd")
+const FactoryPlanPanel = preload("res://game/rear_base/factory_plan_panel.gd")
 const UIKit = preload("res://game/ui/ui_kit.gd")
 const RearLogistics = preload("res://game/logistics/rear_logistics.gd")
 const BUILD_PURPOSES := {"receiving":"Unload purchased supplies", "depot":"Store raw supplies", "workshop":"Manufacture infantry equipment", "munitions":"Manufacture ammunition", "training":"Train workers and specialists", "dispatch":"Send finished supplies onward", "support":"Manufacture support equipment", "vehicle_works":"Build vehicles", "park":"Park finished vehicles", "construction":"Organize construction crews", "materials":"Manufacture Building Materials"}
@@ -46,6 +47,7 @@ var jobs: ItemList
 var inspection: Label
 var production_status: Label
 var cart: Dictionary = {}
+var factory_plan_panel: VBoxContainer
 var workforce_panel: VBoxContainer
 var resource_hud: Label
 var purchase_quote: Label
@@ -829,6 +831,10 @@ func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
 		button.tooltip_text = "Existing haul orders cover the local shortage; arrival is still required." if new_units <= 0 and missing > 0 else ("Ingredients are locally available." if missing <= 0 else ("Buy or manufacture this material; no accessible source stock is available." if source_available <= 0 else "Prepare up to %d units beyond existing haul orders. Review the fields in Haul, then click Order haul." % new_units))
 
 func _production_panel(box: VBoxContainer) -> void:
+	factory_plan_panel = FactoryPlanPanel.new()
+	box.add_child(factory_plan_panel)
+	factory_plan_panel.bind(session)
+	factory_plan_panel.action_requested.connect(_factory_plan_action)
 	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
 	facility.item_selected.connect(func(_index: int) -> void: _load_production(); _request_refresh())
 	context_status = _label(box,"")
@@ -1701,3 +1707,24 @@ func _refresh_workforce() -> void:
 	_sync_option(person_duty,["Available"]+simulation.rear.requests.keys())
 	_fill(people,_person_ids,view.rear.people,func(person: Dictionary) -> String:
 		return person.id+" | "+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+" | "+person.phase)
+
+func _factory_plan_action(action: Dictionary) -> void:
+	var panel := str(action.get("panel", ""))
+	var id := str(action.get("facility_id", ""))
+	if panel == "Build" and not id.is_empty():
+		_select("site", id)
+	elif panel == "Build":
+		show_panel("Build")
+		select_build_kind(str(action.get("building_kind", "")))
+	elif panel == "Work" and not id.is_empty():
+		if str(tabs.get_tab_control(tabs.current_tab).name) == "Work" and _context_duty() == id:
+			# Returning to an already selected control must not reload the model
+			# over a target, staffing or recipe draft that has not been submitted.
+			match str(action.get("focus","")):
+				"target": stock_target.get_line_edit().grab_focus()
+				"staff": context_staff.get_line_edit().grab_focus()
+				"recipe": recipe.grab_focus()
+			return
+		_select("site", id)
+	elif not panel.is_empty():
+		show_panel(panel)

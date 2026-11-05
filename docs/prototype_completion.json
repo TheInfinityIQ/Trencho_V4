@@ -4,8 +4,8 @@
   "implementation_base": {
     "branch": "main",
     "head": "800ec9d4b869fad630327d52b42a807baddf6ac0",
-    "working_tree": "Existing uncommitted integration of build 5426583 plus local overhaul, diagnostics and workflow changes. Preserve those changes.",
-    "owner": "Current lead alone; no delegated implementation or competing continuation loop."
+    "working_tree": "The previous integrated local snapshot was published as3531bd7 on codex/gameplay-demo-integration. Current feature/design increments follow on that review branch.",
+    "owner": "Current lead owns integration; one bounded native coding worker at a time, with read-only/design handoffs from the named team."
   },
   "fixed_acceptance": [
     {
@@ -56,6 +56,12 @@
       "id": "P4",
       "status": "pending",
       "purpose": "Verify ordinary complete/repeated supply and autonomous consequence with the unchanged frame/action budget."
+    },
+    {
+      "id": "P5",
+      "status": "implemented_direct_change_verified",
+      "purpose": "Guide the ordinary factory setup with truthful causes and contextual existing controls.",
+      "acceptance_limit": "Factory goal90 remains open for ordinary player-experience completion."
     }
   ],
   "verification": [
@@ -166,9 +172,13 @@
     {
       "path": "logs/gdunit4-performance-2026-11-05T19-53-02-24424",
       "result": "Default headless functional selection: all 60 pass; sixteen desktop-dependent native cases explicitly omitted. Not visible FPS certification."
+    },
+    {
+      "path": "logs/agent-workflow/20261105-172652-c24cbef0",
+      "result": "Guided factory direct feature demonstration and required maps pass: actual purchased inputs, physical construction and100 new materials/100 ammunition. Explicit component time, not whole-demo/native-input/FPS acceptance."
     }
   ],
-  "next_action": "Complete gameplay design consultation, choose the next ordinary-play feature milestone, then integrate it with UI/UX and art input. Keep source published on codex/gameplay-demo-integration and share exact review commits. Preserve known placement defects and unresolved final performance acceptance.",
+  "next_action": "Diagram and implement the first-class army-needs and physical-supply view; then complete a useful delivery and repeat replenishment through ordinary controls.",
   "limitations": [
     "Prototype completion and 60 FPS compliance are not established.",
     "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
@@ -178,7 +188,7 @@
     "Latest dedicated native pointer/query run: eleven of twelve pass; sustained motion has an unresolved invalid-preview/coordinate contract failure. Older full-suite performance failures remain recorded. Background omissions do not satisfy native acceptance."
   ],
   "evidence": "docs/evidence/prototype_menu_performance.json",
-  "latest_evidence": "docs/evidence/clock_stall_308.json",
+  "latest_evidence": "docs/evidence/factory_plan.json",
   "current_declared_default_cases": 60,
   "current_declared_foreground_cases": 76,
   "current_opt_in_endurance_cases": 1,

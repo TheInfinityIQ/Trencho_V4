@@ -123,6 +123,26 @@ class AgentTaskTests(unittest.TestCase):
         self.assertEqual(state['changes'], ['outside.txt'])
         self.assertIn('outside task scope', state['stop_reason'])
 
+    def test_snapshot_excludes_generated_builds_and_artifacts_but_tracks_source(self):
+        """Prune documented generated output before hashing while retaining real and hidden source."""
+        for directory in ('game', '.github', '.artifacts/nested-worktree', 'builds/old-export'):
+            (self.root / directory).mkdir(parents=True)
+        source = self.root / 'game/play.gd'
+        source.write_text('extends Node\n')
+        configuration = self.root / '.github/check.yml'
+        configuration.write_text('name: retained\n')
+        artifact = self.root / '.artifacts/nested-worktree/generated.gd'
+        artifact.write_text('old generated snapshot\n')
+        export = self.root / 'builds/old-export/game.pck'
+        export.write_bytes(b'generated export')
+        expected = {'game/play.gd': workflow.digest(source), '.github/check.yml': workflow.digest(configuration)}
+        self.assertEqual(workflow.snapshot(self.root), expected)
+        artifact.write_text('another generated snapshot\n')
+        export.write_bytes(b'changed generated export')
+        self.assertEqual(workflow.snapshot(self.root), expected)
+        source.write_text('extends Control\n')
+        self.assertNotEqual(workflow.snapshot(self.root)['game/play.gd'], expected['game/play.gd'])
+
     def test_changed_symlink_is_visible(self):
         """Scope hashing must expose a new link even though it never traverses that link."""
         path = self.task()

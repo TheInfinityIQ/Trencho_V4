@@ -1,0 +1,64 @@
+{
+  "feature": "Guided factory task in the ordinary Production screen",
+  "status": "implemented_direct_change_verified_ordinary_demo_acceptance_open",
+  "diagram": "docs/diagrams/factory_plan.mmd",
+  "design_contract": "docs/diagrams/factory_plan.json",
+  "design_before_code": "The initial frozen worker run contains the diagram hash before factory_plan.gd and factory_plan_panel.gd existed. Diagrams are prospective/static records, not runtime traces.",
+  "behaviour": [
+    "Five truthful steps from worker arrival through actual construction and manufacture.",
+    "Contextual actions navigate to the exact real controls and preserve unsubmitted drafts when revisiting the same facility.",
+    "Completed batches establish manufactured output; starting stock does not. Stored output and historical completion are presented separately.",
+    "An already-covered output-stock minimum is explained before suggesting missing inputs.",
+    "Committed-state, replacement and visibility signals trigger a coalesced deferred read. No new idle timer, process callback or time_advanced subscription."
+  ],
+  "verification": [
+    {
+      "path": "logs/agent-workflow/20261105-172652-c24cbef0",
+      "result": "All three fixed checks passed: new-feature headless demonstration, living system map and clickable UI map. The final corrected contract needed no further worker turn; implementation came from the earlier native coding worker and lead integration."
+    },
+    {
+      "path": "tools/checks/factory_plan_check.gd",
+      "result": "Direct demonstration covers pure opening read, zero idle/hidden polling, one read for a signal burst, actual purchased workers/ingredients, two physically completed facilities,100 manufactured M11 and100 manufactured E02, clean model audit, disconnection on rebind and ordinary main-scene Production integration. Explicit component time is used for construction/manufacturing."
+    },
+    {
+      "path": "logs/factory-plan/editor-import",
+      "result": "Actual updated root editor imports headlessly, exit0, no owned timeout. No desktop focus/cursor takeover."
+    },
+    {
+      "path": "logs/factory-plan/fingerprint-fix.json",
+      "result": "The runner startup exclusion check failed before and passes after pruning generated .artifacts/builds while retaining first-party source. No concurrent retries or native Goals added."
+    }
+  ],
+  "retained_failures": [
+    {
+      "run": "20261105-165826-ed5e3e94",
+      "result": "Lead stopped initial startup before commands/worker because generated output was being fingerprinted contrary to documentation."
+    },
+    {
+      "run": "20261105-170338-cde3d64d",
+      "result": "Worker created the new feature but could not run Python map maintenance. The original direct fixture also stopped construction at900 simulated seconds; diagnosis showed one complete facility and real M11 still in flight to the second. Run remains blocked."
+    },
+    {
+      "run": "20261105-172031-c445c3b3",
+      "result": "The fixture requested a100-unit Materials stock minimum while140 starting M11 already remained. Production correctly stayed idle. The fixture and player-facing cause were corrected under a new reviewed contract; the original failure remains recorded."
+    }
+  ],
+  "unchanged": "No recipe, price, stock, worker speed, construction/production rate, physical conservation rule or performance ceiling was changed.",
+  "source_sha256": {
+    "game/rear_base/factory_plan.gd": "99636898d1c53b74410cc87333097ba38ef4198deab67a42d5d7605f796980fb",
+    "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",
+    "tools/checks/factory_plan_check.gd": "d6fdeb3ad03e862e4603b453cc84ed5a5a2d41eb88af958d64716773f927b01a"
+  },
+  "limits": [
+    "This does not close factory goal90 or complete the ordinary supply-to-battlefield loop.",
+    "The new direct check is headless and explicitly stepped; native input, real1x pacing, full gameplay and60FPS are not certified.",
+    "The panel reuses the existing broad committed-state signal while visible. It does not establish completed scoped-event/domain-clock migration.",
+    "Known placement and performance failures remain open; polishing/optimization remains paused."
+  ],
+  "design_integration": {
+    "source_commit": "6b4f291",
+    "root_cherry_pick": "9eb6aef",
+    "result": "Eight reviewed gameplay documents integrated. The former detailed GDD is retained byte-for-byte after its historical banner; obsolete technical anchor links are repointed to that reference. No balance change."
+  },
+  "next_task": "Diagram and implement the first-class army-needs and physical-supply view; then complete a useful delivery and repeat replenishment through ordinary controls."
+}

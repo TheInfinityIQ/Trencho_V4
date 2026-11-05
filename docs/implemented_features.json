@@ -10,6 +10,16 @@
       ]
     },
     {
+      "feature": "Guided factory task in Production with five physical milestones, contextual navigation, actual stock-target causes and separate historical manufacture/current output. Updates from committed-state/replacement/visibility events without idle polling.",
+      "sources": [
+        "game/rear_base/factory_plan.gd",
+        "game/rear_base/factory_plan_panel.gd",
+        "game/rear_base/base_demo.gd"
+      ],
+      "limit": "Brief direct feature demonstration passes; ordinary complete-demo/player-experience acceptance remains open.",
+      "evidence": "docs/evidence/factory_plan.json"
+    },
+    {
       "feature": "Eleven buildable facility types, rotation, position/overlap validation, provisional preview, physical construction materials/work, preview/site cancellation and preservation of consumed material.",
       "types": [
         "Receiving",
