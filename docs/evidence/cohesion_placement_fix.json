@@ -1,0 +1,1607 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-04T00:26:49.388318+00:00",
+  "status": "reproduced_placement_slowdown_fixed_with_unchanged_budget_passes",
+  "scope": {
+    "request": "Fix repeated squad-cohesion reads and make the actual 1x placement tests pass without raising performance limits.",
+    "production_changes": {
+      "game/identity/identity_ledger.gd": {
+        "before": "b4e39d47e527acfadef7589a4dce7850c4f9ccd6ea4331e2681941f217bef8a9",
+        "after": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484"
+      },
+      "game/rear_base/base_simulation.gd": {
+        "before": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e",
+        "after": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+      },
+      "game/battlefield/squad_execution.gd": {
+        "before": "cb6a389346e600c390837f0796f000d32e533f618f8c0bbddf66042015cb96c1",
+        "after": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992"
+      },
+      "game/main/game_session.gd": {
+        "before": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369",
+        "after": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+      },
+      "game/combat/combat_service.gd": {
+        "before": "e232e21de86f2490abe9bf9f29e8f6509228c999470b9111bca2a2a71f6c889d",
+        "after": "070426f5c400cbb8ca90c271b039fcdc019fc3c0de34cc3bbe13a6a351e814fc"
+      },
+      "game/staffing/rear_simulation.gd": {
+        "before": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1",
+        "after": "a69ec01a4d386793f3c0dd8ecd9a5a709ee4dcc4c63f191cc16e745e4831d886"
+      },
+      "game/vehicle_combat/vehicle_combat_service.gd": {
+        "before": "24c79ea787d31e533d90a2ef3b4d234f8950c70e6c63d3ab014193b40b880f76",
+        "after": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f"
+      },
+      "game/military/organization.gd": {
+        "before": "9f7e2740d9cfa9925fb222d4abbf049fe749b3d4c7021bad9e762a83e9f7e8ba",
+        "after": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92"
+      }
+    },
+    "project_configuration_changed": false,
+    "time_driver": "RearSimulation.advance_time and global settlement remain. No scheduler, timer cadence, recipe, capacity, opening or start-position change. Live wall-clock background pumping is coalesced per engine process frame; explicit-delta stepping remains unchanged.",
+    "reference_evidence": "docs/evidence/building_pointer_regression.json",
+    "fingerprint_scope": "Source-anchor file_sha256 values use the living map newline-normalized content fingerprint; raw_file_sha256 and launcher source manifests are byte hashes. Function fingerprints are the map implementation hashes."
+  },
+  "implementation": {
+    "cohesion": "Fresh roster-level scalar counts replace two detailed-person exports per active member. The same eligibility and 30-metre inclusivity rules remain; immediate movement/health/boarding effects and dispersion timestamps are not deferred or cached.",
+    "membership": "Canonical ledger membership queries return only fresh ordered IDs; no persistent relationship index or invalidation mechanism was introduced.",
+    "ammunition": "One fresh scan counts the initial per-squad loose/loaded ammunition view with the scalar query rules. Later shot checks still read current state.",
+    "mounted_weapons": "Idle/future reload commitments do not export hulls. Due reloads retain actual crew/rack checks. Rack quantities use the existing canonical scalar query; source selection inspects only the local stock subset.",
+    "frame_coordination": "GameSession skips duplicate live wall-clock pumps in the same Engine.get_process_frames ID. BaseSimulation accrues the entire elapsed interval on its next pump or speed change; replacement resets the scene-owned gate. Explicit-delta models retain every physics callback.",
+    "diagnostics": "Opt-in TRENCHO_PROFILE_STAGES=1 records inclusive service, policy, execution, ammunition, collection, per-person and route scope durations. It is off in final placement runs; full existing caller-stack capture remains on.",
+    "native_test_strengthening": "Placement phases now verify actual 1x logical progress within 0.25 seconds of wall elapsed time and at most 0.25 seconds of outstanding simulation debt. No existing timing or inspection budget was relaxed."
+  },
+  "native_results": [
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-11-50-17444",
+      "report": "logs/gdunit4-performance-2026-11-04T00-11-50-17444/gdunit-report/results.xml",
+      "report_sha256": "633568eb02379df68af2b8375fca00de9f6ffb7e44b78232bd6faeaf30823543",
+      "cases": 4,
+      "problems": 0,
+      "settings": {
+        "started_utc": "2026-11-04T00:12:05.9956230Z",
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-11-50-17444",
+        "headless": false,
+        "action_limit_ms": 100.0,
+        "process_id": 7824,
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "profile_filter": "",
+        "text_filter": "",
+        "stacks_enabled": true,
+        "frame_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "inspect_call_budget": 30000,
+        "continue_after_issues": true,
+        "observation_seconds": 2.0
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066427,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 28.679,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.158703,
+              "inspect_calls_per_second": 264.645280807546,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 2.157578,
+                "owed_simulation_seconds": 1.87350135405495e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 36.335,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.010252,
+              "inspect_calls_per_second": 752.144507255807,
+              "issues": [],
+              "inspect_entity_entries": 1512,
+              "physics_callbacks": 126,
+              "live_pumps": 120
+            },
+            {
+              "action": {
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 4.47823200000001,
+                "maximum_motion_dispatch_ms": 0.201,
+                "motion_events": 121,
+                "owed_simulation_seconds": 2.42861286636753e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 35.853,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.244191,
+              "inspect_calls_per_second": 999.469296508185,
+              "issues": [],
+              "inspect_entity_entries": 2243,
+              "physics_callbacks": 139,
+              "live_pumps": 135
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 9.134,
+                "expected_center": "(83.375, 48.625)",
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 6.58971900000002,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 91.343,
+              "dispatch_ms": 9.134,
+              "elapsed_seconds": 2.040573,
+              "inspect_calls_per_second": 2792.84299066978,
+              "issues": [],
+              "inspect_entity_entries": 5699,
+              "physics_callbacks": 126,
+              "live_pumps": 111
+            },
+            {
+              "action": {
+                "label": "Default game / select and move depot preview at 1x",
+                "logical_time": 8.99741400000004,
+                "maximum_motion_dispatch_ms": 0.308,
+                "motion_events": 87,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 72.172,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.32536,
+              "inspect_calls_per_second": 4404.47930642997,
+              "issues": [],
+              "inspect_entity_entries": 10242,
+              "physics_callbacks": 145,
+              "live_pumps": 100
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 15.829,
+                "expected_center": "(158.125, 127.375)",
+                "label": "Default game / click and observe depot at 1x",
+                "logical_time": 11.2040280000001,
+                "owed_simulation_seconds": 1.2490009027033e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 83.49,
+              "dispatch_ms": 15.829,
+              "elapsed_seconds": 2.127747,
+              "inspect_calls_per_second": 4544.71325773224,
+              "issues": [],
+              "inspect_entity_entries": 9670,
+              "physics_callbacks": 133,
+              "live_pumps": 90
+            }
+          ],
+          "summary_sha256": "2735c18fe3cdf589bdf6e45350417fd8d302aa1c5b80061cd2f7949230f6d8f2"
+        },
+        {
+          "group": "group-02",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.06642,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 29.339,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.15692,
+              "inspect_calls_per_second": 267.652306907979,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.479,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 2.520448,
+                "maximum_motion_dispatch_ms": 0.22,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 35.703,
+              "dispatch_ms": 7.479,
+              "elapsed_seconds": 2.362838,
+              "inspect_calls_per_second": 735.979360413198,
+              "issues": [],
+              "inspect_entity_entries": 1739,
+              "physics_callbacks": 147,
+              "live_pumps": 142
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.626,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 6.80768500000003,
+                "maximum_motion_dispatch_ms": 0.394,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 90.972,
+              "dispatch_ms": 8.626,
+              "elapsed_seconds": 4.219072,
+              "inspect_calls_per_second": 2081.26336786857,
+              "issues": [],
+              "inspect_entity_entries": 8781,
+              "physics_callbacks": 256,
+              "live_pumps": 238
+            }
+          ],
+          "summary_sha256": "b93868c584a9ee4a9c1a7a178a4b433b86a4d1a019aae4c9302092d05410c836"
+        },
+        {
+          "group": "group-03",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.074882,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 39.221,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.165212,
+              "inspect_calls_per_second": 254.218821877345,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 2.665202,
+                "maximum_motion_dispatch_ms": 0.224,
+                "motion_events": 961,
+                "owed_simulation_seconds": 2.04697370165263e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 39.171,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.512657,
+              "inspect_calls_per_second": 725.128817821135,
+              "issues": [],
+              "inspect_entity_entries": 1822,
+              "physics_callbacks": 155,
+              "live_pumps": 151
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.568,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 4.80435900000001,
+                "maximum_motion_dispatch_ms": 0.083,
+                "motion_events": 969,
+                "owed_simulation_seconds": 1.59594559789866e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 44.53,
+              "dispatch_ms": 7.568,
+              "elapsed_seconds": 2.062668,
+              "inspect_calls_per_second": 1230.4452291886,
+              "issues": [],
+              "inspect_entity_entries": 2538,
+              "physics_callbacks": 130,
+              "live_pumps": 124
+            }
+          ],
+          "summary_sha256": "1807786b760ffc0561a6e2aac5ab80bf23623f48af9276d0bd32d4be66043fd9"
+        },
+        {
+          "group": "group-04",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.064232,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "peak_frame_ms": 27.509,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.157555,
+              "inspect_calls_per_second": 266.57357748088,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 12.1505860000001,
+                "owed_simulation_seconds": 4.61436444609831e-16
+              },
+              "ok": true,
+              "peak_frame_ms": 94.121,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 12.013971,
+              "inspect_calls_per_second": 2972.78893048768,
+              "issues": [],
+              "inspect_entity_entries": 35715,
+              "physics_callbacks": 725,
+              "live_pumps": 629
+            }
+          ],
+          "summary_sha256": "df3152355d51a074093ae45c0dc8ff3ed95e931b158c3d209493a09d314e3aba"
+        }
+      ]
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-12-58-12420",
+      "report": "logs/gdunit4-performance-2026-11-04T00-12-58-12420/gdunit-report/results.xml",
+      "report_sha256": "5d3349a2f231d8c1211c31030e16268203b4553e996e031d8299bc83fb5e47c6",
+      "cases": 4,
+      "problems": 0,
+      "settings": {
+        "frame_limit_ms": 100.0,
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "process_id": 42004,
+        "inspect_call_budget": 30000,
+        "action_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-12-58-12420",
+        "text_filter": "",
+        "headless": false,
+        "observation_seconds": 3.0,
+        "started_utc": "2026-11-04T00:13:13.5193133Z",
+        "profile_filter": "",
+        "stacks_enabled": true,
+        "continue_after_issues": true
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066398,
+                "owed_simulation_seconds": 3.46944695195361e-18,
+                "simulation_progress_seconds": 0.066398
+              },
+              "ok": true,
+              "peak_frame_ms": 27.964,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.158123,
+              "inspect_calls_per_second": 265.616007791403,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.066398,
+                "initial_speed": 1,
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 3.15812800000001,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.09173000000001
+              },
+              "ok": true,
+              "peak_frame_ms": 35.569,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 3.010349,
+              "inspect_calls_per_second": 760.044765573693,
+              "issues": [],
+              "inspect_entity_entries": 2288,
+              "physics_callbacks": 186,
+              "live_pumps": 182
+            },
+            {
+              "action": {
+                "initial_logical_time": 3.15812800000001,
+                "initial_speed": 1,
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 6.49475800000002,
+                "maximum_motion_dispatch_ms": 0.195,
+                "motion_events": 171,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.33663000000002
+              },
+              "ok": true,
+              "peak_frame_ms": 91.316,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 3.267568,
+              "inspect_calls_per_second": 2049.53653604148,
+              "issues": [],
+              "inspect_entity_entries": 6697,
+              "physics_callbacks": 199,
+              "live_pumps": 185
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 12.938,
+                "expected_center": "(83.375, 48.625)",
+                "initial_logical_time": 6.49475800000002,
+                "initial_speed": 1,
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 9.65975100000005,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.16499300000003
+              },
+              "ok": true,
+              "peak_frame_ms": 70.571,
+              "dispatch_ms": 12.938,
+              "elapsed_seconds": 3.082723,
+              "inspect_calls_per_second": 4709.47276158124,
+              "issues": [],
+              "inspect_entity_entries": 14518,
+              "physics_callbacks": 191,
+              "live_pumps": 140
+            },
+            {
+              "action": {
+                "initial_logical_time": 9.65975100000005,
+                "initial_speed": 1,
+                "label": "Default game / select and move depot preview at 1x",
+                "logical_time": 13.1124260000001,
+                "maximum_motion_dispatch_ms": 0.298,
+                "motion_events": 129,
+                "owed_simulation_seconds": 7.32053306862213e-16,
+                "simulation_progress_seconds": 3.45267500000003
+              },
+              "ok": true,
+              "peak_frame_ms": 72.857,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 3.372822,
+              "inspect_calls_per_second": 4387.12745588116,
+              "issues": [],
+              "inspect_entity_entries": 14797,
+              "physics_callbacks": 207,
+              "live_pumps": 142
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 19.318,
+                "expected_center": "(158.125, 127.375)",
+                "initial_logical_time": 13.1124260000001,
+                "initial_speed": 1,
+                "label": "Default game / click and observe depot at 1x",
+                "logical_time": 16.2847520000001,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.17232600000003
+              },
+              "ok": true,
+              "peak_frame_ms": 70.078,
+              "dispatch_ms": 19.318,
+              "elapsed_seconds": 3.087395,
+              "inspect_calls_per_second": 4393.34778996533,
+              "issues": [],
+              "inspect_entity_entries": 13564,
+              "physics_callbacks": 190,
+              "live_pumps": 139
+            }
+          ],
+          "summary_sha256": "fc077fdcd708afdff7bebae73d453ace1aaafc212cc83d198acd0278847e3541"
+        },
+        {
+          "group": "group-02",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066339,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.066339
+              },
+              "ok": true,
+              "peak_frame_ms": 27.622,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.156216,
+              "inspect_calls_per_second": 268.858503610386,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.273,
+                "initial_logical_time": 0.066339,
+                "initial_speed": 1,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 3.51210800000001,
+                "maximum_motion_dispatch_ms": 0.201,
+                "motion_events": 182,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.44576900000001
+              },
+              "ok": true,
+              "peak_frame_ms": 36.099,
+              "dispatch_ms": 7.273,
+              "elapsed_seconds": 3.363203,
+              "inspect_calls_per_second": 741.852335407646,
+              "issues": [],
+              "inspect_entity_entries": 2495,
+              "physics_callbacks": 207,
+              "live_pumps": 202
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 12.769,
+                "initial_logical_time": 3.51210800000001,
+                "initial_speed": 1,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 9.89271400000005,
+                "maximum_motion_dispatch_ms": 0.342,
+                "motion_events": 167,
+                "owed_simulation_seconds": 7.0082828429463e-16,
+                "simulation_progress_seconds": 6.38060600000004
+              },
+              "ok": true,
+              "peak_frame_ms": 94.26,
+              "dispatch_ms": 12.769,
+              "elapsed_seconds": 6.313104,
+              "inspect_calls_per_second": 3478.47904929176,
+              "issues": [],
+              "inspect_entity_entries": 21960,
+              "physics_callbacks": 382,
+              "live_pumps": 314
+            }
+          ],
+          "summary_sha256": "d88528528100a407a1108cbe72050bb5e041973813384d30326b7a1610721837"
+        },
+        {
+          "group": "group-03",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066302,
+                "owed_simulation_seconds": 3.46944695195361e-18,
+                "simulation_progress_seconds": 0.066302
+              },
+              "ok": true,
+              "peak_frame_ms": 27.409,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.155736,
+              "inspect_calls_per_second": 269.687162891046,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.066302,
+                "initial_speed": 1,
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 3.67433600000001,
+                "maximum_motion_dispatch_ms": 0.206,
+                "motion_events": 1441,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.60803400000001
+              },
+              "ok": true,
+              "peak_frame_ms": 36.391,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 3.533013,
+              "inspect_calls_per_second": 729.688795370977,
+              "issues": [],
+              "inspect_entity_entries": 2578,
+              "physics_callbacks": 216,
+              "live_pumps": 211
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.327,
+                "initial_logical_time": 3.67433600000001,
+                "initial_speed": 1,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 6.79203700000003,
+                "maximum_motion_dispatch_ms": 0.102,
+                "motion_events": 1321,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 3.11770100000002
+              },
+              "ok": true,
+              "peak_frame_ms": 99.585,
+              "dispatch_ms": 7.327,
+              "elapsed_seconds": 3.05398,
+              "inspect_calls_per_second": 2548.15028258207,
+              "issues": [],
+              "inspect_entity_entries": 7782,
+              "physics_callbacks": 187,
+              "live_pumps": 167
+            }
+          ],
+          "summary_sha256": "f772109b497e2bc1d801ec2ba7c447afe11cca83ccc40050e01088e6899f404f"
+        },
+        {
+          "group": "group-04",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066181,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.066181
+              },
+              "ok": true,
+              "peak_frame_ms": 27.98,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.157052,
+              "inspect_calls_per_second": 267.427348903548,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.066181,
+                "initial_speed": 1,
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 12.1663570000001,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 12.1001760000001
+              },
+              "ok": true,
+              "peak_frame_ms": 92.532,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 12.0101,
+              "inspect_calls_per_second": 2958.6764473235,
+              "issues": [],
+              "inspect_entity_entries": 35534,
+              "physics_callbacks": 726,
+              "live_pumps": 625
+            }
+          ],
+          "summary_sha256": "22243658c1f67201d75fe969250b884636ff3f9a82223830aafc7225061091a4"
+        }
+      ]
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-20-09-19724",
+      "report": "logs/gdunit4-performance-2026-11-04T00-20-09-19724/gdunit-report/results.xml",
+      "report_sha256": "d0f4dd20d902bdef655b159183c720ddb6efcbb54d84782fbe4466052d53197a",
+      "cases": 4,
+      "problems": 0,
+      "settings": {
+        "action_limit_ms": 100.0,
+        "frame_limit_ms": 100.0,
+        "inspect_call_budget": 30000,
+        "process_id": 41580,
+        "profile_filter": "",
+        "started_utc": "2026-11-04T00:20:25.3620302Z",
+        "training_observation_seconds": 2.0,
+        "continue_after_issues": true,
+        "observation_seconds": 2.0,
+        "text_filter": "",
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-20-09-19724",
+        "stacks_enabled": true,
+        "headless": false
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066425,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.066425
+              },
+              "ok": true,
+              "peak_frame_ms": 28.149,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.158379,
+              "inspect_calls_per_second": 265.186672475518,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.066425,
+                "initial_speed": 1,
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 2.155536,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 2.089111
+              },
+              "ok": true,
+              "peak_frame_ms": 34.711,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.010947,
+              "inspect_calls_per_second": 756.857341342164,
+              "issues": [],
+              "inspect_entity_entries": 1522,
+              "physics_callbacks": 125,
+              "live_pumps": 121
+            },
+            {
+              "action": {
+                "initial_logical_time": 2.155536,
+                "initial_speed": 1,
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 4.50186900000001,
+                "maximum_motion_dispatch_ms": 0.23,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 2.34633300000001
+              },
+              "ok": true,
+              "peak_frame_ms": 37.05,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.261099,
+              "inspect_calls_per_second": 1014.10862593809,
+              "issues": [],
+              "inspect_entity_entries": 2293,
+              "physics_callbacks": 141,
+              "live_pumps": 136
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.741,
+                "expected_center": "(83.375, 48.625)",
+                "initial_logical_time": 4.50186900000001,
+                "initial_speed": 1,
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 6.61951600000002,
+                "owed_simulation_seconds": 3.40005801291454e-16,
+                "simulation_progress_seconds": 2.11764700000001
+              },
+              "ok": true,
+              "peak_frame_ms": 93.931,
+              "dispatch_ms": 8.741,
+              "elapsed_seconds": 2.051088,
+              "inspect_calls_per_second": 2799.00228561622,
+              "issues": [],
+              "inspect_entity_entries": 5741,
+              "physics_callbacks": 127,
+              "live_pumps": 110
+            },
+            {
+              "action": {
+                "initial_logical_time": 6.61951600000002,
+                "initial_speed": 1,
+                "label": "Default game / select and move depot preview at 1x",
+                "logical_time": 9.07596400000004,
+                "maximum_motion_dispatch_ms": 0.299,
+                "motion_events": 86,
+                "owed_simulation_seconds": 1.11022302462516e-16,
+                "simulation_progress_seconds": 2.45644800000002
+              },
+              "ok": true,
+              "peak_frame_ms": 74.521,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.373839,
+              "inspect_calls_per_second": 4427.00621229999,
+              "issues": [],
+              "inspect_entity_entries": 10509,
+              "physics_callbacks": 146,
+              "live_pumps": 99
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 16.743,
+                "expected_center": "(158.125, 127.375)",
+                "initial_logical_time": 9.07596400000004,
+                "initial_speed": 1,
+                "label": "Default game / click and observe depot at 1x",
+                "logical_time": 11.2449290000001,
+                "owed_simulation_seconds": 6.93889390390723e-18,
+                "simulation_progress_seconds": 2.16896500000002
+              },
+              "ok": true,
+              "peak_frame_ms": 71.5,
+              "dispatch_ms": 16.743,
+              "elapsed_seconds": 2.084382,
+              "inspect_calls_per_second": 4505.89191424604,
+              "issues": [],
+              "inspect_entity_entries": 9392,
+              "physics_callbacks": 132,
+              "live_pumps": 91
+            }
+          ],
+          "summary_sha256": "89d5aba3b9d6b5e2117db4feabf097ee50789299b189e82e05c040fccac68a0a"
+        },
+        {
+          "group": "group-02",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066442,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.066442
+              },
+              "ok": true,
+              "peak_frame_ms": 27.364,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.157503,
+              "inspect_calls_per_second": 266.661587398335,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.769,
+                "initial_logical_time": 0.066442,
+                "initial_speed": 1,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 2.516006,
+                "maximum_motion_dispatch_ms": 0.252,
+                "motion_events": 122,
+                "owed_simulation_seconds": 1.83880688453542e-16,
+                "simulation_progress_seconds": 2.449564
+              },
+              "ok": true,
+              "peak_frame_ms": 35.138,
+              "dispatch_ms": 7.769,
+              "elapsed_seconds": 2.362789,
+              "inspect_calls_per_second": 734.301708701031,
+              "issues": [],
+              "inspect_entity_entries": 1735,
+              "physics_callbacks": 147,
+              "live_pumps": 142
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.811,
+                "initial_logical_time": 2.516006,
+                "initial_speed": 1,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 6.80739200000003,
+                "maximum_motion_dispatch_ms": 0.35,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 4.29138600000002
+              },
+              "ok": true,
+              "peak_frame_ms": 92.483,
+              "dispatch_ms": 8.811,
+              "elapsed_seconds": 4.224068,
+              "inspect_calls_per_second": 2081.64262507138,
+              "issues": [],
+              "inspect_entity_entries": 8793,
+              "physics_callbacks": 257,
+              "live_pumps": 238
+            }
+          ],
+          "summary_sha256": "f17d4f69266f93af214a2d18e014c0a24672da16e2b9c07ccd963ba8720d93f9"
+        },
+        {
+          "group": "group-03",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.07701,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.07701
+              },
+              "ok": true,
+              "peak_frame_ms": 41.371,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.166921,
+              "inspect_calls_per_second": 251.616033932219,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.07701,
+                "initial_speed": 1,
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 2.667883,
+                "maximum_motion_dispatch_ms": 0.179,
+                "motion_events": 961,
+                "owed_simulation_seconds": 1.80411241501588e-16,
+                "simulation_progress_seconds": 2.590873
+              },
+              "ok": true,
+              "peak_frame_ms": 41.573,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 2.515148,
+              "inspect_calls_per_second": 723.61546914933,
+              "issues": [],
+              "inspect_entity_entries": 1820,
+              "physics_callbacks": 156,
+              "live_pumps": 151
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.674,
+                "initial_logical_time": 2.667883,
+                "initial_speed": 1,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 4.80704100000001,
+                "maximum_motion_dispatch_ms": 0.086,
+                "motion_events": 969,
+                "owed_simulation_seconds": 3.64291929955129e-16,
+                "simulation_progress_seconds": 2.13915800000001
+              },
+              "ok": true,
+              "peak_frame_ms": 43.968,
+              "dispatch_ms": 7.674,
+              "elapsed_seconds": 2.061619,
+              "inspect_calls_per_second": 1222.34030633206,
+              "issues": [],
+              "inspect_entity_entries": 2520,
+              "physics_callbacks": 128,
+              "live_pumps": 122
+            }
+          ],
+          "summary_sha256": "8e9026fe41c9fb9091a87803e3cc7a66d0b4082d944b76ceb32ddbc41da4e2a5"
+        },
+        {
+          "group": "group-04",
+          "complete": true,
+          "pending": [],
+          "results": [
+            {
+              "action": {
+                "initial_logical_time": 0.0,
+                "initial_speed": 0,
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066417,
+                "owed_simulation_seconds": 0.0,
+                "simulation_progress_seconds": 0.066417
+              },
+              "ok": true,
+              "peak_frame_ms": 30.066,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 0.156765,
+              "inspect_calls_per_second": 267.916945746819,
+              "issues": [],
+              "inspect_entity_entries": 42,
+              "physics_callbacks": 9,
+              "live_pumps": 9
+            },
+            {
+              "action": {
+                "initial_logical_time": 0.066417,
+                "initial_speed": 1,
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 12.1574850000001,
+                "owed_simulation_seconds": 1.73472347597681e-17,
+                "simulation_progress_seconds": 12.0910680000001
+              },
+              "ok": true,
+              "peak_frame_ms": 90.657,
+              "dispatch_ms": 0.0,
+              "elapsed_seconds": 12.009044,
+              "inspect_calls_per_second": 3005.6514073893,
+              "issues": [],
+              "inspect_entity_entries": 36095,
+              "physics_callbacks": 724,
+              "live_pumps": 633
+            }
+          ],
+          "summary_sha256": "0f58a9c70b59719a2fcfb74b715e4a4389dd766f4b5ba983cd5d3767dee2917e"
+        }
+      ]
+    }
+  ],
+  "regression_results": [
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-11-32-17444",
+      "report": "logs/gdunit4-performance-2026-11-04T00-11-32-17444/gdunit-report/results.xml",
+      "report_sha256": "c73fb9116c97110cebe36517e1c785ae0236fd47dc3d70d45f06f89aaec39549",
+      "cases": 5,
+      "problems": 0,
+      "settings": {
+        "started_utc": "2026-11-04T00:11:47.5435914Z",
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-11-32-17444",
+        "headless": true,
+        "action_limit_ms": 100.0,
+        "process_id": 34688,
+        "selection": [
+          "game/diagnostics/tests/gdunit/cohesion_read_test.gd"
+        ],
+        "profile_filter": "",
+        "text_filter": "",
+        "stacks_enabled": false,
+        "frame_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "inspect_call_budget": 30000,
+        "continue_after_issues": false,
+        "observation_seconds": 2.0
+      },
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-15-24-26924",
+      "report": "logs/gdunit4-performance-2026-11-04T00-15-24-26924/gdunit-report/results.xml",
+      "report_sha256": "2773ae5571b99955d53936d16cfdba1475010b35ed9ef1eb43c7760d6b9b3ad4",
+      "cases": 22,
+      "problems": 0,
+      "settings": {
+        "selection": [
+          "game/diagnostics/tests/gdunit/training_read_test.gd",
+          "game/training/tests/training_domain_test.gd",
+          "game/training/tests/training_input_test.gd"
+        ],
+        "action_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "text_filter": "",
+        "continue_after_issues": false,
+        "frame_limit_ms": 100.0,
+        "inspect_call_budget": 30000,
+        "process_id": 38464,
+        "started_utc": "2026-11-04T00:15:44.0007540Z",
+        "profile_filter": "",
+        "headless": false,
+        "observation_seconds": 2.0,
+        "stacks_enabled": false,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-15-24-26924"
+      },
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-16-10-26924",
+      "report": "logs/gdunit4-performance-2026-11-04T00-16-10-26924/gdunit-report/results.xml",
+      "report_sha256": "7a0be82199ceaa2ecd0e46a83490d387e3801af4a1eb385a47ee7605e4a53882",
+      "cases": 10,
+      "problems": 0,
+      "settings": {
+        "selection": [
+          "game/diagnostics/tests/gdunit/menu_performance_test.gd"
+        ],
+        "action_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "text_filter": "",
+        "continue_after_issues": false,
+        "frame_limit_ms": 100.0,
+        "inspect_call_budget": 30000,
+        "process_id": 30356,
+        "started_utc": "2026-11-04T00:16:27.7050410Z",
+        "profile_filter": "",
+        "headless": true,
+        "observation_seconds": 2.0,
+        "stacks_enabled": false,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-16-10-26924"
+      },
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-16-39-26924",
+      "report": "logs/gdunit4-performance-2026-11-04T00-16-39-26924/gdunit-report/results.xml",
+      "report_sha256": "f9369d2ba536cae279b63eb9207be1b45ce5b2a78efeea5bd02fb196013eeeaa",
+      "cases": 2,
+      "problems": 0,
+      "settings": {
+        "selection": [
+          "game/diagnostics/tests/gdunit/live_frame_test.gd"
+        ],
+        "action_limit_ms": 100.0,
+        "training_observation_seconds": 2.0,
+        "text_filter": "",
+        "continue_after_issues": false,
+        "frame_limit_ms": 100.0,
+        "inspect_call_budget": 30000,
+        "process_id": 36772,
+        "started_utc": "2026-11-04T00:16:54.5238160Z",
+        "profile_filter": "",
+        "headless": true,
+        "observation_seconds": 2.0,
+        "stacks_enabled": false,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-04T00-16-39-26924"
+      },
+      "stderr_bytes": 0
+    }
+  ],
+  "retained_regressions": {
+    "snapshot_manifest": "logs/gdunit4-performance-2026-11-04T00-16-39-26924/source_manifest.json",
+    "scripts": [
+      {
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\combat_regression.log",
+        "sha256": "1c423bfbfd67c8c9d1d0acad209d0028f411cee99088d4bac2d6be109436013e",
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\combat_regression-errors.log",
+        "script": "game/combat/tests/combat_regression.gd",
+        "exit_code": 0,
+        "stdout_sha256": "fea583d8c56451b253845f2c833641a772b1d9e779d01dad720e4ed44fd84ee3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\military_regression.log",
+        "sha256": "b0a8a2c16da784d34a6411841ae805a77826435fbbefb5b0dea4a129438817b6",
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\military_regression-errors.log",
+        "script": "game/military/tests/military_regression.gd",
+        "exit_code": 0,
+        "stdout_sha256": "12abc1fa03cd4112a242ec97edbb0b4c573cffd63f71939d3c100b0d09d47772",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\vehicle_combat_regression.log",
+        "sha256": "62e06f579527f39a8b14b86b5f5d9769697653e45cdfc55d4fbb34384ba3751b",
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\vehicle_combat_regression-errors.log",
+        "script": "game/vehicle_combat/tests/vehicle_combat_regression.gd",
+        "exit_code": 0,
+        "stdout_sha256": "6de2a54e44fc445b92e676cbfd7be59f1567e3a42737d11b04a7039fd36fbd99",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\identity_regression.log",
+        "sha256": "129bc51333c2936e243e0cc3f98f5edead7f867c488a96d5dcb648c929560696",
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\identity_regression-errors.log",
+        "script": "game/identity/tests/identity_regression.gd",
+        "exit_code": 0,
+        "stdout_sha256": "74df2b81a542010a3b0b8acff90f097d26c550f79498acdc3078b2f14f5803ed",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\session_regression-current-errors.log",
+        "exit_code": 0,
+        "script": "game/battlefield/tests/session_regression.gd",
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\session_regression-current.log",
+        "sha256": "7ca70c342d7fbf6689da5d80b740aa17056c0f6f645be7df9a2449bf85d2490e",
+        "stdout_sha256": "6882a22c1c6a46920dbdca4b25675e7bfe6edae0312df6efce87044dfe5ae2a3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stderr": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\forward_clock_regression-current-errors.log",
+        "exit_code": 0,
+        "script": "game/battlefield/tests/forward_clock_regression.gd",
+        "stdout": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\formation-performance-retained-2026-11-04T00-18-05-37936\\forward_clock_regression-current.log",
+        "sha256": "4c60faafe6ceaf98cfa58f2b8ccd6d0cd5180bf478c996404c8d9e859eb65cf4",
+        "stdout_sha256": "6236d9bafdada357f7b0483fef66a6661d85a516565f98edbcc2329fb5728b1c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "checks": {
+      "combat": 176,
+      "military": 503,
+      "vehicle_combat": 276,
+      "identity": 624,
+      "session": 12,
+      "forward_clock": 39
+    },
+    "total_checks": 1630,
+    "session_test_update": "The unchanged old session test failed the obsolete resource-central expectation on both pre-task and fixed builds. Current Farmland declares resource-centre-blue/red and seven other objectives. The test now verifies every authored objective, the actual empty-field opening and replacement through Main._start_playtest, while preserving hidden-view clock, pause, identity and audit checks.",
+    "historical_failure_stdout": "logs/formation-performance-retained-2026-11-04T00-18-05-37936/session_regression.log",
+    "baseline_failure_stderr": "logs/formation-performance-retained-2026-11-04T00-18-05-37936/session-baseline-errors.log"
+  },
+  "summary": {
+    "placement_cases_per_run": 4,
+    "clean_native_runs": 3,
+    "unchanged_limits": {
+      "frame_ms": 100,
+      "action_ms": 100,
+      "inspect_entity_per_second": 30000
+    },
+    "worst_frame_ms_across_three_runs": 99.585,
+    "final_default_worst_frame_ms": 93.931,
+    "longer_observation_worst_frame_ms": 99.585,
+    "all_phases_completed": true,
+    "all_native_runs_used_full_caller_stacks": true,
+    "largest_checkpoint_simulation_debt_seconds": 7.32053306862213e-16,
+    "focused_gdunit_cases_exercised": 43,
+    "default_selection_cases": 47,
+    "original_frozen_domain_checkpoints": 13,
+    "frozen_training_states": 9,
+    "cohesion_cost_guard": "100 reads require 100 fresh count queries and zero inspect_entity exports; the old healthy eight-person path exported 16 detailed people per assessment.",
+    "performance_interpretation": "Bounded runs on the installed Godot 4.7.2 system, with live 1x progress and unchanged instrumentation/limits. Frame intervals include rendering/scheduling and are not script CPU attribution or a statistical guarantee for all hardware/states."
+  },
+  "iteration_evidence": [
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-47-13-32776",
+      "finding": "Cohesion-only change preserved behavior but default placement still had three timing failures."
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-53-54-3188",
+      "finding": "Opt-in substep timings attributed the remaining initial decision burst; no limits were raised."
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-03-42-29232",
+      "finding": "A conservative terrain row-prefilter experiment did not improve this stall. Terrain source was restored to its exact pre-task SHA256 and that experimental test was removed; no terrain behavior change remains."
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-04T00-08-08-28896",
+      "finding": "Frame coordination let placement workflows pass but the no-building control still failed near 102.5 ms; unused mounted-hull/rack exports were subsequently removed."
+    }
+  ],
+  "fixture_corrections": [
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-56-54-36956",
+      "issue": "New ammunition fixture called a nonexistent consumption API."
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-57-47-35276",
+      "issue": "Replacement fixture used a place-only consumption API with a person holder."
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-58-29-8732",
+      "issue": "Fixture passed an untyped empty array to a typed roster API."
+    },
+    {
+      "resolution": "The passing current guard uses actual load/fire operations and a correctly typed empty roster; no expected gameplay values or frozen baselines were changed."
+    }
+  ],
+  "source_anchors": [
+    {
+      "function": "game/battlefield/squad_execution.gd::settle",
+      "line": 69,
+      "end_line": 94,
+      "function_sha256": "696173eaeb33687e9e432ea25bd08d4805deaec6da1752d8e26c774293a24c21",
+      "file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992",
+      "raw_file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992"
+    },
+    {
+      "function": "game/battlefield/squad_execution.gd::_execute",
+      "line": 105,
+      "end_line": 237,
+      "function_sha256": "49f6f94592e1377d1b83493c2ff1ba1a9ed150cf0ae12b5df33bc3c77520b9dc",
+      "file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992",
+      "raw_file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992"
+    },
+    {
+      "function": "game/battlefield/squad_execution.gd::_walk",
+      "line": 514,
+      "end_line": 536,
+      "function_sha256": "0cc03d90a528501f69163182e26d6abc705de6659c34bed0d9673717ef4a5db2",
+      "file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992",
+      "raw_file_sha256": "d9f315d2a74e2440b6d8b22ebe62ab875f057e120374c115377ec8faa3788992"
+    },
+    {
+      "function": "game/battlefield/tests/session_regression.gd::_run",
+      "line": 14,
+      "end_line": 45,
+      "function_sha256": "d01bb9a41c532eb4c00235ad95a97a7d5e153b61fc5310c6efc2081c2ec8d0d8",
+      "file_sha256": "7ca70c342d7fbf6689da5d80b740aa17056c0f6f645be7df9a2449bf85d2490e",
+      "raw_file_sha256": "7ca70c342d7fbf6689da5d80b740aa17056c0f6f645be7df9a2449bf85d2490e"
+    },
+    {
+      "function": "game/battlefield/tests/session_regression.gd::_declared_objectives_present",
+      "line": 48,
+      "end_line": 52,
+      "function_sha256": "71693765f034694dbbe3c1d466f8bc369154cc0ad21f94a3422a06ee645d4bfb",
+      "file_sha256": "7ca70c342d7fbf6689da5d80b740aa17056c0f6f645be7df9a2449bf85d2490e",
+      "raw_file_sha256": "7ca70c342d7fbf6689da5d80b740aa17056c0f6f645be7df9a2449bf85d2490e"
+    },
+    {
+      "function": "game/combat/combat_service.gd::squad_cohesion",
+      "line": 326,
+      "end_line": 338,
+      "function_sha256": "9d66917d367bfc850d661db0c512053e54bcaed2925308be20b69473cf3eb908",
+      "file_sha256": "070426f5c400cbb8ca90c271b039fcdc019fc3c0de34cc3bbe13a6a351e814fc",
+      "raw_file_sha256": "070426f5c400cbb8ca90c271b039fcdc019fc3c0de34cc3bbe13a6a351e814fc"
+    },
+    {
+      "function": "game/identity/identity_ledger.gd::formation_cohesion_counts",
+      "line": 227,
+      "end_line": 245,
+      "function_sha256": "b75454c0a95d0672f4b203879fe958c546f18fe5b9668b00e1e01b378d00330e",
+      "file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484",
+      "raw_file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484"
+    },
+    {
+      "function": "game/identity/identity_ledger.gd::active_formation_member_ids",
+      "line": 248,
+      "end_line": 253,
+      "function_sha256": "816df6741567dbcbc43943fe5de4741ba9e12bb6243cea2d9a677e6de0953a9e",
+      "file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484",
+      "raw_file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484"
+    },
+    {
+      "function": "game/identity/identity_ledger.gd::_active_formation_person",
+      "line": 256,
+      "end_line": 261,
+      "function_sha256": "19cfb3363ac26876e08ccecef49e4a1a68c2904bf01380401ef9bfccdab64e66",
+      "file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484",
+      "raw_file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484"
+    },
+    {
+      "function": "game/identity/identity_ledger.gd::ammunition_quantities_at",
+      "line": 437,
+      "end_line": 450,
+      "function_sha256": "52ad1628e45a566363a11f98f3a24b765311e5903203636f69f8a83ffa40e8bd",
+      "file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484",
+      "raw_file_sha256": "1ff57dc2a5c83662fa1cc64e38f61e9f20c2887e804b1cebd43156d169c2f484"
+    },
+    {
+      "function": "game/main/game_session.gd::_physics_process",
+      "line": 21,
+      "end_line": 38,
+      "function_sha256": "3e1169df0327341381a444741d388895a9afa4b9229e7af2ce2390792d811afc",
+      "file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94",
+      "raw_file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+    },
+    {
+      "function": "game/main/game_session.gd::replace_simulation",
+      "line": 41,
+      "end_line": 49,
+      "function_sha256": "8b0458451e7b45b6e66567f1def3941bbbf6f5604e535984d8812673eed772bd",
+      "file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94",
+      "raw_file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+    },
+    {
+      "function": "game/military/organization.gd::personal_round_counts",
+      "line": 954,
+      "end_line": 955,
+      "function_sha256": "a1ba3c6057eec84dc3bff83f487ab01ae05350954a607ec19184a3d164eb080f",
+      "file_sha256": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92",
+      "raw_file_sha256": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92"
+    },
+    {
+      "function": "game/military/organization.gd::_active_roster_members",
+      "line": 1080,
+      "end_line": 1082,
+      "function_sha256": "d5f8d262dc193e06521f4188053e9df99e8aaf8169e2e19b946ca5e61606a712",
+      "file_sha256": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92",
+      "raw_file_sha256": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::uses_live_wall_clock",
+      "line": 164,
+      "end_line": 165,
+      "function_sha256": "2e745873bea2ea0dfa2ad10cc915f15f42614177af59e1b500342df437d538b4",
+      "file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744",
+      "raw_file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+    },
+    {
+      "function": "game/staffing/rear_simulation.gd::_settle",
+      "line": 557,
+      "end_line": 622,
+      "function_sha256": "834cce82dd08d47907e10dd39307dfd6635256763e751b08d182f1867c4659a0",
+      "file_sha256": "2867536a6eeca24d49f54cd2ba48aee695fd9921f2ff34a0204dcda090cae948",
+      "raw_file_sha256": "a69ec01a4d386793f3c0dd8ecd9a5a709ee4dcc4c63f191cc16e745e4831d886"
+    },
+    {
+      "function": "game/vehicle_combat/vehicle_combat_service.gd::advance_to",
+      "line": 239,
+      "end_line": 256,
+      "function_sha256": "a208cfbbe4ca07bdad354776190b67c10821c0b1b976bb9da8aa9b1201872bb5",
+      "file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
+      "raw_file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f"
+    },
+    {
+      "function": "game/vehicle_combat/vehicle_combat_service.gd::_rack_source",
+      "line": 362,
+      "end_line": 365,
+      "function_sha256": "a78af598ae0176cd5b654a18b700b1db334a1473609a7cfec74e117d8fd95446",
+      "file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
+      "raw_file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f"
+    },
+    {
+      "function": "game/vehicle_combat/vehicle_combat_service.gd::_available_rack",
+      "line": 367,
+      "end_line": 368,
+      "function_sha256": "be3ff3fc4eaeb78c824229e2bf46eeffd66f98e743e864493496777b5898a91b",
+      "file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
+      "raw_file_sha256": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::_begin_phase",
+      "line": 132,
+      "end_line": 135,
+      "function_sha256": "907fe9839c315e93deec7f7c2ec0b7c68ca1e09ca3c1cf859f051d1155233bdd",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::_finish",
+      "line": 258,
+      "end_line": 271,
+      "function_sha256": "bea08aaa3aeff14aa0d7dac0076da6ff23d1b79920d547867e1630b15ec5a818",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::test_00_cohesion_matches_legacy_eligibility_boarding_and_geometry",
+      "line": 7,
+      "end_line": 43,
+      "function_sha256": "bef52da562156af124c239229dc3eb51301cccde12df6abe366bb46bb1a37e6a",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::test_01_movement_and_injury_keep_immediate_dispersion_timestamps",
+      "line": 45,
+      "end_line": 63,
+      "function_sha256": "a52e3590649990717bc4e945e8d2843c99cc60079e63a7af8bd1dd22d851773a",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::test_02_repeated_cohesion_reads_export_no_detailed_entities",
+      "line": 65,
+      "end_line": 74,
+      "function_sha256": "847f6f1f54e69030e939322229da75d8d181956a9d5a1ead85f7b021f0f5494f",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::test_03_batch_ammunition_matches_fresh_scalar_counts",
+      "line": 76,
+      "end_line": 93,
+      "function_sha256": "2c72ae992027d7e170e13fb3e81929ebad9496f0eb74e5738bff84d8ede0b768",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::test_04_mounted_rack_and_idle_reload_reads_stay_local",
+      "line": 95,
+      "end_line": 125,
+      "function_sha256": "f340d62df60ccc820c4c42153a247ffe8ee9515359fa915c6878db8ac9383d30",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::_fixture",
+      "line": 127,
+      "end_line": 140,
+      "function_sha256": "3476384d32c233a70fd109a5995541505d6918875c5ae962ea4dc960486dfc17",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::_legacy",
+      "line": 142,
+      "end_line": 167,
+      "function_sha256": "5033ada53fb162c9974dd201f8b336ff21dc44681662e1e0934bb072df20e075",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/cohesion_read_test.gd::_legacy_members",
+      "line": 169,
+      "end_line": 177,
+      "function_sha256": "977c6547e2688d117bdc9837e0268542330c705c612819279d9e266405b003d0",
+      "file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14",
+      "raw_file_sha256": "51b68265a37a279ae56d83b192c79d5a11e5529162e9d7be4611fb34aa3c7b14"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/live_frame_test.gd::test_00_live_catch_up_pumps_once_per_process_frame_without_losing_elapsed_time",
+      "line": 7,
+      "end_line": 44,
+      "function_sha256": "2ec4ecaf77c0f25ec97d801fd5f8c36aa68ef5b9ec544d6aeb6be98a1a9d57ac",
+      "file_sha256": "66a859fd13ae91203f2a264a59f60b2e6a96fc8ea38bf99e323c9dd9a7cfd9b8",
+      "raw_file_sha256": "66a859fd13ae91203f2a264a59f60b2e6a96fc8ea38bf99e323c9dd9a7cfd9b8"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/live_frame_test.gd::test_01_explicit_delta_models_keep_every_physics_step",
+      "line": 46,
+      "end_line": 56,
+      "function_sha256": "7acb29f404525d5cba5a9e88ee402989a4c4cd560d5c576e20c071dddb148b1e",
+      "file_sha256": "66a859fd13ae91203f2a264a59f60b2e6a96fc8ea38bf99e323c9dd9a7cfd9b8",
+      "raw_file_sha256": "66a859fd13ae91203f2a264a59f60b2e6a96fc8ea38bf99e323c9dd9a7cfd9b8"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::test_00_default_game_move_preview_place_and_repeat_at_one_x",
+      "line": 32,
+      "end_line": 54,
+      "function_sha256": "36b1c39b7a3bfd2d48606a8d79ab47997f58ee25e63a62227b942d28816c67e9",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::test_01_transformed_map_rotation_rejected_click_recovery_and_cancel_at_one_x",
+      "line": 56,
+      "end_line": 92,
+      "function_sha256": "5340a152154960f0f421e9e8286fe2dde8a9bb878081afc6fe66cbbe76d81bd5",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::test_02_sustained_pointer_motion_and_post_placement_workload_at_one_x",
+      "line": 94,
+      "end_line": 110,
+      "function_sha256": "bd1c94983b8bf535ce0443d00b82eafb10ac3c80e32023ef48f3bbd4029c4d75",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::test_03_default_game_without_building_control_at_one_x",
+      "line": 112,
+      "end_line": 121,
+      "function_sha256": "ab069c24d35987d5772729017956322285448668e232e6a217f0fb1e0bb1caa7",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::_open",
+      "line": 123,
+      "end_line": 130,
+      "function_sha256": "f92c0394f06b08627a81bbc48f89eaae04b2b4514679de00a5de2801ea0b48ac",
+      "file_sha256": "2dfc350e6687a6dd7724297f7919266f09aefda6a896be1fd326fffa7abb6683",
+      "raw_file_sha256": "8e22ca0d3719ac38935eebb9837662ccd65761531a7f1fadf6a1e980889fff29"
+    },
+    {
+      "function": "tools/ui_function_map.py::reviewed_flows",
+      "line": 197,
+      "end_line": 284,
+      "function_sha256": "6ac9a68e3f661e4c2b7e0be5f3f24f56ec4cca1b66bc312390a764626bc3a438",
+      "file_sha256": "b878f9c69a0b7a95f9d8f469157d8715521d6227451ed98e4797d8e3fd4a0176",
+      "raw_file_sha256": "b878f9c69a0b7a95f9d8f469157d8715521d6227451ed98e4797d8e3fd4a0176"
+    }
+  ],
+  "preserved_baseline_sha256": {
+    "game/diagnostics/tests/gdunit/fixtures/read_path_baseline.json": "940b5ad2e001de1a652a09eab532f707e77b2c9b00cf8ac351524f2f7e38bc93",
+    "game/diagnostics/tests/gdunit/fixtures/training_read_baseline.json": "8c2e3aed0e16daffbe147df5091961959c42f6abf945b0d4ad3f31782bb06183"
+  },
+  "remaining_limits": [
+    "Full 47-case default suite and the broader UI/building matrix were not rerun in this fix; their previously recorded new-game/cancellation/menu timing issues remain open until revalidated.",
+    "The global dispatcher/settlement design, other broad advanced-panel reads and later-game performance remain overhaul work.",
+    "Native pointer scenarios cover the default opening and these bounded 1x actions; they do not certify every building, arbitrary late-game state or every function.",
+    "Pause and 2x tests verify time accounting; sustained full-world 2x frame/progress performance was not certified by the 1x native placement runs."
+  ],
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/performance/general_optimization.html",
+      "use": "Measure identified costs, recheck after each change and discard ineffective optimizations."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_engine.html#class-engine-method-get-process-frames",
+      "use": "A process-frame identifier advances even with the render loop disabled and can coordinate repeated expensive calls."
+    }
+  ],
+  "log_availability": "Raw isolated reports and comparison copies are local ignored artifacts. This record preserves hashes and bounded results without assuming raw logs exist in a fresh checkout."
+}

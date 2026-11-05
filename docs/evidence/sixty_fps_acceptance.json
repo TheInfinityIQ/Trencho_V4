@@ -1,0 +1,323 @@
+{
+  "id": "E16",
+  "recorded_utc": "2026-11-04T19:25:51.691404+00:00",
+  "status": "acceptance_policy_implemented_game_still_fails",
+  "user_requirement": "Never dip below 60 FPS; no average/percentile-only pass while individual measured frames exceed 1000/60 ms.",
+  "active_policy": {
+    "minimum_fps": 60,
+    "frame_limit_ms": 16.666666666666668,
+    "synchronous_action_limit_ms": 16.666666666666668,
+    "source": "game/diagnostics/performance_budget.gd",
+    "overrides": "Launcher arguments above this ceiling are rejected. Direct probe/menu settings are capped; zero/nonfinite values cannot disable the gate.",
+    "inspect_calls_per_second": 30000,
+    "simulation_progress_debt_seconds": 0.25,
+    "measurement_frame_cap": 0,
+    "disable_vsync_requested": true,
+    "warmup": "Frame/action limits include running warmup observations; no warmup exemption."
+  },
+  "decision": {
+    "problem": "The former 100 ms alarm allowed severe visible stutters; historical passes did not establish smooth 60 FPS. A 60 FPS test cap includes deliberate waiting in wall-frame samples.",
+    "principles": [
+      "Explicit measurable performance requirements",
+      "Tail/worst-frame latency instead of average-only throughput",
+      "Separate capacity measurement from deliberate pacing",
+      "Preserve failures and stop interrupted test sequences"
+    ],
+    "choice": "Enforce 1000/60 ms for measured frames and synchronous actions. Request uncapped, VSync-disabled performance runs, retain raw intervals and stop/log the first issue. Stop sending pointer input or checking final poses once a performance failure has paused that sequence.",
+    "owner": "Shared Budget constants/helper, validated launcher arguments, existing scene-owned probes/menu suite.",
+    "triggers": [
+      "Each measured frame",
+      "Measured input dispatch/receipt",
+      "Diagnostic run initialization"
+    ],
+    "alternatives": [
+      {
+        "option": "Retain 100 ms or average-only acceptance",
+        "assessment": "Rejected: contradicts the user requirement and hides isolated spikes."
+      },
+      {
+        "option": "Subtract a guessed pacing allowance from capped frames",
+        "assessment": "Rejected: can hide actual work. Uncap measurement and preserve raw wall intervals."
+      },
+      {
+        "option": "Loosen limits, drop elapsed work or change gameplay cadence",
+        "assessment": "Rejected: preserve correctness, progress and workloads."
+      }
+    ],
+    "evidence": [
+      "Existing E15 captures include 62.347 ms live ticks and 51.959 ms settlement.",
+      "Service-level capture below observes opening-policy and planning/admission spikes.",
+      "Three real rejection/pause/log contracts pass, including attempted 100 ms environment overrides.",
+      "Actual uncapped 1x tests fail at 25.236 ms with profiling and 22.572 ms without it."
+    ],
+    "tradeoffs": [
+      "Uncapped input stress generates more events than a capped run; it is a new baseline, not an optimization comparison.",
+      "VSync disabling is requested; driver enforcement can override it. Engine cap and flags are recorded.",
+      "Wall intervals include scheduling/rendering. Preserve over-budget observations; no outlier allowance is used to pass.",
+      "Profiler costs and nested inclusive scopes require separate attribution/acceptance modes.",
+      "No gameplay scheduler/strategy optimization is claimed in this policy change. The application still fails."
+    ],
+    "acceptance": "Enforcement guards pass; game compliance is false. Every measured frame/action must satisfy the ceiling in declared native scenarios with correctness/progress gates before claiming compliance.",
+    "rollback": "Retain the user 60 FPS requirement and all raw evidence. Measurement/configuration changes are independently reversible; do not restore 100 ms to obtain passes.",
+    "status": "policy_validated_application_performance_unresolved"
+  },
+  "service_attribution": {
+    "logs": "logs/gdunit4-performance-2026-11-04T19-09-59-2516",
+    "classification": "diagnostic_attribution_only_not_60_fps_acceptance",
+    "settings": "Captured before defaults changed: old 100 ms alarm, 60 FPS cap, counters on, stacks off, stage timings on. Its legacy PASS is not a 60 FPS pass.",
+    "unique_complete_second_windows": 21,
+    "scopes": {
+      "battlefield/squad_execution.gd::settle/policy": {
+        "calls": 21,
+        "total_usec": 106839,
+        "max_usec": 46726
+      },
+      "rear_base/base_simulation.gd::tick_live": {
+        "calls": 1159,
+        "total_usec": 12644623,
+        "max_usec": 63342
+      },
+      "staffing/rear_simulation.gd::_settle": {
+        "calls": 2320,
+        "total_usec": 5045875,
+        "max_usec": 52700
+      },
+      "staffing/rear_simulation.gd::_settle/battlefield_operations": {
+        "calls": 2355,
+        "total_usec": 890494,
+        "max_usec": 49354
+      },
+      "staffing/rear_simulation.gd::_settle/combat": {
+        "calls": 2361,
+        "total_usec": 7769,
+        "max_usec": 14
+      },
+      "staffing/rear_simulation.gd::_settle/construction": {
+        "calls": 2361,
+        "total_usec": 10060,
+        "max_usec": 12
+      },
+      "staffing/rear_simulation.gd::_settle/military": {
+        "calls": 2361,
+        "total_usec": 231099,
+        "max_usec": 1044
+      },
+      "staffing/rear_simulation.gd::_settle/orders": {
+        "calls": 2361,
+        "total_usec": 235195,
+        "max_usec": 2961
+      },
+      "staffing/rear_simulation.gd::_settle/vehicles": {
+        "calls": 2361,
+        "total_usec": 5171,
+        "max_usec": 8
+      },
+      "staffing/rear_simulation.gd::advance_time": {
+        "calls": 1148,
+        "total_usec": 9385690,
+        "max_usec": 63295
+      },
+      "battlefield/squad_execution.gd::_execute/capability": {
+        "calls": 75,
+        "total_usec": 72940,
+        "max_usec": 2669
+      },
+      "battlefield/squad_execution.gd::_execute/collection": {
+        "calls": 75,
+        "total_usec": 165,
+        "max_usec": 4
+      },
+      "battlefield/squad_execution.gd::_execute/people": {
+        "calls": 75,
+        "total_usec": 203859,
+        "max_usec": 14930
+      },
+      "battlefield/squad_execution.gd::_execute/rounds": {
+        "calls": 75,
+        "total_usec": 11986,
+        "max_usec": 197
+      },
+      "battlefield/squad_execution.gd::_walk/route": {
+        "calls": 18,
+        "total_usec": 16586,
+        "max_usec": 1456
+      },
+      "battlefield/squad_execution.gd::settle/execute": {
+        "calls": 150,
+        "total_usec": 295963,
+        "max_usec": 17028
+      },
+      "rear_base/base_simulation.gd::_pump_live/pure_work": {
+        "calls": 9190,
+        "total_usec": 3189003,
+        "max_usec": 21255
+      }
+    },
+    "interpretation": "Opening policy max 46.726 ms; battlefield settlement 49.354 ms; planning/admission-labelled pure_work 21.255 ms; live tick 63.342 ms. These nested inclusive wall scopes must not be summed or labelled self CPU time. pure_work may include admission; source review is required before changing it."
+  },
+  "new_gate_runs": [
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T19-15-54-37640",
+      "mode": "stage timings on",
+      "result": "failed",
+      "frame_cap": 0,
+      "disable_vsync_requested": true,
+      "frame_limit_ms": 16.666666666666668,
+      "cases": [
+        {
+          "ok": true,
+          "elapsed_seconds": 0.028331,
+          "peak_frame_ms": 10.221,
+          "dispatch_ms": 0.0,
+          "issues": [],
+          "label": "Default game / open Build and start 1x through player controls"
+        },
+        {
+          "ok": false,
+          "elapsed_seconds": 0.953989,
+          "peak_frame_ms": 25.236,
+          "dispatch_ms": 0.0,
+          "issues": [
+            {
+              "milliseconds": 25.236,
+              "reason": "frame_time_budget"
+            },
+            {
+              "details": {},
+              "message": "Ghost coordinates must follow the pointer through the actual map transform.",
+              "reason": "contract_failure"
+            },
+            {
+              "limit": 16.6666666666667,
+              "milliseconds": 25.236,
+              "reason": "frame_time_budget"
+            }
+          ],
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x"
+        }
+      ]
+    },
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T19-18-09-32080",
+      "mode": "stage timings off",
+      "result": "failed",
+      "frame_cap": 0,
+      "disable_vsync_requested": true,
+      "frame_limit_ms": 16.666666666666668,
+      "cases": [
+        {
+          "ok": true,
+          "elapsed_seconds": 0.027099,
+          "peak_frame_ms": 10.203,
+          "dispatch_ms": 0.0,
+          "issues": [],
+          "label": "Default game / open Build and start 1x through player controls"
+        },
+        {
+          "ok": false,
+          "elapsed_seconds": 0.951429,
+          "peak_frame_ms": 22.572,
+          "dispatch_ms": 0.0,
+          "issues": [
+            {
+              "milliseconds": 22.572,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 16.6666666666667,
+              "milliseconds": 22.572,
+              "reason": "frame_time_budget"
+            }
+          ],
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "guards": {
+      "logs": "logs/gdunit4-performance-2026-11-04T19-34-08-31796",
+      "cases": 13,
+      "failures": 0,
+      "includes": "Ten original guards/frozen 13 domain states plus three real 17 ms rejection/pause/log tests.",
+      "earlier_logs": "logs/gdunit4-performance-2026-11-04T19-20-45-36512"
+    },
+    "game_meets_sixty_fps": false,
+    "default_suite_cases": 58,
+    "full_default_suite_executed": false,
+    "maps_and_tools": {
+      "tool_tests": 12,
+      "tool_tests_status": "passed",
+      "document_source_validation": "passed: active target, decision fields, references, phase graph, six source anchors, current inventory and 58 declared cases",
+      "purpose_reviews_pending": 0,
+      "final_map_and_diagram": "Regenerate fingerprints and require both --check tools before delivery."
+    },
+    "launcher_rejection_smoke": {
+      "cases": 2,
+      "status": "passed",
+      "checks": [
+        "GdUnit launcher rejects FrameLimitMs=100 before starting Godot.",
+        "Menu launcher rejects ActionLimitMs=100 before starting Godot."
+      ]
+    },
+    "purpose_reviews": "19 added/changed functions/callbacks reviewed against current implementation; zero pending."
+  },
+  "failure_capture_correction": "First strict run also checked the final pointer pose after the world had paused. The sweep now records samples and returns on its first issue. The unprofiled second run reports only frame-budget failure.",
+  "historical_evidence_policy": "Preserve E13/E15 passes against their original 100 ms criterion. They are not 60 FPS compliance.",
+  "next_work": [
+    "Profile inside OpeningPolicy.tick and physical admission callees; current inclusive timing does not prove which inner function dominates.",
+    "Bound pure preparation separately from fresh atomic admission, preserving authority, cancellation, physical custody and ordering.",
+    "Apply the whole-frame budget to independent-owner/event/timer migrations; moving a 47 ms workload to timeout does not make it cheap.",
+    "Revalidate affected native 1x, paused/2x, cancellation and larger-world scenarios; no full-game performance claim from a subset."
+  ],
+  "references": [
+    "https://docs.godotengine.org/en/4.7/tutorials/performance/cpu_optimization.html",
+    "https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html"
+  ],
+  "source_anchors": [
+    {
+      "function": "game/diagnostics/performance_budget.gd::capped_limit",
+      "line": 7,
+      "end_line": 10,
+      "function_sha256": "babe65b74304e5d232e090091c05498823911bef65bdac27527a4de0e20a10c7",
+      "file_sha256": "5b90cb52ed6aafd2ce036130b7c661f926547ab2ebb1ca820c60da4c2b4932bf"
+    },
+    {
+      "function": "game/diagnostics/menu_performance_suite.gd::_start_suite",
+      "line": 88,
+      "end_line": 117,
+      "function_sha256": "619311efb86133cc44adb752573f8dc606a052177e0bad0679e44abd59453a9c",
+      "file_sha256": "f5a5a2b4803f87f56201da2c02d27a0f5976dafb527b17c3d7381f4a380f2a0a"
+    },
+    {
+      "function": "game/diagnostics/menu_performance_suite.gd::_process",
+      "line": 165,
+      "end_line": 208,
+      "function_sha256": "c03527dd981ee7a5e62841a5a7b3965caff0ec97ef4daebf29e4fed495068184",
+      "file_sha256": "f5a5a2b4803f87f56201da2c02d27a0f5976dafb527b17c3d7381f4a380f2a0a"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd::_setting",
+      "line": 207,
+      "end_line": 212,
+      "function_sha256": "189be7fad5525c1c141a188a1e3a5b8c2687d9b63e166941b903f6852bf47939",
+      "file_sha256": "cd2a65639c90d430c4958e96af6a516c463287b7f217f3d87d46c132c1fd98b0"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd::_process",
+      "line": 98,
+      "end_line": 124,
+      "function_sha256": "dc93015397774bdf31aabbb8138bc93d6d5076b39150f268e5cb9064833be126",
+      "file_sha256": "cd2a65639c90d430c4958e96af6a516c463287b7f217f3d87d46c132c1fd98b0"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/building_pointer_test.gd::_sweep",
+      "line": 271,
+      "end_line": 301,
+      "function_sha256": "ef657800eba2af82c9290ee9018d0205ad260e26e8771ea003bf236fb823215c",
+      "file_sha256": "03f8844e04690057c975ee26a132b99d4b7e04290e49b0ed154f433f04e19db4"
+    }
+  ],
+  "normal_gameplay_source_changed": false,
+  "normal_gameplay_source_check": "Byte fingerprints match the pre-policy attribution capture outside diagnostics/test files, including project.godot; no simulation or shader optimization is claimed."
+}

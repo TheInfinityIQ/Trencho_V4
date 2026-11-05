@@ -36,6 +36,7 @@ var dispatch_sites: Dictionary = {"dispatch":{"store":"dispatch","duty":"dispatc
 
 func _init(rear: RefCounted, at: Vector2 = HQ) -> void:
 	_rear_ref = weakref(rear)
+	if rear.empty_field_opening: dispatch_sites.clear()
 	hq_position = at
 	queue_position = at + (HQ_QUEUE - HQ)
 	rear.ledger.add_place("dispatch-berth","F07 real dispatch vehicle berth",Layout.door("dispatch"))
@@ -161,19 +162,27 @@ func _active_manifest(hull_id: String) -> String:
 
 func _reserve_cargo(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
+	var candidates: Array[Dictionary] = []
+	var captured := false
 	for type in row.cargo:
 		var have := 0
 		for item in row.weapon_items:
 			if item.type == type: have += 1
 		for item in row.stock_items:
 			if item.type == type: have += int(item.quantity)
-		for weapon in rear.ledger.snapshot().entities:
+		if have >= int(row.cargo[type]): continue
+		if not captured:
+			# Fresh direct-holder facts are sufficient for staging. Reservations
+			# recheck authoritative stock; recursive world masses are unrelated.
+			candidates = rear.ledger.entities_at_any(rear.stores.keys(),["WEAPON","STOCK"],false)
+			captured = true
+		for weapon in candidates:
 			if have >= int(row.cargo[type]): break
 			if weapon.kind != "WEAPON" or weapon.design_type != type or weapon.owner != rear.PLAYER or weapon_promises.has(weapon.id) or not rear.stores.has(weapon.holder_id) or weapon.loaded_rounds != 0: continue
 			weapon_promises[weapon.id] = row.id
 			row.weapon_items.append({"type":type,"id":weapon.id,"stage":"Staged" if weapon.holder_id == row.dispatch_store else "Source"})
 			have += 1
-		for stock in rear.ledger.snapshot().entities:
+		for stock in candidates:
 			if have >= int(row.cargo[type]): break
 			if stock.kind != "STOCK" or stock.design_type != type or stock.owner != rear.PLAYER or not rear.stores.has(stock.holder_id) or not rear.stores[stock.holder_id].accessible: continue
 			var count: int = mini(int(row.cargo[type])-have,mini(rear.ledger.available(stock.id),int(floor(25.0/_unit_mass(type)))))

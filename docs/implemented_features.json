@@ -1,0 +1,144 @@
+{
+  "scope": "Source-observed current implementation, not a claim that all features/states are tested, polished or accepted at 60 FPS. Advanced standalone review scenes are distinguished below.",
+  "main_game": [
+    {
+      "feature": "Empty-field rear opening and connected battlefield observation, persistent session, Pause/1x/2x, navigation and new session confirmation.",
+      "sources": [
+        "game/main/main.gd",
+        "game/main/game_session.gd",
+        "game/scenario/farmland_session.gd"
+      ]
+    },
+    {
+      "feature": "Eleven buildable facility types, rotation, position/overlap validation, provisional preview, physical construction materials/work, preview/site cancellation and preservation of consumed material.",
+      "types": [
+        "Receiving",
+        "Depot",
+        "Workshop",
+        "Munitions",
+        "Training",
+        "Logistics Centre",
+        "Support",
+        "Vehicle Works",
+        "Vehicle Park",
+        "Construction Office",
+        "Materials"
+      ],
+      "sources": [
+        "game/construction/construction_catalogue.gd",
+        "game/construction/construction_service.gd",
+        "game/rear_base/base_map.gd"
+      ]
+    },
+    {
+      "feature": "Purchase and arrival of actual workers; staffing targets, priorities, travel/reporting and actual work assignments.",
+      "sources": [
+        "game/staffing/rear_simulation.gd",
+        "game/rear_base/workforce_panel.gd",
+        "game/procurement/receiving_simulation.gd"
+      ]
+    },
+    {
+      "feature": "Requisition purchases, recipe/blueprint access, physical incoming material, storage capacity/filters and manual plus event-woken automatic factory-input handling.",
+      "sources": [
+        "game/procurement/receiving_simulation.gd",
+        "game/logistics/rear_logistics.gd",
+        "game/rear_base/base_simulation.gd"
+      ]
+    },
+    {
+      "feature": "Recipes for weapons, ammunition, construction material, support equipment and vehicles; actual inputs/earned work/output custody. R01 produces an intact unloaded rifle.",
+      "sources": [
+        "game/production/fixed_production.gd",
+        "game/production/selectable_production.gd",
+        "game/production/heavy_production.gd"
+      ],
+      "limit": "Catalogued recipes are not all verified through the complete ordinary UI-to-frontline loop."
+    },
+    {
+      "feature": "Eight training course types with instructors/students, prerequisites, real duration, withdrawal, access control and current/completed course display.",
+      "courses": [
+        "Basic infantry",
+        "Engineer",
+        "Medic",
+        "Heavy weapons",
+        "Artillery",
+        "Drone operator",
+        "Marksman",
+        "Vehicle crew"
+      ],
+      "sources": [
+        "game/training/training_service.gd",
+        "game/rear_base/base_demo.gd"
+      ],
+      "limit": "A Drone operator course is not proof of an implemented playable drone subsystem."
+    },
+    {
+      "feature": "Vehicle manufacture, crew/driver assignment, fuel and parking/loading; real rear-to-HQ dispatch, unloading and returning trucks. Manual and automatic supply intents, cancellation holds and outstanding-promise accounting.",
+      "sources": [
+        "game/vehicles/vehicle_activity.gd",
+        "game/dispatch/dispatch_service.gd",
+        "game/logistics/rear_logistics.gd"
+      ]
+    },
+    {
+      "feature": "HQ issue, forward ammunition deliveries/vehicle rack supply and troop boarding, transport and dismount.",
+      "sources": [
+        "game/hq/hq_logistics.gd",
+        "game/forward_supply/forward_supply.gd",
+        "game/forward_supply/vehicle_rack_issue.gd",
+        "game/military/troop_transport.gd"
+      ],
+      "limit": "Controlled component deliveries have passed; ordinary repeated autonomous causal-loop acceptance is still pending."
+    },
+    {
+      "feature": "Farmland battlefield observation with pan/zoom and inspection; autonomous squads/vehicles, movement/orders, contacts, infantry and mounted combat, ammunition/reload, wounds/suppression/morale and care.",
+      "sources": [
+        "game/battlefield/battlefield_view.gd",
+        "game/battlefield/squad_execution.gd",
+        "game/battlefield/vehicle_execution.gd",
+        "game/combat/combat_service.gd",
+        "game/vehicle_combat/vehicle_combat_service.gd"
+      ],
+      "limit": "Battlefield operations are autonomous; do not infer a full player tactical-command UI or exhaustive integration coverage."
+    },
+    {
+      "feature": "Physical objective contest/capture, ownership and resource income.",
+      "sources": [
+        "game/objectives/objective_service.gd",
+        "game/battlefield/resource_operations.gd"
+      ]
+    }
+  ],
+  "backend_and_review_scenarios": [
+    {
+      "feature": "Field fortifications and support structures.",
+      "source": "game/field_structures/field_service.gd"
+    },
+    {
+      "feature": "Bridge construction/crossing, repair and demolition.",
+      "source": "game/bridges"
+    },
+    {
+      "feature": "Mine placement, detection and clearance.",
+      "source": "game/mines/mine_service.gd"
+    },
+    {
+      "feature": "Vehicle repair, recovery, towing and wreck handling.",
+      "source": "game/vehicle_recovery/recovery_service.gd"
+    }
+  ],
+  "backend_limit": "These systems have retained diagnostic/review demonstrations; their presence does not establish a polished connected main-game flow.",
+  "developer_tools": [
+    "Per-second function counts and optional unique caller stacks",
+    "GdUnit functional/UI/performance guards with retained failures and logs",
+    "Living reviewed function map and clickable UI flowchart opening VS Code",
+    "Routine headless test launchers with explicit foreground regression mode"
+  ],
+  "incomplete": [
+    "Strict minimum 60 FPS; native 330-second liveness run still peaks at 30.888 ms",
+    "Entire ordinary manufacturing-to-frontline consequence and second supply cycle acceptance",
+    "Independent logistics/battlefield clock and event migration; shared settlement still exists",
+    "Full native UI regression coverage and integration of advanced review systems"
+  ]
+}

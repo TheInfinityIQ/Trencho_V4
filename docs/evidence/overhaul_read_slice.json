@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T00:03:44.132889+00:00",
+  "status": "read_slice_verified_full_live_sweep_still_fails",
+  "scope": "First bounded P00/P01 implementation slice. No event-driven scheduler migration is claimed.",
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "changes": [
+    "Nine uncached ledger reads replace full inspections for living-duty, commander, qualification, HQ eligibility, held equipment, sight candidates and nearby patients.",
+    "Military/HQ automation preserves its ordering and physical delivery, but filters ineligible recipients before exporting full records.",
+    "Orders use detached person/carrier sight metadata, retaining their existing visibility, affiliation, assignment and reporting rules.",
+    "Medic candidate selection exports only living friendly wounded people inside the existing 60 metre radius, preserving insertion order.",
+    "Four optional monotonic wall-time scopes record calls, total and maximum duration with the existing per-second reports.",
+    "GdUnit4 adds six focused guards: duration windows, frozen behavior, predicates, repeated-check inspection costs, actual contact parity and patient selection.",
+    "Source-map extraction now handles multiline callbacks with absent parser endpoints; an added regression test prevents whole-file callback ranges."
+  ],
+  "behavior_baseline": {
+    "fixture": "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd",
+    "expected": "game/diagnostics/tests/gdunit/fixtures/read_path_baseline.json",
+    "capture": "Captured twice before production read changes; all 13 checkpoint hashes matched. Opt-in capture refuses to overwrite an existing destination.",
+    "coverage": "Canonical ledger, military formations/reports/commander, HQ jobs/status and receiving state at opening, two seconds, leader loss/wait/replacement, HQ receipt and timed real issue boundaries; coarse/partitioned HQ completion.",
+    "result": "All 13 original expected hashes match the final implementation; every checkpoint audit is clean. Actual hull has three E25 shells and five M08 fuel; rifle holder is read-trained.",
+    "expected_hashes": {
+      "hq_at_11.5": "2e242de00acca0fb8fe56673250a19a644660c26d8abc0783abad960e6452819",
+      "hq_at_2.0": "f69cd66422f0314d787f3fb6add479689bf6564dbda9bde27c34fc126bb21d79",
+      "hq_at_20.0": "fa19281ae6e448457562cfde0b679fb731048b1b43493a9c1368580e8cc8aef3",
+      "hq_at_4.0": "2d2d4143a640df0cf96f38cb8be5bada65866862a60ac3a4885b73a2ae4ef693",
+      "hq_at_60.0": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "hq_coarse": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "hq_partitioned": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "hq_reserved": "9baff3ae300ca025c49387588ab1c831c3488d2675d2c7b64f9b193b6c2f9ff8",
+      "leader_incapacitated": "1ba4f506b8e2913d22d0d94d873295ccbfe1345dbcddf6e7b11904db4b89e837",
+      "leader_replacement_boundary": "25afcb648d18efa5a0bcadd56877eab73e62c30b4f950bfcbfa7d1803fb1f033",
+      "leader_waiting": "bf63605dadf6dbba5b1fb0927db442b5a79ef815b6e7605ece935f4dfd98ac4e",
+      "world_start": "02a20157a6b9f909b3f57d3ffdb5092b705f519f9d777afe6a37f06fd0e9f9d8",
+      "world_two_seconds": "943401a7387d31d7f725392b047a83ecaeee310c456f974fe3e6bfd3f92e3b4a"
+    },
+    "original_source_sha256": {
+      "game/hq/hq_logistics.gd": "bfdb97c8ecbc6bb329da16f35030feb70c5d486d1abb29bd2643ee341206cd38",
+      "game/identity/identity_ledger.gd": "caa14c3f5a032fb606c0b954be5f7d9dba9e20cbdb689852af4b604df4476917",
+      "game/military/organization.gd": "afafa92560291b838ca31d69b56a2e579865f1ddcddde02e6d548083f8ad9a5c"
+    },
+    "strict_json_note": "Only explanatory non-finite tank/rifle detail values were normalized to strings after capture. Expected canonical hashes and original source hashes were not regenerated.",
+    "limits": "Focused explicit-time fixtures, not proof of every gameplay state, live wall-clock planning path, Pause/2x behavior or all planned overhaul contracts."
+  },
+  "repeated_check_comparison": {
+    "world": {
+      "auto_vehicle": {
+        "before": {
+          "elapsed_usec": 23256,
+          "full_inspections": 400,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 625,
+          "full_inspections": 0,
+          "repeats": 100
+        }
+      },
+      "commander": {
+        "before": {
+          "elapsed_usec": 709,
+          "full_inspections": 100,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 160,
+          "full_inspections": 0,
+          "repeats": 100
+        }
+      },
+      "hq_auto_issue": {
+        "before": {
+          "elapsed_usec": 36613,
+          "full_inspections": 800,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 11149,
+          "full_inspections": 0,
+          "repeats": 100
+        }
+      }
+    },
+    "hq": {
+      "auto_vehicle": {
+        "before": {
+          "elapsed_usec": 10411,
+          "full_inspections": 900,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 3405,
+          "full_inspections": 100,
+          "repeats": 100
+        }
+      },
+      "commander": {
+        "before": {
+          "elapsed_usec": 684,
+          "full_inspections": 100,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 161,
+          "full_inspections": 0,
+          "repeats": 100
+        }
+      },
+      "hq_auto_issue": {
+        "before": {
+          "elapsed_usec": 24389,
+          "full_inspections": 1200,
+          "repeats": 100
+        },
+        "after": {
+          "elapsed_usec": 8865,
+          "full_inspections": 100,
+          "repeats": 100
+        }
+      }
+    }
+  },
+  "measurement_limits": "Each measurement is one batch of 100 calls with counters enabled and stacks disabled. Inspection counts are structural evidence; elapsed wall times include diagnostic/OS effects and are not statistical CPU benchmarks or a whole-game speedup.",
+  "formal_run": {
+    "path": "logs/gdunit4-performance-2026-11-02T23-54-24-43416",
+    "mode": "Headless, counters-only; stack guard deliberately captures its own fixture calls",
+    "test_cases": 11,
+    "passed_guards": [
+      "test_00_call_stacks_group_origins_per_second",
+      "test_00_call_stacks_can_be_disabled_without_losing_counts",
+      "test_00_duration_windows_preserve_known_totals",
+      "test_01_build_and_map_reads_do_not_export_whole_world",
+      "test_02_narrow_staffing_queries_preserve_assignments",
+      "test_02a_read_paths_preserve_recorded_gameplay",
+      "test_02b_narrow_reads_follow_current_authoritative_fields",
+      "test_02c_hot_checks_avoid_full_entity_exports",
+      "test_02d_sight_candidates_preserve_real_contact_reports",
+      "test_02e_patient_search_matches_canonical_selection"
+    ],
+    "errors": 0,
+    "failures": 1,
+    "runtime_stderr_bytes": 0,
+    "isolated_import_note": "import-errors.log contains editor-settings write errors in the restricted environment; no claim of clean import stderr or manual GUI testing."
+  },
+  "unresolved_live_failure": {
+    "action": {
+      "kind": "build_place",
+      "label": "Build map action: build_place",
+      "menu": "Build"
+    },
+    "measurement": {
+      "frame_ms": 118.642,
+      "limit_ms": 100.0
+    },
+    "simulation_time": 7.17462100000003,
+    "durations_usec_in_partial_second": {
+      "rear_base/base_simulation.gd::_pump_live/pure_work": {
+        "calls": 87,
+        "maximum": 13265,
+        "total": 49075
+      },
+      "rear_base/base_simulation.gd::tick_live": {
+        "calls": 10,
+        "maximum": 56682,
+        "total": 194116
+      },
+      "staffing/rear_simulation.gd::_settle": {
+        "calls": 22,
+        "maximum": 36134,
+        "total": 70917
+      },
+      "staffing/rear_simulation.gd::advance_time": {
+        "calls": 10,
+        "maximum": 52634,
+        "total": 144470
+      }
+    },
+    "interpretation": "Largest measured live tick was 56.682 ms; these inclusive scope maxima do not explain or uniquely attribute the 118.642 ms frame interval. Multiple ticks, untimed work and scheduling/pacing remain possible. Do not sum parent/child totals or equate a frame gap to exclusive CPU time.",
+    "consequence": "Suite stopped and paused; later menus/actions remain untested. The 100 ms budgets were not relaxed."
+  },
+  "other_runs": [
+    {
+      "path": "logs/menu-performance-2026-11-02T23-33-04-23028",
+      "result": "Before slice: bounded one-step Build observation completed. Not a full sweep."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-02T23-39-06-31284",
+      "result": "First read slice: seven guards passed; live failed at 121.943 ms during Build rotation."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-02T23-46-39-11144",
+      "result": "Intermediate added-test run exposed typed-array and fixture-ID errors. Both fixture defects were corrected before final verification."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-02T23-50-22-4980",
+      "result": "Nine guards passed; live failed at 116.465 ms during Build placement before wall scopes were added."
+    }
+  ],
+  "preserved_contracts": [
+    "Single authoritative ledger and shared clock",
+    "No persistent read caches requiring invalidation",
+    "Existing mutation, settlement and observation order",
+    "Synchronous mine contact and wreck consequences",
+    "Current empty-field opening and disabled editor addons",
+    "Physical HQ arrival/issue and leader replacement timing in the characterized fixtures"
+  ],
+  "remaining_work": [
+    "Attribute the reproducible Build-phase frame-budget failure with finer frame/CPU measurements before changing timing behavior.",
+    "Replace broad military/HQ polling only after committed-change wakeups and mutation coverage exist.",
+    "Audit the wider mutation matrix and prerequisite-rich scenarios before adding indexes or migrating other services.",
+    "Run the full reachable menu sweep past the remaining failure; unreached actions remain untested."
+  ],
+  "current_gdscript_drift_from_original_inventory": {
+    "game/battlefield/squad_execution.gd": {
+      "baseline_sha256": "9c2c409322806a66409ab7b8983b85ae051cd6ee8bfcf6be16e1a5a4d83c9fec",
+      "current_sha256": "cb6a389346e600c390837f0796f000d32e533f618f8c0bbddf66042015cb96c1"
+    },
+    "game/diagnostics/function_call_log.gd": {
+      "baseline_sha256": "5d763e5fa6b8c86e6d2043ab7bb0f4077cfe1fdfb3c3c4934de611ed3d96182b",
+      "current_sha256": "489531d3ce66c2e55c3ac74ca80d8cc72b0cefe2e0300779c43d2cde0ac83b81"
+    },
+    "game/diagnostics/tests/gdunit/menu_performance_test.gd": {
+      "baseline_sha256": "9797ad4f96a502946b3bd1034eb89a126af8772cd951631ccb223c4f583b8828",
+      "current_sha256": "d9a0553585eef88a8dbacb36e19b815029b2f1d02e3b87472244e71ce3be6960"
+    },
+    "game/hq/hq_logistics.gd": {
+      "baseline_sha256": "bfdb97c8ecbc6bb329da16f35030feb70c5d486d1abb29bd2643ee341206cd38",
+      "current_sha256": "cf4ba935bcaca4b5a77b7ee99dc77c34d972525ed3b94bcb6a1dd7ff60d5f93b"
+    },
+    "game/identity/identity_ledger.gd": {
+      "baseline_sha256": "caa14c3f5a032fb606c0b954be5f7d9dba9e20cbdb689852af4b604df4476917",
+      "current_sha256": "b4e39d47e527acfadef7589a4dce7850c4f9ccd6ea4331e2681941f217bef8a9"
+    },
+    "game/main/game_session.gd": {
+      "baseline_sha256": "81f18f8b8c449f4a94560b960b85f9ca8f8957122c8473ec48fa4d7ee41c5ba7",
+      "current_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+    },
+    "game/military/organization.gd": {
+      "baseline_sha256": "afafa92560291b838ca31d69b56a2e579865f1ddcddde02e6d548083f8ad9a5c",
+      "current_sha256": "9f7e2740d9cfa9925fb222d4abbf049fe749b3d4c7021bad9e762a83e9f7e8ba"
+    },
+    "game/orders/order_service.gd": {
+      "baseline_sha256": "3a8030567d7f097f296268665d0e0ca17ba0f1ff470a87e29b89bc3e6553f2bf",
+      "current_sha256": "fc92a33a3ed00478e16ee798aa36114bc80fba74920fe8e519a63175cbd9bd82"
+    },
+    "game/rear_base/base_simulation.gd": {
+      "baseline_sha256": "177711c6965123b35c439009e6ea6e4cf9c3e47836ea542060a8a92480d6ae01",
+      "current_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    "game/staffing/rear_simulation.gd": {
+      "baseline_sha256": "3abd4fbc9ab7f8535701ec3df237e7d56a4db7accc4f36b4cbb702d2889ed813",
+      "current_sha256": "d44c6c9b89d7bd3af44e2eee291d1d82ccf1d67cea93ee6566927b7ae2f0fef4"
+    }
+  },
+  "added_gdscript_files": {
+    "game/diagnostics/tests/gdunit/capture_read_baseline.gd": "ed580acd08a1762285065081feadaa2316b8901394572f082095ab484190bda5",
+    "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd": "123bcd76962b3258db26cdd78596a47643b35ca07a71cd323f2d1f2fc550b405"
+  },
+  "map_tool_verification": {
+    "tests": 7,
+    "result": "passed",
+    "command": "python -m unittest discover -s tools/tests -v",
+    "limits": "Tool correctness tests do not certify gameplay."
+  },
+  "raw_log_availability": "Raw logs are local ignored artifacts. This tracked evidence preserves the salient results; fresh checkouts must rerun tests to produce raw logs.",
+  "official_references": [
+    {
+      "topic": "Profile before optimizing",
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/performance/general_optimization.html"
+    },
+    {
+      "topic": "Godot profiler",
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/scripting/debug/the_profiler.html"
+    },
+    {
+      "topic": "Monotonic elapsed time",
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_time.html#class-time-method-get-ticks-usec"
+    }
+  ]
+}

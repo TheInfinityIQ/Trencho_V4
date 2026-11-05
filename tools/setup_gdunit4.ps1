@@ -1,10 +1,18 @@
 [CmdletBinding()]
-param()
+param([string]$TargetProject = '')
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$dependencyCacheRoot = $projectRoot
+if ($TargetProject) {
+    $targetRoot = [IO.Path]::GetFullPath($TargetProject)
+    if (!$targetRoot.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'An alternate GdUnit4 test project must be inside this workspace.'
+    }
+    $projectRoot = $targetRoot
+}
 $pin = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'gdunit4.lock.json') -Raw | ConvertFrom-Json
-$cache = Join-Path $projectRoot '.tools/gdunit4'
+$cache = Join-Path $dependencyCacheRoot '.tools/gdunit4'
 $addon = [IO.Path]::GetFullPath((Join-Path $projectRoot 'addons/gdUnit4'))
 $archivePath = Join-Path $cache ($pin.commit + '.zip')
 New-Item -ItemType Directory -Path $cache -Force | Out-Null

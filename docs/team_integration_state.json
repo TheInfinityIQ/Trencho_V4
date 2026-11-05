@@ -1,0 +1,50 @@
+{
+  "updated_date": "2026-11-05",
+  "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
+  "lead": {
+    "title": "Trencho V4 Developer",
+    "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+    "host_id": "local",
+    "owns": [
+      "Authoritative gameplay implementation",
+      "Technical choices",
+      "Final integration",
+      "Published review revisions",
+      "Focused verification and living map"
+    ]
+  },
+  "consultants": [
+    {
+      "title": "Trencho — Game Designer",
+      "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
+      "host_id": "local",
+      "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
+    },
+    {
+      "title": "Trencho — UI/UX developer",
+      "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
+      "host_id": "local",
+      "scope": "Player interactions, menus, required information and reusable presentation handoffs."
+    },
+    {
+      "title": "Trencho - 2D Artist",
+      "thread_id": "6aecc998-2d4c-83e9-9cc3-8d7653edbe04",
+      "kind": "chatgpt",
+      "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
+    }
+  ],
+  "current_work": "Read-only gameplay/UI/art consultations. Lead assembles the next feature milestone; no parallel project edits assigned.",
+  "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
+  "review_source": {
+    "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
+    "branch": "codex/gameplay-demo-integration",
+    "commit_resolution": "Use the exact commit sent by the lead; refs/heads/codex/gameplay-demo-integration is the current published review head. A future local edit is not reviewed until pushed.",
+    "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded."
+  },
+  "scope_limits": [
+    "The existing GDD gameplay scope remains; feature priorities do not establish implementation or acceptance.",
+    "An eventual independent logistics/battlefield event/timer migration remains unfinished; historical shared-clock prose is superseded by user direction.",
+    "The demo is not complete, and strict 60 FPS is not certified.",
+    "Consultants report in their own chats; the lead reads results and controls integration. No archived developer assignment is implicitly resumed."
+  ]
+}

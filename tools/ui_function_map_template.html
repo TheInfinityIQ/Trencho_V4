@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trencho · UI function map</title>
+  <style>
+    :root { color-scheme: light dark; --bg:light-dark(#f5f6f7,#121619); --fg:light-dark(#17232d,#e3ebef); --muted:light-dark(#50616e,#a4b5c0); --surface:light-dark(#fff,#1b2329); --line:light-dark(#cad5dc,#3b4b55); --accent:light-dark(#176e59,#7ed2b2); }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui,sans-serif; }
+    main { max-width:1350px; margin:auto; padding:40px 32px 80px; }
+    h1 { margin:4px 0 10px; font-size:32px; font-weight:600; letter-spacing:-.035em; }
+    h2 { margin:0 0 8px; font-size:21px; font-weight:600; }
+    p { margin:0 0 20px; color:var(--muted); max-width:80ch; }
+    .eyebrow,.stage { text-transform:uppercase; letter-spacing:.09em; font-size:11px; font-weight:600; color:var(--muted); }
+    .eyebrow { color:var(--accent); }
+    nav { display:flex; flex-wrap:wrap; gap:8px 20px; margin:24px 0 40px; }
+    nav a,a.inline { color:var(--accent); text-underline-offset:4px; }
+    .workflow { padding:26px 0; border-top:1px solid var(--line); scroll-margin-top:24px; }
+    .chain { display:flex; align-items:stretch; gap:27px; padding:0; margin:20px 0 4px; list-style:none; }
+    .chain li { flex:1; min-width:0; position:relative; display:flex; }
+    .chain li+li::before { content:'→'; color:var(--muted); position:absolute; left:-22px; top:44%; }
+    .node { display:flex; flex-direction:column; gap:9px; width:100%; min-width:0; text-decoration:none; color:var(--fg); background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:15px 13px; overflow-wrap:anywhere; }
+    .node:hover { border-color:var(--accent); }
+    .node:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+    .node-label { font-weight:500; }
+    code { font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--accent); }
+    .source { color:var(--muted); font-size:11px; margin-top:auto; }
+    .catalogue { margin:50px 0 20px; }
+    details.panel { border-top:1px solid var(--line); }
+    summary { cursor:pointer; }
+    .panel>summary { padding:20px 0; display:list-item; font-size:18px; font-weight:500; }
+    .panel>summary span { margin-left:16px; font-size:12px; font-weight:400; color:var(--muted); }
+    .action { margin:0 0 12px 18px; }
+    .action>summary { padding:8px 0; }
+    .action-flow { display:grid; grid-template-columns:1fr 1fr 1.5fr; gap:32px; margin:15px 0 30px; }
+    .action-flow>div { min-width:0; position:relative; }
+    .action-flow>div+div::before { content:'→'; position:absolute; left:-23px; top:49px; color:var(--muted); }
+    .stage { display:block; margin-bottom:9px; }
+    .targets { display:grid; gap:9px; border-left:1px solid var(--line); padding-left:14px; }
+    .empty { display:block; color:var(--muted); padding:16px 0; }
+    footer { border-top:1px solid var(--line); margin-top:32px; padding-top:24px; color:var(--muted); font-size:13px; }
+    noscript,.link-error { color:light-dark(#9d291d,#ffad9d); }
+    @media(max-width:1050px) { .chain { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:26px; } .chain li+li::before { content:'↳'; } }
+    @media(max-width:680px) { main { padding:24px 18px 50px; } .chain { display:flex; flex-direction:column; gap:24px; } .chain li+li::before { content:'↓'; left:50%; top:-24px; } .action-flow { grid-template-columns:1fr; gap:26px; } .action-flow>div+div::before { content:'↓'; left:50%; top:-22px; } .panel>summary span { display:block; margin:4px 0 0; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Trencho · source navigation</div>
+    <h1>From a UI click to the work it starts</h1>
+    <p>Click any function box to open VS Code at that line. Follow the main workflows, or expand a panel below to trace its individual controls.</p>
+    <noscript>Enable JavaScript to resolve local VS Code links. The diagrams and source locations remain readable.</noscript>
+  </header>
+  <nav aria-label="Main workflows"><!-- OVERVIEW --></nav>
+  <div><!-- WORKFLOWS --></div>
+  <div class="catalogue"><h2>Controls by panel</h2><p><!-- CONTROL_COUNT --> declared control callbacks from the shell, rear panels, workforce panel and army-supply panel. Availability depends on game state; standalone and optional diagnostic controls are labelled separately. Loop-generated controls share one source definition.</p></div>
+  <div><!-- PANELS --></div>
+  <footer id="source-link-help">
+    <p id="link-status">Open this page from the project’s docs folder. Your browser may ask permission to open VS Code on the first click.</p>
+    <p>Boxes link to definitions or the precise labelled call/signal site. Panel branches show direct calls found in source, including conditional alternatives; they are not recorded runtime traces or test coverage. Runtime-selected production implementations remain labelled. Main workflows omit intermediate helpers and state requirements.</p>
+    <p>Refresh with <strong>Update System Map.cmd</strong>. Source: <a class="inline" href="https://code.visualstudio.com/docs/configure/command-line#_opening-vs-code-with-urls">VS Code’s file-and-line URL documentation</a>.</p>
+  </footer>
+</main>
+<script>
+{
+  const page = new URL(location.href);
+  const status = document.getElementById('link-status');
+  if (page.protocol === 'file:') {
+    const projectUrl = new URL('../', page);
+    let project = decodeURIComponent(projectUrl.pathname).replace(/\/$/, '');
+    if (/^\/[a-z]:\//i.test(project)) project = project.slice(1);
+    if (projectUrl.hostname) project = '//' + projectUrl.hostname + project;
+    for (const link of document.querySelectorAll('a[data-source]')) {
+      const path = encodeURI(project + '/' + link.dataset.source).replace(/#/g, '%23').replace(/\?/g, '%3F');
+      link.href = 'vscode://file/' + path + ':' + link.dataset.line + ':1';
+    }
+  } else {
+    status.textContent = 'Open the downloaded page locally from the project’s docs folder to enable VS Code file-and-line links.';
+    status.className = 'link-error';
+  }
+}
+</script>
+</body>
+</html>

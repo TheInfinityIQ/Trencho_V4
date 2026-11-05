@@ -25,6 +25,34 @@ const STORES: Dictionary = {
 	"vehicle_input": ["vehicle_works", 5000], "dispatch": ["dispatch", 6000],
 }
 
+# These links describe only the immutable G03 template above. Runtime-created
+# footprints use ConstructionService's current geometry instead of this graph.
+static var _route_corners: Array[Vector2] = _build_route_corners()
+static var _route_edges: Array = _build_route_edges()
+const ROUTE_MEMO_LIMIT := 128
+static var _route_memo: Dictionary = {}
+
+static func _build_route_corners() -> Array[Vector2]:
+	var corners: Array[Vector2] = []
+	for id in FACILITIES:
+		if id == "park": continue
+		var f: Array = FACILITIES[id]
+		var box := Rect2(f[1]-f[2]/2.0,f[2]).grow(0.6)
+		corners.append_array([box.position,Vector2(box.end.x,box.position.y),box.end,Vector2(box.position.x,box.end.y)])
+	corners.make_read_only()
+	return corners
+
+static func _build_route_edges() -> Array:
+	var edges: Array = []
+	for first in _route_corners.size():
+		var row := PackedByteArray()
+		row.resize(_route_corners.size())
+		for second in _route_corners.size():
+			row[second] = 1 if clear_segment(_route_corners[first],_route_corners[second]) else 0
+		edges.append(row)
+	edges.make_read_only()
+	return edges
+
 
 static func door(facility: String) -> Vector2:
 	return FACILITIES[facility][4]
@@ -46,15 +74,23 @@ static func clear_segment(a: Vector2, b: Vector2) -> bool:
 
 
 static func path(a: Vector2, b: Vector2) -> Array:
+	# Only immutable template geometry is memoized, never people or reservations.
+	# Return detached arrays because callers may extend a walking route.
+	var key := Vector4(a.x,a.y,b.x,b.y)
+	if _route_memo.has(key): return _route_memo[key].duplicate()
+	var route: Array = _compute_path(a,b)
+	if _route_memo.size() >= ROUTE_MEMO_LIMIT: _route_memo.erase(_route_memo.keys()[0])
+	_route_memo[key] = route.duplicate()
+	return route
+
+static func _compute_path(a: Vector2, b: Vector2) -> Array:
 	if a.is_equal_approx(b):
 		return [a, b]
+	# The existing graph also chooses this shortest segment when clear.
+	# Avoid constructing/searching all fixture corners for an unobstructed walk.
+	if clear_segment(a,b): return [a,b]
 	var nodes: Array = [a, b]
-	for id in FACILITIES:
-		if id == "park":
-			continue
-		var f: Array = FACILITIES[id]
-		var box := Rect2(f[1] - f[2] / 2.0, f[2]).grow(0.6)
-		nodes.append_array([box.position, Vector2(box.end.x, box.position.y), box.end, Vector2(box.position.x, box.end.y)])
+	nodes.append_array(_route_corners)
 	var distances: Array = []
 	var previous: Array = []
 	var visited: Array = []
@@ -72,8 +108,10 @@ static func path(a: Vector2, b: Vector2) -> Array:
 			break
 		visited[selected] = true
 		for i in nodes.size():
-			if visited[i] or not clear_segment(nodes[selected], nodes[i]):
-				continue
+			if visited[i]: continue
+			if selected >= 2 and i >= 2:
+				if _route_edges[selected-2][i-2] == 0: continue
+			elif not clear_segment(nodes[selected],nodes[i]): continue
 			var candidate: float = distances[selected] + (nodes[selected] as Vector2).distance_to(nodes[i])
 			if candidate < distances[i]:
 				distances[i] = candidate

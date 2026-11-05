@@ -1,4 +1,11 @@
-; Engine configuration file. Prefer editing project settings in Godot.
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
 config_version=5
 
 [application]
@@ -12,6 +19,18 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[gdscript_ast]
+
+scan/enabled=false
+scan/include=PackedStringArray("res://game")
+scan/exclude=PackedStringArray("res://addons", "res://.godot", "res://.git", "res://game/battlefield/tests", "res://game/bridges/tests", "res://game/combat/tests", "res://game/construction/tests", "res://game/dispatch/tests", "res://game/field_structures/tests", "res://game/forward_supply/tests", "res://game/hq/tests", "res://game/identity/tests", "res://game/military/tests", "res://game/mines/tests", "res://game/objectives/tests", "res://game/orders/tests", "res://game/overhead_evaluation/tests", "res://game/procurement/tests", "res://game/production/tests", "res://game/rear_base/tests", "res://game/routes/tests", "res://game/scenario/tests", "res://game/staffing/tests", "res://game/terrain/tests", "res://game/training/tests", "res://game/vehicles/tests", "res://game/vehicle_combat/tests", "res://game/vehicle_recovery/tests")
+scan/scenes=true
+scan/resources=true
 
 [rendering]
 

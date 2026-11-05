@@ -1,0 +1,755 @@
+{
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "measurements": {
+    "hq_checks": {
+      "auto_vehicle": {
+        "elapsed_usec": 10411,
+        "full_inspections": 900,
+        "repeats": 100
+      },
+      "commander": {
+        "elapsed_usec": 684,
+        "full_inspections": 100,
+        "repeats": 100
+      },
+      "hq_auto_issue": {
+        "elapsed_usec": 24389,
+        "full_inspections": 1200,
+        "repeats": 100
+      }
+    },
+    "world_checks": {
+      "auto_vehicle": {
+        "elapsed_usec": 23256,
+        "full_inspections": 400,
+        "repeats": 100
+      },
+      "commander": {
+        "elapsed_usec": 709,
+        "full_inspections": 100,
+        "repeats": 100
+      },
+      "hq_auto_issue": {
+        "elapsed_usec": 36613,
+        "full_inspections": 800,
+        "repeats": 100
+      }
+    }
+  },
+  "source_sha256": {
+    "game/hq/hq_logistics.gd": "bfdb97c8ecbc6bb329da16f35030feb70c5d486d1abb29bd2643ee341206cd38",
+    "game/identity/identity_ledger.gd": "caa14c3f5a032fb606c0b954be5f7d9dba9e20cbdb689852af4b604df4476917",
+    "game/military/organization.gd": "afafa92560291b838ca31d69b56a2e579865f1ddcddde02e6d548083f8ad9a5c"
+  },
+  "states": {
+    "hq_at_11.5": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "hq-stock",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "2e242de00acca0fb8fe56673250a19a644660c26d8abc0783abad960e6452819",
+      "tank": {
+        "ammunition": {
+          "E25": 3
+        },
+        "contents_mass_kg": 36.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 0.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 11.5
+    },
+    "hq_at_2.0": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "hq-stock",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "f69cd66422f0314d787f3fb6add479689bf6564dbda9bde27c34fc126bb21d79",
+      "tank": {
+        "ammunition": {},
+        "contents_mass_kg": 0.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 0.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 2.0
+    },
+    "hq_at_20.0": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "hq-stock",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "fa19281ae6e448457562cfde0b679fb731048b1b43493a9c1368580e8cc8aef3",
+      "tank": {
+        "ammunition": {
+          "E02": 900,
+          "E25": 3
+        },
+        "contents_mass_kg": 54.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 5.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 20.0
+    },
+    "hq_at_4.0": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "hq-stock",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "2d2d4143a640df0cf96f38cb8be5bada65866862a60ac3a4885b73a2ae4ef693",
+      "tank": {
+        "ammunition": {
+          "E25": 2
+        },
+        "contents_mass_kg": 24.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 0.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 4.0
+    },
+    "hq_at_60.0": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "read-trained",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1655.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 27.5,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "tank": {
+        "ammunition": {
+          "E02": 900,
+          "E25": 3
+        },
+        "contents_mass_kg": 54.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 5.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 60.0
+    },
+    "hq_coarse": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "read-trained",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1655.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 27.5,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "tank": {
+        "ammunition": {
+          "E02": 900,
+          "E25": 3
+        },
+        "contents_mass_kg": 54.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 5.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 60.0
+    },
+    "hq_partitioned": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "read-trained",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1655.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 27.5,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "f65c2205fa31d583b11135747f8b0eb7b65783c618d8d810153c6b2ec93c521b",
+      "tank": {
+        "ammunition": {
+          "E02": 900,
+          "E25": 3
+        },
+        "contents_mass_kg": 54.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 5.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 60.0
+    },
+    "hq_reserved": {
+      "audit": [],
+      "rifle": {
+        "ammo_type": "E02",
+        "contents_mass_kg": 0.0,
+        "controller": "",
+        "created_at": 0.0,
+        "description": "Intact weapon",
+        "design_type": "E01",
+        "functional": true,
+        "holder_id": "hq-stock",
+        "id": "read-rifle",
+        "kind": "WEAPON",
+        "loaded_capacity": 30,
+        "loaded_rounds": 0,
+        "origin_id": "",
+        "owner": "army-blue",
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "unit_mass_kg": 4.0
+      },
+      "sha256": "9baff3ae300ca025c49387588ab1c831c3488d2675d2c7b64f9b193b6c2f9ff8",
+      "tank": {
+        "ammunition": {},
+        "contents_mass_kg": 0.0,
+        "controller": "army-blue-hq",
+        "created_at": 0.0,
+        "crew": [],
+        "crew_by_station": {},
+        "damage_immobilized": false,
+        "description": "Manufactured empty, unfuelled and uncrewed hull",
+        "design_type": "T05",
+        "destruction_resolved": false,
+        "facing_degrees": 2.0006144880891563,
+        "fleet_domain": "Military",
+        "fuel": 0.0,
+        "health": 1200,
+        "holder_id": "hq-berth",
+        "id": "read-tank",
+        "kind": "CARRIER",
+        "last_damage_at": "-INF",
+        "max_health": 1200,
+        "origin_id": "",
+        "owner": "army-blue",
+        "passengers": [],
+        "position": "(1640.0, 91.0)",
+        "quantity": 1,
+        "state": "Present",
+        "state_entered_at": 0.0,
+        "submerged": false,
+        "towed_by": "",
+        "towing": "",
+        "unit_mass_kg": 30000.0,
+        "vehicle_spec": {
+          "footprint": "(8.5, 3.5)",
+          "health": 1200,
+          "mass": 30000.0,
+          "mechanisms": [
+            "Integral W07 cannon and mounting",
+            "Integral coaxial W02 and mounting"
+          ],
+          "passenger_seats": 0,
+          "payload": 200.0,
+          "rack_capacity": {
+            "E02": 1200,
+            "E25": 40
+          },
+          "stations": [
+            "Driver",
+            "Gunner",
+            "Loader",
+            "Commander"
+          ],
+          "tank_capacity": 120.0
+        },
+        "wreck_cleared": false
+      },
+      "time": 0.0
+    },
+    "leader_incapacitated": {
+      "audit": [],
+      "rifle": {},
+      "sha256": "1ba4f506b8e2913d22d0d94d873295ccbfe1345dbcddf6e7b11904db4b89e837",
+      "tank": {},
+      "time": 1.9999999999999964
+    },
+    "leader_replacement_boundary": {
+      "audit": [],
+      "rifle": {},
+      "sha256": "25afcb648d18efa5a0bcadd56877eab73e62c30b4f950bfcbfa7d1803fb1f033",
+      "tank": {},
+      "time": 7.9999999999999964
+    },
+    "leader_waiting": {
+      "audit": [],
+      "rifle": {},
+      "sha256": "bf63605dadf6dbba5b1fb0927db442b5a79ef815b6e7605ece935f4dfd98ac4e",
+      "tank": {},
+      "time": 5.9999999999999964
+    },
+    "world_start": {
+      "audit": [],
+      "rifle": {},
+      "sha256": "02a20157a6b9f909b3f57d3ffdb5092b705f519f9d777afe6a37f06fd0e9f9d8",
+      "tank": {},
+      "time": 0.0
+    },
+    "world_two_seconds": {
+      "audit": [],
+      "rifle": {},
+      "sha256": "943401a7387d31d7f725392b047a83ecaeee310c456f974fe3e6bfd3f92e3b4a",
+      "tank": {},
+      "time": 1.9999999999999964
+    }
+  }
+}

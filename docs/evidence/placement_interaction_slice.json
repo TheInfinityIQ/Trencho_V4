@@ -1,0 +1,583 @@
+{
+  "id": "E15",
+  "recorded_utc": "2026-11-04T14:47:41.166108+00:00",
+  "status": "bounded_placement_slice_implemented_and_benchmarked_broader_failure_retained",
+  "user_authorization": "Plan, implement, benchmark. Apply E14 evidence/justification standard through bounded reversible slices; this record does not mark the full overhaul complete.",
+  "parent": "docs/engine_aligned_migration_plan.json::event_driven_domain_revision",
+  "parent_steps": [
+    "M0 (bounded placement characterization)",
+    "M1 (cheap provisional feedback and authoritative click)"
+  ],
+  "decision": {
+    "problem": "Every hover event previously ran full Construction.preview, including repeated visibility/clearance-path searches. The four original default-game cases missed the six-site workload.",
+    "principles": [
+      "Separate presentation feedback from authoritative commands",
+      "Single canonical geometry owner; detached read-only query",
+      "Validate current state at the commit boundary",
+      "Optimize measured work; retain simple mechanisms until alternatives earn their cost"
+    ],
+    "choice": "Use fresh canonical Rect2 footprint/bounds/entrance checks for event-driven provisional hover. Share those exact checks with full preview. Keep complete access/connectivity checks on explicit Preview legal site and every place command. Render provisional success amber and explain that the click checks access.",
+    "owners": "ConstructionService owns both read contracts and authoritative placement; BaseDemo selects the query based on input intent; BaseMap presents the provisional state.",
+    "triggers": [
+      "Pointer/camera/rotation input",
+      "Explicit legal-site preview",
+      "Placement command; always its own current position and state"
+    ],
+    "alternatives": [
+      {
+        "option": "Keep full route validation for every pointer event",
+        "assessment": "Rejected: three native six-site runs exceeded the unchanged 100 ms frame gate in under a second."
+      },
+      {
+        "option": "Trust the previous hover result at click",
+        "assessment": "Rejected: protected-lane and changed-obstruction same-frame tests prove why admission must read current facts."
+      },
+      {
+        "option": "Introduce an Area2D collider mirror immediately",
+        "assessment": "Deferred: geometry hints already measure in microseconds at six sites, while the current ledger does not declare a scoped stock-change signal. A mirror adds producers/lifetime synchronization for cancelled sites retaining stock and physics-step/pause/transform obligations. No Area2D performance superiority or inferiority is claimed; no comparative physics benchmark was executed."
+      },
+      {
+        "option": "Cache full route answers across pointer positions",
+        "assessment": "Deferred: avoiding full route work on the interaction path removes the immediate cost without stale-access cache invalidation obligations."
+      }
+    ],
+    "evidence": [
+      "Three separately restarted failed before runs and three passing 30-second hover/post-placement observations, below.",
+      "Six query/commit tests including every buildable kind/orientation, retained stock, purity, path-call tracing and blocked/stale commit.",
+      "Native traces prove hover never calls full validation/path searches and stationary input does not poll.",
+      "Mechanical source comparison proves the extracted shared geometry checks and remaining full-validator tail are unchanged.",
+      "Godot documents Rect2 geometry and Area2D physics-step overlap updates; engine facilities do not by themselves establish application performance."
+    ],
+    "tradeoffs": [
+      "Hover no longer guarantees access/connectivity. Its success is explicitly provisional; final validation may reject.",
+      "Geometry still scans current instances on an input event. This is not a recurring application poll and is not a measured bottleneck in the tested six-site state. Larger populations remain an explicit unmeasured limit.",
+      "Current global simulation dispatch, read fanout and roughly 50 ms p99 live frames remain outside this slice.",
+      "Cancelled/dismantled stock rules remain canonical; no physics-space or cached geometry authority was introduced."
+    ],
+    "acceptance": "The bounded R30/R31 interaction requirements pass; whole-system R25-R32 and all-menu/cancellation acceptance are incomplete. Limits remain 100 ms frame/action, 30000 inspections/s and 0.25 s placement progress/debt allowance.",
+    "rollback": "Restore the previous hover connection and UI query branch together, or revert the three runtime file changes as one slice. The full placement validator, state format, jobs and clocks retain their prior rules; no state conversion is required."
+  },
+  "implementation": {
+    "runtime_files": [
+      "game/construction/construction_service.gd",
+      "game/rear_base/base_demo.gd",
+      "game/rear_base/base_map.gd"
+    ],
+    "clock_driver_changed": false,
+    "source_comparison": {
+      "shared_geometry_body_unchanged": true,
+      "remaining_full_validator_tail_unchanged": true,
+      "full_validator_tail_sha256": "e383c71c9e1d2ecb0ffafae21adbe71845f4c6065e369ada60ff5538007ae6e5",
+      "classification": "mechanical_source_equivalence_not_complete_behavior_coverage"
+    },
+    "ledger_signal_declarations_observed": [
+      "signal person_position_changed(person_id: String)",
+      "signal vehicle_damaged(vehicle_id: String)",
+      "signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)"
+    ],
+    "call_graph": "Map input -> preview_build_hint_at -> preview_build_at(full_validation=false) -> placement_hint -> _footprint_preview. Explicit preview -> preview(full rules). Click -> place -> preview(full rules) -> commit."
+  },
+  "benchmark_protocol": {
+    "engine": "Installed Godot 4.7.2 stable Steam ed1daf0bf; workspace-local executable copy verified equal to installed binary. Portable editor/user data kept inside the workspace for restricted test execution.",
+    "native_fixture": "Actual connected default empty-field game; prepare six legal construction sites while paused through public domain commands, resume via player controls, select workshop with GUI input, issue eight unaccumulated viewport motions per rendered frame, place at a fractional arbitrary coordinate and observe. No substitution of the world.",
+    "renderer_viewport_cap": "GL compatibility; 1280x720; 60 fps cap; 1x; same current scene and fixture for before/after.",
+    "native_instrumentation": "Counters on, caller stacks off, optional stage profiling off. A separate default-stack run validates attribution compatibility. No performance threshold is relaxed.",
+    "native_duration": "Each run targets 30 seconds hover and 30 seconds post-placement. Before runs abort on the first >100 ms frame after about one second; before distributions are truncated and are not a matched 30-second performance baseline.",
+    "quantiles": "Linear interpolation at (n-1)*p over retained raw observations, per run; p50/p95/p99/max are descriptive. Consecutive frames/events are correlated; no confidence interval or whole-game speed factor is claimed.",
+    "query_fixture": "Separate equivalent six-site paused fixtures, eight warmup queries/mode, 192 identical poses per mode per batch, three alternating-order batches. Counters off only inside timed calls. Confirm unchanged sites, ledger and time.",
+    "query_limit": "Compares the cost of a complete validator with intentionally narrower provisional geometry; it proves the saving from removing route work, not semantic equivalence of hint and full validation. Commit retains the complete validator.",
+    "replication_order": "Three before failures, then three after passes; not randomized old/new order. Record timing noise/drift limitations and independent per-run results."
+  },
+  "before_runs": [
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-07-15-22564",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": false,
+          "elapsed_seconds": 0.913533,
+          "frame": {
+            "samples": 22,
+            "p50": 16.7325,
+            "p95": 96.90405,
+            "p99": 103.93126,
+            "max": 105.757,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 56,
+            "p50": 10.0555,
+            "p95": 10.62325,
+            "p99": 10.75145,
+            "max": 10.763,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 0.80215,
+          "owed_seconds": 0.104831,
+          "inspect_calls_per_second": 400.642341327571,
+          "issues": [
+            {
+              "milliseconds": 105.757,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 105.757,
+              "reason": "frame_time_budget"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-08-40-11916",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": false,
+          "elapsed_seconds": 0.981596,
+          "frame": {
+            "samples": 23,
+            "p50": 17.112,
+            "p95": 93.54599999999999,
+            "p99": 101.02264000000001,
+            "max": 103.055,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 64,
+            "p50": 9.826,
+            "p95": 10.02315,
+            "p99": 10.51498,
+            "max": 10.549,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 0.872508,
+          "owed_seconds": 0.102207,
+          "inspect_calls_per_second": 383.049645679078,
+          "issues": [
+            {
+              "milliseconds": 103.055,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 103.055,
+              "reason": "frame_time_budget"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-10-14-25336",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": false,
+          "elapsed_seconds": 0.977034,
+          "frame": {
+            "samples": 23,
+            "p50": 16.929,
+            "p95": 93.2242,
+            "p99": 101.31964,
+            "max": 103.506,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 64,
+            "p50": 9.677,
+            "p95": 10.0932,
+            "p99": 10.20694,
+            "max": 10.246,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 0.867894,
+          "owed_seconds": 0.102581,
+          "inspect_calls_per_second": 384.838193962544,
+          "issues": [
+            {
+              "milliseconds": 103.506,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 103.506,
+              "reason": "frame_time_budget"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "after_runs": [
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-16-06-25508",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.279608,
+          "frame": {
+            "samples": 1704,
+            "p50": 17.055,
+            "p95": 19.470399999999998,
+            "p99": 50.05422000000001,
+            "max": 74.389,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 13504,
+            "p50": 0.024,
+            "p95": 0.081,
+            "p99": 0.092,
+            "max": 0.408,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 30.2782060000005,
+          "owed_seconds": 0.0,
+          "inspect_calls_per_second": 3458.43314748328,
+          "issues": []
+        },
+        {
+          "label": "Populated field / fresh authoritative click and subsequent work at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.0181,
+          "frame": {
+            "samples": 1787,
+            "p50": 16.64,
+            "p95": 18.590499999999995,
+            "p99": 47.9837,
+            "max": 50.137,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": null,
+          "click_dispatch_ms": 15.97,
+          "logical_progress_seconds": 30.0934880000016,
+          "owed_seconds": 1.90819582357449e-15,
+          "inspect_calls_per_second": 2412.64437122936,
+          "issues": []
+        }
+      ]
+    },
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-21-09-6348",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.262283,
+          "frame": {
+            "samples": 1697,
+            "p50": 17.064,
+            "p95": 19.463399999999996,
+            "p99": 50.13531999999999,
+            "max": 72.543,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 13448,
+            "p50": 0.024,
+            "p95": 0.081,
+            "p99": 0.094,
+            "max": 0.19,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 30.2605760000005,
+          "owed_seconds": 0.0,
+          "inspect_calls_per_second": 3447.06313135727,
+          "issues": []
+        },
+        {
+          "label": "Populated field / fresh authoritative click and subsequent work at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.032474,
+          "frame": {
+            "samples": 1788,
+            "p50": 16.6405,
+            "p95": 18.847649999999998,
+            "p99": 47.717,
+            "max": 50.576,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": null,
+          "click_dispatch_ms": 16.388,
+          "logical_progress_seconds": 30.1095220000015,
+          "owed_seconds": 2.37657116208823e-15,
+          "inspect_calls_per_second": 2415.58520953019,
+          "issues": []
+        }
+      ]
+    },
+    {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-22-31-25000",
+      "cases": [
+        {
+          "label": "Populated field / six real sites and eight pointer motions per frame at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.281443,
+          "frame": {
+            "samples": 1709,
+            "p50": 16.939,
+            "p95": 19.377399999999998,
+            "p99": 49.6172,
+            "max": 74.796,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": {
+            "samples": 13544,
+            "p50": 0.024,
+            "p95": 0.081,
+            "p99": 0.092,
+            "max": 0.671,
+            "unit": "milliseconds"
+          },
+          "click_dispatch_ms": 0.0,
+          "logical_progress_seconds": 30.2804530000005,
+          "owed_seconds": 1.52308721190764e-15,
+          "inspect_calls_per_second": 3471.3339123238,
+          "issues": []
+        },
+        {
+          "label": "Populated field / fresh authoritative click and subsequent work at 1x",
+          "ok": true,
+          "elapsed_seconds": 30.026599,
+          "frame": {
+            "samples": 1787,
+            "p50": 16.644,
+            "p95": 17.89339999999998,
+            "p99": 47.94206,
+            "max": 56.107,
+            "unit": "milliseconds"
+          },
+          "pointer_dispatch": null,
+          "click_dispatch_ms": 15.559,
+          "logical_progress_seconds": 30.1011390000015,
+          "owed_seconds": 1.32185928869433e-15,
+          "inspect_calls_per_second": 2413.89309525198,
+          "issues": []
+        }
+      ]
+    }
+  ],
+  "query_benchmark": {
+    "logs": "logs/gdunit4-performance-2026-11-04T14-31-16-24672",
+    "raw": "logs/gdunit4-performance-2026-11-04T14-31-16-24672/placement-query-benchmark.json",
+    "runs": [
+      {
+        "replication": 0,
+        "full_preview": {
+          "samples": 192,
+          "p50": 9.8675,
+          "p95": 10.231449999999999,
+          "p99": 10.56779,
+          "max": 10.736,
+          "unit": "milliseconds"
+        },
+        "footprint_hint": {
+          "samples": 192,
+          "p50": 0.012,
+          "p95": 0.017,
+          "p99": 0.018090000000000002,
+          "max": 0.021,
+          "unit": "milliseconds"
+        },
+        "median_cost_ratio": 822.2916666666666
+      },
+      {
+        "replication": 1,
+        "full_preview": {
+          "samples": 192,
+          "p50": 9.9115,
+          "p95": 10.237449999999999,
+          "p99": 10.81039,
+          "max": 11.481,
+          "unit": "milliseconds"
+        },
+        "footprint_hint": {
+          "samples": 192,
+          "p50": 0.01,
+          "p95": 0.016,
+          "p99": 0.017090000000000004,
+          "max": 0.09,
+          "unit": "milliseconds"
+        },
+        "median_cost_ratio": 991.15
+      },
+      {
+        "replication": 2,
+        "full_preview": {
+          "samples": 192,
+          "p50": 9.916,
+          "p95": 10.34865,
+          "p99": 10.67136,
+          "max": 11.512,
+          "unit": "milliseconds"
+        },
+        "footprint_hint": {
+          "samples": 192,
+          "p50": 0.012,
+          "p95": 0.01744999999999999,
+          "p99": 0.026180000000000005,
+          "max": 0.029,
+          "unit": "milliseconds"
+        },
+        "median_cost_ratio": 826.3333333333334
+      }
+    ],
+    "native_frame_results_are_separate": true
+  },
+  "validation": {
+    "initial_current_game_control": {
+      "logs": "logs/gdunit4-performance-2026-11-04T13-58-42-23736",
+      "cases": 4,
+      "result": "passed_before_implementation; original coverage did not catch six-site hover cost"
+    },
+    "query_guards": {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-31-16-24672",
+      "cases": 6,
+      "result": "passed; separate equivalent-fixture benchmark included"
+    },
+    "original_guards": {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-31-42-8508",
+      "cases": 10,
+      "result": "passed; includes existing frozen 13 domain hashes"
+    },
+    "default_stack_placement": {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-41-07-19852",
+      "cases": 12,
+      "result": "passed; six actual-game cases plus six query/commit guards; full caller stacks enabled outside timed query batches"
+    },
+    "wider_construction_matrix": {
+      "logs": "logs/gdunit4-performance-2026-11-04T14-34-46-1092",
+      "selected_cases": 2,
+      "result": "failed_performance_not_claimed_passed",
+      "placement_rotations": {
+        "scenarios": 22,
+        "result": "passed all 11 buildable kinds and both orientations, including cancellation before work and material invariants"
+      },
+      "started_completed_cancellation": "Fourteen scenarios passed; vehicle_works started cancellation exceeded 100 ms, leaving later scenarios pending.",
+      "failure": {
+        "action": "Started cancellation: vehicle_works",
+        "dispatch_ms": 105.876,
+        "peak_frame_ms": 113.434,
+        "classification": "known_failure_reobserved; same action failed in E07 at 102.903 ms dispatch and 109.117 ms frame; no matched cross-run speed claim"
+      },
+      "prior_evidence": "docs/evidence/ui_acceptance_matrix.json"
+    },
+    "whole_55_case_suite": "not_executed_in_full; no whole-game acceptance claim",
+    "tools_and_maps": {
+      "tool_tests": {
+        "cases": 12,
+        "status": "passed"
+      },
+      "document_and_source_validation": "passed: references, acyclic phase graph, eight current runtime anchors, current inventory hashes, frozen original inventory and 55 declared default suite cases",
+      "purpose_reviews": "28 added/changed functions/callbacks reviewed against implementation; zero pending",
+      "final_map_and_diagram_check": "Required after fingerprint regeneration; final command output is the delivery gate.",
+      "checked_utc": "2026-11-04T14:57:37.460022+00:00"
+    }
+  },
+  "test_harness_corrections": [
+    {
+      "problem": "Installed portable Godot attempted editor/user-data writes outside workspace, causing infrastructure errors during initial compile checks.",
+      "resolution": "Use verified workspace-local engine copy and child-process APPDATA location; normal installed editor/project behavior is unchanged.",
+      "logs": [
+        "logs/gdunit4-performance-2026-11-04T13-54-58-23468",
+        "logs/gdunit4-performance-2026-11-04T13-56-50-19868"
+      ]
+    },
+    {
+      "problem": "New benchmark selector originally retained the default 47-case count after executing one selected case.",
+      "resolution": "Assert exactly one benchmark case, record its selection and maintain explicit expected counts for 55 default, 12 placement and six query guards.",
+      "logs": "logs/gdunit4-performance-2026-11-04T14-02-51-22452"
+    },
+    {
+      "problem": "New protected-lane fixture used an unprotected coordinate.",
+      "resolution": "Read the actual Supply Table lane endpoints and use (18,100), preserving the full validator and expectations.",
+      "logs": "logs/gdunit4-performance-2026-11-04T14-13-00-22324"
+    },
+    {
+      "problem": "Existing full UI matrix passed viewport coordinates to push_input with default window-coordinate conversion; scaled/headless map cancellation/placement missed the target.",
+      "resolution": "Use push_input(event,true) for both mouse motion and buttons. The same 22 placement/rotation scenarios then passed without relaxing assertions.",
+      "logs": "logs/gdunit4-performance-2026-11-04T14-32-11-16544",
+      "reference": "https://docs.godotengine.org/en/4.7/classes/class_viewport.html#class-viewport-method-push-input"
+    }
+  ],
+  "source_anchors": [
+    {
+      "function": "game/construction/construction_service.gd::placement_hint",
+      "line": 32,
+      "end_line": 38,
+      "function_sha256": "834975516eb530facf69706747122dc226cc4f43692d021fadfbb1e65ab74e83",
+      "file_sha256": "0046a4a8ae5cb758f57366e3be578b84e9d363531cd509822c831311c3e1872f"
+    },
+    {
+      "function": "game/construction/construction_service.gd::_footprint_preview",
+      "line": 40,
+      "end_line": 54,
+      "function_sha256": "264e8fef8ec8c046fb13b12ce011e649175fddb2f82fd0f7cc40b679de7b80bb",
+      "file_sha256": "0046a4a8ae5cb758f57366e3be578b84e9d363531cd509822c831311c3e1872f"
+    },
+    {
+      "function": "game/construction/construction_service.gd::preview",
+      "line": 56,
+      "end_line": 97,
+      "function_sha256": "f845fac182c7eb64e293f9c164e5225925d0853544ccf2f317057ce2d4d86a9e",
+      "file_sha256": "0046a4a8ae5cb758f57366e3be578b84e9d363531cd509822c831311c3e1872f"
+    },
+    {
+      "function": "game/construction/construction_service.gd::place",
+      "line": 133,
+      "end_line": 150,
+      "function_sha256": "503fbc309fc9a4721b09382f13bce67a0b25270e56e041b65be3f45c326093e5",
+      "file_sha256": "0046a4a8ae5cb758f57366e3be578b84e9d363531cd509822c831311c3e1872f"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::preview_build_hint_at",
+      "line": 884,
+      "end_line": 885,
+      "function_sha256": "ec2eede10c23300436102b1ce8f90f8b12f8d432170e26e0a0ec771392c3f852",
+      "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::preview_build_at",
+      "line": 887,
+      "end_line": 899,
+      "function_sha256": "14028ffbaeab08461c5adb771bb5fdb13b201b259d38a5961b2cbba7c9a1e43d",
+      "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::confirm_build_at",
+      "line": 901,
+      "end_line": 911,
+      "function_sha256": "fad8493168ba0f2e4c2fc36454bff833f325b83ec10e0a9f0328294723e187be",
+      "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+    },
+    {
+      "function": "game/rear_base/base_map.gd::_draw",
+      "line": 159,
+      "end_line": 233,
+      "function_sha256": "04e5d3a1907bdcf38c860cb1ede1c59a2ad228b650796e4b8b489f55600f849f",
+      "file_sha256": "c4ba38284391806d66e0bd7ff40963ded0690510eb8e14dc0176b4c5381e2ee3"
+    }
+  ],
+  "remaining": [
+    "Independent logistics/battlefield drivers, owned native job timers and explicit shipment custody handoffs remain proposed; advance_time/_settle are still the current live driver.",
+    "Area2D prototype/comparative physics benchmark deferred until justified by scale and a complete geometry/stock event contract.",
+    "Vehicle-works cancellation and wider known menu/new-session timing failures remain open.",
+    "Long-run native p99 frames are about 50 ms even after hover is cheap; 60fps stability is not established.",
+    "Full selected 55-case and larger-world acceptance remain unexecuted."
+  ],
+  "references": [
+    "https://docs.godotengine.org/en/4.7/tutorials/best_practices/scene_organization.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_rect2.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_area2d.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_viewport.html#class-viewport-method-push-input"
+  ],
+  "source_anchor_hashing": "Function and file hashes use the living map newline-normalized source convention. Raw source_manifest.json files in each executed run retain byte hashes separately."
+}

@@ -66,6 +66,16 @@ func _exposed_gunner(person: Dictionary) -> bool:
 	var hull: Dictionary = _rear().ledger.inspect_entity(person.holder_id)
 	return hull.get("design_type","") == "T03" and hull.get("health",0) > 0
 
+func observation_station(hull: Dictionary) -> Dictionary:
+	if hull.get("design_type","") != "T04" or hull.get("health",0) <= 0: return {}
+	for station in ["Commander","Gunner","Driver"]:
+		var person_id: String = _operator(hull,station)
+		if person_id.is_empty(): continue
+		var person: Dictionary = _rear().ledger.inspect_entity(person_id)
+		if person.owner != hull.owner: continue
+		return {"source":person_id,"role":"apc_commander" if station == "Commander" else "ordinary"}
+	return {}
+
 func _surface(target: Dictionary, origin: Vector2) -> String:
 	var direction: Vector2 = origin-target.position
 	if direction.length_squared() <= EPS: return "Side"
@@ -143,7 +153,8 @@ func inspect_fire(id: String, target_id: String, weapon: String, moving: bool = 
 		var radius := 6.0 if weapon == "Main" else 2.0
 		for person in _rear().ledger.snapshot().entities:
 			if person.kind == "PERSON" and person.owner == hull.owner and person.health > 0 and not _seated(person) and person.position.distance_to(target.position) < radius: return _block("Friendly person occupies the cannon blast area.")
-	var sight: Dictionary = _rear().combat.world.observe(hull.position,target.position,"ordinary",1.5,float(spec.range))
+	var observer: Dictionary = observation_station(hull)
+	var sight: Dictionary = _rear().combat.world.observe(hull.position,target.position,str(observer.get("role","ordinary")),3.0,float(spec.range))
 	if not sight.visible or not sight.firing_line_clear: return _block("Observation or firing line blocked.")
 	var friendly: String = _friendly_line_blocker(hull.owner,id,target_id,hull.position,target.position)
 	if not friendly.is_empty(): return _block("Friendly person or vehicle "+friendly+" intersects the direct firing line.")
@@ -201,6 +212,7 @@ func fire(id: String, target_id: String, weapon: String, moving: bool = false) -
 	return {"ok":true,"hit":hit,"damage":damage,"penetrated":penetrated,"surface":check.surface,"remaining_local":_available_rack(id,str(spec.ammo))}
 
 func request_reload(id: String, weapon: String) -> Dictionary:
+	if _rear().forward_supply != null and _rear().forward_supply.rack_issue.hull_committed(id): return _block("Physical local rack handling must finish before mounted reload.")
 	var hull: Dictionary = _rear().ledger.inspect_entity(id)
 	if hull.is_empty() or not MOUNTS.has(hull.get("design_type","")) or not MOUNTS[hull.design_type].has(weapon): return _block("Actual integral mount required.")
 	if (weapon == "Main" and _operator(hull,"Loader").is_empty()) or (weapon != "Main" and _operator(hull,"Gunner").is_empty()): return _block("Actual reload operator absent.")
@@ -231,9 +243,13 @@ func advance_to(at: float) -> void:
 			projectiles.erase(shot)
 	for id in mounts:
 		var row: Dictionary = mounts[id]
-		var hull: Dictionary = _rear().ledger.inspect_entity(id)
+		var hull: Dictionary = {}
+		var inspected := false
 		for weapon in row.reload_due.keys():
 			if float(row.reload_due[weapon]) > at+EPS: continue
+			if not inspected:
+				hull = _rear().ledger.inspect_entity(id)
+				inspected = true
 			var spec: Dictionary = MOUNTS.get(hull.get("design_type",""),{}).get(weapon,{})
 			if not spec.is_empty() and (not _operator(hull,"Loader").is_empty() if weapon == "Main" else not _operator(hull,"Gunner").is_empty()):
 				row.loaded[weapon] = mini(int(spec.capacity),_available_rack(id,str(spec.ammo)))
@@ -308,6 +324,7 @@ func inspect_personal_vehicle(shooter_id: String, target_id: String, weapon_id: 
 	if target.kind not in ["PERSON","CARRIER"]: return _block("Actual exposed gunner or vehicle target required.")
 	if person.owner == target.owner or target.health <= 0 or person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"] or _seated(person) or not person.crew_station.is_empty(): return _block("Living dismounted hostile shooter and surviving hull required.")
 	if _rear().forward_supply != null and _rear().forward_supply.person_committed(shooter_id): return _block("Forward issue handoff occupies this person.")
+	if _rear().military != null and _rear().military.person_committed(shooter_id): return _block("Troop transport handling occupies this person.")
 	if gun.holder_id != shooter_id or not gun.functional or gun.loaded_rounds <= 0: return _block("Shooter must hold a functional weapon with its own loaded E02.")
 	if gun.design_type == "E05" and person.qualification != "P04": return _block("Portable machine gun requires actual P04.")
 	if gun.design_type == "E19" and person.qualification != "P07": return _block("Marksman rifle requires actual P07.")
@@ -343,15 +360,12 @@ func fire_personal_at_vehicle(shooter_id: String, target_id: String, weapon_id: 
 	return {"ok":true,"hit":hit,"penetrated":penetrated,"damage":int(spec.damage) if penetrated else 0,"surface":check.surface}
 
 func _rack_source(id: String, ammo: String) -> String:
-	for item in _rear().ledger.snapshot().entities:
+	for item in _rear().ledger.entities_at(id,["STOCK"],false):
 		if item.kind == "STOCK" and item.holder_id == id and item.design_type == ammo and item.available > 0: return item.id
 	return ""
 
 func _available_rack(id: String, ammo: String) -> int:
-	var total := 0
-	for item in _rear().ledger.snapshot().entities:
-		if item.kind == "STOCK" and item.holder_id == id and item.design_type == ammo: total += int(item.available)
-	return total
+	return _rear().ledger.available_stock_at(id,ammo)
 
 func _seated(person: Dictionary) -> bool:
-	return _rear().ledger.inspect_entity(person.holder_id).get("kind","") == "CARRIER"
+	return _rear().ledger.entity_kind(person.holder_id) == "CARRIER"

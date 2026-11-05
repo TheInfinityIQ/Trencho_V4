@@ -1,0 +1,52 @@
+{
+  "user_preference": "Routine tests may be headless or minimized. Use foreground only when necessary for a user-reported testing issue, bug or regression.",
+  "implementation": "Both launchers default to headless. Explicit Foreground enables rendered runs; Headless plus Foreground is rejected before launching. Native-only selections refuse a background launch. CMD entry points forward arguments. Production F5 window settings and pinned third-party sources were not edited for this policy.",
+  "reason": "Pinned GdUnit SceneRunner initializes native scenes by foregrounding the window and warping the actual OS cursor. Minimizing that runner alone cannot provide the requested desktop isolation. A headless display avoids the native desktop surface.",
+  "coverage": {
+    "routine_declared_cases": 60,
+    "foreground_declared_cases": 76,
+    "long_session_cases_opt_in": 1,
+    "background_logistics": 11,
+    "foreground_logistics": 12,
+    "background_training": 18,
+    "foreground_training": 22,
+    "visible_fps_certified": false
+  },
+  "omitted_native_cases": {
+    "full_ui": 3,
+    "building_pointer": 6,
+    "training_input": 4,
+    "ordinary_live_menu": 1,
+    "handler_live_menu": 1,
+    "logistics_request_cancel_input": 1
+  },
+  "checks": [
+    {
+      "command": "python -m unittest discover -s tools/tests -p test_test_launchers.py -v",
+      "result": "Three tests pass; real PowerShell launch plans validate default selectors, explicit omissions/counts, foreground preservation, conflicting modes and native-only refusal without starting Godot."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-53-02-24424",
+      "result": "Actual default headless selection: all sixty cases pass, zero failures/errors/skips. Engine arguments and exact source hashes retained; unchanged 16.67 ms ceilings. Not native-input/render/FPS certification."
+    },
+    {
+      "path": "logs/menu-performance-2026-11-05T19-55-09-7516",
+      "result": "Actual headless handler sweep deliberately tightened to 0.01 ms; saved failure and exited 2 without waiting for invisible paused-window interaction. Contract verification, not gameplay performance pass."
+    }
+  ],
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html",
+      "use": "Documented headless display and Dummy audio driver, rather than relying on an unsupported minimized CLI argument."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_input.html",
+      "use": "warp_mouse moves OS cursor; parse_input_event is local engine input."
+    },
+    {
+      "pin": "GdUnit4 6.2.2 / 0127a55f4543dfc24746f6e5c7ba6f94105d51f2",
+      "source": "addons/gdUnit4/src/core/GdUnitSceneRunnerImpl.gd::_init",
+      "use": "Inspected isolated pinned framework; foreground/warp calls explain native runner desktop behavior."
+    }
+  ]
+}

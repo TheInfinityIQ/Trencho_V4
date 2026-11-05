@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T14:30:36.614147+00:00",
+  "status": "implemented_validated_with_performance_failures",
+  "implementation": {
+    "suite": "game/diagnostics/tests/gdunit/a_full_ui_test.gd",
+    "launcher": "Run Full UI Coverage.cmd",
+    "default_observation_seconds": 2,
+    "core_button_definitions": 76,
+    "ui_profiles": 21,
+    "construction": "11 buildable facilities x two orientations; 11 started cancellations; 11 completed-building cancellation rejections. Coordinate and field placement, preview/button/Escape/right-click cancellation, rotation, overlap/bounds rejection, repeated cancellation and material invariants are asserted.",
+    "correctness": "Actual engine input receipts, checkbox/selector/menu behavior, navigation/help, new-game and consumed-recipe confirmations, structured engine errors, available model audits and construction-specific state/material contracts.",
+    "logging": "Per-action counters, frame/dispatch budgets, flushed engine errors and backtraces, process-wide per-second caller chains when enabled, current/pending actions, failure JSON/screenshots and JUnit/HTML. Stack windows may overlap setup/adjacent actions.",
+    "safety": "Framework runs in a disposable snapshot; no editor plugin is enabled and no gameplay implementation changed for this test addition."
+  },
+  "runs": {
+    "complete_ui_and_buildings": {
+      "path": "logs/gdunit4-performance-2026-11-03T14-21-26-38836",
+      "groups": [
+        {
+          "group": 1,
+          "cases": 22,
+          "complete": true,
+          "failed": 0
+        },
+        {
+          "group": 2,
+          "cases": 22,
+          "complete": true,
+          "failed": 1
+        },
+        {
+          "group": 3,
+          "cases": 854,
+          "complete": true,
+          "failed": 4
+        }
+      ],
+      "aggregate_gdunit_cases": 3,
+      "junit_failure_error_skip_entries": 5,
+      "runtime_stderr_empty": true,
+      "profiles": {
+        "construction": 44,
+        "Main game": 195,
+        "Standalone rear": 155,
+        "HQ diagnostics": 204,
+        "G24 Vehicle recovery": 12,
+        "G03 Staffing & hauling": 28,
+        "G04 R01 Production": 18,
+        "G04 R02 Munitions": 30,
+        "G04 R27 Explosives": 30,
+        "G04 R26 Materials": 20,
+        "G04 R32 Chain": 35,
+        "G04 R33 Chain": 35,
+        "G08 Terrain & sight": 10,
+        "G02 Procurement": 13,
+        "G01 Identity": 16,
+        "G16 Combat & care": 8,
+        "G17 Orders & information": 7,
+        "G18 Objectives & income": 5,
+        "G19 Field structures & roads": 4,
+        "G20 Bridges & traversal": 8,
+        "G22 Mines and clearance": 8,
+        "G21 Bridge denial": 13
+      },
+      "failures": [
+        {
+          "action": "Started cancellation: vehicle_works",
+          "dispatch_ms": 102.903,
+          "peak_frame_ms": 109.117,
+          "inspect_calls_per_second": 3727.7176121407,
+          "issues": [
+            {
+              "milliseconds": 109.117,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 102.903,
+              "reason": "action_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 109.117,
+              "reason": "frame_time_budget"
+            }
+          ]
+        },
+        {
+          "action": "Main game > Start new game",
+          "dispatch_ms": 160.266,
+          "peak_frame_ms": 222.456,
+          "inspect_calls_per_second": 14885.3881006319,
+          "issues": [
+            {
+              "milliseconds": 222.456,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 160.266,
+              "reason": "action_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 222.456,
+              "reason": "frame_time_budget"
+            }
+          ]
+        },
+        {
+          "action": "Standalone rear > Start new empty-field game",
+          "dispatch_ms": 160.58,
+          "peak_frame_ms": 178.568,
+          "inspect_calls_per_second": 8749.60229080496,
+          "issues": [
+            {
+              "milliseconds": 178.568,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 160.58,
+              "reason": "action_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 178.568,
+              "reason": "frame_time_budget"
+            }
+          ]
+        },
+        {
+          "action": "HQ diagnostics > Start new game",
+          "dispatch_ms": 162.967,
+          "peak_frame_ms": 331.958,
+          "inspect_calls_per_second": 32906.8241469816,
+          "issues": [
+            {
+              "milliseconds": 331.958,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 162.967,
+              "reason": "action_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 331.958,
+              "reason": "frame_time_budget"
+            }
+          ]
+        },
+        {
+          "action": "G24 Vehicle recovery > Repair scenario",
+          "dispatch_ms": 84.191,
+          "peak_frame_ms": 100.45,
+          "inspect_calls_per_second": 29160.7602626783,
+          "issues": [
+            {
+              "milliseconds": 100.45,
+              "reason": "frame_time_budget"
+            },
+            {
+              "limit": 100.0,
+              "milliseconds": 100.45,
+              "reason": "frame_time_budget"
+            }
+          ]
+        }
+      ],
+      "snapshot_source_sha256": {
+        "game/diagnostics/tests/gdunit/a_full_ui_test.gd": "f2c3ab872583ab509b64f2ae6902fc647cfddc1b6c12fa8c84f385519887499e",
+        "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd": "345789867d4d131c3366509033e76a4bd1e5b9b91526d7903cdccb636a887765",
+        "game/diagnostics/tests/gdunit/fixtures/ui_error_sink.gd": "90dffb96a7f0094de8462895af70fd394ab186559b6d1df1e6c17c583c0ed2e0"
+      },
+      "observation_seconds": 0.1,
+      "stacks_enabled": false,
+      "purpose": "Complete functional/native-input matrix; short windows do not certify the per-action one-second inspection budget.",
+      "source_button_gate": {
+        "declared_definitions": 76,
+        "missing": [],
+        "runtime_cases": 854
+      }
+    },
+    "hq_call_volume": {
+      "path": "logs/gdunit4-performance-2026-11-03T14-26-42-7400",
+      "groups": [
+        {
+          "group": 1,
+          "cases": 1,
+          "complete": true,
+          "failed": 1
+        }
+      ],
+      "aggregate_gdunit_cases": 1,
+      "junit_failure_error_skip_entries": 1,
+      "runtime_stderr_empty": true,
+      "profiles": {
+        "HQ diagnostics": 1
+      },
+      "failures": [
+        {
+          "action": "HQ diagnostics > Request course",
+          "dispatch_ms": 3.429,
+          "peak_frame_ms": 50.794,
+          "inspect_calls_per_second": 35587.8573691491,
+          "issues": [
+            {
+              "calls_per_second": 35812.233049312,
+              "limit": 30000.0,
+              "reason": "call_volume_budget"
+            },
+            {
+              "calls_per_second": 35587.8573691491,
+              "limit": 30000.0,
+              "reason": "call_volume_budget"
+            }
+          ]
+        }
+      ],
+      "snapshot_source_sha256": {
+        "game/diagnostics/tests/gdunit/a_full_ui_test.gd": "f2c3ab872583ab509b64f2ae6902fc647cfddc1b6c12fa8c84f385519887499e",
+        "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd": "30ef843c66d3b1f4bc15f2c6d1b8b011ee526a0e56d8ce301b1b7163357d4e60",
+        "game/diagnostics/tests/gdunit/fixtures/ui_error_sink.gd": "90dffb96a7f0094de8462895af70fd394ab186559b6d1df1e6c17c583c0ed2e0"
+      },
+      "requested_observation_seconds": 2,
+      "stacks_enabled": false,
+      "purpose": "Longer 1x call-volume check, stopped and paused at the first budget violation after approximately one real second."
+    },
+    "stack_capture": {
+      "path": "logs/gdunit4-performance-2026-11-03T14-27-08-3956",
+      "groups": [
+        {
+          "group": 1,
+          "cases": 3,
+          "complete": true,
+          "failed": 0
+        }
+      ],
+      "aggregate_gdunit_cases": 1,
+      "junit_failure_error_skip_entries": 0,
+      "runtime_stderr_empty": true,
+      "profiles": {
+        "Main game": 3
+      },
+      "failures": [],
+      "snapshot_source_sha256": {
+        "game/diagnostics/tests/gdunit/a_full_ui_test.gd": "f2c3ab872583ab509b64f2ae6902fc647cfddc1b6c12fa8c84f385519887499e",
+        "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd": "30ef843c66d3b1f4bc15f2c6d1b8b011ee526a0e56d8ce301b1b7163357d4e60",
+        "game/diagnostics/tests/gdunit/fixtures/ui_error_sink.gd": "90dffb96a7f0094de8462895af70fd394ab186559b6d1df1e6c17c583c0ed2e0"
+      },
+      "observation_seconds": 1,
+      "stacks_enabled": true,
+      "purpose": "Native Session-menu input and enabled caller-stack output smoke check.",
+      "stack_windows": 7,
+      "windows_with_caller_chains": 7
+    },
+    "read_guards": {
+      "path": "logs/gdunit4-performance-2026-11-03T14-27-39-3560",
+      "aggregate_cases": 10,
+      "failure_error_skip_entries": 0,
+      "scope": "Ten existing guards including thirteen frozen state checkpoints, stack grouping and narrow-read parity."
+    }
+  },
+  "assessment": {
+    "functional_contract_failures_in_complete_matrix": 0,
+    "complete_matrix_scenarios": 898,
+    "complete_matrix_performance_failures": 5,
+    "source_button_definitions_missing": [],
+    "full_performance_suite_green": false
+  },
+  "limits": [
+    "854 button/menu actions are concrete prepared runtime cases, not 854 distinct button definitions or every possible gameplay state.",
+    "Input exercised does not establish every successful training, dispatch, delivery, battle or other domain outcome. Disabled negative tests do not satisfy enabled source obligations.",
+    "Core fixtures reset per action; retained reviews run contextual sequences with explicit-time setup, which is excluded from measured windows.",
+    "Frame and queued-input timings include scheduling and instrumentation; these are bounded observations, not CPU attribution or statistical benchmarks.",
+    "The default selection declares fourteen aggregate cases. This validation ran the three UI aggregates and ten focused guards separately; the unchanged older live-menu aggregate was not rerun here.",
+    "The original complete run and intermediate debugging runs include superseded fixture/input failures. Only the named final runs support the current assessment.",
+    "Raw logs and isolated snapshots are ignored local artifacts; this JSON preserves bounded results for a fresh checkout."
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "status": "reviewed_additive_scheduler_projection_verified",
+  "recorded_utc": "2026-11-05T17:34:16.297410+00:00",
+  "frozen_baseline": "game/diagnostics/tests/gdunit/fixtures/training_read_baseline.json",
+  "baseline_sha256_preserved": "8c2e3aed0e16daffbe147df5091961959c42f6abf945b0d4ad3f31782bb06183",
+  "original_source_snapshot": ".tools/gdunit4-performance/2026-11-03T21-50-30-11388",
+  "original_sources_match_frozen_five_hashes": true,
+  "original_reproduction": "logs/prototype-training-state-old",
+  "current_full_capture": "logs/prototype-training-state-current",
+  "exact_raw_difference": "logs/prototype-training-structural-diff.json",
+  "labels": [
+    "access_paused",
+    "active",
+    "completed",
+    "empty",
+    "instructor_paused",
+    "multiple_sites",
+    "queued",
+    "reporting",
+    "withdrawn"
+  ],
+  "comparison": "All nine original before/after hashes reproduced. Full old/current raw data differs only by these seven additive idle scheduler fields, and all visible facts match. Current before/after raw states are also equal.",
+  "approved_additions": {
+    "/fields/_advance_due": {
+      "old": "absent",
+      "expected_current": false
+    },
+    "/fields/_foot_view_revision": {
+      "old": "absent",
+      "expected_current": -1
+    },
+    "/fields/_forward_view_revision": {
+      "old": "absent",
+      "expected_current": -1
+    },
+    "/fields/rear/fields/forward_supply/fields/transport/fields/_plan_queue": {
+      "old": "absent",
+      "expected_current": []
+    },
+    "/fields/rear/fields/forward_supply/fields/transport/fields/_plans": {
+      "old": "absent",
+      "expected_current": {}
+    },
+    "/fields/rear/fields/forward_supply/fields/transport/fields/_route_sequence": {
+      "old": "absent",
+      "expected_current": 0
+    },
+    "/fields/rear/fields/forward_supply/fields/transport/fields/planning_revision": {
+      "old": "absent",
+      "expected_current": 0
+    }
+  },
+  "verification": "logs/prototype-reviewed-characterization",
+  "acceptance_preservation": "Original frozen hashes and display facts were not recaptured or edited. The explicit projection asserts every listed field and exact idle default, removes only those seven additions from a clone, and leaves unknown additions or changed historical data to fail the original hashes. Full current-state before/after equality is additionally required."
+}

@@ -1,0 +1,2210 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T18:01:24.217535+00:00",
+  "kind": "Dated source-and-runtime analysis; no gameplay implementation changed.",
+  "living_inventory": "docs/system_map.json",
+  "scope": {
+    "gdscript_files": 171,
+    "gdscript_functions": 2713,
+    "game_systems": 29,
+    "review_depth": "Existing complete static inventory plus direct reading of the clock, settlement, UI, ledger, training and measured hotspot implementations cited in source_anchors. This is not a new line-by-line audit or runtime execution proof for every retained file.",
+    "freshness": "Original counts, modules, candidate locations, source_anchors and runtime call shares describe the recorded review epoch and are preserved as history. current_revision records only the rechecked training/read-only-rejection changes; use docs/system_map.json for the current full static inventory. Historical stack shares are not current CPU shares. E13 current_followup records bounded query/frame coordination changes; earlier source counts and stack shares remain historical."
+  },
+  "verdict": {
+    "authoritative_data_center": "IdentityLedger records and claims",
+    "execution_center": "GameSession -> BaseSimulation -> RearSimulation shared clock and domain services",
+    "inspect_entity_role": "Read/export adapter returning a detached description. It is neither the clock nor the command dispatcher.",
+    "why_central_reads_exist": "People, stock, weapons, vehicles and physical custody share stable identities and one authoritative ledger. Detached exports prevent consumers from directly mutating internal records; broad reused inspections trade convenience for repeated derivation/allocation.",
+    "design_problem": "Generic time/state notifications still fan out into refreshes, and settlement/eligibility checks repeatedly derive detailed facts. Normal Build/Supplies/Workers/Train now have scoped read branches; other advanced panels and HQ diagnostics retain broad exports. inspect_person_status still wraps inspect_entity with mass disabled."
+  },
+  "system_groups": {
+    "composition_and_presentation": [
+      "scenario",
+      "main",
+      "ui"
+    ],
+    "authoritative_entity_and_claim_data": [
+      "identity"
+    ],
+    "rear_logistics_and_facilities": [
+      "rear_base",
+      "staffing",
+      "procurement",
+      "production",
+      "construction",
+      "training",
+      "vehicles",
+      "dispatch",
+      "hq"
+    ],
+    "battlefield_and_operations": [
+      "battlefield",
+      "military",
+      "orders",
+      "combat",
+      "vehicle_combat",
+      "vehicle_recovery",
+      "objectives",
+      "forward_supply",
+      "field_structures",
+      "bridges",
+      "mines"
+    ],
+    "routes_and_geography": [
+      "routes",
+      "terrain"
+    ],
+    "diagnostics_and_retained_evaluations": [
+      "diagnostics",
+      "overhead_evaluation",
+      "world_probe"
+    ]
+  },
+  "modules": {
+    "battlefield": {
+      "purpose": "Author the opening battlefield and execute/display squad, vehicle, supply and resource orders.",
+      "gdscript_files": [
+        "game/battlefield/battlefield_presentation.gd",
+        "game/battlefield/battlefield_view.gd",
+        "game/battlefield/farmland_scenario.gd",
+        "game/battlefield/opening_policy.gd",
+        "game/battlefield/opening_resupply.gd",
+        "game/battlefield/resource_operations.gd",
+        "game/battlefield/rifle_supply_travel.gd",
+        "game/battlefield/squad_execution.gd",
+        "game/battlefield/tests/forward_clock_regression.gd",
+        "game/battlefield/tests/hq_location_regression.gd",
+        "game/battlefield/tests/session_regression.gd",
+        "game/battlefield/vehicle_deployment.gd",
+        "game/battlefield/vehicle_execution.gd"
+      ],
+      "gdscript_functions": 233,
+      "roles": {
+        "production": 10,
+        "test": 3
+      }
+    },
+    "bridges": {
+      "purpose": "Build and damage crossings, and place/resolve controlled demolition charges.",
+      "gdscript_files": [
+        "game/bridges/bridge_canvas.gd",
+        "game/bridges/bridge_catalogue.gd",
+        "game/bridges/bridge_demo.gd",
+        "game/bridges/bridge_service.gd",
+        "game/bridges/demolition_demo.gd",
+        "game/bridges/demolition_service.gd",
+        "game/bridges/tests/bridge_input_test.gd",
+        "game/bridges/tests/bridge_regression.gd",
+        "game/bridges/tests/demolition_input_test.gd",
+        "game/bridges/tests/demolition_regression.gd"
+      ],
+      "gdscript_functions": 115,
+      "roles": {
+        "production": 4,
+        "demo": 2,
+        "test": 4
+      }
+    },
+    "combat": {
+      "purpose": "Resolve infantry fire, wounds, morale, suppression, treatment and casualty consequences.",
+      "gdscript_files": [
+        "game/combat/combat_demo.gd",
+        "game/combat/combat_service.gd",
+        "game/combat/tests/combat_input_test.gd",
+        "game/combat/tests/combat_regression.gd"
+      ],
+      "gdscript_functions": 56,
+      "roles": {
+        "demo": 1,
+        "production": 1,
+        "test": 2
+      }
+    },
+    "construction": {
+      "purpose": "Place structures, commit local materials and builders, finish sites and dismantle structures.",
+      "gdscript_files": [
+        "game/construction/construction_catalogue.gd",
+        "game/construction/construction_service.gd",
+        "game/construction/tests/construction_input_test.gd",
+        "game/construction/tests/construction_regression.gd",
+        "game/construction/tests/construction_ui_smoke.gd"
+      ],
+      "gdscript_functions": 48,
+      "roles": {
+        "production": 2,
+        "test": 3
+      }
+    },
+    "diagnostics": {
+      "purpose": "Count runtime calls/stacks and run the opt-in 1x menu performance detector and its guards.",
+      "gdscript_files": [
+        "game/diagnostics/function_call_log.gd",
+        "game/diagnostics/menu_performance_suite.gd",
+        "game/diagnostics/tests/gdunit/a_full_ui_test.gd",
+        "game/diagnostics/tests/gdunit/capture_read_baseline.gd",
+        "game/diagnostics/tests/gdunit/fixtures/call_stack_origin_a.gd",
+        "game/diagnostics/tests/gdunit/fixtures/call_stack_origin_d.gd",
+        "game/diagnostics/tests/gdunit/fixtures/call_stack_target.gd",
+        "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd",
+        "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd",
+        "game/diagnostics/tests/gdunit/fixtures/ui_error_sink.gd",
+        "game/diagnostics/tests/gdunit/menu_performance_test.gd"
+      ],
+      "gdscript_functions": 111,
+      "roles": {
+        "production": 2,
+        "test": 3,
+        "test_fixture": 6
+      }
+    },
+    "dispatch": {
+      "purpose": "Admit people and vehicles into military service through physical reporting and handover.",
+      "gdscript_files": [
+        "game/dispatch/dispatch_service.gd",
+        "game/dispatch/tests/dispatch_input_test.gd",
+        "game/dispatch/tests/dispatch_regression.gd"
+      ],
+      "gdscript_functions": 62,
+      "roles": {
+        "production": 1,
+        "test": 2
+      }
+    },
+    "field_structures": {
+      "purpose": "Build and operate battlefield structures with workers, local materials and access checks.",
+      "gdscript_files": [
+        "game/field_structures/field_catalogue.gd",
+        "game/field_structures/field_demo.gd",
+        "game/field_structures/field_service.gd",
+        "game/field_structures/tests/field_input_test.gd",
+        "game/field_structures/tests/field_regression.gd"
+      ],
+      "gdscript_functions": 66,
+      "roles": {
+        "production": 2,
+        "demo": 1,
+        "test": 2
+      }
+    },
+    "forward_supply": {
+      "purpose": "Allocate forward ammunition/equipment and transport real freight to deployed recipients.",
+      "gdscript_files": [
+        "game/forward_supply/forward_delivery_panel.gd",
+        "game/forward_supply/forward_supply.gd",
+        "game/forward_supply/forward_transport.gd",
+        "game/forward_supply/tests/forward_supply_regression.gd",
+        "game/forward_supply/tests/forward_transport_regression.gd",
+        "game/forward_supply/vehicle_rack_issue.gd"
+      ],
+      "gdscript_functions": 138,
+      "roles": {
+        "production": 4,
+        "test": 2
+      }
+    },
+    "hq": {
+      "purpose": "Issue HQ equipment, ammunition and fuel to eligible recipients using actual local stock.",
+      "gdscript_files": [
+        "game/hq/hq_logistics.gd",
+        "game/hq/tests/hq_input_test.gd",
+        "game/hq/tests/hq_regression.gd"
+      ],
+      "gdscript_functions": 43,
+      "roles": {
+        "production": 1,
+        "test": 2
+      }
+    },
+    "identity": {
+      "purpose": "Own authoritative entity identity, holders, stock, personnel assignments, claims and conservation.",
+      "gdscript_files": [
+        "game/identity/identity_demo.gd",
+        "game/identity/identity_fixture.gd",
+        "game/identity/identity_ledger.gd",
+        "game/identity/identity_records.gd",
+        "game/identity/tests/identity_regression.gd"
+      ],
+      "gdscript_functions": 247,
+      "roles": {
+        "demo": 1,
+        "production": 3,
+        "test": 1
+      }
+    },
+    "main": {
+      "purpose": "Own the playable session, shared clock and navigation between screens.",
+      "gdscript_files": [
+        "game/main/game_session.gd",
+        "game/main/main.gd"
+      ],
+      "gdscript_functions": 20,
+      "roles": {
+        "production": 2
+      }
+    },
+    "military": {
+      "purpose": "Maintain formations, leaders, crews, capabilities and personnel transport.",
+      "gdscript_files": [
+        "game/military/organization.gd",
+        "game/military/tests/military_input_test.gd",
+        "game/military/tests/military_regression.gd",
+        "game/military/troop_transport.gd"
+      ],
+      "gdscript_functions": 163,
+      "roles": {
+        "production": 2,
+        "test": 2
+      }
+    },
+    "mines": {
+      "purpose": "Place, detect, clear and detonate devices while constraining movement through known hazards.",
+      "gdscript_files": [
+        "game/mines/device_catalogue.gd",
+        "game/mines/mine_demo.gd",
+        "game/mines/mine_service.gd",
+        "game/mines/tests/mine_input_test.gd",
+        "game/mines/tests/mine_regression.gd"
+      ],
+      "gdscript_functions": 67,
+      "roles": {
+        "production": 2,
+        "demo": 1,
+        "test": 2
+      }
+    },
+    "objectives": {
+      "purpose": "Track objective ownership and progress from physically present eligible forces.",
+      "gdscript_files": [
+        "game/objectives/objective_demo.gd",
+        "game/objectives/objective_service.gd",
+        "game/objectives/tests/objective_input_test.gd",
+        "game/objectives/tests/objective_regression.gd"
+      ],
+      "gdscript_functions": 23,
+      "roles": {
+        "demo": 1,
+        "production": 1,
+        "test": 2
+      }
+    },
+    "orders": {
+      "purpose": "Deliver command intent, sample battlefield reports and handle delayed/fallback decisions.",
+      "gdscript_files": [
+        "game/orders/order_demo.gd",
+        "game/orders/order_service.gd",
+        "game/orders/tests/order_input_test.gd",
+        "game/orders/tests/order_regression.gd"
+      ],
+      "gdscript_functions": 50,
+      "roles": {
+        "demo": 1,
+        "production": 1,
+        "test": 2
+      }
+    },
+    "overhead_evaluation": {
+      "purpose": "Compare illustrative map presentation and data overhead in a separate evaluation scene.",
+      "gdscript_files": [
+        "game/overhead_evaluation/overhead_evaluation.gd",
+        "game/overhead_evaluation/sample_map.gd",
+        "game/overhead_evaluation/tests/overhead_input_test.gd"
+      ],
+      "gdscript_functions": 19,
+      "roles": {
+        "production": 2,
+        "test": 1
+      }
+    },
+    "procurement": {
+      "purpose": "Manage requisition balance, incoming purchases, receiving capacity, recruitment and goods catalogues.",
+      "gdscript_files": [
+        "game/procurement/receiving_demo.gd",
+        "game/procurement/receiving_simulation.gd",
+        "game/procurement/resource_catalog.gd",
+        "game/procurement/tests/gdunit/receiving_domain_test.gd",
+        "game/procurement/tests/gdunit/receiving_input_test.gd",
+        "game/procurement/tests/receiving_regression.gd",
+        "game/procurement/tests/receiving_ui_regression.gd"
+      ],
+      "gdscript_functions": 154,
+      "roles": {
+        "demo": 1,
+        "production": 2,
+        "test": 4
+      }
+    },
+    "production": {
+      "purpose": "Define recipes/equipment and turn staffed local inputs into manufactured outputs.",
+      "gdscript_files": [
+        "game/production/explosives_demo.gd",
+        "game/production/fixed_production.gd",
+        "game/production/heavy_production.gd",
+        "game/production/materials_demo.gd",
+        "game/production/munitions_demo.gd",
+        "game/production/production_demo.gd",
+        "game/production/r01_production.gd",
+        "game/production/r02_production.gd",
+        "game/production/r26_production.gd",
+        "game/production/selectable_production.gd",
+        "game/production/shell_chain_demo.gd",
+        "game/production/support_production.gd",
+        "game/production/tests/catalogue_domain_test.gd",
+        "game/production/tests/catalogue_input_test.gd",
+        "game/production/tests/heavy_domain_test.gd",
+        "game/production/tests/heavy_input_test.gd",
+        "game/production/tests/r01_domain_test.gd",
+        "game/production/tests/r01_input_test.gd",
+        "game/production/tests/r01_target_domain_test.gd",
+        "game/production/tests/r02_domain_test.gd",
+        "game/production/tests/r02_input_test.gd",
+        "game/production/tests/r26_domain_test.gd",
+        "game/production/tests/r26_input_test.gd",
+        "game/production/tests/r27_domain_test.gd",
+        "game/production/tests/r27_input_test.gd",
+        "game/production/tests/shell_chain_domain_test.gd",
+        "game/production/tests/shell_chain_input_test.gd",
+        "game/production/vehicle_specs.gd"
+      ],
+      "gdscript_functions": 303,
+      "roles": {
+        "demo": 5,
+        "production": 8,
+        "test": 15
+      }
+    },
+    "rear_base": {
+      "purpose": "Integrate the rear simulation and present construction, supply, workforce and command controls.",
+      "gdscript_files": [
+        "game/rear_base/base_demo.gd",
+        "game/rear_base/base_map.gd",
+        "game/rear_base/base_simulation.gd",
+        "game/rear_base/tests/base_domain_test.gd",
+        "game/rear_base/tests/base_input_test.gd",
+        "game/rear_base/workforce_panel.gd"
+      ],
+      "gdscript_functions": 229,
+      "roles": {
+        "demo": 1,
+        "production": 3,
+        "test": 2
+      }
+    },
+    "routes": {
+      "purpose": "Plan usable routes and validate distance, clearance, crossing load and fuel requirements.",
+      "gdscript_files": [
+        "game/routes/route_plan_work.gd",
+        "game/routes/route_planner.gd",
+        "game/routes/tests/route_regression.gd"
+      ],
+      "gdscript_functions": 22,
+      "roles": {
+        "production": 2,
+        "test": 1
+      }
+    },
+    "scenario": {
+      "purpose": "Create the initial rear/battlefield state and join it into a playable session.",
+      "gdscript_files": [
+        "game/scenario/battlefield_start.gd",
+        "game/scenario/farmland_session.gd",
+        "game/scenario/rear_start.gd",
+        "game/scenario/tests/rear_start_regression.gd"
+      ],
+      "gdscript_functions": 11,
+      "roles": {
+        "production": 3,
+        "test": 1
+      }
+    },
+    "staffing": {
+      "purpose": "Schedule rear workers, hauling jobs, movement, shared time and immediate service transitions.",
+      "gdscript_files": [
+        "game/staffing/rear_demo.gd",
+        "game/staffing/rear_layout.gd",
+        "game/staffing/rear_simulation.gd",
+        "game/staffing/tests/gdunit/staffing_input_test.gd",
+        "game/staffing/tests/rear_regression.gd",
+        "game/staffing/tests/rear_ui_regression.gd",
+        "game/staffing/yard_activity.gd"
+      ],
+      "gdscript_functions": 173,
+      "roles": {
+        "demo": 1,
+        "production": 3,
+        "test": 3
+      }
+    },
+    "terrain": {
+      "purpose": "Own terrain geometry, surfaces, obstacles, crossings and bounded route-search work.",
+      "gdscript_files": [
+        "game/terrain/lane_simulation.gd",
+        "game/terrain/route_work.gd",
+        "game/terrain/terrain_catalog.gd",
+        "game/terrain/terrain_demo.gd",
+        "game/terrain/terrain_diagram.gd",
+        "game/terrain/terrain_fixtures.gd",
+        "game/terrain/terrain_world.gd",
+        "game/terrain/tests/gdunit/terrain_input_test.gd",
+        "game/terrain/tests/terrain_regression.gd",
+        "game/terrain/tests/terrain_ui_regression.gd"
+      ],
+      "gdscript_functions": 135,
+      "roles": {
+        "production": 6,
+        "demo": 1,
+        "test": 3
+      }
+    },
+    "training": {
+      "purpose": "Enroll eligible people, consume course inputs and advance staffed training to qualification.",
+      "gdscript_files": [
+        "game/training/tests/training_domain_test.gd",
+        "game/training/tests/training_input_test.gd",
+        "game/training/training_service.gd"
+      ],
+      "gdscript_functions": 50,
+      "roles": {
+        "test": 2,
+        "production": 1
+      }
+    },
+    "ui": {
+      "purpose": "Construct shared controls/themes and provide the command shell/navigation layout.",
+      "gdscript_files": [
+        "game/ui/command_shell.gd",
+        "game/ui/ui_kit.gd"
+      ],
+      "gdscript_functions": 24,
+      "roles": {
+        "production": 2
+      }
+    },
+    "vehicle_combat": {
+      "purpose": "Resolve vehicle fire, damage, movement effects, destruction and wreck consequences.",
+      "gdscript_files": [
+        "game/vehicle_combat/tests/vehicle_combat_input_test.gd",
+        "game/vehicle_combat/tests/vehicle_combat_regression.gd",
+        "game/vehicle_combat/vehicle_combat_demo.gd",
+        "game/vehicle_combat/vehicle_combat_service.gd"
+      ],
+      "gdscript_functions": 45,
+      "roles": {
+        "test": 2,
+        "demo": 1,
+        "production": 1
+      }
+    },
+    "vehicle_recovery": {
+      "purpose": "Authorize and advance physical towing/recovery with crew, route and damage constraints.",
+      "gdscript_files": [
+        "game/vehicle_recovery/recovery_demo.gd",
+        "game/vehicle_recovery/recovery_fixture.gd",
+        "game/vehicle_recovery/recovery_service.gd",
+        "game/vehicle_recovery/tests/recovery_input_test.gd",
+        "game/vehicle_recovery/tests/recovery_mines_regression.gd",
+        "game/vehicle_recovery/tests/recovery_regression.gd"
+      ],
+      "gdscript_functions": 45,
+      "roles": {
+        "demo": 1,
+        "production": 2,
+        "test": 3
+      }
+    },
+    "vehicles": {
+      "purpose": "Schedule rear fleet operators, vehicle movement, loading and physical access.",
+      "gdscript_files": [
+        "game/vehicles/tests/vehicle_input_test.gd",
+        "game/vehicles/tests/vehicle_regression.gd",
+        "game/vehicles/vehicle_activity.gd"
+      ],
+      "gdscript_functions": 52,
+      "roles": {
+        "test": 2,
+        "production": 1
+      }
+    },
+    "world_probe": {
+      "purpose": "Measure correctness and data size of a synthetic full-size world without changing the main scene.",
+      "gdscript_files": [
+        "game/world_probe/full_size_probe.gd"
+      ],
+      "gdscript_functions": 9,
+      "roles": {
+        "production": 1
+      }
+    }
+  },
+  "static_inspection_candidates": {
+    "functions_with_inspect_entity_named_call_expressions": 532,
+    "function_ids": [
+      "game/battlefield/battlefield_presentation.gd::inspect",
+      "game/battlefield/battlefield_view.gd::_refresh",
+      "game/battlefield/opening_policy.gd::_add_trip",
+      "game/battlefield/opening_policy.gd::_squad_order",
+      "game/battlefield/opening_policy.gd::_reposition_supply_truck",
+      "game/battlefield/opening_resupply.gd::squad_replenishment_status",
+      "game/battlefield/opening_resupply.gd::_person_issue_pending",
+      "game/battlefield/opening_resupply.gd::request_rack_replenishment",
+      "game/battlefield/opening_resupply.gd::rack_replenishment_status",
+      "game/battlefield/opening_resupply.gd::tick",
+      "game/battlefield/opening_resupply.gd::_tick_racks",
+      "game/battlefield/opening_resupply.gd::_tick_replenishments",
+      "game/battlefield/opening_resupply.gd::_replenishment_job_pending",
+      "game/battlefield/opening_resupply.gd::snapshot",
+      "game/battlefield/resource_operations.gd::_proposal_issue_error",
+      "game/battlefield/resource_operations.gd::_force",
+      "game/battlefield/resource_operations.gd::_begin_search",
+      "game/battlefield/rifle_supply_travel.gd::_gather_error",
+      "game/battlefield/rifle_supply_travel.gd::_capture",
+      "game/battlefield/rifle_supply_travel.gd::_candidate",
+      "game/battlefield/rifle_supply_travel.gd::_continue",
+      "game/battlefield/rifle_supply_travel.gd::_markers",
+      "game/battlefield/rifle_supply_travel.gd::_capture_current",
+      "game/battlefield/rifle_supply_travel.gd::_arrived",
+      "game/battlefield/squad_execution.gd::_execute",
+      "game/battlefield/squad_execution.gd::_collect_ammunition",
+      "game/battlefield/squad_execution.gd::_drive_supply_journey",
+      "game/battlefield/squad_execution.gd::_install_supply_walks",
+      "game/battlefield/squad_execution.gd::_walk",
+      "game/battlefield/squad_execution.gd::audit",
+      "game/battlefield/tests/forward_clock_regression.gd::_initialize",
+      "game/battlefield/tests/hq_location_regression.gd::_exercise",
+      "game/battlefield/vehicle_deployment.gd::payloads",
+      "game/battlefield/vehicle_deployment.gd::_at",
+      "game/battlefield/vehicle_deployment.gd::_prepare_support",
+      "game/battlefield/vehicle_deployment.gd::settle_ready_departures",
+      "game/battlefield/vehicle_deployment.gd::request",
+      "game/battlefield/vehicle_deployment.gd::_ready_error",
+      "game/battlefield/vehicle_deployment.gd::tick",
+      "game/battlefield/vehicle_execution.gd::settle",
+      "game/bridges/bridge_canvas.gd::_draw",
+      "game/bridges/bridge_demo.gd::_action",
+      "game/bridges/bridge_demo.gd::_refresh",
+      "game/bridges/bridge_service.gd::order",
+      "game/bridges/bridge_service.gd::deliver_material",
+      "game/bridges/bridge_service.gd::assign_engineer",
+      "game/bridges/bridge_service.gd::_eligible",
+      "game/bridges/bridge_service.gd::advance_to",
+      "game/bridges/bridge_service.gd::damage",
+      "game/bridges/bridge_service.gd::_retime_traffic",
+      "game/bridges/bridge_service.gd::request_repair",
+      "game/bridges/bridge_service.gd::_repair_rate",
+      "game/bridges/bridge_service.gd::request_crossing",
+      "game/bridges/bridge_service.gd::_admission",
+      "game/bridges/demolition_service.gd::_squad",
+      "game/bridges/demolition_service.gd::order",
+      "game/bridges/demolition_service.gd::_committed",
+      "game/bridges/demolition_service.gd::_reserve_material",
+      "game/bridges/demolition_service.gd::deliver",
+      "game/bridges/demolition_service.gd::_access",
+      "game/bridges/demolition_service.gd::_withdrawn",
+      "game/bridges/demolition_service.gd::authorize",
+      "game/bridges/demolition_service.gd::set_mode",
+      "game/bridges/demolition_service.gd::_operator",
+      "game/bridges/demolition_service.gd::assign_remote_vehicle",
+      "game/bridges/demolition_service.gd::remote_trigger",
+      "game/bridges/demolition_service.gd::_detonate",
+      "game/bridges/tests/bridge_input_test.gd::test_bridge_delivery_traversal_damage_and_small_render",
+      "game/bridges/tests/bridge_regression.gd::_a23_live_vehicle_route",
+      "game/bridges/tests/bridge_regression.gd::_a34_foot_queue",
+      "game/bridges/tests/bridge_regression.gd::_collapse_on_water",
+      "game/bridges/tests/bridge_regression.gd::_tank_tow_load",
+      "game/bridges/tests/bridge_regression.gd::_collapse_vehicle",
+      "game/bridges/tests/bridge_regression.gd::_boarded_passenger_and_move_failure",
+      "game/bridges/tests/bridge_regression.gd::_impossible_approaches",
+      "game/bridges/tests/bridge_regression.gd::_damage_retimes_active_tow",
+      "game/bridges/tests/demolition_regression.gd::_structure_remote",
+      "game/bridges/tests/demolition_regression.gd::_world_remote",
+      "game/combat/combat_service.gd::inspect_fire",
+      "game/combat/combat_service.gd::fire",
+      "game/combat/combat_service.gd::request_reload",
+      "game/combat/combat_service.gd::inspect_field_gun_fire",
+      "game/combat/combat_service.gd::fire_field_gun",
+      "game/combat/combat_service.gd::injure",
+      "game/combat/combat_service.gd::start_care",
+      "game/combat/combat_service.gd::next_boundary",
+      "game/combat/combat_service.gd::advance_to",
+      "game/combat/combat_service.gd::settle",
+      "game/combat/combat_service.gd::_field_crew_ready",
+      "game/combat/combat_service.gd::snapshot",
+      "game/combat/combat_service.gd::audit",
+      "game/combat/combat_service.gd::_nearby_casualty",
+      "game/combat/combat_service.gd::_apply_stress",
+      "game/combat/combat_service.gd::_stress_tick",
+      "game/combat/combat_service.gd::_record_demand",
+      "game/combat/combat_service.gd::_assistant_near",
+      "game/combat/tests/combat_input_test.gd::test_combat_review_accepts_real_input_and_renders_state",
+      "game/combat/tests/combat_regression.gd::_test_a03",
+      "game/combat/tests/combat_regression.gd::_test_a26",
+      "game/combat/tests/combat_regression.gd::_test_vehicle_occupant_drop",
+      "game/combat/tests/combat_regression.gd::_test_a27",
+      "game/combat/tests/combat_regression.gd::_test_field_gun_direct",
+      "game/combat/tests/combat_regression.gd::_test_reload_commitment",
+      "game/construction/construction_service.gd::_site_members",
+      "game/construction/construction_service.gd::_office_site_count",
+      "game/construction/construction_service.gd::set_office_staff",
+      "game/construction/construction_service.gd::set_builders",
+      "game/construction/tests/construction_regression.gd::_initialize",
+      "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd::_checkpoint",
+      "game/dispatch/dispatch_service.gd::accept",
+      "game/dispatch/dispatch_service.gd::_begin_hull_approach",
+      "game/dispatch/dispatch_service.gd::advance_to",
+      "game/dispatch/dispatch_service.gd::_finish_route",
+      "game/dispatch/dispatch_service.gd::_physical_totals",
+      "game/dispatch/dispatch_service.gd::settle",
+      "game/dispatch/dispatch_service.gd::_ready_worker",
+      "game/dispatch/dispatch_service.gd::_schedule_preparation",
+      "game/dispatch/dispatch_service.gd::_finish_task",
+      "game/dispatch/dispatch_service.gd::route_preview",
+      "game/dispatch/dispatch_service.gd::depart",
+      "game/dispatch/dispatch_service.gd::_schedule_hq",
+      "game/dispatch/dispatch_service.gd::free_hq_handlers",
+      "game/dispatch/dispatch_service.gd::request_safe_return",
+      "game/dispatch/dispatch_service.gd::clear_route_hazard",
+      "game/dispatch/dispatch_service.gd::cancel",
+      "game/dispatch/dispatch_service.gd::change_mode",
+      "game/dispatch/dispatch_service.gd::add_field_gun",
+      "game/dispatch/dispatch_service.gd::_manifest_payload",
+      "game/dispatch/dispatch_service.gd::_schedule_cancel",
+      "game/dispatch/dispatch_service.gd::snapshot",
+      "game/dispatch/dispatch_service.gd::_payload_mass",
+      "game/dispatch/dispatch_service.gd::audit",
+      "game/dispatch/tests/dispatch_regression.gd::_test_passenger_duty_handoff",
+      "game/dispatch/tests/dispatch_regression.gd::_test_a20_a21_a60",
+      "game/dispatch/tests/dispatch_regression.gd::_test_a21_cancellation",
+      "game/dispatch/tests/dispatch_regression.gd::_test_driver_only_fleet_transfer",
+      "game/dispatch/tests/dispatch_regression.gd::_test_a20_exact_and_unload_cancel",
+      "game/dispatch/tests/dispatch_regression.gd::_test_hq_berth_wait",
+      "game/dispatch/tests/dispatch_regression.gd::_test_pre_hq_safety_return",
+      "game/dispatch/tests/dispatch_regression.gd::_test_damage_stops_transit",
+      "game/field_structures/field_demo.gd::_action",
+      "game/field_structures/field_demo.gd::_refresh",
+      "game/field_structures/field_service.gd::assign_engineer",
+      "game/field_structures/field_service.gd::stage_request",
+      "game/field_structures/field_service.gd::deliver_material",
+      "game/field_structures/field_service.gd::assign_staff",
+      "game/field_structures/field_service.gd::service_status",
+      "game/field_structures/field_service.gd::start_aid_care",
+      "game/field_structures/field_service.gd::admit_patient",
+      "game/field_structures/field_service.gd::dock_vehicle",
+      "game/field_structures/field_service.gd::withdraw_stock",
+      "game/field_structures/field_service.gd::request_repair",
+      "game/field_structures/field_service.gd::clear_segment",
+      "game/field_structures/field_service.gd::crush_segment",
+      "game/field_structures/field_service.gd::_crush_ready",
+      "game/field_structures/field_service.gd::_repair_rate",
+      "game/field_structures/field_service.gd::_clearance_rate",
+      "game/field_structures/field_service.gd::assess_vehicle",
+      "game/field_structures/field_service.gd::route_vehicle",
+      "game/field_structures/field_service.gd::enter",
+      "game/field_structures/field_service.gd::exit",
+      "game/field_structures/field_service.gd::audit",
+      "game/field_structures/field_service.gd::_eligible_engineers",
+      "game/field_structures/tests/field_regression.gd::_a31_bunker_delivery",
+      "game/field_structures/tests/field_regression.gd::_a32_service_gates",
+      "game/field_structures/tests/field_regression.gd::_a14_destroyed_causeway",
+      "game/field_structures/tests/field_regression.gd::_repairs_cancellation_and_clearance",
+      "game/forward_supply/forward_delivery_panel.gd::refresh",
+      "game/forward_supply/forward_delivery_panel.gd::_routes",
+      "game/forward_supply/forward_delivery_panel.gd::_resume_delivery",
+      "game/forward_supply/forward_delivery_panel.gd::_delivery_detail",
+      "game/forward_supply/forward_supply.gd::register_delivery_stop",
+      "game/forward_supply/forward_supply.gd::start_issue",
+      "game/forward_supply/forward_supply.gd::resume_issue",
+      "game/forward_supply/forward_supply.gd::person_committed",
+      "game/forward_supply/forward_supply.gd::advance_to",
+      "game/forward_supply/forward_supply.gd::settle",
+      "game/forward_supply/forward_supply.gd::_finish_pickup",
+      "game/forward_supply/forward_supply.gd::_finish_drop",
+      "game/forward_supply/forward_supply.gd::_begin",
+      "game/forward_supply/forward_supply.gd::_at_stop",
+      "game/forward_supply/forward_supply.gd::_active_member",
+      "game/forward_supply/forward_supply.gd::audit",
+      "game/forward_supply/forward_transport.gd::_init",
+      "game/forward_supply/forward_transport.gd::_plan_sources",
+      "game/forward_supply/forward_transport.gd::_request_delivery",
+      "game/forward_supply/forward_transport.gd::_preview_delivery",
+      "game/forward_supply/forward_transport.gd::resume_delivery",
+      "game/forward_supply/forward_transport.gd::_schedule_load",
+      "game/forward_supply/forward_transport.gd::_finish_load",
+      "game/forward_supply/forward_transport.gd::_schedule_unload",
+      "game/forward_supply/forward_transport.gd::_finish_unload",
+      "game/forward_supply/forward_transport.gd::_advance_unloader",
+      "game/forward_supply/forward_transport.gd::_begin_route",
+      "game/forward_supply/forward_transport.gd::_advance_route",
+      "game/forward_supply/forward_transport.gd::_finish_route",
+      "game/forward_supply/forward_transport.gd::_active_member",
+      "game/forward_supply/forward_transport.gd::_on_foot",
+      "game/forward_supply/forward_transport.gd::_task_actor_valid",
+      "game/forward_supply/tests/forward_supply_regression.gd::_test_two_local_issues_and_interruption",
+      "game/forward_supply/tests/forward_transport_regression.gd::_test_two_physical_cycles",
+      "game/forward_supply/vehicle_rack_issue.gd::request",
+      "game/forward_supply/vehicle_rack_issue.gd::resume",
+      "game/forward_supply/vehicle_rack_issue.gd::advance_to",
+      "game/forward_supply/vehicle_rack_issue.gd::_pickup",
+      "game/forward_supply/vehicle_rack_issue.gd::_drop",
+      "game/forward_supply/vehicle_rack_issue.gd::_hull_error",
+      "game/forward_supply/vehicle_rack_issue.gd::_handler_error",
+      "game/forward_supply/vehicle_rack_issue.gd::_valid",
+      "game/forward_supply/vehicle_rack_issue.gd::_begin",
+      "game/forward_supply/vehicle_rack_issue.gd::_stop",
+      "game/forward_supply/vehicle_rack_issue.gd::audit",
+      "game/hq/hq_logistics.gd::_init",
+      "game/hq/hq_logistics.gd::request_person_stock",
+      "game/hq/hq_logistics.gd::request_person_weapon",
+      "game/hq/hq_logistics.gd::request_vehicle_ammo",
+      "game/hq/hq_logistics.gd::request_vehicle_fuel",
+      "game/hq/hq_logistics.gd::_reserve_job",
+      "game/hq/hq_logistics.gd::cancel",
+      "game/hq/hq_logistics.gd::settle",
+      "game/hq/hq_logistics.gd::_auto_request",
+      "game/hq/hq_logistics.gd::_finish_step",
+      "game/hq/hq_logistics.gd::_finish_drop",
+      "game/hq/hq_logistics.gd::snapshot",
+      "game/hq/tests/hq_input_test.gd::test_normal_player_dispatch_shows_automatic_hq_issue_without_manual_commands",
+      "game/hq/tests/hq_input_test.gd::test_hq_issue_panel_click_reserves_then_physically_issues_same_person",
+      "game/hq/tests/hq_regression.gd::_test_construction_and_hq_share_clock",
+      "game/hq/tests/hq_regression.gd::_test_a24_and_local_handoff",
+      "game/hq/tests/hq_regression.gd::_test_person_and_cancellation",
+      "game/hq/tests/hq_regression.gd::_test_carried_cancel_returns_to_hq",
+      "game/hq/tests/hq_regression.gd::_test_automatic_hq_command",
+      "game/hq/tests/hq_regression.gd::_test_real_dispatch_receipt_auto_issue",
+      "game/identity/identity_demo.gd::_refresh",
+      "game/identity/identity_fixture.gd::load_ten",
+      "game/identity/identity_fixture.gd::handoff_weapon",
+      "game/identity/identity_ledger.gd::entities_at_any",
+      "game/identity/identity_ledger.gd::entities_of_type",
+      "game/identity/identity_ledger.gd::entities_of_kind",
+      "game/identity/identity_ledger.gd::entities_of_kinds",
+      "game/identity/identity_ledger.gd::persons_near_any",
+      "game/identity/identity_ledger.gd::inspect_person_status",
+      "game/identity/identity_ledger.gd::snapshot",
+      "game/identity/tests/identity_regression.gd::_creation",
+      "game/identity/tests/identity_regression.gd::_safe_handoff",
+      "game/identity/tests/identity_regression.gd::_cancel_handoff",
+      "game/identity/tests/identity_regression.gd::_carry_protection",
+      "game/identity/tests/identity_regression.gd::_carry_reload_guard",
+      "game/identity/tests/identity_regression.gd::_reservations",
+      "game/identity/tests/identity_regression.gd::_ammunition",
+      "game/identity/tests/identity_regression.gd::_physical_location",
+      "game/identity/tests/identity_regression.gd::_detached_inspection",
+      "game/military/organization.gd::_init",
+      "game/military/organization.gd::add_initial_squad",
+      "game/military/organization.gd::assess_squad",
+      "game/military/organization.gd::form_squad",
+      "game/military/organization.gd::cancel_pending_squad",
+      "game/military/organization.gd::cancel_replacement",
+      "game/military/organization.gd::cancel_crew_report",
+      "game/military/organization.gd::settle",
+      "game/military/organization.gd::request_replacement",
+      "game/military/organization.gd::_auto_replace",
+      "game/military/organization.gd::_replacement_ready",
+      "game/military/organization.gd::_auto_vehicle",
+      "game/military/organization.gd::assign_crew",
+      "game/military/organization.gd::_attach_vehicle",
+      "game/military/organization.gd::set_vehicle_mission",
+      "game/military/organization.gd::vehicle_supply_needs",
+      "game/military/organization.gd::vehicle_readiness",
+      "game/military/organization.gd::vehicle_capability",
+      "game/military/organization.gd::board_squad",
+      "game/military/organization.gd::exit_squad",
+      "game/military/organization.gd::_reserve_transport_manifest",
+      "game/military/organization.gd::_all_reported",
+      "game/military/organization.gd::_equip_artillery",
+      "game/military/organization.gd::_appoint_squad",
+      "game/military/organization.gd::_appoint_seniors",
+      "game/military/organization.gd::_auto_issue_for_need",
+      "game/military/organization.gd::_artillery_count",
+      "game/military/organization.gd::shortages",
+      "game/military/organization.gd::_roster_specialists",
+      "game/military/organization.gd::audit",
+      "game/military/tests/military_regression.gd::_test_a25",
+      "game/military/tests/military_regression.gd::_test_vehicle_element_and_passengers",
+      "game/military/tests/military_regression.gd::_test_leadership_delay_and_acting_commander",
+      "game/military/tests/military_regression.gd::_test_acting_commander_refills_senior_post",
+      "game/military/tests/military_regression.gd::_test_acting_rifle_conscript",
+      "game/military/tests/military_regression.gd::_test_pending_intent_cancellation",
+      "game/military/troop_transport.gd::_init",
+      "game/military/troop_transport.gd::supply_cohort_facts",
+      "game/military/troop_transport.gd::_supply_authority_error",
+      "game/military/troop_transport.gd::_supply_planning_guard",
+      "game/military/troop_transport.gd::_supply_custody_error",
+      "game/military/troop_transport.gd::_supply_live_error",
+      "game/military/troop_transport.gd::_commit_supply_handling",
+      "game/military/troop_transport.gd::_planning_guard",
+      "game/military/troop_transport.gd::_planning_capture",
+      "game/military/troop_transport.gd::request_trip",
+      "game/military/troop_transport.gd::request_reposition",
+      "game/military/troop_transport.gd::resume_trip",
+      "game/military/troop_transport.gd::_manifest_people",
+      "game/military/troop_transport.gd::_schedule_board",
+      "game/military/troop_transport.gd::_finish_board",
+      "game/military/troop_transport.gd::_advance_boarder",
+      "game/military/troop_transport.gd::_schedule_dismount",
+      "game/military/troop_transport.gd::_finish_dismount",
+      "game/military/troop_transport.gd::_begin_route",
+      "game/military/troop_transport.gd::_advance_route",
+      "game/military/troop_transport.gd::_finish_route",
+      "game/mines/mine_demo.gd::_refresh",
+      "game/mines/mine_demo.gd::_draw_map",
+      "game/mines/mine_service.gd::_qualified_engineer",
+      "game/mines/mine_service.gd::_engineer",
+      "game/mines/mine_service.gd::order",
+      "game/mines/mine_service.gd::_access",
+      "game/mines/mine_service.gd::observe_placement",
+      "game/mines/mine_service.gd::_known",
+      "game/mines/mine_service.gd::start_scan",
+      "game/mines/mine_service.gd::start_disarm",
+      "game/mines/mine_service.gd::_task_ready",
+      "game/mines/mine_service.gd::damage_device",
+      "game/mines/mine_service.gd::observe_clearance",
+      "game/mines/mine_service.gd::_operator",
+      "game/mines/mine_service.gd::remote_trigger",
+      "game/mines/mine_service.gd::movement_limit",
+      "game/mines/mine_service.gd::_on_moved",
+      "game/mines/mine_service.gd::_detonate",
+      "game/mines/mine_service.gd::settle",
+      "game/mines/mine_service.gd::_committed",
+      "game/mines/mine_service.gd::_reserve_material",
+      "game/mines/mine_service.gd::deliver",
+      "game/mines/tests/mine_input_test.gd::test_a37_a38_buttons_at_development_resolution",
+      "game/mines/tests/mine_regression.gd::_a37",
+      "game/mines/tests/mine_regression.gd::_remote",
+      "game/mines/tests/mine_regression.gd::_limits_and_ap",
+      "game/mines/tests/mine_regression.gd::_convoy_knowledge",
+      "game/mines/tests/mine_regression.gd::_dismounted_ground_actions",
+      "game/mines/tests/mine_regression.gd::_fuel_boundary",
+      "game/objectives/objective_demo.gd::_reset",
+      "game/objectives/objective_demo.gd::_action",
+      "game/objectives/objective_demo.gd::_refresh",
+      "game/objectives/objective_service.gd::register",
+      "game/objectives/objective_service.gd::audit",
+      "game/objectives/tests/objective_regression.gd::_test_transport_dismount_capture_and_income",
+      "game/orders/order_demo.gd::_refresh",
+      "game/orders/order_service.gd::register_enemy_hq",
+      "game/orders/order_service.gd::prepare_hq_assault",
+      "game/orders/order_service.gd::_company_support",
+      "game/orders/order_service.gd::settle",
+      "game/orders/order_service.gd::_sample_squad",
+      "game/orders/order_service.gd::_apc_observer",
+      "game/orders/order_service.gd::_fixing_ammunition",
+      "game/orders/order_service.gd::_has_antiarmour",
+      "game/orders/order_service.gd::_flank_geometry",
+      "game/procurement/receiving_demo.gd::_update_detail",
+      "game/procurement/receiving_simulation.gd::_init",
+      "game/procurement/receiving_simulation.gd::release_unloaders",
+      "game/procurement/receiving_simulation.gd::resource_counts",
+      "game/procurement/receiving_simulation.gd::_exit_passenger",
+      "game/procurement/receiving_simulation.gd::_start_worker_job",
+      "game/procurement/receiving_simulation.gd::_start_vehicle_motion",
+      "game/procurement/tests/receiving_regression.gd::_passenger_cadence",
+      "game/procurement/tests/receiving_regression.gd::_interruption",
+      "game/procurement/tests/receiving_regression.gd::_freight_clearance",
+      "game/production/fixed_production.gd::operators",
+      "game/production/fixed_production.gd::stock_coverage",
+      "game/production/fixed_production.gd::settle",
+      "game/production/heavy_production.gd::_slot_legal",
+      "game/production/heavy_production.gd::accept_order",
+      "game/production/heavy_production.gd::stock_coverage",
+      "game/production/heavy_production.gd::clearance_reason",
+      "game/production/heavy_production.gd::snapshot",
+      "game/production/tests/catalogue_domain_test.gd::test_every_recipe_completes_only_full_operator_work_into_exact_unissued_physical_output_once",
+      "game/production/tests/r01_domain_test.gd::test_complete_local_batch_is_atomic_and_reserved_foreign_remote_goods_are_not_inputs",
+      "game/production/tests/r01_domain_test.gd::test_shared_time_partition_matches_reporting_hauling_start_and_completion",
+      "game/production/tests/r01_domain_test.gd::test_output_edits_are_atomic_and_inbound_hauling_cannot_steal_promise",
+      "game/production/tests/r01_target_domain_test.gd::test_foreign_cargo_issued_pile_and_ineligible_deposits_are_excluded",
+      "game/production/tests/r01_target_domain_test.gd::test_actual_internal_reservation_pickup_deposit_conserves_coverage_once",
+      "game/production/tests/r01_target_domain_test.gd::test_invalid_unpicked_claim_and_ineligible_source_remove_only_their_coverage",
+      "game/production/tests/r02_domain_test.gd::test_exact_local_r02_consumption_work_yield_and_mass_complete_once",
+      "game/production/tests/r02_domain_test.gd::test_foreign_remote_carried_and_other_reserved_inputs_cannot_start",
+      "game/production/tests/r02_domain_test.gd::test_complete_output_capacity_and_filter_edits_protect_independent_claims",
+      "game/production/tests/r02_domain_test.gd::test_real_e02_claim_carry_and_deposit_convert_coverage_once",
+      "game/production/tests/r02_domain_test.gd::test_e02_invalid_destination_reroute_cancel_and_pile_recovery_keep_physical_goods",
+      "game/production/tests/r26_domain_test.gd::test_r26_exact_inputs_100work_mass_and_four_eight_ordinary_operators",
+      "game/production/tests/r26_domain_test.gd::test_30metal_69timber_and_actual_carried_last_unit_cannot_start_before_drop",
+      "game/production/tests/r26_domain_test.gd::test_foreign_remote_and_reserved_ingredients_fail_without_partial_consumption",
+      "game/production/tests/r26_domain_test.gd::test_real_five_trip_delivery_respects_25kg_and_never_earns_work_in_transit",
+      "game/production/tests/r26_domain_test.gd::test_100kg_promise_and_invalidating_edits_preserve_all_independent_owners",
+      "game/production/tests/r27_domain_test.gd::test_exact_r27_local_inputs_40work_one_physical_m06_and_two_four_operators",
+      "game/production/tests/r27_domain_test.gd::test_either_missing_foreign_remote_person_carrier_or_reserved_input_refuses_whole_batch",
+      "game/production/tests/r27_domain_test.gd::test_whole_one_kg_promise_capacity_filter_and_other_claims_remain_atomic",
+      "game/production/tests/shell_chain_domain_test.gd::test_component_exact_shell_inputs_work_yields_mass_and_two_four_ordinary_operators",
+      "game/production/tests/shell_chain_domain_test.gd::test_each_missing_other_reserved_foreign_remote_person_and_cargo_ingredient_refuses_atomic_start",
+      "game/production/tests/shell_chain_domain_test.gd::_raw_chain",
+      "game/production/tests/shell_chain_domain_test.gd::test_whole_shell_promise_mixed_finished_contents_and_other_inbound_claims_are_atomic",
+      "game/production/tests/shell_chain_input_test.gd::_chain",
+      "game/rear_base/base_demo.gd::_load_vehicle_people",
+      "game/rear_base/base_demo.gd::_load_vehicle_stations",
+      "game/rear_base/base_demo.gd::_refresh_dispatch_choices",
+      "game/rear_base/base_demo.gd::_refresh",
+      "game/rear_base/base_map.gd::_draw",
+      "game/rear_base/base_simulation.gd::audit",
+      "game/rear_base/tests/base_domain_test.gd::test_purchase_real_arrival_zero_unloader_blocks_then_all_four_outputs_and_eight_same_people",
+      "game/rear_base/tests/base_domain_test.gd::test_incoming_and_personally_carried_material_never_become_local_inputs",
+      "game/rear_base/tests/base_domain_test.gd::test_unloader_carry_handoff_retains_exclusive_old_duty_until_safe_deposit",
+      "game/rear_base/tests/base_domain_test.gd::test_finished_unloader_release_rebalances_outstanding_staff_targets",
+      "game/routes/route_plan_work.gd::_init",
+      "game/routes/route_planner.gd::gross_kg",
+      "game/routes/route_planner.gd::plan",
+      "game/routes/tests/route_regression.gd::_test_a22_real_tank",
+      "game/scenario/rear_start.gd::apply",
+      "game/scenario/tests/rear_start_regression.gd::_initialize",
+      "game/staffing/rear_demo.gd::_update",
+      "game/staffing/rear_demo.gd::_refresh_person",
+      "game/staffing/rear_simulation.gd::reassign_person",
+      "game/staffing/rear_simulation.gd::set_store",
+      "game/staffing/rear_simulation.gd::_report",
+      "game/staffing/rear_simulation.gd::_settle",
+      "game/staffing/rear_simulation.gd::_sync_receiving_people",
+      "game/staffing/rear_simulation.gd::_finish_phase",
+      "game/staffing/rear_simulation.gd::_job_option",
+      "game/staffing/rear_simulation.gd::_nearest_storage",
+      "game/staffing/rear_simulation.gd::_reroute",
+      "game/staffing/rear_simulation.gd::_deposit",
+      "game/staffing/rear_simulation.gd::snapshot",
+      "game/staffing/rear_simulation.gd::_waiting_job_viable",
+      "game/staffing/rear_simulation.gd::audit",
+      "game/staffing/tests/gdunit/staffing_input_test.gd::_person",
+      "game/staffing/tests/rear_regression.gd::_timed_carry",
+      "game/staffing/tests/rear_regression.gd::_gear",
+      "game/staffing/tests/rear_regression.gd::_source_release",
+      "game/staffing/tests/rear_regression.gd::_handoff",
+      "game/staffing/tests/rear_regression.gd::_reroute",
+      "game/staffing/tests/rear_regression.gd::_driver",
+      "game/staffing/tests/rear_regression.gd::_partitioning",
+      "game/staffing/tests/rear_regression.gd::_qualified_incumbent",
+      "game/staffing/tests/rear_regression.gd::_entry_interruption",
+      "game/staffing/tests/rear_regression.gd::_parking_guards",
+      "game/staffing/tests/rear_regression.gd::_approach",
+      "game/staffing/tests/rear_regression.gd::_staff_age",
+      "game/staffing/tests/rear_regression.gd::_idle_selection",
+      "game/staffing/tests/rear_regression.gd::_pending_target_quota",
+      "game/staffing/tests/rear_regression.gd::_parked_reentry",
+      "game/staffing/tests/rear_regression.gd::_withdrawn_promise",
+      "game/staffing/tests/rear_ui_regression.gd::_run",
+      "game/staffing/yard_activity.gd::board",
+      "game/staffing/yard_activity.gd::start_trip",
+      "game/staffing/yard_activity.gd::snapshot",
+      "game/training/tests/training_domain_test.gd::test_all_eight_courses_take_exact_elapsed_time_after_actual_reporting_and_grant_no_gear_or_body",
+      "game/training/tests/training_domain_test.gd::test_access_instructor_loss_and_partitioned_time_preserve_elapsed_progress",
+      "game/training/tests/training_domain_test.gd::test_withdrawal_basic_retention_single_specialist_and_queued_course_do_not_replace_completed_qualification",
+      "game/training/tests/training_domain_test.gd::test_carry_to_student_safe_handoff_and_withdraw_pending_request_preserve_person_and_freight",
+      "game/training/tests/training_domain_test.gd::test_recovery_one_pending_shared_personnel_and_population_reservations_are_atomic",
+      "game/training/tests/training_domain_test.gd::test_normal_zero_unloader_recovery_basic_and_p08_keep_same_identity_no_goods_or_bay_clearance",
+      "game/training/tests/training_domain_test.gd::test_carrying_instructor_reports_only_after_safe_deposit_and_students_wait_without_labour_overlap",
+      "game/training/tests/training_input_test.gd::test_normal_recovery_arrival_a11_basic_then_same_person_p08_and_persistent_small_training_panel",
+      "game/training/training_service.gd::instructors",
+      "game/training/training_service.gd::settle",
+      "game/training/training_service.gd::withdraw",
+      "game/vehicle_combat/tests/vehicle_combat_input_test.gd::test_vehicle_combat_review_accepts_mouse_input_and_renders_real_hulls",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_crew",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_a13_a24_a40",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_a39",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_burst_travel_and_t03",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_blast_and_surface_boundaries",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_moved_target_keeps_impact",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_real_structure_impact",
+      "game/vehicle_combat/tests/vehicle_combat_regression.gd::_test_real_bridge_impact",
+      "game/vehicle_combat/vehicle_combat_demo.gd::_refresh",
+      "game/vehicle_combat/vehicle_combat_service.gd::_target",
+      "game/vehicle_combat/vehicle_combat_service.gd::_operator",
+      "game/vehicle_combat/vehicle_combat_service.gd::_exposed_gunner",
+      "game/vehicle_combat/vehicle_combat_service.gd::observation_station",
+      "game/vehicle_combat/vehicle_combat_service.gd::aim",
+      "game/vehicle_combat/vehicle_combat_service.gd::select_weapon",
+      "game/vehicle_combat/vehicle_combat_service.gd::inspect_fire",
+      "game/vehicle_combat/vehicle_combat_service.gd::fire",
+      "game/vehicle_combat/vehicle_combat_service.gd::request_reload",
+      "game/vehicle_combat/vehicle_combat_service.gd::advance_to",
+      "game/vehicle_combat/vehicle_combat_service.gd::_resolve_cannon",
+      "game/vehicle_combat/vehicle_combat_service.gd::inspect",
+      "game/vehicle_combat/vehicle_combat_service.gd::inspect_personal_vehicle",
+      "game/vehicle_combat/vehicle_combat_service.gd::fire_personal_at_vehicle",
+      "game/vehicle_recovery/recovery_demo.gd::_refresh",
+      "game/vehicle_recovery/recovery_fixture.gd::hull",
+      "game/vehicle_recovery/recovery_service.gd::_on_damage",
+      "game/vehicle_recovery/recovery_service.gd::_engineer",
+      "game/vehicle_recovery/recovery_service.gd::start_repair",
+      "game/vehicle_recovery/recovery_service.gd::_rate",
+      "game/vehicle_recovery/recovery_service.gd::next_boundary",
+      "game/vehicle_recovery/recovery_service.gd::advance_to",
+      "game/vehicle_recovery/recovery_service.gd::_coupling_check",
+      "game/vehicle_recovery/recovery_service.gd::start_tow_route",
+      "game/vehicle_recovery/recovery_service.gd::inspect",
+      "game/vehicle_recovery/recovery_service.gd::audit",
+      "game/vehicle_recovery/tests/recovery_input_test.gd::test_recovery_destruction_repair_and_tow_controls_at_development_size",
+      "game/vehicle_recovery/tests/recovery_mines_regression.gd::_tow_contact",
+      "game/vehicle_recovery/tests/recovery_mines_regression.gd::_rotated_blast",
+      "game/vehicle_recovery/tests/recovery_mines_regression.gd::_bridge_contact",
+      "game/vehicle_recovery/tests/recovery_regression.gd::_a41",
+      "game/vehicle_recovery/tests/recovery_regression.gd::_water_and_no_exit",
+      "game/vehicle_recovery/tests/recovery_regression.gd::_repairs",
+      "game/vehicle_recovery/tests/recovery_regression.gd::_a42",
+      "game/vehicle_recovery/tests/recovery_regression.gd::_boarded_engineer",
+      "game/vehicles/tests/vehicle_input_test.gd::test_normal_rear_vehicle_controls_report_refuel_drive_same_produced_hull_and_fit_small_view",
+      "game/vehicles/tests/vehicle_input_test.gd::_capture",
+      "game/vehicles/tests/vehicle_regression.gd::_test_hull",
+      "game/vehicles/tests/vehicle_regression.gd::_test_station_readiness",
+      "game/vehicles/tests/vehicle_regression.gd::_test_interruptions",
+      "game/vehicles/tests/vehicle_regression.gd::_test_damage_stops_lane",
+      "game/vehicles/tests/vehicle_regression.gd::_test_connected_session",
+      "game/vehicles/vehicle_activity.gd::register_output",
+      "game/vehicles/vehicle_activity.gd::register_initial_parked",
+      "game/vehicles/vehicle_activity.gd::eligible",
+      "game/vehicles/vehicle_activity.gd::assign_station",
+      "game/vehicles/vehicle_activity.gd::report_path",
+      "game/vehicles/vehicle_activity.gd::_path_to_hull",
+      "game/vehicles/vehicle_activity.gd::_walk_from",
+      "game/vehicles/vehicle_activity.gd::begin_board",
+      "game/vehicles/vehicle_activity.gd::complete_board",
+      "game/vehicles/vehicle_activity.gd::request_exit",
+      "game/vehicles/vehicle_activity.gd::complete_exit",
+      "game/vehicles/vehicle_activity.gd::request_refuel",
+      "game/vehicles/vehicle_activity.gd::begin_fuel_pickup",
+      "game/vehicles/vehicle_activity.gd::complete_fuel_pickup",
+      "game/vehicles/vehicle_activity.gd::start_drive",
+      "game/vehicles/vehicle_activity.gd::_route",
+      "game/vehicles/vehicle_activity.gd::advance_to",
+      "game/vehicles/vehicle_activity.gd::settle",
+      "game/vehicles/vehicle_activity.gd::readiness",
+      "game/vehicles/vehicle_activity.gd::snapshot",
+      "game/vehicles/vehicle_activity.gd::audit"
+    ],
+    "limits": "Includes retained tests, fixtures and demos. Receiver-name matches are static candidates, not proven calls or runtime frequencies."
+  },
+  "current_flow": {
+    "status": "Source-derived conceptual aggregation, updated for the bounded training slice. Not every arrow is a direct call; static branches are not runtime traces.",
+    "mermaid": "flowchart TD\n    A[\"Godot physics callback\"] --> B[\"GameSession._physics_process\"]\n    B --> H[\"Wall-clock model: pump once per process frame; explicit model: every physics step\"]\n    H --> C[\"BaseSimulation.tick_live\"]\n    C -->|\"playable live session\"| D[\"Budgeted route planning + owed time\"]\n    C -->|\"explicit / prepared session\"| E[\"tick(delta x speed)\"]\n    D --> F[\"RearSimulation.advance_time\"]\n    E --> F\n    F --> G[\"Boundaries, active work, movement + repeated settlement\"]\n    U[\"UI buttons / commands\"] -->|\"accepted / untagged legacy reconciliation\"| G\n    U -->|\"explicit read-only Training rejection\"| T[\"Local feedback + refresh; no global reconciliation\"]\n    T --> R\n    G --> S[\"Rear logistics + battlefield domain services\"]\n    S -->|\"authoritative changes\"| L[\"IdentityLedger records + claims\"]\n    S -->|\"reads\"| I[\"inspect_entity: detached detailed description\"]\n    I -->|\"reads\"| L\n    B -->|\"time_advanced\"| R[\"Deferred UI refresh; deduplicated while pending\"]\n    S -->|\"state_changed via session\"| R\n    R --> N[\"Build / Supplies / Workers / Train narrow views when diagnostics off\"]\n    N --> Q[\"Targeted ledger queries\"]\n    Q --> L\n    R --> V[\"Other panels / diagnostics: broad service snapshots\"]\n    V --> K[\"Ledger snapshots and repeated per-person reads\"]\n    K --> I",
+    "baseline_mermaid": "flowchart TD\n    A[\"Godot physics callback\"] --> B[\"GameSession._physics_process\"]\n    B --> C[\"BaseSimulation.tick_live\"]\n    C -->|\"playable live session\"| D[\"Budgeted route planning + owed time\"]\n    C -->|\"explicit / prepared session\"| E[\"tick(delta x speed)\"]\n    D --> F[\"RearSimulation.advance_time\"]\n    E --> F\n    F --> G[\"Boundaries, active work, movement + repeated settlement\"]\n    U[\"UI buttons / commands\"] --> G\n    G --> S[\"Rear logistics + battlefield domain services\"]\n    S -->|\"authoritative changes\"| L[\"IdentityLedger records + claims\"]\n    S -->|\"reads\"| I[\"inspect_entity: detached detailed description\"]\n    I -->|\"reads\"| L\n    B -->|\"time_advanced\"| R[\"Deferred UI refresh; deduplicated while pending\"]\n    S -->|\"state_changed via session\"| R\n    R --> N[\"Build / Supplies / Workers narrow views when diagnostics off\"]\n    N --> Q[\"Targeted ledger queries\"]\n    Q --> L\n    R --> V[\"Other panels / diagnostics: broad service snapshots\"]\n    V --> K[\"Ledger snapshots and repeated per-person reads\"]\n    K --> I"
+  },
+  "proposed_flow": {
+    "status": "Recommendation only; not implemented or benchmarked as a full architecture.",
+    "mermaid": "flowchart TD\n    A[\"Commands / physical domain changes\"] --> B[\"Domain service commits authoritative mutation\"]\n    C[\"One shared simulation clock\"] --> D[\"Active motion + ordered due-event queue\"]\n    D --> B\n    B --> L[\"IdentityLedger remains authoritative\"]\n    B -->|\"scoped committed-change signal\"| E[\"Deduplicated affected-service work\"]\n    E --> B\n    B -->|\"dirty domain / entity IDs\"| F[\"Small panel-specific read models\"]\n    F --> G[\"Refresh affected visible controls\"]\n    H[\"Explicit detailed inspection\"] --> I[\"inspect_entity when details are needed\"]\n    I --> L"
+  },
+  "measurements": {
+    "playable_Build": {
+      "label": "Current playable empty-field opening: Open Build",
+      "path": "logs/menu-performance-2026-11-03T17-55-29-19344",
+      "session": "Main creates FarmlandSession.create_empty_field and enables live planning; normal diagnostics environment is off. No stocked acceptance fixture is installed.",
+      "speed": 1,
+      "stacks_enabled": true,
+      "observation_seconds": 3.003846,
+      "inspections": 2944,
+      "inspections_per_second": 980.0768747798656,
+      "physics_callbacks": 180,
+      "UI_refreshes": 181,
+      "settlements": 363,
+      "peak_frame_ms": 34.33,
+      "ledger_snapshot_calls": 0,
+      "outcome": "observed",
+      "runtime_stderr_empty": true,
+      "stack_attribution": {
+        "selection": "Deduplicated complete engine-second buckets wholly inside the measured action; no partial/setup/audit windows included.",
+        "seconds": [
+          {
+            "engine_second": 4,
+            "inspections": 974,
+            "physics_callbacks": 60,
+            "settlements": 121,
+            "UI_refreshes": 60
+          },
+          {
+            "engine_second": 5,
+            "inspections": 974,
+            "physics_callbacks": 60,
+            "settlements": 121,
+            "UI_refreshes": 60
+          }
+        ],
+        "total_inspections": 1948,
+        "origin_counts": {
+          "simulation clock": 1828,
+          "UI refresh": 120
+        },
+        "origin_percent": {
+          "simulation clock": 93.83983572895278,
+          "UI refresh": 6.160164271047228
+        },
+        "top_chains": [
+          {
+            "count": 488,
+            "percent": 25.05133470225873,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/military/organization.gd::settle",
+              "game/military/organization.gd::_auto_organize",
+              "game/military/organization.gd::_candidate_people",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 244,
+            "percent": 12.525667351129364,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/military/organization.gd::advance_to",
+              "game/military/troop_transport.gd::advance_to",
+              "game/military/troop_transport.gd::_advance_route",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 244,
+            "percent": 12.525667351129364,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/vehicle_combat/vehicle_combat_service.gd::advance_to",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 160,
+            "percent": 8.213552361396303,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/orders/order_service.gd::settle",
+              "game/orders/order_service.gd::_sample_squad",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 160,
+            "percent": 8.213552361396303,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/orders/order_service.gd::settle",
+              "game/orders/order_service.gd::_sample_squad",
+              "game/military/organization.gd::_active_roster_members",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 122,
+            "percent": 6.262833675564682,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/military/organization.gd::advance_to",
+              "game/military/troop_transport.gd::advance_to",
+              "game/military/troop_transport.gd::_advance_route",
+              "game/identity/identity_ledger.gd::move_entity",
+              "game/mines/mine_service.gd::_on_moved",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 122,
+            "percent": 6.262833675564682,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/military/organization.gd::advance_to",
+              "game/military/troop_transport.gd::advance_to",
+              "game/military/troop_transport.gd::_advance_route",
+              "game/military/troop_transport.gd::_movement_blocker",
+              "game/military/organization.gd::_living_crew_id",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 122,
+            "percent": 6.262833675564682,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/military/organization.gd::advance_to",
+              "game/military/troop_transport.gd::advance_to",
+              "game/military/troop_transport.gd::_advance_route",
+              "game/mines/mine_service.gd::movement_limit",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 120,
+            "percent": 6.160164271047228,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_demo.gd::_refresh_construction",
+              "game/rear_base/base_simulation.gd::construction_view",
+              "game/rear_base/base_simulation.gd::purchasing_view",
+              "game/staffing/rear_simulation.gd::_stock_at",
+              "game/identity/identity_ledger.gd::entities_at",
+              "game/identity/identity_ledger.gd::entities_at_any",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 80,
+            "percent": 4.1067761806981515,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/orders/order_service.gd::settle",
+              "game/orders/order_service.gd::_sample_squad",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 32,
+            "percent": 1.6427104722792607,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/opening_policy.gd::tick",
+              "game/battlefield/opening_resupply.gd::tick",
+              "game/military/organization.gd::_active_roster_members",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 16,
+            "percent": 0.8213552361396304,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/opening_policy.gd::tick",
+              "game/battlefield/opening_resupply.gd::tick",
+              "game/battlefield/opening_resupply.gd::_tick_racks",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 16,
+            "percent": 0.8213552361396304,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::settle",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 8,
+            "percent": 0.4106776180698152,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/opening_policy.gd::tick",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 4,
+            "percent": 0.2053388090349076,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::_execute",
+              "game/military/organization.gd::vehicle_capability",
+              "game/military/organization.gd::_living_crew_id",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 4,
+            "percent": 0.2053388090349076,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::_execute",
+              "game/military/organization.gd::vehicle_readiness",
+              "game/military/organization.gd::_living_crew_id",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2,
+            "percent": 0.1026694045174538,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/opening_policy.gd::tick",
+              "game/battlefield/opening_resupply.gd::tick",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2,
+            "percent": 0.1026694045174538,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::_pump_live",
+              "game/rear_base/base_simulation.gd::_advance_live_quantum",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/battlefield/squad_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::settle",
+              "game/battlefield/vehicle_execution.gd::_execute",
+              "game/military/organization.gd::vehicle_capability",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          }
+        ]
+      }
+    },
+    "prepared_HQ_stack_trace": {
+      "label": "HQ diagnostics: Request course",
+      "path": "logs/gdunit4-performance-2026-11-03T17-52-55-37480",
+      "session": "Prepared expanded rear: 12 rear workers, stocked stores, no connected battlefield; tick_live delegates to tick. This is not the playable empty-field opening.",
+      "diagnostics": true,
+      "stacks_enabled": true,
+      "observation_seconds": 3.430844,
+      "speed": 1,
+      "inspections": 113591,
+      "inspections_per_second": 33108.7627417627,
+      "physics_callbacks": 200,
+      "UI_refreshes": 203,
+      "ledger_snapshots": 812,
+      "settlements": 401,
+      "peak_frame_ms": 146.153,
+      "diagnostic_limits": {
+        "frame_ms": 1000.0,
+        "action_ms": 1000.0,
+        "inspection_budget": 0
+      },
+      "runtime_stderr_empty": true,
+      "stack_attribution": {
+        "selection": "Deduplicated complete engine-second buckets wholly inside the measured action; no partial/setup/audit windows included.",
+        "seconds": [
+          {
+            "engine_second": 5,
+            "inspections": 33235,
+            "physics_callbacks": 59,
+            "settlements": 118,
+            "UI_refreshes": 59
+          },
+          {
+            "engine_second": 6,
+            "inspections": 33022,
+            "physics_callbacks": 59,
+            "settlements": 117,
+            "UI_refreshes": 58
+          }
+        ],
+        "total_inspections": 66257,
+        "origin_counts": {
+          "UI refresh": 53972,
+          "simulation clock": 12285
+        },
+        "origin_percent": {
+          "UI refresh": 81.45856286882895,
+          "simulation clock": 18.541437131171048
+        },
+        "top_chains": [
+          {
+            "count": 8732,
+            "percent": 13.178984861976847,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/combat/combat_service.gd::snapshot",
+              "game/identity/identity_ledger.gd::snapshot",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 8658,
+            "percent": 13.067298549587214,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/identity/identity_ledger.gd::snapshot",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 8658,
+            "percent": 13.067298549587214,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::workshop_readiness",
+              "game/identity/identity_ledger.gd::snapshot",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 8658,
+            "percent": 13.067298549587214,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/procurement/receiving_simulation.gd::snapshot",
+              "game/identity/identity_ledger.gd::snapshot",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2832,
+            "percent": 4.27426536064114,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/training/training_service.gd::snapshot",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2808,
+            "percent": 4.238042772839096,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::tick",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/training/training_service.gd::settle",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2808,
+            "percent": 4.238042772839096,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::tick",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/training/training_service.gd::settle",
+              "game/training/training_service.gd::_refresh_states",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2808,
+            "percent": 4.238042772839096,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::audit",
+              "game/training/training_service.gd::audit",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 2574,
+            "percent": 3.8848725417691714,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::tick",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/staffing/rear_simulation.gd::_settle",
+              "game/production/fixed_production.gd::settle",
+              "game/production/fixed_production.gd::_target_satisfied",
+              "game/production/fixed_production.gd::stock_coverage",
+              "game/identity/identity_ledger.gd::entities_at_any",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1416,
+            "percent": 2.13713268032057,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/training/training_service.gd::snapshot",
+              "game/training/training_service.gd::_refresh_states",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1404,
+            "percent": 2.119021386419548,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::tick",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/training/training_service.gd::advance_work",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1404,
+            "percent": 2.119021386419548,
+            "chain": [
+              "game/main/game_session.gd::_physics_process",
+              "game/rear_base/base_simulation.gd::tick_live",
+              "game/rear_base/base_simulation.gd::tick",
+              "game/staffing/rear_simulation.gd::advance_time",
+              "game/training/training_service.gd::next_boundary",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1404,
+            "percent": 2.119021386419548,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1404,
+            "percent": 2.119021386419548,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::audit",
+              "game/training/training_service.gd::audit",
+              "game/training/training_service.gd::_active",
+              "game/training/training_service.gd::instructors",
+              "game/identity/identity_ledger.gd::inspect_person_status",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1404,
+            "percent": 2.119021386419548,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::snapshot",
+              "game/staffing/rear_simulation.gd::audit",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1298,
+            "percent": 1.9590382902938557,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/production/selectable_production.gd::snapshot",
+              "game/production/fixed_production.gd::snapshot",
+              "game/production/fixed_production.gd::_target_satisfied",
+              "game/production/fixed_production.gd::stock_coverage",
+              "game/identity/identity_ledger.gd::entities_at_any",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1298,
+            "percent": 1.9590382902938557,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_demo.gd::_refresh_core_ui",
+              "game/rear_base/base_demo.gd::_refresh_production_context",
+              "game/production/selectable_production.gd::snapshot",
+              "game/production/fixed_production.gd::snapshot",
+              "game/production/fixed_production.gd::_target_satisfied",
+              "game/production/fixed_production.gd::stock_coverage",
+              "game/identity/identity_ledger.gd::entities_at_any",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          },
+          {
+            "count": 1296,
+            "percent": 1.9560197413103522,
+            "chain": [
+              "game/rear_base/base_demo.gd::_refresh",
+              "game/rear_base/base_simulation.gd::snapshot",
+              "game/production/selectable_production.gd::snapshot",
+              "game/production/fixed_production.gd::snapshot",
+              "game/production/fixed_production.gd::_target_satisfied",
+              "game/production/fixed_production.gd::stock_coverage",
+              "game/identity/identity_ledger.gd::entities_at_any",
+              "game/identity/identity_ledger.gd::inspect_entity"
+            ]
+          }
+        ]
+      }
+    },
+    "prepared_HQ_counters_only": {
+      "label": "HQ diagnostics: Request course",
+      "path": "logs/gdunit4-performance-2026-11-03T17-54-04-29176",
+      "session": "Prepared expanded rear: 12 rear workers, stocked stores, no connected battlefield; tick_live delegates to tick. This is not the playable empty-field opening.",
+      "diagnostics": true,
+      "stacks_enabled": false,
+      "observation_seconds": 3.089925,
+      "speed": 1,
+      "inspections": 106796,
+      "inspections_per_second": 34562.6511970355,
+      "physics_callbacks": 187,
+      "UI_refreshes": 190,
+      "ledger_snapshots": 760,
+      "settlements": 375,
+      "peak_frame_ms": 49.326,
+      "diagnostic_limits": {
+        "frame_ms": 1000.0,
+        "action_ms": 1000.0,
+        "inspection_budget": 0
+      },
+      "runtime_stderr_empty": true
+    },
+    "prepared_normal_Train_counters_only": {
+      "label": "Main game profile: Request course",
+      "path": "logs/gdunit4-performance-2026-11-03T17-55-00-12732",
+      "session": "Prepared expanded rear: 12 rear workers, stocked stores, no connected battlefield; tick_live delegates to tick. This is not the playable empty-field opening.",
+      "diagnostics": false,
+      "stacks_enabled": false,
+      "observation_seconds": 3.031533,
+      "speed": 1,
+      "inspections": 52131,
+      "inspections_per_second": 17196.2502140006,
+      "physics_callbacks": 183,
+      "UI_refreshes": 186,
+      "ledger_snapshots": 186,
+      "settlements": 367,
+      "peak_frame_ms": 22.914,
+      "diagnostic_limits": {
+        "frame_ms": 1000.0,
+        "action_ms": 1000.0,
+        "inspection_budget": 0
+      },
+      "runtime_stderr_empty": true
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "evidence": "source_anchors + playable_Build",
+      "finding": "The playable opening already uses Godot physics callbacks and one custom game clock. advance_time preserves ordered physical events and explicit-time tests; its name is not evidence of incorrect engine use."
+    },
+    {
+      "id": "F2",
+      "evidence": "prepared_HQ_stack_trace.stack_attribution",
+      "finding": "In two complete measured HQ diagnostic seconds, 53972 of 66257 inspections (81.46%) were rooted in deferred UI refresh; 12285 (18.54%) were rooted in the simulation clock. These are call shares, not CPU-time shares."
+    },
+    {
+      "id": "F3",
+      "evidence": "UI snapshot source and measured chains",
+      "finding": "Four broad export paths repeatedly reach ledger.snapshot: Rear.snapshot, Rear.workshop_readiness for consumed totals, Receiving.snapshot with diagnostics, and Combat.snapshot. Together their inspect_entity chains account for 34706 calls (52.38%) in those two HQ diagnostic seconds."
+    },
+    {
+      "id": "F4",
+      "evidence": "training snapshot/instructors source",
+      "finding": "Training.snapshot refreshes row states and calls instructors twice directly; _refresh_states/_active/audits can call it again. Each instructors scan exports person status for all rear actors. Not all existing snapshot methods are pure reads."
+    },
+    {
+      "id": "F5",
+      "evidence": "playable_Build.stack_attribution",
+      "finding": "The current playable Build opening has 974 inspections in each of two complete seconds, with 60 UI-rooted and 914 clock-rooted inspections per second. Full-action rate is approximately 980/s. This is a different session/state from the stocked HQ acceptance fixture."
+    },
+    {
+      "id": "F6",
+      "evidence": "paired prepared Request course observations",
+      "finding": "With counters only, the same prepared action measured about 17196 inspections/s without diagnostics and 34563/s with diagnostics. Sequential short runs identify workload amplification; they are not statistical frame-time benchmarks."
+    },
+    {
+      "id": "F7",
+      "evidence": "inspect_entity and snapshot implementations",
+      "finding": "One inspection allocates a detached dictionary and derives world position and kind-specific facts. Optional mass can build a holder index and recurse; detailed vehicle exports can scan all entity children. Ledger.snapshot already batches masses and some stock facts within one synchronous snapshot, so no claim is made that every call performs every expensive branch."
+    }
+  ],
+  "alternatives": [
+    {
+      "priority": 1,
+      "approach": "Panel-specific queries plus one scoped read context for required shared facts",
+      "status": "Partially implemented for Build/Supplies/Workers; extend to advanced panels and diagnostics.",
+      "evidence": "Historical direct Build refresh: 1251 -> 1 full inspections and 1 -> 0 whole-ledger snapshots (docs/evidence/build_inspection_reduction.md); current HQ trace exposes repeated full-ledger UI exports.",
+      "why_better": "Avoids constructing and re-deriving unrelated entity data for a visible panel. Needed shared exports can be reused only within a stable synchronous read boundary.",
+      "risks": "Training snapshot currently refreshes state. Enforce pure queries or preserve side-effect order before sharing results; do not cache mutable whole-entity results across arbitrary callbacks."
+    },
+    {
+      "priority": 2,
+      "approach": "Scoped committed-change signals and dirty visible-panel read models",
+      "status": "Proposed; existing generic signals/deferred coalescing already work but remain too broad.",
+      "evidence": "Current GameSession.time_advanced drives BaseDemo._request_refresh. HQ trace records 117 UI refreshes over two seconds and 81.46% UI-rooted inspections; Godot signal documentation describes event-driven UI updates.",
+      "why_better": "A stock change can dirty stock/material panels, while a ticking clock updates its text without reconstructing all service snapshots.",
+      "risks": "Requires complete invalidation for all relevant mutations, including pause-time commands and session replacement. Movement/progress still need suitable continuous or scheduled presentation updates."
+    },
+    {
+      "priority": 3,
+      "approach": "Pure ledger predicates, filtered candidate sets and authoritative indices where justified",
+      "status": "Uncached predicates already implemented for selected military/HQ paths; more candidates remain in training and military formation scans.",
+      "evidence": "docs/evidence/overhaul_read_slice.json: 100 world HQ auto-issue checks fell from 800 full inspections to 0; bounded HQ fixture 1200 -> 100. Thirteen frozen checkpoints and parity guards protect covered behavior.",
+      "why_better": "Read eligibility facts before exporting full descriptions, and avoid scanning unrelated holders/kinds when a maintained index is justified.",
+      "risks": "Keep physical position, injury, pending duty, reservations and custody authoritative. Index every mutation path correctly; lower call count alone does not prove a speedup."
+    },
+    {
+      "priority": 4,
+      "approach": "One simulation deadline queue plus deduplicated affected-service work and active motion",
+      "status": "Proposed migration; preserve the current clock and ordering contracts.",
+      "evidence": "Current advance_time scans service boundaries and settles before/after advance. The measured HQ seconds contain 235 settlements for 118 physics callbacks; Orders already gates observation to one logical second.",
+      "why_better": "Inactive services need not rediscover unchanged prerequisites every tick. Material arrival, staff arrival, capacity changes and completions can wake only affected work.",
+      "risks": "High correctness risk unless event ordering, cancellation tokens, staff-rate changes and same-boundary physical handoffs preserve existing behavior. No full scheduler benchmark or implementation is claimed."
+    }
+  ],
+  "godot_guidance": {
+    "processing": "Changing _physics_process to _process changes scheduling, not the work performed. The current normal game already uses _physics_process.",
+    "signals": "Godot renders Controls but does not infer bindings from custom RefCounted records or dictionaries. Current UI already uses signals; use narrower notifications and queries.",
+    "timers": "Useful for bounded local UI/time tasks. Timer uses Engine.time_scale; this project has custom simulation.speed, so bare timers do not automatically preserve its pause/1x/2x or exact event ordering. Avoid assuming timer-per-entity or node-per-record is a performance solution.",
+    "references": [
+      {
+        "title": "Godot 4.7 processing callbacks",
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/scripting/idle_and_physics_processing.html"
+      },
+      {
+        "title": "Godot 4.7 signals / observer pattern",
+        "url": "https://docs.godotengine.org/en/4.7/getting_started/step_by_step/signals.html"
+      },
+      {
+        "title": "Godot 4.7 Timer",
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_timer.html"
+      },
+      {
+        "title": "Godot 4.7 CPU optimization / profiling and node costs",
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/performance/cpu_optimization.html"
+      }
+    ]
+  },
+  "validation_and_limits": {
+    "source_fingerprints": "All 171 current GDScript files matched their maintained map fingerprints before this analysis was saved.",
+    "measurement_protocol": "Godot 4.7.2, rendered isolated GdUnit prepared fixtures or the current playable one-menu suite, normal game speed 1x, sequential runs. Diagnostic frame/action budgets were raised to 1000 ms and the inspection stop budget disabled only to collect complete traces; these passes do not certify default performance budgets.",
+    "stack_windows": "Only distinct complete real-second buckets wholly inside an observed action were attributed. Grouped chain counts exactly equal their measured inspect_entity counts.",
+    "CPU_limits": "Stack collection adds overhead: HQ trace peak frame 146.153 ms versus 49.326 ms in its separate counters-only run. This is not an A/B CPU benchmark or evidence that 81.46% of CPU time belongs to UI.",
+    "coverage": "Short opening/fixture observations do not establish late-game performance or every gameplay state. The full function inventory is a static map, not test coverage.",
+    "artifact_availability": "Raw run logs are local ignored artifacts. This JSON retains the measured counts/chains and source hashes without assuming raw logs exist in a fresh checkout."
+  },
+  "source_anchors": {
+    "game/main/main.gd::_ready": {
+      "path": "game/main/main.gd",
+      "line": 36,
+      "implementation_sha256": "b388cf1242f52cd4595ff859f5769d938d64cc3bcd194c60fba227fb84cb2b70",
+      "purpose": "Build the shared session, command shell, rear view and battlefield view; connect navigation, clock and command signals."
+    },
+    "game/main/main.gd::_start_playtest": {
+      "path": "game/main/main.gd",
+      "line": 130,
+      "implementation_sha256": "30ce3f564c57310189be281a61b9a08ffda897b813285c510c246d5c747949c5",
+      "purpose": "Replace the session with the empty-field playable opening and return to the rear view."
+    },
+    "game/main/game_session.gd::_physics_process": {
+      "path": "game/main/game_session.gd",
+      "line": 20,
+      "implementation_sha256": "9ed37dda7b73daca31f4e8407e736d1897bc036510d6417e04d1a564dde03875",
+      "purpose": "Drive the shared live simulation independently of visible screens, optionally measure the tick wall time and emit a time/view notification when simulation time or planning revision changes."
+    },
+    "game/main/game_session.gd::set_speed": {
+      "path": "game/main/game_session.gd",
+      "line": 43,
+      "implementation_sha256": "bf2f38c5d4f08c4c60f9354911c6e58a8aba37028aa0c03340986b574336035f",
+      "purpose": "Apply the requested simulation speed and notify session views of the command result."
+    },
+    "game/main/game_session.gd::notify_command": {
+      "path": "game/main/game_session.gd",
+      "line": 49,
+      "implementation_sha256": "ce10894a28476d32f7ad06b7961314c52caa27f1da303c4c16134295a697e2ef",
+      "purpose": "Notify session listeners that an issued command changed shared state."
+    },
+    "game/rear_base/base_simulation.gd::tick": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 132,
+      "implementation_sha256": "121d814952139a9f4046461ba7372581fae07569f2919887d0644bbaba955550",
+      "purpose": "Advance explicitly supplied elapsed time in explicit-time mode; reject mixing that clock with live wall-clock planning."
+    },
+    "game/rear_base/base_simulation.gd::tick_live": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 164,
+      "implementation_sha256": "93266ee258902593e63305873dbedbcf9293e955ac010d29a0832990b900b39e",
+      "purpose": "Accrue live wall-clock time and pump bounded planning/simulation work, or delegate to the explicit-time tick when live planning is disabled."
+    },
+    "game/rear_base/base_simulation.gd::_pump_live": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 182,
+      "implementation_sha256": "e03dda5a2c326a1a962a6e2f7acb21576d9307c45085d5ff8bcb3066ace95fa6",
+      "purpose": "Fairly pump bounded pure transport/supply/resource planning chunks, optionally record chunk wall time, settle at most one admitted transition per returned frame and then advance the existing owed live quantum."
+    },
+    "game/rear_base/base_simulation.gd::_advance_live_quantum": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 219,
+      "implementation_sha256": "964f267e6da27554b725e993b779680bdeee37e2f2a7d44c5cb0eaf9ae9109ce",
+      "purpose": "When running with owed time, advance the rear by the existing capped live quantum, optionally measure advancement wall time, subtract actual elapsed simulation time and refresh trip admissions."
+    },
+    "game/rear_base/base_simulation.gd::after_command": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 230,
+      "implementation_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+      "purpose": "Accrue live time, invalidate captured route inputs, settle the command at the current clock boundary and update planning-view revisions."
+    },
+    "game/rear_base/base_simulation.gd::snapshot": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 315,
+      "implementation_sha256": "914a2a4f6ab4b89255a8cc802fb23c6fa7f88e2dfaae2ee44265832d02badd69",
+      "purpose": "Combine shared rear, procurement, construction, training, military and other subsystem inspections for broad diagnostic/UI readers."
+    },
+    "game/rear_base/base_simulation.gd::construction_view": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 296,
+      "implementation_sha256": "db8e4dce872e54a450fd5ff01cc024c96a8da1d036cb99dc81de017bc2ef5d06",
+      "purpose": "Combine purchasing data with construction state and builder staffing counts without exporting the full simulation."
+    },
+    "game/rear_base/base_simulation.gd::purchasing_view": {
+      "path": "game/rear_base/base_simulation.gd",
+      "line": 286,
+      "implementation_sha256": "b4da52ee51fdbe00cdb9bd74b608bd4e0638c505a7df55bc3e586aa7e6f5d8cf",
+      "purpose": "Build a narrow receiving/local-stock/requisition view for purchase-related controls."
+    },
+    "game/staffing/rear_simulation.gd::advance_time": {
+      "path": "game/staffing/rear_simulation.gd",
+      "line": 306,
+      "implementation_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+      "purpose": "Validate explicit elapsed time, preserve ordered global settlement and nearest service/actor/job boundaries, accrue work and physical motion with synchronous consequences, advance shared clocks and emit existing notifications; optionally time the entry/end settlement call sites."
+    },
+    "game/staffing/rear_simulation.gd::_settle": {
+      "path": "game/staffing/rear_simulation.gd",
+      "line": 556,
+      "implementation_sha256": "0062f8999eb7f3affcec04478d4b2aa14f8972db071503306022da5710ee432b",
+      "purpose": "Repeatedly resolve due workers and service transitions, store reconciliation and job admissions until no change remains; emit state_changed after actual settled changes."
+    },
+    "game/staffing/rear_simulation.gd::snapshot": {
+      "path": "game/staffing/rear_simulation.gd",
+      "line": 938,
+      "implementation_sha256": "9f17c88f9aaef5bd39868c5d657d2598b14e4175f7744f84f14827cff17827fd",
+      "purpose": "Build the broad rear inspection with people, staffing, stores, jobs, service views, events and optional diagnostics."
+    },
+    "game/staffing/rear_simulation.gd::workshop_readiness": {
+      "path": "game/staffing/rear_simulation.gd",
+      "line": 393,
+      "implementation_sha256": "72f06528f389d9e625bf57f4e91f60926477c60f76dc48f149550a6b243005f2",
+      "purpose": "Workshop readiness for rear simulation. Implementation: calls production.snapshot, view.operators.size, view.batch.get, ledger.snapshot; updates missing[type]."
+    },
+    "game/rear_base/base_demo.gd::_request_refresh": {
+      "path": "game/rear_base/base_demo.gd",
+      "line": 229,
+      "implementation_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+      "purpose": "Request a visible base demo refresh, coalescing work when supported. Implementation: calls is_node_ready, is_visible_in_tree, _refresh.call_deferred; updates _refresh_queued."
+    },
+    "game/rear_base/base_demo.gd::_refresh": {
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1345,
+      "implementation_sha256": "a962771ed567c2aa22d2a4fea1a003f7346be3e21869c64127abaed7b414a6d2",
+      "purpose": "Rebuild visible base demo controls/text from current simulation state. Implementation: calls is_visible_in_tree, clock_text, base_map.queue_redraw, str; updates (construction_office.get_parent() as Control).visible, _displayed_planning_revision, _displayed_speed, _displayed_time."
+    },
+    "game/rear_base/base_demo.gd::_refresh_construction": {
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1484,
+      "implementation_sha256": "a51be218b7cf2fb435d9d9d6d683a5d8530830cb0c0e4314eba5a1abdd462137",
+      "purpose": "Refresh construction for base demo. Implementation: calls simulation.construction_view, _refresh_resource_hud, _refresh_build_description, _sync_option; updates (construction_office.get_parent() as Control).visible, construction_office.editable, construction_status.text, status.text."
+    },
+    "game/rear_base/base_demo.gd::_result": {
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1186,
+      "implementation_sha256": "e1eba5ac0acc0c3b5d1158179d1cf73cdf632802f42f00ce40c4e882c8ecb1ac",
+      "purpose": "Build a structured base demo result from its success flag and explanation. Implementation: calls session.notify_command.call_deferred, result.get, simulation.after_command, str; updates feedback.text, feedback.visible."
+    },
+    "game/rear_base/base_demo.gd::start_empty_field_session": {
+      "path": "game/rear_base/base_demo.gd",
+      "line": 402,
+      "implementation_sha256": "3882cd5a8d4e72a36edfd4227df3611f7e29022a2dfa55e19edd0acd7a1ecb0f",
+      "purpose": "Start empty field session for base demo. Implementation: calls simulation.cancel_live_planning, preload(\"res://game/scenario/farmland_session.gd\").create_empty_field, preload, simulation.enable_live_planning; updates simulation."
+    },
+    "game/identity/identity_ledger.gd::inspect_entity": {
+      "path": "game/identity/identity_ledger.gd",
+      "line": 1401,
+      "implementation_sha256": "e04bf6bcac639e6816fe6445e4054d13e7fdfa68acfec971f3f9fd0ca205ac28",
+      "purpose": "Build a detached inspection dictionary for one entity, including world position, kind-specific personnel/stock/vehicle facts and optional contents mass."
+    },
+    "game/identity/identity_ledger.gd::inspect_person_status": {
+      "path": "game/identity/identity_ledger.gd",
+      "line": 1393,
+      "implementation_sha256": "a29a9539076e6d21fcc052960a714ef9caa5eb6efd85f4368a517a21d2c31999",
+      "purpose": "Validate that the ID is a person, then return its entity inspection with mass calculation disabled."
+    },
+    "game/identity/identity_ledger.gd::snapshot": {
+      "path": "game/identity/identity_ledger.gd",
+      "line": 1499,
+      "implementation_sha256": "e35f9c91eebf8228ff2427cef7c27ab4e7fb1220bbc15024844afcffbefba3e6",
+      "purpose": "Inspect every entity and claim, precomputing shared stock/carry facts and optional masses, then export ledger time, totals, promises and events."
+    },
+    "game/identity/identity_ledger.gd::_contents_mass": {
+      "path": "game/identity/identity_ledger.gd",
+      "line": 1705,
+      "implementation_sha256": "fcef69daa011bd63837264430ba52af20ff78541067766c6e5ea46f62a4dea72",
+      "purpose": "Return zero for stock leaves or compute descendant mass using a holder-to-children index."
+    },
+    "game/identity/identity_ledger.gd::_world_position": {
+      "path": "game/identity/identity_ledger.gd",
+      "line": 1728,
+      "implementation_sha256": "11f250ecb4d08f67ab90ad1a39c3aefca0650ab672b85e13c4c0c29b07fe4a07",
+      "purpose": "Resolve authoritative world coordinates by recursively adding holder positions."
+    },
+    "game/training/training_service.gd::instructors": {
+      "path": "game/training/training_service.gd",
+      "line": 103,
+      "implementation_sha256": "4475f72b44b11be960a79a40947a94e7d589d99f870b30a5b123c446b949d734",
+      "purpose": "Instructors for training service. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_person_status, p.carrying_stock_id.is_empty, p.crew_station.is_empty."
+    },
+    "game/training/training_service.gd::_active": {
+      "path": "game/training/training_service.gd",
+      "line": 123,
+      "implementation_sha256": "babcc6a779a54e11bedcee73b9d396fe775448c0d8f65c43cb33119b28a12c06",
+      "purpose": "Active for training service. Implementation: calls _unfinished, unfinished.is_empty, instructors, _rear_ref.get_ref().ledger.inspect_person_status; updates coverage[duty]."
+    },
+    "game/training/training_service.gd::snapshot": {
+      "path": "game/training/training_service.gd",
+      "line": 240,
+      "implementation_sha256": "b92e26bbad03810335f8f9db5bafbdcb5bacd5dfa53c0cebc610a94c1a33ae11",
+      "purpose": "Export the current training service state as a detached inspection dictionary. Implementation: calls _refresh_states, COURSES.duplicate, rows.duplicate, _seat_capacity; updates counts[row.state]."
+    },
+    "game/military/organization.gd::_candidate_people": {
+      "path": "game/military/organization.gd",
+      "line": 780,
+      "implementation_sha256": "7bc790362d66ac6c1da9473eb4826dc291576b7d7a1382892063e19c4324f914",
+      "purpose": "Inspect and select people eligible for automatic formation organization."
+    },
+    "game/orders/order_service.gd::settle": {
+      "path": "game/orders/order_service.gd",
+      "line": 281,
+      "implementation_sha256": "58fd5c95b2ccf9c4cde9a062f332564421e92987379d8223de6a3150f4049dc1",
+      "purpose": "Sample narrow sight candidates on the existing observation cadence, deliver due reports, review flank/failure deadlines and preserve the twenty-second leader-absence fallback for current intents."
+    },
+    "game/combat/combat_service.gd::snapshot": {
+      "path": "game/combat/combat_service.gd",
+      "line": 365,
+      "implementation_sha256": "5c5a96ba5f1d99c2e67b4feb98829dba266092c48780a8cb322f44589fc6ade4",
+      "purpose": "Export the current combat service state as a detached inspection dictionary. Implementation: calls _rear().ledger.snapshot, _rear, owner.is_empty, people.append; updates formations[id]."
+    },
+    "game/procurement/receiving_simulation.gd::snapshot": {
+      "path": "game/procurement/receiving_simulation.gd",
+      "line": 314,
+      "implementation_sha256": "39277bdf4d47f0770c952160b62a67be9aab7b8065cf98cc47e4f12b352022fd",
+      "purpose": "Export receiving money, orders, people, workers, capacity, motions and events for inspection."
+    }
+  },
+  "engine_audit_corrections": [
+    {
+      "recorded_utc": "2026-11-03T18:25:39.233846+00:00",
+      "evidence": "docs/evidence/godot_engine_efficiency_audit.json",
+      "previous_statement": "Deferred UI refresh; coalesced once per frame",
+      "corrected_statement": "Deferred UI refresh; deduplicated while pending",
+      "reason": "Godot flushes deferred calls at multiple processing phases. A pending flag alone is not a strict Engine.get_process_frames limiter; the installed-engine probe produced two refreshes in the same process-frame ID.",
+      "historical_measurements_changed": false
+    }
+  ],
+  "updated_utc": "2026-11-03T23:00:52.732843+00:00",
+  "current_revision": {
+    "checked_utc": "2026-11-03T23:00:52.732843+00:00",
+    "evidence": "docs/evidence/training_read_slice.json",
+    "inventory": "docs/system_map.json",
+    "limited_recheck": "Rechecked normal Train branch, scoped APIs, result reconciliation marker and unchanged dispatcher implementations. This is not a repeat whole-project line-by-line audit.",
+    "normal_train_path": [
+      "BaseDemo._refresh",
+      "BaseDemo._refresh_training",
+      "BaseSimulation.training_view",
+      "purchasing_view + Training.snapshot + selected training_person_view"
+    ],
+    "normalization": "Training.snapshot retains _refresh_states writes; narrow reads preserve observed behavior. Query purity remains planned.",
+    "rejected_commands": "Only explicitly marked read-only Training rejections bypass session notification and after_command; accepted and untagged legacy results retain previous guarantees.",
+    "measurements": {
+      "inspections_per_direct_refresh": {
+        "before": 153,
+        "after": 55
+      },
+      "direct_refresh_median_ms": {
+        "before": 4.3515,
+        "after": 0.9235
+      },
+      "process_cpu_seconds_per_wall_second_median": {
+        "before": 0.722068011880889,
+        "after": 0.49460354966171743
+      },
+      "world_exports_per_30_direct_refreshes": {
+        "before": 30,
+        "after": 0
+      },
+      "observed_inspections_per_wall_second": {
+        "before_range": [
+          23714.9367252411,
+          23720.9557926551
+        ],
+        "after_range": [
+          17810.192520652,
+          17820.5103730844
+        ]
+      }
+    },
+    "source_anchors": [
+      {
+        "function": "game/rear_base/base_demo.gd::_refresh",
+        "line": 1346,
+        "end_line": 1477,
+        "function_sha256": "cb70566ed89afbdb8ab62bd70566e6b98d7bd96c5d6eabafe5c31cd590705515",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/rear_base/base_demo.gd::_refresh_training",
+        "line": 1500,
+        "end_line": 1505,
+        "function_sha256": "5f24035a6b15afb42cb847eda6fa92c0621c59ad108d6fa095664415c2498000",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/rear_base/base_demo.gd::_refresh_training_controls",
+        "line": 1507,
+        "end_line": 1515,
+        "function_sha256": "69f1109cd4d161dfb039ca34e8ad2056f6d8a3076e6a953f43e90c48535ab3f0",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/rear_base/base_demo.gd::_result",
+        "line": 1186,
+        "end_line": 1193,
+        "function_sha256": "910841b5ce79e21575b76f599c99de6e248b3a065cf44d66e14d0a9eb0173b11",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/rear_base/base_simulation.gd::training_view",
+        "line": 323,
+        "end_line": 330,
+        "function_sha256": "f0b643f26edd17aca2fba032777bb14e4757bf3892d499d48cdbfbab3d302f4b",
+        "file_sha256": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+      },
+      {
+        "function": "game/rear_base/base_simulation.gd::training_person_view",
+        "line": 315,
+        "end_line": 321,
+        "function_sha256": "d3c6a324374b08634180ee27e94277ed079f55eca3fc6c2897f1e58f46596da5",
+        "file_sha256": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+      },
+      {
+        "function": "game/training/training_service.gd::snapshot",
+        "line": 244,
+        "end_line": 249,
+        "function_sha256": "2c8aa3f732efc2af539b69da3e523d4bcf494a540a1f4e32dd3312a6df407a88",
+        "file_sha256": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1"
+      },
+      {
+        "function": "game/training/training_service.gd::_result",
+        "line": 265,
+        "end_line": 268,
+        "function_sha256": "d55f40953bab7e1559b5f1f77a627c17b8cd7696b6ea4852028ee961b0280b1b",
+        "file_sha256": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1"
+      },
+      {
+        "function": "game/staffing/rear_simulation.gd::advance_time",
+        "line": 307,
+        "end_line": 383,
+        "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+        "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+      },
+      {
+        "function": "game/staffing/rear_simulation.gd::_settle",
+        "line": 557,
+        "end_line": 602,
+        "function_sha256": "0062f8999eb7f3affcec04478d4b2aa14f8972db071503306022da5710ee432b",
+        "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+      }
+    ],
+    "historical_measurements_replaced": false,
+    "global_dispatcher_removed": false
+  },
+  "current_followup": {
+    "checked_utc": "2026-11-04T00:26:49.388318+00:00",
+    "evidence": "docs/evidence/cohesion_placement_fix.json",
+    "inventory": "docs/system_map.json",
+    "changes": "Cohesion and active roster queries use fresh ledger facts; ammunition totals are batched; idle mounted reloads avoid hull exports and rack reads stay local. Scene-owned process-frame gating prevents duplicate wall-clock pumps; explicit-delta models retain every tick.",
+    "global_dispatcher_removed": false,
+    "historical_measurements_unchanged": true
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "status": "in_progress_not_full_prototype_acceptance",
+  "recorded_utc": "2026-11-05T04:20:05.139081+00:00",
+  "base_revision": "800ec9d4b869fad630327d52b42a807baddf6ac0",
+  "source_state": "Uncommitted working-tree integration; unrelated existing changes preserved. No branch switch, commit or remote publication.",
+  "hardware": {
+    "cpu": "Intel Core i7-13700F (registry)",
+    "gpu": "NVIDIA GeForce RTX 4070 Ti (engine log)",
+    "driver": "NVIDIA 621.01",
+    "engine": "4.7.2.stable.steam.ed1daf0bf",
+    "renderer": "OpenGL Compatibility",
+    "measurement": "Native uncapped rendering with vsync disabled; counters enabled, caller stacks and deep attribution disabled for acceptance."
+  },
+  "protected_limits": {
+    "frame_ms": 16.666666666666668,
+    "action_ms": 16.666666666666668,
+    "inspect_calls_per_second": 30000,
+    "simulation_debt_seconds": 0.25,
+    "new_ai_guard": "Do not retain more than one due decision per squad or let the oldest reach the existing one-second decision period."
+  },
+  "changes": [
+    "Fresh batched stock reconciliation, distant-observer broad phase, personal ammunition read batching and lazy physical cargo reservation remove repeated world scans without cross-frame caches.",
+    "Build elapsed-time presentation refreshes markers/earned work; committed events retain full refresh. Private logistics status refreshes only the visible Supplies panel.",
+    "Clear construction access segments use the same current authoritative bounds/obstacle test before falling back to the visibility graph.",
+    "Event-woken finite rear logistics passes request actual next-batch hauling and real dispatch fulfilment; no materials, people, fuel or trucks are granted.",
+    "Physical HQ-to-front freight prepares bounded routes, claims exact fresh source portions, and preserves real loading, travel, unload, return, interruption and local Engineer issue.",
+    "Actual passenger approaches are prepared in chunks and admitted only against unchanged current people/hull/world facts; synchronous explicit callers retain their original validation.",
+    "Live squad decisions retain FIFO due work and execute one fresh squad transaction per pump; foot route preparation is private and checks current order/person/load/terrain before motion starts.",
+    "While planning/decisions are pending, their work and complete simulation transactions use separate returned frames. Actual elapsed simulation debt is retained; no time is discarded.",
+    "A real-time Godot Timer collects diagnostic windows; console output drains with a cooperative per-frame allowance and flushes at exit. Counts/unique caller groups retain their original monotonic seconds."
+  ],
+  "design_justification": [
+    {
+      "principle": "Single authoritative owner and conservation",
+      "application": "Existing ledger, hauling, Dispatch and ForwardSupply services own every physical mutation. New controllers submit their real commands and subtract existing commitments."
+    },
+    {
+      "principle": "Fresh admission after private preparation",
+      "application": "Time-sliced geometry writes no physical state. Admission rechecks exact source portions, ownership, handlers, fuel, load, route world, intent and people before an atomic transition."
+    },
+    {
+      "principle": "Bounded work with liveness",
+      "application": "Expensive preparation and due AI decisions are distributed; simulation time and decision backlog are measured so smooth frames cannot conceal dropped work."
+    },
+    {
+      "principle": "Measure specific bottlenecks and instrumentation overhead",
+      "application": "Inclusive scopes identified actual route/decision spikes and console costs. Whole-frame/action thresholds were not raised and earlier failures remain under logs."
+    }
+  ],
+  "official_sources": [
+    "https://docs.godotengine.org/en/stable/classes/class_timer.html",
+    "https://docs.godotengine.org/en/stable/tutorials/performance/general_optimization.html",
+    "https://docs.godotengine.org/en/stable/tutorials/performance/cpu_optimization.html",
+    "https://docs.godotengine.org/en/stable/tutorials/scripting/debug/the_profiler.html"
+  ],
+  "native_ordinary_placement": [
+    {
+      "action": "Default game / open Build and start 1x through player controls",
+      "peak_frame_ms": 11.744,
+      "dispatch_ms": 0.0,
+      "frames": 9,
+      "inspect_calls_per_second": 308.472717301892,
+      "simulation_progress_seconds": 0.005795,
+      "owed_seconds": 0.0,
+      "maximum_ai_decision_age": 0.0,
+      "issues": []
+    },
+    {
+      "action": "Default game / Build idle baseline at 1x",
+      "peak_frame_ms": 11.728,
+      "dispatch_ms": 0.0,
+      "frames": 2683,
+      "inspect_calls_per_second": 452.348011068281,
+      "simulation_progress_seconds": 2.049803,
+      "owed_seconds": 1.04083408558608e-16,
+      "maximum_ai_decision_age": 0.0,
+      "issues": []
+    },
+    {
+      "action": "Default game / select and move workshop preview at 1x",
+      "peak_frame_ms": 13.269,
+      "dispatch_ms": 0.0,
+      "frames": 925,
+      "inspect_calls_per_second": 777.446852718873,
+      "simulation_progress_seconds": 2.08445700000001,
+      "owed_seconds": 0.0,
+      "maximum_ai_decision_age": 0.0,
+      "issues": []
+    },
+    {
+      "action": "Default game / click and observe workshop at 1x",
+      "peak_frame_ms": 13.139,
+      "dispatch_ms": 2.751,
+      "frames": 3097,
+      "inspect_calls_per_second": 1892.66320504182,
+      "simulation_progress_seconds": 2.06556400000001,
+      "owed_seconds": 0.0,
+      "maximum_ai_decision_age": 0.20561900000002,
+      "issues": []
+    },
+    {
+      "action": "Default game / select and move depot preview at 1x",
+      "peak_frame_ms": 16.018,
+      "dispatch_ms": 0.0,
+      "frames": 809,
+      "inspect_calls_per_second": 3285.26692426554,
+      "simulation_progress_seconds": 2.08425300000001,
+      "owed_seconds": 0.016044,
+      "maximum_ai_decision_age": 0.36423000000002,
+      "issues": []
+    },
+    {
+      "action": "Default game / click and observe depot at 1x",
+      "peak_frame_ms": 16.644,
+      "dispatch_ms": 5.208,
+      "frames": 2584,
+      "inspect_calls_per_second": 3478.24627681549,
+      "simulation_progress_seconds": 2.08261300000001,
+      "owed_seconds": 0.0168050000000009,
+      "maximum_ai_decision_age": 0.382905000000028,
+      "issues": []
+    }
+  ],
+  "retained_failures": [
+    {
+      "path": "logs/gdunit4-performance-2026-11-04T23-24-03-12704",
+      "peak_ms": 23.89,
+      "scope": "Initial populated case"
+    },
+    {
+      "path": "logs/prototype-current-ordinary-placement",
+      "peak_ms": 50.653,
+      "scope": "Ordinary first placement"
+    },
+    {
+      "path": "logs/prototype-ordinary-attribution",
+      "peak_ms": 51.26,
+      "scope": "Attribution: settlement includes 42.395 ms battlefield operations"
+    },
+    {
+      "path": "logs/prototype-bounded-walking-placement",
+      "peak_ms": 38.927,
+      "scope": "After foot route continuation; batched decisions remain expensive"
+    },
+    {
+      "path": "logs/prototype-squad-only-attribution",
+      "peak_ms": 37.942,
+      "scope": "Attribution: five squad executions total 23.612 ms"
+    },
+    {
+      "path": "logs/prototype-scheduled-decisions-placement",
+      "peak_ms": 20.956,
+      "scope": "Planning and simulation work still stacked"
+    },
+    {
+      "path": "logs/prototype-shared-frame-budget",
+      "peak_ms": 22.179,
+      "scope": "Cooperative atomic advancement exceeded remaining allowance"
+    },
+    {
+      "path": "logs/prototype-separated-live-work",
+      "peak_ms": 16.742,
+      "scope": "Second placement; passenger approach work still synchronous"
+    },
+    {
+      "path": "logs/prototype-bounded-passenger-placement",
+      "peak_ms": 16.911,
+      "scope": "Later run catches small menu/diagnostic stall; retained, not exempted"
+    }
+  ],
+  "component_evidence": [
+    {
+      "path": "logs/prototype-logistics-direct",
+      "result": "Correction from raw report: workshop batch completed but the WEAPON assertion failed because R01 created generic STOCK. The two rear-to-HQ trips passed. The third case failed on an incorrect test input helper, corrected separately."
+    },
+    {
+      "path": "logs/prototype-request-buttons",
+      "result": "Actual new request/cancel buttons passed; paused ledger unchanged."
+    },
+    {
+      "path": "logs/prototype-forward-bounded-trip",
+      "result": "Two actual HQ-to-forward deliveries, real Engineer issue and same-hull returns passed in an explicitly arranged component."
+    },
+    {
+      "path": "logs/prototype-passenger-approach-batched-check",
+      "result": "Prepared passenger approaches preserve ledger and attachment state; moved passenger rejects admission, unchanged cohort admits one real boarding job. Pure test chunks are grouped; this is not FPS evidence."
+    },
+    {
+      "path": "logs/prototype-report-delivery",
+      "result": "Native Timer preserves all three stimulus counts across completed windows; console queue drains and returns to idle."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T16-33-26-23940",
+      "result": "Real -LogisticsOnly launcher: 10 cases passed, no failures/errors/skips. R01 now creates one intact unloaded E01/E02-capacity-30 rifle; store mass and displayed physical output include it. Controlled component stepping is not native FPS or ordinary full-loop acceptance."
+    }
+  ],
+  "current_runtime_matches_final_snapshot": false,
+  "mismatched_runtime_files": [
+    "game/diagnostics/function_call_log.gd",
+    "game/identity/identity_ledger.gd",
+    "game/main/game_session.gd",
+    "game/main/main.gd",
+    "game/production/fixed_production.gd",
+    "game/production/heavy_production.gd",
+    "game/production/r02_production.gd",
+    "game/production/selectable_production.gd",
+    "game/rear_base/base_demo.gd",
+    "game/rear_base/base_simulation.gd",
+    "game/staffing/rear_simulation.gd"
+  ],
+  "final_snapshot_runtime_sha256": {
+    "game/battlefield/battlefield_presentation.gd": "7c806c2248a3565e7ca9eebdc9a8e5f26b0bbe5cf04e31134aadffda1b8cb762",
+    "game/battlefield/battlefield_view.gd": "fbf0c8904adab960d47c6ccd3b58b56dc64666c05b8dee342b93ba6b8029bf1e",
+    "game/battlefield/farmland_scenario.gd": "25f9c3684ead8176beebb2a083b9eba7d39b071f01db69491b27630137729fb9",
+    "game/battlefield/opening_policy.gd": "1a81a4a42ddd8cf68f3095f30c2870f08b579ecf03903afbb4af5607ac9717b7",
+    "game/battlefield/opening_resupply.gd": "ad3c9a730f60f6219ebf7abee8faaf216d8b595fbea4e76ea3c2955ffcf32515",
+    "game/battlefield/resource_operations.gd": "92d7317edb5eb8a858ce1332f258c2493dcdf7dad344933acf01a5bb3180018f",
+    "game/battlefield/rifle_supply_travel.gd": "a01e811f3c97d43fe933014906f3211355380638561d48b2af0492d1772d5c84",
+    "game/battlefield/squad_execution.gd": "7eed05c4fde6d163481778573b319fc2222e0b6b91c9400494c37a36c59d9a5d",
+    "game/battlefield/vehicle_deployment.gd": "a7a7cd8fcfef3e105974a7b9d915ae86e5e4c8dfa1f8b4e7dc12888aa905d9fd",
+    "game/battlefield/vehicle_execution.gd": "9aa6e7316466c208558540ce4fd65ab34c88a2f603aaa8290ec7e5b7f5bfb038",
+    "game/bridges/bridge_canvas.gd": "c7c740a6f3d91cf2fe02d311564c4bdd3af1b83b18ca115be219855ffbe037c7",
+    "game/bridges/bridge_catalogue.gd": "8a0bea48dcd6a3196a2cfa6b5d7c51801622a32d1c8a2cb6f1b79619bcdf5245",
+    "game/bridges/bridge_demo.gd": "372e55b4efbf920be82f54da2f74e23b959d7fe052d6d98a04866864b87e7542",
+    "game/bridges/bridge_service.gd": "ad4bc924b4efc650a8fb8a4a89520dfeb005e29c14bde1ecb6d4d6207bd32b88",
+    "game/bridges/demolition_demo.gd": "144abf3969d3d6492b5860408cedbab21d95db40db4dc04b33f8ebe757e50345",
+    "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
+    "game/combat/combat_demo.gd": "d9e88db528b58f74d14ccba66f52704b13bd96278e08ab0d8d1824ef85511500",
+    "game/combat/combat_service.gd": "070426f5c400cbb8ca90c271b039fcdc019fc3c0de34cc3bbe13a6a351e814fc",
+    "game/construction/construction_catalogue.gd": "0b2b1db148c9f8d0b4e075ab412882bd48d67812e819107c54f2fafbbfd552bd",
+    "game/construction/construction_service.gd": "e146d317d335f9f8ff7b09c405098d8a97e686d3ed1c68e390b8b2fa525f0120",
+    "game/diagnostics/function_call_log.gd": "e8fd761541e5038ee826168e18a505420957fc64b0b40c19fef9fe2a3f01c8aa",
+    "game/diagnostics/menu_performance_suite.gd": "2d4f43a619a750fe62534849cf91b17f074243e2177998db73a6b5a797886827",
+    "game/diagnostics/performance_budget.gd": "5b90cb52ed6aafd2ce036130b7c661f926547ab2ebb1ca820c60da4c2b4932bf",
+    "game/dispatch/dispatch_service.gd": "5252bebcf6ac85132b9426555560bf45a3f91261f24e1c6f21932eb0886e3abc",
+    "game/field_structures/field_catalogue.gd": "538cabb046d5cafd91e64cc11e24413078fce20ed6ce121a10ea5d6d5b5ef315",
+    "game/field_structures/field_demo.gd": "1341e8f8d29b61b69271d50733a6d97332a4fbfc3d1af9b77c7be81bc0a5e71b",
+    "game/field_structures/field_service.gd": "c2d0cfd355cc378bca253a13a0990be37fe7f0ad5443c8285d4d26aba6f1427f",
+    "game/forward_supply/forward_delivery_panel.gd": "8c61a9bf50629833705cbae08965a7c69184027e601bb29f6e702ee0bae2fc62",
+    "game/forward_supply/forward_supply.gd": "d09b12ef7e8b2d1c5e78da88fd73c663374a762388cc1cab9d887a4f129c1930",
+    "game/forward_supply/forward_transport.gd": "f6ed01098eb8d7be82e6ab87ff61f9a58ab3a5a23e56639b4e3ca00d9119f436",
+    "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
+    "game/hq/hq_logistics.gd": "cf4ba935bcaca4b5a77b7ee99dc77c34d972525ed3b94bcb6a1dd7ff60d5f93b",
+    "game/identity/identity_demo.gd": "cf56e2c9f4795ef857b559c0228fac2d4a7096618bdb77d957c8d3209a3c1538",
+    "game/identity/identity_fixture.gd": "3e3bbe494af7bce994175876c2d1a343e292a3188390db3733a9e4f0e8bbb97f",
+    "game/identity/identity_ledger.gd": "a4c95f33fcba89c1a7d9d2536de0a7594642ec69710a1ee34ae0fdf357d8c232",
+    "game/identity/identity_records.gd": "2f7c5fc0d8a375e510dc121895e803ac57c2d2167c353a55933b995d13eb455e",
+    "game/logistics/rear_logistics.gd": "48c1495713ea10395ffa52190388fbcb57ecbc28a54699cbc95ddb5753038dcc",
+    "game/main/game_session.gd": "4816019bdf99d22be78587eecf276016cf89b9261a0bd7e0b8fa24c8dbac5ca3",
+    "game/main/main.gd": "288bb1e7a4a5ec93c0c0d15abb1e2daaebc62f0f0295940d76af450155ac8ae3",
+    "game/military/organization.gd": "2fa9978a55454a90dea0b6cd4791d2740b8ef2f57c5a81f7e650c47fe55dac92",
+    "game/military/troop_transport.gd": "7ce551d3925643ed2d64df636d5d2b17e27db33779b3b94942dcd0b085f183fc",
+    "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
+    "game/mines/mine_demo.gd": "341fa69bb0bbd13bee0bcb721ee95ab85d96437281264ca7d9a16f4e096b4e3e",
+    "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
+    "game/objectives/objective_demo.gd": "a218d65f9ca4fc8a1c661be775418fc1cce1cfabf41f34dd344ddc29eebb439b",
+    "game/objectives/objective_service.gd": "fcf3015f0c33111927c686ff426aea9c5abade7ce4319c1da9e83d0c1c62672d",
+    "game/orders/order_demo.gd": "3990b8ad598c79cbc7a517906cd900d1a2a23accb2892a98e77840f7e6d6542a",
+    "game/orders/order_service.gd": "7abb663301dce7c5e2dc7f603b32dc493d41585b104feaa348a32b0cf9c15ba6",
+    "game/overhead_evaluation/overhead_evaluation.gd": "34755868de24a1925e0356f0126a5c68ddc69a2df4c2f56b0b3f925ae8eee336",
+    "game/overhead_evaluation/sample_map.gd": "c30a22df669cb8cd974f9926d6b8d40f5a91662540a440e103a45cfe0f8fed3f",
+    "game/procurement/receiving_demo.gd": "78ab6ce66d119c16ab544dc58cf68ede784ba5d5bce90fbfd13d26a7e67138bd",
+    "game/procurement/receiving_simulation.gd": "6db60059d609fa65bab3177309eeab41c665b77bafb577465a1f588cb549d254",
+    "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
+    "game/production/explosives_demo.gd": "d251d095745349b36bec6b0d4f2d33e93eb8d821e239b8e2a0fd00ba2264fee0",
+    "game/production/fixed_production.gd": "2a5a7d30513fd3764f96e27eb889f416c68fca57539010f8c8a3a5e12b37080e",
+    "game/production/heavy_production.gd": "9af777e2b7e8fe06a064b5b4892d8a287f7f7da5b875a623e080bd37e0794cf5",
+    "game/production/materials_demo.gd": "ce598a153ee52b18efd0122c5aa1eb3f8043cc1fb22443a5095912790b87b95f",
+    "game/production/munitions_demo.gd": "02db60ed332d655213260b5fe51f418e6f8d9b3399898ee8754f4f7787d49dba",
+    "game/production/production_demo.gd": "c25d8b7036f1a6de13b8f40644a1503f28a647c6c8070a59e9aa3084b27bc99f",
+    "game/production/r01_production.gd": "c4fcbe33fa5049ad9c5628d3d9f50bfe24c45eb00249583d9f8fcc4a6653ee8a",
+    "game/production/r02_production.gd": "44ead830cac0cb25308adbc89c2728a4bc835ab5e755666fccc694e6de9bda4d",
+    "game/production/r26_production.gd": "2355f49a897506ab53aada0adc7776aae08d0082a0c7942b279667ea8e078345",
+    "game/production/selectable_production.gd": "d1513059b3b9653cb8333a782bc7c23ca220b60c72d3fb0932e53f129b268346",
+    "game/production/shell_chain_demo.gd": "2a043eb7fd0874cee999a27fb6b08246305983273333e4268c7c5a218d596c71",
+    "game/production/support_production.gd": "52c72da3598fc99e3e2b7a14454d984f890414102dec63e37350421c42b6b22f",
+    "game/production/vehicle_specs.gd": "df5ff29df40502dbad790b3296037f203e7319c7d6ee65448f31dd527bb100cc",
+    "game/rear_base/base_demo.gd": "e66458cdbb01f5f2e75fea1a5195be846483099a4de451175aa9a2c8316c330d",
+    "game/rear_base/base_map.gd": "15ae9023f7215c9746bbeb633b4d8d01b5ce047dfcc87e12001d9371541d06ab",
+    "game/rear_base/base_simulation.gd": "23d195230ab387b0423f4eb51578af5248d581869a9102c7b6c0f20aa687ff4f",
+    "game/rear_base/workforce_panel.gd": "764de0d17ecde05b3764d9d17e48b3138feea12669e02a3ca7d9ab00fe108d71",
+    "game/routes/route_plan_work.gd": "cb2cf312356419052f97b976307842282ce6670f9a73684b7766cd60ab6fbf6e",
+    "game/routes/route_planner.gd": "517aee978efd6499d640b42543ef858ca595501b8db71ba9c645ba05414879e6",
+    "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
+    "game/scenario/farmland_session.gd": "52e7559e063bc5b419fa3eb5671cf5c747ea1f72f770212c9dfe2c3bf9b17d59",
+    "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
+    "game/staffing/rear_demo.gd": "7338578a23270017daaff93fb12e0e56307a02b22677588ab468935140526e3e",
+    "game/staffing/rear_layout.gd": "9d80126d4754e5b4d99a88603f015ecfbdfe7ac2921a46ee9c038575c7c43926",
+    "game/staffing/rear_simulation.gd": "820c87a5f742aae019ae933cc3ac0bc81fc7c45db4d3248c255891c057373d7e",
+    "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
+    "game/terrain/lane_simulation.gd": "c8ae95eb925e9fc1f28ebd7e11c1648b21d6e53993fd422810ec1e1a920cda7c",
+    "game/terrain/route_work.gd": "632497194d42b0193a9eb6403dcce216c9d481c000a26326d2b00f385a78156b",
+    "game/terrain/terrain_catalog.gd": "5fb94465b75fd29118bd879304730bda824750b1b1cd1e69fd2a4bde422aa802",
+    "game/terrain/terrain_demo.gd": "edf3553de1d10ef7048365dcfd915535673c029f691f49220355fa4b72da432f",
+    "game/terrain/terrain_diagram.gd": "7c7e46f492ececc43aaba02a735eec35a7fcf501a84f1b722083371c53d01718",
+    "game/terrain/terrain_fixtures.gd": "03f4914cde9f02fefb78f61e6cbb14b0012a1e3033d75f175ab94cc2bf8b2b26",
+    "game/terrain/terrain_world.gd": "ab2bbc6806db77c266a07c4e2d61c447e8793aa158909611e48471e85d899b0c",
+    "game/training/training_service.gd": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1",
+    "game/ui/command_shell.gd": "9bfa3744490f0a369217589f66512c04f5066c1ff41594383f49204a025273fa",
+    "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
+    "game/vehicle_combat/vehicle_combat_demo.gd": "e101b43ced42e5ac417c4852d27611e6752837638f515a48470340068c107f79",
+    "game/vehicle_combat/vehicle_combat_service.gd": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
+    "game/vehicle_recovery/recovery_demo.gd": "8292d13e3a10eb020a5e9765bcac1b443ea11bdee18f7f2eaac6a3a1aa071843",
+    "game/vehicle_recovery/recovery_fixture.gd": "d00db52dd4226a33509c35711d571772e5858ea6372c56ce17159ca5ede6d0e7",
+    "game/vehicle_recovery/recovery_service.gd": "f7d9eadec3ebc34fcda8c52da6b4e3daad7ae49f7975b889810b021331a486b8",
+    "game/vehicles/vehicle_activity.gd": "3d97f11b9c5dd1ed799b1f6626e5de84f1f6897a7c4cd58b00df2c8c824beb4e",
+    "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721"
+  },
+  "historical_source_limit": "The original launcher baseline froze a manifest. Later direct attempts retained exact argv/raw logs but did not each freeze every intermediate source hash; final snapshot hashes are captured here, not invented for older attempts.",
+  "remaining": [
+    "Other 1x placement scenarios under the final runtime.",
+    "Active populated workforce/manufacture, relevant menus and 2x/native transition checks.",
+    "Ordinary continuous rear manufacture -> HQ -> autonomous issue/consumption/consequence, with a second newly prepared cycle.",
+    "Independent logistics/battlefield domain event/clock migration; current dispatcher remains legacy.",
+    "Complete current purpose reviews, UI links/source-button inventory and both freshness checks."
+  ],
+  "snapshot_scope": "final_snapshot_runtime_sha256 retains the earlier passing ordinary-placement source epoch. Later rifle/production-view/presentation changes are not that measured build; new runs carry separate source_manifest.json files.",
+  "later_evidence": "docs/evidence/prototype_menu_performance.json",
+  "later_scope_note": "The earlier bounded console drain and near-limit ordinary placement pass are historical. Later evidence records asynchronous console output, scoped panels and current full menu/six-placement results; prototype/domain-clock acceptance remains open."
+}

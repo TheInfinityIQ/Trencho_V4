@@ -20,6 +20,21 @@ func _init(rear: RefCounted) -> void:
 func _rear() -> RefCounted:
 	return _rear_ref.get_ref()
 
+func initialize_defence(code: String, center: Vector2, owner: String, facing: float = 0.0) -> Dictionary:
+	if _rear().time != 0.0 or code not in ["S01","S02"]: return _fail("Only declared starting trenches and sandbags may initialize at time zero.")
+	var result: Dictionary = order(code,center,owner,"",facing)
+	if not result.ok: return result
+	var row: Dictionary = projects[result.id]
+	row.initial_supply = true
+	row.state = "Complete"
+	row.progress = row.work_required
+	row.health = row.max_health
+	row.completed_at = 0.0
+	row.blocked_reason = ""
+	_rear().combat.world.set_project_structure(row.id,row.code,row.area,true,row.facing)
+	events.append({"at":0.0,"id":row.id,"kind":"Initialized","detail":"Declared opening defence; no runtime materials or people granted."})
+	return {"ok":true,"id":row.id,"message":"Declared starting defence initialized without consuming loose HQ stock."}
+
 func order(code: String, center: Vector2, owner: String = "army-blue", company_id: String = "", facing: float = 0.0) -> Dictionary:
 	if not Catalog.SPECS.has(code) or not center.is_finite() or not is_finite(facing) or owner not in ["army-blue","army-red"]:
 		return _fail("Choose one S01–S12 blueprint, finite position and actual army owner.")
@@ -551,7 +566,7 @@ func inspect(site_id: String) -> Dictionary:
 	if row.is_empty(): return {}
 	var result: Dictionary = row.duplicate(true)
 	result["m11_local_available"] = _rear().ledger.available_stock_at(site_id,"M11")
-	result["m11_missing"] = maxi(0,int(row.m11_required)-int(result.m11_local_available)) if row.m11_consumed == 0 else 0
+	result["m11_missing"] = maxi(0,int(row.m11_required)-int(result.m11_local_available)) if row.m11_consumed == 0 and row.state != "Complete" else 0
 	result["eligible_engineers"] = _eligible_engineers(row)
 	result["service"] = service_status(site_id)
 	return result

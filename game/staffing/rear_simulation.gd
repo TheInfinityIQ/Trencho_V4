@@ -1,4 +1,6 @@
 extends RefCounted
+const CallLog = preload("res://game/diagnostics/function_call_log.gd")
+signal state_changed
 ## G03 owns staffing, timed local jobs and space promises; G01 owns physical facts.
 
 const Ledger = preload("res://game/identity/identity_ledger.gd")
@@ -10,8 +12,11 @@ const PLAYER := "army-blue"
 const EPS := 0.000001
 
 var ledger := Ledger.new()
+const SUPPLY_TABLE := Vector2(10,90)
+var empty_field_opening := false
 var yard: RefCounted
 var time: float = 0.0
+var vehicle_departures_allowed := true # Explicit-time callers own their clock; live Base gates Pause.
 var stores: Dictionary = {}
 var requests: Dictionary = {}
 var actors: Dictionary = {}
@@ -35,6 +40,7 @@ var recovery: RefCounted # G24 physical repair, towing and once-only destruction
 var orders: RefCounted # G17 observed contacts, command links and local coordinated intent.
 var objectives: RefCounted # G18 physical objective control and owned uncontested income.
 var forward_supply: RefCounted # Timed local issue from arrived forward stock to an active formation.
+var battlefield_operations: RefCounted # Delivered squad intent, movement and local action on this clock.
 var field_structures: RefCounted # G19 local engineer projects and field services.
 var bridges: RefCounted # G20 constructed crossing, traffic and repair owner.
 var mines: RefCounted # G22 field devices, knowledge and clearance.
@@ -44,20 +50,30 @@ var _output_promises: Dictionary = {}
 var receiving: RefCounted # Optional integrated G02 activity; same ledger and joint boundaries.
 
 
-func _init(fixture: String = "A05", include_yard_fixture: bool = true) -> void:
+func _init(fixture: String = "A05", include_yard_fixture: bool = true, empty_field: bool = false) -> void:
+	empty_field_opening = empty_field
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
 	for id in Layout.FACILITIES:
+		# Dormant templates preserve recipe/diagnostic callers; only the edge
+		# Supply Table has positions/storage until real construction completes.
 		var f: Array = Layout.FACILITIES[id]
-		ledger.add_place("duty-" + id, f[0] + " staff entrance", f[4])
-		requests[id] = {"id": id, "target": 0, "positions": f[3], "priority": 1, "created": 0.0, "order": _next(), "place": "duty-" + id}
+		var at: Vector2 = SUPPLY_TABLE if empty_field and id in ["receiving","personnel","depot"] else f[4]
+		ledger.add_place("duty-" + id, f[0] + " staff entrance", at)
+		requests[id] = {"id": id, "target": 0, "positions": (4 if id == "receiving" else 0) if empty_field else f[3], "priority": 1, "created": 0.0, "order": _next(), "place": "duty-" + id}
 	requests.hauling = {"id": "hauling", "target": 0, "positions": 120, "priority": 1, "created": 0.0, "order": _next(), "place": "duty-depot"}
 	requests.yard = {"id": "yard", "target": 0, "positions": 1, "priority": 1, "created": 0.0, "order": _next(), "place": "yard-start"}
+	if empty_field: requests.yard.positions = 0
 	for id in Layout.STORES:
 		var definition: Array = Layout.STORES[id]
-		ledger.add_place(id, id + " physical storage", Layout.door(definition[0]))
-		stores[id] = {"id": id, "capacity": float(definition[1]), "accessible": true, "filter": [], "pile": false}
-	yard = Yard.new(ledger,include_yard_fixture)
+		var at: Vector2 = SUPPLY_TABLE if empty_field and id == "receiving" else Layout.door(definition[0])
+		ledger.add_place(id, id + " physical storage", at)
+		var active: bool = not empty_field or id == "receiving"
+		stores[id] = {"id": id, "capacity": float(definition[1]) if active else 0.0, "accessible": active, "filter": [], "pile": false}
+	yard = Yard.new(ledger,include_yard_fixture and not empty_field)
+	if empty_field:
+		yard.active_parking.fill(false)
+		return
 	if fixture == "Empty":
 		return
 	for i in range(1, 5):
@@ -94,6 +110,7 @@ func add_person(id: String, basic: bool = false, qualification: String = "None",
 
 
 func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
+	CallLog.record(&"staffing/rear_simulation.gd::set_target")
 	if construction != null and construction.is_office(id) and not construction._syncing_offices:
 		return construction.set_office_staff(id,count,priority)
 	if not requests.has(id) or count < 0 or count > int(requests[id].positions) or priority < 0 or priority > 3:
@@ -106,7 +123,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 	r.priority = priority
 	var pending_allowed := maxi(0, count - _retaining(id))
 	for person_id in actors:
-		var p: Dictionary = ledger.inspect_entity(person_id)
+		var p: Dictionary = ledger.inspect_person_status(person_id)
 		if p.pending_assignment != "None" and p.pending_duty == id:
 			if pending_allowed > 0:
 				pending_allowed -= 1
@@ -225,7 +242,7 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 				a.phase = "Pickup"
 				a.deadline = time + a.blocked_remaining
 			else:
-				_move(a, "Approach", Layout.path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.source).position), 1.5)
+				_move(a, "Approach", walk_path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.source).position), 1.5)
 			a.blocked_since = -1.0
 		elif a.phase in ["Approach", "Pickup"] and not _valid_destination(a.load.destination, a.load.type, a.load.mass, a.id):
 			_release_load(a)
@@ -233,15 +250,13 @@ func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Var
 	return _result(true, "Storage edited without deleting or moving any contents.")
 
 
-func _reconcile_store(id: String) -> bool:
+func _reconcile_store(id: String, summary: Dictionary = {}) -> bool:
 	var changed := false
 	var needed_types: Array = []
 	# Existing contents survive every edit; disallowed/excess stock creates relocation demand.
-	var excess := maxf(0.0, ledger.loose_stock_mass_at(id) - float(stores[id].capacity))
-	var contents: Dictionary = {}
-	for stock in _stock_at(id):
-		if not contents.has(stock.design_type): contents[stock.design_type] = {"quantity": 0, "mass": stock.unit_mass_kg, "position": stock.position}
-		contents[stock.design_type].quantity += stock.quantity
+	if summary.is_empty(): summary = ledger.loose_stock_summary(id,PLAYER)
+	var excess := maxf(0.0, float(summary.mass) - float(stores[id].capacity))
+	var contents: Dictionary = summary.contents
 	for type in contents:
 		var stock: Dictionary = contents[type]
 		var disallowed: bool = not stores[id].filter.is_empty() and type not in stores[id].filter
@@ -289,13 +304,31 @@ func gun_owner(gun_id: String) -> RefCounted:
 	return null
 
 
-func advance_time(seconds: float) -> Dictionary:
+func advance_time(seconds: float, stop_on_planning: bool = false, work_budget_usec: int = 0) -> Dictionary:
+	CallLog.record(&"staffing/rear_simulation.gd::advance_time")
+	var advance_started: int = Time.get_ticks_usec() if work_budget_usec > 0 else 0
 	if not is_finite(seconds) or seconds < 0.0:
 		return _result(false, "Time must be finite and nonnegative.")
 	var target := time + seconds
+	var settle_started_usec: int = Time.get_ticks_usec() if CallLog.enabled else 0
 	_settle()
+	if CallLog.enabled: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle", Time.get_ticks_usec() - settle_started_usec)
+	if stop_on_planning and _transport_planning_pending():
+		return _result(true, "Transport planning is waiting at the settled clock boundary.")
+	var reached_boundary := false
+	var completed_interval := false
+	var profile_stages := CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+	var stage_started: int = 0
 	while time < target - EPS:
-		var next := minf(target, yard.deadline)
+		# A live owner may return only between complete settled transactions.
+		# Its caller retains the unadvanced elapsed-time debt. Explicit domain
+		# stepping keeps its original unlimited default and exact endpoints.
+		# Initial settlement can itself exceed this cooperative allowance. Always
+		# complete one positive interval before yielding, or every later call can
+		# repeat the same settled state forever while elapsed-time debt grows.
+		if completed_interval and work_budget_usec > 0 and Time.get_ticks_usec()-advance_started >= work_budget_usec: break
+		if profile_stages: stage_started = Time.get_ticks_usec()
+		var next: float = yard.deadline
 		if vehicles != null: next = minf(next,vehicles.next_boundary())
 		if dispatch != null: next = minf(next,dispatch.next_boundary())
 		if hq != null: next = minf(next,hq.next_boundary())
@@ -307,6 +340,7 @@ func advance_time(seconds: float) -> Dictionary:
 		if orders != null: next = minf(next,orders.next_boundary())
 		if objectives != null: next = minf(next,objectives.next_boundary())
 		if forward_supply != null: next = minf(next,forward_supply.next_boundary())
+		if battlefield_operations != null: next = minf(next,battlefield_operations.next_boundary())
 		if field_structures != null: next = minf(next,field_structures.next_boundary())
 		if bridges != null: next = minf(next,bridges.next_boundary())
 		if mines != null: next = minf(next,mines.next_boundary())
@@ -322,8 +356,12 @@ func advance_time(seconds: float) -> Dictionary:
 				next = minf(next, boundary)
 			if job.emergency_contention_since >= 0.0 and job.emergency_contention_since + 120.0 > time + EPS:
 				next = minf(next, job.emergency_contention_since + 120.0)
+		reached_boundary = reached_boundary or next <= target + EPS
+		next = minf(target,next)
 		if next <= time + EPS:
 			next = minf(target, time + EPS)
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::advance_time/boundaries",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		for activity in _production_activities(): activity.advance_work(next - time)
 		if construction != null: construction.advance_work(next - time)
 		if training != null: training.advance_work(next - time)
@@ -336,7 +374,12 @@ func advance_time(seconds: float) -> Dictionary:
 		if dispatch != null: dispatch.advance_to(next)
 		if hq != null: hq.advance_to(next)
 		if construction != null: construction.advance_to(next)
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::advance_time/rear_motion",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		if military != null: military.advance_to(next)
+		if battlefield_operations != null: battlefield_operations.advance_to(next)
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::advance_time/military_motion",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		if combat != null: combat.advance_to(next)
 		if orders != null: orders.advance_to(next)
 		if objectives != null: objectives.advance_to(next)
@@ -345,13 +388,25 @@ func advance_time(seconds: float) -> Dictionary:
 		if bridges != null: bridges.advance_to(next)
 		if mines != null: mines.advance_to(next)
 		if demolition != null: demolition.advance_to(next)
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::advance_time/world",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		ledger.advance_time(next - time)
 		time = next
 		if vehicle_combat != null: vehicle_combat.advance_to(next)
 		if recovery != null: recovery.advance_to(next)
 		if receiving != null: receiving.advance_clock_to(next)
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::advance_time/receiving_combat",Time.get_ticks_usec()-stage_started)
+		settle_started_usec = Time.get_ticks_usec() if CallLog.enabled else 0
 		_settle()
+		if CallLog.enabled: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle", Time.get_ticks_usec() - settle_started_usec)
+		completed_interval = true
+		if reached_boundary: state_changed.emit()
+		if stop_on_planning and _transport_planning_pending(): break
 	return _result(true, "Shared rear time advanced; each facility's prerequisites still govern operator work." if not _production_activities().is_empty() else "Only elapsed reporting, handling, walking and yard movement completed.")
+
+
+func _transport_planning_pending() -> bool:
+	return military != null and military.troop_transport.has_planning_work()
 
 
 func effective_priority(job: Dictionary) -> int:
@@ -376,19 +431,26 @@ func workshop_readiness() -> Dictionary:
 		"work": 0, "consumed": 0, "output": 0, "complete_A05_passed": false}
 
 
+func walk_path(origin: Vector2, destination: Vector2) -> Array:
+	if empty_field_opening:
+		return construction.walking_path(origin,destination) if construction != null else [origin,destination]
+	return Layout.path(origin,destination)
+
 func _rebalance() -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
 	# incumbents within those counts before requesting any safe transfers.
+	var facts := {}
+	for id in actors: facts[id] = ledger.inspect_person_status(id)
 	var pool: Array = []
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
-		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and not p.duty_id.begins_with("builders-"):
+		var p: Dictionary = facts[id]
+		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and (empty_field_opening or not p.duty_id.begins_with("builders-")):
 			pool.append(id)
 	var pending: Dictionary = {}
 	# A pending handoff occupies its destination target vacancy even though
 	# the person still physically serves the old duty until safe completion.
 	for id in actors:
-		var person: Dictionary = ledger.inspect_entity(id)
+		var person: Dictionary = facts[id]
 		if person.pending_assignment != "None" and requests.has(person.pending_duty):
 			pending[person.pending_duty] = int(pending.get(person.pending_duty, 0)) + 1
 	var quotas: Dictionary = pending.duplicate()
@@ -398,13 +460,13 @@ func _rebalance() -> void:
 		var best: Dictionary = {}
 		for r in requests.values():
 			if r.get("manual",false): continue
-			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id):
+			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id, facts):
 				continue
 			if best.is_empty() or _staff_before(r, best, quotas):
 				best = r
 		if best.is_empty():
 			break
-		var candidate := _choose_person(remaining, best.id)
+		var candidate := _choose_person(remaining, best.id, facts)
 		remaining.erase(candidate)
 		planned[candidate] = best.id
 		quotas[best.id] = int(quotas.get(best.id, 0)) + 1
@@ -413,7 +475,7 @@ func _rebalance() -> void:
 	var keep: Dictionary = pending.duplicate()
 	var free: Array = []
 	for id in pool:
-		var duty: String = ledger.inspect_entity(id).duty_id
+		var duty: String = facts[id].duty_id
 		if not duty.is_empty() and planned.get(id, "") == duty and int(keep.get(duty, 0)) < int(quotas.get(duty, 0)):
 			keep[duty] = int(keep.get(duty, 0)) + 1
 		else:
@@ -431,7 +493,7 @@ func _rebalance() -> void:
 			reassign_person(id, r.id)
 			keep[r.id] = int(keep.get(r.id, 0)) + 1
 	for id in free:
-		if ledger.inspect_entity(id).assignment != "Available":
+		if ledger.inspect_person_status(id).assignment != "Available":
 			reassign_person(id, "Available")
 
 
@@ -460,24 +522,26 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 	return true
 
 
-func _any_eligible(ids: Array, duty: String) -> bool:
+func _any_eligible(ids: Array, duty: String, facts: Dictionary = {}) -> bool:
 	for id in ids:
-		if _eligible(ledger.inspect_entity(id), duty): return true
+		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if _eligible(person,duty): return true
 	return false
 
-
-func _choose_person(ids: Array, duty: String) -> String:
-	var candidates: Array = ids.filter(func(id: String) -> bool: return _eligible(ledger.inspect_entity(id), duty))
-	candidates.sort_custom(func(a: String, b: String) -> bool:
-		var first: Dictionary = ledger.inspect_entity(a)
-		var second: Dictionary = ledger.inspect_entity(b)
-		var rank_a := (2 if first.qualification != "None" else (1 if first.basic_training else 0))
-		var rank_b := (2 if second.qualification != "None" else (1 if second.basic_training else 0))
-		if (first.duty_id == duty) != (second.duty_id == duty): return first.duty_id == duty
-		if (first.assignment == "Available") != (second.assignment == "Available"): return first.assignment == "Available"
-		if rank_a != rank_b: return rank_a < rank_b
-		return a < b)
-	return candidates[0]
+func _choose_person(ids: Array, duty: String, facts: Dictionary = {}) -> String:
+	# Same lexicographic preference as the former sort, with one pass. Facts
+	# are supplied only during pure quota planning, never across reassignment.
+	var best := ""
+	var best_rank := 100
+	for id in ids:
+		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if not _eligible(person,duty): continue
+		var qualification := 2 if person.qualification != "None" else (1 if person.basic_training else 0)
+		var rank: int = (0 if person.duty_id == duty else 6)+(0 if person.assignment == "Available" else 3)+qualification
+		if rank < best_rank or (rank == best_rank and str(id) < best):
+			best = id
+			best_rank = rank
+	return best
 
 
 func _report(a: Dictionary) -> void:
@@ -495,9 +559,9 @@ func _report(a: Dictionary) -> void:
 		var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
 		if heavy_production != null and heavy_production.bay_occupant != "" and p.position.is_equal_approx(ledger.inspect_entity(heavy_production.bay_occupant).position):
 			path = [p.position,Layout.door("vehicle_works")]
-			var outward: Array = Layout.path(Layout.door("vehicle_works"),destination)
+			var outward: Array = walk_path(Layout.door("vehicle_works"),destination)
 			if not outward.is_empty(): path.append_array(outward.slice(1))
-		else: path = Layout.path(p.position,destination)
+		else: path = walk_path(p.position,destination)
 	_move(a, "Reporting", path, 1.5)
 
 
@@ -513,24 +577,56 @@ func _move(a: Dictionary, phase: String, points: Array, speed: float) -> void:
 
 
 func _settle() -> void:
+	CallLog.record(&"staffing/rear_simulation.gd::_settle")
+	var any_changed := false
+	var profile_stages := CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+	var stage_started: int = 0
+	if profile_stages: stage_started = Time.get_ticks_usec()
 	if receiving != null:
 		receiving._pump()
 		_sync_receiving_people()
+	if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/receiving",Time.get_ticks_usec()-stage_started)
 	for _iteration in 1000:
 		var changed: bool = yard.complete_due()
-		if vehicles != null: changed = vehicles.settle() or changed
+		if vehicles != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = vehicles.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/vehicles", Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		if dispatch != null: changed = dispatch.settle() or changed
 		if hq != null: changed = hq.settle() or changed
-		if construction != null: changed = construction.settle() or changed
-		if military != null: changed = military.settle() or changed
-		if combat != null: changed = combat.settle() or changed
-		if orders != null: changed = orders.settle() or changed
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/dispatch_hq",Time.get_ticks_usec()-stage_started)
+		if construction != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = construction.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/construction", Time.get_ticks_usec()-stage_started)
+		if military != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = military.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/military", Time.get_ticks_usec()-stage_started)
+		if combat != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = combat.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/combat", Time.get_ticks_usec()-stage_started)
+		if orders != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = orders.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/orders", Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		if objectives != null: changed = objectives.settle() or changed
 		if forward_supply != null: changed = forward_supply.settle() or changed
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/objectives_supply",Time.get_ticks_usec()-stage_started)
+		if battlefield_operations != null:
+			if profile_stages: stage_started = Time.get_ticks_usec()
+			changed = battlefield_operations.settle() or changed
+			if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/battlefield_operations", Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		if field_structures != null: changed = field_structures.settle() or changed
 		if bridges != null: changed = bridges.settle() or changed
 		if mines != null: changed = mines.settle() or changed
 		if demolition != null: changed = demolition.settle() or changed
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/engineering",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		for a in actors.values():
 			if a.deadline <= time + EPS:
 				_finish_phase(a)
@@ -541,17 +637,24 @@ func _settle() -> void:
 				changed = true
 		# Resolve physical constraints after every promise/handling boundary,
 		# before selecting new work. No per-frame or recursive scheduling loop.
+		# Constraint reconciliation only records/extends relocation demand; it
+		# does not move stock. Share one fresh physical scan for this whole pass.
+		var storage_facts: Dictionary = ledger.loose_stock_summaries(stores.keys(),PLAYER)
 		for id in stores.keys():
-			changed = _reconcile_store(id) or changed
+			changed = _reconcile_store(id,storage_facts[id]) or changed
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/actors_stores",Time.get_ticks_usec()-stage_started)
+		if profile_stages: stage_started = Time.get_ticks_usec()
 		for a in actors.values():
-			var p: Dictionary = ledger.inspect_entity(a.id)
-			if a.phase == "Idle" and p.duty_id == "hauling":
+			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
 				changed = _start_job(a) or changed
 		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
 		if training != null: changed = training.settle() or changed
+		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/production_staff",Time.get_ticks_usec()-stage_started)
+		any_changed = any_changed or changed
 		if not changed:
 			_refresh_contention()
+			if any_changed: state_changed.emit()
 			return
 	push_error("Rear activity failed to settle finite immediate boundaries.")
 
@@ -559,9 +662,9 @@ func _settle() -> void:
 func _sync_receiving_people() -> void:
 	var added := false
 	var released := false
-	for p in ledger.snapshot().entities:
-		if p.kind == "PERSON" and p.owner == PLAYER and not actors.has(p.id) and p.assignment == "Available":
-			actors[p.id] = {"id": p.id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
+	for id in ledger.available_person_ids(PLAYER):
+		if not actors.has(id):
+			actors[id] = {"id": id, "phase": "Available", "deadline": INF, "motion": {}, "load": {}, "blocked_since": -1.0}
 			added = true
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
@@ -574,8 +677,9 @@ func _sync_receiving_people() -> void:
 
 func _sync_receiving_staff() -> void:
 	for a in actors.values():
-		var p: Dictionary = ledger.inspect_entity(a.id)
-		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None" and a.phase == "Idle":
+		if a.phase != "Idle": continue
+		var p: Dictionary = ledger.inspect_person_status(a.id)
+		if (p.duty_id == "receiving" or (construction != null and construction.instances.has(p.duty_id) and construction.instances[p.duty_id].kind == "receiving" and construction.instances[p.duty_id].state == "Complete")) and p.pending_assignment == "None":
 			receiving._workers[a.id] = {"person_id": a.id, "job": {}}
 			a.phase = "Unloading"
 	receiving._pump()
@@ -629,7 +733,7 @@ func _finish_phase(a: Dictionary) -> void:
 			else:
 				a.load.carried = result.entity_id
 				a.load.claim = ""
-				_move(a, "Carry", Layout.path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.destination).position), 1.2)
+				_move(a, "Carry", walk_path(ledger.inspect_entity(a.id).position, ledger.inspect_entity(a.load.destination).position), 1.2)
 		"Carry":
 			a.phase = "Drop"
 			a.deadline = time + 2.0
@@ -642,7 +746,7 @@ func _finish_phase(a: Dictionary) -> void:
 
 
 func _start_job(a: Dictionary) -> bool:
-	var person: Dictionary = ledger.inspect_entity(a.id)
+	var person: Dictionary = ledger.inspect_person_status(a.id)
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
@@ -682,16 +786,20 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 	for source_id in source_ids:
 		if not stores.has(source_id) or not stores[source_id].accessible or source_id == job.destination:
 			continue
-		for stock in _stock_at(source_id):
+		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
+			# A shortage needs no carried-mass traversal. Inspect fresh mass only
+			# once real freight is eligible; Emergency callers' detached adjusted
+			# mass remains intact, and every physical reservation still rechecks.
+			if not person.has("contents_mass_kg"): person = ledger.inspect_entity(person.id)
 			var count := mini(stock.available, job.requested - job.delivered - _in_flight(job.id))
 			count = mini(count, int(floor((25.0 - person.contents_mass_kg) / stock.unit_mass_kg)))
 			count = mini(count, int(floor(_free_space(job.destination) / stock.unit_mass_kg)))
 			if count <= 0 or not _valid_destination(job.destination, job.type, count * stock.unit_mass_kg):
 				continue
-			var approach: Array = Layout.path(person.position, stock.position)
-			var carry: Array = Layout.path(stock.position, ledger.inspect_entity(job.destination).position)
+			var approach: Array = walk_path(person.position, stock.position)
+			var carry: Array = walk_path(stock.position, ledger.inspect_entity(job.destination,{},false).position)
 			if approach.is_empty() or carry.is_empty():
 				continue
 			var distance := Layout.length(approach) + Layout.length(carry)
@@ -760,7 +868,7 @@ func _nearest_storage(origin: Vector2, type: String, mass: float, excluded: Stri
 	for id in stores:
 		if id == excluded or stores[id].pile or not _valid_destination(id, type, mass, person):
 			continue
-		var route: Array = Layout.path(origin, ledger.inspect_entity(id).position)
+		var route: Array = walk_path(origin, ledger.inspect_entity(id).position)
 		if route.is_empty(): continue
 		var length := Layout.length(route)
 		if length < distance - EPS or (is_equal_approx(length, distance) and (selected.is_empty() or id < selected)):
@@ -779,7 +887,7 @@ func _reroute(a: Dictionary) -> void:
 		stores[destination] = {"id": destination, "capacity": a.load.mass, "accessible": true, "filter": [a.load.type], "pile": true}
 	a.load.destination = destination
 	_job(a.load.job).blocker = "Destination changed; safe delivery to " + destination + ", original demand remains"
-	_move(a, "Carry", Layout.path(origin, ledger.inspect_entity(destination).position), 1.2)
+	_move(a, "Carry", walk_path(origin, ledger.inspect_entity(destination).position), 1.2)
 
 
 func _deposit(a: Dictionary) -> void:
@@ -819,8 +927,8 @@ func _release_load(a: Dictionary) -> void:
 	a.blocked_since = -1.0
 
 
-func _stock_at(holder: String) -> Array:
-	return ledger.snapshot().entities.filter(func(e: Dictionary) -> bool: return e.kind == "STOCK" and e.owner == PLAYER and e.holder_id == holder and e.quantity > 0)
+func _stock_at(holder: String, include_mass: bool = true) -> Array:
+	return ledger.entities_at(holder,["STOCK"],include_mass).filter(func(e: Dictionary) -> bool: return e.owner == PLAYER and e.quantity > 0)
 
 
 func _reconcile_relocation(source: String, destination: String, type: String, physical_needed: int) -> bool:
@@ -857,34 +965,35 @@ func _reconcile_relocation(source: String, destination: String, type: String, ph
 		return changed
 
 
-func snapshot() -> Dictionary:
-	var staffing: Array[Dictionary] = []
-	for r in requests.values():
-		var assigned := _assigned(r.id)
-		var present := _present(r.id)
-		var pending := _pending_in(r.id)
-		staffing.append({"id": r.id, "target": r.target, "positions": r.positions,
-			"assigned": assigned, "pending_in": pending, "present": present, "reporting_or_active": assigned - present,
-			"shortage": maxi(0, r.target - _retaining(r.id) - pending), "priority": PRIORITIES[r.priority], "requested_at": r.created})
+func workforce_snapshot() -> Dictionary:
+	# One synchronous read of the real rear pool; no shared-world ledger export
+	# or retained cache. Counts use the same assignment/pending predicates.
 	var people: Array[Dictionary] = []
-	for entity in ledger.snapshot().entities:
-		if entity.kind != "PERSON": continue
-		var p: Dictionary = entity.duplicate(true)
-		p.phase = actors[p.id].phase if actors.has(p.id) else "External/away — ineligible"
-		p.load = actors[p.id].load.duplicate(true) if actors.has(p.id) else {}
-		people.append(p)
-	var storage: Array[Dictionary] = []
-	for store in stores.values():
-		var row: Dictionary = store.duplicate(true)
-		row.position = ledger.inspect_entity(store.id).position
-		row.physical_kg = ledger.loose_stock_mass_at(store.id)
-		row.reserved_inbound_kg = _reserved_space(store.id, "", false)
-		row.reserved_output_kg = _reserved_space(store.id) - row.reserved_inbound_kg
-		row.free_kg = _free_space(store.id)
-		row.stocks = _stock_at(store.id)
-		row.reserved_outbound = 0
-		for stock in row.stocks: row.reserved_outbound += stock.reserved
-		storage.append(row)
+	var counts := {}
+	for id in actors:
+		var person: Dictionary = ledger.inspect_person_status(id)
+		person.phase = actors[id].phase
+		people.append(person)
+		var duty: String = person.duty_id
+		if not counts.has(duty): counts[duty] = {"assigned":0,"present":0,"pending":0,"retaining":0}
+		counts[duty].assigned += 1
+		if actors[id].phase in ["Idle","Unloading"]: counts[duty].present += 1
+		if person.pending_assignment == "None" or person.pending_duty == duty: counts[duty].retaining += 1
+		if person.pending_assignment != "None":
+			var destination: String = person.pending_duty
+			if not counts.has(destination): counts[destination] = {"assigned":0,"present":0,"pending":0,"retaining":0}
+			counts[destination].pending += 1
+	var staffing: Array[Dictionary] = []
+	for request in requests.values():
+		var row: Dictionary = counts.get(request.id,{"assigned":0,"present":0,"pending":0,"retaining":0})
+		staffing.append({"id":request.id,"target":request.target,"positions":request.positions,
+			"assigned":row.assigned,"present":row.present,"pending_in":row.pending,
+			"reporting_or_active":row.assigned-row.present,
+			"shortage":maxi(0,request.target-row.retaining-row.pending),
+			"priority":PRIORITIES[request.priority],"requested_at":request.created})
+	return {"people":people,"staffing":staffing}
+
+func hauling_snapshot() -> Array[Dictionary]:
 	var inspected_jobs: Array[Dictionary] = jobs.duplicate(true)
 	for job in inspected_jobs:
 		job.age = time - job.created
@@ -893,9 +1002,42 @@ func snapshot() -> Dictionary:
 		job.emergency_wait_seconds = maxf(0.0, time - job.emergency_contention_since) if job.emergency_contention_since >= 0.0 else 0.0
 		job.starved = job.emergency_contention_since >= 0.0 and job.emergency_wait_seconds >= 120.0
 		if job.starved: job.blocker = "Starved by explicit Emergency work for at least 120 seconds"
+	return inspected_jobs
+
+
+func snapshot(include_diagnostics: bool = true) -> Dictionary:
+	CallLog.record(&"staffing/rear_simulation.gd::snapshot")
+	var staffing: Array[Dictionary] = []
+	for r in requests.values():
+		var assigned := _assigned(r.id)
+		var present := _present(r.id)
+		var pending := _pending_in(r.id)
+		staffing.append({"id": r.id, "target": r.target, "positions": r.positions,
+			"assigned": assigned, "pending_in": pending, "present": present, "reporting_or_active": assigned - present,
+			"shortage": maxi(0, r.target - _retaining(r.id) - pending), "priority": PRIORITIES[r.priority], "requested_at": r.created})
+	var ledger_view: Dictionary = ledger.snapshot(include_diagnostics)
+	var people: Array[Dictionary] = []
+	for entity in ledger_view.entities:
+		if entity.kind != "PERSON": continue
+		var p: Dictionary = entity.duplicate(true)
+		p.phase = actors[p.id].phase if actors.has(p.id) else "External/away — ineligible"
+		p.load = actors[p.id].load.duplicate(true) if actors.has(p.id) else {}
+		people.append(p)
+	var storage: Array[Dictionary] = []
+	for store in stores.values():
+		var row: Dictionary = store.duplicate(true)
+		row.position = ledger.inspect_entity(store.id,{},false).position
+		row.physical_kg = ledger.loose_stock_mass_at(store.id)
+		row.reserved_inbound_kg = _reserved_space(store.id, "", false)
+		row.reserved_output_kg = _reserved_space(store.id) - row.reserved_inbound_kg
+		row.free_kg = _free_space(store.id)
+		row.stocks = _stock_at(store.id)
+		row.reserved_outbound = 0
+		for stock in row.stocks: row.reserved_outbound += stock.reserved
+		storage.append(row)
 	return {"time": time, "staffing": staffing, "people": people, "stores": storage,
-		"jobs": inspected_jobs, "workshop": workshop_readiness(), "yard": yard.snapshot(),
-		"audit": audit(), "ledger": ledger.snapshot(), "events": _events.duplicate(true)}
+		"jobs": hauling_snapshot(), "workshop": workshop_readiness() if include_diagnostics else {}, "yard": yard.snapshot(),
+		"audit": audit() if include_diagnostics else null, "ledger": ledger_view, "events": _events.duplicate(true)}
 
 
 func _refresh_contention() -> void:
@@ -912,10 +1054,14 @@ func _waiting_job_viable(job: Dictionary) -> bool:
 	# missing staff/access/capacity. Active freight is removed only from this
 	# detached eligibility view, never from the actual personal holder.
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
 		var actor: Dictionary = actors[id]
-		if p.duty_id != "hauling" or actor.load.is_empty() or actor.phase == "Source blocked" or p.pending_assignment != "None" or _job(actor.load.job).priority != 3:
+		if actor.load.is_empty() or actor.phase == "Source blocked": continue
+		if _job(actor.load.job).get("priority",-1) != 3: continue
+		var status: Dictionary = ledger.inspect_person_status(id)
+		if status.duty_id != "hauling" or status.pending_assignment != "None":
 			continue
+		# Only an actual Emergency contender needs its fresh retained/carry mass.
+		var p: Dictionary = ledger.inspect_entity(id)
 		if not p.carrying_stock_id.is_empty():
 			var freight: Dictionary = ledger.inspect_entity(p.carrying_stock_id)
 			p.contents_mass_kg -= freight.quantity * freight.unit_mass_kg
@@ -949,21 +1095,21 @@ func audit() -> Array[String]:
 func _assigned(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty: count += 1
+		if ledger.person_has_duty(id, duty): count += 1
 	return count
 
 
 func _committed(duty: String) -> int:
 	var count := _assigned(duty)
 	for id in actors:
-		if ledger.inspect_entity(id).pending_duty == duty: count += 1
+		if ledger.duty_status(id).pending_duty == duty: count += 1
 	return count
 
 
 func _pending_in(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.duty_status(id)
 		if p.pending_assignment != "None" and p.pending_duty == duty: count += 1
 	return count
 
@@ -971,7 +1117,7 @@ func _pending_in(duty: String) -> int:
 func _retaining(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		var p: Dictionary = ledger.inspect_entity(id)
+		var p: Dictionary = ledger.duty_status(id)
 		if p.duty_id == duty and (p.pending_assignment == "None" or p.pending_duty == duty): count += 1
 	return count
 
@@ -979,7 +1125,7 @@ func _retaining(duty: String) -> int:
 func _present(duty: String) -> int:
 	var count: int = 0
 	for id in actors:
-		if ledger.inspect_entity(id).duty_id == duty and actors[id].phase in ["Idle", "Unloading"]: count += 1
+		if ledger.person_has_duty(id, duty) and actors[id].phase in ["Idle", "Unloading"]: count += 1
 	return count
 
 

@@ -1,0 +1,1361 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T23:20:19.924797+00:00",
+  "status": "regression_added_slowdown_reproduced_not_resolved",
+  "request": "Select a facility, move the ghost to an arbitrary position and place it in the actual running game; track stalls and high function-call volume.",
+  "prior_coverage_gap": "The prior matrix primarily selected catalogue entries by emitted signals, set exact numeric coordinates, and bound a rear-only Base fixture. Its final field click did not cover sustained pointer movement or the default connected world continuing beyond early observation windows. That coverage did not establish this player workflow was performant.",
+  "user_report": {
+    "symptom": "Almost freezes after moving and placing; reported hundreds of thousands of function calls versus about 30,000 before.",
+    "attachment_sha256": "4d827bad59f821331eb725d8f4a49cf7421a679bdb6a172994b33bd0ccf57eb8",
+    "attachment_scope": "Local pasted output, not assumed present in a fresh checkout. Available complete printed inspect_entity buckets do not establish hundreds of thousands per second; output overflow can truncate evidence.",
+    "visible_inspect_entity_count_range": [
+      1,
+      12236
+    ],
+    "output_overflow_errors": 2
+  },
+  "implementation": {
+    "suite": "game/diagnostics/tests/gdunit/building_pointer_test.gd",
+    "suite_sha256": "7fef6e21442f0e19c888bf762f6946c0b461edc0f741c98f124d7964d5ef709c",
+    "shortcut": "Run Building Placement Tests.cmd",
+    "selector": "-PlacementOnly",
+    "cases": 4,
+    "default_suite_cases": 40,
+    "ui_only_cases": 7,
+    "buildings_rendered_cases": 6,
+    "buildings_headless_cases": 2,
+    "world": "Main creates its actual empty-field connected session. No Base replacement, explicit fast-forward, command stubs, scene-tree pause, cadence change, hidden performance whitelist or production gameplay modification.",
+    "speed": "Build navigation and 1x are activated through GUI clicks; physics stays live until a detected issue pauses the test world.",
+    "inputs": [
+      "Facility selection through an opened PopupMenu and keyboard navigation",
+      "Fractional arbitrary world points: workshop (83.375,48.625), depot (158.125,127.375)",
+      "Continuous pointer motion before and after placement",
+      "Wheel zoom, middle-button pan, R rotation and transformed pointer placement",
+      "Overlapping click rejection followed by motion and legal placement without restarting",
+      "Escape cancellation",
+      "Eight unaccumulated viewport motion events per rendered frame as an explicitly artificial stress case",
+      "At least twelve seconds planned for the no-building comparison; the normal run stops when its budget fails."
+    ],
+    "failure_behavior": "Normal limits remain 100 ms frame/action and 30,000 full inspections per second. The probe pauses, saves current/complete failure records, counts, unique caller chains, engine errors and screenshots under logs/, and keeps subsequent phases pending. -ContinueAfterIssues runs the next isolated case; it does not certify the failed case.",
+    "measurement_limits": "Engine GUI propagation is exercised, including transforms and popups; this is not physical OS polling. Counters cover instrumented entries only. Frame wall intervals include scheduling, rendering and logging; stack counts are not CPU shares. These four cases do not test every facility/state or replace the broader matrix."
+  },
+  "executed_runs": [
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-11-13-23480",
+      "report": "logs/gdunit4-performance-2026-11-03T23-11-13-23480/gdunit-report/results.xml",
+      "report_sha256": "c34754543ec23a9348b19223389746452e0a3c7f1f4ff62dfd28f9bbdeaee258",
+      "case_count": 3,
+      "failure_elements": 2,
+      "settings": {
+        "process_id": 33804,
+        "continue_after_issues": true,
+        "inspect_call_budget": 30000,
+        "started_utc": "2026-11-03T23:11:28.8087059Z",
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-03T23-11-13-23480",
+        "profile_filter": "",
+        "action_limit_ms": 100.0,
+        "stacks_enabled": false,
+        "training_observation_seconds": 2.0,
+        "frame_limit_ms": 100.0,
+        "observation_seconds": 2.0,
+        "headless": false,
+        "text_filter": ""
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066437,
+                "owed_simulation_seconds": 3.46944695195361e-18
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 28.255,
+              "elapsed_seconds": 0.157975,
+              "inspect_calls_per_second": 316.505776230416,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 2.123751,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 31.689,
+              "elapsed_seconds": 2.000877,
+              "inspect_calls_per_second": 991.565198660387,
+              "issues": [],
+              "instrumented_entries": 9601,
+              "inspect_entity_entries": 1984
+            },
+            {
+              "action": {
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 4.48096500000001,
+                "maximum_motion_dispatch_ms": 0.208,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 48.048,
+              "elapsed_seconds": 2.301104,
+              "inspect_calls_per_second": 1208.55033062391,
+              "issues": [],
+              "instrumented_entries": 11620,
+              "inspect_entity_entries": 2781
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 5.44,
+                "expected_center": "(83.375, 48.625)",
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 6.17804800000003,
+                "owed_simulation_seconds": 0.0194720000000001
+              },
+              "ok": false,
+              "dispatch_ms": 5.44,
+              "peak_frame_ms": 111.009,
+              "elapsed_seconds": 1.652428,
+              "inspect_calls_per_second": 3748.42353191788,
+              "issues": [
+                {
+                  "milliseconds": 111.009,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "details": {},
+                  "message": "The player sequence must remain at 1x unless a detected issue paused it.",
+                  "reason": "contract_failure"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 111.009,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 12253,
+              "inspect_entity_entries": 6194
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "fe8549fdb6477decb0aeaac391d50efce96d6cbfa21e147d3cd033b32f711a37"
+        },
+        {
+          "group": "group-02",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066435,
+                "owed_simulation_seconds": 6.93889390390723e-18
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 28.297,
+              "elapsed_seconds": 0.156524,
+              "inspect_calls_per_second": 319.439830313562,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 4.993,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 2.516398,
+                "maximum_motion_dispatch_ms": 0.196,
+                "motion_events": 122,
+                "owed_simulation_seconds": 1.04083408558608e-16
+              },
+              "ok": true,
+              "dispatch_ms": 4.993,
+              "peak_frame_ms": 34.909,
+              "elapsed_seconds": 2.391472,
+              "inspect_calls_per_second": 951.296941799862,
+              "issues": [],
+              "instrumented_entries": 11569,
+              "inspect_entity_entries": 2275
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 5.716,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 6.27846200000002,
+                "maximum_motion_dispatch_ms": 0.477,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.0199940000000003
+              },
+              "ok": false,
+              "dispatch_ms": 5.716,
+              "peak_frame_ms": 102.421,
+              "elapsed_seconds": 3.719249,
+              "inspect_calls_per_second": 2772.06500559656,
+              "issues": [
+                {
+                  "milliseconds": 102.421,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "details": {},
+                  "message": "The player sequence must remain at 1x unless a detected issue paused it.",
+                  "reason": "contract_failure"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 102.421,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 24149,
+              "inspect_entity_entries": 10310
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "f29a4eb972623e29ae96b850b9fc50aa678c905007b81e04f231603a28d97063"
+        },
+        {
+          "group": "group-03",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.06644,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.11,
+              "elapsed_seconds": 0.15462,
+              "inspect_calls_per_second": 323.373431638857,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 2.63783100000001,
+                "maximum_motion_dispatch_ms": 0.193,
+                "motion_events": 961,
+                "owed_simulation_seconds": 4.16333634234434e-17
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 32.385,
+              "elapsed_seconds": 2.514066,
+              "inspect_calls_per_second": 937.127346696547,
+              "issues": [],
+              "instrumented_entries": 11987,
+              "inspect_entity_entries": 2356
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 5.304,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 4.77826600000001,
+                "maximum_motion_dispatch_ms": 0.081,
+                "motion_events": 977,
+                "owed_simulation_seconds": 3.05311331771918e-16
+              },
+              "ok": true,
+              "dispatch_ms": 5.304,
+              "peak_frame_ms": 32.913,
+              "elapsed_seconds": 2.083351,
+              "inspect_calls_per_second": 1436.14782146647,
+              "issues": [],
+              "instrumented_entries": 11001,
+              "inspect_entity_entries": 2992
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "ab58ae39a302a67edbc646c8e5427744e9ec95c722d14ae7cebc8f3826665af9"
+        }
+      ]
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-13-00-25864",
+      "report": "logs/gdunit4-performance-2026-11-03T23-13-00-25864/gdunit-report/results.xml",
+      "report_sha256": "d8d42f7924444673c9c61ff3eea5204308ff7803009b1ecb2f678d5ff0c4190a",
+      "case_count": 4,
+      "failure_elements": 3,
+      "settings": {
+        "frame_limit_ms": 100.0,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-03T23-13-00-25864",
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "text_filter": "",
+        "observation_seconds": 2.0,
+        "continue_after_issues": true,
+        "headless": false,
+        "inspect_call_budget": 30000,
+        "training_observation_seconds": 2.0,
+        "action_limit_ms": 100.0,
+        "process_id": 1736,
+        "stacks_enabled": true,
+        "started_utc": "2026-11-03T23:13:15.3416648Z",
+        "profile_filter": ""
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066611,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 29.078,
+              "elapsed_seconds": 0.161199,
+              "inspect_calls_per_second": 310.175621436858,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 2.162337,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 42.693,
+              "elapsed_seconds": 2.014701,
+              "inspect_calls_per_second": 1002.63016695778,
+              "issues": [],
+              "instrumented_entries": 9820,
+              "inspect_entity_entries": 2020
+            },
+            {
+              "action": {
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 4.51481000000001,
+                "maximum_motion_dispatch_ms": 0.176,
+                "motion_events": 121,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.848,
+              "elapsed_seconds": 2.278229,
+              "inspect_calls_per_second": 1238.24251205651,
+              "issues": [],
+              "instrumented_entries": 11659,
+              "inspect_entity_entries": 2821
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.751,
+                "expected_center": "(83.375, 48.625)",
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 6.00569200000002,
+                "owed_simulation_seconds": 0.105608
+              },
+              "ok": false,
+              "dispatch_ms": 8.751,
+              "peak_frame_ms": 112.131,
+              "elapsed_seconds": 1.516065,
+              "inspect_calls_per_second": 2726.79601468275,
+              "issues": [
+                {
+                  "milliseconds": 112.131,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 112.131,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 9766,
+              "inspect_entity_entries": 4134
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "908e2125d53c46eeef0b94ef2c63c340a492a3998c17a6f137fbbc19e086f048"
+        },
+        {
+          "group": "group-02",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066599,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 28.868,
+              "elapsed_seconds": 0.157826,
+              "inspect_calls_per_second": 316.804582261478,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.353,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 2.562131,
+                "maximum_motion_dispatch_ms": 0.216,
+                "motion_events": 121,
+                "owed_simulation_seconds": 6.59194920871187e-17
+              },
+              "ok": true,
+              "dispatch_ms": 7.353,
+              "peak_frame_ms": 49.96,
+              "elapsed_seconds": 2.415305,
+              "inspect_calls_per_second": 958.471083362143,
+              "issues": [],
+              "instrumented_entries": 11791,
+              "inspect_entity_entries": 2315
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.59,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 6.00124900000002,
+                "maximum_motion_dispatch_ms": 0.351,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.10625
+              },
+              "ok": false,
+              "dispatch_ms": 8.59,
+              "peak_frame_ms": 112.856,
+              "elapsed_seconds": 3.462524,
+              "inspect_calls_per_second": 1929.80611831138,
+              "issues": [
+                {
+                  "milliseconds": 112.856,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 112.856,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 19728,
+              "inspect_entity_entries": 6682
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "678ea70fbde0f01fabec738d7594df2409b980e676ee73524b2c3be71fa4f901"
+        },
+        {
+          "group": "group-03",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066181,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 52.11,
+              "elapsed_seconds": 0.160803,
+              "inspect_calls_per_second": 310.939472522279,
+              "issues": [],
+              "instrumented_entries": 334,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 2.69585400000001,
+                "maximum_motion_dispatch_ms": 0.196,
+                "motion_events": 961,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.962,
+              "elapsed_seconds": 2.554514,
+              "inspect_calls_per_second": 936.381636585276,
+              "issues": [],
+              "instrumented_entries": 12206,
+              "inspect_entity_entries": 2392
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.015,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 4.89577900000002,
+                "maximum_motion_dispatch_ms": 0.084,
+                "motion_events": 969,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 8.015,
+              "peak_frame_ms": 46.468,
+              "elapsed_seconds": 2.1234,
+              "inspect_calls_per_second": 1497.59819157954,
+              "issues": [],
+              "instrumented_entries": 11433,
+              "inspect_entity_entries": 3180
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "792b45ad053375b7c40f74b53a1e63b4a332bdfdcbe58de1805facb26c1650c9"
+        },
+        {
+          "group": "group-04",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066677,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 28.892,
+              "elapsed_seconds": 0.159104,
+              "inspect_calls_per_second": 314.259855189059,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 6.00041900000002,
+                "owed_simulation_seconds": 0.104625
+              },
+              "ok": false,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 111.3,
+              "elapsed_seconds": 5.933695,
+              "inspect_calls_per_second": 1507.66090943333,
+              "issues": [
+                {
+                  "milliseconds": 111.3,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 111.3,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 31006,
+              "inspect_entity_entries": 8946
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "67340f56886343c3f8ea00a1959f6b05ea156fee1853ecc1ca16d62bced68c24"
+        }
+      ]
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-15-15-38472",
+      "report": "logs/gdunit4-performance-2026-11-03T23-15-15-38472/gdunit-report/results.xml",
+      "report_sha256": "383c3c1d1c6d9c31060a479965f4874d42c6f3b1f5f7f21130ebd4b1bf49ea54",
+      "case_count": 4,
+      "failure_elements": 0,
+      "settings": {
+        "process_id": 20372,
+        "inspect_call_budget": 30000,
+        "observation_seconds": 3.0,
+        "started_utc": "2026-11-03T23:15:30.7871631Z",
+        "stacks_enabled": true,
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "action_limit_ms": 1000.0,
+        "profile_filter": "",
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-03T23-15-15-38472",
+        "training_observation_seconds": 2.0,
+        "headless": false,
+        "text_filter": "",
+        "continue_after_issues": true,
+        "frame_limit_ms": 1000.0
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066552,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 29.114,
+              "elapsed_seconds": 0.159283,
+              "inspect_calls_per_second": 313.906694374164,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 3.15247000000001,
+                "owed_simulation_seconds": 1.59594559789866e-16
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.15,
+              "elapsed_seconds": 3.009644,
+              "inspect_calls_per_second": 990.150330072261,
+              "issues": [],
+              "instrumented_entries": 14436,
+              "inspect_entity_entries": 2980
+            },
+            {
+              "action": {
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 6.94221000000002,
+                "maximum_motion_dispatch_ms": 0.176,
+                "motion_events": 154,
+                "owed_simulation_seconds": 3.40005801291454e-16
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 236.778,
+              "elapsed_seconds": 3.733165,
+              "inspect_calls_per_second": 4654.76345138776,
+              "issues": [],
+              "instrumented_entries": 29906,
+              "inspect_entity_entries": 17377
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 13.602,
+                "expected_center": "(83.375, 48.625)",
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 10.655827,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 13.602,
+              "peak_frame_ms": 333.71,
+              "elapsed_seconds": 3.632897,
+              "inspect_calls_per_second": 11915.5594006656,
+              "issues": [],
+              "instrumented_entries": 50443,
+              "inspect_entity_entries": 43288
+            },
+            {
+              "action": {
+                "label": "Default game / select and move depot preview at 1x",
+                "logical_time": 17.2156300000001,
+                "maximum_motion_dispatch_ms": 0.125,
+                "motion_events": 14,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 301.311,
+              "elapsed_seconds": 6.475572,
+              "inspect_calls_per_second": 11964.1940511201,
+              "issues": [],
+              "instrumented_entries": 91081,
+              "inspect_entity_entries": 77475
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 19.644,
+                "expected_center": "(158.125, 127.375)",
+                "label": "Default game / click and observe depot at 1x",
+                "logical_time": 20.7838820000002,
+                "owed_simulation_seconds": 1.07552855510562e-16
+              },
+              "ok": true,
+              "dispatch_ms": 19.644,
+              "peak_frame_ms": 250.856,
+              "elapsed_seconds": 3.480954,
+              "inspect_calls_per_second": 8591.03567585208,
+              "issues": [],
+              "instrumented_entries": 39441,
+              "inspect_entity_entries": 29905
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "79dbf5993608d667f4c611b8549a9a06452fdd0cd44d3b3aee260de36612b30e"
+        },
+        {
+          "group": "group-02",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066418,
+                "owed_simulation_seconds": 3.46944695195361e-18
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.661,
+              "elapsed_seconds": 0.15726,
+              "inspect_calls_per_second": 317.94480478189,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.149,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 3.60385900000001,
+                "maximum_motion_dispatch_ms": 0.24,
+                "motion_events": 181,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 7.149,
+              "peak_frame_ms": 63.298,
+              "elapsed_seconds": 3.445774,
+              "inspect_calls_per_second": 960.887162071569,
+              "issues": [],
+              "instrumented_entries": 16686,
+              "inspect_entity_entries": 3311
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 12.747,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 12.3120430000001,
+                "maximum_motion_dispatch_ms": 0.329,
+                "motion_events": 138,
+                "owed_simulation_seconds": 8.70831184940357e-16
+              },
+              "ok": true,
+              "dispatch_ms": 12.747,
+              "peak_frame_ms": 312.816,
+              "elapsed_seconds": 8.652293,
+              "inspect_calls_per_second": 9501.2963615541,
+              "issues": [],
+              "instrumented_entries": 103863,
+              "inspect_entity_entries": 82208
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "f6f397e6f46597c5d8806f1be4c6579407f913166adc460a2b32bce26840b7a8"
+        },
+        {
+          "group": "group-03",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066417,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.695,
+              "elapsed_seconds": 0.15736,
+              "inspect_calls_per_second": 317.742755465175,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 3.68685000000001,
+                "maximum_motion_dispatch_ms": 0.2,
+                "motion_events": 1441,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.035,
+              "elapsed_seconds": 3.540543,
+              "inspect_calls_per_second": 950.136744561498,
+              "issues": [],
+              "instrumented_entries": 16955,
+              "inspect_entity_entries": 3364
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.427,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 7.26879200000003,
+                "maximum_motion_dispatch_ms": 0.081,
+                "motion_events": 1081,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 7.427,
+              "peak_frame_ms": 244.445,
+              "elapsed_seconds": 3.527722,
+              "inspect_calls_per_second": 5901.25865927077,
+              "issues": [],
+              "instrumented_entries": 31934,
+              "inspect_entity_entries": 20818
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "41f9ef050aba9c06ce02943c0f971c2ed479024c5c66ae6f30314c978ee3e1c3"
+        },
+        {
+          "group": "group-04",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066115,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 26.991,
+              "elapsed_seconds": 0.15619,
+              "inspect_calls_per_second": 320.122927204046,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 12.2626950000001,
+                "owed_simulation_seconds": 7.80625564189563e-16
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 296.332,
+              "elapsed_seconds": 12.123132,
+              "inspect_calls_per_second": 7254.7259239609,
+              "issues": [],
+              "instrumented_entries": 122869,
+              "inspect_entity_entries": 87950
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "246658a34a0ec168e93822d9516dce72fc14a9db9d159ad13a19807feecafcbb"
+        }
+      ]
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T23-17-16-24344",
+      "report": "logs/gdunit4-performance-2026-11-03T23-17-16-24344/gdunit-report/results.xml",
+      "report_sha256": "b888c8fc0ba231684a83f0ad3417223c406c7a5c53443a57e94ebe860de8c172",
+      "case_count": 4,
+      "failure_elements": 3,
+      "settings": {
+        "inspect_call_budget": 30000,
+        "project": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\.tools\\gdunit4-performance\\2026-11-03T23-17-16-24344",
+        "selection": [
+          "game/diagnostics/tests/gdunit/building_pointer_test.gd"
+        ],
+        "continue_after_issues": true,
+        "frame_limit_ms": 100.0,
+        "started_utc": "2026-11-03T23:17:31.2714136Z",
+        "training_observation_seconds": 2.0,
+        "profile_filter": "",
+        "headless": false,
+        "action_limit_ms": 100.0,
+        "process_id": 34116,
+        "text_filter": "",
+        "observation_seconds": 2.0,
+        "stacks_enabled": true
+      },
+      "stderr_bytes": 0,
+      "groups": [
+        {
+          "group": "group-01",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066403,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 29.279,
+              "elapsed_seconds": 0.159294,
+              "inspect_calls_per_second": 313.885017640338,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / Build idle baseline at 1x",
+                "logical_time": 2.155265,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.331,
+              "elapsed_seconds": 2.012054,
+              "inspect_calls_per_second": 997.985143539885,
+              "issues": [],
+              "instrumented_entries": 9747,
+              "inspect_entity_entries": 2008
+            },
+            {
+              "action": {
+                "label": "Default game / select and move workshop preview at 1x",
+                "logical_time": 4.50855600000001,
+                "maximum_motion_dispatch_ms": 0.197,
+                "motion_events": 121,
+                "owed_simulation_seconds": 1.90819582357449e-16
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 38.616,
+              "elapsed_seconds": 2.278124,
+              "inspect_calls_per_second": 1238.29958334138,
+              "issues": [],
+              "instrumented_entries": 11659,
+              "inspect_entity_entries": 2821
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.427,
+                "expected_center": "(83.375, 48.625)",
+                "label": "Default game / click and observe workshop at 1x",
+                "logical_time": 6.00727100000002,
+                "owed_simulation_seconds": 0.109961
+              },
+              "ok": false,
+              "dispatch_ms": 8.427,
+              "peak_frame_ms": 115.707,
+              "elapsed_seconds": 1.531872,
+              "inspect_calls_per_second": 2719.54836957657,
+              "issues": [
+                {
+                  "milliseconds": 115.707,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 115.707,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 9859,
+              "inspect_entity_entries": 4166
+            }
+          ],
+          "pending": [
+            "Move depot preview",
+            "Place depot"
+          ],
+          "summary_sha256": "a37a2b6199976bcc84f6311592ad771431901c96e0224ac687df70d2341f51ce"
+        },
+        {
+          "group": "group-02",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066417,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.68,
+              "elapsed_seconds": 0.157733,
+              "inspect_calls_per_second": 316.991371494868,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.542,
+                "label": "Default game / zoom, pan, rotate and place with the pointer at 1x",
+                "logical_time": 2.548551,
+                "maximum_motion_dispatch_ms": 0.192,
+                "motion_events": 121,
+                "owed_simulation_seconds": 6.59194920871187e-17
+              },
+              "ok": true,
+              "dispatch_ms": 7.542,
+              "peak_frame_ms": 47.849,
+              "elapsed_seconds": 2.402613,
+              "inspect_calls_per_second": 957.707296181283,
+              "issues": [],
+              "instrumented_entries": 11716,
+              "inspect_entity_entries": 2301
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 8.766,
+                "label": "Default game / overlap rejection then move and place without restarting",
+                "logical_time": 6.00313500000002,
+                "maximum_motion_dispatch_ms": 0.407,
+                "motion_events": 122,
+                "owed_simulation_seconds": 0.105926
+              },
+              "ok": false,
+              "dispatch_ms": 8.766,
+              "peak_frame_ms": 112.369,
+              "elapsed_seconds": 3.477739,
+              "inspect_calls_per_second": 1936.31551993982,
+              "issues": [
+                {
+                  "milliseconds": 112.369,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 112.369,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 19902,
+              "inspect_entity_entries": 6734
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "4b7a6a00aa6d746967a2a5e0151a5bfb00b70d61916cef49ec3e5a2d1da3deeb"
+        },
+        {
+          "group": "group-03",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.066419,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.464,
+              "elapsed_seconds": 0.157667,
+              "inspect_calls_per_second": 317.124065276818,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "input_scope": "Direct viewport GUI events; deliberate unaccumulated stress, not a claim about OS mouse polling.",
+                "label": "Default game / sustained eight-motion bursts per rendered frame at 1x",
+                "logical_time": 2.68718700000001,
+                "maximum_motion_dispatch_ms": 0.196,
+                "motion_events": 961,
+                "owed_simulation_seconds": 1.04083408558608e-16
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 39.266,
+              "elapsed_seconds": 2.544212,
+              "inspect_calls_per_second": 944.103714627555,
+              "issues": [],
+              "instrumented_entries": 12277,
+              "inspect_entity_entries": 2402
+            },
+            {
+              "action": {
+                "click_dispatch_ms": 7.629,
+                "label": "Default game / sustained motion after placing a building at 1x",
+                "logical_time": 4.88088000000001,
+                "maximum_motion_dispatch_ms": 0.11,
+                "motion_events": 969,
+                "owed_simulation_seconds": 2.91433543964104e-16
+              },
+              "ok": true,
+              "dispatch_ms": 7.629,
+              "peak_frame_ms": 46.104,
+              "elapsed_seconds": 2.116191,
+              "inspect_calls_per_second": 1493.24895531642,
+              "issues": [],
+              "instrumented_entries": 11413,
+              "inspect_entity_entries": 3160
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "be0158e5cc3b1776ca71ee641484b4c6398d5a3e5f8a9c3c4603dad5c51e6f63"
+        },
+        {
+          "group": "group-04",
+          "results": [
+            {
+              "action": {
+                "label": "Default game / open Build and start 1x through player controls",
+                "logical_time": 0.0664,
+                "owed_simulation_seconds": 0.0
+              },
+              "ok": true,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 27.475,
+              "elapsed_seconds": 0.157737,
+              "inspect_calls_per_second": 316.98333301635,
+              "issues": [],
+              "instrumented_entries": 331,
+              "inspect_entity_entries": 50
+            },
+            {
+              "action": {
+                "label": "Default game / no selection or placement control at 1x",
+                "logical_time": 6.01569400000002,
+                "owed_simulation_seconds": 0.106343
+              },
+              "ok": false,
+              "dispatch_ms": 0.0,
+              "peak_frame_ms": 113.448,
+              "elapsed_seconds": 5.959752,
+              "inspect_calls_per_second": 1505.76735407782,
+              "issues": [
+                {
+                  "milliseconds": 113.448,
+                  "reason": "frame_time_budget"
+                },
+                {
+                  "limit": 100.0,
+                  "milliseconds": 113.448,
+                  "reason": "frame_time_budget"
+                }
+              ],
+              "instrumented_entries": 31095,
+              "inspect_entity_entries": 8974
+            }
+          ],
+          "pending": [],
+          "summary_sha256": "19b06f213b575bf259cb26eb27db6d198b6a000fe95c15c391a15f5d8ada9d19"
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "normal_final_run": "Four aggregate cases executed; three failed solely on frame-time budgets. No functional-contract or engine errors were recorded. One passing short stress case ends before the later default-world stall, so it is not evidence of long-run safety.",
+    "observed_normal_failures": [
+      {
+        "label": "Default game / click and observe workshop at 1x",
+        "peak_frame_ms": 115.707,
+        "logical_time": 6.00727100000002
+      },
+      {
+        "label": "Default game / overlap rejection then move and place without restarting",
+        "peak_frame_ms": 112.369,
+        "logical_time": 6.00313500000002
+      },
+      {
+        "label": "Default game / no selection or placement control at 1x",
+        "peak_frame_ms": 113.448,
+        "logical_time": 6.01569400000002
+      }
+    ],
+    "diagnostic_run": "Explicitly raised frame/action stops to 1000 ms only to finish the sequence with traces. All four cases completed functional checks; this is not a normal-budget performance pass. The normal final run was executed afterward with unchanged defaults.",
+    "diagnostic_peak_frame_ms": 333.71,
+    "diagnostic_no_building_control_peak_ms": 296.332,
+    "largest_measured_motion_dispatch_ms": 0.329,
+    "largest_measured_click_dispatch_ms": 19.644,
+    "causal_inference": "The no-selection/no-placement control also stalls around the same early simulation boundary. Pointer dispatch itself stayed below one millisecond in this trace, while frame gaps reached hundreds of milliseconds. The evidence points to shared default-world progression rather than an exclusively ghost-preview cause; it does not prove a single CPU culprit.",
+    "not_measured": "Hundreds of thousands of inspect_entity entries per real second were not reproduced. Large cumulative instrumented totals and existing slower frame intervals are reproduced; the user may have a different world state or observation interval.",
+    "gameplay_source_unchanged": true,
+    "project_configuration_unchanged": true
+  },
+  "complete_window_caller_counts": [
+    {
+      "group": "group-01",
+      "complete_measured_seconds": 14,
+      "inspect_entity_entries": 119521,
+      "largest_caller_suffixes": [
+        {
+          "callers": "game/combat/combat_service.gd::squad_cohesion -> game/military/organization.gd::_active_roster_members -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 38935
+        },
+        {
+          "callers": "game/combat/combat_service.gd::formation_changed -> game/combat/combat_service.gd::squad_cohesion -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 38536
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::settle -> game/battlefield/squad_execution.gd::_clear_unavailable_motions -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 9774
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/staffing/rear_simulation.gd::_settle -> game/orders/order_service.gd::settle",
+          "entries": 9360
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 4817
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::move_entity -> game/mines/mine_service.gd::_on_moved",
+          "entries": 4705
+        },
+        {
+          "callers": "game/military/organization.gd::_auto_organize -> game/military/organization.gd::_candidate_people -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 2396
+        },
+        {
+          "callers": "game/military/organization.gd::advance_to -> game/military/troop_transport.gd::advance_to -> game/military/troop_transport.gd::_advance_route",
+          "entries": 1198
+        }
+      ]
+    },
+    {
+      "group": "group-02",
+      "complete_measured_seconds": 10,
+      "inspect_entity_entries": 80341,
+      "largest_caller_suffixes": [
+        {
+          "callers": "game/combat/combat_service.gd::squad_cohesion -> game/military/organization.gd::_active_roster_members -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 25864
+        },
+        {
+          "callers": "game/combat/combat_service.gd::formation_changed -> game/combat/combat_service.gd::squad_cohesion -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 25584
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::settle -> game/battlefield/squad_execution.gd::_clear_unavailable_motions -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 6574
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/staffing/rear_simulation.gd::_settle -> game/orders/order_service.gd::settle",
+          "entries": 6280
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 3198
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::move_entity -> game/mines/mine_service.gd::_on_moved",
+          "entries": 3100
+        },
+        {
+          "callers": "game/military/organization.gd::_auto_organize -> game/military/organization.gd::_candidate_people -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 1748
+        },
+        {
+          "callers": "game/military/organization.gd::advance_to -> game/military/troop_transport.gd::advance_to -> game/military/troop_transport.gd::_advance_route",
+          "entries": 871
+        }
+      ]
+    },
+    {
+      "group": "group-03",
+      "complete_measured_seconds": 4,
+      "inspect_entity_entries": 13930,
+      "largest_caller_suffixes": [
+        {
+          "callers": "game/combat/combat_service.gd::squad_cohesion -> game/military/organization.gd::_active_roster_members -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 3208
+        },
+        {
+          "callers": "game/combat/combat_service.gd::formation_changed -> game/combat/combat_service.gd::squad_cohesion -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 3168
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/staffing/rear_simulation.gd::_settle -> game/orders/order_service.gd::settle",
+          "entries": 2000
+        },
+        {
+          "callers": "game/military/organization.gd::_auto_organize -> game/military/organization.gd::_candidate_people -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 886
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::settle -> game/battlefield/squad_execution.gd::_clear_unavailable_motions -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 810
+        },
+        {
+          "callers": "game/military/organization.gd::advance_to -> game/military/troop_transport.gd::advance_to -> game/military/troop_transport.gd::_advance_route",
+          "entries": 443
+        },
+        {
+          "callers": "game/rear_base/base_simulation.gd::_advance_live_quantum -> game/staffing/rear_simulation.gd::advance_time -> game/vehicle_combat/vehicle_combat_service.gd::advance_to",
+          "entries": 442
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 396
+        }
+      ]
+    },
+    {
+      "group": "group-04",
+      "complete_measured_seconds": 11,
+      "inspect_entity_entries": 77004,
+      "largest_caller_suffixes": [
+        {
+          "callers": "game/combat/combat_service.gd::squad_cohesion -> game/military/organization.gd::_active_roster_members -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 24218
+        },
+        {
+          "callers": "game/combat/combat_service.gd::formation_changed -> game/combat/combat_service.gd::squad_cohesion -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 23976
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/staffing/rear_simulation.gd::_settle -> game/orders/order_service.gd::settle",
+          "entries": 6110
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::settle -> game/battlefield/squad_execution.gd::_clear_unavailable_motions -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 6102
+        },
+        {
+          "callers": "game/staffing/rear_simulation.gd::advance_time -> game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 2998
+        },
+        {
+          "callers": "game/battlefield/squad_execution.gd::advance_to -> game/identity/identity_ledger.gd::move_entity -> game/mines/mine_service.gd::_on_moved",
+          "entries": 2930
+        },
+        {
+          "callers": "game/military/organization.gd::_auto_organize -> game/military/organization.gd::_candidate_people -> game/identity/identity_ledger.gd::inspect_person_status",
+          "entries": 2090
+        },
+        {
+          "callers": "game/military/organization.gd::advance_to -> game/military/troop_transport.gd::advance_to -> game/military/troop_transport.gd::_advance_route",
+          "entries": 1046
+        }
+      ]
+    }
+  ],
+  "next_investigation": "Profile and characterize movement-triggered squad cohesion exports plus synchronous order/route work in the actual default world. Evaluate fresh scoped ledger facts while preserving every immediate movement/health/boarding consequence and dispersed-state timestamp. Compare no-building and placement controls before changing execution order or time policy.",
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_viewport.html#class-viewport-method-push-input",
+      "use": "GUI event propagation with explicit viewport-local coordinates."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_control.html#class-control-private-method-gui-input",
+      "use": "Actual Control hit testing and GUI input propagation."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_input.html#class-input-property-use-accumulated-input",
+      "use": "Distinguish deliberately injected unaccumulated stress from normal engine input accumulation."
+    }
+  ],
+  "artifact_availability": "Raw reports/traces/screenshots are local ignored artifacts. This record retains measured summaries and hashes; it does not assume those raw files exist in a fresh checkout.",
+  "source_observed_amplification": {
+    "chain": [
+      "IdentityLedger.move_entity emits person_position_changed for each moved person",
+      "Combat._on_person_position_changed scans squad rosters and invokes formation_changed",
+      "Combat.formation_changed calls squad_cohesion synchronously",
+      "squad_cohesion calls Organization._active_roster_members, which exports each roster person",
+      "squad_cohesion exports each active person again to calculate positions/boarding"
+    ],
+    "interpretation": "A moving squad repeats whole-squad detailed reads for each moved member. Complete-window caller counts corroborate this repeated export path in both placement and no-building controls. This is source/entry-count evidence, not exclusive CPU attribution; immediate cohort cohesion semantics must be preserved by any later fix."
+  },
+  "resolution": {
+    "recorded_utc": "2026-11-04T00:26:49.388318+00:00",
+    "evidence": "docs/evidence/cohesion_placement_fix.json",
+    "status": "three_clean_native_runs_at_original_limits",
+    "historical_measurements_unchanged": true
+  }
+}

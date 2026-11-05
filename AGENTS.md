@@ -1,32 +1,79 @@
-# Working on Trencho V4
+# Living system map
 
-## Context
+The user requires `docs/system_map.json` to stay current whenever project code
+changes. The maintenance requirement applies to workflow tools too.
 
-- Godot 4.7.2 standard edition; root `project.godot`; entry scene `game/main/main.tscn`.
-- Read `docs/design_brief.md` for accepted design facts, `docs/team_workflow.md` for current ownership, and `docs/playable_delivery.md` for the active outcome. Engineering decisions remain in `docs/foundation.md`.
-- The Game Designer directs gameplay scope; the Lead Developer owns engineering assignments, integration and PR merges. Do not infer gameplay requirements from the project name.
-- Use GDScript by default. Propose C#, GDExtension, or plugins when a concrete requirement justifies them.
+- Before editing, query the relevant entries with
+  `python tools/system_map.py --query PATH_OR_FUNCTION`. Read the actual source
+  before changing behavior. A map or call count does not establish test coverage.
+- After adding, editing, moving or deleting project files, run
+  `python tools/system_map.py --update`. The Windows launcher is
+  `Update System Map.cmd`. Do not hide first-party source in ignored directories.
+- Review every changed/new function's purpose against its implementation. Use
+  `--purpose FUNCTION_ID "Purpose"`, or `--review-file PATH` with a JSON object
+  mapping exact function IDs to reviewed purpose text. These commands record the
+  current implementation hash. Preserve useful existing descriptions.
+- Run `python tools/system_map.py --check` before reporting completion. It must
+  pass with no pending purpose reviews. Do not reinitialize the map, accept stale
+  hashes, disable the check or mark unexamined prose as reviewed to make it pass.
+- Keep graph uncertainty explicit: candidate targets are not proven calls,
+  static resource reachability is not execution, and initial implementation-
+  derived descriptions are distinguished from reviewed descriptions.
+- The inventory includes retained tests, fixtures, demos, scenes, tools and
+  project configuration. Its documented exclusions are generated caches/logs,
+  exports, Git internals, secrets and ignored third-party downloads. No editor
+  plugin is required for map maintenance.
+- Consult `docs/system_overhaul_plan.json` and `docs/overhaul_inventory.json`
+  when changing an affected game system. They distinguish source observations,
+  historical measurements, proposed migrations and planned tests. Recheck source
+  anchors before implementing a slice; a proposed phase is not an instruction to
+  expand the user's requested scope or evidence that its tests have passed.
+- Keep the clickable UI flowchart current too. `Update System Map.cmd` updates
+  the map, regenerates `docs/ui_function_map.html`, then fingerprints the result.
+  For direct Python use, run `tools/system_map.py --update`,
+  `tools/ui_function_map.py --update`, then `tools/system_map.py --update` again.
+  Check both tools with `--check`; the diagram must not retain stale source
+  lines. Review any hand-maintained cross-file workflow anchors when their
+  underlying UI or signal logic changes. Static branches are not runtime traces.
+  The same updater regenerates
+  `game/diagnostics/tests/gdunit/fixtures/ui_button_contracts.json`; keep this
+  source-button inventory current so new declared controls enter the acceptance
+  coverage gate.
 
-## Implementation
+# Objective workflow
 
-- Group each feature's scenes, scripts, resources, and assets under `game/<feature>/`.
-- Use snake_case file/folder names, PascalCase nodes/classes, tab-indented GDScript, and explicit types where useful.
-- Prefer small composed scenes, clear ownership, and explicit dependencies. Add autoloads only for genuinely global lifetime.
-- Keep changes focused. Avoid speculative frameworks, unused folders, and unrelated refactors.
-- For substantive work, state a short plan and acceptance criteria before implementation.
-- Resolve reversible implementation details independently. Raise design contradictions, missing acceptance criteria, or costly choices with the Game Designer; continue independent work when possible.
-- Measure suspected performance problems with the profiler before optimizing. Avoid per-frame polling when events suffice.
+For a bounded objective with durable progress, follow `docs/agent_workflow.md`.
+The manual controller is the sole retry owner; do not combine it with native
+goal continuation or a scheduled retry loop. Freeze task-specific acceptance
+before editing, preserve unrelated changes, and report actual checks and limits.
 
-## Verification
+# Test desktop behavior
 
-Dawson's 31 October instruction takes precedence: until the main game is complete, do not write regression tests or run regression suites, broad scenarios, failure injection or coverage matrices. Only brief direct checks that the code just changed works are allowed. Preserve existing tests for later; do not rename a regression suite as a direct check.
-CI parses changed production scripts and can run one brief, explicitly supplied current-change demonstration; it does not run the old suites. See [current verification policy](docs/current_change_verification.md). Compilation is not gameplay acceptance; report the exact direct check and unverified behavior.
-Protect desktop resources: no local engine runs under the current restriction. Necessary direct new-code checks run briefly on GitHub; preserve the human editor and unrelated applications.
+Routine tests must run headless, or minimized only when they cannot take desktop
+focus or move the OS cursor. The launchers default to headless. Use explicit
+`-Foreground` only when needed to investigate a user-reported issue, bug or
+regression. Record omitted native-input checks; a background pass does not
+certify visible-window rendering or 60 FPS. Keep normal F5 behavior unchanged.
 
-## Repository care
+# Current delivery priorities and team
 
-- Commit `.uid` and `.import` sidecars; do not edit generated `.godot/` contents.
-- Keep caches, engine downloads, builds, secrets, and private credentials out of commits.
-- Use Git LFS before adding large binary assets; keep text scenes/resources reviewable in Git.
-- Keep this file concise. Record lasting decisions with rationale and sources in `docs/`.
-- Do not discard unrelated work or rewrite shared history. Describe the behavior, purpose, and validation in pull requests.
+Dawson paused polishing, optimization and benchmark-driven work on 5 November
+2026 to prioritize gameplay features and the connected demo. Keep known defects
+and performance results visible; preserve the eventual 60 FPS target. Use brief
+direct checks of changed behavior when needed, without routine full-suite runs
+or new coverage infrastructure. Fix defects that block the current gameplay
+increment or corrupt state. Required living-map maintenance still applies.
+
+The current developer owns integration. Consult the designated Game Designer
+for gameplay, UI/UX developer for interaction/menus and 2D Artist for sourced
+assets. Current recipients and ownership are in `docs/team_integration_state.json`;
+historical team assignments do not reactivate automatically. Preserve asset
+origin, license, attribution and modification records at integration.
+
+Keep authorized changes pushed to the dedicated review branch. Give reviewers
+the exact branch and commit; an uncommitted local state is not a published
+build. Do not force-push, discard unrelated work or equate publication with
+gameplay acceptance.
+
+Use a task briefing in progress and completion messages: Objective, Outcome and
+Next task. Say Completed only for the specific result actually verified.
