@@ -45,6 +45,11 @@
       "failure": "The factory walkthrough requested a100-unit M11 stock minimum while140 starting M11 already remained. Production correctly did not start, but the initial guidance could suggest missing ingredients instead of the already-covered target.",
       "evidence": "logs/factory-plan/stock-target-correction.json",
       "rule": "Distinguish a minimum stock target from a new-manufacture quantity, existing coverage from physical availability, and historical production from present storage. Explain the authoritative no-work cause before suggesting purchases or extra labour."
+    },
+    {
+      "failure": "A draft Army needs checker reused the disconnected factory model, which has no authored battlefield policy or approved HQ stock. Source review caught the mismatch before its first execution.",
+      "evidence": "logs/army-supply/fixture-review.json; docs/evidence/army_supply_view.json",
+      "rule": "Choose the actual authored context required by the feature. Preserve a mistaken fixture and document corrections; a disconnected component cannot establish connected-opening behaviour, and source review is not an executed pass."
     }
   ],
   "design_review": [

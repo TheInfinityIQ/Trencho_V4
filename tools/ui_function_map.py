@@ -29,12 +29,12 @@ CONSTRUCTION = 'game/construction/construction_service.gd'
 REAR = 'game/staffing/rear_simulation.gd'
 SIMULATION = 'game/rear_base/base_simulation.gd'
 UI_FILES = [SHELL, BASE, 'game/rear_base/workforce_panel.gd', 'game/forward_supply/forward_delivery_panel.gd',
-            'game/rear_base/factory_plan_panel.gd']
+            'game/rear_base/factory_plan_panel.gd', 'game/logistics/army_supply_panel.gd']
 PANEL_NAMES = {
     '_construction_panel': 'Build', '_orders_panel': 'Supplies', '_staff_panel': 'Workers / Jobs',
     '_haul_panel': 'Hauling', '_production_panel': 'Production', '_refresh_ingredients': 'Production',
     '_inspect_panel': 'Inspection', '_training_panel': 'Training', '_vehicles_panel': 'Vehicles',
-    '_dispatch_panel': 'Dispatch', '_hq_panel': 'HQ diagnostics (optional)',
+    '_dispatch_panel': 'Dispatch', '_hq_panel': 'HQ diagnostics (optional)', '_army_needs_panel': 'Army needs',
     '_ready': 'Standalone rear controls',
 }
 RECEIVERS = {
@@ -182,7 +182,9 @@ def scan_controls(index: SourceIndex, path: str) -> list[dict]:
                 elif path.endswith('workforce_panel.gd'):
                     area = 'Workers / Jobs'
                 elif path.endswith('forward_delivery_panel.gd'):
-                    area = 'Army supply / prototype'
+                    area = 'Forward supply / advanced'
+                elif path.endswith('army_supply_panel.gd'):
+                    area = 'Army needs'
                 else:
                     area = PANEL_NAMES.get(owner['name'].split('/')[0], 'Other rear controls')
                 controls.append({'area': area, 'label': caption, 'signal': signal,
@@ -251,6 +253,16 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/logistics/rear_logistics.gd', '_ensure_haul', 'Subtract existing obligations and request only missing goods', ''),
             (REAR, 'request_haul', 'Create real physical hauling demand', ''),
             (REAR, '_start_job', 'Reserve actual goods for an eligible worker', ''),
+        ]),
+        ('army-needs', 'Army needs: real rifle demand and supply facts', 'A coalesced visible query reads owner facts without advancing time or issuing orders. Rear receipt, forward freight and recipient ammunition are separate facts, not a fabricated shipment lineage. These are source-checked branches, not a runtime trace.', [
+            (BASE, '_army_needs_panel', 'Bind the scene-owned panel to the real reader', ''),
+            ('game/logistics/army_supply_panel.gd', '_refresh', 'Read once after a visible committed-event burst', ''),
+            ('game/logistics/army_supply_view.gd', 'view', 'Read current supply stages and cancellation intent', ''),
+            ('game/battlefield/opening_resupply.gd', 'rifle_supply_view', 'Batch reported recipients and actual courier commitments', ''),
+            (BASE, '_army_supply_action', 'Re-resolve the clicked action against current state', ''),
+            ('game/logistics/rear_logistics.gd', 'resume_automatic_supply', 'Explicitly release cancellation intent without reviving a request', ''),
+            (MAIN, '_observe_recipient', 'Open observation only for a valid friendly identity', ''),
+            ('game/battlefield/battlefield_view.gd', 'focus_entity', 'Focus the current recipient without a tactical command', ''),
         ]),
         ('army-requests', 'Supplies: request delivery to HQ', 'Available goods are physically staged, loaded, transported and unloaded by existing owners. The same truck returns before the request sends another load. Cancellation holds the unsent remainder. These source-checked branches are not one synchronous call chain.', [
             (BASE, '_orders_panel', 'Press Request delivery to HQ', '"Request delivery to HQ"'),

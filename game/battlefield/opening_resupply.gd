@@ -648,6 +648,31 @@ func _safe(squad_id: String, at: Vector2) -> bool:
 			if at.distance_to(known.position) <= effective+20.0+float(known.get("uncertainty_m",0)): return false
 	return true
 
+func rifle_supply_view() -> Dictionary:
+	# Report only this owner's named rifle needs. Do not rerun eligibility,
+	# create demand, or perform a whole-ledger read separately for each person.
+	var rear: RefCounted = _rear_ref.get_ref()
+	var ids: Array[String] = []
+	ids.assign(requests.keys())
+	var rounds: Dictionary = rear.military.personal_round_counts(ids) if not ids.is_empty() else {}
+	var committed := {}
+	for job in rear.forward_supply.jobs.values():
+		if requests.has(job.recipient) and job.type == "E02" and job.state not in ["Complete","Interrupted"]:
+			committed[job.recipient] = int(committed.get(job.recipient,0))+int(job.quantity)
+	var labels := {}
+	for squad_index in rifle_squads.size():
+		var squad: Dictionary = rear.military.squads.get(rifle_squads[squad_index],{})
+		var roster: Array = squad.get("roster",[])
+		for member_index in roster.size():
+			labels[roster[member_index]] = "Rifle %d · %d" % [squad_index+1,member_index+1]
+	var rows: Array[Dictionary] = []
+	for id in ids:
+		var carried := int(rounds.get(id,0))
+		var needed := maxi(0,int(requests[id])-carried)
+		var promised := int(committed.get(id,0))
+		rows.append({"id":id,"label":str(labels.get(id,"Reported rifle recipient")),"carried":carried,"needed":needed,"committed":promised,"remaining":maxi(0,needed-promised)})
+	return {"recipients":rows,"stop_id":stop_id,"status":status,"freight_status":freight_status,"automatic":automatic_deliveries}
+
 func snapshot() -> Dictionary:
 	var rows: Array[Dictionary] = []
 	var rear: RefCounted = _rear_ref.get_ref()

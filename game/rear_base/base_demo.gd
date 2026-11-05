@@ -3,6 +3,7 @@ const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 ## One live scene, persistent panels, physical map and player commands.
 signal session_changed(next_simulation: RefCounted)
 signal panel_changed(title: String)
+signal observation_requested(entity_id: String)
 const Session = preload("res://game/main/game_session.gd")
 const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const Map = preload("res://game/rear_base/base_map.gd")
@@ -14,6 +15,8 @@ const WorkforcePanel = preload("res://game/rear_base/workforce_panel.gd")
 const FactoryPlanPanel = preload("res://game/rear_base/factory_plan_panel.gd")
 const UIKit = preload("res://game/ui/ui_kit.gd")
 const RearLogistics = preload("res://game/logistics/rear_logistics.gd")
+const ArmySupplyView = preload("res://game/logistics/army_supply_view.gd")
+const ArmySupplyPanel = preload("res://game/logistics/army_supply_panel.gd")
 const BUILD_PURPOSES := {"receiving":"Unload purchased supplies", "depot":"Store raw supplies", "workshop":"Manufacture infantry equipment", "munitions":"Manufacture ammunition", "training":"Train workers and specialists", "dispatch":"Send finished supplies onward", "support":"Manufacture support equipment", "vehicle_works":"Build vehicles", "park":"Park finished vehicles", "construction":"Organize construction crews", "materials":"Manufacture Building Materials"}
 var session: Node
 var simulation: RefCounted
@@ -48,6 +51,8 @@ var inspection: Label
 var production_status: Label
 var cart: Dictionary = {}
 var factory_plan_panel: VBoxContainer
+var army_supply_panel: VBoxContainer
+var _supply_views: TabContainer
 var workforce_panel: VBoxContainer
 var resource_hud: Label
 var purchase_quote: Label
@@ -208,6 +213,7 @@ func _ready() -> void:
 	_staff_panel(_panel("Workers/Jobs"))
 	_haul_panel(_panel("Haul"))
 	_production_panel(_panel("Work"))
+	_army_needs_panel(_panel("ArmyNeeds"))
 	_inspect_panel(_panel("Info"))
 	_training_panel(_panel("Train"))
 	_vehicles_panel(_panel("Vehicles"))
@@ -246,6 +252,11 @@ func _request_refresh() -> void:
 func _on_time_advanced() -> void:
 	if not is_node_ready() or not is_visible_in_tree(): return
 	var panel: Control = tabs.get_tab_control(tabs.current_tab)
+	if str(panel.name) == "ArmyNeeds":
+		# The new panel owns committed-event reads. Elapsed time only moves the map.
+		base_map.queue_redraw()
+		if _local_clock_controls.visible: _local_clock_status.text = clock_text()
+		return
 	if str(panel.name) == "Workers_Jobs" and OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") != "1":
 		# Commands and committed work still request immediate fresh presentation.
 		# Only arrival countdown text needs an elapsed-time update, once a second.
@@ -364,6 +375,7 @@ func _list(parent: Node, height: float = 120) -> ItemList:
 
 func _orders_panel(box: VBoxContainer) -> void:
 	var views := TabContainer.new()
+	_supply_views = views
 	box.add_child(views)
 	var purchase := VBoxContainer.new()
 	purchase.name = "Purchase"
@@ -1454,6 +1466,8 @@ func _refresh_contents() -> void:
 	_displayed_planning_revision = simulation.planning_view_revision
 	base_map.queue_redraw()
 	var active_panel: String = str(tabs.get_tab_control(tabs.current_tab).name)
+	resource_hud.visible = active_panel != "ArmyNeeds"
+	if active_panel == "ArmyNeeds": return
 	var diagnostics: bool = OS.get_environment("TRENCHO_HQ_DIAGNOSTICS") == "1"
 	if active_panel == "Supplies" and not diagnostics:
 		_refresh_purchasing()
@@ -1728,3 +1742,35 @@ func _factory_plan_action(action: Dictionary) -> void:
 		_select("site", id)
 	elif not panel.is_empty():
 		show_panel(panel)
+
+func _army_needs_panel(box: VBoxContainer) -> void:
+	army_supply_panel = ArmySupplyPanel.new()
+	box.add_child(army_supply_panel)
+	army_supply_panel.bind(session,ArmySupplyView.view)
+	army_supply_panel.action_requested.connect(_army_supply_action)
+
+func _army_supply_action(requested: Dictionary) -> void:
+	# A click re-resolves current commands; never execute an old facility/action
+	# retained by deferred presentation across a replaced session.
+	var current: Dictionary = ArmySupplyView.view(session)
+	var action := {}
+	for candidate in current.get("actions",[]):
+		if candidate.id == requested.get("id","") and candidate.get("enabled",false):
+			action = candidate
+			break
+	if action.is_empty(): return
+	match str(action.id):
+		"resume_automatic": _result(session.automatic_logistics.resume_automatic_supply("E02"))
+		"rear_requests":
+			show_panel("Supplies")
+			for index in _supply_views.get_tab_count():
+				if _supply_views.get_tab_title(index) == "Army requests":
+					_supply_views.current_tab = index
+					break
+		"observe":
+			var id := str(requested.get("entity_id",""))
+			for row in current.get("recipients",[]):
+				if row.id == id:
+					observation_requested.emit(id)
+					break
+		_: _factory_plan_action(action)

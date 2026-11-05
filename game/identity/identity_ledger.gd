@@ -1640,6 +1640,15 @@ func loose_stock_summaries(holders: Array, owner: String) -> Dictionary:
 	return summaries
 
 
+func available_stock_counts(holders: Array, type: String, owner: String) -> Dictionary:
+	# One detached, owner-filtered batch; reservations remain authoritative.
+	var counts := {}
+	for holder in holders: counts[holder] = 0
+	for entity in _entities.values():
+		if entity.kind == Records.Kind.STOCK and entity.design_type == type and entity.owner == owner and counts.has(entity.holder_id):
+			counts[entity.holder_id] += available(entity.id)
+	return counts
+
 func available_stock_at(holder_id: String, type: String) -> int:
 	var total: int = 0
 	for entity in _entities.values():

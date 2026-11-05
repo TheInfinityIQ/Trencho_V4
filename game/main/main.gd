@@ -49,6 +49,7 @@ func _ready() -> void:
 	_host.add_child(_base)
 	_base.use_shared_navigation()
 	_base.panel_changed.connect(_on_panel_changed)
+	_base.observation_requested.connect(_observe_recipient)
 	_battlefield = Battlefield.instantiate()
 	_battlefield.session = _session
 	_host.add_child(_battlefield)
@@ -107,6 +108,10 @@ func _show_battlefield() -> void:
 	_battlefield.show()
 	_shell.set_navigation("Battlefield")
 	_refresh_clock()
+
+func _observe_recipient(id: String) -> void:
+	if not _battlefield.focus_entity(id): return
+	_show_battlefield()
 
 func _show_diagnostics() -> void:
 	_clear_review()

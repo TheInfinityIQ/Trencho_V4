@@ -6,8 +6,8 @@ signal new_session_requested
 signal modal_visibility_changed(visible: bool)
 
 const UI = preload("res://game/ui/ui_kit.gd")
-const NAVIGATION := [["rear", "Rear base"], ["Build", "Build"], ["Workers/Jobs", "Workers / Jobs"], ["Supplies", "Supplies"], ["Work", "Production"]]
-const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "Battlefield": "BATTLEFIELD", "Haul": "HAULING", "Info": "INSPECTION", "Train": "TRAINING", "Vehicles": "VEHICLES", "ArmySupply": "ARMY SUPPLY / PROTOTYPE", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
+const NAVIGATION := [["rear", "Rear base"], ["Build", "Build"], ["Workers/Jobs", "Workers / Jobs"], ["Supplies", "Supplies"], ["Work", "Production"], ["ArmyNeeds", "Army needs"]]
+const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "ArmyNeeds":"ARMY NEEDS", "Battlefield": "BATTLEFIELD", "Haul": "HAULING", "Info": "INSPECTION", "Train": "TRAINING", "Vehicles": "VEHICLES", "ArmySupply": "FORWARD SUPPLY / ADVANCED", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
 const MORE_ACTIONS := ["Haul", "Info", "Train", "Vehicles", "ArmySupply", "Dispatch", "Diagnostics"]
 
 var content_host: Control
@@ -134,7 +134,7 @@ func _build_navigation(parent: Node) -> void:
 	advanced.get_popup().add_item("Training", 2)
 	advanced.get_popup().add_item("Vehicles", 3)
 	advanced.get_popup().add_separator()
-	advanced.get_popup().add_item("Army supply · prototype", 4)
+	advanced.get_popup().add_item("Forward supply · advanced", 4)
 	advanced.get_popup().add_item("Dispatch · prototype", 5)
 	advanced.get_popup().add_separator()
 	advanced.get_popup().add_item("Diagnostics", 6)
@@ -161,7 +161,7 @@ func _build_help(parent: Node) -> void:
 	UI.button(heading, "Close", func() -> void: _help.hide())
 	UI.label(layout, "Start time with 1×. Hire workers through Supplies or Workers / Jobs; they join only after arrival and disembarkation. Request haulers, place a Workshop through Build, then assign builders to its site.", 14, UI.INK, true)
 	UI.label(layout, "Staff a completed workshop, choose its recipe and set a production target. Purchase its ingredients through Supplies. Haulers bring the next batch to the workshop automatically; production still needs real materials and workers.", 14, UI.INK, true)
-	UI.label(layout, "For army supply, build and staff a Logistics Centre, manufacture a transport truck and seat a trained Driver. Supplies → Army requests sends available goods to HQ and returns the same truck. Forward supply uses a separate military truck and Engineer couriers; shortages and missing requirements remain visible.", 14, UI.INK, true)
+	UI.label(layout, "Army needs shows actual rifle-ammunition demand and separate rear, HQ and forward stocks. Automatic requests follow military shortages. Build and staff a Logistics Centre, manufacture a transport truck and seat a trained Driver for rear-to-HQ freight. Forward supply uses a separate military truck and Engineer couriers. Cancelled automatic supply stays held until you explicitly resume it.", 14, UI.INK, true)
 	UI.label(layout, "WASD: move · R: rotate placement · Esc: cancel placement. Rear and Battlefield share one session.", 12, UI.MUTED, true)
 
 func _build_confirmation() -> void:

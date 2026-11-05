@@ -134,6 +134,24 @@ func _ensure_haul(destination: String, type: String, missing: int, priority: int
 func request_delivery(type: String, quantity: int) -> Dictionary:
 	return _queue_delivery(type,quantity,false)
 
+func supply_intent(type: String) -> Dictionary:
+	# Detached player intent, separate from physical request/cargo state.
+	return {"held":_army_holds.has(type),"automatic_request_id":str(_army_requests.get(type,""))}
+
+func resume_automatic_supply(type: String) -> Dictionary:
+	var model := _model()
+	if model == null or not model.empty_field_opening or type not in shipment_types():
+		return {"ok":false,"requires_reconciliation":false,"message":"Choose a supported supply in the live game."}
+	if not _army_holds.has(type):
+		return {"ok":true,"requires_reconciliation":false,"message":"Automatic supply is already enabled."}
+	_army_holds.erase(type)
+	var prior: Dictionary = requests.get(str(_army_requests.get(type,"")),{})
+	if not prior.is_empty() and prior.cancelled: _army_requests.erase(type)
+	var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
+	if supply != null: supply.invalidate_rear_supply_need(type)
+	changed.emit()
+	return {"ok":true,"requires_reconciliation":false,"message":"Automatic supply resumed. The next military supply decision will recompute actual need; cancelled requests stay cancelled."}
+
 func _queue_delivery(type: String, quantity: int, automatic: bool) -> Dictionary:
 	if _model() == null or not _model().empty_field_opening: return {"ok":false,"requires_reconciliation":false,"message":"Army delivery requests belong to the live empty-field game."}
 	if type not in shipment_types() or quantity <= 0: return {"ok":false,"requires_reconciliation":false,"message":"Choose a supported supply and a positive whole quantity."}
@@ -159,7 +177,7 @@ func ensure_army_supply(type: String, quantity: int) -> void:
 	if quantity <= 0 or _army_holds.has(type): return
 	var current: Dictionary = requests.get(str(_army_requests.get(type,"")),{})
 	# Explicit cancellation holds this automatic demand until the player places
-	# a new request. Never recreate a cancelled consequential action silently.
+	# a new request or explicitly resumes it. Never recreate cancelled work silently.
 	if not current.is_empty() and current.cancelled: return
 	# Existing promises already exclude delivered quantities. Do not order the
 	# same shortage twice, and never grow a player's explicit requested amount.

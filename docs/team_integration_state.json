@@ -33,7 +33,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Guided factory feature implemented and directly checked. Lead integrates the reviewed design alignment and owns the next diagrammed army-needs/supply feature. Game Designer owns vision; UI/UX and art handoffs remain scoped.",
+  "current_work": "Guided factory and first-class rifle-ammunition Army needs are implemented and directly checked. Lead integrated UI82dfdf5 as ae020de with the real reader/commands/navigation. Next is the connected useful physical delivery/replenishment loop; designer vision and scoped UI/art handoffs remain authoritative.",
   "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",

@@ -112,6 +112,19 @@ func _select_nearest(point: Vector2) -> void:
 	_refresh()
 	queue_redraw()
 
+func focus_entity(id: String) -> bool:
+	if simulation == null: return false
+	var marker: Dictionary = Presentation.inspect(simulation.rear,id)
+	if marker.is_empty() or marker.get("kind","") != "PERSON" or marker.get("owner","") != simulation.rear.PLAYER: return false
+	var position: Vector2 = marker.get("position",Vector2.INF)
+	if not position.is_finite(): return false
+	selected_id = id
+	zoom = maxf(zoom,8.0)
+	pan = -(position-WORLD_SIZE/2.0)*_scale()
+	_request_refresh()
+	queue_redraw()
+	return true
+
 
 func _draw() -> void:
 	CallLog.record(&"battlefield/battlefield_view.gd::_draw")

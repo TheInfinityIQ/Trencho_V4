@@ -1,0 +1,47 @@
+{
+  "status": "implemented_direct_change_verified",
+  "diagram": "docs/diagrams/army_supply_view.mmd",
+  "scope": "A first-class rifle-ammunition Army needs view connecting real reported need, production, separate physical shipment stages and observation. Other military resources remain wider work; do not claim a general demand planner.",
+  "owners": {
+    "query": "game/logistics/army_supply_view.gd: pure view(session) reads authoritative current facts without advancing time, creating demand or moving goods.",
+    "intent": "Existing RearLogistics owns player cancellation holds and a new explicit idempotent resume_automatic_supply(type) command; a detached supply_intent(type) query exposes intent without leaking mutable private dictionaries.",
+    "presentation": "UI/UX owns only game/logistics/army_supply_panel.gd in an isolated branch; lead owns the real reader, commands, navigation and final integration.",
+    "physical": "Existing military, rear/forward transport, issue and ledger services remain authoritative. A narrow ledger available-stock batch reads all relevant stores in one pass; the resupply owner batches personal rounds and courier commitments once for its reported rifle recipients."
+  },
+  "panel_contract": {
+    "extends": "VBoxContainer",
+    "bind": "bind(session: Node, reader: Callable); reader.call(session) returns a detached current view. Never install fake simulation data or directly call logistics commands.",
+    "state": "Public view Dictionary for current presentation; retain selected recipient by stable id across updates.",
+    "signal": "action_requested(action: Dictionary) delegates to the lead-owned rear controller.",
+    "view": {
+      "title": "Human-readable supply title",
+      "summary": "Human-readable current real need and supply context",
+      "recipients": "Array of {id,label,needed,carried,committed,remaining}; all are real reported friendly recipients.",
+      "stages": "Array of {label,quantity_text,detail}; rear stock, HQ receipt, forward freight and actual issue are separate facts, never a fabricated one-to-one shipment trace.",
+      "requests": "Array of {id,label,state,requested,delivered,blocker,cancelled}; quantities describe actual rear requests/HQ receipt.",
+      "blockers": "Array of readable causes; avoid technical codes in primary text.",
+      "held": "Boolean owner-provided automatic resupply cancellation intent.",
+      "actions": "Array of {id,label,enabled,panel,facility_id,building_kind,request_id}; semantic ids produce/build, workers, rear_requests, observe, resume_automatic. Observe adds current selected entity_id when available. Disabled/absent actions do not execute."
+    }
+  },
+  "events": [
+    "GameSession.state_changed",
+    "GameSession.simulation_changed",
+    "RearLogistics.changed",
+    "Panel visibility_changed"
+  ],
+  "lifecycle": "Coalesce finite signal bursts into one deferred visible read. Hidden panels retain dirty state without reading. Rebinding/exit disconnect all old subscribers and discard old selections/actions. Deferred work resolves the current session; replacement disables old actions immediately.",
+  "no_polling": "No new process/physics callback, timer or time_advanced subscription. Use current owner indexes/batched rounds once per actual visible update; no world snapshot or per-member whole-ledger export.",
+  "resume_semantics": "Only explicit player action clears a type's automatic hold. Repeated resume is harmless. It does not uncancel an old request, credit cargo, create a manual amount, rewind departure or bypass Pause. The next existing owned resupply event publishes freshly computed need.",
+  "navigation": "Add an ordinary Army needs rear tab/navigation entry. Existing expert forward controls remain available and distinct. Production links resolve the real selected munitions facility; observation never creates an order or guarantees battle success.",
+  "unchanged": "Starting6000 HQ rifle rounds, prices, recipes, physical rates, military decisions and all other supply quantities stay unchanged. A lack of a genuine shortage is shown truthfully rather than manufactured.",
+  "principles": [
+    "Single authoritative intent/physical owners",
+    "Observer pattern and bounded visible presentation",
+    "Command/query separation",
+    "Truthful quantities and causal uncertainty",
+    "Idempotent explicit cancellation recovery"
+  ],
+  "direct_check_scope": "Briefly demonstrate new query purity, hold/resume semantics, signal-driven lifecycle and ordinary navigation. No broad suite, forced shortage, benchmark or complete ordinary resupply-cycle claim.",
+  "evidence": "docs/evidence/army_supply_view.json"
+}

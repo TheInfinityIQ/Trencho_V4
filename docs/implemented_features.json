@@ -20,6 +20,17 @@
       "evidence": "docs/evidence/factory_plan.json"
     },
     {
+      "feature": "First-class rifle-ammunition Army needs: real reported need, batched available stocks, separate physical handling/receipts, explicit cancellation hold/resume and existing production/request/observation actions. Scene-owned committed-event presentation without idle polling.",
+      "sources": [
+        "game/logistics/army_supply_view.gd",
+        "game/logistics/army_supply_panel.gd",
+        "game/logistics/rear_logistics.gd",
+        "game/battlefield/opening_resupply.gd"
+      ],
+      "limit": "Brief opening/read/intent/lifecycle/navigation demonstration passes. Multi-resource demand and ordinary complete/repeat supply acceptance remain open.",
+      "evidence": "docs/evidence/army_supply_view.json"
+    },
+    {
       "feature": "Eleven buildable facility types, rotation, position/overlap validation, provisional preview, physical construction materials/work, preview/site cancellation and preservation of consumed material.",
       "types": [
         "Receiving",
