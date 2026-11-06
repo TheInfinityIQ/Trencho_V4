@@ -1,0 +1,98 @@
+{
+  "feature": "Truthful rifle supply coverage and recipient handoff feedback",
+  "status": "implemented_direct_feedback_and_arranged_issue_verified_ordinary_need_open",
+  "baseline": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "diagram": "docs/diagrams/army_supply_feedback.mmd",
+  "frozen_acceptance": "docs/diagrams/army_supply_feedback.json",
+  "behaviour": [
+    "Missing local E02 no longer asserts that manufacture is required.",
+    "Army needs derives current-stage feedback from facts its existing reader already computed: reported/courier need, available local and HQ stock, committed forward freight, available rear stock and rear cancellation intent.",
+    "Named recipients expose actual target/destination/squad and explain the physical issue/handoff requirement separately from current orders and surviving capability.",
+    "Additive detached view fields; no new stock, demand, command, owner, timer, subscription, world snapshot or per-recipient capability query."
+  ],
+  "ordinary_baseline_trace": {
+    "context": "Authored Farmland empty-field scenario, synchronous domain clock, normal automatic forward-supply policy enabled. No stock/person/position/order/depletion/fire mutation injected; no live-screen or1x-pacing claim.",
+    "run": "logs/army-loop/trace2.stdout",
+    "script": "logs/army-loop/trace.gd (generated diagnostic input retained locally)",
+    "script_sha256": "a50cfd0af3f0b2fde71ca99c96ac3191f062263045b09810221f8147cbecc8f7",
+    "bounded_wall_deadline_seconds": 360,
+    "simulated_seconds_completed": 1200,
+    "engine_exit": 0,
+    "owner_stop_reason": null,
+    "stderr": "empty",
+    "audit": [],
+    "observations": {
+      "blue_rifle_trip_admitted_at": 6.0,
+      "blue_support_trip_admitted_at": 7.0,
+      "both_trips_physically_dismounted": true,
+      "final_periodic_sample": {
+        "time": 1171.0,
+        "squads": [
+          {
+            "active": 8,
+            "collection": {},
+            "id": "start-blue-squad-00",
+            "rounds": 480,
+            "status": "Advancing"
+          },
+          {
+            "active": 8,
+            "collection": {},
+            "id": "start-blue-squad-01",
+            "rounds": 480,
+            "status": "Advancing"
+          }
+        ]
+      },
+      "reported_rifle_need_in_periodic_samples": false,
+      "forward_freight_jobs": 0,
+      "courier_jobs": 0
+    },
+    "conclusion": "This bounded ordinary progression did not reach a genuine rifle need. It cannot establish a physical supply blocker, new manufacture, restored combat or issue91 acceptance.",
+    "earlier_bounded_probe": "logs/army-loop/trace.stdout ended its sampled record at t271 with no reported need; it is retained as an incomplete exploratory run, not a passing full chain."
+  },
+  "verification": [
+    {
+      "path": "tools/checks/army_supply_feedback_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Actual6000-HQ/no-need opening and read/detachment purity; explicit named80-round target with160 local deficit covered by existing HQ; actual rear cancellation hold. Pure supplied-fact stage branches are labelled and do not enter fictional freight in an owner. Explicitly arranged existing people/stock endpoints then actual co-located160-round relocation,20-round courier issue to8 named recipients, clear handoff, later target separation and clean audit."
+    },
+    {
+      "path": "tools/checks/army_supply_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Existing actual opening/intent, panel event/visibility/rebind lifecycle, ordinary navigation and friendly observation."
+    },
+    {
+      "path": "tools/checks/refill_continuity_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Existing arranged-stock actual courier issue, request removal, selection/Observe continuity, read purity and cycle replacement."
+    },
+    {
+      "path": "logs/army-loop/editor-import",
+      "result": "Headless editor import exit0, no stop reason, empty stderr. tools/checks is intentionally behind existing tools/.gdignore like the other retained standalone checks; no UID sidecar was generated or removed."
+    }
+  ],
+  "purpose_review": "The author read each changed/new function implementation and preserved useful existing purpose text while reviewing the current implementation hashes. Strict living-map results must be recorded after regeneration.",
+  "map_checks": {
+    "system_map": "PASS: system map matches every in-scope file and function; no purpose review is pending.",
+    "ui_function_map": "PASS: UI function diagram matches current source and line numbers.",
+    "reviewed_changed_or_new_functions": 7,
+    "pending_purpose_reviews": 0,
+    "ui_output": "Regenerated; clickable map and source-button inventory have no content diff because no UI/signal anchors changed."
+  },
+  "unchanged": "Approved6000 HQ E02, troop/stock starting package, demand thresholds, recipes, prices, rates, freight/courier custody and admission, cancellation commands, operation authority and performance limits.",
+  "limits": [
+    "No genuine shortage arose during the bounded ordinary trace.",
+    "The new physical receipt check explicitly arranges existing people and carrier endpoints; it is not ordinary HQ-forward travel or new rear manufacture.",
+    "Incoming/rear-scarcity branch cases are pure supplied-fact projection checks, not physical delivery demonstrations.",
+    "Receipt or named handoff does not prove return to duty, a feasible acknowledged operation, victory, second natural refill, native-input rendering,1x pacing or60FPS.",
+    "Independent event/domain-clock migration remains unfinished; known historical performance failures remain open while polishing/optimization stay paused.",
+    "PR must remain draft pending lead technical and designated Game Designer review of its exact commit; does not close91."
+  ],
+  "official_engine_reference": {
+    "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html",
+    "application": "Dictionary reference semantics require enriching only newly constructed view rows; detached-row mutation and source read-purity are directly checked."
+  },
+  "source_sha256": {
+    "game/battlefield/opening_resupply.gd": "eda4fc81c2164c96b6ccc2894981f8f5f3524da3f4f06f0d64185f6024bfc4a0",
+    "game/logistics/army_supply_view.gd": "2ef0c3bddbd190d4919911a7be8e9253bf5d987202354b11696ff7391a3241fc",
+    "tools/checks/army_supply_feedback_check.gd": "b73695ec477638f2bda716c67797749a033dc7f985e03f4a5c07518745a04795"
+  }
+}

@@ -1,0 +1,17 @@
+flowchart TD
+  A[Existing committed state or rear intent event] --> B[Army needs requests fresh detached view]
+  B --> C[Reuse current request, stock, freight and courier facts]
+  C --> D{Reported need?}
+  D -->|None| E[Explain no current rifle shortage]
+  D -->|Present| F[Separate carried rounds and courier commitments]
+  F --> G[Separate local stock and committed forward freight]
+  G --> H[Explain existing HQ coverage before rear demand]
+  H --> I[Separate available rear stock from new production gap]
+  C --> J[Show latest named collection and actual current activity]
+  C --> K{Rear cancellation hold?}
+  K -->|Yes| L[Explain rear-request hold; existing freight retains its owner]
+  E --> M[Render existing Army panel]
+  I --> M
+  J --> M
+  L --> M
+  M --> N[No requests, cargo, operations or time mutated]

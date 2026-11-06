@@ -341,7 +341,7 @@ func tick() -> void:
 		var source := ""
 		for stock in rear.ledger.entities_at(stop_id,["STOCK"]):
 			if stock.owner == rear.PLAYER and stock.design_type == "E02" and stock.available > 0: source = stock.id; break
-		if source.is_empty(): _person_status(id,"Local E02 is missing; manufacture and physically deliver freight."); continue
+		if source.is_empty(): _person_status(id,"Local E02 is missing; check existing HQ coverage and forward freight in Army needs before producing more."); continue
 		var engineers: Dictionary = rear.military.squads.get(engineer_squad,{})
 		if engineers.is_empty(): _person_status(id,"The actual Engineer courier element is unavailable."); continue
 		var started := false
@@ -684,14 +684,23 @@ func rifle_supply_view() -> Dictionary:
 		var promised := int(committed.get(id,0))
 		var receipt := int(issued.get(id,0))
 		var detail := "%d rounds issued in the current named cycle; carried rounds are current possession." % receipt if receipt > 0 else "Current reported request; no completed issue in this named cycle."
+		var squad_id: String = str(person_squads.get(id,""))
+		var cycle: Dictionary = _squad_replenishments.get(squad_id,{})
+		var collection: Dictionary = {}
 		var operations: RefCounted = rear.battlefield_operations
+		if operations != null: collection = operations.rifle_collection.get(squad_id,{})
+		if reported:
+			detail += " Destination: local forward supply stop. Target: %d carried rounds." % int(requests[id])
+			if not cycle.is_empty() and not cycle.released:
+				detail += " This named collection needs actual recipient receipt and clear physical handling before handoff to its operation owner."
+			else: detail += " Missing and committed rounds are not usable carried ammunition until local issue completes."
+		elif receipt > 0 and not cycle.is_empty() and cycle.released:
+			detail += " This refill was handed off to its operation owner; current orders and surviving capability determine what happens next."
+		if not collection.is_empty(): detail += " Collection: %s. %s" % [str(collection.get("state","Unknown")),str(collection.get("blocker",""))]
 		if operations != null:
-			var squad_id: String = str(person_squads.get(id,""))
-			var collection: Dictionary = operations.rifle_collection.get(squad_id,{})
-			if not collection.is_empty(): detail += " Collection: %s. %s" % [str(collection.get("state","Unknown")),str(collection.get("blocker",""))]
 			var activity := str(operations.status.get(squad_id,""))
 			if not activity.is_empty(): detail += " Activity: " + activity
-		rows.append({"id":id,"label":str(labels.get(id,"Reported rifle recipient")),"carried":carried,"needed":needed,"committed":promised,"remaining":maxi(0,needed-promised),"reported":reported,"issued":receipt,"detail":detail})
+		rows.append({"id":id,"label":str(labels.get(id,"Reported rifle recipient")),"carried":carried,"needed":needed,"committed":promised,"remaining":maxi(0,needed-promised),"reported":reported,"issued":receipt,"detail":detail,"target":int(requests[id]) if reported else int(cycle.get("target",0)),"destination":stop_id,"squad":squad_id})
 	return {"recipients":rows,"stop_id":stop_id,"status":status,"freight_status":freight_status,"automatic":automatic_deliveries}
 
 func snapshot() -> Dictionary:
