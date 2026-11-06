@@ -120,7 +120,7 @@
     ]},
     "docs/diagrams/factory_plan.mmd": {"role":"configuration","system":"docs","sha256":"a6c67641e3192cf807a800f0b4ae65239abd840f404205e019909af5d24f2d9e","lines":25,"purpose":"Supply factory plan project settings or repository metadata.","functions":[
     ]},
-    "docs/diagrams/github_projects_connection.json": {"role":"data","system":"docs","sha256":"de0e003be95e07f930edddb177773f56832d2f0e13ea148e91ddb3469a16ae60","lines":17,"purpose":"Supply structured settings, dependency pins or catalogue data for github projects connection.","functions":[
+    "docs/diagrams/github_projects_connection.json": {"role":"data","system":"docs","sha256":"fa9a0a4a6d20da1c776c161e668fbd0a45d98a58f1e65a32467073fc0e68322b","lines":26,"purpose":"Supply structured settings, dependency pins or catalogue data for github projects connection.","functions":[
     ]},
     "docs/diagrams/github_projects_connection.mmd": {"role":"configuration","system":"docs","sha256":"bc33da8f2f53b8e6e93bdd0a9b4b2a771c6a03672a6041f9f34a3c7dc5249566","lines":8,"purpose":"Supply github projects connection project settings or repository metadata.","functions":[
     ]},
@@ -326,7 +326,7 @@
     ]},
     "docs/game_design_document.md": {"role":"documentation","system":"docs","sha256":"66a079aed6a5012a6b9fd9b2b113908a3434e2e2158f1bc36d0683face9c2f9c","lines":134,"purpose":"Document Trencho V4 — Game Design Document.","functions":[
     ]},
-    "docs/github_project_management.md": {"role":"documentation","system":"docs","sha256":"f4ecee943c93a64edaa6c0bc4b1ada2a3b4baaef26144e0fcb9f720d4a49fb1e","lines":44,"purpose":"Document GitHub Projects connection and repository cleanup.","functions":[
+    "docs/github_project_management.md": {"role":"documentation","system":"docs","sha256":"59d52fb4a372079593a3a7902933bdeb5aa71a23bac4e8fc63251299fb4c324d","lines":45,"purpose":"Document GitHub Projects connection and repository cleanup.","functions":[
     ]},
     "docs/github_repository_status.json": {"role":"data","system":"docs","sha256":"c7f8ec0339689d6e5123bd3eb11b215a944431e57eecef98fa9e0f935ea43b54","lines":163,"purpose":"Supply structured settings, dependency pins or catalogue data for github repository status.","functions":[
     ]},
@@ -364,7 +364,7 @@
     ]},
     "docs/team_handoff.md": {"role":"documentation","system":"docs","sha256":"3dd859fb64803ef702e7151745fb318ce1f8b7f6e33a6a42cb7f589279c4bedc","lines":31,"purpose":"Document Team transition handoff.","functions":[
     ]},
-    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"47f37f99ad3c1afce8475eda330abdf8648838f62a16b7f68e9f29008c324c96","lines":231,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
+    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"b20612dc1f4686748e9dd3ec1850983e50cd48b88b15b8c60cb273e12c840a93","lines":231,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
     "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"64a244bbea1e0f8c805d6f52795de68b9d3ca1c108d36d710e0531f0b78c80d7","lines":39,"purpose":"Document Team workflow.","functions":[
     ]},
