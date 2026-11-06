@@ -18,7 +18,6 @@
   "new_code_direct_check": {
     "state": "PASS",
     "script_local": "logs/collection-readiness/direct_check.gd (ignored; not a committed regression fixture)",
-    "script_sha256": "79171fa646baf2cdb8f0313388d4ddc4703ff39770ae83b333abf5adaaa69faf",
     "scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim.",
     "code_commit": "31b73da0c18edddf4365c5ba1583c620cc1a032b",
     "run_id": 42151066130,
@@ -32,7 +31,12 @@
     "executed_source_sha256": {
       "game/battlefield/squad_execution.gd": "8cb8c548d4b135f43517167f48a33cdcf3318fcd867793dc042f9f90728cea6b",
       "game/battlefield/opening_resupply.gd": "d759fba7718b4cef03a984e5858995892f9bae20d13111a89139e6ba03143bb9"
-    }
+    },
+    "local_submitted_file_sha256": "79171fa646baf2cdb8f0313388d4ddc4703ff39770ae83b333abf5adaaa69faf",
+    "executed_artifact_script_sha256": "751b5bca1567b5bc478b1a88bd9978894f3a188c70eb2e91923b974abad65435",
+    "artifact_zip_sha256": "6a5f17ed3a738848e5f6544f9dc2be01ca3b488e8c96d9f2cdbc915bfe5179b8",
+    "script_serialization": "Workflow decodes the submitted UTF8 string, strips leading/trailing whitespace, then appends LF: (local_bytes.decode(\"utf-8\").strip()+\"\\n\").encode(\"utf-8\"). Interior CRLF remains; the final submitted CRLF becomes LF. This changes bytes, not script logic.",
+    "executed_hash_provenance": "Lead independently downloaded and inspected actual artifact13471249510, confirmed exact script hash and byte equality with the stated transformation. Developer independently reproduced the submitted-file transformation and matching actual hash; developer did not claim another artifact download."
   },
   "limits": [
     "No local engine or regression/broad old-code check run.",
@@ -64,6 +68,14 @@
     "finding": "The original withdrawing-or-broken predicate short-circuited when an earlier condition already selected withdrawal. The first diagnostic revision evaluated the pure broken comparison unconditionally.",
     "correction": "Use if not withdrawing and broken_count > active.size()/2.0; keep the earlier actual casualty/capability reason when already withdrawing.",
     "scope": "Single existing predicate guard, unchanged boolean decision outcome and restored original evaluation order. Later dispersed/strength predicates remain independently evaluated as before.",
-    "verification": "Lead source review requested this correction; no extra engine demonstration or regression run requested. Changed-production parsing at the corrected published head remains pending."
+    "verification": "Lead requested and source-reviewed this one-predicate correction; corrected-source changed-production parsing passed in run42151679219 atb78030ba. No extra diagnostic demonstration or regression run requested."
+  },
+  "corrected_source_parse": {
+    "state": "PASS",
+    "commit": "b78030ba3d5817b888f487a553d80b3ccc27b2ce",
+    "run_id": 42151679219,
+    "job_id": 127676150340,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151679219",
+    "result": "Changed production script parsing succeeded; optional gameplay demonstration skipped. Parsing is not gameplay acceptance."
   }
 }
