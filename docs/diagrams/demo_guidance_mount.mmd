@@ -1,0 +1,19 @@
+flowchart TD
+    Main[Actual main scene] --> Session[Existing shared GameSession]
+    Main --> Shell[One command shell]
+    Shell --> Help[Optional fixed heading and Close]
+    Help --> Scroll[Bounded scroll body]
+    Scroll --> Guide[One scene-owned guidance panel]
+    Session --> Bind[Bind once; clear on replacement]
+    Bind --> Guide
+    Events[Committed state / logistics / visibility] --> Dirty[Dirty; finite deferred visible read]
+    Dirty --> Guide
+    Hidden[Closed help] --> Defer[Dirty only; zero guide reads]
+    Guide --> Action[One navigation String]
+    Action --> Existing[Existing main deferred destination]
+    Existing --> Preserve[Retain selected context and unsubmitted drafts]
+    Existing --> Train[Training primary instructor hire control]
+    Close[Close / reopen] --> Help
+    Replace[Simulation replacement / exit] --> Guard[Clear stale action; current session; disconnect on exit]
+    Guard --> Guide
+    Owners[Physical services retain goods / people / claims / intent] -. Read only .-> Guide

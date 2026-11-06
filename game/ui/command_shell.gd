@@ -6,10 +6,12 @@ signal new_session_requested
 signal modal_visibility_changed(visible: bool)
 
 const UI = preload("res://game/ui/ui_kit.gd")
+const DemoGuidancePanel = preload("res://game/ui/demo_guidance_panel.gd")
 const NAVIGATION := [["rear", "Rear base"], ["Build", "Build"], ["Workers/Jobs", "Workers / Jobs"], ["Supplies", "Supplies"], ["Work", "Production"], ["Train", "Training"], ["Vehicles", "Vehicles"], ["ArmyNeeds", "Army needs"]]
 const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "ArmyNeeds":"ARMY NEEDS", "Battlefield": "BATTLEFIELD", "Haul": "HAULING", "Info": "INSPECTION", "Train": "TRAINING", "Vehicles": "VEHICLES", "ArmySupply": "FORWARD SUPPLY / ADVANCED", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
 const MORE_ACTIONS := ["Haul", "Info", "Train", "Vehicles", "ArmySupply", "Dispatch", "Diagnostics"]
 
+var demo_guidance_panel: VBoxContainer
 var content_host: Control
 var _navigation_buttons: Dictionary = {}
 var _speed_buttons: Dictionary = {}
@@ -157,13 +159,25 @@ func _build_help(parent: Node) -> void:
 	parent.add_child(_help)
 	var layout := UI.column(_help)
 	var heading := UI.row(layout)
-	UI.label(heading, "Build a working supply line", 18).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UI.label(heading, "Getting started", 18).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	UI.button(heading, "Close", func() -> void: _help.hide())
-	UI.label(layout, "Hire workers through Supplies, then start 1× for their arrival. Request receiving and hauling workers. Build a Materials Plant, assign builders and then operators, and buy Metal and Timber. A sufficiently high output target requests new Building Materials for expansion.", 14, UI.INK, true)
-	UI.label(layout, "Build Munitions, Vehicle Works, a Vehicle Park, Training and a Logistics Centre. Haulers bring available Building Materials and production inputs automatically. In Vehicle Works select Supply truck, apply an output target of1 and accept the vehicle order.", 14, UI.INK, true)
-	UI.label(layout, "Training lets you hire the first instructor for120 requisition. After arrival, assign an instructor to the built school. Train a worker in Basic infantry and then Vehicle crew. Vehicles provides separate choices for seating that Driver and using an available worker to carry purchased Fuel; finish both before driving to parking.", 14, UI.INK, true)
-	UI.label(layout, "Army needs shows actual rifle-ammunition demand and separate rear, HQ and forward stocks. Automatic requests follow military shortages. Build and staff a Logistics Centre, manufacture a transport truck and seat a trained Driver for rear-to-HQ freight. Forward supply uses a separate military truck and Engineer couriers. Cancelled automatic supply stays held until you explicitly resume it.", 14, UI.INK, true)
-	UI.label(layout, "WASD: move · R: rotate placement · Esc: cancel placement. Rear and Battlefield share one session.", 12, UI.MUTED, true)
+	# Bound the outer help height even with a long reason and expanded overview.
+	# Its heading stays outside the scroll; destination controls keep their space.
+	var scroll := ScrollContainer.new()
+	scroll.name = "GuidanceScroll"
+	scroll.custom_minimum_size.y = 180
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	layout.add_child(scroll)
+	demo_guidance_panel = DemoGuidancePanel.new()
+	demo_guidance_panel.name = "DemoGuidance"
+	demo_guidance_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(demo_guidance_panel)
+	demo_guidance_panel.action_requested.connect(_guidance_action)
+
+func _guidance_action(action: String) -> void:
+	# Keep existing selections and drafts; this link only opens a destination.
+	navigation_requested.emit(action)
 
 func _build_confirmation() -> void:
 	_confirmation = ConfirmationDialog.new()

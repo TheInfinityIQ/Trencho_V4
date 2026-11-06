@@ -1,0 +1,16 @@
+flowchart TD
+    Open[Player opens existing Getting started] --> Panel[Scene-owned DemoGuidancePanel]
+    Session[Current GameSession committed state / replacement] --> Dirty[Mark dirty and queue one deferred visible read]
+    Logistics[Current automatic logistics changed] --> Dirty
+    Open --> Dirty
+    Dirty --> Reader[Read current authoritative facts]
+    Reader --> Factory[Reuse FactoryPlan manufacture history]
+    Reader --> School[Rear people qualifications and current course rows]
+    Reader --> Transport[Live registered trucks, crew readiness, active manifests]
+    Reader --> Army[Reuse ArmySupplyView stock, demand and receipt distinctions]
+    Reader --> Next[Explain one current preparation action]
+    Next --> Navigate[Emit existing navigation String only]
+    Navigate --> Controls[Existing Build / Production / Supplies / Training / Vehicles / Army needs]
+    Hidden[Hidden or unbound] --> Wait[Keep dirty; no polling or model read]
+    Replacement[Replace or bind session] --> Clear[Disconnect old owners; clear stale action]
+    Clear --> Dirty
