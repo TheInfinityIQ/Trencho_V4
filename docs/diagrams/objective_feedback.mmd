@@ -12,6 +12,7 @@ flowchart TD
   I --> Q
   A --> Q
   Q --> F[Read-only feedback: current state, rate, earned, latest change]
-  F --> V[Existing deferred BattlefieldView inspector refresh]
+  F --> E[Contest ended says nothing about which side remains]
+  E --> V[Existing deferred BattlefieldView inspector refresh]
   B[Bind replacement simulation] --> Q
   N[No new command / timer / polling / history log] -. contract .-> V

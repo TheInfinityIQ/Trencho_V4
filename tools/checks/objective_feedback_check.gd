@@ -58,15 +58,23 @@ func _run() -> void:
 	if not _move_people(rear,red,str(armies["army-red"].staging)): return
 	rear.advance_time(0)
 	var cleared: Dictionary = rear.objectives.inspect(objective_id)
-	if not _require(cleared.state == "Controlled" and cleared.income_rate == 1.5 and cleared.latest_change.from_state == "Contested" and cleared.latest_change.income_from == 0 and cleared.latest_change.income_to == 1.5,"Leaving real opposing people clears contest and resumes eligibility."): return
+	if not _require(cleared.state == "Controlled" and cleared.income_rate == 1.5 and not cleared.blue.is_empty() and cleared.red.is_empty() and cleared.capture_rate == 0 and cleared.latest_change.from_state == "Contested" and cleared.latest_change.income_from == 0 and cleared.latest_change.income_to == 1.5,"Leaving real opposing people clears contest and resumes eligibility."): return
 	view._refresh()
-	if not _require(view._inspector.text.contains("Contest cleared") and view._inspector.text.contains("Resource income eligible again"),"Inspector keeps the cleared contest understandable."): return
+	if not _require(view._inspector.text.contains("Contest ended") and view._inspector.text.contains("Resource income eligible again") and not view._inspector.text.contains("no opposing capture presence"),"Red departure ends contest without claiming enemy clearance."): return
 	rear.advance_time(4)
 	if not _require(rear.objectives.inspect(objective_id).income == 12,"Resumed eligible control credits a further six requisition."): return
 	if not _move_people(rear,red,objective_id): return
+	rear.advance_time(0)
+	if not _require(rear.objectives.inspect(objective_id).state == "Contested","Returning actual Red presence must start another contest before Blue leaves."): return
 	if not _move_people(rear,blue,str(armies[rear.PLAYER].staging)): return
 	rear.advance_time(0)
-	rear.advance_time(15)
+	var blue_left: Dictionary = rear.objectives.inspect(objective_id)
+	if not _require(blue_left.owner == rear.PLAYER and blue_left.state == "Controlled" and blue_left.blue.is_empty() and not blue_left.red.is_empty() and blue_left.capture_rate == -4 and blue_left.income_rate == 1.5 and blue_left.latest_change.from_state == "Contested","Blue departure ends contest while Red continues neutralizing the still-friendly objective under existing income rules."): return
+	view._refresh()
+	if not _require(view._inspector.text.contains("Contest ended") and not view._inspector.text.contains("no opposing capture presence") and not view._inspector.text.contains("Contest cleared") and view._inspector.text.contains("Current resource income: 1.5"),"Blue departure cannot claim Red capture presence cleared or stop pre-neutralization income early."): return
+	rear.advance_time(1)
+	if not _require(rear.objectives.inspect(objective_id).control == 56 and rear.objectives.inspect(objective_id).income == 13.5,"Red capture work continues while unchanged friendly ownership credits its final pre-neutralization income."): return
+	rear.advance_time(14)
 	var lost: Dictionary = rear.objectives.inspect(objective_id)
 	if not _require(lost.owner == "" and lost.control == 0 and lost.income_rate == 0 and lost.latest_change.from_owner == rear.PLAYER and lost.latest_change.to_owner == "","Existing opposing capture work removes friendly ownership at the real zero-control boundary."): return
 	view._refresh()
@@ -82,12 +90,34 @@ func _run() -> void:
 	for _repeat in 3: view._refresh()
 	if not _require(rear.ledger.snapshot(false) == physical_before and rear.objectives.snapshot() == objectives_before and rear.receiving.snapshot() == money_before,"Detached nested transition and repeated UI reads preserve physical, objective and money authority."): return
 	if not _require(rear.ledger.inspect_entity("start-blue-hq-E02",{},false).quantity == 6000,"Authored6000 HQ rifle rounds remain untouched."): return
+	# Repeat both departures on neutral ground using only the same authored
+	# people and zero existing control. No owner, credit or absence is invented.
+	if not _move_people(rear,blue,objective_id): return
+	rear.advance_time(0)
+	if not _require(rear.objectives.inspect(objective_id).state == "Contested" and rear.objectives.inspect(objective_id).owner.is_empty(),"Both real sides contest the now-neutral objective."): return
+	if not _move_people(rear,red,str(armies["army-red"].staging)): return
+	rear.advance_time(0)
+	var neutral_blue: Dictionary = rear.objectives.inspect(objective_id)
+	view._refresh()
+	if not _require(neutral_blue.state == "Neutral" and neutral_blue.owner.is_empty() and neutral_blue.capture_rate == 4 and neutral_blue.income_rate == 0 and view._inspector.text.contains("Contest ended") and not view._inspector.text.contains("no opposing capture presence"),"Red departure leaves actual Blue capture work on neutral ground without granting ownership, income or claimed clearance."): return
+	rear.advance_time(1)
+	if not _require(rear.objectives.inspect(objective_id).control == 4,"Remaining Blue people earn actual neutral capture progress."): return
+	if not _move_people(rear,red,objective_id): return
+	rear.advance_time(0)
+	if not _require(rear.objectives.inspect(objective_id).state == "Contested","Red return must actually contest neutral progress before Blue leaves."): return
+	if not _move_people(rear,blue,str(armies[rear.PLAYER].staging)): return
+	rear.advance_time(0)
+	var neutral_red: Dictionary = rear.objectives.inspect(objective_id)
+	view._refresh()
+	if not _require(neutral_red.state == "Neutral" and neutral_red.owner.is_empty() and neutral_red.capture_rate == -4 and neutral_red.income_rate == 0 and view._inspector.text.contains("Contest ended") and not view._inspector.text.contains("no opposing capture presence") and not view._inspector.text.contains("Contest cleared"),"Blue departure leaves real Red capture work on neutral ground without a false clearance claim."): return
+	rear.advance_time(1)
+	if not _require(rear.objectives.inspect(objective_id).control == 0,"Remaining Red people reverse actual neutral capture progress."): return
 	var replacement: RefCounted = Farmland.create_empty_field()
 	view.bind(replacement)
 	view._refresh()
-	if not _require(replacement.rear.objectives.inspect(objective_id).get("latest_change",{}).is_empty() and not view._inspector.text.contains("Friendly control lost"),"Binding a new simulation cannot retain the previous objective transition."): return
+	if not _require(replacement.rear.objectives.inspect(objective_id).get("latest_change",{}).is_empty() and not view._inspector.text.contains("Friendly control lost") and not view._inspector.text.contains("Contest ended"),"Binding a new simulation cannot retain the previous objective transition."): return
 	if not _require(base.audit().is_empty() and replacement.audit().is_empty(),"Arranged transitions and inspection preserve actual identities and accounting."): return
 	view.queue_free()
 	for _frame in 2: await process_frame
-	print(JSON.stringify({"result":"PASS","checks":checks,"scope":"Arranged authored-force capture/contest/clear/loss, actual credit timing, headless real inspector text, duplicate settlement, detached reads and simulation replacement. No ordinary combat, supply return/reuse, second replenishment, native-input, visible rendering or FPS certification."}))
+	print(JSON.stringify({"result":"PASS","checks":checks,"scope":"Arranged authored-force capture/contest/both departures/loss including neutral ground, actual credit timing, headless real inspector text, duplicate settlement, detached reads and simulation replacement. No ordinary combat, supply return/reuse, second replenishment, native-input, visible rendering or FPS certification."}))
 	quit(0)

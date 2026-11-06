@@ -5,7 +5,7 @@
   "base_commit": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
   "engine": "Godot4.7.2.stable.steam.ed1daf0bf",
   "python": "C:/Users/dawso/AppData/Local/Python/pythoncore-3.13-64/python.exe",
-  "checker_sha256": "195e42a7718bda6e685144a4cc33311abf17fec02b5dac434737ad4612aaead4",
+  "checker_sha256": "68511a061e2931a54e104682aae630395bf2f0ba09ab6f30bc754544e804968d",
   "baseline": {
     "exit_code": 1,
     "reason": "Capture must retain the actual latest transition for player feedback.",
@@ -23,9 +23,10 @@
         "res://tools/checks/objective_feedback_check.gd"
       ],
       "exit_code": 0,
-      "checks": 58,
+      "checks": 100,
       "stderr": "empty",
-      "result": "Actual capture before credit; six credited in four seconds; real contest stops additional objective credit; real removal clears contest/resumes eligibility and credit; red capture work reaches zero and removes friendly ownership; inspector text; unchanged repeated settle; nested detached reads and UI purity; replacement binding; untouched6000HQE02; audits clean."
+      "result": "v3: actual capture before credit; six credited in four seconds; contest stops additional credit; Red leaves while Blue remains; Blue leaves while Red remains with continuing negative capture work and unchanged1.5/s income until neutralization; both departures repeated on neutral ground with no income; neutral Contest ended inspector text makes no clearance claim; unchanged settlement, nested detached reads, replacement, untouched6000HQE02 and audits.",
+      "contract": "v3"
     },
     {
       "argv": [
@@ -40,7 +41,8 @@
       "checks": 119,
       "failures": 0,
       "stderr": "empty",
-      "result": "Existing transport/dismount, capture boundary, control decay/reversal, contested income, actual eligibility and nonresource income regression."
+      "result": "Existing transport/dismount, capture boundary, control decay/reversal, contested income, actual eligibility and nonresource income regression.",
+      "rerun": "v3 wording correction:119checks0failures; no change to capture or income rules."
     }
   ],
   "scope_limits": [
@@ -52,18 +54,18 @@
     "No#92closure or whole-demo completion claim."
   ],
   "review": {
-    "lead_technical": "pending exact PR/head",
-    "game_designer": "pending exact PR/head",
-    "ui_ux": "pre-implementation guidance relayed by lead; no runtime or approval claim"
+    "lead_technical": "Prior head review superseded; fresh exact PR/head review pending.",
+    "game_designer": "Changes requested at05d6a251; neutral wording fix and strengthened evidence await fresh exact-head review.",
+    "ui_ux": "Pre-implementation text guidance retained; exact Designer review clarified asymmetric contest departure. No runtime or approval claim."
   },
   "handoff": {
-    "technical_review": "Inspect current state/rate vs latest historical transition, one fact per objective, source-read purity, unchanged settlement and credit authority.",
+    "technical_review": "Inspect neutral Contest ended message for either departure, current signed capture/income facts, and preserved owner-written transition/read purity. Fresh exact-head review required.",
     "ordinary_review_steps": [
       "Open Battlefield and click a resource objective; read its name/type, owner/state and control.",
       "Observe actual contest/capture/loss when it arises during normal play; current rate and credited-this-session stay separate.",
       "Switch objective or simulation; prior selection/session cannot supply a transition for the new one."
     ],
-    "next_task": "Lead technical and designated Game Designer review at exact draft PR head; keep larger second replenishment acceptance open."
+    "next_task": "Fresh lead technical and designated Game Designer review on updated draftPR93 exact head; keep larger second replenishment acceptance open."
   },
   "maintenance": {
     "system_map": "PASS;570 files,3148 functions;0 pending purpose reviews",
@@ -72,5 +74,18 @@
     "tool_regression": "tools/tests/test_ui_function_map.py:5 tests passed",
     "whitespace": "git diff --check:PASS",
     "dependency_note": "Used existing pinned primary .tools/gdscript-parser read-only through PYTHONPATH. Initial absent worktree-local parser and default Git read permission failures were corrected without changing source/check strictness."
+  },
+  "revision_history": [
+    {
+      "head": "05d6a2516d16656d8943c54ff9be223ea75e1093",
+      "prior_checker_checks": 58,
+      "review_result": "Designer/lead requested changes: universal no-opposing-capture-presence wording was false when Blue left and Red remained. Prior checker only checked opposing departure, so its passing result did not cover the asymmetric departure. Previous checker and contract preserved in logs/objective-feedback/acceptance-v2.*."
+    }
+  ],
+  "baseline_v3": {
+    "exit_code": 1,
+    "reason": "Red departure ends contest without claiming enemy clearance.",
+    "log": "logs/objective-feedback/v3-baseline.stderr.txt",
+    "contract": "v3 frozen before the production wording change; both asymmetric departures from actual contest and neutral-ground cases added."
   }
 }

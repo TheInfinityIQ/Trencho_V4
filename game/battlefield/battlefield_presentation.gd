@@ -75,7 +75,7 @@ static func objective_feedback(objective: Dictionary, player: String = "army-blu
 		elif str(change.to_owner).is_empty(): detail = ownership_label(str(change.from_owner),player)+" control lost"
 		else: detail = ownership_label(str(change.to_owner),player)+" control gained"
 	elif change.to_state == "Contested": detail = "Contested: both armies have eligible capture presence"
-	elif change.from_state == "Contested": detail = "Contest cleared: no opposing capture presence"
+	elif change.from_state == "Contested": detail = "Contest ended"
 	else: detail = str(change.to_state)
 	if float(change.income_from) > 0 and float(change.income_to) == 0:
 		detail += ". Resource income suspended" if change.to_state == "Contested" else ". Resource income ended"

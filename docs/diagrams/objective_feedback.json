@@ -1,5 +1,5 @@
 {
-  "status": "implemented_component_verified_reviews_pending",
+  "status": "v3_component_verified_fresh_exact_head_reviews_pending",
   "objective": "Expose actual objective capture, contest, cleared contest and loss with current income eligibility separate from already credited requisition.",
   "workspace": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_dev_transport",
   "branch": "codex/dev-troop-transport",
@@ -25,7 +25,8 @@
     "Unchanged repeated settlement creates no new transition; detached inspection and repeated feedback/UI reads cannot mutate objective, physical or currency state.",
     "Replacing the inspected simulation cannot show the old objective transition.",
     "The 6000 authored HQ E02 rounds and existing capture/income rules stay unchanged.",
-    "Required living map and UI map strict checks pass with all changed/new functions examined and purposes reviewed."
+    "Required living map and UI map strict checks pass with all changed/new functions examined and purposes reviewed.",
+    "After either side leaves a real contest, say only Contest ended. Verify Blue leaves while Red remains and Red leaves while Blue remains, on friendly/formerly-friendly and neutral ground, with unchanged signed capture work and pre-neutralization income. Never infer all opposing capture presence or enemy forces are gone."
   ],
   "authoritative_state": "ObjectiveService alone owns control, owner, state, income and one latest_change dictionary per registered objective; Receiving owns credited money. Existing ownership events remain unchanged.",
   "commands_events": "Existing physical ledger changes and rear event-boundary settlement call ObjectiveService.settle. Only actual owner/state transitions replace latest_change. Presentation reads one detached objective inspect result.",
@@ -80,8 +81,8 @@
     ]
   ],
   "limits": "Arranged existing-force objective component and headless inspector text only; no ordinary combat outcome, supply return/reuse, second shipment, native input, visible rendering or 60 FPS certification. #92 remains open. Lead technical and exact-head Game Designer PR reviews remain required.",
-  "acceptance_revision": "v2 before baseline execution: UI/UX requested precise credited-income label, clear opposition-presence wording and distinction between game pause and income suspension. Preserved v1 in logs/objective-feedback/acceptance-v1.*. Physical acceptance unchanged.",
-  "checker_sha256": "195e42a7718bda6e685144a4cc33311abf17fec02b5dac434737ad4612aaead4",
-  "implementation": "Each objective stores one latest_change on actual owner/state transition only. A single existing eligibility rule supplies advance credit, inspect rate and transition rates. Selected-objective feedback receives the detached inspect result and adds no simulation query/callback.",
-  "consultation": "Lead relayed Game Designer scope and UI/UX text guidance before implementation. Their exact PR-head approval remains pending. UI names objective/type, separates capture cause, uses credited-this-session label and no-opposing-capture-presence wording; no hidden force/intent query added."
+  "acceptance_revision": "v3 after exact05d6a251 Game Designer/lead review: preserve v2 checker/contract in logs/objective-feedback/acceptance-v2.*. Add both departures from a real Contested state on formerly-friendly and neutral ground; no false enemy-clearance claim; current signed capture work and existing income eligibility remain authoritative. No active experiment is being edited.",
+  "checker_sha256": "68511a061e2931a54e104682aae630395bf2f0ba09ab6f30bc754544e804968d",
+  "implementation": "Each objective stores one latest_change on actual owner/state transition only. A single existing eligibility rule supplies advance credit, inspect rate and transition rates. Selected-objective feedback receives the detached inspect result and adds no simulation query/callback. Any exit from Contested says Contest ended; it does not infer which side remains.",
+  "consultation": "Exact05d6a251 Designer/lead review found universal no-opposing-capture-presence wording false when Blue leaves and Red remains. Revised to neutral Contest ended; fresh exact-head reviews required. Original scope/credit labels remain."
 }
