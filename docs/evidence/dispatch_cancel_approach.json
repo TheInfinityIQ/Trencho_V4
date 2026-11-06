@@ -1,0 +1,73 @@
+{
+  "objective": "Fix the independently reproduced Dispatch initial-approach cancellation deadlock",
+  "result": "bounded_physical_component_verified",
+  "branch": "codex/dispatch-cancel-approach",
+  "base_commit": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "engine": "Godot4.7.2.stable.steam.ed1daf0bf",
+  "execution": "Finite owned headless process trees; no desktop focus or OS input.",
+  "baseline": {
+    "exit_code": 1,
+    "observed": {
+      "manifest": "Cancelling",
+      "vehicle": "Dispatch Approach",
+      "holder": "vehicle-lane",
+      "task": {},
+      "blocker": ""
+    },
+    "elapsed_component_seconds_after_cancel": 200,
+    "failure": "Initial approach cancellation must finish the same hull's physical safe parking and release its lane/manifest commitment.",
+    "source": "logs/dispatch-cancel-approach/baseline.stdout.txt and .stderr.txt",
+    "independent": "Reproduced on the specified8cafd source; no Army feedback Reader dependency copied from peer reproduction."
+  },
+  "cause": "Existing _finish_route consumes cancel_after_route, but cancel overwrote Approaching Dispatch before the route timer/advance owner could reach that arrival. This is an unreachable existing handoff, not a missing second route owner.",
+  "changes": "Retain captured approach state/route/deadline after once-only commitment withdrawal. Arrival hands off to existing physical cancellation handling and home return. Reject repeated cancel and route/mode/field-gun edits after cancel_released.",
+  "checks": [
+    {
+      "argv": [
+        "godot",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "res://tools/checks/dispatch_cancel_approach_check.gd"
+      ],
+      "exit_code": 0,
+      "checks": 39,
+      "stderr": "empty",
+      "scope": "Immediate no-stock approach cancellation returns real same hull/crew to legal home slot with actual fuel burn; midway actual20-round reservation and Fleet passenger admission cancel preserves route/deadline, releases only own source/admission claims, rejects repeated/late edits including real uncommitted gun; later physical same-hull20-round loading/departure/HQ receipt/return; departed cancel rejects; audits clean."
+    },
+    {
+      "argv": [
+        "godot",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "res://game/dispatch/tests/dispatch_regression.gd"
+      ],
+      "exit_code": 0,
+      "checks": 451,
+      "failures": 0,
+      "stderr": "empty",
+      "scope": "Retained Dispatch passenger handoff, cargo/gun loading and cancellation, driver-only Fleet transfer, exact unloading, HQ berth wait, safety return and damaged transit guards."
+    }
+  ],
+  "fixture_disclosure": "Disconnected Base.new(true), matching retained Dispatch fixture pattern. Recipe ingredients, fuel, a P08 Driver, a passenger and20 rifle rounds are explicitly supplied to the component. Actual owners still manufacture, staff, walk/carry/refuel, drive, reserve, unload and return. This is not an ordinary empty-field purchase/production or genuine Army demand demonstration.",
+  "integration": "Base intentionally precedes lead primary truck work. Lead rear.walk_path replacements in the same Dispatch file must be preserved during integration; this slice changes no path-provider calls and never edits primary or PR93 worktree.",
+  "hand_maintained_ui_anchors": "Reviewed existing Army-request/Dispatch admission/departure workflow anchors. Their named calls and cancellation meaning remain valid; regeneration updates shifted source lines. No UI/signal owner/control added.",
+  "limits": [
+    "No ordinary empty-field or genuine automatic Army-need acceptance.",
+    "No native input, visible rendering, frame/performance or60FPS certification.",
+    "Existing fuel-empty, blocked-route and destruction/recovery paths retain their own stop/custody owners; this focused fixture does not revalidate every hazard during pending cancellation.",
+    "No new polling, scheduler, automatic demand recreation, physical route replacement, teleport, claim deletion or crew/cargo grant in production.",
+    "No merge or self-approval."
+  ],
+  "review": {
+    "lead_technical": "pending exact new draft PR/head",
+    "game_designer": "pending exact new draft PR/head"
+  },
+  "handoff": {
+    "next_task": "Lead technical and designated Game Designer exact-head review; integrate with lead existing rear.walk_path substitutions and regenerate combined maps.",
+    "ordinary_steps": "Cancel an accepted supply vehicle while it approaches Dispatch. The current approach finishes, physical cancellation work returns the same truck/crew to its held home slot, and later delivery can use it again. Departed trips retain their existing cancellation rejection."
+  }
+}
