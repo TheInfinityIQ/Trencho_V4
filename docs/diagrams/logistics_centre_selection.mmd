@@ -1,0 +1,13 @@
+flowchart TD
+    Request[Existing delivery request wake] --> Bound{Already bound to a manifest?}
+    Bound -->|yes| Captured[Unchanged captured site / berth / cargo / claims / return / cancellation]
+    Bound -->|no| Intent[Existing cancel / complete / paused guards]
+    Intent --> Candidates[Dispatch collects accessible registered sites with positive requested target in existing order]
+    Candidates --> Read[One bounded pass: current rear actor person status once]
+    Read --> Rule[Shared original Dispatch handler predicate in original order]
+    Rule --> Duties[Ephemeral eligible duty facts only]
+    Duties --> Site[First configured candidate with a real eligible handler]
+    Site -->|none| Wait[Truthful wait for an idle on-duty handler free of carry / pending reassignment]
+    Site -->|usable| Stock[Existing available goods and parked qualified-hull selection]
+    Stock --> Accept[Existing Dispatch.accept revalidates physical admission and captures site]
+    Accept --> Captured
