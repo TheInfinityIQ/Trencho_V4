@@ -20,13 +20,13 @@
     ]},
     ".github/pull_request_template.md": {"role":"documentation","system":".github","sha256":"28ff275971338bfcffde53921e9557ad6b15a36e75c74e4511bdebc554e609e9","lines":15,"purpose":"Document pull request template.","functions":[
     ]},
-    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"4faa4cda8de8418502dd953d9e2abd68c8314ca003eb595286430462f9691105","lines":120,"purpose":"Configure GitHub automation: validate.","functions":[
+    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"3fd37e8bcd656194c82399ec6f6d4fcc4ee47c7dd4e021bf082c338ec29a8067","lines":113,"purpose":"Configure GitHub automation: validate.","functions":[
     ]},
     ".gitignore": {"role":"configuration","system":"project","sha256":"568c3e6e224bded04a4d8967b46a1e4b3777adec490c0f3812cc6b46012b072c","lines":28,"purpose":"Supply .gitignore project settings or repository metadata.","functions":[
     ]},
     ".godot-version": {"role":"configuration","system":"project","sha256":"964bf9b089d1e1c9474f4baab1c909ee2affc1fea9464eceaf5d3b8d2ce555f4","lines":1,"purpose":"Supply .godot-version project settings or repository metadata.","functions":[
     ]},
-    "AGENTS.md": {"role":"documentation","system":"project","sha256":"49826d93339935f793a4587a4e86467c80587d701a7f4792f6ce64bef5c1070d","lines":115,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
+    "AGENTS.md": {"role":"documentation","system":"project","sha256":"0340b9baa45a3a6b7178237e0c38fb63a516c9fe9c62d79116fc23bbdeee67d0","lines":32,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
     ]},
     "Open Trencho (Recovery).cmd": {"role":"launcher","system":"project","sha256":"127ade169d35c784998aa717d61f124fba27a80a96f03789157bbcc1232a5040","lines":11,"purpose":"Provide a double-click Windows entry point: setlocal set \"TRENCHO_GODOT=%ProgramFiles(x86)%\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe\" if not exist \"%TRENCHO_GODOT%\" ( echo Godot….","functions":[
     ]},
@@ -58,7 +58,7 @@
     ]},
     "docs/connected_rear_base.md": {"role":"documentation","system":"docs","sha256":"3b3b4ab06e608763f995b0e9e07deca06d526227cb0a800a52e2411a49f78029","lines":24,"purpose":"Document Connected rear-base integration.","functions":[
     ]},
-    "docs/current_change_verification.md": {"role":"documentation","system":"docs","sha256":"f28b9c2a61c447416972e72375e5af4ce511e188198fd2bbe8d35cdb38c9bb58","lines":43,"purpose":"Document Current-change verification.","functions":[
+    "docs/current_change_verification.md": {"role":"documentation","system":"docs","sha256":"8dfc6e064cf952c5bf4fd4681917ddb73f92b9e2dda4ec3cad0492728f75d45b","lines":19,"purpose":"Document Current-change verification.","functions":[
     ]},
     "docs/d01_measured_options.md": {"role":"documentation","system":"docs","sha256":"52734046c77dcc17e90b82a5780a4dc4df1237fb78926dab76ae64d240ea8444","lines":88,"purpose":"Document D01 measured presentation options.","functions":[
     ]},
