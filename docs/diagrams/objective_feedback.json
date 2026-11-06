@@ -1,0 +1,87 @@
+{
+  "status": "implemented_component_verified_reviews_pending",
+  "objective": "Expose actual objective capture, contest, cleared contest and loss with current income eligibility separate from already credited requisition.",
+  "workspace": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_dev_transport",
+  "branch": "codex/dev-troop-transport",
+  "base_commit": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "owner": "operations_developer; sole bounded execution owner; no nested workers or continuation loops",
+  "scope": [
+    "game/objectives/objective_service.gd",
+    "game/battlefield/battlefield_presentation.gd",
+    "game/battlefield/battlefield_view.gd",
+    "tools/ui_function_map.py battlefield workflow entry",
+    "tools/checks/objective_feedback_check.gd",
+    "docs/diagrams/objective_feedback.json",
+    "docs/diagrams/objective_feedback.mmd",
+    "docs/evidence/objective_feedback.json",
+    "docs/system_map.json",
+    "docs/ui_function_map.html",
+    "game/diagnostics/tests/gdunit/fixtures/ui_button_contracts.json"
+  ],
+  "acceptance": [
+    "Existing authored armed people physically capture, contest, clear contest and remove friendly ownership through actual objective settlement; no new people, ammunition, grants, forced shots or result assignment.",
+    "Inspection and the real BattlefieldView inspector show current state, current income rate, credited requisition for that objective and the latest actual owner/state transition.",
+    "Contest stops objective credit, clearing it resumes credit, and friendly ownership loss stops credit under unchanged existing timing and income rules.",
+    "Unchanged repeated settlement creates no new transition; detached inspection and repeated feedback/UI reads cannot mutate objective, physical or currency state.",
+    "Replacing the inspected simulation cannot show the old objective transition.",
+    "The 6000 authored HQ E02 rounds and existing capture/income rules stay unchanged.",
+    "Required living map and UI map strict checks pass with all changed/new functions examined and purposes reviewed."
+  ],
+  "authoritative_state": "ObjectiveService alone owns control, owner, state, income and one latest_change dictionary per registered objective; Receiving owns credited money. Existing ownership events remain unchanged.",
+  "commands_events": "Existing physical ledger changes and rear event-boundary settlement call ObjectiveService.settle. Only actual owner/state transitions replace latest_change. Presentation reads one detached objective inspect result.",
+  "timed_work": "No new timer, polling callback or scheduler. Existing next_boundary/advance_to integrate control and credit; existing battlefield refresh subscriptions and deferred coalescing are reused.",
+  "cancellation_replacement_late_events": "No new gameplay command or cancellation owner. Repeated settlement is idempotent for feedback. No asynchronous transition event can arrive late. A replacement simulation supplies its own objective registry; bind refresh reads it fresh. Latest_change is bounded and cannot override current state/rate.",
+  "failure_paths": "Unregistered objective yields no feedback; absent latest change says no control change yet. Existing eligibility, physical movement, morale, capture and income failures remain authoritative.",
+  "safeguards": [
+    "Use one selected detached objective read, no new broad world snapshots.",
+    "Separate actual credited money from rate eligibility and transition facts.",
+    "Do not treat arranged transitions, source reachability or a passing map as an ordinary connected second replenishment.",
+    "No added lifecycle callbacks or retained session references; existing view binding and coalescing remain."
+  ],
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html",
+      "application": "Dictionary is reference-based; inspect already duplicates deeply, so the nested latest_change remains detached from authority."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_object.html#class-object-method-call-deferred",
+      "application": "Reuse the existing finite deferred refresh; do not introduce an additional timer/process callback."
+    },
+    "docs/engineering_lessons.json",
+    "docs/system_overhaul_plan.json objectives/battlefield P07 observations; proposed migrations are outside this task",
+    "docs/overhaul_inventory.json objectives and battlefield entries; source anchors rechecked"
+  ],
+  "checks": [
+    [
+      "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_dev_transport",
+      "--script",
+      "res://tools/checks/objective_feedback_check.gd"
+    ],
+    [
+      "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/godot.windows.opt.tools.64.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_dev_transport",
+      "--script",
+      "res://game/objectives/tests/objective_regression.gd"
+    ],
+    [
+      "python",
+      "tools/system_map.py",
+      "--check"
+    ],
+    [
+      "python",
+      "tools/ui_function_map.py",
+      "--check"
+    ]
+  ],
+  "limits": "Arranged existing-force objective component and headless inspector text only; no ordinary combat outcome, supply return/reuse, second shipment, native input, visible rendering or 60 FPS certification. #92 remains open. Lead technical and exact-head Game Designer PR reviews remain required.",
+  "acceptance_revision": "v2 before baseline execution: UI/UX requested precise credited-income label, clear opposition-presence wording and distinction between game pause and income suspension. Preserved v1 in logs/objective-feedback/acceptance-v1.*. Physical acceptance unchanged.",
+  "checker_sha256": "195e42a7718bda6e685144a4cc33311abf17fec02b5dac434737ad4612aaead4",
+  "implementation": "Each objective stores one latest_change on actual owner/state transition only. A single existing eligibility rule supplies advance credit, inspect rate and transition rates. Selected-objective feedback receives the detached inspect result and adds no simulation query/callback.",
+  "consultation": "Lead relayed Game Designer scope and UI/UX text guidance before implementation. Their exact PR-head approval remains pending. UI names objective/type, separates capture cause, uses credited-this-session label and no-opposing-capture-presence wording; no hidden force/intent query added."
+}

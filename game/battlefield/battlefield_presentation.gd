@@ -53,3 +53,33 @@ static func ownership_colour(owner: String, player: String = "army-blue") -> Col
 		"Friendly": return Color("74c8ed")
 		"Enemy": return Color("e48378")
 	return Color("f0c565")
+
+static func objective_feedback(objective: Dictionary, player: String = "army-blue") -> String:
+	if objective.is_empty(): return ""
+	var lines: Array[String] = ["Owner: %s · State: %s" % [ownership_label(str(objective.owner),player),objective.state],
+		"Control: %.1f / 60" % float(objective.control)]
+	var capture_reason: String = str(objective.get("blocked_reason",""))
+	if not capture_reason.is_empty(): lines.append("Capture: "+capture_reason)
+	if objective.kind == "Resource":
+		lines.append("Current resource income: %.1f requisition per simulation second" % float(objective.income_rate))
+		lines.append("Credited by this objective this session: %.1f requisition" % float(objective.income))
+	else: lines.append("No requisition income from this objective type.")
+	var change: Dictionary = objective.get("latest_change",{})
+	if change.is_empty():
+		lines.append("Latest change: No control change yet.")
+		return "\n".join(lines)
+	var detail := ""
+	if change.from_owner != change.to_owner:
+		if change.to_owner == player: detail = "Friendly control gained"
+		elif change.from_owner == player: detail = "Friendly control lost"
+		elif str(change.to_owner).is_empty(): detail = ownership_label(str(change.from_owner),player)+" control lost"
+		else: detail = ownership_label(str(change.to_owner),player)+" control gained"
+	elif change.to_state == "Contested": detail = "Contested: both armies have eligible capture presence"
+	elif change.from_state == "Contested": detail = "Contest cleared: no opposing capture presence"
+	else: detail = str(change.to_state)
+	if float(change.income_from) > 0 and float(change.income_to) == 0:
+		detail += ". Resource income suspended" if change.to_state == "Contested" else ". Resource income ended"
+	elif float(change.income_from) == 0 and float(change.income_to) > 0:
+		detail += ". Resource income eligible again" if change.from_state == "Contested" else ". Resource income eligible"
+	lines.append("Latest at %.1f s: %s." % [float(change.at),detail])
+	return "\n".join(lines)

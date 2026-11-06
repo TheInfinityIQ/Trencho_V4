@@ -328,13 +328,15 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             (BASE, 'start_empty_field_session', 'Create and bind the replacement game', ''),
             (SESSION, 'replace_simulation', 'Replace the shared simulation', ''),
         ]),
-        ('battlefield', 'Battlefield view and selection', 'This screen observes the shared simulation; its map selection is read-only.', [
+        ('battlefield', 'Battlefield view and selection', 'This screen observes the shared simulation; map selection and objective feedback are read-only. Objective settlement alone records latest actual owner/state changes; current income eligibility is separate from credited requisition.', [
             (MAIN, '_navigate', 'Queue navigation on a reserved presentation frame', 'process_frame.connect'),
             (MAIN, '_apply_navigation', 'Choose Battlefield', '"Battlefield"'),
             (MAIN, '_show_battlefield', 'Show the battlefield view', ''),
             ('game/battlefield/battlefield_view.gd', '_gui_input', 'Click the battlefield map', ''),
             ('game/battlefield/battlefield_view.gd', '_select_nearest', 'Pick the nearest visible marker', ''),
-            ('game/battlefield/battlefield_view.gd', '_refresh', 'Refresh the inspector', ''),
+            ('game/battlefield/battlefield_view.gd', '_refresh', 'Refresh the named objective inspector', ''),
+            ('game/objectives/objective_service.gd', 'inspect', 'Read detached current objective and latest transition', ''),
+            ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
     return [{'id': key, 'title': title, 'note': note,

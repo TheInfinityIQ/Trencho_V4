@@ -289,10 +289,9 @@ func _refresh() -> void:
 			for id in selected.get("passengers",[]):
 				var passenger: Dictionary = rear.ledger.inspect_person_status(id)
 				detail += "\n%s · Health %d · %s" % [_unit_label(passenger),passenger.health,passenger.assignment]
-	var blocked: String = objective.get("blocked_reason", "No objective registered.")
 	var objective_detail := "No objective registered."
 	if not objective.is_empty():
-		objective_detail = "%s\nControl: %.1f / 60\nOwner: %s\nIncome: %.1f per second\n%s" % [_site_label(objective_id),objective.control,Presentation.ownership_label(str(objective.owner),rear.PLAYER),objective.income_rate,blocked]
+		objective_detail = "%s · %s\n%s" % [_site_label(objective_id),objective.kind,Presentation.objective_feedback(objective,rear.PLAYER)]
 	var declaration := ""
 	if not rear.combat.world.scenario.is_empty(): declaration = "%s • Seed %d\n" % [rear.combat.world.scenario.family,rear.combat.world.scenario.seed]
 	var text := "BATTLEFIELD\n%s\nTime: %.1f s  •  %s\nRequisition: %.0f\n\n%s\n\nSelected\n%s\n\nObjective rings: blue Friendly, red Enemy, gold Neutral.\n\nWheel: zoom  •  Middle drag: pan\nClick a marker to inspect.\nUse Rear base to manage production and dispatch." % [declaration,rear.time, "Paused" if simulation.speed == 0 else "%dx" % simulation.speed, simulation.receiving.requisition_balance(),objective_detail,detail]

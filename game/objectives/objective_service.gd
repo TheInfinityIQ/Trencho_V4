@@ -25,7 +25,7 @@ func register(place_id: String, kind: String) -> Dictionary:
 	for row in objectives.values():
 		if row.kind == kind: used += 1
 	if used >= limit: return {"ok":false,"message":"Scenario objective count exceeds the GDD kind limit."}
-	objectives[place_id] = {"id":place_id,"kind":kind,"position":place.position,"control":0.0,"owner":"","state":"Neutral","blue":[],"red":[],"blockers":[],"income":0.0,"last_at":_rear().time}
+	objectives[place_id] = {"id":place_id,"kind":kind,"position":place.position,"control":0.0,"owner":"","state":"Neutral","blue":[],"red":[],"blockers":[],"income":0.0,"last_at":_rear().time,"latest_change":{}}
 	_refresh()
 	return {"ok":true,"message":"Physical objective registered at 25 m radius; no owner or income granted."}
 
@@ -46,8 +46,9 @@ func advance_to(at: float) -> void:
 	var delta: float = at-_rear().time
 	if delta <= EPS: return
 	for row in objectives.values():
-		if row.kind == "Resource" and row.state != "Contested" and row.owner == _rear().PLAYER:
-			var credited: float = RESOURCE_INCOME*delta
+		var income_rate := _income_rate(row)
+		if income_rate > 0.0:
+			var credited: float = income_rate*delta
 			_rear().receiving.credit_objective_income(credited)
 			row.income += credited
 			_income_total += credited
@@ -59,6 +60,8 @@ func settle() -> bool:
 	var changed := _refresh()
 	for row in objectives.values():
 		var previous_owner: String = row.owner
+		var previous_state: String = row.state
+		var previous_income := _income_rate(row)
 		if (previous_owner == _rear().PLAYER and row.control <= EPS) or (previous_owner == "army-red" and row.control >= -EPS): row.owner = ""
 		if row.control >= 60.0-EPS: row.owner = _rear().PLAYER
 		elif row.control <= -60.0+EPS: row.owner = "army-red"
@@ -72,6 +75,10 @@ func settle() -> bool:
 		if state != row.state:
 			row.state = state
 			changed = true
+		if row.owner != previous_owner or row.state != previous_state:
+			# One bounded fact from this authority, never a UI-derived history.
+			row.latest_change = {"at":_rear().time,"from_owner":previous_owner,"to_owner":row.owner,
+				"from_state":previous_state,"to_state":row.state,"income_from":previous_income,"income_to":_income_rate(row)}
 	return changed
 
 func inspect(place_id: String) -> Dictionary:
@@ -81,7 +88,7 @@ func inspect(place_id: String) -> Dictionary:
 	var effective_rate: float = _rate(row)
 	if row.control >= 60.0-EPS and effective_rate > 0.0 or row.control <= -60.0+EPS and effective_rate < 0.0: effective_rate = 0.0
 	row["capture_rate"] = effective_rate
-	row["income_rate"] = RESOURCE_INCOME if row.kind == "Resource" and row.owner == _rear().PLAYER and row.state != "Contested" else 0.0
+	row["income_rate"] = _income_rate(row)
 	row["blocked_reason"] = "Both armies present: no capture progress or resource income." if row.state == "Contested" else ("No eligible armed dismounted people within 25 m." if row.blue.is_empty() and row.red.is_empty() else "")
 	return row
 
@@ -97,6 +104,9 @@ func audit() -> Array[String]:
 		if _rear().ledger.inspect_entity(id).get("kind","") != "PLACE" or absf(float(row.control)) > 60.0+EPS: failures.append("G18 objective place/control invalid: "+id)
 		if row.owner == _rear().PLAYER and row.control < -EPS or row.owner == "army-red" and row.control > EPS: failures.append("G18 owner/control contradiction: "+id)
 	return failures
+
+func _income_rate(row: Dictionary) -> float:
+	return RESOURCE_INCOME if row.kind == "Resource" and row.owner == _rear().PLAYER and row.state != "Contested" else 0.0
 
 func _rate(row: Dictionary) -> float:
 	if not row.blue.is_empty() and not row.red.is_empty(): return 0.0

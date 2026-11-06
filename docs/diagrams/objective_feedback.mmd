@@ -1,0 +1,17 @@
+flowchart TD
+  P[Existing physical presence and eligibility] --> S[ObjectiveService settle]
+  T[Existing timed control boundary] --> S
+  S --> C{Owner or state changed?}
+  C -->|Yes| L[Replace one latest_change fact on this objective]
+  C -->|No| I[Keep prior fact; no duplicate]
+  T --> A[Existing advance_to credits eligible Resource income]
+  A --> R[Receiving requisition authority]
+  S --> O[Current control / owner / state authority]
+  O --> Q[Detached selected-objective inspect]
+  L --> Q
+  I --> Q
+  A --> Q
+  Q --> F[Read-only feedback: current state, rate, earned, latest change]
+  F --> V[Existing deferred BattlefieldView inspector refresh]
+  B[Bind replacement simulation] --> Q
+  N[No new command / timer / polling / history log] -. contract .-> V
