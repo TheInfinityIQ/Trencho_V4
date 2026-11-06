@@ -1,0 +1,17 @@
+flowchart TD
+    Click[Normal Request delivery to HQ click] --> Owner[Existing RearLogistics command]
+    Owner -->|success / returned stable ID| Select[Refresh list with that ID selected]
+    Owner -->|failure| Context[Retain prior selection and show existing command reason]
+    Select --> Receipt[Render selected request actual delivered / requested / state / blocker]
+    Events[Existing scene change and tab events] --> Refresh[Existing finite refresh]
+    Refresh --> Facts[Existing vehicle row: tank / Driver / fuel claims]
+    Facts --> Reserved[Nonempty claim: fuel reserved, pickup and tank handoff pending]
+    Facts --> Carried[Carried ID: fuel carried, tank handoff pending]
+    Facts --> Tank[Actual hull tank fuel shown separately]
+    Refresh --> Manifest[One existing active-manifest lookup for selected hull]
+    Manifest --> Status[Current shipment state / task phase / blocker]
+    Rear[Existing actor / ledger person facts] --> Filter[Living player-owned Occupied rear people]
+    Filter --> Crew[Qualified crew choices include seated rear crew for existing safe extraction]
+    Filter --> Fuel[Existing available / no-pending / no-carry / no-station fuel choices]
+    Crew --> Guards[Existing assignment / stopped-hull extraction guards remain authoritative]
+    Fuel --> Guards

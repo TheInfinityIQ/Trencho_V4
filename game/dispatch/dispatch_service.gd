@@ -155,6 +155,12 @@ func _unit_mass(type: String) -> float:
 		if spec.output_type == type: return float(spec.unit_mass)
 	return -1.0
 
+func active_handling_status(hull_id: String) -> Dictionary:
+	var id: String = _active_manifest(hull_id)
+	if id.is_empty(): return {}
+	var row: Dictionary = manifests[id]
+	return {"state":str(row.state),"handling":str(row.task.get("phase","")),"blocker":str(row.blocker)}
+
 func _active_manifest(hull_id: String) -> String:
 	for id in manifests:
 		if manifests[id].hull == hull_id and manifests[id].state not in ["Complete","Cancelled","Safety Returned"]: return id

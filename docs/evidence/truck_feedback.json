@@ -1,0 +1,21 @@
+{
+  "status": "implemented_pending_github_direct_demonstration_and_exact_head_reviews",
+  "objective": "Correct player context and physical-state feedback for delivery requests and rear transport trucks.",
+  "source_base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
+  "behavior": [
+    "Successful request click selects returned stable ID and renders that current request receipt",
+    "Transport status separates tank fuel, reserved fuel and carried fuel awaiting handoff; selected-hull owner read supplies active shipment handling/blocker",
+    "Crew and fuel choices require living player-owned Occupied rear actors; seated qualified rear crew remain visible for existing extraction"
+  ],
+  "source_inspection": "Read complete changed functions, existing request/refresh/list selection, vehicle fuel job pickup/deposit and readiness snapshot, Dispatch active-manifest resolution, and rear reassignment/extraction guards. Fuel job.state is not displayed because its Reporting label is not updated during carry.",
+  "contract": "docs/diagrams/truck_feedback.json and .mmd",
+  "verification": [],
+  "manual_steps": [
+    "Launch game/main/main.tscn normally; pause. Open Supplies → Army requests, request100 rifle rounds, then37. The second row is selected and its own0/37 HQ-unloaded receipt appears immediately. Requests remain queued until normal prerequisites and time allow work.",
+    "Inspect an ordinarily manufactured supply truck under Vehicles. A purchased-fuel handling request shows reserved units before pickup and carried units pending tank handoff after pickup; tank amount remains separate. Once the ordinary shipment is active, inspect its handling and blocking reason in the truck status.",
+    "Driver/crew dropdown lists current living qualified rear people, including valid seated rear crew for Extract selected station occupant. People committed outside the occupied rear are excluded; existing physical assignment/extraction restrictions remain."
+  ],
+  "deferred": "tools/checks/supply_truck_playthrough.gd and docs/evidence/supply_truck_progression.json unchanged. Long900s proposal revoked before any execution and removed from publishable paths; original proposal retained only under this checkout's ignored logs as new provenance, not historical original logs.",
+  "limits": "No local engine run, regression test/suite, broad scenario, full two-delivery chain, actual fuel-carry or extraction execution, ordinary autonomous Army need, visible/native-input,1x pacing or60FPS certification. Compilation is not gameplay acceptance.",
+  "ownership": "Operations developer owns this bounded change; lead integration and exact-head lead technical/Designer design approvals remain pending."
+}
