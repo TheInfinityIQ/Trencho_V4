@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-05",
+  "objective": "Mount optional ordinary Getting started guidance with truthful useful destination-only navigation.",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/97",
+  "branch": "codex/demo-guidance-mount",
+  "checked_head": "edbc109eb2e1b267836111f574d04f01442346a4",
+  "integration_base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
+  "approved_inherited_component": "50d663a39a51880ce65e1193c4b9a16313d991fb",
+  "policy_merge": "12005e3ad3a399cf9789d0130b9c53cf99d28a4c",
+  "contract": "docs/diagrams/demo_guidance_mount.json",
+  "flow": "docs/diagrams/demo_guidance_mount.mmd",
+  "result": {
+    "status": "PASS",
+    "assertions": 32,
+    "run_id": 42147313490,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42147313490",
+    "job_id": 127661831571,
+    "engine": "Godot4.7.2 stable official ed1daf0bf, Ubuntu24.04 GitHub runner",
+    "direct_step_window_seconds_approx": 2.3,
+    "process_deadline_seconds": 45,
+    "command": "timeout --signal=TERM --kill-after=5s 45s \"$GODOT_BIN\" --headless --path . --audio-driver Dummy --script res://.artifacts/current-change/direct_check.gd",
+    "script_input_sha256": "00b9538bd7d678b25eb2850a29fe3623c6fbc5e2bf75cb23cfd8d5f7b95b39c3",
+    "script_storage": "Explicit workflow input; retained in CI current-change-evidence artifact13469554992 and local ignored logs/guidance-mount/direct_check.gd; no new committed regression fixture.",
+    "artifact": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42147313490/artifacts/13469554992",
+    "artifact_sha256": "94bc72165db4b0e200b664d8ad4e680f8343a8492629ecf1552f1ef8df95fa5e",
+    "artifact_expiry_utc": "2026-11-13T01:58:48Z",
+    "errors": "No SCRIPT ERROR or ERROR reported; successful process and job."
+  },
+  "observed": [
+    "One guide bound to actual main session, initially hidden/optional; ordinary Getting started opened current worker action.",
+    "Primary action emitted once and reached actual Workers/Jobs; direct Training/Vehicles/Army needs links each emitted once and reached actual tabs. Training exposes current Hire instructor control without executing it.",
+    "Paused ledger, staffing requests, courses, model output target, elapsed time and speed unchanged across help/navigation. Existing HQ coverage reported; paused reason shown.",
+    "Unsubmitted production target/mode and cart widget inputs retained across existing destination changes including same-destination; selected context/facility/recipe indices unchanged.",
+    "Hidden state/logistics events produced zero guidance reads; visible burst coalesced to one; quiet frames did not poll. Close/reopen retained expanded overview with fresh action.",
+    "Actual main new-session path replaced simulation, cleared old guidance and restored current opening. Prior-model state event no longer invalidated guidance; guide exited with main.",
+    "First-instructor detached selector input routes Train and names Hire instructor; no school completion, instructor purchase or physical qualification is claimed.",
+    "Expanded overview plus deliberately long reason stayed bounded; each navigation control could be scrolled into view."
+  ],
+  "geometry": [
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "help": [
+        1248,
+        252
+      ],
+      "destination": [
+        1062,
+        344
+      ]
+    },
+    {
+      "viewport": [
+        960,
+        540
+      ],
+      "help": [
+        928,
+        252
+      ],
+      "destination": [
+        742,
+        164
+      ]
+    }
+  ],
+  "arrangements": [
+    "Actual main.tscn booted normally paused. Its physics pump was disabled immediately after boot for bounded UI-only observation; no physical-progress acceptance.",
+    "Production/cart field values were unsubmitted UI inputs in the empty opening. There was no physically constructed/operating workshop; recipe/facility selection checks establish retained indices only.",
+    "Long reason text was an arranged presentation input; it does not fabricate demand or world readiness.",
+    "The first-instructor selector uses detached prerequisites solely for destination migration. No real course/truck/Driver was arranged or demonstrated."
+  ],
+  "source_review": [
+    "UI/UX source consultation confirmed optional help, fixed heading/Close, bounded body, no speed/Escape changes, truthful labels and retained context/drafts.",
+    "Corrected Unicode corruption introduced by the text rewrite by restoring baseline shell strings exactly; final source retains original pause/speed/menu symbols.",
+    "Corrected centre-specific wording: guide asks player to choose one usable completed centre, without individual counts or implied selected object.",
+    "Existing command handlers, base_demo and physical owners unchanged; String forwarding only, no new scheduler, timer, polling callback, inventory/history owner or automatic gameplay command."
+  ],
+  "static_checks": [
+    "Strict source map passed with zero pending purpose reviews.",
+    "Strict UI function map/button inventory passed.",
+    "git diff --check passed.",
+    "Inherited approved purpose reviews retained only when implementation hash matched; changed/new production functions read and reviewed."
+  ],
+  "ci_parse": {
+    "status": "success",
+    "run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42147315585",
+    "scope": "Changed production syntax only; main/panel also loaded by the actual-main direct demonstration. Compilation alone is not gameplay acceptance."
+  },
+  "production_sha256": {
+    "game/main/main.gd": "0772f0bf02e42e19b2f8e647be3d37d236615802ef8bf1212583cd1f6fa9085c",
+    "game/ui/command_shell.gd": "ddf678045ec93aee7ea70ee0318a86c0cd0af996315e76647746d62134259ad4",
+    "game/ui/demo_guidance.gd": "86c083f79ff78b8906f192c37b1e22115662d0fc0c16b511e71f54ec6731673c",
+    "game/ui/demo_guidance_panel.gd": "f8b85a65345770d813b96121e4f05b465598824b1cd1a00c2d063c9505434108"
+  },
+  "inherited_evidence": {
+    "original33": "Historical PR94 component evidence, not rerun. Original checker preserved byte-for-byte including obsolete Supplies first-instructor assertion. Lead explicitly confirmed successor mount contract Train.",
+    "logistics21": "Historical actual-centre/handler evidence, not rerun; original checker byte-for-byte.",
+    "provenance": "Temporary-helper source/evidence inherited, not authored or newly executed by this developer."
+  },
+  "limits": [
+    "No local engine run, regression suite, broad scenario, failure injection, coverage matrix or benchmark.",
+    "Headless geometry is not visible-render, native-input or FPS acceptance.",
+    "No physical first-instructor arrival/training, Driver, manufactured truck, rear-to-HQ delivery, naturally arising Army need or full supply-loop proof.",
+    "No exact facility/person/hull focusing; links preserve current selections and the guide explains that the player chooses objects in destination controls.",
+    "Opening resources/HQ6000, costs/recipes/rates/cancellation/physical custody unchanged. #83/#90/#91/#92 and complete demo/60FPS remain open."
+  ],
+  "player_steps": [
+    "Launch ordinary main scene.",
+    "Open Getting started from the existing left navigation or Session menu.",
+    "Read current task/cause, use Open destination or direct links; choose objects in destination controls.",
+    "Expand overview/control reference if wanted; Close/reopen retains expansion and reads current facts. Opening help does not change game speed."
+  ],
+  "reviews": {
+    "lead_technical": "pending exact final published head",
+    "designer_design": "pending exact final published head",
+    "native_github_approval": "none claimed",
+    "merge": "not performed; lead-owned"
+  }
+}
