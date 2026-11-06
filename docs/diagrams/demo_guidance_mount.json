@@ -1,0 +1,59 @@
+{
+  "status": "frozen_before_mount",
+  "objective": "Optional ordinary Getting started guidance with useful truthful navigation; preserve the approved component and physical gameplay owners.",
+  "base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
+  "component": "50d663a39a51880ce65e1193c4b9a16313d991fb",
+  "ownership": {
+    "session": "Existing main GameSession; owns simulation/replacement/automatic logistics.",
+    "shell": "One scene-owned DemoGuidancePanel inside bounded help; header/Close outside scroll.",
+    "navigation": "One panel action forwards once to existing main deferred navigation. It changes destination only and preserves existing selected context/drafts.",
+    "physical": "Existing services unchanged; no automatic purchase, staff assignment, target, shipping or resume command."
+  },
+  "events": [
+    "Guide owns existing state_changed/simulation_changed/logistics.changed/visibility_changed subscriptions.",
+    "Hidden guide marks dirty without reading. One queued deferred visible refresh per burst.",
+    "Main binds its shared session once after shell creation. Simulation replacement clears stale action and reads current session. Exit disconnects."
+  ],
+  "timed_work": "No added frame callback, timer, idle polling, independent clock or state owner.",
+  "cancellation": "Closing hides help without changing gameplay, pause, overview state or destination drafts. Cancelled automatic supply remains held. Reopen reads current facts; no stale deferred action after replacement/removal.",
+  "experience": [
+    "Optional cause plus dominant navigation action; collapsed preparation overview.",
+    "Fixed header/Close; bounded scrolling body with follow_focus; preserve shell header/navigation scrolling.",
+    "Navigation labels describe opening/reviewing controls; String route does not select a particular facility/person/hull. Explain this visibly.",
+    "Current first instructor route is Training > Hire instructor, 120 requisition; normal physical arrival/reporting still required.",
+    "No invented demand; preserve HQ6000 and actual stock/receipt distinctions. Opening help does not pause or unpause."
+  ],
+  "acceptance": [
+    "Instantiate actual main.tscn paused, one mounted guide bound to its actual shared session.",
+    "Opening contextual button emits once and reaches Workers/Jobs; Training/Vehicles/Army needs links reach existing actual panels.",
+    "Repeated same-destination and other navigation preserves unsubmitted production target/recipe/mode, cart and actual selected context; navigation does not buy, assign, change targets or advance paused game time.",
+    "Close/reopen works and retains overview state; hidden state/logistics events cause no guide reads; visible burst coalesces; no idle reads.",
+    "Actual session replacement clears old action/progress and uses current session; no old-owner callbacks after rebind/exit.",
+    "At1280x720 and960x540, long cause plus expanded overview remains within bounded help: fixed Close reachable, body scrolls, contextual/link controls can be revealed, useful destination space remains. Headless geometry is not rendered/native-input/FPS proof.",
+    "Primary first-instructor selector routes Train; actual main Training destination exposes current hire control without executing it."
+  ],
+  "preserved_checks": {
+    "original33": "Preserve file byte-for-byte. Its one Supplies first-instructor expectation is obsolete under current approved Training route; successor migration requested from lead/Designer before treating new acceptance as approved. No physical factory pass newly claimed.",
+    "logistics21": "Preserve file byte-for-byte and exact actual-centre/handler evidence; source unchanged. No unrelated rerun."
+  },
+  "checks": [
+    "Brief new mount checker only; preserve errors and unsupported-fixture failures.",
+    "Regenerate combined maps/button inventory; examine actual changed/new functions and current hashes; strict checks and git diff --check."
+  ],
+  "sources": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_scrollcontainer.html",
+      "applies": "Bounded viewport with automatic scrolling and follow_focus; descendant minimum size must not expand outer help."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_canvasitem.html",
+      "applies": "Inherited visibility and visibility_changed used by scene-owned guide; actual hidden reads checked."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_object.html",
+      "applies": "Finite deferred call coalescing; existing component guard checks tree/visibility/current session."
+    }
+  ],
+  "limits": "No base_demo or physical-service edits. One bounded execution owner; no full suites/benchmarks/nested workers. No physical Driver/truck/delivery, whole-demo, native-input or60FPS proof. Lead/Designer exact-head review required; no self-merge.",
+  "verification_policy": "Dawson replacement AGENTS received 5 November: no local engine; one brief new-code demonstration on GitHub only; no regression runs/broad scenarios/failure injection/coverage matrix. Inherited33/21 preserved for later, historical only."
+}

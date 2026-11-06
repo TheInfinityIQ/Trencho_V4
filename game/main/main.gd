@@ -54,6 +54,7 @@ func _ready() -> void:
 	_battlefield.session = _session
 	_host.add_child(_battlefield)
 	_shell.navigation_requested.connect(_navigate)
+	_shell.demo_guidance_panel.bind(_session)
 	_shell.speed_requested.connect(func(value: int) -> void:
 		_session.set_speed(value)
 		_refresh_clock())

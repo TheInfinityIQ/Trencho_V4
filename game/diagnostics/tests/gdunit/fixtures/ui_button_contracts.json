@@ -2,28 +2,19 @@
   "schema_version": 1,
   "button_definitions": [
     {
-      "id": "game/ui/command_shell.gd::_build_header@95",
+      "id": "game/ui/command_shell.gd::_build_header@97",
       "path": "game/ui/command_shell.gd",
-      "line": 95,
-      "label": "[\"Ⅱ\", \"1×\", \"2×\"][value] [dynamic label]",
+      "line": 97,
+      "label": "[\"â…¡\", \"1Ã—\", \"2Ã—\"][value] [dynamic label]",
       "dynamic": true,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_header@107",
+      "id": "game/ui/command_shell.gd::_build_header@109",
       "path": "game/ui/command_shell.gd",
-      "line": 107,
+      "line": 109,
       "label": "Session",
-      "dynamic": false,
-      "prefix": "",
-      "area": "Shell / navigation"
-    },
-    {
-      "id": "game/ui/command_shell.gd::_build_navigation@141",
-      "path": "game/ui/command_shell.gd",
-      "line": 141,
-      "label": "More systems",
       "dynamic": false,
       "prefix": "",
       "area": "Shell / navigation"
@@ -32,24 +23,33 @@
       "id": "game/ui/command_shell.gd::_build_navigation@143",
       "path": "game/ui/command_shell.gd",
       "line": 143,
+      "label": "More systems",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_build_navigation@145",
+      "path": "game/ui/command_shell.gd",
+      "line": 145,
       "label": "Getting started",
       "dynamic": false,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_navigation_button@147",
+      "id": "game/ui/command_shell.gd::_navigation_button@149",
       "path": "game/ui/command_shell.gd",
-      "line": 147,
+      "line": 149,
       "label": "title [dynamic label]",
       "dynamic": true,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_help@161",
+      "id": "game/ui/command_shell.gd::_build_help@163",
       "path": "game/ui/command_shell.gd",
-      "line": 161,
+      "line": 163,
       "label": "Close",
       "dynamic": false,
       "prefix": "",
@@ -747,15 +747,61 @@
       "dynamic": false,
       "prefix": "",
       "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@21",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 21,
+      "label": "Open next step",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@24",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 24,
+      "label": "Show preparation overview",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@28",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 28,
+      "label": "Open Training",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@29",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 29,
+      "label": "Open Vehicles",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@30",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 30,
+      "label": "Review Army needs",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
     }
   ],
   "source_sha256": {
-    "game/ui/command_shell.gd": "1eb4b40f2a8c6c6aa0758ce2190ebab17bd6494d234296a6f250e2de76ccc783",
+    "game/ui/command_shell.gd": "8209962bb089d58b09445199c7e04e26cf8dcb47e58b5be16f4ee632fa0a88a9",
     "game/rear_base/base_demo.gd": "42d5d54f3d5415507f5c6f56000e4aede611b6a4cda57481be670c8c3d2e9815",
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",
-    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e"
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
+    "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089"
   },
   "limits": "Source obligations plus concrete runtime instances in prepared profiles. A dynamic factory match is not proof of every possible argument or gameplay state."
 }

@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-05",
+  "objective": "Truthful optional demo guidance from existing factory progress through real school, transport and Army-needs preparation.",
+  "branch": "codex/dev-player-onboarding",
+  "baseline": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "scope": ["New read-only guidance projection and scene-owned panel", "One new panel path in the existing UI map generator", "Focused checker, design/event contract and lead integration handoff"],
+  "checks": [
+    {"id":"godot-parse", "engine":"Godot 4.7.2 stable Steam ed1daf0bf", "result":"PASS", "exit_code":0, "log":"logs/demo-guidance/parse.stdout.log"},
+    {"id":"direct-initial", "result":"PASS", "assertions":29, "exit_code":0, "log":"logs/demo-guidance/direct.stdout.log"},
+    {"id":"direct-final", "result":"PASS", "assertions":33, "exit_code":0, "stderr":"empty", "log":"logs/demo-guidance/final.stdout.log", "command":"godot --headless --path . --script res://tools/checks/demo_guidance_check.gd"}
+  ],
+  "observed": ["Approved connected empty rear has no rear crew/truck; existing military coverage remains with6000 HQ rounds and no fabricated demand", "Guidance reads preserve ledger/courses/demand", "Primary button emits actual existing worker navigation", "Idle/hidden frames do not poll; committed bursts coalesce; logistics-only changes refresh", "Actual ordinary worker and ingredient purchases, physical Materials/Munitions construction and actual R26/R02 manufacture advance existing factory milestones", "Existing stock-target coverage is distinguished from new output", "Actual placed/cancelled unfinished School is reflected", "Session replacement, rebind and exit remove stale progress/actions and old subscriptions", "Detached selector cases separately cover first teacher, Driver, fuel, active trip, Logistics Centre staffing and existing military coverage"],
+  "design_consultation": "Lead relayed Designer and UI/UX feedback: optional navigation only, current cause then one action, collapsed wider sequence, actual first teacher/Driver, no invented need or progression/acceptance confusion. This is consultation, not exact-commit PR approval.",
+  "safeguards": "Existing owners retain goods, people, demand, courses and history. No full-world export, mutating training snapshot, polling callback, timer, second quest/history owner, automatic gameplay command or asset added. Crew counts exclude unoccupied rear places.",
+  "integration": "Lead owns shell/main/base changes; see docs/diagrams/demo_guidance_integration.md. Component branch does not mount it in ordinary Getting started. Navigation seam emits String only, so exact facility/person/hull selection is a stated limit; existing factory focused links remain.",
+  "limits": ["No actual trained Driver or truck produced by this check", "No newly supplied military shortage, rear-to-HQ trip or frontline consequence certified", "No whole-demo, native-input, rendered layout or60FPS certification", "Known performance failures and eventual60FPS target remain unchanged", "No broad suite, benchmark campaign, foreground desktop input, resource grant, stock reset, price/recipe/timing/policy change"],
+  "reviews": {"lead_technical":"pending exact published commit", "game_designer":"pending exact published commit", "native_github_approval":"none claimed"}
+}
