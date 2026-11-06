@@ -255,7 +255,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	if not execution_capable and not collectable and not (role == "Guard" and intent.action == "Defend HQ"):
 		withdrawing = true
 		withdrawal_reason = str(execution_capability.message)+" Withdrawal took priority over pickup."
-	if broken_count > active.size()/2.0:
+	if not withdrawing and broken_count > active.size()/2.0:
 		withdrawing = true
 		withdrawal_reason = "Most active members had broken morale; withdrawal took priority over pickup."
 	var offensive: bool = intent.action in ["Seize Objective","Probe","Assault HQ"] and role == "Rifle"
