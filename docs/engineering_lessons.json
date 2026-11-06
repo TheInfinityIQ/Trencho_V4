@@ -90,6 +90,11 @@
       "failure": "Adding a checker lambda shifted anonymous ordinal IDs; previously useful purpose text then described a different body. Inspection caught the mismatch before completion.",
       "evidence": "logs/testable-supply-truck/map-purpose-correction-v5.txt and reviewed current source",
       "rule": "Review anonymous-function purposes against their current bodies after insertions. Numeric or stable-looking IDs do not prove descriptions still match implementation."
+    },
+    {
+      "failure": "A Windows-default text read decoded newly written UTF-8 repository/overview text with a legacy encoding; a later UnicodeDecodeError stopped a handoff update before writing. Source hashes stayed intact.",
+      "evidence": "Current GitHub setup/integration handoff,5November2026; Project3 overview re-read explicitly as UTF-8 and corrected.",
+      "rule": "Always specify UTF-8 for repository JSON/Markdown/source reads and writes; preserve source bytes during merges. Verify the actual published text, not only counts or round-tripped corrupted strings. Never repair encoding by dropping invalid characters."
     }
   ],
   "design_review": [

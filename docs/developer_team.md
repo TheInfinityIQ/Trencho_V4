@@ -48,3 +48,7 @@ consultant roles. Communicate meaningful progress/handoffs without acknowledgeme
 loops. Use feature-level Objective / Outcome / Next task briefings. Request the next
 bounded task after handoff; no invented feature, nested execution owner, autonomous
 heartbeat or always-on service is established by these chats.
+
+## Integrated stage handoff
+
+PRs93–98 are merged into source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e on the review branch. Only PR89 remains open. The bounded combined-source design delta is approved; its brief manual UI demonstration is queued on GitHub, not a runtime pass. Developer A owns the next authoritative collection-readiness explanation, B owns observing that single remote job, and C awaits the next bounded feature. No local engine or regression run is permitted.

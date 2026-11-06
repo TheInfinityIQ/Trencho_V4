@@ -37,7 +37,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Lead owns GitHub cleanup/integration. Three persistent GPT-6.1 Sol Medium developer chats own source-first Army feedback, current truck/request feedback and mounted player guidance in isolated checkouts. Exact-head technical/Designer review is required.",
+  "current_work": "Published integrated player guidance, truck/request, Army/objective feedback and cancellation stage; collect a brief GitHub new-integration demonstration and bounded Designer review. Ordinary supply-loop and FPS acceptance stay open.",
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -86,7 +86,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army",
         "branch": "codex/dev-army-loop",
-        "current_assignment": "Ordinary authored first-contact/consumption and genuine Rifle need investigation; source/Designer clarification before changes."
+        "current_assignment": "New isolated source-first increment from7fd7ff0: expose authoritative reason an actual Rifle need waits for collection, without duplicated decision rules or numerical/physical changes; diagram/acceptance before implementation."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +96,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_truck_handoff",
         "branch": "codex/testable-truck-handoff",
-        "current_assignment": "Truthful current truck handling/fuel/crew status and selection of newly queued delivery requests; brief GitHub-only current-change demonstration."
+        "current_assignment": "Exact approved feature integrated; awaiting next bounded lead assignment."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -106,7 +106,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_guidance_mount",
         "branch": "codex/demo-guidance-mount",
-        "current_assignment": "Mount approved guidance into ordinary Getting started with current Train route, retained UI context and finite visible-only updates; brief GitHub-only current-change demonstration."
+        "current_assignment": "Exact approved feature integrated; awaiting next bounded lead assignment."
       }
     ],
     "review_policy": {
@@ -123,7 +123,7 @@
         "technical": "approved role review5794227658",
         "design": "approved role review5794190558",
         "scope": "Objective feedback only",
-        "integration": "pending"
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
       },
       {
         "pr": 94,
@@ -131,7 +131,7 @@
         "technical": "approved role review5794258289",
         "design": "approved role review5794266035",
         "scope": "Unmounted guidance component only",
-        "integration": "pending lead mount"
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
       },
       {
         "pr": 95,
@@ -139,7 +139,7 @@
         "technical": "approved role review5794258428",
         "design": "approved role review5794254642",
         "scope": "Supply feedback only",
-        "integration": "pending"
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
       },
       {
         "pr": 96,
@@ -147,7 +147,23 @@
         "technical": "approved role review5794390977",
         "design": "approved role review5794323282",
         "scope": "Physical approach cancellation",
-        "integration": "pending"
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 97,
+        "sha": "a3cf8e8ae2f4396382652e0eccfe3b5edd76fb42",
+        "technical": "approved roleCOMMENT5794821257",
+        "design": "approved roleCOMMENT5794785656",
+        "scope": "Mounted optional Getting started destination-only guidance",
+        "integration": "merged source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 98,
+        "sha": "2cea6a84b67e5f97aca0b88725dda2f6b8bef814",
+        "technical": "approved roleCOMMENT5794837745",
+        "design": "approved roleCOMMENT5794836007 after wording correction",
+        "scope": "Current request selection, physical-fact truck feedback and rear crew eligibility",
+        "integration": "merged source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
       }
     ],
     "kind": "persistent_codex_project_chats",
@@ -178,7 +194,18 @@
     ],
     "closed_superseded_pr": 86,
     "verification_record": "docs/github_repository_status.json",
-    "public_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235"
+    "public_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235",
+    "active_prs_after_feature_integration": [
+      89
+    ],
+    "merged_feature_prs": [
+      93,
+      94,
+      95,
+      96,
+      97,
+      98
+    ]
   },
   "github_projects_connection": {
     "server": "github_projects",

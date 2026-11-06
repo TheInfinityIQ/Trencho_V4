@@ -132,5 +132,26 @@
   "designer_scope": "Approved in designated Designer chat before execution; independent final read-only check requested",
   "closed_pr_manifest": "https://github.com/TheInfinityIQ/Trencho_V4/pull/86#issuecomment-6674829104",
   "public_cleanup_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235",
-  "no_gameplay_acceptance_claim": true
+  "no_gameplay_acceptance_claim": true,
+  "integration_follow_up": {
+    "source_head": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
+    "merged_feature_prs": [
+      93,
+      94,
+      95,
+      96,
+      97,
+      98
+    ],
+    "currently_open_prs": [
+      89
+    ],
+    "combined_design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89#pullrequestreview-5794892375",
+    "syntax_run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42148949547",
+    "brief_demo": {
+      "status": "queued",
+      "run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42149002464"
+    },
+    "note": "Original active_prs field is the earlier cleanup snapshot, not current openPR inventory. No ordinary-gameplay/FPS acceptance."
+  }
 }
