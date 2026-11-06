@@ -200,7 +200,7 @@
     ]},
     "docs/evidence/training_scheduler_characterization.json": {"role":"data","system":"docs","sha256":"5da3eacdf14ca28dd32523c0046fc3dd0af8e60ee54e94b91d80c0ec3ec2d8dc","lines":55,"purpose":"Supply structured settings, dependency pins or catalogue data for training scheduler characterization.","functions":[
     ]},
-    "docs/evidence/truck_feedback.json": {"role":"data","system":"docs","sha256":"9d868282a2de776439ee577f5bb82a19213e1a781d33c7a52713699f8ce31e4e","lines":21,"purpose":"Supply structured settings, dependency pins or catalogue data for truck feedback.","functions":[
+    "docs/evidence/truck_feedback.json": {"role":"data","system":"docs","sha256":"3b25c41b0bff6ebb14688d2fa1ac8ca7e8e9978838d6cb06d71573b05ae3386f","lines":59,"purpose":"Supply structured settings, dependency pins or catalogue data for truck feedback.","functions":[
     ]},
     "docs/evidence/ui_acceptance_matrix.json": {"role":"data","system":"docs","sha256":"308f5e23e0440d4975d8cb62edf7269003450085c080c5f7cbe2595fb8fffe98","lines":283,"purpose":"Supply structured settings, dependency pins or catalogue data for ui acceptance matrix.","functions":[
     ]},
