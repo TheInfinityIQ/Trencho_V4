@@ -15,7 +15,7 @@
     "run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42149002464",
     "scope": "Actual combined main loaded paused; guidance Training navigation and second explicit request receipt only. Physics pump disabled; no physical gameplay/FPS claim.",
     "script_sha256": "3d986d4e217bae0d03c30f384a01fcc099a65e1c1ab5ee59066e3f6789659fe2",
-    "observer": "Operations developer; one current-job observation owner, no duplicate execution"
+    "observer": "Bounded Operations observation ended while still queued/nojobs/artifacts. No background observation remains; not a pass."
   },
   "verification_policy": "No local engine/regressions/broad scenarios; one brief explicitly supplied GitHub current-new-integration demonstration. Existing component evidence not rerun.",
   "unverified": [
@@ -50,5 +50,13 @@
     "run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42148949547",
     "limit": "Changed-production parsing; no gameplay demonstration in automatic PR run."
   },
-  "combined_design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89#pullrequestreview-5794892375"
+  "combined_design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89#pullrequestreview-5794892375",
+  "army_explanation_follow_up": {
+    "pr": 99,
+    "exact_component_sha": "ff5d176e196eb6ca7e9b29bdb246d1dea9ade191",
+    "technical_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/99#pullrequestreview-5795065501",
+    "design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/99#pullrequestreview-5795066498",
+    "evidence": "docs/evidence/army_collection_readiness.json",
+    "integration": "Production bytes exactly match approved component; no additional runtime demonstration. Original combinedUI check remains separate and externally queued."
+  }
 }

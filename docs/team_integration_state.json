@@ -37,7 +37,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Published integrated player guidance, truck/request, Army/objective feedback and cancellation stage; collect a brief GitHub new-integration demonstration and bounded Designer review. Ordinary supply-loop and FPS acceptance stay open.",
+  "current_work": "Integrated approved last-assessed Army supply-pickup explanation (PR99). Genuine shortage, useful manufacture/physical receipt and repeat full-loop acceptance remain open.",
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -86,7 +86,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army",
         "branch": "codex/dev-army-loop",
-        "current_assignment": "New isolated source-first increment from7fd7ff0: expose authoritative reason an actual Rifle need waits for collection, without duplicated decision rules or numerical/physical changes; diagram/acceptance before implementation."
+        "current_assignment": "PR99 approved and integrated; waiting next bounded lead assignment."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +96,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_truck_handoff",
         "branch": "codex/testable-truck-handoff",
-        "current_assignment": "Exact approved feature integrated; awaiting next bounded lead assignment."
+        "current_assignment": "Completed bounded observation of42149002464; still externally queued with nojobs/artifacts at end. Observation stopped, no automatic watcher."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -164,6 +164,14 @@
         "design": "approved roleCOMMENT5794836007 after wording correction",
         "scope": "Current request selection, physical-fact truck feedback and rear crew eligibility",
         "integration": "merged source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 99,
+        "sha": "ff5d176e196eb6ca7e9b29bdb246d1dea9ade191",
+        "technical": "approved roleCOMMENT5795065501",
+        "design": "approved roleCOMMENT5795066498",
+        "scope": "Last actual supply-pickup assessment diagnostic and recipient text; decision gates unchanged",
+        "integration": "merged into current review branch; exact production bytes preserved"
       }
     ],
     "kind": "persistent_codex_project_chats",
@@ -204,7 +212,8 @@
       95,
       96,
       97,
-      98
+      98,
+      99
     ]
   },
   "github_projects_connection": {
