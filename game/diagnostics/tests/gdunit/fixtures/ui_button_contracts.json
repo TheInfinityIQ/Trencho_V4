@@ -702,6 +702,51 @@
       "dynamic": false,
       "prefix": "",
       "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@20",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 20,
+      "label": "Open next step",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@23",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 23,
+      "label": "Show preparation overview",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@27",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 27,
+      "label": "Training",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@28",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 28,
+      "label": "Vehicles",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@29",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 29,
+      "label": "Army needs",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
     }
   ],
   "source_sha256": {
@@ -710,7 +755,8 @@
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",
-    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e"
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
+    "game/ui/demo_guidance_panel.gd": "39068f94513f176d29b9a0b9f3d8609d6ff057413cd4c2ffc254f48d38ce16a5"
   },
   "limits": "Source obligations plus concrete runtime instances in prepared profiles. A dynamic factory match is not proof of every possible argument or gameplay state."
 }
