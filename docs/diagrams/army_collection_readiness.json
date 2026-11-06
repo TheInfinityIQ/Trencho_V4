@@ -1,7 +1,7 @@
 {
   "objective": "Explain the last authoritative supply pickup decision for a reported Rifle need before collection begins.",
   "baseline": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
-  "status": "implemented_pending_remote_direct_check_and_exact_head_reviews",
+  "status": "implemented_direct_diagnostic_verified_pending_exact_head_reviews_and_integration",
   "ownership": "SquadExecution alone records one latest scalar diagnostic per own Rifle squad during an already-occurring decision. OpeningResupply projects it once per reported squad, only when no real collection exists. No UI decision owner.",
   "mutable_source": [
     "game/battlefield/squad_execution.gd",

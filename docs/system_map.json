@@ -76,7 +76,7 @@
     ]},
     "docs/developer_team.md": {"role":"documentation","system":"docs","sha256":"d83684160d44131772bb549e2119acd19aa1567f9a840abc441cb791837b183e","lines":50,"purpose":"Document Gameplay developer team.","functions":[
     ]},
-    "docs/diagrams/army_collection_readiness.json": {"role":"data","system":"docs","sha256":"b4fd8248061d1a8d5b254e159e5fdde418fb1973cd6049cdcdd8178fe34befd4","lines":59,"purpose":"Supply structured settings, dependency pins or catalogue data for army collection readiness.","functions":[
+    "docs/diagrams/army_collection_readiness.json": {"role":"data","system":"docs","sha256":"761265a162a157a86e85d6d91786922948659ba3aeae0ca083cb6d956daf9e6e","lines":59,"purpose":"Supply structured settings, dependency pins or catalogue data for army collection readiness.","functions":[
     ]},
     "docs/diagrams/army_collection_readiness.mmd": {"role":"configuration","system":"docs","sha256":"1c977dfa4c047b8fb10d4598bc7545da202be27ee00ee3e47bfe244976d86800","lines":12,"purpose":"Supply army collection readiness project settings or repository metadata.","functions":[
     ]},
@@ -158,7 +158,7 @@
     ]},
     "docs/evidence/agent_workflow.json": {"role":"data","system":"docs","sha256":"0ddc0dc84356270d271f8a046ad582366dc9d9544943c50243bbf162b64f2dfb","lines":419,"purpose":"Supply structured settings, dependency pins or catalogue data for agent workflow.","functions":[
     ]},
-    "docs/evidence/army_collection_readiness.json": {"role":"data","system":"docs","sha256":"e1af944778decf52e45025f610636b1eec1070fd64f387ae63effc029a233ade","lines":44,"purpose":"Supply structured settings, dependency pins or catalogue data for army collection readiness.","functions":[
+    "docs/evidence/army_collection_readiness.json": {"role":"data","system":"docs","sha256":"519c230c797f84ddf35a2ef69374a74cf14e944f08bfbac3658f21e971cd9441","lines":59,"purpose":"Supply structured settings, dependency pins or catalogue data for army collection readiness.","functions":[
     ]},
     "docs/evidence/army_supply_feedback.json": {"role":"data","system":"docs","sha256":"982999e2a956b85553a7db11ebf6eddd566cd49c188cf66904d6e602768e35ce","lines":281,"purpose":"Supply structured settings, dependency pins or catalogue data for army supply feedback.","functions":[
     ]},

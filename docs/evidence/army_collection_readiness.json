@@ -1,7 +1,7 @@
 {
   "feature": "Last authoritative supply pickup check for reported Rifle need without a collection",
   "baseline": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
-  "status": "implemented_source_reviewed_pending_GitHub_direct_check_and_exact_head_reviews",
+  "status": "implemented_direct_diagnostic_verified_pending_exact_head_reviews_and_integration",
   "behaviour": [
     "Existing execution decision records one latest reason and game time; no extra gate evaluation.",
     "Recipient detail reads once per reported squad lacking collection; existing collection state wins.",
@@ -16,10 +16,19 @@
     "preservation": "Diff review caught and restored an unintended Windows default-code-page middle-dot conversion before commit; source files now read/written explicitly as UTF8."
   },
   "new_code_direct_check": {
-    "state": "pending",
+    "state": "PASS",
     "script_local": "logs/collection-readiness/direct_check.gd (ignored; not a committed regression fixture)",
     "script_sha256": "79171fa646baf2cdb8f0313388d4ddc4703ff39770ae83b333abf5adaaa69faf",
-    "scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim."
+    "scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim.",
+    "code_commit": "31b73da0c18edddf4365c5ba1583c620cc1a032b",
+    "run_id": 42151066130,
+    "job_id": 127674161129,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151066130",
+    "artifact": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151066130/artifacts/13471249510",
+    "engine": "Godot4.7.2.stable.official.ed1daf0bf, Linux GitHub runner, headless",
+    "deadline_seconds": 45,
+    "result": "Changed two production scripts parsed successfully. Explicit direct script returned PASS for new normal transport-assignment diagnostic, detached-copy read and current-operation replacement. No SCRIPT ERROR or ERROR in actual engine output; workflow/job concluded success.",
+    "evidence_revision_note": "This receipt-only update changes no production source; hashes above match the executed code revision."
   },
   "limits": [
     "No local engine or regression/broad old-code check run.",
@@ -40,5 +49,11 @@
     "reason": "Replaced proposed unavailable-destination input with normal transport-assignment input to avoid failure injection under current human policy. No engine execution occurred before this correction.",
     "retained_local": "logs/collection-readiness/direct_check.unexecuted-draft.gd",
     "sha256": "6f93b189f4668b38e3a908716c2928ffc7ff4c48d319c16da294568a5cd97500"
+  },
+  "static_checks": {
+    "system_map": "PASS, zero pending function purpose reviews",
+    "ui_function_map": "PASS, existing UI/button anchors unchanged",
+    "diff_check": "PASS",
+    "purpose_reviewed_functions": 5
   }
 }
