@@ -1,0 +1,90 @@
+{
+  "objective": "Explain current rifle supply blockers and the actual named-collection consequence using existing authoritative view facts, without inventing a production requirement.",
+  "acceptance": [
+    "Approved empty opening reports no rifle need and retains6000 HQ E02; projection remains read-only.",
+    "An explicitly arranged named80-round target explains160 missing local rounds covered by existing HQ stock; it does not tell the player to manufacture them.",
+    "Projection branch checks distinguish committed forward freight, local issue, courier commitment, existing rear coverage and uncovered rear stock, with cancellation limited to automatic rear requests.",
+    "An arranged existing-stock courier component records actual receipt separately from present rounds and named collection handoff/current activity; later-cycle receipts remain separate.",
+    "Existing Army panel lifecycle/intent and refill-continuity direct checks pass; both living-map strict checks pass."
+  ],
+  "mutable_paths": [
+    "game/battlefield/opening_resupply.gd",
+    "game/logistics/army_supply_view.gd",
+    "tools/checks/army_supply_feedback_check.gd",
+    "tools/checks/army_supply_feedback_check.gd.uid",
+    "docs/diagrams/army_supply_feedback.json",
+    "docs/diagrams/army_supply_feedback.mmd",
+    "docs/evidence/army_supply_feedback.json",
+    "docs/system_map.json",
+    "docs/ui_function_map.html",
+    "game/diagnostics/tests/gdunit/fixtures/ui_button_contracts.json"
+  ],
+  "owner": "army_supply_developer; one active bounded execution owner; no native goal/controller/subworker",
+  "authoritative_state": {
+    "ammunition_and_stock": "IdentityLedger",
+    "needs_and_named_issue_cycle": "OpeningResupply",
+    "physical_forward_freight": "ForwardTransport",
+    "physical_local_issue": "ForwardSupply",
+    "current_operation_and_activity": "Orders/SquadExecution",
+    "rear_cancellation_intent": "RearLogistics"
+  },
+  "commands": "No new gameplay command. Existing request, delivery, issue, release, cancel and resume admission remain unchanged.",
+  "events": "Existing Army panel invokes the detached reader after committed state/intent events. No signal, timer, polling or subscription is added.",
+  "timed_work": "No new timed work. Existing transport/courier clocks retain complete physical handling.",
+  "cancel_replace_late_event": "Cancellation text describes the rear-request hold only. It does not cancel existing HQ/forward work. Fresh projection uses the current session and latest named cycle; no history or cached owner is added. Duplicate reads cannot create requests or cargo.",
+  "failure_paths": "No reported need stays explicit. Missing local stock is distinguished from available HQ, committed freight and courier custody. Received rounds do not establish operation success or surviving capability.",
+  "safeguards": [
+    "Reuse already batched source facts, without snapshots or per-recipient capability queries.",
+    "Projection owns only fresh dictionaries; never modify source requests or operation state.",
+    "Preserve6000 HQ opening, demand thresholds, rates, custody, admission, cancellation and operation authority.",
+    "Arranged component and pure projection cases are labelled; the1200-second ordinary trace had no natural rifle need and cannot certify91."
+  ],
+  "engine_reference": {
+    "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html",
+    "application": "Dictionaries are reference values: enrich only freshly constructed projection rows and return fresh feedback dictionaries; read-purity checks guard the source ledger and requests."
+  },
+  "checks": [
+    [
+      "godot",
+      "--headless",
+      "--path",
+      "WORKTREE",
+      "--script",
+      "res://tools/checks/army_supply_feedback_check.gd"
+    ],
+    [
+      "godot",
+      "--headless",
+      "--path",
+      "WORKTREE",
+      "--script",
+      "res://tools/checks/army_supply_check.gd"
+    ],
+    [
+      "godot",
+      "--headless",
+      "--path",
+      "WORKTREE",
+      "--script",
+      "res://tools/checks/refill_continuity_check.gd"
+    ],
+    [
+      "python",
+      "tools/system_map.py",
+      "--check"
+    ],
+    [
+      "python",
+      "tools/ui_function_map.py",
+      "--check"
+    ]
+  ],
+  "limits": "Brief headless current-change checks only; no native-input, full demo, useful new manufacture, second natural refill,1x pacing or60FPS certification. Technical and designated Designer exact-commit review remain pending.",
+  "view_contract_additions": {
+    "supply_state": "Human-readable current coverage stage, derived only from aggregate facts already read in this view.",
+    "supply_feedback": "Specific coverage/physical-issue explanation, appended to the existing summary surface.",
+    "forward_committed": "Remaining quantity committed by existing non-complete HQ-forward jobs, separate from personal carried rounds.",
+    "recipient_fields": "Add target (current request or latest named cycle), destination (existing stop id), squad (existing identity); existing detail explains named physical handoff and current activity without a capability requery."
+  },
+  "review_revision": "docs/diagrams/army_supply_feedback_review.json supersedes only the incomplete rear-coverage branch and its checker expectation; original checker preserved at the PR95 baseline."
+}

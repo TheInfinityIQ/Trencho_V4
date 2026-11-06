@@ -1,0 +1,281 @@
+{
+  "feature": "Truthful rifle supply coverage and recipient handoff feedback",
+  "status": "implemented_direct_feedback_and_arranged_issue_verified_ordinary_need_open",
+  "baseline": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "diagram": "docs/diagrams/army_supply_feedback.mmd",
+  "frozen_acceptance": "docs/diagrams/army_supply_feedback.json",
+  "behaviour": [
+    "Missing local E02 no longer asserts that manufacture is required.",
+    "Army needs derives current-stage feedback from facts its existing reader already computed: reported/courier need, available local and HQ stock, committed forward freight, available rear stock and rear cancellation intent.",
+    "Named recipients expose actual target/destination/squad and explain the physical issue/handoff requirement separately from current orders and surviving capability.",
+    "Additive detached view fields; no new stock, demand, command, owner, timer, subscription, world snapshot or per-recipient capability query."
+  ],
+  "ordinary_baseline_trace": {
+    "context": "Authored Farmland empty-field scenario, synchronous domain clock, normal automatic forward-supply policy enabled. No stock/person/position/order/depletion/fire mutation injected; no live-screen or1x-pacing claim.",
+    "run": "logs/army-loop/trace2.stdout",
+    "script": "logs/army-loop/trace.gd (generated diagnostic input retained locally)",
+    "script_sha256": "a50cfd0af3f0b2fde71ca99c96ac3191f062263045b09810221f8147cbecc8f7",
+    "bounded_wall_deadline_seconds": 360,
+    "simulated_seconds_completed": 1200,
+    "engine_exit": 0,
+    "owner_stop_reason": null,
+    "stderr": "empty",
+    "audit": [],
+    "observations": {
+      "blue_rifle_trip_admitted_at": 6.0,
+      "blue_support_trip_admitted_at": 7.0,
+      "both_trips_physically_dismounted": true,
+      "final_periodic_sample": {
+        "time": 1171.0,
+        "squads": [
+          {
+            "active": 8,
+            "collection": {},
+            "id": "start-blue-squad-00",
+            "rounds": 480,
+            "status": "Advancing"
+          },
+          {
+            "active": 8,
+            "collection": {},
+            "id": "start-blue-squad-01",
+            "rounds": 480,
+            "status": "Advancing"
+          }
+        ]
+      },
+      "reported_rifle_need_in_periodic_samples": false,
+      "forward_freight_jobs": 0,
+      "courier_jobs": 0
+    },
+    "conclusion": "This bounded ordinary progression did not reach a genuine rifle need. It cannot establish a physical supply blocker, new manufacture, restored combat or issue91 acceptance.",
+    "earlier_bounded_probe": "logs/army-loop/trace.stdout ended its sampled record at t271 with no reported need; it is retained as an incomplete exploratory run, not a passing full chain."
+  },
+  "verification": [
+    {
+      "path": "tools/checks/army_supply_feedback_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Actual6000-HQ/no-need opening and read/detachment purity; explicit named80-round target with160 local deficit covered by existing HQ; actual rear cancellation hold. Pure supplied-fact stage branches are labelled and do not enter fictional freight in an owner. Explicitly arranged existing people/stock endpoints then actual co-located160-round relocation,20-round courier issue to8 named recipients, clear handoff, later target separation and clean audit."
+    },
+    {
+      "path": "tools/checks/army_supply_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Existing actual opening/intent, panel event/visibility/rebind lifecycle, ordinary navigation and friendly observation."
+    },
+    {
+      "path": "tools/checks/refill_continuity_check.gd",
+      "result": "PASS; owned headless run exit0, no stop reason, empty stderr. Existing arranged-stock actual courier issue, request removal, selection/Observe continuity, read purity and cycle replacement."
+    },
+    {
+      "path": "logs/army-loop/editor-import",
+      "result": "Headless editor import exit0, no stop reason, empty stderr. tools/checks is intentionally behind existing tools/.gdignore like the other retained standalone checks; no UID sidecar was generated or removed."
+    }
+  ],
+  "purpose_review": "The author read each changed/new function implementation and preserved useful existing purpose text while reviewing the current implementation hashes. Strict living-map results must be recorded after regeneration.",
+  "map_checks": {
+    "system_map": "PASS: system map matches every in-scope file and function; no purpose review is pending.",
+    "ui_function_map": "PASS: UI function diagram matches current source and line numbers.",
+    "review_revision_changed_or_new_function_reviews": 6,
+    "pending_purpose_reviews": 0,
+    "ui_output": "Regenerated; clickable map and source-button inventory retain no content diff because UI/signal anchors did not change."
+  },
+  "unchanged": "Approved6000 HQ E02, troop/stock starting package, demand thresholds, recipes, prices, rates, freight/courier custody and admission, cancellation commands, operation authority and performance limits.",
+  "limits": [
+    "No genuine shortage arose during the bounded ordinary trace.",
+    "The new physical receipt check explicitly arranges existing people and carrier endpoints; it is not ordinary HQ-forward travel or new rear manufacture.",
+    "Incoming/rear-scarcity branch cases are pure supplied-fact projection checks, not physical delivery demonstrations.",
+    "Receipt or named handoff does not prove return to duty, a feasible acknowledged operation, victory, second natural refill, native-input rendering,1x pacing or60FPS.",
+    "Independent event/domain-clock migration remains unfinished; known historical performance failures remain open while polishing/optimization stay paused.",
+    "PR must remain draft pending lead technical and designated Game Designer review of its exact commit; does not close91."
+  ],
+  "official_engine_reference": {
+    "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html",
+    "application": "Dictionary reference semantics require enriching only newly constructed view rows; detached-row mutation and source read-purity are directly checked."
+  },
+  "source_sha256": {
+    "game/battlefield/opening_resupply.gd": "eda4fc81c2164c96b6ccc2894981f8f5f3524da3f4f06f0d64185f6024bfc4a0",
+    "game/logistics/army_supply_view.gd": "dba17b4baef83d2dd9465b2bad7121595bac59a6fd22a68c8853fee2efbeaa9e",
+    "tools/checks/army_supply_feedback_check.gd": "602fa826ea213941c88fb8d2b8f24d2998dcd044b965a3afad0fa31d311efd31",
+    "tools/checks/army_rear_cargo_feedback_check.gd": "d58b2e037cdad7174e4948e0c6928f1f3859b11288a3420587035b0b09cb0043"
+  },
+  "technical_review_followup": {
+    "reviewed_baseline": "63cb1213c86afbe2c8c70f9b67e379ef401f585f",
+    "strengthened_contract": "docs/diagrams/army_supply_feedback_review.json",
+    "finding": "The reader excludes reserved rear stock and does not read rear-to-HQ manifests. Its original production-gap assertion was unsupported when actual rear cargo covered the same need.",
+    "source_semantics": {
+      "requested": "Dispatch.accept copies cargo quantities before _reserve_cargo; requested amount alone does not prove physical goods.",
+      "reserved_and_loaded": "Actual stock_items refer to claim/portion identity. Successful real carry/drop changes its stage to Onboard. Available rear stock excludes those reservations or held cargo.",
+      "cancel": "Predeparture cancellation releases actual claims and physically unloads cargo. A departed manifest rejects Dispatch.cancel; RearLogistics cancellation retains the existing physical trip."
+    },
+    "correction": "Pure feedback branch now says Review rear deliveries, explicitly states that reserved/onboard rear-to-HQ cargo is omitted, and requires checking actual deliveries before extra production. No new owner, source/ledger/manifest query, scan, timer, demand or custody/cancellation behavior.",
+    "original_checker_preserved": "Exact baseline commit retains original tools/checks/army_supply_feedback_check.gd; local copy and hash are recorded in the strengthened contract. The current checker changes only the documented incomplete-coverage expectation.",
+    "before_fix": {
+      "run": "logs/army-loop/rear-cargo-before-v2",
+      "engine_exit": 1,
+      "owner_stop_reason": null,
+      "result": "Real request-only/reserved/loaded/departed cases completed; feedback acceptance failed because it said20 rounds should be manufactured even with20 actual onboard/departed.",
+      "observations": [
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds remain beyond available rear stock as well as HQ/forward coverage. Review production and labour for that gap; every stage of physical delivery still remains.",
+            "state": "Rear supply shortfall"
+          },
+          "label": "Request only, no physical ammunition",
+          "manifest_state": "Approaching Dispatch",
+          "onboard": 0,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds remain beyond available rear stock as well as HQ/forward coverage. Review production and labour for that gap; every stage of physical delivery still remains.",
+            "state": "Rear supply shortfall"
+          },
+          "label": "Actual reservation",
+          "manifest_state": "Approaching Dispatch",
+          "onboard": 0,
+          "requested": 20,
+          "reserved": 20,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds remain beyond available rear stock as well as HQ/forward coverage. Review production and labour for that gap; every stage of physical delivery still remains.",
+            "state": "Rear supply shortfall"
+          },
+          "label": "Physically loaded",
+          "manifest_state": "Loaded Waiting Dispatch",
+          "onboard": 20,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": true,
+          "feedback": {
+            "detail": "20 rounds remain beyond available rear stock as well as HQ/forward coverage. Review production and labour for that gap; every stage of physical delivery still remains.",
+            "state": "Rear supply shortfall"
+          },
+          "label": "Departed; cancellation rejected",
+          "manifest_state": "Departed",
+          "onboard": 20,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        }
+      ]
+    },
+    "after_fix": {
+      "run": "logs/army-loop/rear-cargo-after",
+      "engine_exit": 0,
+      "owner_stop_reason": null,
+      "stderr": "empty",
+      "audit": [],
+      "observations": [
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds are not covered by the available unreserved rear stock and HQ/forward supplies shown here. Reserved or onboard rear-to-HQ cargo is not counted in this view. Check existing delivery requests and actual cargo before ordering extra production.",
+            "state": "Review rear deliveries"
+          },
+          "label": "Request only, no physical ammunition",
+          "manifest_state": "Approaching Dispatch",
+          "onboard": 0,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds are not covered by the available unreserved rear stock and HQ/forward supplies shown here. Reserved or onboard rear-to-HQ cargo is not counted in this view. Check existing delivery requests and actual cargo before ordering extra production.",
+            "state": "Review rear deliveries"
+          },
+          "label": "Actual reservation",
+          "manifest_state": "Approaching Dispatch",
+          "onboard": 0,
+          "requested": 20,
+          "reserved": 20,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": false,
+          "feedback": {
+            "detail": "20 rounds are not covered by the available unreserved rear stock and HQ/forward supplies shown here. Reserved or onboard rear-to-HQ cargo is not counted in this view. Check existing delivery requests and actual cargo before ordering extra production.",
+            "state": "Review rear deliveries"
+          },
+          "label": "Physically loaded",
+          "manifest_state": "Loaded Waiting Dispatch",
+          "onboard": 20,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        },
+        {
+          "departed": true,
+          "feedback": {
+            "detail": "20 rounds are not covered by the available unreserved rear stock and HQ/forward supplies shown here. Reserved or onboard rear-to-HQ cargo is not counted in this view. Check existing delivery requests and actual cargo before ordering extra production.",
+            "state": "Review rear deliveries"
+          },
+          "label": "Departed; cancellation rejected",
+          "manifest_state": "Departed",
+          "onboard": 20,
+          "requested": 20,
+          "reserved": 0,
+          "stock": {
+            "forward": 0,
+            "hq": 0,
+            "rear": 0
+          }
+        }
+      ]
+    },
+    "other_current_checks": [
+      {
+        "path": "tools/checks/army_supply_feedback_check.gd",
+        "result": "PASS; revised under the strengthened contract, owned headless exit0, no stop reason, empty stderr; existing physical recipient receipt/cancellation/detachment/cycle checks retained."
+      },
+      {
+        "path": "tools/checks/army_supply_check.gd",
+        "result": "PASS; owned headless exit0, no stop reason, empty stderr; original opening, cancellation/resume, panel lifecycle/navigation/observation retained."
+      }
+    ],
+    "separate_retained_defect": {
+      "run": "logs/army-loop/rear-cancel-diagnostic",
+      "checker": "logs/army-loop/army_rear_cargo_feedback_check.v1.gd",
+      "result": "Immediate cancellation during the approach retained manifest Cancelling, vehicle Dispatch Approach, holder vehicle-lane and empty task after200 simulated seconds. Reproduced exit1; Dispatch source unchanged; lead notified.",
+      "scope": "The revised focused cargo fixture waits for actual approach completion before predeparture cancel. This does not fix or certify the separate approach-cancellation path."
+    },
+    "limits": "Disconnected component explicitly grants recipe inputs, fuel and20 rounds to arrange real dispatch handling; no ordinary manufacture, genuine Army shortage or whole-chain claim. Current reader intentionally does not calculate rear-manifest coverage; it states that limitation instead."
+  }
+}
