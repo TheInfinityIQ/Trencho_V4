@@ -1,5 +1,5 @@
 {
-  "status": "prospective_before_integration",
+  "status": "source_integrated_pending_brief_GitHub_demonstration",
   "outcome": "Optional Getting started links and truthful current truck/request/Army/objective feedback are usable in one current main session.",
   "authorities": "Exact-head technical and Designer role approvals for each component; lead owns integration; current AGENTS verification restrictions apply.",
   "ownership": "Existing GameSession/rear/ledger/Dispatch/Army/objective owners remain authoritative. Guidance is a scene-owned read-only projection; its actions emit existing destinations. Truck UI reads detached current Dispatch strings and supplied vehicle facts.",
@@ -21,5 +21,14 @@
     "Windows native/rendered readability",
     "1x/FPS experience",
     "Whole game completion"
-  ]
+  ],
+  "reviewed_heads": {
+    "93": "52ef961002419f1240adcab03de1419eee651c30",
+    "94": "50d663a39a51880ce65e1193c4b9a16313d991fb (included via97)",
+    "95": "62a12584148901eac223a9d7ef38963ea215b9a8",
+    "96": "3429228ba88e9687f77360f622cc3286bcfd8eb9",
+    "97": "a3cf8e8ae2f4396382652e0eccfe3b5edd76fb42",
+    "98": "2cea6a84b67e5f97aca0b88725dda2f6b8bef814"
+  },
+  "merge_resolution": "Only generated maps/HTML/button contracts conflicted; regenerated from combined source. Production changes merged cleanly. Existing per-function review prose inherited only on exact implementation-hash match."
 }

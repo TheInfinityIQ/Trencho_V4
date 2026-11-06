@@ -748,18 +748,24 @@ func _material_label(type: String) -> String:
 	return str(Catalog.MATERIALS[type].name) if Catalog.MATERIALS.has(type) else {"M06":"Explosives","M11":"Building Materials","E01":"Service rifles","E02":"Rifle rounds","E03":"Helmets","E04":"Body armour","E05":"Support machine guns","E06":"Mortars","E07":"Mortar bombs","E08":"Engineer kits","E11":"Medic kits","E12":"Medical packs","E13":"Field guns","E14":"Artillery shells","E15":"Recon drones","E16":"Drone controllers","E17":"Drone batteries","E18":"Field radios","E19":"Marksman rifles","E20":"Binoculars","E21":"Stretchers","E24":"Smoke rounds","E25":"Tank shells","E26":"Autocannon rounds"}.get(type,type)
 
 func _request_army_delivery() -> void:
-	_result(session.automatic_logistics.request_delivery(str(army_request_type.get_item_metadata(army_request_type.selected)),int(army_request_count.value)))
+	var result: Dictionary = session.automatic_logistics.request_delivery(str(army_request_type.get_item_metadata(army_request_type.selected)),int(army_request_count.value))
+	_result(result)
+	if result.ok: _refresh_army_requests(str(result.id))
 
 func _cancel_army_delivery() -> void:
 	if army_request_rows.get_selected_items().is_empty(): return
 	_result(session.automatic_logistics.cancel_request(_army_request_ids[army_request_rows.get_selected_items()[0]]))
 
-func _refresh_army_requests() -> void:
+func _refresh_army_requests(preferred_id: String = "") -> void:
 	if army_request_rows == null: return
 	army_request_button.disabled = not simulation.empty_field_opening
 	var rows: Array = session.automatic_logistics.requests.values()
 	_fill(army_request_rows,_army_request_ids,rows,func(row: Dictionary) -> String:
 		return "%s%s · %d / %d delivered · %s" % ["Army: " if row.get("automatic",false) else "",_material_label(row.type),row.delivered,row.requested,row.state])
+	var preferred_index: int = _army_request_ids.find(preferred_id)
+	if preferred_index >= 0:
+		army_request_rows.select(preferred_index)
+		army_request_rows.ensure_current_is_visible()
 	if army_request_rows.get_selected_items().is_empty() and army_request_rows.item_count > 0: army_request_rows.select(0)
 	army_request_cancel.disabled = true
 	army_request_status.text = "Production inputs are hauled automatically when a staffed facility needs its next batch. Assign actual hauling workers. Delivery requires a built Logistics Centre, a parked transport truck and a qualified Driver."
@@ -1226,7 +1232,8 @@ func _load_vehicle_people() -> void:
 	var fuel: Array[Dictionary] = []
 	for id in simulation.rear.actors:
 		var person: Dictionary = simulation.rear.ledger.inspect_person_status(id)
-		if person.owner != simulation.rear.PLAYER or person.health <= 0: continue
+		if person.owner != simulation.rear.PLAYER or person.health <= 0 or person.rear_place != "Occupied": continue
+		# Seated rear crew remain selectable for the existing safe-exit command.
 		if person.qualification in ["P08","P04"]: crew.append(person)
 		if person.assignment == "Available" and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty(): fuel.append(person)
 	_sync_vehicle_people(vehicle_person,crew)
@@ -1676,6 +1683,33 @@ func _refresh_inspection(view: Dictionary) -> void:
 func _refresh_haul_rows(rows: Array) -> void:
 	_fill(jobs, _job_ids, rows, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 
+static func _transport_truck_status(row: Dictionary, delivery: Dictionary) -> String:
+	var lines: Array[String] = [
+		"%s · %s" % [VEHICLE_NAMES[row.hull.design_type],row.state],
+		"Fuel %.1f / %.0f · Driver %s" % [row.hull.fuel,row.hull.vehicle_spec.tank_capacity,"seated" if row.readiness.driver else "required"]]
+	for job in row.fuel_claims:
+		if not str(job.get("claim","")).is_empty():
+			lines.append("Fuel reserved: %d units; pickup and tank handoff pending." % int(job.units))
+		elif not str(job.get("carried","")).is_empty():
+			lines.append("Fuel carried: %d units; tank handoff pending." % int(job.units))
+		else:
+			lines.append("Fuel handling: %d units pending." % int(job.units))
+	if not delivery.is_empty():
+		lines.append("Delivery: " + str(delivery.state))
+		if not str(delivery.handling).is_empty(): lines.append("Handling: " + str(delivery.handling))
+		if not str(delivery.blocker).is_empty(): lines.append("Blocked: " + str(delivery.blocker))
+		lines.append("Inspect this shipment in Supplies → Army requests or Dispatch.")
+	else:
+		if not row.readiness.driver: lines.append("Choose a trained Driver and report to this truck's Driver station.")
+		if row.hull.fuel <= 0.0 and row.fuel_claims.is_empty(): lines.append("Choose an available worker to carry purchased fuel into the tank.")
+		if row.state == "In F10":
+			lines.append("Finish fuel handling and boarding before driving this truck to its promised parking place.")
+		elif row.state == "Parked":
+			lines.append("Inspect Army needs for actual demand, stock coverage, handling and transport eligibility. A staffed Logistics Centre fulfils genuine Army requests automatically when automatic supply is enabled and the physical requirements are met.")
+		else:
+			lines.append("Inspect the current vehicle state before requesting another trip.")
+	return "\n".join(lines)
+
 func _refresh_vehicle_controls(view: Dictionary, include_people: bool) -> void:
 	if include_people: _load_vehicle_people()
 	_fill(vehicle_rows,vehicle_ids,view.vehicles.rows,func(row: Dictionary) -> String: return "%s %s | %s | fuel %.1f/%.0f | F11 %d" % [row.id,row.hull.design_type,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,row.slot+1])
@@ -1686,7 +1720,7 @@ func _refresh_vehicle_controls(view: Dictionary, include_people: bool) -> void:
 	for row in view.vehicles.rows:
 		if row.id != _vehicle_id(): continue
 		if row.hull.design_type in ["T01","T02"]:
-			vehicle_status.text = "%s · %s\nFuel %.1f / %.0f · Driver %s\n%s" % [VEHICLE_NAMES[row.hull.design_type],row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,"seated" if row.readiness.driver else "required","Choose an available worker to carry purchased fuel; choose the trained Driver separately. Finish both before driving to parking. After parking, a staffed Logistics Centre can send supplies." if row.state == "In F10" else "Existing delivery work retains this hull and crew. The truck returns to its parking place after HQ receipt."]
+			vehicle_status.text = _transport_truck_status(row,simulation.rear.dispatch.active_handling_status(row.id))
 			continue
 		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Fleet Transfer preserves this hull at HQ; inspect military deployment on Battlefield and actual E26 issue in Supply." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
 
