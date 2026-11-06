@@ -85,5 +85,6 @@
     "supply_feedback": "Specific coverage/physical-issue explanation, appended to the existing summary surface.",
     "forward_committed": "Remaining quantity committed by existing non-complete HQ-forward jobs, separate from personal carried rounds.",
     "recipient_fields": "Add target (current request or latest named cycle), destination (existing stop id), squad (existing identity); existing detail explains named physical handoff and current activity without a capability requery."
-  }
+  },
+  "review_revision": "docs/diagrams/army_supply_feedback_review.json supersedes only the incomplete rear-coverage branch and its checker expectation; original checker preserved at the PR95 baseline."
 }

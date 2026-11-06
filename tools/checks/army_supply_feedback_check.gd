@@ -40,12 +40,12 @@ func _run() -> void:
 		{"need":20,"remaining":20,"forward":20,"hq":0,"rear":0,"incoming":0,"state":"Local issue"},
 		{"need":20,"remaining":20,"forward":0,"hq":0,"rear":0,"incoming":20,"state":"Forward freight"},
 		{"need":20,"remaining":20,"forward":0,"hq":0,"rear":20,"incoming":0,"state":"Rear stock covers gap"},
-		{"need":20,"remaining":20,"forward":0,"hq":0,"rear":5,"incoming":0,"state":"Rear supply shortfall"}
+		{"need":20,"remaining":20,"forward":0,"hq":0,"rear":5,"incoming":0,"state":"Review rear deliveries"}
 	]:
 		var facts := {"forward":case.forward,"hq":case.hq,"rear":case.rear}
 		var feedback: Dictionary = Reader._supply_feedback(case.need,case.remaining,facts,case.incoming,false,true)
 		if not _require(feedback.state == case.state,"Separate existing supply stages in pure projection: "+str(case.state)): return
-		if case.state == "Rear supply shortfall" and not _require("15 rounds remain" in feedback.detail,"Production suggestion must use only the uncovered rear-stock gap."): return
+		if case.state == "Review rear deliveries" and not _require("15 rounds are not covered" in feedback.detail and "rear-to-HQ cargo is not counted" in feedback.detail,"Incomplete available-stock coverage must direct the player to actual rear cargo before extra production."): return
 	var queued: Dictionary = session.automatic_logistics.request_delivery("E02",1)
 	if not _require(queued.ok and session.automatic_logistics.cancel_request(queued.id).ok,"Use actual rear request/cancellation commands for the hold."): return
 	session.automatic_logistics.set_process(false)

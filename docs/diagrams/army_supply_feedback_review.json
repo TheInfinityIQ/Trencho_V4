@@ -1,0 +1,47 @@
+{
+  "objective": "Correct PR95 feedback that asserted a new production gap while reserved or onboard rear-to-HQ cargo was omitted by the current projection.",
+  "baseline": "63cb1213c86afbe2c8c70f9b67e379ef401f585f",
+  "original_acceptance_preserved": {
+    "git_path": "63cb1213c86afbe2c8c70f9b67e379ef401f585f:tools/checks/army_supply_feedback_check.gd",
+    "local_copy": "logs/army-loop/army_supply_feedback_check.pre_review.gd",
+    "sha256": "b73695ec477638f2bda716c67797749a033dc7f985e03f4a5c07518745a04795"
+  },
+  "source_findings": [
+    "ArmySupplyView has available stock and HQ-forward commitments, but does not read rear manifests.",
+    "Dispatch.accept copies requested cargo before physical reservation or loading; requested quantity is not physical cargo.",
+    "Dispatch._reserve_cargo allocates actual claims/portions; successful carry/drop changes stock_items stages to Onboard.",
+    "Predeparture cancellation releases claims and physically unloads loaded goods. Departed cargo cannot be recalled by Dispatch.cancel; RearLogistics cancellation retains the real trip."
+  ],
+  "chosen_contract": "Conservative omission is explicit: keep the existing available-stock gap arithmetic but label its branch Review rear deliveries. State that reserved/onboard rear-to-HQ cargo is not included and require checking physical shipments before extra production. Never claim a confirmed manufacture quantity from incomplete coverage facts.",
+  "acceptance": [
+    "A short disconnected dispatch component distinguishes requested-but-absent ammunition, actually reserved stock, physically loaded cargo and the same hull after real departure.",
+    "With zero unreserved rear/HQ/forward stock while a real manifest carries ammunition, feedback must not assert that amount must be manufactured.",
+    "A request alone must not be credited as actual cargo or coverage; a rejected postdeparture cancel must preserve real onboard custody.",
+    "Preserve the old checker; revise its uncovered-branch expectation under this new reviewed contract and keep all original opening, custody, cancellation, receipt and later-cycle checks passing.",
+    "No gameplay owner, manifest/ledger read, world scan, recurring query, polling or physical/cancellation rule is added by the fix.",
+    "Both strict maps pass without pending purpose reviews."
+  ],
+  "authoritative_state": "Existing Dispatch owns requested manifest and actual handling stages; Ledger owns physical claims and cargo; existing Army reader omits rear-manifest coverage and must explain that limit.",
+  "commands_events_timed_work": "No new gameplay command, event or timed work. Only a pure feedback branch changes; the component uses existing manufacture, crew, fuel, dispatch, cancel and time APIs.",
+  "cancellation_replacement_failure": "Do not infer incoming cargo from requests or infer loss from cancellation. Missing rear coverage remains unknown in this reader; current existing owners retain all custody and late/duplicate-work rules.",
+  "safeguards": [
+    "Apply the existing-stock-versus-manufacture engineering lesson.",
+    "Use explicit disconnected fixture grants only to arrange the component; do not claim an ordinary factory, military shortage or full supply cycle.",
+    "Preserve failure output against the old implementation, then execute the strengthened checks after code correction."
+  ],
+  "checks": [
+    "tools/checks/army_rear_cargo_feedback_check.gd",
+    "tools/checks/army_supply_feedback_check.gd",
+    "tools/checks/army_supply_check.gd",
+    "tools/system_map.py --check",
+    "tools/ui_function_map.py --check"
+  ],
+  "limits": "No genuine need, new ordinary manufacture, whole delivery chain, return-to-duty, visible rendering, pacing or FPS acceptance. Lead technical and Designer exact-head review remain pending.",
+  "fixture_revision": 2,
+  "retained_unrelated_failure": {
+    "checker": "logs/army-loop/army_rear_cargo_feedback_check.v1.gd",
+    "output": "logs/army-loop/rear-cancel-diagnostic.stdout",
+    "result": "Existing immediate cancellation during Dispatch Approach did not return after200 simulated seconds: manifest Cancelling, vehicle Dispatch Approach, holder vehicle-lane, empty task. No dispatch source change. Lead notified.",
+    "revision_reason": "The focused rear-cargo acceptance does not require cancellation during approach. Wait for the actual approach to finish before cancelling the request-only case, retain the defect, then inspect reserved/loaded/departed cargo and postdeparture cancellation refusal."
+  }
+}

@@ -92,8 +92,8 @@ static func _supply_feedback(need: int, remaining: int, stock: Dictionary, incom
 		state = "Rear stock covers gap"
 		detail = "Existing available rear ammunition covers the shortfall beyond forward and HQ supplies. It still needs rear-to-HQ delivery, onward freight and recipient issue."
 	else:
-		state = "Rear supply shortfall"
-		detail = "%d rounds remain beyond available rear stock as well as HQ/forward coverage. Review production and labour for that gap; every stage of physical delivery still remains." % (hq_gap-int(stock.rear))
+		state = "Review rear deliveries"
+		detail = "%d rounds are not covered by the available unreserved rear stock and HQ/forward supplies shown here. Reserved or onboard rear-to-HQ cargo is not counted in this view. Check existing delivery requests and actual cargo before ordering extra production." % (hq_gap-int(stock.rear))
 	if held: detail += " Automatic rear-to-HQ requests are held after cancellation; resume them explicitly if wanted. This hold does not recall existing forward freight."
 	return {"state":state,"detail":detail}
 
