@@ -31,8 +31,13 @@ static func _facilities(rear: RefCounted) -> Dictionary:
 		var row: Dictionary = rear.construction.instances[id]
 		if row.kind not in result or row.state in RETIRED: continue
 		var previous: Dictionary = result[row.kind]
-		if previous.is_empty() or (row.state == "Complete" and previous.state != "Complete"):
-			result[row.kind] = {"id":str(id),"state":str(row.state),"blocker":str(row.get("blocker","")),"requested":int(rear.requests.get(id,{}).get("target",0)),"present":rear._present(id) if row.kind == "dispatch" and row.state == "Complete" else 0}
+		# One completed centre with actual handlers satisfies this preparation.
+		# Once found, later unstaffed copies need neither a read nor another target.
+		if row.kind == "dispatch" and int(previous.get("requested",0)) > 0 and int(previous.get("present",0)) > 0: continue
+		var candidate := {"id":str(id),"state":str(row.state),"blocker":str(row.get("blocker","")),"requested":int(rear.requests.get(id,{}).get("target",0)),"present":rear._present(id) if row.kind == "dispatch" and row.state == "Complete" else 0}
+		var staffed_dispatch: bool = row.kind == "dispatch" and row.state == "Complete" and candidate.requested > 0 and candidate.present > 0
+		if previous.is_empty() or (row.state == "Complete" and previous.state != "Complete") or staffed_dispatch:
+			result[row.kind] = candidate
 	return result
 
 static func _school(rear: RefCounted) -> Dictionary:
@@ -85,7 +90,7 @@ static func _next(factory: Dictionary, facilities: Dictionary, school: Dictionar
 	if not dispatch_site.is_empty(): return dispatch_site
 	var dispatch: Dictionary = facilities.dispatch
 	if int(dispatch.requested) == 0 or int(dispatch.present) == 0:
-		return _action("Workers/Jobs","Staff the Logistics Centre","The Logistics Centre has %d workers requested and %d present. Request actual handlers and hauling workers; reporting and loading still take physical time." % [dispatch.requested,dispatch.present])
+		return _action("Workers/Jobs","Staff the Logistics Centre","No completed Logistics Centre currently has both requested and present handlers. At the shown centre, %d are requested and %d present. Request handlers at one usable centre and allow reporting; hauling and loading still take physical time." % [dispatch.requested,dispatch.present])
 	return _action("ArmyNeeds","Review actual Army needs",_army_reason(army))
 
 static func _site_action(site: Dictionary, name: String) -> Dictionary:
