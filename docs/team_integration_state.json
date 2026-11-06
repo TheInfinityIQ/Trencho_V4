@@ -37,7 +37,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Integrated approved last-assessed Army supply-pickup explanation (PR99). Genuine shortage, useful manufacture/physical receipt and repeat full-loop acceptance remain open.",
+  "current_work": "Operations developer fixes new automatic Logistics Centre selection using actual eligible handlers while preserving accepted manifests. PR99 diagnostic feature is integrated; ordinary supply-loop/FPS acceptance stays open.",
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -94,9 +94,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_truck_handoff",
-        "branch": "codex/testable-truck-handoff",
-        "current_assignment": "Completed bounded observation of42149002464; still externally queued with nojobs/artifacts at end. Observation stopped, no automatic watcher."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_logistics_selection",
+        "branch": "codex/ready-logistics-centre",
+        "current_assignment": "New automatic shipment centre selection must skip requested-but-unfilled centres when another has an actual eligible idle handler; narrow authoritative single-pass readiness, accepted manifests unchanged. Startpointffd92ab; contract/diagram before edits; brief GitHub new-code check only."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -225,7 +225,7 @@
       "projects_write"
     ],
     "credential_owner": "Existing named Windows credential; token never in repo/config/logs",
-    "verified": "Deployed helper, MCP initialization/tools list and real Project3 read succeeded",
-    "session_limit": "Current chat registry reload has not yet been observed"
+    "verified": "Deployed helper, MCP initialization/tools list and real Project3 read succeeded; native registered app tool projects_get returned private Project3.",
+    "session_limit": "Resolved: registered mcp__github_projects tools are available; native projects_get read actual Project3 successfully."
   }
 }

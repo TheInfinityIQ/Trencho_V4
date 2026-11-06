@@ -8,8 +8,9 @@ The official GitHub Projects MCP connection is named `github_projects`, with
 `projects_get`, `projects_list` and `projects_write`. Installed Codex successfully
 parsed the connection. A private captured invocation of the deployed header helper
 initialized the official server, listed those exact tools and read Project3.
-Current-chat tool-registry reload has not yet been observed; configuration is not
-a claim that new tools already appear in an existing chat.
+The registered `mcp__github_projects` tools are now available in the lead chat.
+A native `projects_get` invocation successfully returned actual private Project3;
+this verifies the app connection as well as the earlier private protocol check.
 
 The existing Generic Windows credential `TrenchoProjectsGitHub` has actual update
 access to this project. Its token remains owned by Windows Credential Manager.
