@@ -367,8 +367,8 @@ func tick() -> void:
 	if automatic_deliveries: _dispatch_requested_freight(stop)
 
 func invalidate_rear_supply_need(type: String) -> void:
-	# A new explicit rear request clears cancellation intent. Recompute current
-	# need at the next owned resupply tick; retain no stale quantity or stock.
+	# Intent changes or newly credited receipts can change outstanding coverage.
+	# Recompute at the next owned resupply tick; this does not clear rear holds.
 	_rear_shortages.erase(type)
 
 func _dispatch_requested_freight(stop: Dictionary) -> void:

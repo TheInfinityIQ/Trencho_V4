@@ -233,6 +233,14 @@ func _advance_request(row: Dictionary) -> bool:
 		if unloaded > credited:
 			row.delivered += unloaded-credited
 			row.credited[manifest.id] = unloaded
+			# Receipt changes outstanding promises even when net Army need is unchanged.
+			# Invalidate only publication; the next military decision owns fresh coverage.
+			var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
+			var operations: RefCounted = rear.battlefield_operations
+			if model == _model() and supply != null and operations != null:
+				var policy: RefCounted = operations.policy
+				if policy != null and policy.get("resupply") == supply:
+					supply.invalidate_rear_supply_need(str(row.type))
 			changed.emit()
 		if manifest.state in ["Complete","Cancelled","Safety Returned"]:
 			row.manifest = ""
