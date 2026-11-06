@@ -5,7 +5,7 @@
     "branch": "main",
     "head": "800ec9d4b869fad630327d52b42a807baddf6ac0",
     "working_tree": "The previous integrated local snapshot was published as3531bd7 on codex/gameplay-demo-integration. Current feature/design increments follow on that review branch.",
-    "owner": "Current lead owns integration; one bounded native coding worker at a time, with read-only/design handoffs from the named team."
+    "owner": "Lead integrates; three explicitly authorized GPT6.1Sol xhigh developers own bounded features in separate worktrees, focused tests and draft PRs. Technical and Game Designer exact-commit reviews required."
   },
   "fixed_acceptance": [
     {
@@ -74,6 +74,12 @@
       "status": "implemented_physical_component_verified",
       "purpose": "Keep actual latest named-refill recipients and their current operation followable after requests clear, with truthful stock coverage.",
       "acceptance_limit": "Arranged physical courier component passes; ordinary natural refill/return/repeated need and full useful rear production loop remain open."
+    },
+    {
+      "id": "P8",
+      "status": "implemented_physical_chain_verification_in_progress",
+      "purpose": "Connect actual empty-field Materials expansion, selected school/teacher/Driver, manufactured fueled truck and repeated HQ delivery through ordinary commands.",
+      "acceptance_limit": "All facilities/training/truck/fuel/park and new200rounds observed; fixed command deadline elapsed during first shipment, so two-load/return acceptance remains pending."
     }
   ],
   "verification": [
@@ -198,7 +204,7 @@
       "result": "Named refill continuity: actual courier receipt, cleared requests, selected recipient/Observe retention, next-cycle receipt reset and pure read/audit pass. Both maps pass; arranged component scope only."
     }
   ],
-  "next_action": "Follow a naturally arising Rifle refill through its current feasible operation and later need, then establish the useful rear-production path when genuine demand requires it. Preserve the approved opening and report any pacing limitation.",
+  "next_action": "Finish the two newly made ammunition deliveries and same-hull returns, integrate reviewed team components and directly verify the mounted guidance; keep native/ordinary autonomous/FPS limits explicit.",
   "limitations": [
     "Prototype completion and 60 FPS compliance are not established.",
     "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
@@ -208,7 +214,7 @@
     "Latest dedicated native pointer/query run: eleven of twelve pass; sustained motion has an unresolved invalid-preview/coordinate contract failure. Older full-suite performance failures remain recorded. Background omissions do not satisfy native acceptance."
   ],
   "evidence": "docs/evidence/prototype_menu_performance.json",
-  "latest_evidence": "docs/evidence/refill_continuity.json",
+  "latest_evidence": "docs/evidence/supply_truck_progression.json",
   "current_declared_default_cases": 60,
   "current_declared_foreground_cases": 76,
   "current_opt_in_endurance_cases": 1,

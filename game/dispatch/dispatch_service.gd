@@ -487,7 +487,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if source.is_empty() or not rear.stores[source.holder_id].accessible:
 			row.blocker = "Reserved cargo source is inaccessible; claim retained."
 			return false
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
 		if path.is_empty(): row.blocker = "No clear walking route to reserved cargo source."; return false
 		_start_task(row,"Stock Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
@@ -498,7 +498,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if item.stage != "Source": continue
 		if worker.is_empty(): row.blocker = "Real Dispatch worker needed to collect the reserved rifle."; return false
 		var source: Dictionary = rear.ledger.inspect_entity(item.id)
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
 		if path.is_empty(): row.blocker = "No clear walking route to actual rifle."; return false
 		_start_task(row,"Weapon Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
@@ -553,7 +553,7 @@ func _finish_task(row: Dictionary) -> void:
 	var result: Dictionary = {"ok":true}
 	if phase == "Gun Handling":
 		var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
-		var path: Array = Layout.path(owner.site_door,row.dispatch_door)
+		var path: Array = rear.walk_path(owner.site_door,row.dispatch_door)
 		if path.is_empty(): row.blocker = "Gun gear route to F07 blocked; same gun remains in F10."; _clear_task(row); return
 		result = rear.ledger.move_field_gun(task.gun,"rear",owner.site_door)
 		if not result.ok: row.blocker = result.message; _clear_task(row); return
@@ -578,7 +578,7 @@ func _finish_task(row: Dictionary) -> void:
 	elif phase == "Weapon Pickup":
 		result = rear.ledger.begin_weapon_carry(worker,row.weapon_items[task.item_index].id)
 	if phase in ["Stock Pickup","Weapon Pickup"] and result.ok:
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
 		_start_task(row,"Stock Carry" if phase == "Stock Pickup" else "Weapon Carry",[worker],Layout.length(path)/1.2,path)
 		row.task.item_index = task.item_index
 		return
@@ -669,7 +669,7 @@ func _finish_task(row: Dictionary) -> void:
 		result = rear.ledger.move_field_gun(task.gun,"rear",row.dispatch_door)
 		if result.ok:
 			var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
-			var path: Array = Layout.path(row.dispatch_door,owner.site_door)
+			var path: Array = rear.walk_path(row.dispatch_door,owner.site_door)
 			_start_task(row,"Gun Return Carry",task.actors,Layout.length(path)/1.2,path)
 			row.task.gun = task.gun
 			return

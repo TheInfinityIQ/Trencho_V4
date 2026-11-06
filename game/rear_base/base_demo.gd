@@ -18,6 +18,7 @@ const RearLogistics = preload("res://game/logistics/rear_logistics.gd")
 const ArmySupplyView = preload("res://game/logistics/army_supply_view.gd")
 const ArmySupplyPanel = preload("res://game/logistics/army_supply_panel.gd")
 const BUILD_PURPOSES := {"receiving":"Unload purchased supplies", "depot":"Store raw supplies", "workshop":"Manufacture infantry equipment", "munitions":"Manufacture ammunition", "training":"Train workers and specialists", "dispatch":"Send finished supplies onward", "support":"Manufacture support equipment", "vehicle_works":"Build vehicles", "park":"Park finished vehicles", "construction":"Organize construction crews", "materials":"Manufacture Building Materials"}
+const VEHICLE_NAMES := {"T01":"Supply truck","T02":"Personnel transport","T03":"Armed car","T04":"APC","T05":"Tank"}
 var session: Node
 var simulation: RefCounted
 var forward_delivery_panel: VBoxContainer
@@ -43,6 +44,7 @@ var _standalone_session_actions: VBoxContainer
 var _fit_base_button: Button
 var _advanced_panels: CheckButton
 var _uses_shared_navigation := false
+var _staff_control_basis := ""
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -99,12 +101,16 @@ var training_rows: ItemList
 var training_status: Label
 var training_ids: Array[String] = []
 var instructor_count: SpinBox
+var training_site: OptionButton
+var instructor_hire_button: Button
+var instructor_hire_status: Label
 var training_access: CheckBox
 var recovery_button: Button
 var recovery_status: Label
 var vehicle_rows: ItemList
 var vehicle_ids: Array[String] = []
 var vehicle_person: OptionButton
+var vehicle_fuel_person: OptionButton
 var vehicle_station: OptionButton
 var vehicle_fuel_units: SpinBox
 var vehicle_status: Label
@@ -621,20 +627,23 @@ func _refresh_resource_hud(view: Dictionary) -> void:
 	resource_hud.text = "%sLocal stock: %s%sOrdered / in delivery: %s" % [money," · ".join(physical),separator,", ".join(incoming) if not incoming.is_empty() else "none"]
 
 func _refresh_production_context(view: Dictionary) -> void:
-	var staff: Dictionary = simulation.rear.requests.get(_context_duty(),{})
+	var duty := _context_duty()
+	var basis := str(simulation.get_instance_id()) + ":" + duty
+	var staff: Dictionary = simulation.rear.requests.get(duty,{})
 	context_staff.editable = not staff.is_empty()
 	context_priority.disabled = staff.is_empty()
 	context_staff.set_block_signals(true)
 	context_staff.max_value = int(staff.get("positions",0))
-	if not context_staff.get_line_edit().has_focus(): context_staff.value = int(staff.get("target",0))
+	if basis != _staff_control_basis or not context_staff.get_line_edit().has_focus(): context_staff.value = int(staff.get("target",0))
+	_staff_control_basis = basis
 	context_staff.set_block_signals(false)
 	context_priority.select(int(staff.get("priority",1)))
 	var activity: Dictionary = _activity().snapshot(false)
-	context_status.text = "%s\nRecipe %s · %s\nOutput target %d · Local inputs: %s\nNeeds: %s" % [WorkforcePanel.job_name(_context_duty(),simulation),activity.recipe,activity.status,int(_activity().stock_target),_named_quantities(activity.local_inputs),_named_quantities(activity.missing_local)]
-	production_controls.visible = int(staff.get("positions",0)) > 0 or simulation.rear.construction.activities.has(_context_duty())
+	context_status.text = "%s\nRecipe %s · %s\nOutput target %d · Local inputs: %s\nNeeds: %s" % [WorkforcePanel.job_name(duty,simulation),activity.recipe,activity.status,int(_activity().stock_target),_named_quantities(activity.local_inputs),_named_quantities(activity.missing_local)]
+	production_controls.visible = int(staff.get("positions",0)) > 0 or simulation.rear.construction.activities.has(duty)
 	if not production_controls.visible: context_status.text = "No workshop built. Open Build to place one, then assign workers after construction."
 	for row in view.rear.staffing:
-		if row.id == _context_duty(): context_status.text += "\n%d present · %d assigned · %d requested · %d vacancies" % [row.present,row.assigned,row.target,row.shortage]
+		if row.id == duty: context_status.text += "\n%d present · %d assigned · %d requested · %d vacancies" % [row.present,row.assigned,row.target,row.shortage]
 	_refresh_build_description()
 
 func _refresh_build_description() -> void:
@@ -1026,10 +1035,20 @@ func _sync_option(option: OptionButton, values: Array) -> void:
 	option.select(index if index >= 0 else 0)
 
 func _training_panel(box: VBoxContainer) -> void:
-	_label(box,"F06: two instructors, twelve students").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UIKit.label(box,"Train your workforce",20)
+	_label(box,"Build a Training facility, hire its first instructor, then assign that instructor here. Train a worker in Basic infantry before Vehicle crew to prepare a Driver.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_button(box,"Build a Training facility",func() -> void: _factory_plan_action({"panel":"Build","building_kind":"training"}))
+	training_site = _option(box,"Training facility",[])
+	training_site.item_selected.connect(func(_index: int) -> void: _request_refresh())
+	instructor_hire_button = _button(box,"Hire instructor · 120 requisition",func() -> void: _result(simulation.receiving.buy_recovery_instructor()),true)
+	instructor_hire_status = _label(box,"")
+	instructor_hire_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	instructor_count = _spin(box,"Instructor target",2)
 	instructor_count.value_changed.connect(func(value: float) -> void:
-		_result(simulation.rear.set_target("training",int(value))))
+		var duty := _training_duty()
+		if not duty.is_empty():
+			var priority := int(simulation.rear.requests.get(duty,{}).get("priority",1))
+			_result(simulation.rear.set_target(duty,int(value),priority)))
 	training_course = _option(box,"Course / declared recipe access",[])
 	training_count = _spin(box,"Requested students",12,1)
 	_button(box,"Request course",func() -> void: _result(simulation.rear.training.request_course(training_course.get_item_metadata(training_course.selected),int(training_count.value))))
@@ -1050,25 +1069,33 @@ func _training_panel(box: VBoxContainer) -> void:
 	_load_courses()
 
 func _vehicles_panel(box: VBoxContainer) -> void:
-	_label(box,"F10 produced hulls retain their identity through crew, fuel and F11 parking.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label(box,"C30: accept R30 in Work and choose F11 place 5 before completion. Haul its listed ingredients to Vehicle Input; R33 needs ingredients at Munitions Input. Seat three existing P08 crew at Driver, Gunner and Commander, carry real M08, then drive to parking and Fleet Transfer in Dispatch. Preview the route's actual fuel needs. Send separately made autocannon rounds (E26) through HQ and Supply. The army handles field deployment and rack issue.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"Prepare a supply truck").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"Build Vehicle Works and a Vehicle Park. In Production choose Supply truck, apply a target of 1 and accept the vehicle order. Train a Driver, buy fuel, then prepare the same manufactured truck below.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_button(box,"Vehicle production",_open_vehicle_production,true)
+	_button(box,"Driver training",func() -> void: show_panel("Train"))
+	_button(box,"Buy fuel",func() -> void:
+		show_panel("Supplies")
+		_supply_views.current_tab = 0
+		cart.M08.get_line_edit().grab_focus())
 	vehicle_rows = _list(box,140)
 	vehicle_rows.item_selected.connect(func(_index: int) -> void: _load_vehicle_stations(); _request_refresh())
-	vehicle_person = _option(box,"Actual rear person",[])
+	vehicle_person = _option(box,"Driver / crew member",[])
 	vehicle_station = _option(box,"Distinct crew station",[])
 	_button(box,"Report and board selected station",func() -> void:
 		if not vehicle_rows.get_selected_items().is_empty() and vehicle_person.selected >= 0 and vehicle_station.selected >= 0:
 			_result(simulation.rear.vehicles.assign_station(_vehicle_id(),vehicle_person.get_item_metadata(vehicle_person.selected),vehicle_station.get_item_text(vehicle_station.selected))))
 	_button(box,"Extract selected station occupant",func() -> void:
 		if vehicle_person.selected >= 0: _result(simulation.rear.reassign_person(vehicle_person.get_item_metadata(vehicle_person.selected),"Available")))
+	vehicle_fuel_person = _option(box,"Available fuel-handling worker",[])
 	vehicle_fuel_units = _spin(box,"Whole M08 units (up to 25 per carry)",25,1)
 	_button(box,"Carry purchased fuel into this tank",func() -> void:
-		if not vehicle_rows.get_selected_items().is_empty() and vehicle_person.selected >= 0:
-			_result(simulation.rear.vehicles.request_refuel(_vehicle_id(),vehicle_person.get_item_metadata(vehicle_person.selected),int(vehicle_fuel_units.value))))
+		if not vehicle_rows.get_selected_items().is_empty() and vehicle_fuel_person.selected >= 0:
+			_result(simulation.rear.vehicles.request_refuel(_vehicle_id(),vehicle_fuel_person.get_item_metadata(vehicle_fuel_person.selected),int(vehicle_fuel_units.value))))
 	_button(box,"Drive SAME F10 hull to promised F11 place",func() -> void:
 		if not vehicle_rows.get_selected_items().is_empty(): _result(simulation.rear.vehicles.start_drive(_vehicle_id())))
 	vehicle_status = _label(box,"")
 	vehicle_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label(box,"Once parked, staff a Logistics Centre and use Supplies → Army requests. Its workers load the truck, deliver to HQ and return for the next load.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func _dispatch_panel(box: VBoxContainer) -> void:
 	_label(box,"G12/G13 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew, Fleet permanently transfers them at HQ. Preview the full route against tank fuel before departure.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1194,23 +1221,62 @@ func _vehicle_id() -> String:
 	return vehicle_ids[vehicle_rows.get_selected_items()[0]] if not vehicle_rows.get_selected_items().is_empty() else ""
 
 func _load_vehicle_people() -> void:
-	if vehicle_person == null: return
-	var selected: String = str(vehicle_person.get_item_metadata(vehicle_person.selected)) if vehicle_person.selected >= 0 else ""
-	var ids: Array[String] = []
-	for p in simulation.rear.ledger.entities_of_kinds(["PERSON"],false):
-		if p.kind == "PERSON" and p.owner == "army-blue": ids.append(p.id)
-	if vehicle_person.item_count == ids.size():
-		var same := true
-		for index in ids.size():
-			if vehicle_person.get_item_metadata(index) != ids[index]: same = false
-		if same: return
-	vehicle_person.clear()
-	for id in ids:
-		var p: Dictionary = simulation.rear.ledger.inspect_entity(id,{},false)
-		vehicle_person.add_item(id + " / " + p.design_type)
-		vehicle_person.set_item_metadata(vehicle_person.item_count-1,id)
-		if id == selected: vehicle_person.select(vehicle_person.item_count-1)
-	if vehicle_person.selected < 0 and vehicle_person.item_count > 0: vehicle_person.select(0)
+	if vehicle_person == null or vehicle_fuel_person == null: return
+	var crew: Array[Dictionary] = []
+	var fuel: Array[Dictionary] = []
+	for id in simulation.rear.actors:
+		var person: Dictionary = simulation.rear.ledger.inspect_person_status(id)
+		if person.owner != simulation.rear.PLAYER or person.health <= 0: continue
+		if person.qualification in ["P08","P04"]: crew.append(person)
+		if person.assignment == "Available" and person.pending_assignment == "None" and person.crew_station.is_empty() and person.carrying_stock_id.is_empty(): fuel.append(person)
+	_sync_vehicle_people(vehicle_person,crew)
+	_sync_vehicle_people(vehicle_fuel_person,fuel)
+
+func _sync_vehicle_people(option: OptionButton, people: Array[Dictionary]) -> void:
+	var selected := str(option.get_item_metadata(option.selected)) if option.selected >= 0 else ""
+	var selection := -1
+	for index in people.size():
+		var person: Dictionary = people[index]
+		var role := "Driver trained" if person.qualification == "P08" else ("Heavy weapons trained" if person.qualification == "P04" else "Worker")
+		var caption := "%s · %s · %s" % [role,str(person.id),str(person.assignment)]
+		if index >= option.item_count: option.add_item(caption)
+		elif option.get_item_text(index) != caption: option.set_item_text(index,caption)
+		option.set_item_metadata(index,str(person.id))
+		if str(person.id) == selected: selection = index
+	while option.item_count > people.size(): option.remove_item(option.item_count-1)
+	option.select(selection if selection >= 0 else (0 if not people.is_empty() else -1))
+	option.disabled = people.is_empty()
+	if people.is_empty(): option.text = "No eligible rear person available"
+
+func _open_vehicle_production() -> void:
+	var chosen := {}
+	for site in simulation.rear.construction.instances.values():
+		if site.kind != "vehicle_works" or site.state in ["Cancelled","Destroyed","Dismantled"]: continue
+		if chosen.is_empty() or (site.state == "Complete" and chosen.state != "Complete"): chosen = site
+	_factory_plan_action({"panel":"Work" if chosen.get("state","") == "Complete" else "Build","facility_id":str(chosen.get("id","")),"building_kind":"vehicle_works","focus":"target"})
+
+func _training_duty() -> String:
+	if training_site == null or training_site.selected < 0: return ""
+	var duty := str(training_site.get_item_metadata(training_site.selected))
+	for site in simulation.rear.training.training_sites:
+		if site.active and str(site.duty) == duty: return duty
+	return ""
+
+func _sync_training_sites(sites: Array) -> void:
+	var selected := str(training_site.get_item_metadata(training_site.selected)) if training_site.selected >= 0 else ""
+	var active: Array = sites.filter(func(site: Dictionary) -> bool: return bool(site.active))
+	var selection := -1
+	for index in active.size():
+		var duty := str(active[index].duty)
+		var caption := WorkforcePanel.job_name(duty,simulation)
+		if index >= training_site.item_count: training_site.add_item(caption)
+		elif training_site.get_item_text(index) != caption: training_site.set_item_text(index,caption)
+		training_site.set_item_metadata(index,duty)
+		if duty == selected: selection = index
+	while training_site.item_count > active.size(): training_site.remove_item(training_site.item_count-1)
+	training_site.select(selection if selection >= 0 else (0 if not active.is_empty() else -1))
+	training_site.disabled = active.is_empty()
+	if active.is_empty(): training_site.text = "Build a Training facility"
 
 func _load_vehicle_stations() -> void:
 	if vehicle_station == null: return
@@ -1256,7 +1322,7 @@ func _load_production() -> void:
 	for id in choices:
 		var spec: Dictionary = activity.RECIPES[id]
 		var allowed: bool = activity.recipe_accessible(id) if activity.has_method("recipe_accessible") else true
-		recipe.add_item(id + " / " + spec.output_type + ("" if allowed else " (locked)"))
+		recipe.add_item(str(VEHICLE_NAMES.get(spec.output_type,spec.output_type)) + " · " + id + ("" if allowed else " (locked)"))
 		recipe.set_item_metadata(recipe.item_count - 1, id)
 		recipe.set_item_disabled(recipe.item_count - 1, not allowed)
 		if id == view.recipe: recipe.select(recipe.item_count - 1)
@@ -1301,7 +1367,7 @@ func _select(kind: String, id: String, open_panel: bool = true) -> void:
 		show_panel(target)
 		# Hidden controls can be old while Supplies is open. Refresh the target
 		# before resolving its selection; tab_changed handles a visible new tab.
-		if previous_tab == tabs.current_tab or not is_visible_in_tree(): _refresh()
+		if target == "Work" or previous_tab == tabs.current_tab or not is_visible_in_tree(): _refresh()
 		if target == "Build": _cancel_placement()
 	if kind == "site":
 		var site_index: int = construction_ids.find(id)
@@ -1616,9 +1682,12 @@ func _refresh_vehicle_controls(view: Dictionary, include_people: bool) -> void:
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:
 		vehicle_rows.select(0)
 		_load_vehicle_stations()
-	vehicle_status.text = "No F10-produced hull yet. Select an accessible recipe in Work, then use actual trained people and M08. The C30 playtest provides R30 and R33 access alongside essential recipes."
+	vehicle_status.text = "No manufactured vehicle yet. Build Vehicle Works and a Vehicle Park, choose Supply truck in Production, apply its target and accept the order."
 	for row in view.vehicles.rows:
 		if row.id != _vehicle_id(): continue
+		if row.hull.design_type in ["T01","T02"]:
+			vehicle_status.text = "%s · %s\nFuel %.1f / %.0f · Driver %s\n%s" % [VEHICLE_NAMES[row.hull.design_type],row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,"seated" if row.readiness.driver else "required","Choose an available worker to carry purchased fuel; choose the trained Driver separately. Finish both before driving to parking. After parking, a staffed Logistics Centre can send supplies." if row.state == "In F10" else "Existing delivery work retains this hull and crew. The truck returns to its parking place after HQ receipt."]
+			continue
 		vehicle_status.text = "%s %s at %s | %s | distance %.1f/%.1fm | fuel burned %.3f\nStations %s; missing %s\nDriver-only Fleet Transfer crew %s; motion %s; combat crew %s; main-fire stations %s; matching rack ammo %d; combat ready %s\nFuel carries %s; rear fleet remains %d live/%d reserved. Fleet Transfer preserves this hull at HQ; inspect military deployment on Battlefield and actual E26 issue in Supply." % [row.id,row.hull.design_type,str(row.hull.position),row.state,row.distance,row.length,row.burned,str(row.hull.crew_by_station),str(row.readiness.missing_stations),str(row.readiness.transfer_crew_eligible),str(row.readiness.motion_ready),str(row.readiness.combat_crew_ready),str(row.readiness.main_fire_stations_ready),row.readiness.matching_ammo,str(row.readiness.combat_ready),str(row.fuel_claims),view.heavy.fleet.live,view.heavy.fleet.reserved]
 
 func _refresh_work() -> void:
@@ -1685,14 +1754,23 @@ func _refresh_construction_progress() -> void:
 func _refresh_training() -> void:
 	CallLog.record(&"rear_base/base_demo.gd::_refresh_training")
 	var view: Dictionary = simulation.training_view(_selected_id)
+	var offer: Dictionary = view.receiving.recovery_offer
+	instructor_hire_button.disabled = not bool(offer.available) or float(view.receiving.money) < 120.0
+	instructor_hire_status.text = "120 requisition includes arrival transport. The instructor must arrive before teaching." if offer.available else str(offer.message).replace("recovery","instructor").replace("Recovery","Instructor")
 	_refresh_resource_hud(view)
 	_refresh_training_controls(view.training, view.training_selected_person)
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, view.rear_population, simulation.receiving.incoming_people()]
 
 func _refresh_training_controls(training: Dictionary, person: Dictionary) -> void:
+	_sync_training_sites(training.training_sites)
 	_fill(training_rows,training_ids,training.rows,func(row: Dictionary) -> String: return "%s %s %s | %s %.1f/%.0fs" % [row.id,row.course,row.person_id,row.state,row.work,row.required])
-	training_status.text = "Instructors %d/%d requested; coverage %d students\nStudent places %d/12 | active %d, paused %d, reporting %d, queued %d\n" % [training.instructors.size(),training.instructor_target,training.coverage,training.reserved_student_places,training.counts.Active,training.counts.Paused,training.counts.Reporting,training.counts.Queued]
-	if training.instructors.is_empty(): training_status.text += "Missing actual instructor: purchase recovery P01 if none remain, then assign and wait for reporting.\n"
+	var duty := _training_duty()
+	var requested := int(simulation.rear.requests.get(duty,{}).get("target",0))
+	instructor_count.set_value_no_signal(requested)
+	instructor_count.editable = not duty.is_empty()
+	training_status.text = "Selected school's instructor target: %d · Instructors present overall: %d · Coverage: %d students\nStudent places reserved: %d | active %d, paused %d, reporting %d, queued %d\n" % [requested,training.instructors.size(),training.coverage,training.reserved_student_places,training.counts.Active,training.counts.Paused,training.counts.Reporting,training.counts.Queued]
+	if duty.is_empty(): training_status.text += "Build a Training facility before assigning instructors or requesting courses.\n"
+	elif training.instructors.is_empty(): training_status.text += "Hire or assign an existing basic-trained instructor, then wait for reporting. If that person is on another job, use Workers / Jobs to raise this school's priority above competing jobs and allow the current carry and reporting to finish.\n"
 	for row in training.rows:
 		if row.id != _selected_id: continue
 		training_status.text += "%s / %s: %s\nElapsed %.1f/%.0f seconds; %s" % [row.course,row.person_id,row.state,row.work,row.required,row.reason]

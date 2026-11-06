@@ -15,6 +15,14 @@ existing safety configuration remains in effect. No scheduler, hook, service,
 API key or second continuation loop is added. The lead may arrange an independent
 review outside the controller, with explicit ownership and no concurrent edits.
 
+Dawson's 5 November parallel-team instruction permits independent developers
+in separate worktrees, as described in `developer_team.md`. The one-worker and
+one-controller limits apply per objective/worktree. Direct bounded feature work
+may be performed by its assigned developer; do not wrap that developer in a
+second automatic continuation owner. Retain fixed acceptance, evidence and
+deadlines, and use the controller when automatic retries are needed. Other
+developers and the lead may inspect the work, but must coordinate edits.
+
 ## Launch and inspect
 
 From the project folder in PowerShell:

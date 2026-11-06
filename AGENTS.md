@@ -77,6 +77,31 @@ gameplay acceptance.
 
 Use a task briefing in progress and completion messages: Objective, Outcome and
 Next task. Say Completed only for the specific result actually verified.
+Keep briefings at feature level (for example, vehicle factory or Army supply).
+Continue authorized work until the agreed increment is testable; a partial
+internal step is not a playable handoff.
+
+# Parallel developers and review
+
+Dawson authorized three GPT-6.1 Sol developers at `xhigh` reasoning on
+5 November 2026. Follow `docs/developer_team.md` for onboarding, isolated
+worktrees, feature ownership, testing, draft PRs and exact-commit reviews.
+The lead gives technical approval on developer PRs. The designated Game Designer
+must give design approval on every PR, including the lead's. Do not substitute
+CI, publication or the author's report for either approval, and do not merge
+without the required reviews. Parallel work does not authorize concurrent
+writers or controllers in one checkout, nested retry loops or unattended
+scheduled work.
+
+# Repository ownership
+
+Dawson assigned repository, issue, PR, milestone and Projects upkeep to the
+lead on 5 November 2026, in consultation with the Game Designer. Keep tickets
+accurate and actionable. Close duplicates and superseded work with a reason,
+successor and preserved unique requirements/source references. Remove stale
+blocked-by planning gates; record real unmet acceptance and the next bounded
+action instead of marking incomplete work complete. Retain history and useful
+unmerged revisions; do not delete issues or branches to clear the board.
 
 # Design before implementation
 

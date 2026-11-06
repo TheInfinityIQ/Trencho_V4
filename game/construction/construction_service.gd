@@ -146,9 +146,9 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,
 		"m11":plan.m11,"work":plan.work,"progress":0.0,"site_store":id,
 		"blocker":"Deliver %d real M11 from an accessible rear store." % plan.m11,"builders":{},"haul_job":""}
-	if rear.empty_field_opening: order_materials(id,"receiving")
+	if rear.empty_field_opening: order_materials(id,"receiving",1,true)
 	rear._settle()
-	return {"ok":true,"id":id,"message":"Site placed; materials requested from the Supply Table. Assign hauling workers and up to four builders." if rear.empty_field_opening else "Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
+	return {"ok":true,"id":id,"message":"Site placed; Building Materials are requested from the Supply Table and completed Materials Plants. Assign haulers and up to four builders." if rear.empty_field_opening else "Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
 
 func _path_hits(path: Array, box: Rect2) -> bool:
 	for index in range(1,path.size()):
@@ -243,7 +243,7 @@ func _register_builders(id: String, door: Vector2, rear: RefCounted) -> void:
 	rear.ledger.add_place("duty-" + duty, "Construction workers at " + id, door)
 	rear.requests[duty] = {"id":duty,"target":0,"positions":4,"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-" + duty,"manual":not rear.empty_field_opening}
 
-func order_materials(id: String, source: String, priority: int = 1) -> Dictionary:
+func order_materials(id: String, source: String, priority: int = 1, automatic: bool = false) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual construction site.")
 	var row: Dictionary = instances[id]
 	if row.state != "Awaiting M11": return _fail("Only an awaiting site can request its build materials.")
@@ -255,9 +255,24 @@ func order_materials(id: String, source: String, priority: int = 1) -> Dictionar
 		if job.destination == id and job.type == "M11" and not job.cancelled: in_flight += maxi(0,int(job.requested)-int(job.delivered))
 	var needed: int = maxi(0,int(row.m11)-local-in_flight)
 	if needed == 0: return _fail("The complete M11 delivery is already here or committed.")
-	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority)
-	if result.ok: row.haul_job = result.id
+	var alternatives: Array = _manufactured_material_sources() if automatic else []
+	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority,alternatives)
+	if result.ok:
+		row.haul_job = result.id
+		if automatic: rear._job(str(result.id)).automatic_site = id
 	return result
+
+func _manufactured_material_sources() -> Array:
+	var sources: Array = []
+	for site in instances.values():
+		if site.kind == "materials" and site.state == "Complete" and site.has("output_store"): sources.append(str(site.output_store))
+	return sources
+
+func _publish_material_source(source: String, rear: RefCounted) -> void:
+	# A plant completion is a real membership event, not a recurring source scan.
+	for job in rear.jobs:
+		var site: Dictionary = instances.get(str(job.get("automatic_site","")),{})
+		if job.type == "M11" and not site.is_empty() and site.state == "Awaiting M11": rear.add_haul_source(str(job.id),source)
 
 func is_office(id: String) -> bool:
 	return (id == "construction" and not _rear_ref.get_ref().empty_field_opening) or (instances.has(id) and instances[id].kind == "construction" and instances[id].state == "Complete")
@@ -513,6 +528,7 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 		activity.mode = "Stock target"
 		rear.additional_productions.append(activity)
 		activities[row.id] = activity
+	if row.kind == "materials": _publish_material_source(str(row.output_store),rear)
 
 func request_dismantle(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual facility.")

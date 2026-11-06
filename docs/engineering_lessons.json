@@ -60,6 +60,36 @@
       "failure": "Two draft refill checker arrangements failed before testing the requested continuity: a top-level Panel alias collided with a Godot class, then a distant local stock transfer correctly failed co-location. Both owned runs were stopped before changing protected inputs.",
       "evidence": "docs/evidence/refill_continuity.json; logs/refill-continuity/checker-correction.json; logs/refill-continuity/local-transfer-correction.json",
       "rule": "Use non-conflicting preload names and read physical admission contracts before arranging a component. Preserve invalid fixtures/failures, correct a reviewed new contract, and never weaken correct custody/distance guards to make it pass."
+    },
+    {
+      "failure": "Objective feedback inferred no opposing capture presence from any exit from Contested; the friendly side can leave while enemies remain. Designer review caught the false claim.",
+      "evidence": "PR93 reviews5794145836/5794190558; docs/evidence/objective_feedback.json on52ef961",
+      "rule": "State transitions establish only their actual facts. Check both directions and neutral/owned contexts before translating a transition into a player claim."
+    },
+    {
+      "failure": "Guidance selected the first completed Logistics Centre and claimed a staffing blocker even when a later copy was actually staffed.",
+      "evidence": "PR94 review5794182998 and corrected50d663a; docs/evidence/demo_guidance_logistics_selection.json",
+      "rule": "An arbitrary first instance is not aggregate capability. Select an actual qualifying instance or use an explicit bounded aggregate, and test reversed ordering plus no eligible instance."
+    },
+    {
+      "failure": "Supply feedback treated unreserved available stock as full coverage and prescribed manufacture while real cargo was reserved, loaded or departed to HQ.",
+      "evidence": "PR95 corrected62a1258; docs/evidence/army_supply_feedback.json",
+      "rule": "Available inventory excludes commitments. Reconcile custody accurately or disclose uncounted cargo; incomplete coverage cannot establish a need to manufacture."
+    },
+    {
+      "failure": "Cancelling a truck approach overwrote the physical route state before its existing arrival handoff could execute, stranding the hull in its lane.",
+      "evidence": "PR96 exact3429228; docs/evidence/dispatch_cancel_approach.json",
+      "rule": "Separate cancellation intent from physical phase ownership. Withdraw once, preserve captured safe work, and reach the existing completion/return handoff before changing physical phase."
+    },
+    {
+      "failure": "Training target callback omitted the independent priority argument, resetting a chosen Emergency school to the default Normal priority.",
+      "evidence": "docs/diagrams/training_priority.json; tools/checks/training_priority_check.gd; logs/testable-supply-truck/training-priority-baseline and training-priority-fixed",
+      "rule": "A command that edits one dimension must preserve other user choices. Read the current owner at submission; test the actual UI command, not just the domain setter."
+    },
+    {
+      "failure": "Adding a checker lambda shifted anonymous ordinal IDs; previously useful purpose text then described a different body. Inspection caught the mismatch before completion.",
+      "evidence": "logs/testable-supply-truck/map-purpose-correction-v5.txt and reviewed current source",
+      "rule": "Review anonymous-function purposes against their current bodies after insertions. Numeric or stable-looking IDs do not prove descriptions still match implementation."
     }
   ],
   "design_review": [

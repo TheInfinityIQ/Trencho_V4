@@ -1,0 +1,19 @@
+flowchart TD
+    U[Human priorities and current demo] --> L[Lead assigns bounded feature and isolated worktree]
+    L --> O[Onboard: current design, lessons, source and map]
+    O --> C[Freeze outcome and acceptance; save prospective diagram]
+    C --> I[Implement against authoritative owners]
+    I --> T[Developer runs focused headless checks and map checks]
+    T -->|Actual defect| I
+    T -->|Invalid verifier| R[Retain evidence; review new contract]
+    R --> C
+    T -->|Passed declared checks| P[Push exact commit and draft PR]
+    P --> A[Lead technical review]
+    P --> D[Game Designer design review, including lead PR]
+    A -->|Changes requested| I
+    D -->|Changes requested| C
+    A --> G[Both exact-commit approvals required]
+    D --> G
+    G --> V[Lead integrates and verifies combined behavior]
+    V --> H[Testable player handoff]
+    H --> L

@@ -135,12 +135,24 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 	return _result(true, "Target recorded; actual people must report before being present.")
 
 
-func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1) -> Dictionary:
+func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1, alternative_sources: Array = []) -> Dictionary:
 	if not stores.has(source) or not stores.has(destination) or source == destination or type.is_empty() or count <= 0 or priority < 0 or priority > 3:
 		return _result(false, "Hauling needs distinct actual stores, one type, positive count and priority.")
 	var result := _queue_haul(source, destination, type, count, priority)
+	for candidate in alternative_sources:
+		add_haul_source(str(result.id),str(candidate))
 	_settle()
 	return result
+
+func add_haul_source(id: String, source: String) -> bool:
+	# Adding an allowed source changes only future selection. A current load
+	# retains its captured stock/claim, holder and destination.
+	var job := _job(id)
+	if job.is_empty() or job.cancelled or not stores.has(source) or source == job.destination: return false
+	if not job.has("alternative_sources"): job.alternative_sources = []
+	if source == job.source or source in job.alternative_sources: return false
+	job.alternative_sources.append(source)
+	return true
 
 
 func _queue_haul(source: String, destination: String, type: String, count: int, priority: int, relocation: bool = false) -> Dictionary:
@@ -782,7 +794,8 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 		return {}
 	var best: Dictionary = {}
 	var source_ids: Array = [job.source]
-	source_ids.append_array(job.recovery_sources)
+	for source_id in job.get("alternative_sources",[]) + job.recovery_sources:
+		if source_id not in source_ids: source_ids.append(source_id)
 	for source_id in source_ids:
 		if not stores.has(source_id) or not stores[source_id].accessible or source_id == job.destination:
 			continue

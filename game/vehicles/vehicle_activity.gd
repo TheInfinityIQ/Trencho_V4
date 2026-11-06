@@ -97,11 +97,11 @@ func _walk_from(origin: Vector2, destination: Vector2) -> Array:
 		if origin.is_equal_approx(bay):
 			var route: Array = [origin,owner.site_door]
 			if not destination.is_equal_approx(owner.site_door):
-				var rest: Array = Layout.path(owner.site_door,destination)
+				var rest: Array = rear.walk_path(owner.site_door,destination)
 				if rest.is_empty(): return []
 				route.append_array(rest.slice(1))
 			return route
-	return Layout.path(origin,destination)
+	return rear.walk_path(origin,destination)
 
 func begin_board(person_id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -270,6 +270,7 @@ func _route(id: String, slot: int) -> Array:
 		var pos: Vector2 = Layout.position(route,float(n))
 		var box := Rect2(pos-size/2.0,size)
 		for facility in Layout.FACILITIES:
+			if rear.empty_field_opening: break
 			if facility == "park" or (facility == "vehicle_works" and (source_site == "initial-vehicle_works" and pos.y < 56.0)): continue
 			var data: Array = Layout.FACILITIES[facility]
 			if box.intersects(Rect2(data[1]-data[2]/2.0,data[2])): return []

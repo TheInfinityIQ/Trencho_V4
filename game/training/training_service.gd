@@ -79,7 +79,7 @@ func _unfinished() -> Array[Dictionary]:
 
 func _eligible(person: Dictionary, course: String) -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	if not rear._eligible(person,"Available") or person.assignment == "Training" or person.duty_id == "training" or person.pending_assignment != "None" or not person.crew_station.is_empty(): return false
+	if not rear._eligible(person,"Available") or person.assignment == "Training" or _training_duty(str(person.duty_id)) or person.pending_assignment != "None" or not person.crew_station.is_empty(): return false
 	return not person.basic_training if course == "P01" else person.basic_training and person.qualification == "None"
 
 func student_position(id: String) -> Vector2:

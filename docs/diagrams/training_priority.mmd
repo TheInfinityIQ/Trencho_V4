@@ -1,0 +1,8 @@
+flowchart LR
+    Jobs[Player chooses school priority in Workers / Jobs] --> Owner[Rear request owns target and priority]
+    Count[Player changes Instructor target] --> Duty[Resolve current active school]
+    Duty --> Read[Read that request's current priority]
+    Read --> Submit[Submit new count with existing priority]
+    Submit --> Owner
+    Owner --> Physical[Existing allocation, safe carry completion and reporting]
+    Physical --> UI[Existing committed-event UI refresh]

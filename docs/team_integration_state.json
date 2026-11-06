@@ -10,18 +10,21 @@
       "Technical choices",
       "Final integration",
       "Published review revisions",
-      "Focused verification and living map"
+      "Focused verification and living map",
+      "Feature delegation and technical approval of developer PRs",
+      "Combined integration verification and testable player handoff",
+      "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer"
     ]
   },
   "consultants": [
     {
-      "title": "Trencho â€” Game Designer",
+      "title": "Trencho \u00e2\u20ac\u201d Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
       "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
     },
     {
-      "title": "Trencho â€” UI/UX developer",
+      "title": "Trencho \u00e2\u20ac\u201d UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
       "scope": "Player interactions, menus, required information and reusable presentation handoffs."
@@ -33,7 +36,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Guided factory, Army needs and latest named-refill follow-up are implemented with bounded direct evidence. Native worker supplied the continuity slice; lead owns reviewed integration, maps, current publication and ordinary refill/return/replenishment follow-through. Game Designer remains responsible for vision/pacing; no6000-round change.",
+  "current_work": "Lead completes testable factory/training/supply-truck progression. Three GPT-6.1 Sol xhigh developers work in isolated worktrees on first genuine Army supply, continued operations and player guidance; each owns tests and a draft PR. Exact-commit technical and Game Designer reviews are required.",
   "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -67,5 +70,78 @@
     },
     "wider_scope": "Eight open later milestones;26 later issues labelled delivery:later and shown as Backlog. Native future dependencies and closed history preserved.",
     "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
+  },
+  "developer_team": {
+    "authority": "Dawson explicit request,2026-11-05",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "xhigh",
+    "charter": "docs/developer_team.md",
+    "agents": [
+      {
+        "id": "/root/army_supply_developer",
+        "branch": "codex/dev-army-loop",
+        "feature": "First genuine Army need and recipient capability",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army"
+      },
+      {
+        "id": "/root/operations_developer",
+        "branch": "codex/dev-troop-transport",
+        "feature": "Continuing operations and replenishment feedback",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_transport"
+      },
+      {
+        "id": "/root/player_experience_developer",
+        "branch": "codex/dev-player-onboarding",
+        "feature": "Discoverable ordinary demo guidance",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_onboarding"
+      }
+    ],
+    "review_policy": {
+      "technical": "Lead approval for each developer PR, exact submitted commit",
+      "design": "Designated Game Designer approval for every PR including the lead, exact submitted commit",
+      "default": "Pending until explicit review; do not merge",
+      "native_github_approval": "Report actual submission separately from a recorded role review note"
+    },
+    "lifecycle": "Lead assigns bounded tasks while active; no scheduled or always-on service.",
+    "reviewed_prs": [
+      {
+        "pr": 93,
+        "sha": "52ef961002419f1240adcab03de1419eee651c30",
+        "technical": "approved role review5794227658",
+        "design": "approved role review5794190558",
+        "scope": "Objective feedback only",
+        "integration": "pending"
+      },
+      {
+        "pr": 94,
+        "sha": "50d663a39a51880ce65e1193c4b9a16313d991fb",
+        "technical": "approved role review5794258289",
+        "design": "approved role review5794266035",
+        "scope": "Unmounted guidance component only",
+        "integration": "pending lead mount"
+      },
+      {
+        "pr": 95,
+        "sha": "62a12584148901eac223a9d7ef38963ea215b9a8",
+        "technical": "approved role review5794258428",
+        "design": "approved role review5794254642",
+        "scope": "Supply feedback only",
+        "integration": "pending"
+      },
+      {
+        "pr": 96,
+        "sha": "3429228ba88e9687f77360f622cc3286bcfd8eb9",
+        "technical": "source/test review completed, public signoff pending",
+        "design": "approved role review5794323282",
+        "scope": "Physical approach cancellation",
+        "integration": "pending"
+      }
+    ]
+  },
+  "repository_cleanup": {
+    "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
+    "status": "parallel read-only audits in progress",
+    "rule": "Close duplicate/obsolete work with evidence and successor; retain valid unmet requirements/history. Remove stale blocked-by gates and give remaining work an actionable next step rather than claim completion.",
+    "designer_scope_review": "Current demo83/90/91/92; retain eight wider milestone outcomes; proposed consolidation42/34/37 and87reparenting awaiting combined audit."
   }
 }
