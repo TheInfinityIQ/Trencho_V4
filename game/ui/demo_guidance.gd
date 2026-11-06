@@ -90,7 +90,7 @@ static func _next(factory: Dictionary, facilities: Dictionary, school: Dictionar
 	if not dispatch_site.is_empty(): return dispatch_site
 	var dispatch: Dictionary = facilities.dispatch
 	if int(dispatch.requested) == 0 or int(dispatch.present) == 0:
-		return _action("Workers/Jobs","Staff the Logistics Centre","No completed Logistics Centre currently has both requested and present handlers. At the shown centre, %d are requested and %d present. Request handlers at one usable centre and allow reporting; hauling and loading still take physical time." % [dispatch.requested,dispatch.present])
+		return _action("Workers/Jobs","Staff the Logistics Centre","No completed Logistics Centre currently has both requested and present handlers. In Workers / Jobs, choose one usable completed centre, request handlers and allow reporting; hauling and loading still take physical time.")
 	return _action("ArmyNeeds","Review actual Army needs",_army_reason(army))
 
 static func _site_action(site: Dictionary, name: String) -> Dictionary:

@@ -22,10 +22,10 @@ var _requisition: Label
 var _help: PanelContainer
 var _confirmation: ConfirmationDialog
 var _current_navigation := "rear"
-var _clock_text := "â€”"
+var _clock_text := "—"
 var _planning_text := ""
 var _current_speed := 0
-var _requisition_text := "â€” REQ"
+var _requisition_text := "— REQ"
 
 func _ready() -> void:
 	theme = UI.make_theme()
@@ -94,7 +94,7 @@ func _build_header(parent: Node) -> void:
 	var speeds := UI.row(header)
 	speeds.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	for value: int in [0, 1, 2]:
-		var button := UI.button(speeds, ["â…¡", "1Ã—", "2Ã—"][value], func() -> void: speed_requested.emit(value))
+		var button := UI.button(speeds, ["Ⅱ", "1×", "2×"][value], func() -> void: speed_requested.emit(value))
 		button.custom_minimum_size = Vector2(40, 40)
 		button.toggle_mode = true
 		button.tooltip_text = ["Pause the shared game clock", "Normal game speed", "Double game speed"][value]
@@ -104,7 +104,7 @@ func _build_header(parent: Node) -> void:
 	menu.custom_minimum_size = Vector2(86, 40)
 	menu.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	header.add_child(menu)
-	menu.get_popup().add_item("New gameâ€¦", 0)
+	menu.get_popup().add_item("New game…", 0)
 	menu.get_popup().add_item("Getting started", 1)
 	menu.get_popup().id_pressed.connect(func(id: int) -> void:
 		if id == 0: _confirmation.popup_centered()
@@ -125,7 +125,7 @@ func _build_navigation(parent: Node) -> void:
 	space.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	rail.add_child(space)
 	UI.label(rail, "OBSERVE", 11, UI.MUTED)
-	_navigation_button(rail, "Battlefield", "Battlefield  â†—")
+	_navigation_button(rail, "Battlefield", "Battlefield  ↗")
 	var advanced := MenuButton.new()
 	advanced.text = "More systems"
 	advanced.custom_minimum_size.y = 38
@@ -136,8 +136,8 @@ func _build_navigation(parent: Node) -> void:
 	advanced.get_popup().add_item("Training", 2)
 	advanced.get_popup().add_item("Vehicles", 3)
 	advanced.get_popup().add_separator()
-	advanced.get_popup().add_item("Forward supply Â· advanced", 4)
-	advanced.get_popup().add_item("Dispatch Â· prototype", 5)
+	advanced.get_popup().add_item("Forward supply · advanced", 4)
+	advanced.get_popup().add_item("Dispatch · prototype", 5)
 	advanced.get_popup().add_separator()
 	advanced.get_popup().add_item("Diagnostics", 6)
 	advanced.get_popup().id_pressed.connect(func(id: int) -> void:

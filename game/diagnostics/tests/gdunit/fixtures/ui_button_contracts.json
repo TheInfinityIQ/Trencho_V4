@@ -5,7 +5,7 @@
       "id": "game/ui/command_shell.gd::_build_header@97",
       "path": "game/ui/command_shell.gd",
       "line": 97,
-      "label": "[\"â…¡\", \"1Ã—\", \"2Ã—\"][value] [dynamic label]",
+      "label": "[\"Ⅱ\", \"1×\", \"2×\"][value] [dynamic label]",
       "dynamic": true,
       "prefix": "",
       "area": "Shell / navigation"
@@ -795,7 +795,7 @@
     }
   ],
   "source_sha256": {
-    "game/ui/command_shell.gd": "8209962bb089d58b09445199c7e04e26cf8dcb47e58b5be16f4ee632fa0a88a9",
+    "game/ui/command_shell.gd": "3b25578d48042cfff90c335fc357790c2ea490e3aac957fdfef25637065de796",
     "game/rear_base/base_demo.gd": "42d5d54f3d5415507f5c6f56000e4aede611b6a4cda57481be670c8c3d2e9815",
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
