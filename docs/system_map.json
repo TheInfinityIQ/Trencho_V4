@@ -236,7 +236,7 @@
     ]},
     "docs/evidence/live_ui_current_change.md": {"role":"documentation","system":"docs","sha256":"b0eb35b7905778f4f5e03ca3f0f7c8dd82f55bb4914c87a6042044562238af1d","lines":57,"purpose":"Document Live session and interface update change.","functions":[
     ]},
-    "docs/evidence/logistics_centre_selection.json": {"role":"data","system":"docs","sha256":"324c74d046580462e6287437d39d777c9e84280f052bb5c3414e0cfc94fc0baf","lines":23,"purpose":"Supply structured settings, dependency pins or catalogue data for logistics centre selection.","functions":[
+    "docs/evidence/logistics_centre_selection.json": {"role":"data","system":"docs","sha256":"a6c31a0a340944b6e08ab5f25c21a3abaf4f939f1b13e8fdef465759d5cdc3f8","lines":27,"purpose":"Supply structured settings, dependency pins or catalogue data for logistics centre selection.","functions":[
     ]},
     "docs/evidence/objective_feedback.json": {"role":"data","system":"docs","sha256":"6f5e88cbf3aa7e8e7be96966a75688dc338521d7a4751478df411393940ecfd0","lines":91,"purpose":"Supply structured settings, dependency pins or catalogue data for objective feedback.","functions":[
     ]},
