@@ -1705,7 +1705,7 @@ static func _transport_truck_status(row: Dictionary, delivery: Dictionary) -> St
 		if row.state == "In F10":
 			lines.append("Finish fuel handling and boarding before driving this truck to its promised parking place.")
 		elif row.state == "Parked":
-			lines.append("Request supplies in Supplies → Army requests; a staffed Logistics Centre prepares the shipment.")
+			lines.append("Inspect Army needs for actual demand, stock coverage, handling and transport eligibility. A staffed Logistics Centre fulfils genuine Army requests automatically when automatic supply is enabled and the physical requirements are met.")
 		else:
 			lines.append("Inspect the current vehicle state before requesting another trip.")
 	return "\n".join(lines)

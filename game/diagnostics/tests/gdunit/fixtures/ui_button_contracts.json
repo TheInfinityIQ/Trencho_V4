@@ -751,7 +751,7 @@
   ],
   "source_sha256": {
     "game/ui/command_shell.gd": "1eb4b40f2a8c6c6aa0758ce2190ebab17bd6494d234296a6f250e2de76ccc783",
-    "game/rear_base/base_demo.gd": "9b6bcaf2f64402c0115fe4022f0f3e1b38a6a4cf442f948b38e0d735bef65221",
+    "game/rear_base/base_demo.gd": "92b8131cd6bae1d31a23ab0c637ffde166c6d2ab8b445c4d4ad5ef38b6bfc0e9",
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",

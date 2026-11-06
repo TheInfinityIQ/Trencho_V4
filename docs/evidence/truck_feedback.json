@@ -1,5 +1,5 @@
 {
-  "status": "bounded_feedback_direct_demonstration_passed_pending_exact_head_reviews_and_lead_integration",
+  "status": "designer_wording_corrected_pending_new_exact_head_reviews",
   "objective": "Correct player context and physical-state feedback for delivery requests and rear transport trucks.",
   "source_base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
   "behavior": [
@@ -50,10 +50,17 @@
   "deferred": "tools/checks/supply_truck_playthrough.gd and docs/evidence/supply_truck_progression.json unchanged. Long900s proposal revoked before any execution and removed from publishable paths; original proposal retained only under this checkout's ignored logs as new provenance, not historical original logs.",
   "limits": "No local engine run, regression test/suite, broad scenario, full two-delivery chain, actual fuel-carry or extraction execution, ordinary autonomous Army need, visible/native-input,1x pacing or60FPS certification. Compilation is not gameplay acceptance.",
   "ownership": "Operations developer owns this bounded change; lead integration and exact-head lead technical/Designer design approvals remain pending.",
-  "source_sha256": {
+  "unverified": "Failed-command context retention and Occupied-only/seated-crew selector filter have source review only in this increment. Physical fuel pickup/deposit, crew extraction, full shipments/returns, autonomous Army need, native rendering/input,1x pacing and60FPS remain unexecuted.",
+  "executed_source_sha256": {
     "game/rear_base/base_demo.gd": "9b6bcaf2f64402c0115fe4022f0f3e1b38a6a4cf442f948b38e0d735bef65221",
     "game/dispatch/dispatch_service.gd": "68459651202ad01d6593c3c59781177c32db7dd165f023e85e0e8776bf229ce3",
     "tools/checks/truck_feedback_direct.gd": "fcb827a1af6d598c2af405c2213517e2b736021da22790cb7dc7ccbeae86b613"
   },
-  "unverified": "Failed-command context retention and Occupied-only/seated-crew selector filter have source review only in this increment. Physical fuel pickup/deposit, crew extraction, full shipments/returns, autonomous Army need, native rendering/input,1x pacing and60FPS remain unexecuted."
+  "design_correction": {
+    "requested_at": "c4619625e76060441382a1ec4e5ccc9e65af18a3",
+    "review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/98#pullrequestreview-5794807977",
+    "change": "Only generic Parked advice changes: inspect actual Army needs/stock coverage/handling/transport eligibility; explain enabled automatic fulfilment of genuine requests when physical requirements permit. No routine manual request or shortage is inferred.",
+    "validation": "Current source read directly and formatter purpose re-reviewed. Required static map/UI/whitespace checks apply; no engine demonstration rerun solely for wording. Run269 remains evidence of the previous source before this wording correction, not execution of the corrected Parked message.",
+    "production_sha256_after_wording": "92b8131cd6bae1d31a23ab0c637ffde166c6d2ab8b445c4d4ad5ef38b6bfc0e9"
+  }
 }

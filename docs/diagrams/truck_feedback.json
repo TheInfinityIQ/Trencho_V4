@@ -40,5 +40,10 @@
   "official_sources": [
     "https://docs.godotengine.org/en/4.7/classes/class_itemlist.html#class-itemlist-method-select",
     "https://docs.godotengine.org/en/4.7/classes/class_optionbutton.html"
-  ]
+  ],
+  "design_correction_contract": {
+    "review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/98#pullrequestreview-5794807977",
+    "acceptance": "An idle Parked truck advises inspection of actual Army needs, stock coverage, handling and transport eligibility, and explains enabled automatic fulfilment when physical requirements are met. It infers neither shortage nor a routine manual shipment. Existing explicit manual request control and all owners are unchanged.",
+    "verification": "Source review and required static maps/whitespace only for this wording correction; no rerun/regression/local-engine/full-chain check."
+  }
 }
