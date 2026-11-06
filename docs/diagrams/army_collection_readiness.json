@@ -1,0 +1,59 @@
+{
+  "objective": "Explain the last authoritative supply pickup decision for a reported Rifle need before collection begins.",
+  "baseline": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
+  "status": "implemented_pending_remote_direct_check_and_exact_head_reviews",
+  "ownership": "SquadExecution alone records one latest scalar diagnostic per own Rifle squad during an already-occurring decision. OpeningResupply projects it once per reported squad, only when no real collection exists. No UI decision owner.",
+  "mutable_source": [
+    "game/battlefield/squad_execution.gd",
+    "game/battlefield/opening_resupply.gd"
+  ],
+  "optional_claim_unused": "game/logistics/army_supply_view.gd: existing recipient-detail presentation should need no edit.",
+  "acceptance": [
+    "An actual reported need before urgency can show Last supply pickup check at <simulation time>: Collection was not yet urgent for the squad, while HQ coverage stays separate.",
+    "Recorded reasons derive only from existing decision context, actual threat and final withdrawal calculations; no gate is evaluated again for the UI.",
+    "A changed current intent, parent or owner cannot expose an earlier operation reason as current; display Supply pickup has not been checked for this operation yet.",
+    "Existing collection facts take precedence; diagnostic reads return fresh scalar dictionaries and never mutate demand, stock, collection, orders or settlements.",
+    "No decision thresholds/outcomes, custody, starting stocks including HQ6000, prices, rates, polling, signals or timers change."
+  ],
+  "commands_events_timed_work": "No new command, event, subscription, poll or timer. Existing SquadExecution decision writes the small record; existing visible Army panel refresh reads it.",
+  "lifecycle": "Existing current intent id, actual parent and owner guard the accessor; the scene/session owns and replaces SquadExecution. At most one record per relevant squad, no history. Last-assessed time explicitly avoids claiming current eligibility between decisions.",
+  "cancellation_replacement_late": "Diagnostic has no authority to start, cancel or resume collection. Current collection facts win. New operation without a matching decision is unknown; no event or late result can create work.",
+  "design_direction": "Designer approved meaning and Last supply pickup check wording in direct consultation; exact-head review still required. Early local refill may use existing HQ reserve, without new rear-production credit. Full91 remains open.",
+  "verification_policy": "No local engine, regression fixtures/suites, broad scenario, failure injection or coverage matrices. If needed one explicit GitHub direct new-explanation demonstration under the existing45s process bound; syntax is not gameplay acceptance.",
+  "safeguards": [
+    "No repeated broad reads: reuse decision locals and bounded dictionary lookups.",
+    "Detached fresh scalar result: Dictionary values otherwise share references.",
+    "Current operation guard and session lifetime prevent stale feedback.",
+    "Retain all historical evidence and unverified ordinary-loop/FPS limits."
+  ],
+  "sources": [
+    {
+      "path": "game/battlefield/squad_execution.gd:198",
+      "why": "Actual decision computes urgent/context/threat/withdrawal before collection."
+    },
+    {
+      "path": "game/battlefield/squad_execution.gd:340",
+      "why": "Existing short-circuit collection context predicates, preserving order and capability call count."
+    },
+    {
+      "path": "game/battlefield/opening_resupply.gd:651",
+      "why": "Current fresh recipient projection already carries actual collection/activity and uses existing UI lifecycle."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+      "why": "Return a newly constructed scalar dictionary; never expose mutable owner storage."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_node.html",
+      "why": "Existing scene-owned processing/lifecycle remains; no new callback is required."
+    }
+  ],
+  "direct_check_scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim.",
+  "wording_consultation": "Designer: Last supply pickup check at <simulation time>: <reason>. New operation: Supply pickup has not been checked for this operation yet. Reasons are past tense; existing collection facts win. UIUX: keep parent mismatch, missing rendezvous, not urgent, nearby threat and survival causes distinct.",
+  "verification_revision": 2,
+  "unexecuted_input_correction": {
+    "reason": "Replaced proposed unavailable-destination input with normal transport-assignment input to avoid failure injection under current human policy. No engine execution occurred before this correction.",
+    "retained_local": "logs/collection-readiness/direct_check.unexecuted-draft.gd",
+    "sha256": "6f93b189f4668b38e3a908716c2928ffc7ff4c48d319c16da294568a5cd97500"
+  }
+}

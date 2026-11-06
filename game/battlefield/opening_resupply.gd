@@ -677,6 +677,7 @@ func rifle_supply_view() -> Dictionary:
 			labels[roster[member_index]] = "Rifle %d · %d" % [squad_index+1,member_index+1]
 			if not person_squads.has(roster[member_index]): person_squads[roster[member_index]] = rifle_squads[squad_index]
 	var rows: Array[Dictionary] = []
+	var pickup_checks := {} # One detached read per reported squad without a collection.
 	for id in ids:
 		var carried := int(rounds.get(id,0))
 		var reported := requests.has(id)
@@ -697,6 +698,11 @@ func rifle_supply_view() -> Dictionary:
 		elif receipt > 0 and not cycle.is_empty() and cycle.released:
 			detail += " This refill was handed off to its operation owner; current orders and surviving capability determine what happens next."
 		if not collection.is_empty(): detail += " Collection: %s. %s" % [str(collection.get("state","Unknown")),str(collection.get("blocker",""))]
+		elif reported and operations != null:
+			if not pickup_checks.has(squad_id): pickup_checks[squad_id] = operations.collection_readiness(squad_id)
+			var pickup: Dictionary = pickup_checks[squad_id]
+			if pickup.get("assessed",false): detail += " Last supply pickup check at %.1f s game time: %s" % [float(pickup.at),str(pickup.reason)]
+			else: detail += " "+str(pickup.get("reason","Supply pickup has not been checked for this operation yet."))
 		if operations != null:
 			var activity := str(operations.status.get(squad_id,""))
 			if not activity.is_empty(): detail += " Activity: " + activity

@@ -14,6 +14,7 @@ var reported: Dictionary = {}
 var baseline: Dictionary = {}
 var policy: RefCounted
 var rifle_collection: Dictionary = {}
+var _collection_checks: Dictionary = {} # One last decision diagnostic per own Rifle squad.
 var _collection_sequence := 0
 var incremental_planning := false
 var planning_revision := 0
@@ -203,11 +204,13 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var goal: Dictionary = rear.ledger.inspect_entity(destination,{},false)
 	if goal.get("kind","") != "PLACE":
 		_interrupt_collection(squad.id,"Current operation destination is unavailable.")
+		_record_collection_check(squad,intent,"The current operation destination was unavailable.")
 		status[squad.id] = "Destination unavailable"
 		return
 	if not baseline.has(squad.id): baseline[squad.id] = squad.roster.size()
 	var active: Array[String] = rear.military._active_roster_members(squad)
 	if not squad.vehicle.is_empty() or intent.action == "Move by Transport":
+		_record_collection_check(squad,intent,"The current operation assigned physical transport instead of a new supply pickup.")
 		var journey: Dictionary = supply_travel.journey_status(squad.id)
 		var collection: Dictionary = rifle_collection.get(squad.id,{})
 		if not collection.is_empty() and not squad.vehicle.is_empty() and journey.get("hull","") == squad.vehicle and not str(journey.get("trip_job","")).is_empty():
@@ -232,8 +235,10 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		_report(squad.id,"Inability","HQ assault requires a validated company preparation plan")
 	var targets: Array[Dictionary] = _targets(squad.id)
 	var withdrawing := active.size() <= float(baseline[squad.id])*0.4
+	var withdrawal_reason := "Casualty withdrawal took priority over supply pickup." if withdrawing else ""
 	if profile_stages: stage_started = Time.get_ticks_usec()
-	var execution_capable: bool = rear.military.capability(squad.id,"Sustained Execution").ok
+	var execution_capability: Dictionary = rear.military.capability(squad.id,"Sustained Execution")
+	var execution_capable: bool = execution_capability.ok
 	if profile_stages: CallLog.record_duration(&"battlefield/squad_execution.gd::_execute/capability", Time.get_ticks_usec()-stage_started)
 	var broken_count := 0
 	var rounds := 0
@@ -244,9 +249,15 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		rounds += int(round_counts[id])
 	if profile_stages: CallLog.record_duration(&"battlefield/squad_execution.gd::_execute/rounds", Time.get_ticks_usec()-stage_started)
 	var urgent: bool = not active.is_empty() and float(rounds)/active.size() < 15
-	var collectable: bool = _collection_context(squad,intent,urgent) and not _collection_threat(active,targets)
-	if not execution_capable and not collectable and not (role == "Guard" and intent.action == "Defend HQ"): withdrawing = true
-	withdrawing = withdrawing or broken_count > active.size()/2.0
+	var pickup_check := {"reason":""}
+	var collectable: bool = _collection_context(squad,intent,urgent,pickup_check) and not _collection_threat(active,targets)
+	if not collectable and str(pickup_check.reason).is_empty(): pickup_check.reason = "A known nearby threat prevented pickup."
+	if not execution_capable and not collectable and not (role == "Guard" and intent.action == "Defend HQ"):
+		withdrawing = true
+		withdrawal_reason = str(execution_capability.message)+" Withdrawal took priority over pickup."
+	if broken_count > active.size()/2.0:
+		withdrawing = true
+		withdrawal_reason = "Most active members had broken morale; withdrawal took priority over pickup."
 	var offensive: bool = intent.action in ["Seize Objective","Probe","Assault HQ"] and role == "Rifle"
 	var armour: Dictionary = _blocking_armour(squad,goal.position) if offensive and squad.owner == "army-red" else {}
 	if not armour.is_empty():
@@ -254,10 +265,14 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 	var advance_allowed := true
 	var cohesion: Dictionary = rear.combat.squad_cohesion(squad.id)
 	if float(cohesion.get("cohesion",0)) < 0.5: advance_allowed = false
-	if cohesion.get("state","") == "Dispersed": withdrawing = true
+	if cohesion.get("state","") == "Dispersed":
+		withdrawing = true
+		withdrawal_reason = "The squad was dispersed; withdrawal took priority over pickup."
 	if offensive and not targets.is_empty():
 		var strength: Dictionary = _strength(squad,targets)
-		if strength.own < strength.enemy*0.8: withdrawing = true
+		if strength.own < strength.enemy*0.8:
+			withdrawing = true
+			withdrawal_reason = "Observed enemy strength required withdrawal instead of supply pickup."
 		advance_allowed = advance_allowed and strength.own >= strength.enemy*1.3
 		if not advance_allowed: _report(squad.id,"Inability","Holding: observed local strength does not support the ordinary attack ratio")
 	if urgent:
@@ -265,6 +280,7 @@ func _execute(squad: Dictionary, intent: Dictionary) -> void:
 		if offensive: advance_allowed = false
 	var fallback_id: String = str(intent.constraints.get("fallback_place",destination))
 	var fallback: Dictionary = rear.ledger.inspect_entity(fallback_id,{},false)
+	_record_collection_check(squad,intent,withdrawal_reason if withdrawing else str(pickup_check.reason))
 	if withdrawing and fallback.get("kind","") != "PLACE": status[squad.id] = "No safe declared fallback"; return
 	if profile_stages: stage_started = Time.get_ticks_usec()
 	var collecting := _collect_ammunition(squad,intent,active,collectable,withdrawing,advance_allowed and not assault_blocked and armour.is_empty())
@@ -337,12 +353,36 @@ func _authorize_supply_transport(proposal: Dictionary, allow_issue: bool) -> Dic
 		return {"ok":false,"message":"Awaiting the vehicle parent's collection assignment."}
 	return policy.authorize_supply_transport(proposal,allow_issue)
 
-func _collection_context(squad: Dictionary, intent: Dictionary, urgent: bool) -> bool:
-	if squad.kind != "Rifle" or intent.action == "Defend HQ" or _collection_owner() == null: return false
-	if intent.get("parent","") != squad.platoon: return false
-	if str(intent.constraints.get("supply_rendezvous","")).is_empty(): return false
+func _collection_context(squad: Dictionary, intent: Dictionary, urgent: bool, check: Dictionary) -> bool:
+	if squad.kind != "Rifle": check.reason = "This formation does not use Rifle supply pickup."; return false
+	if intent.action == "Defend HQ": check.reason = "HQ defence took priority over supply pickup."; return false
+	if _collection_owner() == null: check.reason = "No local supply team was available for this operation."; return false
+	if intent.get("parent","") != squad.platoon: check.reason = "The current order did not match the squad's parent command."; return false
+	if str(intent.constraints.get("supply_rendezvous","")).is_empty(): check.reason = "No supply rendezvous was available for this operation."; return false
 	var row: Dictionary = rifle_collection.get(squad.id,{})
-	return (urgent or (not row.is_empty() and not row.released)) and _rear().military.capability(squad.id,"Supply Collection").ok
+	if not (urgent or (not row.is_empty() and not row.released)):
+		check.reason = "Collection was not yet urgent for the squad."
+		return false
+	var capability: Dictionary = _rear().military.capability(squad.id,"Supply Collection")
+	if not capability.ok: check.reason = str(capability.message)
+	return capability.ok
+
+func _record_collection_check(squad: Dictionary, intent: Dictionary, reason: String) -> void:
+	if squad.kind != "Rifle" or squad.owner != _rear().PLAYER: return
+	_collection_checks[squad.id] = {"intent":str(intent.id),"intent_parent":str(intent.get("parent","")),
+		"parent":str(squad.platoon),"owner":str(squad.owner),"at":float(_rear().time),
+		"reason":reason if not reason.is_empty() else "Pickup was considered; physical travel and issue remained separate."}
+
+func collection_readiness(squad_id: String) -> Dictionary:
+	# Read only the existing owner dictionaries; never reassess physical gates here.
+	var rear := _rear()
+	var squad: Dictionary = rear.military.squads.get(squad_id,{})
+	var intent: Dictionary = rear.orders.intents.get(squad_id,{})
+	var check: Dictionary = _collection_checks.get(squad_id,{})
+	if not rifle_collection.get(squad_id,{}).is_empty(): return {}
+	if squad.get("state","") != "Active" or intent.get("state","") != "Acknowledged" or check.is_empty() or check.intent != intent.get("id","") or check.intent_parent != intent.get("parent","") or check.parent != squad.get("platoon","") or check.owner != squad.get("owner",""):
+		return {"assessed":false,"at":-1.0,"reason":"Supply pickup has not been checked for this operation yet."}
+	return {"assessed":true,"at":float(check.at),"reason":str(check.reason)}
 
 func _interrupt_collection(squad_id: String, reason: String) -> void:
 	var row: Dictionary = rifle_collection.get(squad_id,{})

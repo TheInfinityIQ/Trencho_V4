@@ -1,0 +1,44 @@
+{
+  "feature": "Last authoritative supply pickup check for reported Rifle need without a collection",
+  "baseline": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
+  "status": "implemented_source_reviewed_pending_GitHub_direct_check_and_exact_head_reviews",
+  "behaviour": [
+    "Existing execution decision records one latest reason and game time; no extra gate evaluation.",
+    "Recipient detail reads once per reported squad lacking collection; existing collection state wins.",
+    "Current intent, parent and owner mismatch yields unassessed text; the session owns the diagnostic lifetime.",
+    "HQ/forward coverage and rear-production need remain separate; approved HQ6000 unchanged."
+  ],
+  "source_review": {
+    "context": "Same first-refusal order and short-circuit capability/threat call counts; existing collection-context boolean results unchanged.",
+    "withdrawal": "Same casualty, execution capability, broken morale, dispersed cohesion and observed-strength predicates; reason annotations reuse their actual results.",
+    "read": "Newly constructed scalar dictionary; no roster, capability, terrain, stock or world scan. Projection caches only within one call.",
+    "lifecycle": "Existing intent/parent/owner identities and active/acknowledged state guard the read; no global version, timer, subscription, commands or signals.",
+    "preservation": "Diff review caught and restored an unintended Windows default-code-page middle-dot conversion before commit; source files now read/written explicitly as UTF8."
+  },
+  "new_code_direct_check": {
+    "state": "pending",
+    "script_local": "logs/collection-readiness/direct_check.gd (ignored; not a committed regression fixture)",
+    "script_sha256": "79171fa646baf2cdb8f0313388d4ddc4703ff39770ae83b333abf5adaaa69faf",
+    "scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim."
+  },
+  "limits": [
+    "No local engine or regression/broad old-code check run.",
+    "No actual natural Rifle need, normal not-urgent/threat/withdrawal decision or full recipient UI was executed for this increment; those branches are source-reviewed.",
+    "Direct check, if successful, will cover supplied-input new diagnostic recording/read/replacement only.",
+    "No new manufacture, HQ/frontline physical receipt, operational recovery, repeat refill, native rendering/input, pacing or FPS claim. Full91 remains open."
+  ],
+  "consultation": "Lead accepted file ownership and one-small-diagnostic contract. Designer approved meaning/wording, UIUX consulted. Exact-head technical/design reviews remain pending.",
+  "source_sha256": {
+    "game/battlefield/squad_execution.gd": "8cb8c548d4b135f43517167f48a33cdcf3318fcd867793dc042f9f90728cea6b",
+    "game/battlefield/opening_resupply.gd": "d759fba7718b4cef03a984e5858995892f9bae20d13111a89139e6ba03143bb9"
+  },
+  "engine_reference": {
+    "url": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+    "why": "Return a newly constructed scalar dictionary; never expose mutable owner storage."
+  },
+  "input_correction": {
+    "reason": "Replaced proposed unavailable-destination input with normal transport-assignment input to avoid failure injection under current human policy. No engine execution occurred before this correction.",
+    "retained_local": "logs/collection-readiness/direct_check.unexecuted-draft.gd",
+    "sha256": "6f93b189f4668b38e3a908716c2928ffc7ff4c48d319c16da294568a5cd97500"
+  }
+}
