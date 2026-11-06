@@ -1,0 +1,78 @@
+{
+  "status": "implemented_component_verified_exact_head_reviews_pending",
+  "objective": "Cancel an initial/midway physical Dispatch approach without disabling its route owner; finish safe handling/return and permit same-hull reuse.",
+  "workspace": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_dev_dispatch_cancel",
+  "branch": "codex/dispatch-cancel-approach",
+  "base_commit": "8cafd45294c2c72dc872c33e05bd3619c4cf3b2c",
+  "owner": "operations_developer; one bounded execution owner; no nested worker/goal/retry scheduler",
+  "source_observation": "cancel sets Cancelling before cancel_after_route; next_boundary/advance_to own only active route states. Existing _finish_route already consumes cancel_after_route on arrival, but overwriting approach state makes that arrival unreachable.",
+  "scope": [
+    "game/dispatch/dispatch_service.gd",
+    "tools/checks/dispatch_cancel_approach_check.gd",
+    "docs/diagrams/dispatch_cancel_approach.json",
+    "docs/diagrams/dispatch_cancel_approach.mmd",
+    "docs/evidence/dispatch_cancel_approach.json",
+    "docs/system_map.json",
+    "docs/ui_function_map.html",
+    "game/diagnostics/tests/gdunit/fixtures/ui_button_contracts.json"
+  ],
+  "acceptance": [
+    "Independently reproduce the preserved immediate no-stock approach cancellation before source edit; after fixing it the same hull reaches legal safe parking with original crew and actual fuel burn, no phantom HQ cargo and no live manifest/home-lane claim.",
+    "Cancel midway through a real approach with20 actual reserved fixture rounds and real fleet/passenger commitments. Release only those predeparture claims; retain captured route/deadline and actual hull/crew/cargo custody through safe return.",
+    "Repeated/late cancel and mode/route/field-gun edits cannot reopen withdrawal or affect a later reused hull manifest.",
+    "The returned hull can physically load/depart/unload20 actual rounds at HQ and return; departed cancellation remains rejected and onboard contents stay physical.",
+    "Existing Dispatch regression and strict living/UI-map checks pass; examined changed/new purposes reviewed."
+  ],
+  "authoritative_state": "Dispatch manifest remains sole route/handling/intent owner; ledger owns hull, crew, fuel, stock and claims; Yard owns occupied/reserved home slot. Existing cancel_released is once-only intent, cancel_after_route is the existing arrival handoff.",
+  "flow": "Withdraw future passenger/fleet/cargo commitments once. If Approaching Dispatch, retain that route state and its current plan/deadline; existing timed owner finishes arrival at the real berth, then _finish_route enters Cancelling. Existing cancellation handling unloads real contents and schedules return to held home slot. Otherwise retain current predeparture handling/cancellation flow.",
+  "commands_events": "accept admits current hull and claims; cancel records withdrawal once. set_route_profile/change_mode/add_field_gun reject after cancel_released even while physical state remains Approaching Dispatch. No new event source or owner.",
+  "timed_work": "Existing next_boundary, advance_to, _finish_route, settle and _schedule_cancel only. No new polling, scheduler, callbacks, broad snapshot reads or route recomputation on cancel.",
+  "cancellation_late_replacement_failure": "Repeat cancel rejects using existing once-only flag. Old cancelled manifest cannot affect reused hull. Same-session route completion consumes its own existing cancel_after_route; new session has fresh manifests. Fuel shortage/damage/blocked route retain existing stop/failure owners and contents, never teleport to parking or certify recovery. No attempt to solve unrelated recovery paths.",
+  "safeguards": [
+    "Keep player withdrawal separate from captured physical work; do not erase freight, crew or current route.",
+    "No replacement request/route owner; no idle polling.",
+    "Explicit fixture inputs are disclosed; physical component timing is not ordinary opening or Army-need acceptance.",
+    "Retain primary lead rear.walk_path replacements at integration; this isolated base does not include them."
+  ],
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html",
+      "application": "Existing synchronous GDScript command guards remain atomic and contain no await; preserve the existing scene-owned simulation callback instead of adding a timer/coroutine."
+    },
+    "docs/engineering_lessons.json",
+    "docs/system_overhaul_plan.json dispatchP06 custody/cancellation proposal; source anchors rechecked",
+    "docs/overhaul_inventory.json dispatch ownership/static inventory; not test evidence"
+  ],
+  "reproduction_source": "Army developer preserved logs/army-loop/rear-cancel-diagnostic.gd and stdout/stderr in trencho_dev_army; independent checker copies only existing Dispatch fixture pattern, no Army Reader feature dependency.",
+  "checker_sha256": "b78f20c0c2ab873c117f2febdd181653f2c3ecc603a940793241fb6977783936",
+  "checks": [
+    [
+      "godot",
+      "--headless",
+      "--path",
+      ".",
+      "--script",
+      "res://tools/checks/dispatch_cancel_approach_check.gd"
+    ],
+    [
+      "godot",
+      "--headless",
+      "--path",
+      ".",
+      "--script",
+      "res://game/dispatch/tests/dispatch_regression.gd"
+    ],
+    [
+      "python",
+      "tools/system_map.py",
+      "--check"
+    ],
+    [
+      "python",
+      "tools/ui_function_map.py",
+      "--check"
+    ]
+  ],
+  "limits": "Explicit disconnected manufactured-hull fixture only; no ordinary empty-field manufacturing, genuine Army need, native-input, visible rendering, all-hazard recovery or60FPS acceptance. PR requires lead technical and designated Designer exact-head reviews; no merge.",
+  "implementation": "Only four existing command functions change: cancel preserves active approach state and sets the pre-existing arrival handoff; cancel_released now rejects repeated cancel and pending mode/route/gun edits. Existing _finish_route, next_boundary, advance_to, unloading and parking code remain unchanged."
+}

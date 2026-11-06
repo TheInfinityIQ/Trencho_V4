@@ -1,0 +1,15 @@
+flowchart TD
+  A[Accept actual parked hull and manifest] --> R[Existing Approaching Dispatch route owner]
+  R --> C{Cancel before departure?}
+  C -->|Yes| I[Withdraw own future commitments once; cancel_released]
+  I --> K[Keep captured approach route / deadline / physical state]
+  K --> B[Existing timed arrival at real Dispatch berth]
+  B --> H[Existing cancel_after_route handoff to Cancelling]
+  H --> U[Existing physical passenger/cargo unloading]
+  U --> P[Existing return route to reserved home slot]
+  P --> F[Park same hull and crew; release lane / manifest]
+  F --> N[Later real same-hull shipment can be accepted]
+  I --> G[Reject repeat cancel and mode / route / gun edits]
+  C -->|No| L[Normal physical staging and loading]
+  L --> D[Actual departure: predeparture cancel rejects]
+  K --> X[Existing fuel / damage / blocked-route failure retains custody]

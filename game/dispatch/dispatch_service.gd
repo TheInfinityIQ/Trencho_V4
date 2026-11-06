@@ -729,7 +729,7 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 
 func set_route_profile(id: String, profile: Dictionary) -> Dictionary:
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Route edits require an accepted predeparture manifest.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Route edits require an accepted predeparture manifest.")
 	var preview: Dictionary = route_preview(id,profile)
 	if not preview.ok: return preview
 	row.route_profile = profile.duplicate(true)
@@ -932,7 +932,7 @@ func clear_route_hazard(id: String) -> Dictionary:
 func cancel(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Complete","Cancelled","Cancelling"]: return _fail("Only an accepted predeparture manifest can withdraw its own commitments once.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Complete","Cancelled","Cancelling"]: return _fail("Only an accepted predeparture manifest can withdraw its own commitments once.")
 	row.cancel_released = true
 	for person_id in row.passengers:
 		incoming_people.erase(person_id)
@@ -945,16 +945,20 @@ func cancel(id: String) -> Dictionary:
 	for item in row.weapon_items: weapon_promises.erase(item.id)
 	for item in row.stock_items:
 		if not item.claim.is_empty(): rear.ledger.release_claim(item.claim); item.claim = ""
-	row.state = "Cancelling"
+	if row.state == "Approaching Dispatch":
+		# Withdrawal does not stop the captured physical route. Its existing
+		# arrival handoff enters Cancelling at the real dispatch berth.
+		row.cancel_after_route = true
+	else:
+		row.state = "Cancelling"
 	if rear.ledger.inspect_entity(row.hull).holder_id == row.berth_place and not row.task.is_empty(): row.blocker = "Current handling must finish before actual unloading."
-	if rear.vehicles.vehicles[row.hull].state == "Dispatch Approach": row.cancel_after_route = true
 	rear._settle()
 	return {"ok":true,"message":"Commitments withdrawn once; anything already aboard needs physical cancellation unloading and vehicle return."}
 
 func change_mode(id: String, mode: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Only a live predeparture manifest can change mode.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Only a live predeparture manifest can change mode.")
 	if mode == row.mode: return {"ok":true,"message":"The same mode and claims remain."}
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	if mode not in ["Strategic Delivery","Fleet Transfer"] or (mode == "Strategic Delivery" and hull.design_type not in ["T01","T02"]): return _fail("Strategic Delivery accepts only T01/T02; old mode and claims remain.")
@@ -976,7 +980,7 @@ func change_mode(id: String, mode: String) -> Dictionary:
 func add_field_gun(id: String, gun_id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Add a field gun only to an accepted predeparture manifest.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Add a field gun only to an accepted predeparture manifest.")
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var limit := 2 if hull.design_type == "T01" else (1 if hull.design_type == "T02" else 0)
 	if row.guns.size() >= limit: return _fail("This hull's field-gun limit is already used; old manifest remains.")
