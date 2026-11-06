@@ -14,17 +14,18 @@
       "Feature delegation and technical approval of developer PRs",
       "Combined integration verification and testable player handoff",
       "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer"
-    ]
+    ],
+    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_lead_integration"
   },
   "consultants": [
     {
-      "title": "Trencho \u00e2\u20ac\u201d Game Designer",
+      "title": "Trencho â€” Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
       "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
     },
     {
-      "title": "Trencho \u00e2\u20ac\u201d UI/UX developer",
+      "title": "Trencho â€” UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
       "scope": "Player interactions, menus, required information and reusable presentation handoffs."
@@ -36,8 +37,8 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Lead completes testable factory/training/supply-truck progression. Three GPT-6.1 Sol xhigh developers work in isolated worktrees on first genuine Army supply, continued operations and player guidance; each owns tests and a draft PR. Exact-commit technical and Game Designer reviews are required.",
-  "paused": "Polishing, optimization, routine benchmark campaigns and repetitive full test suites. Known failures stay open; brief current-change checks remain appropriate.",
+  "current_work": "Lead owns GitHub cleanup/integration. Three persistent GPT-6.1 Sol Medium developer chats own source-first Army feedback, current truck/request feedback and mounted player guidance in isolated checkouts. Exact-head technical/Designer review is required.",
+  "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
     "branch": "codex/gameplay-demo-integration",
@@ -52,7 +53,7 @@
     "Consultants report in their own chats; the lead reads results and controls integration. No archived developer assignment is implicitly resumed."
   ],
   "github_delivery_structure": {
-    "source": "Game Designer current-state cleanup, receipts logs/github-current-view-20261105,5 November2026",
+    "source": "Lead live REST/GraphQL post-cleanup verification5November2026; docs/github_repository_status.json",
     "current_milestone": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/9",
     "current_open_goals": [
       83,
@@ -68,32 +69,44 @@
       "91": "In Progress",
       "92": "Backlog"
     },
-    "wider_scope": "Eight open later milestones;26 later issues labelled delivery:later and shown as Backlog. Native future dependencies and closed history preserved.",
+    "wider_scope": "Eight open later milestones;23 open later outcomes labelled delivery:later/Backlog. Stale native blocker edges removed; real sequencing preserved in related-system references and bounded next actions.",
     "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
   },
   "developer_team": {
     "authority": "Dawson explicit request,2026-11-05",
     "model": "gpt-6.1-sol",
-    "reasoning_effort": "xhigh",
+    "reasoning_effort": "medium",
     "charter": "docs/developer_team.md",
     "agents": [
       {
-        "id": "/root/army_supply_developer",
+        "title": "Trencho â€” Developer A â€” Army Supply",
+        "thread_id": "01a1ae78-5b3a-7993-87ca-7d316595fd7e",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army",
         "branch": "codex/dev-army-loop",
-        "feature": "First genuine Army need and recipient capability",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army"
+        "current_assignment": "Ordinary authored first-contact/consumption and genuine Rifle need investigation; source/Designer clarification before changes."
       },
       {
-        "id": "/root/operations_developer",
-        "branch": "codex/dev-troop-transport",
-        "feature": "Continuing operations and replenishment feedback",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_transport"
+        "title": "Trencho â€” Developer B â€” Operations & Transport",
+        "thread_id": "01a1ae78-6945-7ae0-b03c-f2b5fadb56ad",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_truck_handoff",
+        "branch": "codex/testable-truck-handoff",
+        "current_assignment": "Truthful current truck handling/fuel/crew status and selection of newly queued delivery requests; brief GitHub-only current-change demonstration."
       },
       {
-        "id": "/root/player_experience_developer",
-        "branch": "codex/dev-player-onboarding",
-        "feature": "Discoverable ordinary demo guidance",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_onboarding"
+        "title": "Trencho â€” Developer C â€” Player Experience",
+        "thread_id": "01a1ae78-77c2-7822-9322-328161666746",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_guidance_mount",
+        "branch": "codex/demo-guidance-mount",
+        "current_assignment": "Mount approved guidance into ordinary Getting started with current Train route, retained UI context and finite visible-only updates; brief GitHub-only current-change demonstration."
       }
     ],
     "review_policy": {
@@ -131,17 +144,52 @@
       {
         "pr": 96,
         "sha": "3429228ba88e9687f77360f622cc3286bcfd8eb9",
-        "technical": "source/test review completed, public signoff pending",
+        "technical": "approved role review5794390977",
         "design": "approved role review5794323282",
         "scope": "Physical approach cancellation",
         "integration": "pending"
       }
-    ]
+    ],
+    "kind": "persistent_codex_project_chats",
+    "supersedes": "Earlier temporary xhigh sub-agents; their source, branches, PRs and evidence are inherited, not new authorship.",
+    "onboarding": "docs/developer_onboarding.md",
+    "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later."
   },
   "repository_cleanup": {
     "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
-    "status": "parallel read-only audits in progress",
+    "status": "completed_live_verified",
     "rule": "Close duplicate/obsolete work with evidence and successor; retain valid unmet requirements/history. Remove stale blocked-by gates and give remaining work an actionable next step rather than claim completion.",
-    "designer_scope_review": "Current demo83/90/91/92; retain eight wider milestone outcomes; proposed consolidation42/34/37 and87reparenting awaiting combined audit."
+    "designer_scope_review": "Approved before execution; successor contracts retained; Designer independently checked key rewritten bodies.",
+    "open_issues": 27,
+    "current_demo_issues": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "later_open": 23,
+    "open_milestones": 9,
+    "native_blocker_edges_on_open_issues": 0,
+    "blocked_project_cards": 0,
+    "superseded_issues": [
+      42,
+      34,
+      37
+    ],
+    "closed_superseded_pr": 86,
+    "verification_record": "docs/github_repository_status.json",
+    "public_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235"
+  },
+  "github_projects_connection": {
+    "server": "github_projects",
+    "endpoint": "https://api.githubcopilot.com/mcp/x/projects",
+    "tools": [
+      "projects_get",
+      "projects_list",
+      "projects_write"
+    ],
+    "credential_owner": "Existing named Windows credential; token never in repo/config/logs",
+    "verified": "Deployed helper, MCP initialization/tools list and real Project3 read succeeded",
+    "session_limit": "Current chat registry reload has not yet been observed"
   }
 }

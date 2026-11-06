@@ -1,0 +1,8 @@
+flowchart LR
+    Client[Codex Projects connection] --> Helper[Run configured local header helper]
+    Helper --> Store[Read named Windows Generic credential]
+    Store --> Header[Authorization JSON through private MCP helper pipe]
+    Header --> Official[Official GitHub Projects MCP endpoint]
+    Official --> Tools[Projects read / write tools]
+    Missing[Missing or invalid credential] --> Fail[Nonzero exit; no header or secret diagnostic]
+    Store --> Missing
