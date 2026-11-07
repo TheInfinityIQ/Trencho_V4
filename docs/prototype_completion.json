@@ -1,11 +1,11 @@
 {
   "objective": "Complete the connected empty-field prototype while preserving the strict 60 FPS acceptance ceiling.",
-  "status": "in_progress",
+  "status": "in_progress_main_partial_prototype_adopted",
   "implementation_base": {
     "branch": "main",
-    "head": "800ec9d4b869fad630327d52b42a807baddf6ac0",
-    "working_tree": "The previous integrated local snapshot was published as3531bd7 on codex/gameplay-demo-integration. Current feature/design increments follow on that review branch.",
-    "owner": "Lead integrates; three explicitly authorized GPT6.1Sol xhigh developers own bounded features in separate worktrees, focused tests and draft PRs. Technical and Game Designer exact-commit reviews required."
+    "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+    "working_tree": "PR89 reviewed head3859e9b merged into mainab2a406, including PR101 source merge65006544. Original component branches and human checkout remain preserved; this handoff performs no local main update.",
+    "owner": "Lead owns integration and next bounded assignment; current GPT6.1Sol Medium A/B/C roster and ownership: docs/team_integration_state.json and docs/developer_team.md. Exact-head lead technical and Designer role decisions remain required for each new PR."
   },
   "fixed_acceptance": [
     {
@@ -54,8 +54,9 @@
     },
     {
       "id": "P4",
-      "status": "pending",
-      "purpose": "Verify ordinary complete/repeated supply and autonomous consequence with the unchanged frame/action budget."
+      "status": "ordinary_outcome_open_broad_verification_deferred",
+      "purpose": "Verify ordinary complete/repeated supply and autonomous consequence with the unchanged frame/action budget.",
+      "acceptance_limit": "Retained unmet outcome, not an instruction to run a two-trip/broad scenario or FPS campaign under current restrictions."
     },
     {
       "id": "P5",
@@ -77,9 +78,9 @@
     },
     {
       "id": "P8",
-      "status": "implemented_physical_chain_verification_in_progress",
+      "status": "historical_partial_chain_observed_ordinary_acceptance_open",
       "purpose": "Connect actual empty-field Materials expansion, selected school/teacher/Driver, manufactured fueled truck and repeated HQ delivery through ordinary commands.",
-      "acceptance_limit": "All facilities/training/truck/fuel/park and new200rounds observed; fixed command deadline elapsed during first shipment, so two-load/return acceptance remains pending."
+      "acceptance_limit": "All facilities/training/truck/fuel/park and new200rounds observed; fixed command deadline elapsed during first shipment, so two-load/return acceptance remains pending. This is historical partial evidence; no continuing run is assigned."
     }
   ],
   "verification": [
@@ -204,7 +205,7 @@
       "result": "Named refill continuity: actual courier receipt, cleared requests, selected recipient/Observe retention, next-cycle receipt reset and pure read/audit pass. Both maps pass; arranged component scope only."
     }
   ],
-  "next_action": "Finish the two newly made ammunition deliveries and same-hull returns, integrate reviewed team components and directly verify the mounted guidance; keep native/ordinary autonomous/FPS limits explicit.",
+  "next_action": "Lead processes the separate documentation PR, and continues A already preassigned Designer-accepted91/92 implementation: reconcile decreased/zero genuine Army demand before additional AUTOMATIC shipment commitments, preserving accepted manifests, fixed manual quantities and explicit holds. Zero demand must not create a player hold; no rates/HQ6000/threshold changes. This is an implementation outcome, not a new scenario run. Do not restart old two-trip/mounted-guidance sequences; broad/deferred verification remains paused.",
   "limitations": [
     "Prototype completion and 60 FPS compliance are not established.",
     "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
@@ -215,16 +216,34 @@
   ],
   "evidence": "docs/evidence/prototype_menu_performance.json",
   "latest_evidence": "docs/evidence/supply_truck_progression.json",
-  "current_declared_default_cases": 60,
-  "current_declared_foreground_cases": 76,
-  "current_opt_in_endurance_cases": 1,
   "implemented_feature_inventory": "docs/implemented_features.json",
   "delivery_priority": {
     "date": "2026-11-05",
     "direction": "Gameplay/features first; polishing, optimization and benchmark-driven work paused by Dawson.",
     "performance_target": "Retained for later acceptance; current failures remain recorded. It is not a prerequisite for every feature increment during this pause.",
-    "verification": "Brief direct checks of actual changed behavior when needed; routine full-suite runs and new coverage infrastructure deferred. Required source-map maintenance continues.",
+    "verification": "No local engine, regression writing/runs, broad scenarios, failure injection, coverage matrices or benchmarks. Changed-production parsing and at most one brief explicitly supplied GitHub new-code demonstration when needed and authorized. Historical verification entries do not authorize deferred work. This document-only handoff uses JSON/whitespace maintenance only.",
     "ownership": "Current developer integrates gameplay, UI/UX and art handoffs; consult the named team in docs/team_integration_state.json."
   },
-  "current_review_branch": "codex/gameplay-demo-integration"
+  "verification_record_scope": "All entries in verification retain their original historical component/scenario/date limits and failures. None is a current run instruction or proof at mainab2a406; queued/missing/unrun outcomes remain unexecuted. No new engine, runtime or custom check was performed for this documentation handoff.",
+  "historical_declared_default_cases": 60,
+  "historical_declared_foreground_cases": 76,
+  "historical_opt_in_endurance_cases": 1,
+  "current_source_branch": "main",
+  "main_adoption": {
+    "merge": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+    "reviewed_head": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
+    "source_pr": 89,
+    "supporting_review": 5809571546,
+    "lead_review": 5809571664,
+    "designer_review": 5809571746,
+    "review_scope": "Same-head role decisions preceded merge; normal-main partial-prototype adoption only. Required validation passed per retained merge receipt; no new runtime demonstration or native/FPS pass.",
+    "remaining_open_goals": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "main_validation": "validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406: changed-production parsing passed; optional demonstration SKIPPED. B independently observed actual head/jobs/steps; no ongoing watcher. No runtime acceptance added."
+  },
+  "player_launch": "Update a clean local main, open project.godot in Godot and press F5 for the paused empty-field main scene. Preserve existing local changes; the human root checkout was not pulled/reset/overwritten. This launch note is not a newly requested playtest or runtime pass."
 }

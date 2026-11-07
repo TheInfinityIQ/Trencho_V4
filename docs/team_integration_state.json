@@ -41,10 +41,13 @@
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
-    "branch": "codex/gameplay-demo-integration",
-    "commit_resolution": "Use the exact commit sent by the lead; refs/heads/codex/gameplay-demo-integration is the current published review head. A future local edit is not reviewed until pushed.",
+    "branch": "main",
+    "commit_resolution": "PR89 reviewed head3859e9b was merged into main as ab2a406. Use the exact main revision in the handoff; later documentation/feature PRs require their own exact-head decisions. The human checkout was preserved; no forced pull/reset was performed.",
     "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded.",
-    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89"
+    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89",
+    "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+    "status": "merged_partial_prototype_not_complete_demo",
+    "pull_request_status": "merged"
   },
   "scope_limits": [
     "The existing GDD gameplay scope remains; feature priorities do not establish implementation or acceptance.",
@@ -84,9 +87,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_demo_candidate",
-        "branch": "codex/demo-feature-candidate",
-        "current_assignment": "PR101 submitted/published and merged at65006544f27055875008d3c83408094d77b0dd21 after exact-head role decisions and validation. Preserve original sources; lead now owns cumulative PR89 integration workflow. A next supports review of the new PR decision protocol when exact head is ready."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_current_demand",
+        "branch": "codex/reconcile-current-army-demand",
+        "current_assignment": "Three-document main-adoption handoff frozen for separate lead/Designer review/publication. A now implements the separately preassigned91/92 downward/zero automatic-demand reconciliation from mainab2a406, in its own checkout/branch and bounded source contract; preserve prior heads."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +99,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "Cumulative supporting technical source review of lead PR89 againstmain800ec9 is active; production integration65006544, final docs-only head to follow. Identify concrete normal-main adoption blockers or no blocker; no local engine/regression. Lead owns final technical/check/merge disposition."
+        "current_assignment": "Cumulative PR89 source review and exact main validation observation COMPLETE; no watcher remains. B is preassigned independent source peer review of A current-demand reconciliation when A supplies its frozen exact head."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -106,7 +109,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
         "branch": "codex/confirm-consumed-batch-cancel",
-        "current_assignment": "Count/cancellation/reporting fixes included unchanged in merged PR101. Original heads preserved; no remaining separate bay-push permission needed under Dawson's standing rule. Resolve concrete cumulative integration findings if assigned."
+        "current_assignment": "C performs final read-only feedback/guard review of A current-demand exact implementation. Latest lead decision retains existing Complete request lifecycle and guards; the proposed Covered-state UI patch is withdrawn and is not composed."
       }
     ],
     "review_policy": {
@@ -192,6 +195,17 @@
         "scope": "Five-fix source composition; full ordinary demo/FPS acceptance remains open",
         "verification": "Current-head validate42329715958/job128273199231 passed changed-production parsing; optional runtime demonstration skipped",
         "integration": "Merged65006544f27055875008d3c83408094d77b0dd21 into review branch"
+      },
+      {
+        "pr": 89,
+        "sha": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
+        "supporting_technical": "B no-blocker role COMMENT5809571546",
+        "technical": "Lead APPROVED role COMMENT5809571664",
+        "design": "Designer game-identity APPROVED role COMMENT5809571746",
+        "review_timing": "All three decisions apply to the same exact3859e9b head and preceded the source merge. Role COMMENT records are not native GitHub APPROVED.",
+        "scope": "Normal-main adoption of the connected empty-field partial prototype; ordinary/full-loop/native/FPS acceptance remains open.",
+        "verification": "Required validate42330520766 passed at3859e9b; production validation42330067869 also passed. These are retained lead merge receipts, not a new runtime result.",
+        "integration": "Merged into main as ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc"
       }
     ],
     "kind": "persistent_codex_project_chats",
@@ -235,7 +249,8 @@
       97,
       98,
       99
-    ]
+    ],
+    "record_kind": "Historical 5 November cleanup receipt; its PR lists/counts are not the current adoption state. Use current_open_prs and reviewed_prs for the 6 November handoff."
   },
   "github_projects_connection": {
     "server": "github_projects",
@@ -256,7 +271,7 @@
     "human_playtest_requested_pending": false,
     "human_wait_qualification": "This reflects the developer/Designer/UI continuity reports; the Artist was contacted but no fresh response was observed.",
     "scoped_tool_wait": {
-      "status": "RESOLVED by Dawson's direct6November standing PR workflow instruction;101branch published, PR created/reviewed/merged through existing supported connection",
+      "status": "RESOLVED history: PR101 published/reviewed/merged65006544 and PR89 merged into mainab2a406 under Dawson standing PR workflow. No source-publication approval question remains pending.",
       "rule": "No routine extra per-PR publication/merge permission; genuine new tool rejections remain scoped and binding",
       "prior_rejection": "Retained as history; no raw Git credential extraction or rejected-route retry occurred."
     },
@@ -269,8 +284,8 @@
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
       "record_kind": "completed successor history; never dispatch this already integrated work"
     },
-    "lead_next_action": "Finish the new PR review decision protocol and its supporting review; process cumulative PR89 technical/game-identity decisions at final exact head and required checks, then merge when eligible. No human gameplay question or requested playtest currently blocks this work.",
-    "publication": "Continuity records are published on the integration branch; new current-head decisions are updated through ordinary PR handoffs.",
+    "lead_next_action": "Publish/review the separate documentation handoff, and continue the already preassigned A implementation of Designer next accepted91/92 outcome: reconcile decreased or zero genuine Army demand before additional AUTOMATIC shipment commitments. Preserve accepted cargo/crew/site/return rules, fixed manual quantities and explicit holds; zero demand must not create a player cancellation hold. No rates/HQ6000/threshold changes. Source adoption89 and feature101 are complete; do not redispatch their reviews or deferred broad checks. A owns bounded implementation, B its final source peer review, C read-only feedback/guard review using existing Complete lifecycle guards; lead owns integration; no generic human continue or implied playtest gate.",
+    "publication": "The partial prototype is merged into mainab2a406. This three-file documentation handoff is a separate local branch until normally published and reviewed; historical candidate receipts do not imply pending source-publication permission.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
   "local_review_candidates": [
@@ -311,7 +326,23 @@
       "runtime": "NONE combined; only component-specific historical evidence"
     }
   ],
-  "current_open_prs": [
-    89
-  ]
+  "current_open_prs": [],
+  "current_open_prs_scope": "6 November2026 main-adoption snapshot: zero open code PRs after89/101 merged and100 closed superseded. Lead owns live readback. The forthcoming documentation handoff and new current-demand feature PRs are separate; this snapshot is not a perpetual live zero-PR assertion.",
+  "main_adoption": {
+    "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+    "reviewed_head": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
+    "status": "partial_prototype_source_merged",
+    "source_pr": 89,
+    "feature_pr": 101,
+    "superseded_pr": 100,
+    "open_delivery_goals": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "player_launch": "Update a clean local main to the merged revision, open project.godot in Godot and press F5. The main scene starts in the paused empty field. Preserve local changes; no forced pull/reset or human-checkout update was performed by this handoff.",
+    "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance.",
+    "validation": "Main validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406; changed-production parsing passed, optional demonstration SKIPPED. Lead supplied receipt; B independently read actual head/jobs/steps. No watcher or new run."
+  }
 }

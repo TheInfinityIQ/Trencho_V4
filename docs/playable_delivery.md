@@ -1,8 +1,18 @@
 # Connected playable delivery
 
-Updated 5 November 2026. Parent: [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83). Current review: [PR #89](https://github.com/TheInfinityIQ/Trencho_V4/pull/89), `codex/gameplay-demo-integration`. Design: [current GDD](game_design_document.md). Developer publication/status: [team integration state](team_integration_state.json), [implemented features](implemented_features.json) and [prototype completion](prototype_completion.json).
+Updated 6 November 2026. Parent: [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83). The partial prototype is merged into `main` at `ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc` through [PR #89](https://github.com/TheInfinityIQ/Trencho_V4/pull/89). Design: [current GDD](game_design_document.md). Developer publication/status: [team integration state](team_integration_state.json), [implemented features](implemented_features.json) and [prototype completion](prototype_completion.json).
 
 The four current delivery goals #83/#90/#91/#92 are grouped in [demo milestone #9](https://github.com/TheInfinityIQ/Trencho_V4/milestone/9) and the Project #3 **Current demo** view. Wider requirements remain in the eight later milestones and **Later backlog**; retaining them does not make each one a present demo blocker.
+
+## Main adoption and launch
+
+PR #89 merged after supporting technical review `5809571546`, lead technical review `5809571664` and Designer review `5809571746` at the same exact head `3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a`. These decisions preceded source merge `ab2a406`; they are role COMMENT reviews, not native GitHub APPROVED. Required validation `42330520766` passed at that head; production validation `42330067869` also passed. Main validation `42330742832` / job `128276446850` also completed successfully at exact `ab2a406`, with changed-production parsing passed and the optional demonstration skipped; B independently observed the actual head/jobs/steps and no watcher remains. These source/parsing receipts do not establish ordinary full-loop or native/FPS acceptance.
+
+[PR #101](https://github.com/TheInfinityIQ/Trencho_V4/pull/101) was merged into integration at `65006544f27055875008d3c83408094d77b0dd21` and is included in main. [PR #100](https://github.com/TheInfinityIQ/Trencho_V4/pull/100) was closed unmerged as superseded. The 6 November main-adoption snapshot has zero open code PRs after these dispositions; the forthcoming documentation handoff and new feature PRs are separate. This is a dated snapshot, not a perpetual live PR count. The lead owns live repository readback.
+
+For the player: update a clean local `main`, open `project.godot` in Godot and press **F5**. The main scene starts in the paused empty field. Preserve local changes before updating; this handoff did not pull, reset or overwrite the human root checkout. This is a launch note, not a new playtest request or a claim that the game was run.
+
+The source handoff is a partial prototype. Goals #83/#90/#91/#92, ordinary complete and repeated supply, pacing/readability, native input/rendering and strict 60 FPS acceptance remain open. Historical component results and failures retain their original scope; queued or unrun checks do not become passes because source merged.
 
 ## Intended experience
 
@@ -45,8 +55,10 @@ The approved rear package and automatic shipping policy stand. Existing battlefi
 
 ## Ownership and completion reporting
 
-The Designer owns the intended experience, requirements and pacing choices. The Developer owns systems, implementation, testing, integration, the current review PR and a usable handoff. UI/UX owns presentation and interaction design in coordination with both. Historical B/C/Lead/Principle assignments do not activate new work; use the current roster.
+The Designer owns the intended experience, requirements and pacing choices. The Developer owns systems, implementation, permitted verification, integration, each new PR and a usable handoff. UI/UX owns presentation and interaction design in coordination with both. Historical B/C/Lead/Principle assignments do not activate new work; use the current roster.
 
 Report Objective, Outcome and Next task, with exact published branch/commit and actual checks/limits. Publication is not gameplay acceptance. Keep foundation closure, connected implementation, observed ordinary gameplay and Dawson's feedback distinct.
 
 Polishing, optimization and benchmark-driven work are paused. Keep known defects/performance results and the eventual 60 FPS target visible. Use brief direct checks of changed behaviour when needed; no routine full-suite or new test-infrastructure phase is introduced here. Living-map maintenance and current AGENTS.md still apply.
+
+The lead next processes this separate documentation handoff, and continues A already preassigned Designer-accepted #91/#92 outcome: reconcile decreased or zero genuine Army demand before additional **automatic** shipment commitments. Preserve accepted cargo/crew/site/return rules, fixed manual quantities and explicit cancellation holds; zero demand must not create a player hold. No rates, starting HQ 6,000 rounds or threshold changes are included. The Designer identified a conditional source gap, not an observed ordinary-play result; A owns the bounded implementation, B its final source peer review, C read-only feedback/guard review using the existing Complete request lifecycle, and lead integration. This separate documentation PR is not a prerequisite for that independent work. Completed PR89/101 source reviews and the old two-trip/mounted-guidance sequences are not current tasks. No generic human continue, additional routine merge permission or implied playtest gate is introduced. Current instructions prohibit local engine runs and regression/broad-scenario campaigns; historical evidence is retained for later.
