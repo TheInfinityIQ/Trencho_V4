@@ -1,0 +1,11 @@
+flowchart TD
+  A[Cancel unfinished site] --> B[Construction read-only loss query]
+  B -->|not Building| C[Existing direct cancel validation]
+  B -->|Building| D[Capture session model service site identity and loss]
+  D --> E[Explain progress loss consumed materials and physical recovery]
+  E -->|Keep Escape close| F[Clear UI intent only]
+  E -->|Confirm| G[Consume decision then revalidate]
+  G -->|stale complete replaced amount changed| H[Reject with no cancellation]
+  G -->|same Building site| I[Existing captured service.cancel once]
+  J[Existing committed events and selection] --> K[Validate pending intent only]
+  L[Placement preview cancel] --> M[Existing direct preview exit]
