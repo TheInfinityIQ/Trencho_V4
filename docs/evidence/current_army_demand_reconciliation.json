@@ -1,0 +1,54 @@
+{
+  "status": "implemented_locally_static_maintenance_at_final_freeze_not_engine_parsed_executed_or_published",
+  "base": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+  "prospective_contract_frozen_before_production": "079d3b8 (preceded by7477aa5 and corrected3cfd4b4); docs/diagrams/current_army_demand_reconciliation.json/.mmd",
+  "branch": "codex/reconcile-current-army-demand",
+  "checkout": "trencho_dev_current_demand",
+  "production_scope": [
+    "game/battlefield/opening_resupply.gd",
+    "game/logistics/rear_logistics.gd"
+  ],
+  "source_observations": [
+    "Military unchanged deficit/local/HQ/courier/incoming calculation now emits changed zero as well as positive shortage before existing forward-plan gate. Original forward gate and admission block retained.",
+    "Other request promise excludes actual HQ unloaded receipt not yet credited; cancelled departed nonterminal cargo retains existing cargo-minus-unloaded promise. Manual requested quantity is never assigned.",
+    "Current automatic target includes actual delivered, pending actual receipt and the larger of fresh uncovered demand or accepted physical remainder. Missing owned manifest conservatively retains unresolved remainder. No manifest/cargo/claims/crew/site/return writes.",
+    "No-manifest zero/uncovered retirement reuses Complete with explicit neutral additional-load explanation. No delivered/credited/cancelled/hold mutation; existing Cancel and blocker guards suffice. Later positive need creates normal new automatic request unless explicit hold/cancelled intent remains.",
+    "After terminal manifest release with target remaining, request-local awaiting_need gates only next automatic acceptance. Current model/policy/source guarded invalidation requests next normal military assessment; callback clears dependency and wakes existing finite work, avoiding an obsolete accepted-floor next load.",
+    "Original real receipt high-water mark and invalidation precede changed notification. New helper reads only existing narrow row/manifest accounting; no stock/coverage/clock read in callback, new timer or poll.",
+    "Session replacement still disconnects prior source, clears requests/holds and binds current source; no new source subscription or lifetime owner."
+  ],
+  "feedback": "Existing Complete means retired rear-request lifecycle, not credited delivery or recipient capability. No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.",
+  "representation": "Lead withdrew Covered/UI expansion; no C proposal files composed. C read-only exact-source feedback review remains separate.",
+  "static_maintenance": {
+    "source_map": "Final combined bdad+feature+routing tree being regenerated after feedback correction; final purpose/freshness checks required before commit.",
+    "ui_button_map": "PASS; current source anchors/line inventory regenerated and checked. No UI production changes or new regression coverage.",
+    "whitespace": "PASS git diff --check; final staged check required before commit.",
+    "meaning": "Static source grammar and metadata maintenance only; not Godot compilation or execution.",
+    "baseline_map_drift": "Main inherited metadata predates the lead protocol documents; final required map refresh also fingerprints those existing docs without editing them."
+  },
+  "runtime": "NONE. No local engine, regression, broad scenario, failure injection, coverage matrix, benchmark, custom arithmetic harness or GitHub demonstration executed/submitted. One ignored brief current-callback demonstration is PREPARED ONLY for lead script/hash/scope review; required changed-production CI parsing follows normal publication, no result claimed.",
+  "unverified": [
+    "Godot compilation",
+    "Actual changed-zero source event before Pending/Ready forward plan",
+    "Real100to30/0 automatic demand decrease and later natural positive reopening",
+    "Actual receipt-credit lag, manual/other commitments and accepted-floor terminal reassessment timing",
+    "Real explicit holds/cancel guards and missing-manifest state",
+    "Ordinary factory/supply/repeat loop, native input/rendering and FPS"
+  ],
+  "production_normalized_utf8_lf_sha256": {
+    "game/battlefield/opening_resupply.gd": "0e622a1bc851a5e6c13ea86092ab66a1a66b6dc5bf958dcbedc6076407004759",
+    "game/logistics/rear_logistics.gd": "71249e1c1d05fc73335ae7ce96e58f5fd93f2c0f069465b265e27aa4a24d35ef"
+  },
+  "next_owners": "C final feedback/guard source review; B independent technical exact-head review; lead technical/CI/publication/integration; Designer exact-head game identity. A handles concrete findings.",
+  "prepared_direct_check": {
+    "status": "PREPARED_NOT_SUBMITTED_NOT_EXECUTED",
+    "path": "logs/current-army-demand/proposed_direct_check.gd",
+    "sha256": "988ba3b197a325b353b16fb3e42f46f5dfc53a680e94b71f43785b93454435ae",
+    "maximum_remote_seconds": 45,
+    "scope": "One detached actual reconciliation callback sequence with supplied100/30/0 component values; no military source bound, no tree/tick/stock commands. Real Session/Model/Logistics owners; no stub framework. Only uncommitted request retirement and unchanged hold/receipt counters observed.",
+    "not_covered": "Source event/forward Pending/Ready gate, accepted manifests, receipt lag, other/manual promises, explicit holds, terminal reassessment, session replacement, physical/ordinary/native/FPS. These remain source-reviewed only.",
+    "review_owner": "Lead reviews exact script/hash/need before any one remote submission; no submission authorized by preparation."
+  },
+  "final_integration": "Ordinary merge of docs-only mainbdad2ff into existing feature branch; original published931e239 preserved. Two separately authorized routing phrases default main/current lead target. Production delta from931 is ONLY Designer-requested neutral feedback string in rear_logistics; opening_resupply and all arithmetic/ownership/event behavior remain identical.",
+  "review_status": "B931 technical source no-blocker; C931 guards no-blocker. Designer/C requested neutral feedback correction, implemented here; final exact-head reaffirmations still required."
+}

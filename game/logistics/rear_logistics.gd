@@ -173,34 +173,50 @@ func _queue_delivery(type: String, quantity: int, automatic: bool) -> Dictionary
 	changed.emit()
 	return {"ok":true,"requires_reconciliation":false,"id":id,"message":"Supply requested. Actual workers load available goods onto a real truck; it delivers and returns before another trip."}
 
+func _uncredited_hq_receipt(row: Dictionary, manifest: Dictionary) -> int:
+	if manifest.is_empty(): return 0
+	return maxi(0,int(manifest.unloaded.get(row.type,0))-int(row.credited.get(manifest.id,0)))
+
 func ensure_army_supply(type: String, quantity: int) -> void:
-	if quantity <= 0 or _army_holds.has(type): return
+	var model := _model()
+	if model == null or not model.empty_field_opening or quantity < 0 or _army_holds.has(type): return
 	var current: Dictionary = requests.get(str(_army_requests.get(type,"")),{})
-	# Explicit cancellation holds this automatic demand until the player places
-	# a new request or explicitly resumes it. Never recreate cancelled work silently.
+	# Explicit cancellation remains player intent, not a zero-demand transition.
 	if not current.is_empty() and current.cancelled: return
-	# Existing promises already exclude delivered quantities. Do not order the
-	# same shortage twice, and never grow a player's explicit requested amount.
 	var uncovered := quantity
 	for row in requests.values():
 		if row.id == current.get("id","") or row.type != type or row.state == "Complete": continue
-		var promised: int = maxi(0,int(row.requested)-int(row.delivered))
+		var trip: Dictionary = model.rear.dispatch.manifests.get(row.manifest,{})
+		# Source coverage already includes actual HQ receipt, even before this
+		# request's high-water mark catches up. Never count those rounds twice.
+		var promised: int = maxi(0,int(row.requested)-int(row.delivered)-_uncredited_hq_receipt(row,trip))
 		if row.cancelled:
-			var trip: Dictionary = _model().rear.dispatch.manifests.get(row.manifest,{})
 			if trip.is_empty() or not trip.departed or trip.state in ["Complete","Cancelled","Safety Returned"]: continue
-			# A departed cancellation cannot recall its real loaded freight. Only
-			# that actual remaining cargo counts, never its unsent request remainder.
 			promised = maxi(0,int(trip.cargo.get(type,0))-int(trip.unloaded.get(type,0)))
 		uncovered -= promised
-	if uncovered <= 0: return
-	if not current.is_empty() and current.state != "Complete":
-		var remaining: int = int(current.requested)-int(current.delivered)
-		if remaining >= uncovered: return
-		current.requested += uncovered-remaining
+	uncovered = maxi(0,uncovered)
+	if current.is_empty() or current.state == "Complete":
+		if uncovered > 0: _queue_delivery(type,uncovered,true)
+		return
+	var manifest: Dictionary = model.rear.dispatch.manifests.get(current.manifest,{})
+	var uncredited: int = _uncredited_hq_receipt(current,manifest)
+	var accepted := 0
+	if not str(current.manifest).is_empty():
+		if manifest.is_empty():
+			# Missing owned records retain the unresolved promise and blocked path.
+			accepted = maxi(0,int(current.requested)-int(current.delivered)-uncredited)
+		elif manifest.state not in ["Complete","Cancelled","Safety Returned"]:
+			accepted = maxi(0,int(manifest.cargo.get(type,0))-int(manifest.unloaded.get(type,0)))
+	var target: int = int(current.delivered)+uncredited+maxi(uncovered,accepted)
+	var awaiting_need: bool = bool(current.get("awaiting_need",false))
+	if target == int(current.requested) and not awaiting_need: return
+	current.requested = target
+	if awaiting_need: current.awaiting_need = false
+	if str(current.manifest).is_empty() and target == int(current.delivered):
+		_set_status(current,"Complete","No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.")
+	else:
 		_wake()
 		changed.emit()
-		return
-	_queue_delivery(type,uncovered,true)
 
 func cancel_request(id: String) -> Dictionary:
 	var row: Dictionary = requests.get(id,{})
@@ -244,6 +260,16 @@ func _advance_request(row: Dictionary) -> bool:
 			changed.emit()
 		if manifest.state in ["Complete","Cancelled","Safety Returned"]:
 			row.manifest = ""
+			if row.get("automatic",false) and not row.cancelled and row.delivered < row.requested:
+				# The accepted floor is gone. Await fresh military need before a
+				# next load, rather than reusing a protected but obsolete target.
+				row.awaiting_need = true
+				var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
+				var operations: RefCounted = rear.battlefield_operations
+				if model == _model() and supply != null and operations != null:
+					var policy: RefCounted = operations.policy
+					if policy != null and policy.get("resupply") == supply:
+						supply.invalidate_rear_supply_need(str(row.type))
 			_set_status(row,"Cancelled" if row.cancelled else ("Complete" if row.delivered >= row.requested else "Queued"))
 			return true
 		if row.cancelled: return false
@@ -256,6 +282,9 @@ func _advance_request(row: Dictionary) -> bool:
 		# adding a separate haul here would duplicate its reserved freight.
 		return false
 	if row.cancelled or row.delivered >= row.requested: return false
+	if row.get("automatic",false) and row.get("awaiting_need",false):
+		_set_status(row,"Waiting","Waiting for current military need before another automatic load.")
+		return false
 	if model.speed == 0:
 		_set_status(row,"Queued","Start time to prepare the next physical delivery.")
 		return false

@@ -367,19 +367,13 @@ func tick() -> void:
 	if automatic_deliveries: _dispatch_requested_freight(stop)
 
 func invalidate_rear_supply_need(type: String) -> void:
-	# A new explicit rear request clears cancellation intent. Recompute current
-	# need at the next owned resupply tick; retain no stale quantity or stock.
+	# Intent, actual receipts and terminal trips invalidate publication only.
+	# The next owned military tick recomputes need; player holds stay separate.
 	_rear_shortages.erase(type)
 
 func _dispatch_requested_freight(stop: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var transport: RefCounted = rear.forward_supply.transport
-	if not _freight_request.is_empty():
-		var pending: Dictionary = transport.planning_status(_freight_request)
-		freight_status = str(pending.message)
-		if pending.state in ["Pending","Ready"]: return
-		_freight_request = ""
-		if pending.state != "Admitted": return
 	var needs := {"E02":0,"E26":0}
 	var carriers: Array[String] = []
 	carriers.assign(requests.keys())
@@ -396,7 +390,14 @@ func _dispatch_requested_freight(stop: Dictionary) -> void:
 		var shortage: int = maxi(0,int(needs[type])-int(hq.available.get(type,0)))
 		if int(_rear_shortages.get(type,-1)) != shortage:
 			_rear_shortages[type] = shortage
-			if shortage > 0: rear_supply_needed.emit(type,shortage)
+			rear_supply_needed.emit(type,shortage)
+	# Rear demand remains current even while a forward plan owns admission.
+	if not _freight_request.is_empty():
+		var pending: Dictionary = transport.planning_status(_freight_request)
+		freight_status = str(pending.message)
+		if pending.state in ["Pending","Ready"]: return
+		_freight_request = ""
+		if pending.state != "Admitted": return
 	for type in needs:
 		var quantity: int = mini(int(needs[type]),int(hq.available.get(type,0)))
 		if quantity <= 0: continue
