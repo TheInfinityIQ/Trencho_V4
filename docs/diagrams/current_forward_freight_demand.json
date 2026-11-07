@@ -1,5 +1,5 @@
 {
-  "status": "prospective_before_production_edits_pending_designer_behavior_confirmation",
+  "status": "prospective_before_production_edits_designer_accepted_existing_assessment",
   "base": "ffc4c828",
   "objective": "Retire or reprepare only automatic unadmitted HQ-to-forward freight when current military need decreases or reaches zero.",
   "scope": [
@@ -24,7 +24,7 @@
     "At the existing owned assessment, unchanged or increased need preserves a still-useful smaller plan; lower positive need retires its unadmitted plan and prepares a fresh key/route for the smaller load.",
     "Zero need retires only that unadmitted plan without reserving or moving goods. Later genuine positive need uses ordinary policy preparation.",
     "A missing, blocked or already admitted key follows existing completion/ownership handling; never globally cancel unrelated plans.",
-    "Before implementation, lead/Designer resolve whether freshness is only the existing decision boundary or also a single policy callback at Ready admission. No speculative per-chunk source reads."
+    "Designer accepted the existing military assessment cadence; no extra need recomputation at Ready or per route chunk. The prepared new route/load must match its captured admitted quantity."
   ],
   "acceptance": [
     "Changed-zero/positive rear publication from PR103 stays before pending-plan early return.",
