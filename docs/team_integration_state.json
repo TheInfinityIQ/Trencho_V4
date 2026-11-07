@@ -84,9 +84,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_receipt_reconcile",
-        "branch": "codex/army-receipt-reconciliation",
-        "current_assignment": "Preserve receipt fix78bd7b6; independently review B's exact new combined supply candidate when ready. B owns readiness; no repeated old traces."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_demo_candidate",
+        "branch": "codex/demo-feature-candidate",
+        "current_assignment": "Implement LOCAL five-fix composition overbc0bfef, adding frozen counte15eaf4 and cancellationcc030bd after completed source decisions. Preserve original three production files exactly; final base_demo must equalcc030bd plus exactlye15 count callback. B peer, lead technical and Designer final local candidate reviews preassigned. No public merge/network/engine."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +96,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "LOCAL combined candidate frozen at bc0bfefdbdbb0812d8258b106eddf01654fca6f0, parentadfa557, combiningf7b1+78bd+4c87 production in three claimed files. Static maps/whitespace and exact composition comparisons passed; A/Designer/lead exact candidate source reviews requested. No engine/runtime/publication."
+        "current_assignment": "Candidatebc0bfef and cancellationcc030bd independent source reviews COMPLETE/no blocker. Next preassigned action: peer review A final LOCAL five-fix composition; A owns readiness. Preservebc0bfef original source."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -106,7 +106,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
         "branch": "codex/confirm-consumed-batch-cancel",
-        "current_assignment": "Count fix frozen locally at e15eaf4f2f703da8ee47b905bc29c665c4c8a7e3; lead and Designer provisional exact-head source reviews found no blocker, no engine/runtime/publication. C has transitioned without a generic resume to the separately preassigned consumed-active-batch cancellation confirmation; diagram before implementation."
+        "current_assignment": "Cancellation safeguard frozencc030bd7bd5adc521fb0e833a48ac8364f9d14e4 with B/lead/Designer/UX provisional LOCAL source decisions complete/no blocker. Count e15 and bay4c87 preserved. A owns new local composition; C owns concrete corrections if review finds any. No engine/runtime/publication."
       }
     ],
     "review_policy": {
@@ -255,11 +255,40 @@
       "owner": "C",
       "after": "Freeze staff-count priority repair for exact-head review",
       "outcome": "Confirm loss before cancelling a consumed active batch, without cancelling a replacement batch or changing material rules",
-      "status": "C reported transition underway after freezing count repair at e15eaf4; no generic continue needed",
+      "status": "COMPLETE locally atcc030bd with all assigned local source decisions; A now owns actual combined-source preparation",
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first"
     },
-    "lead_next_action": "Protocol supporting-developer source review found no blocker. Lead now processes combined candidate bc0bfef and count e15eaf4 exact-head reviews, while C implements the preassigned cancellation safeguard. Publish only through the applicable permitted path; no local engine or regression work.",
+    "lead_next_action": "Follow A actual five-fix composition, process B peer/Designer/lead exact-head source decisions, then coordinate applicable publication permission. Earlier component reviews are complete, not pending. No local engine or regression work.",
     "publication": "This is a local operational record until separately published. It does not assert that new candidate branches or PRs exist remotely.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
-  }
+  },
+  "local_review_candidates": [
+    {
+      "head": "bc0bfefdbdbb0812d8258b106eddf01654fca6f0",
+      "branch": "codex/connected-supply-candidate",
+      "peer": "A complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer complete/source scope approved",
+      "publication": "NONE; final published-head PR reviews and applicable permissions remain distinct",
+      "runtime": "NONE combined; retained component evidence has its own limits"
+    },
+    {
+      "head": "e15eaf4f2f703da8ee47b905bc29c665c4c8a7e3",
+      "branch": "codex/preserve-facility-staff-priority",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer complete/no blocker",
+      "publication": "NONE",
+      "runtime": "NONE"
+    },
+    {
+      "head": "cc030bd7bd5adc521fb0e833a48ac8364f9d14e4",
+      "branch": "codex/confirm-consumed-batch-cancel",
+      "peer": "B complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer source scope approved",
+      "ux": "No blocking source finding",
+      "publication": "NONE; exact published-head reviews remain distinct",
+      "runtime": "NONE"
+    }
+  ]
 }
