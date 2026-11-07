@@ -1,0 +1,14 @@
+flowchart TD
+  A[Current factory plan] --> B{Recovery cause}
+  B -->|disabled| C[Review stopped: Enable focus]
+  B -->|enabled and paused| D[Review paused: Pause focus]
+  C --> E[Rendered session model site owner identities]
+  D --> E
+  E --> F[Click: validate identities and current plan]
+  F -->|stale or different action/site| G[Reject and refresh guidance]
+  F -->|same recovery site| H{Work already on exact facility?}
+  H -->|yes| I[Preserve drafts]
+  H -->|no| J[Existing select and load]
+  I --> K[Revalidate then focus/reveal existing button]
+  J --> K
+  K --> L[Player separately presses actual command]
