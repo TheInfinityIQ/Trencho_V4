@@ -1,0 +1,34 @@
+{
+  "status": "LOCAL_SOURCE_IMPLEMENTED_STATIC_MAINTENANCE_PASSED",
+  "base": "ffc4c8282c1fed0eea7f61c2ec7d9181032af233",
+  "prior_contract_commit": "a9bd0a0",
+  "branch": "codex/confirm-construction-cancel",
+  "scope": "Two production files only: base_demo scene confirmation/lifecycle and read-only Construction cancellation_loss. Existing cancel/consumption/return/worker/carry implementations unchanged.",
+  "source_observations": [
+    "Building-only owner query reads stored m11 and established successful half-consumption invariant; no receipt/history/catalogue/stock owner introduced.",
+    "Keep/dismiss clears intent and hides only; no speed change, command or reconciliation.",
+    "Confirm consumes dictionary before validation, checks exact site reference via documented is_same plus session/model/service/selection/still-Building/disclosed amount, then calls captured service.cancel once.",
+    "Natural progress allowed; committed completion/model replacement/selection invalidates; missing/replaced site rejects, even with same ID/value.",
+    "Existing single state wrapper and model callback reused; no added subscription/timer/poll/snapshot. Session bind and exit clear decision.",
+    "Awaiting/invalid/Complete no-loss path retains existing cancel validation. Placement and dismantle commands untouched.",
+    "Existing production-loss and recipe dialogs preserved."
+  ],
+  "static_maintenance": {
+    "source_map": "PASS: zero pending purpose reviews; 16 actual changed/new functions and callback reviewed",
+    "ui_map_button_inventory": "PASS: current source/line anchors; existing button fixture changed by generator only, no test logic/scenario added",
+    "whitespace": "git diff --check PASS",
+    "meaning": "Source grammar/metadata maintenance only, not Godot compilation or runtime."
+  },
+  "runtime": "NONE: no local engine, regression, scenarios, failure injection, custom demonstration, benchmarks or remote check.",
+  "unverified": [
+    "Godot compilation and native dialog creation/bounds/default focus/Escape/close",
+    "Actual Keep/confirm/stale timing/completion/custody/recovery through normal controls",
+    "Ordinary full factory/supply loop and FPS"
+  ],
+  "publication": "None yet; dedicated normal branch/draft only after final current-main composition/source review under assigned workflow.",
+  "next": "C freezes source; B/lead technical, Designer identity, UX copy; normal required changed-script CI after publication.",
+  "production_normalized_utf8_lf_sha256": {
+    "game/construction/construction_service.gd": "d6147a4fb1ef4f10bf882a6df50cf1de3af37c1b05573ec46082afe07507c88c",
+    "game/rear_base/base_demo.gd": "5772b37108a4c827fcac6b28b5bf8d0ad0a1d3e1317c96a4726bd1892a6a3d62"
+  }
+}

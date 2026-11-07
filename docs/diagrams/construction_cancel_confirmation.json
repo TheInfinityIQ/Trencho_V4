@@ -1,5 +1,5 @@
 {
-  "status": "prospective acceptance frozen before production edits",
+  "status": "implemented locally; source/UI/button metadata and whitespace maintenance passed; no engine/runtime result",
   "base": "ffc4c8282c1fed0eea7f61c2ec7d9181032af233",
   "owner": "C: base_demo construction cancellation UI/lifecycle, small read-only Construction loss query, own records/maps. Lead integration; B technical; Designer identity; UX wording.",
   "decision": "Designer accepted Building-only informed loss decision; no further principle gate.",
@@ -35,5 +35,6 @@
     "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
     "https://docs.godotengine.org/en/4.7/classes/class_confirmationdialog.html"
   ],
-  "next": "C implements, freezes exact source; B/lead technical, Designer identity, UX copy review; update main/maps then dedicated push/draft under granted scope."
+  "next": "C implements, freezes exact source; B/lead technical, Designer identity, UX copy review; update main/maps then dedicated push/draft under granted scope.",
+  "evidence": "docs/evidence/construction_cancel_confirmation.json"
 }
