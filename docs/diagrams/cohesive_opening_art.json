@@ -6,10 +6,10 @@
   "proposed_source_scope": {
     "primary": "game/rear_base/base_map.gd drawing only: ground, existing scene-owned character, fixed Supply Table/arrival landmark and existing placement ghost; later existing people/completed facilities/stock/carriers under exact approved mappings.",
     "secondary": "game/battlefield/battlefield_view.gd only if Designer includes matching exact known-unit coverage in this increment; preserve contact-report information boundary.",
-    "marker_boundary": "identity_ledger.gd::map_markers narrow additive Person assignment/rear_place plus carried stock type/quantity from already-owned carrying_stock_id via direct record lookup, if needed for accepted role/count distinction. No inventory mass scan or new visible entities. Existing stock design_type/quantity already supports actual starting M11 labels.",
+    "marker_boundary": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
     "assets": "Small exact creator-verified subset, original licence/provenance and actual engine-produced import sidecars; no catalogue bulk imports or generated imagery.",
     "validation": "Existing explicit texture-dependency import list changes only for approved compile dependencies if required. Lead owns bounded remote actual current-build capture and generated sidecars.",
-    "preview_hint": "base_demo.gd::preview_build_at only: attach already-selected kind to display preview, including illegal plan lacking kind, without changing validation/result/footprint or placement command."
+    "preview_hint": "Attach separately named visual_kind from already-selected kind in BaseDemo.preview_build_at, including invalid plans. Never overwrite authoritative plan/validation keys or alter footprint, commands or placement permission."
   },
   "render_flow": [
     "Artist/lead supplies verified original files and precise role/state/source-rect mapping; Designer supplies assets-ready coverage. Commit final mapping before code.",
@@ -41,9 +41,11 @@
   },
   "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
   "real_missing_inputs": [
-    "Verified neutral/unarmed player/worker originals and matching ground/table/resource/facility-category art mappings from Artist/lead.",
-    "Current Person marker lacks role and carried material/count; proposed narrow scalar projection needs lead disposition.",
-    "Illegal placement preview can lack intended kind; proposed display-only hint in existing preview builder.",
+    "Verified neutral/unarmed player/worker originals and matching ground/table/resource/distinct-facility-category mappings from Artist/lead.",
     "Root actual-build viewport captures of normal opening + labelled arranged rear-art example; battlefield only if this revision claims it."
-  ]
+  ],
+  "approved_additions": {
+    "person_marker": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
+    "preview": "Attach separately named visual_kind from already-selected kind in BaseDemo.preview_build_at, including invalid plans. Never overwrite authoritative plan/validation keys or alter footprint, commands or placement permission."
+  }
 }
