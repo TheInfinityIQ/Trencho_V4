@@ -1,0 +1,35 @@
+{
+  "status": "implemented_source_review_pending_not_engine_parsed_or_run",
+  "base": "ffc4c828",
+  "before_code_contracts": [
+    "94097dc",
+    "2b468d2",
+    "6630a1a final cadence resolution"
+  ],
+  "scope": [
+    "game/battlefield/opening_resupply.gd",
+    "game/forward_supply/forward_transport.gd"
+  ],
+  "behavior": [
+    "Existing military assessment and PR103 rear shortage publication remain unchanged and precede this policy pending-key decision.",
+    "Detached planning status returns captured type/quantity without new stock reads. At that assessment an owned Pending/Ready plan exceeding current need is retired; unchanged/increased need keeps the useful smaller plan.",
+    "A positive smaller need follows existing fresh-key preparation with current sources/handlers/routes; zero creates no new load. Later positive need requires no Resume or hold change.",
+    "cancel_pending_freight rejects missing, non-Pending/Ready, departure, reposition and job-bearing requests. It marks only the selected plan Cancelled, removes its private queue entry/work/source capture and increments planning revision; no physical job or claim API is called.",
+    "Source and transport remain owned by the same rear; replaced sessions retain separate old owners and keys, with no static callback or new subscription.",
+    "Assessment cadence remains existing military decision cadence. This is not a new per-frame or Ready-admission need recomputation; physical Ready guard and atomic captured-quantity admission remain unchanged."
+  ],
+  "verification": "Source inspection and required static map/whitespace maintenance only; not Godot compilation or runtime. No engine, regression, scenario, failure injection, matrix, benchmark or custom arithmetic harness run.",
+  "unverified": [
+    "Godot compilation",
+    "Actual decrease/zero retirement at the owned assessment",
+    "Fresh smaller-plan physical admission and later natural positive need",
+    "Ordinary native controls, repeated physical supply, contested outcomes and FPS"
+  ],
+  "next_owners": "A exact-head technical peer; Designer game identity; lead final technical/current-production parsing/merge. B resolves concrete findings and submits the feature PR.",
+  "static_maintenance": {
+    "source_map": "Three changed/new function purposes explicitly source-reviewed; final --check required at freeze.",
+    "ui_map": "Regenerated source links/button inventory; final --check required at freeze.",
+    "whitespace": "git diff --check passed.",
+    "meaning": "Static source grammar and metadata only; not Godot compilation or execution."
+  }
+}

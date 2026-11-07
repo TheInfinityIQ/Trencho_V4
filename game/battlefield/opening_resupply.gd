@@ -395,9 +395,16 @@ func _dispatch_requested_freight(stop: Dictionary) -> void:
 	if not _freight_request.is_empty():
 		var pending: Dictionary = transport.planning_status(_freight_request)
 		freight_status = str(pending.message)
-		if pending.state in ["Pending","Ready"]: return
-		_freight_request = ""
-		if pending.state != "Admitted": return
+		if pending.state in ["Pending","Ready"]:
+			# Only our unadmitted key is compared with this existing assessment.
+			# A smaller replacement needs fresh source/load capture and routes.
+			if not needs.has(pending.type) or int(pending.quantity) <= int(needs[pending.type]): return
+			var retired: Dictionary = transport.cancel_pending_freight(_freight_request)
+			if not retired.ok: freight_status = str(retired.message); return
+			_freight_request = ""
+		else:
+			_freight_request = ""
+			if pending.state != "Admitted": return
 	for type in needs:
 		var quantity: int = mini(int(needs[type]),int(hq.available.get(type,0)))
 		if quantity <= 0: continue
