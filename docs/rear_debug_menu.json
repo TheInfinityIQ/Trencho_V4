@@ -4,7 +4,7 @@
   "diagram": "docs/diagrams/rear_debug_menu.mmd",
   "acceptance": [
     "Session > Debug tools exposes three explicit click actions and result feedback; no timers/polling or automatic grants",
-    "Force deliver completes existing inbound resource orders once, including safe cleanup of partial unloading; paid orders keep original charge, no workers/outbound battlefield bypass",
+    "Force deliver completes existing inbound resource AND personnel orders once, including partial unloading/disembarkation/walking. Same paid passengers arrive, including recovery instructor; preserve existing charges, qualifications and already-arrived/reassigned people. No outbound battlefield bypass.",
     "Instant build completes only Awaiting M11/Building sites; cancels material jobs safely, accounts debug-supplied missing materials and reuses normal activation; no placement or staffing grant",
     "Infinite resources creates zero-cost orders for1000ofeach of nine raw purchasable types and instantly completes those orders only; repeat click adds another batch",
     "Debug overflow stock at the Supply Table is physical and available to existing hauling, finite capacity grows only with explicit deliveries; normal storage capacities stay intact",
@@ -36,5 +36,16 @@
     "result": "PASS: bounded viewport, all buttons and Close inside, closing releases input, Session reopens tools",
     "viewport_sha256": "9edac405b6d397b50edb50becc76ca4300e3fccf55c99ca7043c79cc50a25711",
     "limits": "Remote software rendering and button signal checks; no ordinary-gameplay/native-input/FPS certification."
+  },
+  "worker_delivery_amendment": {
+    "request": "Dawson7November: Force deliver must also deliver workers",
+    "before_code": "Diagram updated before adding personnel completion",
+    "status": "Implementation pending",
+    "requisites": [
+      "No clock advance or duplicated hires",
+      "Pending actual passengers only; do not move already-arrived/reassigned people",
+      "Remove completed walking schedules and release actual population/vehicle reservations",
+      "Resource-only Infinite resources does not complete unrelated worker orders"
+    ]
   }
 }
