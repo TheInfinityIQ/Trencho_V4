@@ -11,6 +11,8 @@ static func view(session: Node) -> Dictionary:
 	var supply: RefCounted = policy.get("resupply") if policy != null else null
 	if supply == null or session.get("automatic_logistics") == null: return {}
 	var rifle: Dictionary = supply.rifle_supply_view()
+	var hq_rifles: Dictionary = rear.hq.rifle_supply_need()
+	var rifle_intent: Dictionary = session.automatic_logistics.supply_intent("E01")
 	var holders: Array = rear.stores.keys()
 	for holder in ["hq-stock",rifle.stop_id]:
 		if holder not in holders: holders.append(holder)
@@ -21,11 +23,12 @@ static func view(session: Node) -> Dictionary:
 	var requests: Array[Dictionary] = []
 	var blockers: Array[String] = []
 	for row in session.automatic_logistics.requests.values():
-		if row.type != "E02": continue
-		requests.append({"id":str(row.id),"label":"Rifle ammunition · " + str(row.state),"state":str(row.state),"requested":int(row.requested),"delivered":int(row.delivered),"blocker":str(row.blocker),"cancelled":bool(row.cancelled)})
+		if row.type not in ["E02","E01"]: continue
+		requests.append({"id":str(row.id),"label":("HQ rifles · " if row.type == "E01" else "Rifle ammunition · ") + str(row.state),"state":str(row.state),"requested":int(row.requested),"delivered":int(row.delivered),"blocker":str(row.blocker),"cancelled":bool(row.cancelled)})
 		if not row.cancelled and row.state != "Complete" and not str(row.blocker).is_empty() and str(row.blocker) not in blockers: blockers.append(str(row.blocker))
 	var intent: Dictionary = session.automatic_logistics.supply_intent("E02")
 	if intent.held: blockers.append("Automatic rear-to-HQ rifle-ammunition requests are held after cancellation. Resume explicitly when ready; existing HQ stock and committed forward deliveries retain their physical rules.")
+	if rifle_intent.held: blockers.append("Rifle deliveries to HQ are on hold. Resume them separately from ammunition deliveries.")
 	if model.speed == 0: blockers.append("Game time is paused. Start 1x when ready for physical work and travel.")
 	var forward_loaded := 0
 	var forward_unloaded := 0
@@ -51,6 +54,7 @@ static func view(session: Node) -> Dictionary:
 	var summary: String = "%d rounds reported needed · %d committed to couriers · %d remaining before stock coverage. Available forward stock: %d; committed forward freight: %d; available HQ stock: %d. Military shortfall beyond those supplies: %d rounds. Rear stores already hold %d available rounds; check existing deliveries before producing more." % [need,committed,remaining,stock.forward,incoming,stock.hq,rear_shortage,stock.rear]
 	var feedback: Dictionary = _supply_feedback(need,remaining,stock,incoming,bool(intent.held),not rifle.recipients.is_empty())
 	summary += " " + str(feedback.detail)
+	summary += "\nHQ rifles: %d trained reserve people need a rifle beyond available HQ equipment. Existing rear deliveries may already cover them. %d wait for ammunition; %d lack carrying capacity. The recipient list below follows frontline ammunition." % [hq_rifles.needed,hq_rifles.ammo_blocked,hq_rifles.capacity_blocked]
 	var stages: Array[Dictionary] = [
 		{"label":"Available rear stock","quantity_text":"%d rounds" % stock.rear,"detail":"Accessible rear stores, excluding reserved stock. Production creates goods here; they are not yet at HQ."},
 		{"label":"Available at HQ","quantity_text":"%d rounds" % stock.hq,"detail":"Actual unreserved HQ stock, including the approved starting ammunition. Rear requests below count only physical HQ receipts."},
@@ -58,6 +62,7 @@ static func view(session: Node) -> Dictionary:
 		{"label":"Available at forward stop","quantity_text":"%d rounds" % stock.forward,"detail":"Unreserved loose rounds at the military's actual local supply stop. Courier commitments are listed separately."},
 		{"label":"Carried by followed recipients","quantity_text":"%d rounds" % carried,"detail":"Current loose and loaded ammunition on the followed people. Completed named-refill recipients remain followable; receipt history and current possession are separate. " + str(rifle.status)}
 	]
+	stages.append({"label":"HQ rifle equipment issue","quantity_text":"%d rifles available at HQ · %d local issues in progress" % [hq_rifles.usable_hq,hq_rifles.issue_promised],"detail":"HQ staff equip trained reserve people after rifles arrive and enough ammunition is available. HQ status: "+str(hq_rifles.status)})
 	var facility := _munitions_site(rear)
 	var actions: Array[Dictionary] = [
 		{"id":"produce" if facility.get("state","") == "Complete" else "build","label":"Review ammunition production" if facility.get("state","") == "Complete" else ("Inspect munitions construction" if not facility.is_empty() else "Build a munitions workshop"),"enabled":true,"panel":"Work" if facility.get("state","") == "Complete" else "Build","facility_id":str(facility.get("id","")),"building_kind":"munitions","focus":"target"},
@@ -65,8 +70,9 @@ static func view(session: Node) -> Dictionary:
 		{"id":"rear_requests","label":"Review HQ delivery requests","enabled":true,"panel":"Supplies"},
 		{"id":"observe","label":"Observe selected recipient","enabled":not rifle.recipients.is_empty(),"panel":"Battlefield"}
 	]
-	if intent.held: actions.append({"id":"resume_automatic","label":"Resume automatic rifle supply","enabled":true})
-	return {"title":"Army needs · Rifle ammunition","summary":summary,"recipients":rifle.recipients,"stages":stages,"requests":requests,"blockers":blockers,"held":bool(intent.held),"actions":actions,"stock":stock,"rear_shortage":rear_shortage,"forward_committed":incoming,"supply_state":str(feedback.state),"supply_feedback":str(feedback.detail)}
+	if intent.held: actions.append({"id":"resume_automatic","label":"Resume automatic rifle-ammunition supply","enabled":true})
+	if rifle_intent.held: actions.append({"id":"resume_rifle_equipment","label":"Resume automatic HQ rifle deliveries","enabled":true})
+	return {"title":"Army needs · Rifles and ammunition","hq_rifles":hq_rifles,"summary":summary,"recipients":rifle.recipients,"stages":stages,"requests":requests,"blockers":blockers,"held":bool(intent.held),"actions":actions,"stock":stock,"rear_shortage":rear_shortage,"forward_committed":incoming,"supply_state":str(feedback.state),"supply_feedback":str(feedback.detail)}
 
 static func _supply_feedback(need: int, remaining: int, stock: Dictionary, incoming: int, held: bool, followed: bool) -> Dictionary:
 	# These are already-read projection facts, never another inventory/capability query.

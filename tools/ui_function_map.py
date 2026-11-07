@@ -339,6 +339,17 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
+    specs.append(('automatic-hq-rifles', 'HQ reserve: actual automatic rifle supply',
+                  'Current eligible reserve need respects existing finite ammunition coverage; named empty weapon identities stage, travel, unload and issue. E01 hold/resume is separate from ammunition.',
+                  [('game/hq/hq_logistics.gd', '_assess_rifle_supply_need', 'Actual eligible reserve gap and finite minimum-ammo budget', ''),
+                   ('game/hq/hq_logistics.gd', 'publish_rifle_supply_need', 'HQ owns E01 demand publication', ''),
+                   ('game/logistics/rear_logistics.gd', 'ensure_army_supply', 'Reconcile need against real shipment promises', ''),
+                   ('game/logistics/rear_logistics.gd', '_advance_request', 'Existing automatic loading, departure, receipt and return', ''),
+                   ('game/dispatch/dispatch_service.gd', '_reserve_cargo', 'Capture only actual functional empty E01 weapon identities', ''),
+                   ('game/hq/hq_logistics.gd', '_finish_drop', 'Existing same-person local weapon issue', ''),
+                   ('game/logistics/army_supply_view.gd', 'view', 'Distinct HQ rifle and ammunition feedback/resume actions', ''),
+                   (BASE, '_army_supply_action', 'Re-resolve current explicit E01 resume action', '"resume_rifle_equipment"'),
+                   ('game/logistics/rear_logistics.gd', '_invalidate_need', 'Invalidate the current correct need owner on resume/receipt', '')]))
     specs.append(('new-facility-staffing', 'New facility: one-time staffing request',
                   'Completion requests existing eligible workers once. Automatic filling preserves occupied duties; count/priority/zero edits become ordinary player instructions.',
                   [(CONSTRUCTION, '_complete_site', 'Actual newly completed facility', ''),

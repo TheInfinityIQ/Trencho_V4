@@ -185,10 +185,15 @@ func _reserve_cargo(row: Dictionary) -> void:
 		for weapon in candidates:
 			if have >= int(row.cargo[type]): break
 			if weapon.kind != "WEAPON" or weapon.design_type != type or weapon.owner != rear.PLAYER or weapon_promises.has(weapon.id) or not rear.stores.has(weapon.holder_id) or weapon.loaded_rounds != 0: continue
+			if type == "E01":
+				if not weapon.functional or not rear.stores[weapon.holder_id].accessible: continue
+				var source_site: Dictionary = rear.construction.instances.get(weapon.holder_id,{})
+				if not source_site.is_empty() and source_site.state != "Complete": continue
 			weapon_promises[weapon.id] = row.id
 			row.weapon_items.append({"type":type,"id":weapon.id,"stage":"Staged" if weapon.holder_id == row.dispatch_store else "Source"})
 			have += 1
 		for stock in candidates:
+			if type == "E01": continue # Rifles are individual WEAPON identities, never generic stock.
 			if have >= int(row.cargo[type]): break
 			if stock.kind != "STOCK" or stock.design_type != type or stock.owner != rear.PLAYER or not rear.stores.has(stock.holder_id) or not rear.stores[stock.holder_id].accessible: continue
 			var count: int = mini(int(row.cargo[type])-have,mini(rear.ledger.available(stock.id),int(floor(25.0/_unit_mass(type)))))

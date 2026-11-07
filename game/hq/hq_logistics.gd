@@ -1,4 +1,5 @@
 extends RefCounted
+signal rear_supply_needed(type: String, quantity: int)
 ## G14 local HQ issue. The ledger owns goods, claims, people, hulls and fuel.
 const Records = preload("res://game/identity/identity_records.gd")
 const EPS := 0.000001
@@ -11,6 +12,9 @@ var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var weapon_promises: Dictionary = {}
 var _sequence := 0
+var _published_rifle_need := -1
+var _rifle_need_dirty := true
+var _rifle_need_view: Dictionary = {}
 var auto_status := "Waiting for physically unloaded HQ stock and eligible recipients."
 const HULL_TARGETS := {"T03":{"E02":900},"T04":{"E26":180},"T05":{"E25":30,"E02":900}}
 
@@ -18,6 +22,8 @@ func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	hq_position = rear.ledger.inspect_entity("hq-berth",{},false).position
 	reserve_position = rear.ledger.inspect_entity("hq-reserve",{},false).position
+	rear.state_changed.connect(_on_rear_commit)
+	_rifle_need_view = _assess_rifle_supply_need()
 
 func request_person_stock(person_id: String, type: String, quantity: int) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -41,6 +47,7 @@ func request_person_weapon(person_id: String, weapon_id: String) -> Dictionary:
 	var id := "hq-issue-%04d" % _sequence
 	jobs[id] = _row(id,"Person Weapon",person_id,weapon.design_type,1,[],weapon_id)
 	weapon_promises[weapon_id] = id
+	_rifle_need_dirty = true
 	return {"ok":true,"id":id,"message":"Same unloaded weapon promised; recipient must walk to staffed HQ issue before transfer."}
 
 func request_vehicle_ammo(hull_id: String, type: String, quantity: int) -> Dictionary:
@@ -85,6 +92,7 @@ func _reserve_job(kind: String, target: String, type: String, quantity: int) -> 
 			return _fail("HQ stock changed before the whole local issue could be reserved.")
 		sources[index].claim = claim_id
 	jobs[id] = _row(id,kind,target,type,quantity,sources,"")
+	_rifle_need_dirty = true
 	return {"ok":true,"id":id,"message":"Unloaded HQ stock reserved on its real stacks; named local handling remains."}
 
 func _row(id: String, kind: String, target: String, type: String, quantity: int, sources: Array[Dictionary], weapon: String) -> Dictionary:
@@ -157,6 +165,8 @@ func settle() -> bool:
 			_finish_drop(row)
 			changed = row.state != "Blocked Carry" or changed
 	changed = _auto_request() or changed
+	if changed: _rifle_need_dirty = true
+	publish_rifle_supply_need()
 	return changed
 
 func _auto_request() -> bool:
@@ -209,6 +219,101 @@ func _auto_request() -> bool:
 		if first_shortage.is_empty(): first_shortage = "Need one intact unloaded E01 at HQ for trained generic reserve %s." % id
 	auto_status = first_shortage if not first_shortage.is_empty() else "Waiting for eligible stopped military hull or trained generic HQ Reserve person and matching unloaded HQ stock."
 	return false
+
+func rifle_supply_need() -> Dictionary:
+	# A committed HQ projection; UI reads never rescan inventory or publish demand.
+	return _rifle_need_view.duplicate(true)
+
+func _on_rear_commit() -> void:
+	# Existing authoritative commit event, not time_advanced/animation polling.
+	_rifle_need_dirty = true
+	publish_rifle_supply_need()
+
+func _assess_rifle_supply_need() -> Dictionary:
+	# Detached projection of the EXISTING serial generic-reserve equipment policy.
+	# This budgets current minimum-ammo coverage, never claims/mutates ammunition.
+	var rear: RefCounted = _rear_ref.get_ref()
+	var ammo: int = int(_stock_counts().available.get("E02",0))
+	var people: Array = rear.dispatch.hq_reserve.keys()
+	people.sort()
+	var usable: Array[Dictionary] = []
+	for weapon in rear.ledger.entities_at("hq-stock",["WEAPON"],false):
+		if weapon.design_type == "E01" and weapon.owner == rear.PLAYER and weapon.functional and not weapon_promises.has(weapon.id): usable.append(weapon)
+	var actual_hq: int = usable.size()
+	var promised := 0
+	# Preserve HQ's existing stopped-hull ammunition priority before generic people.
+	# Active rack claims are already absent from available ammo; cover only the
+	# still-unpromised rack balance, not the same named issue a second time.
+	var hulls: Array = rear.dispatch.military_hulls.keys()
+	hulls.sort()
+	for id in hulls:
+		if not rear.ledger.military_hull_ready_at(id,"hq-berth",rear.PLAYER,hq_position): continue
+		var hull: Dictionary = rear.ledger.inspect_entity(id,{},false)
+		var pending := 0
+		for job in jobs.values():
+			if job.target == id and job.kind == "Vehicle Ammo" and job.type == "E02" and job.state not in ["Complete","Cancelled"]: pending += maxi(0,int(job.requested)-int(job.issued))
+		var rack_gap: int = maxi(0,int(HULL_TARGETS.get(hull.design_type,{}).get("E02",0))-int(hull.ammunition.get("E02",0))-pending)
+		ammo -= mini(ammo,rack_gap)
+	# An existing rifle issue has first call on its later minimum ammunition.
+	# Stock-issue claims are ALREADY excluded from available E02, not subtracted again.
+	for id in people:
+		if not _auto_person_ready(rear,id): continue
+		for job in jobs.values():
+			if job.target != id or job.kind != "Person Weapon" or job.type != "E01" or job.state in ["Complete","Cancelled"]: continue
+			var weapon: Dictionary = rear.ledger.inspect_entity(job.weapon,{},false)
+			if weapon.is_empty() or weapon.owner != rear.PLAYER or not weapon.functional or weapon_promises.get(job.weapon,"") != job.id: continue
+			var extra_rounds: int = int(weapon.loaded_rounds) if weapon.holder_id != id else 0
+			var needed: int = maxi(0,30-_held_rounds(rear,id)-extra_rounds)
+			if needed <= ammo: ammo -= needed
+			promised += 1
+	# The existing HQ policy equips armed generic reserve people's minimum ammo first.
+	for id in people:
+		if not _auto_person_ready(rear,id) or _target_busy(id) or not _held_weapon(rear,id,"E01"): continue
+		var needed: int = maxi(0,30-_held_rounds(rear,id))
+		if needed <= ammo: ammo -= needed
+	var recipients: Array[String] = []
+	var covered := 0
+	var ammo_blocked := 0
+	var capacity_blocked := 0
+	for id in people:
+		if not _auto_person_ready(rear,id) or _target_busy(id) or _held_weapon(rear,id,"E01"): continue
+		var minimum: int = maxi(0,30-_held_rounds(rear,id))
+		if minimum > ammo:
+			ammo_blocked += 1
+			continue
+		var person: Dictionary = rear.ledger.inspect_entity(id)
+		if float(person.contents_mass_kg)+rear.dispatch._unit_mass("E01") > 25.0+EPS:
+			capacity_blocked += 1
+			continue
+		var chosen := -1
+		for index in usable.size():
+			var weapon: Dictionary = usable[index]
+			if float(person.contents_mass_kg)+float(weapon.unit_mass_kg)+float(rear.ledger.inspect_entity(weapon.id).contents_mass_kg) <= 25.0+EPS:
+				chosen = index
+				break
+		if chosen >= 0:
+			var weapon: Dictionary = usable[chosen]
+			ammo -= maxi(0,minimum-int(weapon.loaded_rounds))
+			usable.remove_at(chosen)
+			covered += 1
+		else:
+			ammo -= minimum # A newly requested R01 rifle is an actual empty weapon.
+			recipients.append(str(id))
+	return {"needed":recipients.size(),"recipients":recipients,"usable_hq":actual_hq,"covered":covered,"issue_promised":promised,"ammo_blocked":ammo_blocked,"capacity_blocked":capacity_blocked,"status":auto_status}
+
+func invalidate_rear_supply_need(type: String) -> void:
+	if type == "E01":
+		_published_rifle_need = -1
+		_rifle_need_dirty = true
+
+func publish_rifle_supply_need() -> void:
+	if not _rifle_need_dirty: return
+	_rifle_need_dirty = false
+	_rifle_need_view = _assess_rifle_supply_need()
+	var need: int = int(_rifle_need_view.needed)
+	if need == _published_rifle_need: return
+	_published_rifle_need = need
+	rear_supply_needed.emit("E01",need)
 
 func _auto_accept(result: Dictionary) -> bool:
 	if not result.ok: return false
@@ -331,6 +436,7 @@ func _close(row: Dictionary, cancelled: bool) -> void:
 	row.deadline = INF
 	row.state = "Cancelled" if cancelled else "Complete"
 	row.blocker = ""
+	_rifle_need_dirty = true
 
 func _current_source(row: Dictionary) -> Dictionary:
 	for source in row.sources:

@@ -14,6 +14,7 @@ var _turn := 0
 var _army_requests: Dictionary = {}
 var _army_holds: Dictionary = {}
 var _supply_ref: WeakRef
+var _hq_ref: WeakRef
 
 func _init(session: Node) -> void:
 	_session_ref = weakref(session)
@@ -35,6 +36,10 @@ func _model() -> RefCounted:
 	return session.simulation if session != null else null
 
 func _replace_model(_next: RefCounted) -> void:
+	if _hq_ref != null:
+		var prior_hq: RefCounted = _hq_ref.get_ref()
+		if prior_hq != null and prior_hq.rear_supply_needed.is_connected(ensure_army_supply): prior_hq.rear_supply_needed.disconnect(ensure_army_supply)
+	_hq_ref = null
 	if _supply_ref != null:
 		var prior: RefCounted = _supply_ref.get_ref()
 		if prior != null and prior.rear_supply_needed.is_connected(ensure_army_supply): prior.rear_supply_needed.disconnect(ensure_army_supply)
@@ -53,6 +58,10 @@ func _replace_model(_next: RefCounted) -> void:
 			var supply: RefCounted = policy.resupply
 			_supply_ref = weakref(supply)
 			supply.rear_supply_needed.connect(ensure_army_supply)
+	_hq_ref = weakref(_next.rear.hq)
+	_next.rear.hq.rear_supply_needed.connect(ensure_army_supply)
+	_next.rear.hq.invalidate_rear_supply_need("E01")
+	_next.rear.hq.publish_rifle_supply_need()
 	changed.emit()
 	_wake()
 
@@ -111,9 +120,9 @@ func _source_inventory(destination: String, type: String) -> Array[Dictionary]:
 		var site: Dictionary = rear.construction.instances.get(id,{})
 		if not site.is_empty() and site.state != "Complete": continue
 		var inventory: Dictionary = rear.ledger.owned_inventory_at(id,rear.PLAYER)
-		var available: int = int(inventory.available.get(type,0))
+		var available: int = 0 if type == "E01" else int(inventory.available.get(type,0))
 		for weapon in inventory.weapons:
-			if weapon.design_type == type and not rear.dispatch.weapon_promises.has(weapon.id): available += 1
+			if _weapon_available(weapon,type): available += 1
 		# In-flight claims are already excluded by available(); subtract only
 		# still-unselected demand, so two factories cannot promise the same stock.
 		for job in rear.jobs:
@@ -150,10 +159,27 @@ func resume_automatic_supply(type: String) -> Dictionary:
 	_army_holds.erase(type)
 	var prior: Dictionary = requests.get(str(_army_requests.get(type,"")),{})
 	if not prior.is_empty() and prior.cancelled: _army_requests.erase(type)
-	var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
-	if supply != null: supply.invalidate_rear_supply_need(type)
+	_invalidate_need(type)
 	changed.emit()
 	return {"ok":true,"requires_reconciliation":false,"message":"Automatic supply resumed. The next military supply decision will recompute actual need; cancelled requests stay cancelled."}
+
+func _invalidate_need(type: String) -> void:
+	var model := _model()
+	if model == null: return
+	if type == "E01":
+		var hq: RefCounted = _hq_ref.get_ref() if _hq_ref != null else null
+		if hq != null and model.rear.hq == hq: hq.invalidate_rear_supply_need(type)
+		return
+	var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
+	var operations: RefCounted = model.rear.battlefield_operations
+	if supply != null and operations != null and operations.policy != null and operations.policy.get("resupply") == supply: supply.invalidate_rear_supply_need(type)
+
+func _weapon_available(weapon: Dictionary, type: String) -> bool:
+	var rear: RefCounted = _model().rear
+	if weapon.design_type != type or rear.dispatch.weapon_promises.has(weapon.id): return false
+	if type != "E01": return true # Preserve other existing shipment types.
+	var actual: Dictionary = rear.ledger.inspect_entity(weapon.id,{},false)
+	return actual.get("kind","") == "WEAPON" and actual.owner == rear.PLAYER and actual.functional and int(actual.loaded_rounds) == 0 and rear.stores.has(actual.holder_id) and rear.stores[actual.holder_id].accessible
 
 func _queue_delivery(type: String, quantity: int, automatic: bool) -> Dictionary:
 	if _model() == null or not _model().empty_field_opening: return {"ok":false,"requires_reconciliation":false,"message":"Army delivery requests belong to the live empty-field game."}
@@ -170,8 +196,7 @@ func _queue_delivery(type: String, quantity: int, automatic: bool) -> Dictionary
 		if not held.is_empty() and held.cancelled: _army_requests.erase(type)
 		# Ask the source owner to publish a fresh shortage at its next event.
 		# Manual intent never becomes the automatic request's mutable target.
-		var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
-		if supply != null: supply.invalidate_rear_supply_need(type)
+		_invalidate_need(type)
 	_wake()
 	changed.emit()
 	return {"ok":true,"requires_reconciliation":false,"id":id,"message":"Supply requested. Actual workers load available goods onto a real truck; it delivers and returns before another trip."}
@@ -256,12 +281,7 @@ func _advance_request(row: Dictionary) -> bool:
 			row.credited[manifest.id] = unloaded
 			# Receipt changes outstanding promises even when net Army need is unchanged.
 			# Invalidate only publication; the next military decision owns fresh coverage.
-			var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
-			var operations: RefCounted = rear.battlefield_operations
-			if model == _model() and supply != null and operations != null:
-				var policy: RefCounted = operations.policy
-				if policy != null and policy.get("resupply") == supply:
-					supply.invalidate_rear_supply_need(str(row.type))
+			if model == _model(): _invalidate_need(str(row.type))
 			changed.emit()
 		if manifest.state in ["Complete","Cancelled","Safety Returned"]:
 			row.manifest = ""
@@ -269,12 +289,7 @@ func _advance_request(row: Dictionary) -> bool:
 				# The accepted floor is gone. Await fresh military need before a
 				# next load, rather than reusing a protected but obsolete target.
 				row.awaiting_need = true
-				var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
-				var operations: RefCounted = rear.battlefield_operations
-				if model == _model() and supply != null and operations != null:
-					var policy: RefCounted = operations.policy
-					if policy != null and policy.get("resupply") == supply:
-						supply.invalidate_rear_supply_need(str(row.type))
+				if model == _model(): _invalidate_need(str(row.type))
 			_set_status(row,"Cancelled" if row.cancelled else ("Complete" if row.delivered >= row.requested else "Queued"))
 			return true
 		if row.cancelled: return false
@@ -301,12 +316,12 @@ func _advance_request(row: Dictionary) -> bool:
 		return false
 	var site: Dictionary = rear.dispatch.dispatch_sites[site_id]
 	var inventory: Dictionary = rear.ledger.owned_inventory_at(site.store,rear.PLAYER)
-	var available: int = int(inventory.available.get(row.type,0))
+	var available: int = 0 if row.type == "E01" else int(inventory.available.get(row.type,0))
 	for weapon in inventory.weapons:
-		if weapon.design_type == row.type and not rear.dispatch.weapon_promises.has(weapon.id): available += 1
+		if _weapon_available(weapon,str(row.type)): available += 1
 	for source in _source_inventory(site.store,row.type): available += int(source.available)
 	if available <= 0:
-		_set_status(row,"Waiting","Manufacture or purchase the requested supplies; none are available for this shipment.")
+		_set_status(row,"Waiting","Manufacture rifles in a Workshop, or make intact unloaded rifles accessible in rear storage." if row.type == "E01" else "Manufacture or purchase the requested supplies; none are available for this shipment.")
 		return false
 	var hull_ids: Array = rear.vehicles.vehicles.keys()
 	if not row.has("fuel_attempts"): row.fuel_attempts = {}
