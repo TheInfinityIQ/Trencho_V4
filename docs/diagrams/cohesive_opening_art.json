@@ -29,7 +29,7 @@
     "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
   ],
   "mapping": {
-    "state": "PARTIAL_VERIFIED_GROUND_AND_ARRIVAL_CUE; people/table/resources/categories pending",
+    "state": "VERIFIED_GROUND_ARRIVAL_AND_TABLE; people/resources/category coverage pending",
     "entries": [
       {
         "archive_entry": "Tiles/tile_0001.png",
@@ -66,10 +66,23 @@
         ],
         "role": "Neutral fixed Supply Table arrival cue only; not ownership or a replacement table/resource prop",
         "modified": false
+      },
+      {
+        "role": "Existing Supply Table plain wooden table",
+        "texture": "game/test_art/roguelike_indoor/indoor_sheet.png",
+        "source_rect": [
+          119,
+          0,
+          16,
+          16
+        ],
+        "provenance": "game/test_art/roguelike_indoor/provenance.json",
+        "sha256": "ab482e791c26bf7e483fbd9e2ead88d487502da362cc650b62ade3734c002b6c",
+        "modified": false
       }
     ],
     "ground_render": "One GPU tiled texture rectangle in existing240x180 world bounds under existing grid, using local draw transform reset before any marker; no world-tile loop/nodes or terrain/collision change.",
-    "arrival_render": "Neutral flag at existing fixed Supply Table anchor, retain table fallback and label; does not claim a table prop is already sourced.",
+    "arrival_render": "Neutral flag next to verified plain table at existing fixed Supply Table anchor. Preserve label/input/arrival rules; no supplied stock or ownership implied.",
     "import_dependencies": "Extend existing explicit minimal-project texture import list with these two exact PNGs. Other verified compile dependencies remain; no project scan."
   },
   "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
@@ -81,7 +94,8 @@
   },
   "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
   "real_missing_inputs": [
-    "Verified neutral/unarmed player/worker originals and matching ground/table/resource/distinct-facility-category mappings from Artist/lead.",
+    "Exact visually verified neutral player/worker body/clothes/hair layer rects and Designer inspection-composite approval.",
+    "Verified related facility-category mappings and resource/material symbol mapping, or Designer-approved honest labelled generic physical stock symbol.",
     "Root actual-build viewport captures of normal opening + labelled arranged rear-art example; battlefield only if this revision claims it."
   ],
   "approved_additions": {
