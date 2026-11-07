@@ -1,0 +1,12 @@
+flowchart TD
+  A[Artist/lead verified CC0 files and provenance] --> B[Designer/lead exact role mapping]
+  B --> C[Final mapping committed before code]
+  C --> D[Preloaded cached textures]
+  E[Existing authoritative visible markers] --> F[Existing map transform and eligibility]
+  F --> G{Approved mapping and state?}
+  D --> G
+  G -->|yes| H[Draw cached sprite in existing visual bounds]
+  G -->|no| I[Existing primitive fallback]
+  H --> J[Existing team/status/selection/labels on top]
+  I --> J
+  K[Existing footprints input and report uncertainty] --> L[Unchanged gameplay/information boundary]

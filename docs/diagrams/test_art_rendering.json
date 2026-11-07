@@ -1,0 +1,38 @@
+{
+  "status": "prospective source boundary only; awaiting Artist/lead verified paths and Designer mapping; no asset selected or production edit",
+  "base": "2560de91",
+  "owner": "C single implementation owner. Artist/lead verify creator-hosted CC0 downloads and exact files/provenance; Designer accepts imagery/entity meaning; lead grants final source/assets claim/publication.",
+  "source_boundary": {
+    "rear": "base_map.gd::_draw_contents: existing map_point transforms; completed building fill at183-188 and existing entity marker bodies at195-217 are potential sprite seams only after mapping. Preserve primitive fallback and draw status/selection/door/labels above art.",
+    "battlefield": "battlefield_view.gd::_draw loop165-177 / _draw_marker187-199: only existing Presentation.markers rows, same _screen position/cull and marker geometry; keep team/ownership/selection/labels above texture.",
+    "information": "battlefield_presentation.gd filters own physical units versus uncertain CONTACT reports. Do not edit this boundary or read enemy ledger state to select sprites. Unknown/unmapped/contact/state without approved mapping keeps existing primitive."
+  },
+  "mapping": {
+    "state": "PENDING_VERIFIED_ARTIST_LEAD_MAPPING",
+    "entries": [],
+    "required_per_entry": [
+      "exact logical entity kind/design/state eligibility",
+      "creator page and creator-hosted download URL",
+      "licence evidence and bundled CC0 text",
+      "local relative file path, SHA256, dimensions, alpha",
+      "source rect if atlas, render anchor/aspect-preserving target box and fallback"
+    ]
+  },
+  "render_flow": [
+    "Lead supplies verified small asset set and exact accepted role mapping.",
+    "Commit mapping/provenance before production integration.",
+    "Preload/cache exact textures at script/resource initialization only; no load/filesystem I/O or new node per entity in _draw.",
+    "Existing view obtains existing markers and transforms authoritative position/footprint as before.",
+    "If mapping and state apply, draw cached texture in existing visual box/aspect-preserving region. Otherwise retain primitive.",
+    "Draw existing colour/status/team/ownership/selection/door/label overlays above art; existing hit-test thresholds/collision/footprints unchanged."
+  ],
+  "acceptance": [
+    "Small cohesive verified set; exact provenance/licence retained with assets and Godot sidecars. No generated .godot/cache/download archives committed.",
+    "No gameplay/input/camera/hit-test/footprint/team/status/selection or information-boundary change.",
+    "No dynamic load/I/O/new entity nodes/polling/simulation queries introduced in drawing.",
+    "Unmapped/unsupported state remains readable through existing fallback markers.",
+    "No terrain/catalogue/UI redesign or new imagery selection by implementation owner."
+  ],
+  "verification": "No local engine/regression/benchmark. Inspect supplied images and dimensions/licence, focused source/static metadata and required platform validation only; native rendering/readability/performance remain unverified until permitted observation.",
+  "next": "C hands this boundary to lead once; Artist/lead supplies verified paths/art mapping, then C completes final mapping and implements under claim."
+}
