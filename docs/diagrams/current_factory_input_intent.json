@@ -27,7 +27,7 @@
   "cost_and_order": [
     "NO production/logistics/operator/stock query in _job_option or per-hauler/candidate. _start_job remains unchanged and observes reconciled requested floors.",
     "At most one automatic_input_intent query per affected owner per existing immediate settlement transaction/changed boundary, only when that owner has an unselected automatic remainder. Use transaction-local dictionaries; no retained authoritative demand/history cache.",
-    "Build actor-load counts and outstanding promise groups in bounded local passes once before selection; reuse them for all jobs/haulers. Existing _missing reads current local inputs and existing output coverage only once per owner, not once per candidate.",
+    "Build actor-load counts and outstanding promise groups in bounded local passes once before selection; reuse them for all jobs/haulers. Existing _missing reads local inputs and _target_satisfied reads output coverage at most once per affected owner, not once per candidate.",
     "Existing _settle iterations repeat only for actual immediate state/handling/production changes. No new poll, timer, per-frame callback, generic invalidation or route-plan invalidation.",
     "Creation provenance is atomic before internal settling; recipe/Stop/target changes are re-evaluated before every NEW selection, including synchronous command settling, so no next-frame cleanup window."
   ],
