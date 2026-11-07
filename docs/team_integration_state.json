@@ -37,7 +37,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Local combined supply candidate (B), independent combined-source review (A), Build staffing-count priority preservation (C), then separately queued consumed-batch cancellation confirmation. Lead owns continuity, exact-head review and integration.",
+  "current_work": "Use developer_team.agents[*].current_assignment for each active developer task and continuity_recovery.lead_next_action for lead dispatch. No duplicate mutable assignment summary is maintained here.",
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",

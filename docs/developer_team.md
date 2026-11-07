@@ -4,12 +4,17 @@ Dawson requested three separate persistent Codex chats inside **Trencho v4 exper
 all `gpt-6.1-sol` with `medium` reasoning. The earlier temporary helpers are idle.
 Read [developer onboarding](developer_onboarding.md) and current AGENTS before work.
 
-| Developer | Chat | Current feature | Isolated checkout |
-| --- | --- | --- | --- |
-| A — Army Supply | `01a1ae78-5b3a-7993-87ca-7d316595fd7e` | Preserve receipt fix; independently review B's combined candidate | `trencho_dev_receipt_reconcile` |
-| B — Operations & Transport | `01a1ae78-6945-7ae0-b03c-f2b5fadb56ad` | Prepare local combined automatic-supply candidate | `trencho_dev_supply_candidate` |
-| C — Player Experience | `01a1ae78-77c2-7822-9322-328161666746` | Preserve staffing priority when Build changes count; next, batch cancellation confirmation | `trencho_dev_staff_count` |
-| Lead | `01a199a0-f08e-7f23-947f-62655a9ed233` | Dispatch next outcomes, exact-head review, integration and scoped publication dependencies | `trencho_lead_integration` |
+| Developer | Chat | Stable responsibility |
+| --- | --- | --- |
+| A — Army Supply | `01a1ae78-5b3a-7993-87ca-7d316595fd7e` | Army supply, receipt reconciliation and assigned integration/review |
+| B — Operations & Transport | `01a1ae78-6945-7ae0-b03c-f2b5fadb56ad` | Physical dispatch/transport and assigned integration/review |
+| C — Player Experience | `01a1ae78-77c2-7822-9322-328161666746` | Player actions, guidance and production/worker interaction safeguards |
+| Lead | `01a199a0-f08e-7f23-947f-62655a9ed233` | Task dispatch, engineering review, integration and publication coordination |
+
+Current tasks, exact branches, checkouts and next-action owners are recorded only
+in [team state](team_integration_state.json), under the individual developer
+records and lead next action. This roster describes stable roles; it must not
+duplicate live assignments that can become stale after the next handoff.
 
 Checkouts are under `C:/Users/dawso/Developer/Projects/Godot/`. Never switch or edit
 the shared `trencho_v4` checkout, which was externally returned to main. New feature
