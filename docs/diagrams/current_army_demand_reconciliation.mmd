@@ -12,3 +12,6 @@ flowchart TD
     Publish --> Forward["Existing forward-plan status/admission gates UNCHANGED"]
     Physical --> Receipt["Existing receipt high-water mark and source invalidation"]
     Receipt --> Tick
+    Physical --> Terminal["Terminal with target remaining: awaiting fresh need; invalidate publication"]
+    Terminal --> Tick
+    Terminal -.-> Gate["No new automatic acceptance until next owned assessment"]
