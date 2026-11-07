@@ -1,0 +1,16 @@
+{
+  "owner": "Developer C implements; Lead reviews, publishes and integrates",
+  "base": "0fbaf640a7ad4c5e6bcf59aa9603e33a5c5e5cab",
+  "design": "docs/design_brief.md#automatic-starter-staffing--accepted-7-november-2026",
+  "diagram": "docs/diagrams/new_facility_staffing.mmd",
+  "status": "Pre-implementation source contract; runtime unverified",
+  "defaults": {"receiving":1,"workshop":1,"munitions":1,"materials":1,"support":1,"dispatch":1,"training":1,"vehicle_works":2,"construction":2,"depot":0,"park":0},
+  "contract": [
+    "Apply once at actual new completion after real duty/services registration. Never backfill legacy facilities or replay on recipe/enable/pause. Existing request count/priority including explicit zero wins over default.",
+    "Defaults request existing people, never create people/qualifications or teleport staff. School uses existing basic-trained instructor eligibility; F12 default also initializes its actual office_desired pool.",
+    "Do not steal occupied duties when adding an automatic request. Proposed completion-only available-worker allocator mode seeds current occupied/pending counts and reuses normal eligibility/priority/reporting. Player commands retain existing full allocator behavior; concrete boundary sent to Lead before source implementation.",
+    "Existing haulers, students and vehicle crews stay separate. Depot/Park have no resident duty and request zero. Real counts/vacancies and instructor qualification requirement remain visible."
+  ],
+  "acceptance": "New completion creates exact default request and real eligible reporting; zero/priority edits persist and existing request intent/legacy settings are retained. No worker grant, instant arrival, qualification change or occupied-duty theft.",
+  "verification": "One ignored brief new-completion GitHub demonstration proposal only; no local engine, regression fixtures/suites/coverage/benchmark. Lead owns remote execution and exact-head integration."
+}
