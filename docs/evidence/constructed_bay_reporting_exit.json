@@ -1,0 +1,39 @@
+{
+  "status": "locally_implemented_not_engine_parsed_not_executed_not_published",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "branch": "codex/actual-works-reporting-exit",
+  "checkout": "trencho_dev_bay_exit",
+  "changed_production": [
+    "game/staffing/rear_simulation.gd"
+  ],
+  "contract": "docs/diagrams/constructed_bay_reporting_exit.json",
+  "observed_by_source": "Ordinary _report now uses the narrow current-owner bay/door splice; missing onward route returns empty. No new commands, callbacks, claims or state owner.",
+  "prospective_demo": {
+    "state": "prepared only; no engine execution or GitHub submission",
+    "local_ignored_input": "logs/constructed-bay-exit/proposed_direct_check.gd",
+    "sha256": "a0b4c24369c6d1059b3cbec433822a5696ca5e0b1c16f3f6b1059f6adb8874f1",
+    "feasibility": "ONE supplied current-owner bay/door and valid outward-path input. Actual Rear Empty/no-yard/empty-field constructor creates no people, goods, hull or completed facility. One geometry place only. Calls actual new helper and existing _move on one detached motion record.",
+    "limits": "This cannot prove lawful fuel handoff/extraction, full _report person lookup, real geometry admission, physical walking or arrival; those remain source-reviewed/unverified.",
+    "proposed_result_checks": "One valid owner exit: supplied bay centre -> that owner door -> final destination, scheduled as timed Reporting. No absent-route, alias, unmatched-origin or additional scenario cases.",
+    "previous_unexecuted_proposal": {
+      "archive_ignored_path": "logs/constructed-bay-exit/unexecuted_proposal_70867ba2e376.gd",
+      "raw_file_sha256": "70867ba2e37616cc68c5b738ef857e81b5b41b502395629f9dc04d0335351974",
+      "previously_reported_normalized_utf8_lf_sha256": "ede8513b2fa0809ea689131400bdece5d8cec6cf7408b22de306c46b2069a2ab",
+      "result": "NEVER executed or submitted; retained only as proposal provenance.",
+      "serialization_note": "Earlier proposal evidence hashed its normalized UTF8/LF source string; the Windows file had native newline serialization. Both raw archived bytes and normalized hash are now explicit."
+    },
+    "input_serialization": "Current proposed file written as UTF8 with explicit LF; sha256 above hashes actual file bytes. Any eventual workflow transformation must be recorded separately."
+  },
+  "publication": "Await Dawson explicit approval after credential-route rejection. No credential fallback, PR/check submission or publication attempted.",
+  "verification": "No local engine, old checkers, regressions, broad scenario, failure-injection campaign, coverage matrix or benchmark. Static map maintenance only, to be recorded separately.",
+  "reviews": "Lead technical and Designer exact published-head reviews pending. Prospective Designer behaviour scope received; it is not final code approval.",
+  "static_maintenance": {
+    "source_map": "PASS; zero pending function-purpose reviews",
+    "ui_map": "PASS; current source/line numbers; button inventory regenerated without source-button changes",
+    "whitespace": "git diff --check PASS",
+    "scope": "Static maintenance only. No Godot parser, engine or proposed demonstration executed."
+  },
+  "production_normalized_utf8_lf_sha256": "5bf4ef299603708611d5bdd43475fbcd8660916dfe71bd8d895ecb57c9baac0b",
+  "source_only_unexecuted_branches": "Absent onward route, dormant legacy alias and unmatched-origin routing remain source reviewed only. No supplied failure branch or route coverage proposal remains in the current one-case input.",
+  "metadata_update": "Lead requested one valid new-code case only. Production must remain byte-identical to local de5d483; this receipt changes proposal evidence/contract only."
+}

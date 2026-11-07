@@ -1,0 +1,27 @@
+{
+  "status": "implemented_pending_brief_github_new_selector_demonstration_and_exact_head_reviews",
+  "objective": "Select an actually usable Logistics Centre for a new shipment while respecting requested targets and existing handler eligibility.",
+  "base_commit": "ffd92abef2a49ada8a1f7ecd26737fcf0afeb946",
+  "contract": "docs/diagrams/logistics_centre_selection.json and .mmd",
+  "source_observation": "Old _advance_request chose first accessible centre with positive requested target. Dispatch handling requires actual matching duty, no pending reassignment, Idle phase, positive health and no stock/weapon carry. Requested count is not an eligible handler.",
+  "implementation": "New Dispatch ready_dispatch_site collects accessible requested candidates in configured order, returns immediately if none, reads each current rear actor person-status at most once and retains only ephemeral ready-duty facts. Shared pure predicate preserves original worker conditions and short-circuit order. New request selection calls this once; existing accepted-manifest branch and all admissions/owners remain unchanged.",
+  "feasibility": "Source: each F07 costs150 M11/200 builder-work seconds; two need300 of approved500 M11. Ordinary eight-worker purchase costs140 and supplies two haulers/four builders during construction; after completion seven normal hauling assignments plus one later-centre handler leave first-centre requested1 unfilled. Existing current geometry supports both placement positions. Fixed2400 construction/1200 reporting simulated ceilings and45s GitHub process limit; no rate/deadline growth.",
+  "verification": [],
+  "direct_input": "One ephemeral manually supplied new-code script retained in ignored logs/logistics-centre-selection/direct_input.gd; no committed regression fixture or old checker run.",
+  "limits": "Direct selector evidence, when executed, does not establish _advance_request manifest acceptance, cargo movement, cancelled/returning manifests, first/repeat useful delivery, genuine automatic Army need, full #91/#83/#92, visible/native input,1x pacing or60FPS.",
+  "manual_steps": [
+    "In an ordinary base with two built Logistics Centres, leave an earlier centre's requested handler unfilled through actual labour priorities while a later accessible centre has an idle on-duty handler. A new shipment should use the usable centre when its other real goods/truck/crew/route requirements permit.",
+    "A centre with target0 is not permission for new selection. When none has an eligible idle on-duty handler, inspect reporting/carry/reassignment work instead of treating requested staff as already available.",
+    "An already accepted shipment keeps its original captured centre and safe physical work even if another centre later becomes usable; the fix never relocates it."
+  ],
+  "reviews": "Lead technical and designated Designer approval required at exact published head; no self-merge.",
+  "submitted_direct_sha256": "e2d85d6249832c3991fc81efb9a9190997ef082342165b90a8eeba2b6c1b6bba",
+  "source_sha256": {
+    "game/logistics/rear_logistics.gd": "a919609efea109a9b18d1ea3de6252470eab3ba9219bade28ab63c9861d43cfc",
+    "game/dispatch/dispatch_service.gd": "07309fac92950fd9b6a6e0675a6211c84abb9aed5ba07df62a17dd499a5f73ad"
+  },
+  "prepublication_input_revision": {
+    "original_prepared_sha256": "14dbe58028d6c327a96fb8a1113cfca4f0cfc4cbaa55e3df0b8409325c9b9525",
+    "change": "Before first submission/execution, preload the changed request-controller script as well as Base/Dispatch so the brief new-selector demonstration parses both changed production dependencies despite a documentation-only merge commit. No acceptance or physical preparation change; original prepared input retained in ignored logs. No run or failure preceded this revision."
+  }
+}

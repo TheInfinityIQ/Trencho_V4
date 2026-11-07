@@ -1,0 +1,49 @@
+{
+  "status": "prospective_before_implementation",
+  "objective": "A new automatic shipment must choose a usable accessible Logistics Centre with an actual eligible on-duty idle handler instead of an earlier requested-but-unfilled centre.",
+  "base_commit": "ffd92abef2a49ada8a1f7ecd26737fcf0afeb946",
+  "branch": "codex/ready-logistics-centre",
+  "scope": [
+    "game/logistics/rear_logistics.gd::_advance_request new-manifest centre selection and no-candidate waiting only",
+    "game/dispatch/dispatch_service.gd narrow ready_dispatch_site plus shared exact existing _ready_worker eligibility predicate",
+    "contract/evidence and required maps"
+  ],
+  "acceptance": [
+    "Requested target remains positive, actual idle handler eligible under existing Dispatch rule, accessible registered site",
+    "Skip requested-but-unfilled earlier centre; choose later usable centre; preserve current centre insertion order among multiple usable candidates",
+    "One bounded candidate read per new selection: each current rear actor inspected at most once with narrow person status; ephemeral duty facts only",
+    "No eligible candidate waits for a usable on-duty handler, without calling the whole base unstaffed or prescribing extra hires",
+    "Already accepted manifests never use the new selector and keep captured site/berth/cargo/claims/return/cancellation"
+  ],
+  "ownership": {
+    "staffing": "Existing Rear request targets/priorities and assignment/reporting owner unchanged; no automatic worker seizure",
+    "eligibility": "Dispatch owns the exact existing predicate: matching duty, no pending reassignment, Idle phase, health>0, no stock carry, no weapon carry, in the original boolean order",
+    "selection": "Dispatch narrow read selects registered accessible requested site with current eligible handler. Read actor person-status once per selection, preserve site order. No reservation/assignment occurs in the query.",
+    "manifest": "Existing Dispatch.accept remains physical admission owner and captures site, berth, crew, stock and return commitments. Existing request.manifest branch remains ahead of selection unchanged."
+  },
+  "events": "Existing session state_changed/simulation_changed wakes finite RearLogistics work. Selector is called once for an unbound active request after cancellation/paused guards; no new timer, subscription, per-frame polling or recurring cache.",
+  "cancellation": "Accepted/cancelled/returning work keeps original captured ownership. New selector never relocates manifests or their claims/carries. Zero requested target withdraws permission for new selection even if a person temporarily remains present.",
+  "verification": {
+    "policy": "No local engine, regression tests/suites, broad scenarios, failure injection or full chain. Existing45s GitHub optional direct-check only.",
+    "direct_plan": "One newly supplied current-change script: ordinary8-worker purchase, actual construction of two Logistics Centres using approved starting M11, normal seven-hauler/one-later-handler targets leaving earlier requested1 unfilled. Query new selector once and require later site. Inspect actual existing Dispatch ready-worker identity/phase. No fake hull, supplies or natural need; no reverse/coverage matrix or old checker execution.",
+    "source_only": "No eligible-site waiting, configured-order preservation, shared-predicate equivalence, read-only query and accepted-manifest/cancellation invariants reviewed directly in source; direct script does not establish manifest admission, physical shipment or full loop.",
+    "runtime": "45-second fixed GitHub process deadline, no automatic rerun/limit growth. Retain actual direct input/artifact hashes separately; do not equate submitted bytes with executed bytes."
+  },
+  "unchanged": "Approved opening including6000 HQ E02, prices/recipes/rates, targets/priorities, physical crew/fuel/route/safety/capacity/receiving admissions, existing eligibility and cancellation rules.",
+  "lessons": [
+    "Requested count is intent, not physical presence",
+    "One usable instance suffices; an arbitrary first instance cannot establish capability",
+    "Share authoritative eligibility without adding repeated per-site full-person inspections",
+    "Preserve predicate order and captured physical ownership; source/call-count facts are not executed outcomes"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+      "applies": "Godot Dictionary preserves insertion order; retain existing registered-centre preference among usable sites."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/getting_started/step_by_step/signals.html",
+      "applies": "Existing state-change signals and finite work remain; no new polling is needed."
+    }
+  ]
+}

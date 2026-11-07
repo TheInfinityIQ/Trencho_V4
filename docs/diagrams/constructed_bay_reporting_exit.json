@@ -1,0 +1,36 @@
+{
+  "status": "implemented_locally_under_prospective_contract; static maps current; engine and publication pending",
+  "objective": "Allow ordinary duty reporting to exit an actual constructed Vehicle Works through its own door without completing at an intermediate door.",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "owner": "Developer C; rear_simulation.gd only plus diagram/evidence/maps. No publication or CI submission until explicit authorization.",
+  "authoritative_state": {
+    "person": "Existing ledger position, current/pending assignment and actor phase; same person after lawful fuel handoff or safe station extraction.",
+    "facility": "Existing heavy_owners/current bay place/site_door; ignore unused legacy owner in empty-field opening. Constructed owners persist while their bay exists, independent of a truck still occupying it.",
+    "geometry": "Existing walk_path/construction.walking_path validates all remaining footprints. No new collision geometry or general wall bypass."
+  },
+  "commands": "Existing _report called by safe reassignment/completion. For ordinary destinations resolve current origin and destination once, then one bounded heavy-owner lookup and one outward path query. Vehicle/manual duty branch unchanged.",
+  "route": "At a matching actual bay centre, compose origin -> that owner.site_door -> destination only if the existing outward path is nonempty; otherwise return empty and retain Route blocked/INF. Else use existing normal walk_path.",
+  "events": "No new signals, per-frame work, timer, queued work, cache, history or state owner. Existing _move and physical phase completion own motion/presence.",
+  "cancellation_lifecycle": "Do not alter load release, carried custody, pending assignments, fuel/crew completion or safe reassignment. Resolve owners at _report time, not a retained route cache. Removed owner uses normal path admission.",
+  "reuse": "Generalize existing legacy _report interior-door splice. Do not call vehicle_activity._walk_from because its unused legacy first-match bay can alias actual constructed bay coordinates in empty-field mode; that file remains outside ownership. Both routes reuse existing walk_path for outward geometry.",
+  "frozen_acceptance": [
+    "Ordinary report from actual constructed bay starts a Reporting path through that exact owner door and continues to final assigned destination; no change to ledger position at submission.",
+    "Blocked or missing outward path produces empty route/Route blocked/INF, never a path ending just at the door.",
+    "A vacated constructed bay remains a valid exit origin for a worker left there; unused legacy bay in empty-field mode grants no special exit.",
+    "Other origin/manual vehicle routing, actor identity, assignment, custody/claims, staffing priority and all unrelated footprints remain unchanged."
+  ],
+  "prospective_demonstration": {
+    "execution": "NOT authorized or submitted; one brief GitHub input only if lead/Dawson approves. No local engine or old checkers.",
+    "feasibility": "ONE supplied current-owner bay/door and valid outward-path input. Actual Rear Empty/no-yard/empty-field constructor creates no people, goods, hull or completed facility. One geometry place only. Calls actual new helper and existing _move on one detached motion record.",
+    "observe": "ONE valid actual-owner bay->own door->final destination route and existing timed Reporting motion record. Other blocked/alias/unmatched behavior is source-reviewed only, not an execution proposal.",
+    "limits": "Detached owner/path/motion facts are not actual completed construction, lawful fuel handoff, actual crew extraction, physical worker arrival or ordinary gameplay acceptance. These remain unverified; no stock/resources/people/hulls created.",
+    "sha256": "a0b4c24369c6d1059b3cbec433822a5696ca5e0b1c16f3f6b1059f6adb8874f1",
+    "previous_proposal": "Prior broader UNEXECUTED proposal archived in ignored logs with raw and normalized hashes; see evidence. No existing run or rerun exists."
+  },
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_rect2.html#class-rect2-method-has-point",
+    "Existing vehicle_activity.gd::_walk_from and construction_service.gd::_clearance_path read directly."
+  ],
+  "limits": "No local engine, regression writing/runs, broad scenarios, failure injection campaign, coverage matrix or benchmark. No price/rate/stock/threshold changes, teleport or forced access. Exact lead technical and Designer reviews required at new published head.",
+  "evidence": "docs/evidence/constructed_bay_reporting_exit.json"
+}

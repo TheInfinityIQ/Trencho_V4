@@ -433,11 +433,36 @@ func settle() -> bool:
 			changed = _schedule_cancel(row) or changed
 	return changed
 
+func ready_dispatch_site() -> String:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var candidates: Dictionary = {}
+	var candidate_duties: Dictionary = {}
+	for id in dispatch_sites:
+		var site: Dictionary = dispatch_sites[id]
+		if rear.stores[site.store].accessible and int(rear.requests[site.duty].target) > 0:
+			candidates[id] = site.duty
+			candidate_duties[site.duty] = true
+	if candidates.is_empty(): return ""
+	# One current person-status pass for all candidates, never one scan per site.
+	var ready_duties: Dictionary = {}
+	for id in rear.actors:
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
+		var duty: String = person.duty_id
+		if candidate_duties.has(duty) and not ready_duties.has(duty) and _worker_ready_for_duty(person,duty,rear.actors[id]):
+			ready_duties[duty] = true
+		if ready_duties.size() == candidate_duties.size(): break
+	for id in candidates:
+		if ready_duties.has(candidates[id]): return id
+	return ""
+
+static func _worker_ready_for_duty(person: Dictionary, duty: String, actor: Dictionary) -> bool:
+	return person.duty_id == duty and person.pending_assignment == "None" and actor.phase == "Idle" and person.health > 0 and person.carrying_stock_id.is_empty() and person.carrying_weapon_id.is_empty()
+
 func _ready_worker(row: Dictionary) -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
 	for id in rear.actors:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.duty_id == row.dispatch_duty and p.pending_assignment == "None" and rear.actors[id].phase == "Idle" and p.health > 0 and p.carrying_stock_id.is_empty() and p.carrying_weapon_id.is_empty(): return id
+		if _worker_ready_for_duty(p,row.dispatch_duty,rear.actors[id]): return id
 	return ""
 
 func _start_task(row: Dictionary, phase: String, actors: Array, seconds: float, route: Array = []) -> void:

@@ -1,0 +1,13 @@
+flowchart TD
+    Existing[Existing captured manifest] --> Receipt[Actual unloaded count exceeds credited]
+    Receipt --> Commit[Commit delivered and credited]
+    Commit --> Guard[Current model and weak source equals current policy source]
+    Guard --> Invalidate[Erase only type publication key]
+    Invalidate --> Notify[Existing changed notification]
+    New[Unbound running live request] --> Select[One actual-ready Dispatch site query]
+    Select --> Admit[Unchanged owner admission captures physical work]
+    Admit --> Existing
+    Person[Ordinary duty reporting after safe handoff] --> Owner[Resolve current physical heavy bay owner]
+    Owner --> Exit[Origin through actual site door plus complete outward route]
+    Exit --> Report[Existing reporting and blocked-route handling]
+    Review[Local candidate: static review only] -. no runtime certification .-> Existing

@@ -1,0 +1,42 @@
+{
+  "feature": "Reconcile military supply publication after newly credited rear receipt",
+  "baseline": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "status": "implemented_source_reviewed_no_runtime_PR_or_check_submission_authorized",
+  "diagram": "docs/diagrams/army_receipt_reconciliation.mmd",
+  "contract": "docs/diagrams/army_receipt_reconciliation.json",
+  "change": "Only the new-receipt accounting prefix: commit delivered and credited, validate current model/weak source/policy identity, invalidate its type, then existing changed.emit. Source invalidation comment clarified; source assessment and all physical commands unchanged.",
+  "source_proof": {
+    "event_order": "Dispatch.advance_to can finish physical HQ deposit before Rear._settle calls a due military resupply decision; the Node request-credit process runs later. Net shortage publication is quantity-coalesced; current request promises use later row.delivered bookkeeping.",
+    "conditional_result": "A real later deficit may numerically offset actual receipt, leaving cached net shortage unchanged while outstanding promises shrink after receipt credit. Without a new invalidation, genuine residual can remain unrequested.",
+    "limits": "Source-derived conditional path only. No ordinary first-need timing, shipment, numerical example or failure was executed."
+  },
+  "ownership_preserved": [
+    "Byte comparison against baseline confirms _advance_request new-manifest selection suffix untouched.",
+    "Entire Dispatch source exactly matches baseline; B-owned frozen selection fix is not silently incorporated here.",
+    "No hold, manual target, accepted cargo/claim, return, HQ6000, rate or threshold change."
+  ],
+  "source_review": {
+    "atomic_order": "Both receipt fields precede invalidation, which precedes public changed. Invalidation itself erases a key only; no reentrant ensure or clock/stock read.",
+    "identity": "Existing weak source must exist and equal actual policy.resupply in the current model. No retained stale quantity or new owner.",
+    "no_credit": "Existing unloaded>credited guard encloses new invalidation; repeated no-new-credit reads do nothing.",
+    "coverage": "No attempt to compute residual in rear callback. Existing next eligible military decision remains sole current-coverage authority."
+  },
+  "proposed_direct_input": {
+    "state": "PREPARED_NOT_SUBMITTED_NOT_EXECUTED",
+    "path": "logs/receipt-reconciliation/proposed_direct_check.gd (ignored; not a regression fixture)",
+    "local_submitted_file_sha256": "007cdd3492c1e8e2dd9b0f82f14aec236b941e74e8d04ea0b179e2c52a1570aa",
+    "scope": "One supplied newly credited20 receipt, current weak source, per-type key invalidated after accounting but before notification; same receipt read again does not invalidate. No physical need/goods/clock/scenario arranged; no fresh source coverage or100vs80 coalescing execution claim.",
+    "authorization": "Lead must coordinate user authorization/current frozen head before any PR/check submission. Raw credential fallback and secret-store extraction stopped."
+  },
+  "runtime": "NONE. No local engine, regression, old scenario, failure injection, benchmark or GitHub check run.",
+  "reviews": "Lead accepted bounded ownership/event plan. Designer clarified intended remaining-need behavior; exact-head technical/design review remains required after authorized PR publication.",
+  "source_sha256": {
+    "game/logistics/rear_logistics.gd": "c365240cc968da75d0c4d9cb1c70a4c221ea4189f0011b64b24d167c7f23296e",
+    "game/battlefield/opening_resupply.gd": "3acfdf02832799c254f21dc776347be03463fd0ddad754d5eb90c8b88f13904b",
+    "game/dispatch/dispatch_service.gd": "c687fd7b92f38286e3ed8fe9e4ee15cdbeab81f576fdc3c1ea914047a05ab20b"
+  },
+  "limits": [
+    "No natural shortage, physical receipt, fresh assessment/coalescing, whole Army loop, manufacture benefit, repeated refill, native input/layout, pacing or FPS acceptance.",
+    "Source matching guard, hold/manual intent and no physical/selection changes are source-reviewed only until an authorized scoped check."
+  ]
+}

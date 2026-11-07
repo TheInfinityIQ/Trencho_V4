@@ -569,12 +569,25 @@ func _report(a: Dictionary) -> void:
 		path = vehicles.report_path(a.id,p.duty_id)
 	else:
 		var destination: Vector2 = ledger.inspect_entity("yard-t01").position if p.duty_id == "yard" else (training.student_position(a.id) if p.duty_id == "students" and training != null else ledger.inspect_entity(requests[p.duty_id].place).position)
-		if heavy_production != null and heavy_production.bay_occupant != "" and p.position.is_equal_approx(ledger.inspect_entity(heavy_production.bay_occupant).position):
-			path = [p.position,Layout.door("vehicle_works")]
-			var outward: Array = walk_path(Layout.door("vehicle_works"),destination)
-			if not outward.is_empty(): path.append_array(outward.slice(1))
-		else: path = walk_path(p.position,destination)
+		path = _ordinary_report_path(p.position,destination)
 	_move(a, "Reporting", path, 1.5)
+
+
+func _ordinary_report_path(origin: Vector2, destination: Vector2) -> Array:
+	# Resolve only current physical bays; the empty opening's legacy template
+	# is not a built workshop, even if its coordinates match a placed bay.
+	for owner in heavy_owners():
+		if empty_field_opening and owner == heavy_production: continue
+		var bay: Dictionary = ledger.inspect_entity(owner.bay_id,{},false)
+		if bay.is_empty() or not origin.is_equal_approx(bay.position): continue
+		var outward: Array = walk_path(owner.site_door,destination)
+		if outward.is_empty(): return []
+		# Preserve the interior exit after fuel handoff/crew extraction even if
+		# its truck has since cleared the bay. Never report at just the door.
+		var route: Array = [origin,owner.site_door]
+		route.append_array(outward.slice(1))
+		return route
+	return walk_path(origin,destination)
 
 
 func _move(a: Dictionary, phase: String, points: Array, speed: float) -> void:

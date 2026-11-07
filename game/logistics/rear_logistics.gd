@@ -233,6 +233,14 @@ func _advance_request(row: Dictionary) -> bool:
 		if unloaded > credited:
 			row.delivered += unloaded-credited
 			row.credited[manifest.id] = unloaded
+			# Receipt changes outstanding promises even when net Army need is unchanged.
+			# Invalidate only publication; the next military decision owns fresh coverage.
+			var supply: RefCounted = _supply_ref.get_ref() if _supply_ref != null else null
+			var operations: RefCounted = rear.battlefield_operations
+			if model == _model() and supply != null and operations != null:
+				var policy: RefCounted = operations.policy
+				if policy != null and policy.get("resupply") == supply:
+					supply.invalidate_rear_supply_need(str(row.type))
 			changed.emit()
 		if manifest.state in ["Complete","Cancelled","Safety Returned"]:
 			row.manifest = ""
@@ -251,12 +259,9 @@ func _advance_request(row: Dictionary) -> bool:
 	if model.speed == 0:
 		_set_status(row,"Queued","Start time to prepare the next physical delivery.")
 		return false
-	var site_id := ""
-	for id in rear.dispatch.dispatch_sites:
-		var site: Dictionary = rear.dispatch.dispatch_sites[id]
-		if rear.stores[site.store].accessible and int(rear.requests[site.duty].target) > 0: site_id = id; break
+	var site_id: String = rear.dispatch.ready_dispatch_site()
 	if site_id.is_empty():
-		_set_status(row,"Waiting","Build and staff a Logistics Centre, then assign hauling workers.")
+		_set_status(row,"Waiting","Waiting for an accessible Logistics Centre with requested staff and an eligible idle handler. Staff who are reporting, carrying or changing duties are not ready for a new load.")
 		return false
 	var site: Dictionary = rear.dispatch.dispatch_sites[site_id]
 	var inventory: Dictionary = rear.ledger.owned_inventory_at(site.store,rear.PLAYER)
