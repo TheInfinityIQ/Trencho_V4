@@ -48,5 +48,19 @@
     "game/battlefield/battlefield_view.gd": "029195dd31e399fb95c14f8ec3df1672fc02e896dd6224a51bfa363301ca5ff3",
     "game/identity/identity_ledger.gd": "e847a9a03bfe6756ad27632b9f5df1dc2839cef877140fef9245d82c7ee9118c",
     ".github/workflows/validate.yml": "c7170c92e76559a15e0ffa41fae1bd612824985c1c170457d0537d7f6b71329e"
+  },
+  "remote_import": {
+    "revision": "00dcea24f2ff1a569d1c68e5ad2a6da1f58118cd",
+    "run": 42341589683,
+    "job": 128310240779,
+    "result": "PASS: isolated two-PNG import and changed production parsing; optional gameplay demonstration skipped",
+    "artifact": 13562065054,
+    "sidecars": "Actual engine-generated .import files restored after exact revision/source/metadata hash verification; no .godot cache committed",
+    "native_appearance": "Not observed; no FPS certification"
+  },
+  "artist_consultation": {
+    "thread": "6aecc998-2d4c-83e9-9cc3-8d7653edbe04",
+    "applied": "Keep workers as native markers because supplied person sprites carry weapons; use upright symbolic exact-role art and existing overlays. First two own-blue/factory variants independently inspected and accepted by Designer.",
+    "limit": "Artist inspected mirror copies; lead verified actual creator-uploaded archive and original PNG/licence bytes. Optional soldier/APC mapping excluded from this pass."
   }
 }

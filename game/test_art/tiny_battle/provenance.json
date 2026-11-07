@@ -61,5 +61,17 @@
     }
   ],
   "interpretation": "Generic symbolic factory and T01 truck icons only; brown truck box is not actual loaded-cargo status. No armed or neutral person imagery included. Original indexed palette/tRNS PNGs unchanged.",
-  "excluded": "Whole pack, atlas, inspection enlargements, unused sprites, generated .godot cache."
+  "excluded": "Whole pack, atlas, inspection enlargements, unused sprites, generated .godot cache.",
+  "engine_import_sidecars": [
+    {
+      "path": "game/test_art/tiny_battle/tile_0047.png.import",
+      "sha256": "cea9f8561b5b13546c5610472d3f8290d6d4e6ce417a2050c90af754e6b2d82a",
+      "origin": "Godot 4.7.2 pinned CI run42341589683"
+    },
+    {
+      "path": "game/test_art/tiny_battle/tile_0132.png.import",
+      "sha256": "2f745d97b782112f7b6a8e055042d3f800010ce7cb801c39db2b6845bea9425b",
+      "origin": "Godot 4.7.2 pinned CI run42341589683"
+    }
+  ]
 }
