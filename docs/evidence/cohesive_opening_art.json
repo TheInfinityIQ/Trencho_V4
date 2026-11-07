@@ -25,7 +25,7 @@
     "table": "Complete single round table119,0,16,16; wrong multi-table Artist assembly not used.",
     "stock": "Designer approved only plain bin374,68,16,16, with actual labels/counts.",
     "categories": "Actual original numbered blue tiles inspected before reversible category mapping, frozen before code.",
-    "imports": "Actual new engine-generated .import sidecars pending root remote import/retrieval; no .godot cache committed."
+    "imports": "PASS: actual pinned-Godot isolated13-texture import on GitHub42346783813, exact source4ee8a584af6934fcac365836dc7b6b2f64608fe7; retained source/sidecar hashes verified by lead and actual sidecars committed. No local engine/cache."
   },
   "static_maintenance": "Twelve affected functions source-reviewed. Changed workflow Python syntax and exact13-PNG dependency closure PASS; raw source/licence hashes PASS. Final map/UI/whitespace result supplied with frozen head; no engine locally.",
   "capture": {
@@ -51,5 +51,13 @@
     "game/rear_base/base_demo.gd": "3146827f08b55b9692bfc204e0398a2a31b82f0c2002330616646a168e7ade57",
     "game/identity/identity_ledger.gd": "577c0ed66850aee97fb585b5423f583724ccb37768ec2e8b3f8588e0322b725d",
     ".github/workflows/validate.yml": "11b28f41c1b3c205f28482abd5318abff01da301a5d95cd5f47deabc728c647f"
+  },
+  "lead_import_evidence": {
+    "run": 42346783813,
+    "artifact": 13563857933,
+    "source_head": "4ee8a584af6934fcac365836dc7b6b2f64608fe7",
+    "changed_production_parse": "PASS: identity_ledger.gd,base_demo.gd,base_map.gd",
+    "actual_texture_count": 13,
+    "captured_viewport": "pending final source head"
   }
 }
