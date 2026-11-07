@@ -32,6 +32,7 @@ var speed: int = 0
 var expanded_catalogue: bool = false
 var connected_world: bool = false
 var empty_field_opening: bool = false
+var debug_used := false
 var owed_simulation_seconds := 0.0
 var planning_view_revision := 0
 var _live_planning := false

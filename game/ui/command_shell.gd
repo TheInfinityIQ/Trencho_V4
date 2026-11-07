@@ -4,9 +4,11 @@ signal navigation_requested(action: String)
 signal speed_requested(value: int)
 signal new_session_requested
 signal modal_visibility_changed(visible: bool)
+signal debug_action_requested(action: String)
 
 const UI = preload("res://game/ui/ui_kit.gd")
 const DemoGuidancePanel = preload("res://game/ui/demo_guidance_panel.gd")
+const DebugMenu = preload("res://game/debug/rear_debug_menu.gd")
 const NAVIGATION := [["rear", "Rear base"], ["Build", "Build"], ["Workers/Jobs", "Workers / Jobs"], ["Supplies", "Supplies"], ["Work", "Production"], ["Train", "Training"], ["Vehicles", "Vehicles"], ["ArmyNeeds", "Army needs"]]
 const TITLES := {"rear": "REAR OPERATIONS", "Build": "CONSTRUCTION", "Workers/Jobs": "WORKFORCE", "Supplies": "ACQUISITION", "Work": "PRODUCTION", "ArmyNeeds":"ARMY NEEDS", "Battlefield": "BATTLEFIELD", "Haul": "HAULING", "Info": "INSPECTION", "Train": "TRAINING", "Vehicles": "VEHICLES", "ArmySupply": "FORWARD SUPPLY / ADVANCED", "Dispatch": "DISPATCH / PROTOTYPE", "Diagnostics": "DIAGNOSTICS"}
 const MORE_ACTIONS := ["Haul", "Info", "Train", "Vehicles", "ArmySupply", "Dispatch", "Diagnostics"]
@@ -21,6 +23,8 @@ var _planning: Label
 var _requisition: Label
 var _help: PanelContainer
 var _confirmation: ConfirmationDialog
+var debug_menu: AcceptDialog
+var _debug_used := false
 var _current_navigation := "rear"
 var _clock_text := "—"
 var _planning_text := ""
@@ -54,6 +58,11 @@ func _ready() -> void:
 	content_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_child(content_host)
 	_build_confirmation()
+	debug_menu = DebugMenu.new()
+	debug_menu.name = "RearDebugMenu"
+	add_child(debug_menu)
+	debug_menu.action_requested.connect(func(action: String) -> void: debug_action_requested.emit(action))
+	debug_menu.visibility_changed.connect(_emit_modal_visibility)
 	set_navigation(_current_navigation)
 	set_clock(_clock_text, _current_speed, _planning_text)
 	_requisition.text = _requisition_text
@@ -100,15 +109,19 @@ func _build_header(parent: Node) -> void:
 		button.tooltip_text = ["Pause the shared game clock", "Normal game speed", "Double game speed"][value]
 		_speed_buttons[value] = button
 	var menu := MenuButton.new()
+	menu.name = "SessionMenu"
 	menu.text = "Session"
 	menu.custom_minimum_size = Vector2(86, 40)
 	menu.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	header.add_child(menu)
 	menu.get_popup().add_item("New game…", 0)
 	menu.get_popup().add_item("Getting started", 1)
+	menu.get_popup().add_separator()
+	menu.get_popup().add_item("Debug tools…", 2)
 	menu.get_popup().id_pressed.connect(func(id: int) -> void:
 		if id == 0: _confirmation.popup_centered()
-		elif id == 1: _help.visible = not _help.visible)
+		elif id == 1: _help.visible = not _help.visible
+		elif id == 2: debug_menu.popup_centered())
 
 func _build_navigation(parent: Node) -> void:
 	var scroll := ScrollContainer.new()
@@ -190,7 +203,7 @@ func _build_confirmation() -> void:
 	_confirmation.get_ok_button().theme_type_variation = "Primary"
 	_confirmation.get_cancel_button().text = "Keep playing"
 	_confirmation.confirmed.connect(func() -> void: new_session_requested.emit())
-	_confirmation.visibility_changed.connect(func() -> void: modal_visibility_changed.emit(_confirmation.visible))
+	_confirmation.visibility_changed.connect(_emit_modal_visibility)
 	add_child(_confirmation)
 
 func set_navigation(action: String) -> void:
@@ -200,8 +213,16 @@ func set_navigation(action: String) -> void:
 		var selected := id == action
 		if button.button_pressed != selected: button.set_pressed_no_signal(selected)
 	if is_instance_valid(_title):
-		var text: String = TITLES.get(action, action.to_upper())
+		var text: String = ("DEBUG · " if _debug_used else "")+str(TITLES.get(action, action.to_upper()))
 		if _title.text != text: _title.text = text
+
+func set_debug_used(used: bool) -> void:
+	if _debug_used == used: return
+	_debug_used = used
+	set_navigation(_current_navigation)
+
+func _emit_modal_visibility() -> void:
+	modal_visibility_changed.emit(_confirmation.visible or (is_instance_valid(debug_menu) and debug_menu.visible))
 
 func set_clock(text: String, speed: int, planning_text: String) -> void:
 	_clock_text = text

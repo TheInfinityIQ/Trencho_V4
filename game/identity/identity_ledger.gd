@@ -1050,6 +1050,28 @@ func transfer_stock(source_id: String, quantity: int, destination_id: String,
 	return _ok("Physical transfer completed; ownership and total count preserved.", moved.id)
 
 
+func debug_deposit_stock(stock_id: String, destination_id: String, owner: String) -> Dictionary:
+	# Explicit debug boundary: skip travel, retain conservation and carry handoffs.
+	var stock := _stock(stock_id)
+	if stock == null or stock.owner != owner or not _is_place(destination_id):
+		return _reject("INVALID_DEBUG_DELIVERY", "Debug delivery needs owned stock and an existing storage place.")
+	if available(stock_id) != stock.quantity:
+		return _reject("STOCK_RESERVED", "Release this unload's claims before debug delivery.")
+	var person := _entities.get(stock.holder_id) as Records.Person
+	if person != null and person.carrying_stock_id != stock_id:
+		return _reject("INVALID_DEBUG_CARRY", "Only the person's actual carried stock can be debug-deposited.")
+	var quantity: int = stock.quantity
+	var type: String = stock.design_type
+	if quantity > 0:
+		_split_stock(stock,quantity,destination_id)
+	if person != null:
+		person.carrying_stock_id = ""
+		if person.pending_assignment != -1:
+			_set_assignment(person,person.pending_assignment,person.pending_duty)
+	_event("DEBUG immediate stock delivery; no travel time elapsed",stock_id)
+	return {"ok":true,"quantity":quantity,"type":type}
+
+
 func transfer_weapon(weapon_id: String, destination_id: String) -> Dictionary:
 	var weapon := _weapon(weapon_id)
 	if weapon == null or not _can_hold_stock(destination_id):
