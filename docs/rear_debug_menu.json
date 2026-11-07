@@ -1,0 +1,17 @@
+{
+  "request": "Dawson7November2026: force deliver now, instant pending construction, free immediately delivered1000ofeachrawresource",
+  "owner": "Lead Developer; one implementation owner",
+  "diagram": "docs/diagrams/rear_debug_menu.mmd",
+  "acceptance": [
+    "Session > Debug tools exposes three explicit click actions and result feedback; no timers/polling or automatic grants",
+    "Force deliver completes existing inbound resource orders once, including safe cleanup of partial unloading; paid orders keep original charge, no workers/outbound battlefield bypass",
+    "Instant build completes only Awaiting M11/Building sites; cancels material jobs safely, accounts debug-supplied missing materials and reuses normal activation; no placement or staffing grant",
+    "Infinite resources creates zero-cost orders for1000ofeach of nine raw purchasable types and instantly completes those orders only; repeat click adds another batch",
+    "Debug overflow stock at the Supply Table is physical and available to existing hauling, finite capacity grows only with explicit deliveries; normal storage capacities stay intact",
+    "Current model is resolved on each click, debug-use marker resets with a new game; no clock jump/reset or persistent infinity switch"
+  ],
+  "justification": "Native Godot AcceptDialog and MenuButton/PopupMenu signals, with explicit scene ownership and a thin dispatcher. Domain owners clean up their own reservations, carry pointers and terminal states. Existing command reconciliation wakes dependent views/planning; no process callback, plugin, autoload or parallel authoritative inventory.",
+  "sources": ["https://docs.godotengine.org/en/4.7/classes/class_menubutton.html", "https://docs.godotengine.org/en/4.7/classes/class_popupmenu.html", "https://docs.godotengine.org/en/4.7/classes/class_acceptdialog.html"],
+  "verification": "One brief GitHub current-change demonstration invoking the actual three menu buttons; changed script parsing and source/UI map maintenance. No local engine, regression suite or benchmark.",
+  "status": "Diagram/acceptance frozen before code; implementation pending"
+}
