@@ -1,6 +1,6 @@
 {
   "owner": "Developer C implements; Lead reviews, publishes, verifies remotely and integrates",
-  "status": "Source implementation and focused purpose/UI/system-map checks passed; runtime and actual Godot UID pending Lead GitHub check",
+  "status": "Implemented; one brief actual physical bulk trip/finite fuel/return check passed remotely; final UID and evidence retained. Ordinary gameplay and interruption/refuel interactions remain unverified.",
   "base": "fb02cb038ed2f0d840905357674e0c31dc7c1a23",
   "diagram": "docs/diagrams/construction_utility_truck.mmd",
   "contract": [
@@ -27,5 +27,6 @@
     "scope": "One minimal arranged Rear/Vehicles/Construction component with one actual untrained person and500M11. That same worker foot-delivers60M11 and builds the office normally, then hauls150M11 by one utility truck trip to actual unfinished workshop, returns and releases. Record real source/site/truck quantities, identity, no qualification grant, out-of-fleet identity, measured finite fuel/distance and simulated journey duration versus documented six personal foot trips. <=160 chronological boundaries; use existing45s GitHub limit.",
     "limits": "Not ordinary connected-game acceptance, native input/render/FPS or benchmark. Current source handles cancellation/access/retirement and physical refuel; these interactions remain runtime-unverified unless Lead supplies a proportionate actual new-action observation. No broad scenarios/failure injection/suites."
   },
-  "static_verification": "PASS: source parser/function inventory,62 focused purpose reviews, system-map update/check, generated source-linked UI HTML and whitespace. Lead requested unchanged regression fixture: its sole generated BaseDemo source-hash update was reverted. Combined ui_function_map --check therefore intentionally reports stale button-test inventory; HTML source/line consistency is verified separately. No engine/gameplay/regression run by C."
+  "static_verification": "PASS: source parser/function inventory,62 focused purpose reviews, system-map update/check, generated source-linked UI HTML and whitespace. Lead requested unchanged regression fixture: its sole generated BaseDemo source-hash update was reverted. Combined ui_function_map --check therefore intentionally reports stale button-test inventory; HTML source/line consistency is verified separately. No engine/gameplay/regression run by C.",
+  "evidence": "docs/evidence/construction_utility_truck.json"
 }
