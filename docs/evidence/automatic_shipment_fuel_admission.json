@@ -1,0 +1,32 @@
+{
+  "status": "implemented_locally_source_and_static_maintenance_pending_not_engine_run",
+  "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
+  "before_code_contracts": [
+    "9e5138d",
+    "1622289"
+  ],
+  "scope": [
+    "game/dispatch/dispatch_service.gd",
+    "game/logistics/rear_logistics.gd"
+  ],
+  "source_observations": [
+    "Dispatch automatic command reads actual Parked hull/driver/active manifest and unfinished VehicleActivity fuel jobs before route work. Actual M08 handling remains its existing owner; only actual tank fuel can authorize the projected trip.",
+    "Actual contents reduce nominal candidate payload; intended whole cargo mass uses existing type/unit mass and Routes prospective_load_kg rather than fabricated ledger freight.",
+    "Accepted route_preview delegates to one factored calculation with zero added cargo and unchanged routes/profiles/reserve. Prospective trip uses unladen actual approach, loaded outward rear/corridor/dock and unloaded actual return. The existing authoritative 25 percent reserve formula is shared.",
+    "No positive permit/route plan is retained. After successful measurement the command freshly compares all candidate facts and immediately invokes unchanged existing accept in the same synchronous call. Physical accept/depart/receipt/return implementations are unchanged.",
+    "Only route-success/insufficient-tank results may leave request-local failed-input bookmarks. Current selected-hull facts, actual cargo quantity, endpoints/site/parking/Construction geometry, hazard callable and known mine active positions are compared cheaply; changed inputs force fresh measurement. Unknown custom hazard callables and failed route results are not memoized.",
+    "Candidate cursor/visits-left remains request-local and finite: at most one new expensive measurement per rendered policy turn, while other trucks can be visited in following slices. Existing committed-state wake restarts visits-left without adding an idle timer/poll. Acceptance, zero completion, cancellation and model replacement discard derived candidate state.",
+    "No changes to manual Dispatch acceptance, accepted cargo/claims/crew, vehicle refuel/movement rules, request quantities/holds/receipt credit, demand definition, route rates or reserve."
+  ],
+  "static_maintenance": "Required source/UI/button map freshness and whitespace results recorded at final frozen-head handoff; no engine result.",
+  "runtime": "NONE: no local engine, regression suite, broad scenario, failure injection, matrix, arithmetic harness, demonstration or benchmark run/prepared/submitted.",
+  "unverified": [
+    "Godot compilation",
+    "Actual low-tank or unfinished-fueljob waiting and subsequent automatic acceptance after physical tank handoff",
+    "Actual candidate cursor/fingerprint timing and fresh cargo route admission",
+    "Ordinary factory/supply/repeat/native input/pacing/FPS"
+  ],
+  "next_owners": "Lead prospective API/cost/atomicity and final technical; A exact-head source peer; Designer game identity; lead publication/current parsing/merge. B resolves concrete findings.",
+  "query_boundary": "Blocked bookmark retains only named selected-hull route inputs, not full inspection. No existing narrow ledger combined tank/spec/position/contents query exists; existing full inspection/readiness remains transient and existing owner predicates are reused, no new ledger accessor or duplicated Driver eligibility.",
+  "intent_scope": "Both automatic Army intent and explicit rear-request rows use this scheduled fulfilment safety guard. Explicit requested quantities/cancellation holds stay fixed. Direct Dispatch.accept/manual manifests/Fleet Transfer and already accepted physical jobs remain unchanged."
+}
