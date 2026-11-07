@@ -1,0 +1,47 @@
+{
+  "status": "implemented_locally_static_maintenance_at_final_freeze_not_engine_parsed_or_executed",
+  "base": "ffc4c8282c1fed0eea7f61c2ec7d9181032af233",
+  "before_code_contract": "ea4ba19af8483324b7d1b8d62f0a1982ecb67161; docs/diagrams/current_factory_input_intent.json/.mmd",
+  "production_scope": [
+    "game/logistics/rear_logistics.gd",
+    "game/staffing/rear_simulation.gd",
+    "game/production/fixed_production.gd",
+    "game/production/heavy_production.gd"
+  ],
+  "source_observations": [
+    "RearLogistics passes the actual factory only for its automatic input creation; existing destination/type outstanding-promise deduction remains.",
+    "RearSimulation validates registered owner/current destination/ingredient, stamps model-local duty provenance before internal request_haul settling; untagged manual/other-owner requests never gain inferred provenance.",
+    "Existing settlement finishes due owners/actors/storage constraints, then reconciles explicitly tagged unselected groups before ANY idle-hauler _start_job. _job_option/_start_job contain no new production queries or changed reservation/deposit rules.",
+    "FixedProduction enduring input query ignores temporary pause/access/operators/staffing/batch eligibility, preserving existing whole-recipe missing-input and output-minimum coverage rules; disabled or satisfied intent has no missing inputs.",
+    "Heavy override requires its existing accepted order, then uses existing production-owned enabled/target/order semantics. No accepted order/batch/bay/fleet/parking mutation; Selectable inherits current recipe/spec without new hook.",
+    "Transaction-local captured counts include every actor.load stage (Approach/Pickup/Source blocked/Carry/Drop). Group current missing less other live/manual promises and same-owner captured portions once; distribute allowable unselected quantities across old jobs.",
+    "Only automatic requested targets/reasons can shrink. No increase here, no cancel_job, cancel flag, claim release, reroute, receipt credit, consumed/finished/stock mutation, hold or Resume. Later supplier eligibility creates fresh uncovered jobs normally."
+  ],
+  "cost_and_lifetime": [
+    "No new timer, frame poll, subscription, generic invalidation or route planning change.",
+    "One local actor-load/outstanding-job grouping pass per existing settlement admission transaction/changed immediate boundary; no extra production/stock query for each hauler or job candidate.",
+    "Only affected factories with an unselected tagged remainder query current intent once; reuse that ephemeral result across their groups/jobs. Continuous target check needs no output stock scan; Stock target uses existing coverage query once per affected owner. No persistent demand/history cache.",
+    "Provenance is scalar current-model duty identity, not a retained owner reference/cycle. Missing current owner retires only unselected work, retaining captured floor."
+  ],
+  "limits": [
+    "Source-backed conditional gap, not an observed ordinary-play failure.",
+    "Existing untagged legacy/runtime jobs remain untouched; origin cannot safely be reconstructed from destination/type. No migration/reset is performed.",
+    "Temporary eligibility alone is not a stop. Output target uses existing projected whole-batch coverage rules; accepted Heavy order remains its production owner commitment.",
+    "Godot compilation and actual command/selection/capture/target/stock timing remain unverified.",
+    "No full factory/supply/repeat loop, native input/rendering/pacing or FPS acceptance."
+  ],
+  "static_maintenance": {
+    "source_map": "Seven changed/new functions explicitly source-reviewed; regenerated map has zero pending purposes. Final --check required before commit.",
+    "ui_button_inventory": "PASS source links/current button inventory regenerated and checked; no UI production change or new tests.",
+    "whitespace": "PASS git diff --check; final staged check required before commit.",
+    "meaning": "Static source grammar/metadata only, not Godot compilation or execution."
+  },
+  "runtime": "NONE. No local engine, regression, broad scenario, failure injection, coverage matrix, benchmark, custom harness, direct input or remote check executed/prepared/submitted for this feature.",
+  "production_normalized_utf8_lf_sha256": {
+    "game/logistics/rear_logistics.gd": "5d029b3dc180bb42f250a4d97e5f180e04f3d8d5667308193f1a7ac3905c80d8",
+    "game/staffing/rear_simulation.gd": "a9af01a79cd4eee5609d44ba80f280a962aab79b67607cd634d6f3852ee31f73",
+    "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
+    "game/production/heavy_production.gd": "6ff081dc61130bf405350f652dfec3831fbeb82649f848ccf5a877e97931c968"
+  },
+  "next_owners": "A final source/static handoff and normal feature PR to MAIN; B independent exact-head technical peer; Designer game identity; lead technical/required CI/integration. Concrete scope expansion must be assigned before further files."
+}

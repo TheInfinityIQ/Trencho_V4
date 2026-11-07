@@ -51,6 +51,8 @@ var people: ItemList
 var jobs: ItemList
 var inspection: Label
 var production_status: Label
+var _production_pause_button: Button
+var _production_enable_button: Button
 var cart: Dictionary = {}
 var factory_plan_panel: VBoxContainer
 var army_supply_panel: VBoxContainer
@@ -145,6 +147,8 @@ var parking_access: CheckBox
 var parking_destination: OptionButton
 var _batch_cancel_dialog: ConfirmationDialog
 var _batch_cancel_request: Dictionary = {}
+var _construction_cancel_dialog: ConfirmationDialog
+var _construction_cancel_request: Dictionary = {}
 var _pending_activity: RefCounted
 var scenario: OptionButton
 var declaration: Label
@@ -242,6 +246,7 @@ func _ready() -> void:
 	confirmation.canceled.connect(func() -> void: _result(_pending_activity.decline_recipe(_pending_token)); _load_production())
 	add_child(confirmation)
 	_build_batch_cancel_dialog()
+	_build_construction_cancel_dialog()
 	_load_production()
 	_load_store()
 	_load_vehicle_people()
@@ -485,6 +490,7 @@ func start_empty_field_session(refresh_rear_ui: bool = true) -> void:
 
 func _bind_started_session(refresh_rear_ui: bool) -> void:
 	_keep_batch_cancel()
+	_keep_construction_cancel()
 	session.replace_simulation(simulation)
 	_displayed_time = -INF
 	_haul_draft_dirty = false
@@ -893,9 +899,9 @@ func _production_panel(box: VBoxContainer) -> void:
 	ingredient_heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ingredient_checklist = VBoxContainer.new()
 	box.add_child(ingredient_checklist)
-	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
+	_production_pause_button = _button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
 	_button(box, "Cancel consumed batch / stop", func() -> void: _request_batch_cancel())
-	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
+	_production_enable_button = _button(box, "Enable facility", func() -> void: _result(_activity().resume()))
 	heavy_controls = VBoxContainer.new()
 	box.add_child(heavy_controls)
 	_label(heavy_controls,"Heavy targets request goods; acceptance reserves the bay/fleet place.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -984,7 +990,7 @@ func _construction_panel(box: VBoxContainer) -> void:
 	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
 	box = _section(parent,"Remove a site","Unfinished sites can be cancelled. Completed facilities require physical clearing and dismantling.")
 	_button(box,"Cancel unfinished site",func() -> void:
-		_result(simulation.rear.construction.cancel(_construction_site())))
+		_request_construction_cancel())
 	_button(box,"Dismantle completed facility",func() -> void:
 		_result(simulation.rear.construction.request_dismantle(_construction_site())))
 
@@ -1350,6 +1356,65 @@ func _load_store() -> void:
 	capacity.set_value_no_signal(entry.capacity)
 	accessible.set_pressed_no_signal(entry.accessible)
 
+func _build_construction_cancel_dialog() -> void:
+	_construction_cancel_dialog = ConfirmationDialog.new()
+	_construction_cancel_dialog.name = "ConstructionCancellation"
+	_construction_cancel_dialog.min_size = Vector2i(620,230)
+	_construction_cancel_dialog.dialog_autowrap = true
+	_construction_cancel_dialog.ok_button_text = "Cancel construction"
+	_construction_cancel_dialog.cancel_button_text = "Keep construction"
+	_construction_cancel_dialog.confirmed.connect(_confirm_construction_cancel)
+	_construction_cancel_dialog.canceled.connect(_keep_construction_cancel)
+	add_child(_construction_cancel_dialog)
+
+func _request_construction_cancel() -> void:
+	_keep_construction_cancel()
+	var service: RefCounted = simulation.rear.construction
+	var id := _construction_site()
+	var loss: Dictionary = service.cancellation_loss(id)
+	if loss.is_empty():
+		_result(service.cancel(id))
+		return
+	_construction_cancel_request = {"session":session,"simulation":simulation,"service":service,
+		"id":id,"site":service.instances[id],"kind":_selected_kind,"selection":_selected_id,
+		"consumed_m11":int(loss.consumed_m11)}
+	_construction_cancel_dialog.title = "Cancel construction of %s (%s)?" % [WorkforcePanel.job_name(id,simulation),id]
+	_construction_cancel_dialog.dialog_text = "This site's construction progress will be lost. The %d Building Materials already used will not be refunded. Recovery of remaining materials requires workers and hauling." % int(loss.consumed_m11)
+	_construction_cancel_dialog.popup_centered_clamped(Vector2i(680,280))
+	_construction_cancel_dialog.get_cancel_button().grab_focus()
+
+func _construction_cancel_is_current(request: Dictionary) -> bool:
+	if request.is_empty() or not is_instance_valid(session) or not is_instance_valid(request.session): return false
+	if session != request.session or simulation != request.simulation or session.simulation != request.simulation: return false
+	if simulation.rear.construction != request.service: return false
+	if _construction_site() != request.id or _selected_kind != request.kind or _selected_id != request.selection: return false
+	var service: RefCounted = request.service
+	if not is_same(service.instances.get(request.id,{}),request.site): return false
+	var loss: Dictionary = service.cancellation_loss(request.id)
+	return not loss.is_empty() and int(loss.consumed_m11) == request.consumed_m11
+
+func _confirm_construction_cancel() -> void:
+	if _construction_cancel_request.is_empty(): return
+	var request := _construction_cancel_request
+	_keep_construction_cancel() # Consume one decision before validation or command.
+	if not _construction_cancel_is_current(request):
+		_result({"ok":false,"requires_reconciliation":false,"message":"The construction site changed. Nothing was cancelled. Review the current site and try again."})
+		return
+	var service: RefCounted = request.service
+	_result(service.cancel(request.id))
+
+func _keep_construction_cancel() -> void:
+	_construction_cancel_request = {}
+	if is_instance_valid(_construction_cancel_dialog): _construction_cancel_dialog.hide()
+
+func _invalidate_construction_cancel() -> void:
+	if _construction_cancel_request.is_empty(): return
+	_keep_construction_cancel()
+	_result({"ok":false,"requires_reconciliation":false,"message":"The construction site changed. Nothing was cancelled. Review the current site and try again."})
+
+func _validate_construction_cancel() -> void:
+	if not _construction_cancel_request.is_empty() and not _construction_cancel_is_current(_construction_cancel_request): _invalidate_construction_cancel()
+
 func _build_batch_cancel_dialog() -> void:
 	_batch_cancel_dialog = ConfirmationDialog.new()
 	_batch_cancel_dialog.name = "ConsumedBatchCancellation"
@@ -1411,18 +1476,21 @@ func _invalidate_batch_cancel() -> void:
 func _on_session_state_changed() -> void:
 	_request_refresh()
 	_validate_batch_cancel()
+	_validate_construction_cancel()
 
 func _validate_batch_cancel() -> void:
 	if not _batch_cancel_request.is_empty() and not _batch_cancel_is_current(_batch_cancel_request): _invalidate_batch_cancel()
 
 func _batch_cancel_model_changed(_next: RefCounted) -> void:
 	_invalidate_batch_cancel()
+	_invalidate_construction_cancel()
 
 func _batch_cancel_selection_changed(_index: int) -> void:
 	_invalidate_batch_cancel()
 
 func _exit_tree() -> void:
 	_batch_cancel_request = {}
+	_construction_cancel_request = {}
 	if is_instance_valid(session):
 		if session.state_changed.is_connected(_on_session_state_changed): session.state_changed.disconnect(_on_session_state_changed)
 		if session.simulation_changed.is_connected(_batch_cancel_model_changed): session.simulation_changed.disconnect(_batch_cancel_model_changed)
@@ -1451,7 +1519,9 @@ func _result(result: Dictionary) -> void:
 	if is_node_ready(): _request_refresh()
 
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
-	if kind != _selected_kind or id != _selected_id: _invalidate_batch_cancel()
+	if kind != _selected_kind or id != _selected_id:
+		_invalidate_batch_cancel()
+		_invalidate_construction_cancel()
 	_selected_kind = kind
 	_selected_id = id
 	if open_panel:
@@ -1924,6 +1994,9 @@ func _refresh_workforce() -> void:
 		return person.id+" | "+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+" | "+person.phase)
 
 func _factory_plan_action(action: Dictionary) -> void:
+	if str(action.get("focus","")) in ["enable","pause"]:
+		_focus_factory_recovery(action)
+		return
 	var panel := str(action.get("panel", ""))
 	var id := str(action.get("facility_id", ""))
 	if panel == "Build" and not id.is_empty():
@@ -1975,3 +2048,22 @@ func _army_supply_action(requested: Dictionary) -> void:
 					observation_requested.emit(id)
 					break
 		_: _factory_plan_action(action)
+
+func _focus_factory_recovery(requested: Dictionary) -> void:
+	if session == null or session.simulation != simulation: return
+	var action: Dictionary = factory_plan_panel.current_recovery_action(requested)
+	if action.is_empty(): return
+	var id := str(action.facility_id)
+	var panel: Control = tabs.get_tab_control(tabs.current_tab)
+	if str(panel.get_meta("panel_title",panel.name)) != "Work" or _context_duty() != id:
+		_select("site",id)
+	# Recheck identities/state after selection without another plan query.
+	if session.simulation != simulation or not factory_plan_panel.recovery_identity_is_current(requested): return
+	if _context_duty() != id or _activity() != requested.owner: return
+	if action.focus == "enable" and _activity().enabled: return
+	if action.focus == "pause" and (not _activity().enabled or not _activity().paused): return
+	panel = tabs.get_tab_control(tabs.current_tab)
+	if str(panel.get_meta("panel_title",panel.name)) != "Work": return
+	var button: Button = _production_enable_button if action.focus == "enable" else _production_pause_button
+	button.grab_focus()
+	if panel is ScrollContainer: panel.ensure_control_visible(button)

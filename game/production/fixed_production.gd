@@ -118,6 +118,12 @@ func logistics_demand() -> Dictionary:
 	if int(_rear_ref.get_ref().requests.get(_spec.duty,{}).get("target",0)) <= 0: return {}
 	return _logistics_demand(not _target_satisfied())
 
+func automatic_input_intent() -> Dictionary:
+	# Enduring whole-batch intent, distinct from temporary work eligibility.
+	# Only the admission transaction queries this once per affected factory.
+	var missing: Dictionary = {} if not enabled or _target_satisfied() else _missing()
+	return {"destination":_spec.input_store,"missing":missing}
+
 func _logistics_demand(requested: bool) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	# Only a real staffed/requested facility with an enabled selected request

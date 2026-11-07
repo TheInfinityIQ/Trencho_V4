@@ -98,7 +98,7 @@ func _supply_factory(activity: RefCounted) -> bool:
 	var demand: Dictionary = activity.logistics_demand()
 	if demand.is_empty(): return false
 	for type in demand.missing:
-		if _ensure_haul(str(demand.destination),str(type),int(demand.missing[type]),int(demand.priority)).get("ok",false): return true
+		if _ensure_haul(str(demand.destination),str(type),int(demand.missing[type]),int(demand.priority),activity).get("ok",false): return true
 	return false
 
 func _source_inventory(destination: String, type: String) -> Array[Dictionary]:
@@ -122,14 +122,14 @@ func _source_inventory(destination: String, type: String) -> Array[Dictionary]:
 		if available > 0: sources.append({"id":id,"available":available})
 	return sources
 
-func _ensure_haul(destination: String, type: String, missing: int, priority: int = 1) -> Dictionary:
+func _ensure_haul(destination: String, type: String, missing: int, priority: int = 1, factory: RefCounted = null) -> Dictionary:
 	var rear: RefCounted = _model().rear
 	for job in rear.jobs:
 		if not job.cancelled and job.destination == destination and job.type == type:
 			missing -= maxi(0,int(job.requested)-int(job.delivered))
 	if missing <= 0: return {"ok":false}
 	for source in _source_inventory(destination,type):
-		var result: Dictionary = rear.request_haul(source.id,destination,type,mini(missing,int(source.available)),priority)
+		var result: Dictionary = rear.request_haul(source.id,destination,type,mini(missing,int(source.available)),priority,[],factory)
 		if result.ok: changed.emit()
 		return result
 	return {"ok":false}

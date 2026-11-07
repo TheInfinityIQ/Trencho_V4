@@ -1,0 +1,40 @@
+{
+  "status": "implemented locally; source/UI/button metadata and whitespace maintenance passed; no engine/runtime result",
+  "base": "ffc4c8282c1fed0eea7f61c2ec7d9181032af233",
+  "owner": "C: base_demo construction cancellation UI/lifecycle, small read-only Construction loss query, own records/maps. Lead integration; B technical; Designer identity; UX wording.",
+  "decision": "Designer accepted Building-only informed loss decision; no further principle gate.",
+  "authorities": {
+    "loss": "Construction read-only query reports consumed int(stored site.m11)/2 only for actual Building state, established by successful consume-before-Building invariant. No catalogue lookup/new history/ledger owner.",
+    "command": "Existing Construction.cancel unchanged, including material/claim/carry/worker/return rules.",
+    "identity": "UI retains same session/model/service/site Dictionary reference (is_same), selected site and context, disclosed consumed count. Natural progress allowed; still-Building and count rechecked."
+  },
+  "flow": [
+    "Resolve selected actual site. Query loss. Empty preview (Awaiting/invalid/Complete) follows existing cancel command validation directly; placement cancellation untouched.",
+    "Building opens one scene-owned dialog with actual facility/site identity; consumed count, lost progress, physical recovery explained.",
+    "Keep construction default/focus; Escape/close only clears pending UI and hides; no command/reconciliation/time pause.",
+    "Confirm removes pending request before checking same session/model/service/site reference/current selected site/context, still-Building and unchanged amount. Stale/completed/replaced rejects without domain command; valid calls captured service.cancel once.",
+    "Reuse existing state-change wrapper and model callback for pending-only validation; selection invalidation and session bind/exit clear. No extra subscription/poll/timer/framework."
+  ],
+  "copy": {
+    "title": "Cancel construction of {facility/site}?",
+    "body": "This site\u2019s construction progress will be lost. The {N} Building Materials already used will not be refunded. Recovery of remaining materials requires workers and hauling.",
+    "keep": "Keep construction",
+    "confirm": "Cancel construction",
+    "stale": "The construction site changed. Nothing was cancelled. Review the current site and try again."
+  },
+  "acceptance": [
+    "Building cancellation cannot commit before explicit informed decision.",
+    "Keep/dismiss has no domain command or implicit pause.",
+    "Same owner/site single-use confirmation only; replacement, completion or disclosed amount change rejects.",
+    "Awaiting no-consumption and placement remain direct.",
+    "Existing cancel and physical recovery unchanged; no new stock/history/scan/timer."
+  ],
+  "verification": "Source/static map maintenance only locally; no engine/regression/scenario/coverage/benchmark. Required changed-script CI after publication; any brief direct demonstration requires separate scoped review.",
+  "references": [
+    "GDD64/66; construction_service first-consume/cancel/return owners traced at base",
+    "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
+    "https://docs.godotengine.org/en/4.7/classes/class_confirmationdialog.html"
+  ],
+  "next": "C implements, freezes exact source; B/lead technical, Designer identity, UX copy review; update main/maps then dedicated push/draft under granted scope.",
+  "evidence": "docs/evidence/construction_cancel_confirmation.json"
+}

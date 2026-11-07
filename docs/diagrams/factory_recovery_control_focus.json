@@ -1,0 +1,37 @@
+{
+  "status": "implemented locally; source/UI/button metadata and whitespace passed; no engine/runtime",
+  "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
+  "scope": [
+    "factory_plan.gd stopped/paused navigation action mapping and truthful copy",
+    "base_demo.gd existing Enable/Pause button references and recovery-only focus routing",
+    "factory_plan_panel.gd recovery identity envelope/current click resolution only; reuse existing view/session signals"
+  ],
+  "ownership": "C implements; A technical peer; lead technical/publication; Designer identity; UX exact copy. No backend files or construction81 changes.",
+  "decision": "Navigation/focus only; player must press existing control. Disabled wins over paused because existing Enable.resume clears pause; no subsequent forced pause toggle.",
+  "flow": [
+    "Plan maps disabled to Review stopped production / enable focus; enabled+paused to Review paused production / pause focus. Other action paths unchanged.",
+    "Existing panel rendered recovery action retains session/model/site Dictionary/production owner references. Shallow copy preserves identity; no new retained authoritative state.",
+    "At click resolve against bound live session/model/site reference/owner and recompute existing current plan once on demand. If current next action no longer recovery for same facility, reject and refresh; never redirect to another/successor.",
+    "Same Work facility focuses button without loading/resetting stock/staff/recipe drafts. Other facility uses existing exact selection and synchronous control load, validates again then focuses/reveals existing button.",
+    "No pressed emission, resume/enable command, speed or production mutation from guidance. Existing player controls retain all backend rules."
+  ],
+  "copy": {
+    "stopped": "Review stopped production: This facility is stopped. Use Enable facility to allow production when its requirements are met.",
+    "paused": "Review paused production: This facility is paused. Use Pause / resume facility to resume it; workers, inputs and output space are still required."
+  },
+  "acceptance": [
+    "Correct existing control receives focus for stopped/paused state, both same-instance and after navigation.",
+    "Disabled+paused chooses Enable, whose existing command clears pause; guidance itself never invokes it.",
+    "Stale session/model/site/owner or changed current action cannot focus another/successor factory.",
+    "Same-facility unsaved production/staff/recipe drafts preserved.",
+    "Recipe/target/staff/input guidance and all backend rules unchanged."
+  ],
+  "verification": "Static source/map/button maintenance only; no local engine, regression/scenario/failure/coverage/benchmark. Native focus/reveal not certified.",
+  "publication": "Lead-owned; no independent publication attempt or repeated human permission question.",
+  "evidence": "docs/evidence/factory_recovery_control_focus.json",
+  "click_query": "One Plan.view per explicit recovery click; post-navigation checks use references/scalar enabled/paused only. Existing refresh queries unchanged.",
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
+    "https://docs.godotengine.org/en/4.7/classes/class_scrollcontainer.html#class-scrollcontainer-method-ensure-control-visible"
+  ]
+}

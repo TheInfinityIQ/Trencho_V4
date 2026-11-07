@@ -84,9 +84,14 @@ static func _production_action(simulation: RefCounted, site: Dictionary, activit
 		result.label = "Choose rifle-ammunition recipe" if recipe == "R02" else "Choose Building Materials recipe"
 		result.focus = "recipe"
 		result.reason = "Choose %s. Changing a batch already in progress still asks for confirmation." % ("rifle ammunition" if recipe == "R02" else "Building Materials")
-	elif not activity.enabled or activity.paused:
-		result.label = "Resume production"
-		result.reason = "This facility is stopped or paused; its earned work and used ingredients are retained."
+	elif not activity.enabled:
+		result.label = "Review stopped production"
+		result.focus = "enable"
+		result.reason = "This facility is stopped. Use Enable facility to allow production when its requirements are met."
+	elif activity.paused:
+		result.label = "Review paused production"
+		result.focus = "pause"
+		result.reason = "This facility is paused. Use Pause / resume facility to resume it; workers, inputs and output space are still required."
 	elif activity.mode == "Stock target" and activity.stock_target <= 0:
 		result.reason = "Apply a minimum output-stock target to request this facility's first batch. Starting or committed stock already counts toward that minimum."
 	elif activity.batch.is_empty() and site.target_covered:
