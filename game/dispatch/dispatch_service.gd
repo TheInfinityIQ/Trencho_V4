@@ -76,7 +76,7 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 	if not dispatch_sites.has(dispatch_site): return _fail("Select an actual complete F07 dispatch berth.")
 	var site: Dictionary = dispatch_sites[dispatch_site]
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	if not rear.vehicles.vehicles.has(hull_id) or rear.vehicles.vehicles[hull_id].state != "Parked": return _fail("Select the same stopped F10-produced hull at F11.")
+	if hull.get("fleet_domain","") != "Rear" or not rear.vehicles.vehicles.has(hull_id) or rear.vehicles.vehicles[hull_id].state != "Parked": return _fail("Select the same stopped F10-produced hull at F11.")
 	if mode not in ["Strategic Delivery","Fleet Transfer"] or (mode == "Strategic Delivery" and hull.design_type not in ["T01","T02"]): return _fail("Strategic Delivery needs T01/T02; Fleet Transfer permits all five real hull types.")
 	if _active_manifest(hull_id) != "": return _fail("This physical hull already has an accepted manifest or unfinished return.")
 	if not rear.vehicles.readiness(hull_id).transfer_crew_eligible: return _fail("A healthy actual P08 driver must occupy the distinct Driver station.")
@@ -86,7 +86,7 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 		if seen.has(id) or passenger_promises.has(id) or incoming_people.has(id): return _fail("One real person may hold only one passenger commitment.")
 		seen[id] = true
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.is_empty() or not rear.actors.has(id) or p.owner != rear.PLAYER or p.rear_place != "Occupied" or p.health <= 0 or not p.crew_station.is_empty() or not p.carrying_stock_id.is_empty() or not p.carrying_weapon_id.is_empty() or p.pending_assignment != "None": return _fail("Passenger must be a healthy free actual rear person without carry or station: " + id)
+		if p.is_empty() or not rear.actors.has(id) or p.owner != rear.PLAYER or p.rear_place != "Occupied" or p.health <= 0 or not p.crew_station.is_empty() or not p.carrying_stock_id.is_empty() or not p.carrying_weapon_id.is_empty() or p.pending_assignment != "None" or not str(p.get("construction_truck_id","")).is_empty(): return _fail("Passenger must be a healthy free actual rear person without carry or station: " + id)
 		if not rear._eligible(p,"passenger") or rear.actors[id].phase.begins_with("Dispatch "): return _fail("Passenger must finish training or another committed task before dispatch: " + id)
 		payload += p.unit_mass_kg + p.contents_mass_kg
 	var seats: int = int(hull.vehicle_spec.passenger_seats)
@@ -720,7 +720,7 @@ func _automatic_delivery_facts(hull_id: String, type: String, quantity: int, sit
 	for job in rear.vehicles.fuel_jobs.values():
 		if job.hull == hull_id: return _fail("Waiting for this truck's actual fuel pickup, carry and tank handoff to finish while Parked.")
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	if hull.get("design_type","") not in ["T01","T02"] or not rear.vehicles.readiness(hull_id).transfer_crew_eligible: return _fail("A healthy actual qualified Driver must occupy this rear truck.")
+	if hull.get("fleet_domain","") != "Rear" or hull.get("design_type","") not in ["T01","T02"] or not rear.vehicles.readiness(hull_id).transfer_crew_eligible: return _fail("A healthy actual qualified Driver must occupy this rear truck.")
 	var unit_mass: float = _unit_mass(type)
 	if quantity <= 0 or unit_mass <= 0.0: return _fail("Choose positive actual shipment cargo.")
 	var count: int = mini(quantity,maxi(0,int(floor((float(hull.vehicle_spec.payload)-float(hull.contents_mass_kg))/unit_mass))))

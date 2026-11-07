@@ -56,6 +56,7 @@ class Person extends Entity:
 	var basic_training := false
 	var qualification := "None"
 	var crew_station := ""
+	var construction_truck_id := "" # Scoped exclusive rear utility trip, never a qualification.
 	var morale: int = 60
 	var suppression: int = 0
 	var service_seconds: float = 0.0

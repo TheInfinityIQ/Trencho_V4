@@ -175,6 +175,9 @@ func cancel_job(id: String) -> Dictionary:
 	job.cancelled = true
 	for actor in actors.values():
 		if actor.load.get("job") == id:
+			if actor.load.has("truck"):
+				construction.trucks.cancel_actor(actor)
+				continue
 			if actor.phase in ["Carry", "Drop"]:
 				_reroute(actor)
 			else:
@@ -193,13 +196,15 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	if not _eligible(p, destination):
 		return _result(false, "The person is not qualified/available for this duty.")
 	if p.pending_assignment != "None":
-		return _result(p.pending_duty == destination or (destination == "Available" and p.pending_duty == ""), "Existing safe handoff remains pending; no second assignment created.")
+		var same_handoff: bool = p.pending_duty == destination or (destination == "Available" and p.pending_duty == "")
+		if same_handoff and not str(p.get("construction_truck_id","")).is_empty(): construction.trucks.cancel_actor(actors[id])
+		return _result(same_handoff, "Existing safe handoff remains pending; no second assignment created.")
 	if destination != "Available" and _committed(destination) >= int(requests[destination].positions):
 		return _result(false, "Every actual/pending position in that duty is occupied.")
 	var a: Dictionary = actors[id]
 	var assignment := Records.Assignment.AVAILABLE if destination == "Available" else (Records.Assignment.TRAINING if destination == "students" else Records.Assignment.REAR_LABOUR)
 	var duty := "" if destination == "Available" else destination
-	if not a.load.is_empty() and a.phase not in ["Carry", "Drop"]:
+	if not a.load.is_empty() and not a.load.has("truck") and a.phase not in ["Carry", "Drop"]:
 		_release_load(a)
 	if a.phase == "Yard" and yard.state == "Entering station":
 		yard.cancel_entry(id)
@@ -211,7 +216,9 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	if not result.ok:
 		return result
 	if vehicles != null and p.duty_id.begins_with("crew:") and p.crew_station.is_empty() and requests.has(p.duty_id): requests[p.duty_id].target = 0
-	if not p.crew_station.is_empty():
+	if not p.get("construction_truck_id","").is_empty():
+		construction.trucks.cancel_actor(a)
+	elif not p.crew_station.is_empty():
 		if vehicles != null and vehicles.vehicles.has(p.holder_id): vehicles.request_exit(id)
 		else: yard.request_exit()
 	elif a.phase not in ["Carry", "Drop"] and ledger.inspect_entity(id).carrying_stock_id.is_empty():
@@ -855,7 +862,10 @@ func _start_job(a: Dictionary) -> bool:
 		"source": best.stock.holder_id, "destination": job.destination,
 		"type": job.type, "count": best.count, "mass": best.count * best.stock.unit_mass_kg, "carried": ""}
 	job.selected += 1
-	job.blocker = "Approach/pickup/carry/deposit required; reservation is not local stock"
+	if best.has("truck"):
+		construction.trucks.start(a,best)
+		return true
+	job.blocker = str(best.get("fallback",""))+"Approach/pickup/carry/deposit required; reservation is not local stock"
 	_move(a, "Approach", best.approach, 1.5)
 	_events.append({"time": time, "person": a.id, "job": job.id, "priority": effective_priority(job), "description": "Selected real eligible haul"})
 	return true
@@ -866,6 +876,7 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 		job.blocker = "Destination inaccessible; demand retained"
 		return {}
 	var best: Dictionary = {}
+	var fallback := ""
 	var source_ids: Array = [job.source]
 	for source_id in job.get("alternative_sources",[]) + job.recovery_sources:
 		if source_id not in source_ids: source_ids.append(source_id)
@@ -875,6 +886,13 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
+			if construction != null and job.type == "M11" and construction.instances.has(job.destination):
+				var utility: Dictionary = construction.trucks.option(job,person,stock)
+				fallback = str(utility.get("reason",""))
+				if utility.has("stock"):
+					if best.is_empty() or not best.has("truck") or float(utility.distance) < float(best.distance): best = utility
+					continue
+			if best.has("truck"): continue
 			# A shortage needs no carried-mass traversal. Inspect fresh mass only
 			# once real freight is eligible; Emergency callers' detached adjusted
 			# mass remains intact, and every physical reservation still rechecks.
@@ -890,7 +908,7 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 				continue
 			var distance := Layout.length(approach) + Layout.length(carry)
 			if best.is_empty() or distance < float(best.distance):
-				best = {"job": job, "stock": stock, "count": count, "approach": approach, "distance": distance}
+				best = {"job": job, "stock": stock, "count": count, "approach": approach, "distance": distance, "fallback":fallback}
 	if best.is_empty():
 		job.blocker = ("Source unreachable for 10 seconds; claim released, demand retained. " if job.has("source_release_at") else "") + "No accessible unreserved source, remaining personal allowance or accepting destination space"
 	return best
@@ -1163,7 +1181,7 @@ func audit() -> Array[String]:
 	for a in actors.values():
 		var p: Dictionary = ledger.inspect_entity(a.id)
 		if not a.load.is_empty():
-			if a.load.mass + p.contents_mass_kg > 25.0 + EPS and a.phase not in ["Carry", "Drop"]:
+			if not a.load.has("truck") and a.load.mass + p.contents_mass_kg > 25.0 + EPS and a.phase not in ["Carry", "Drop"]:
 				failures.append("Reserved load exceeds retained gear allowance: " + a.id)
 			if p.contents_mass_kg > 25.0 + EPS: failures.append("Overweight person: " + a.id)
 			if a.phase in ["Carry", "Drop"] and p.carrying_stock_id.is_empty(): failures.append("Carry lacks physical goods: " + a.id)

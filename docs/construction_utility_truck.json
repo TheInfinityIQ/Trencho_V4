@@ -1,6 +1,6 @@
 {
   "owner": "Developer C implements; Lead reviews, publishes, verifies remotely and integrates",
-  "status": "Pre-implementation source contract; runtime unverified",
+  "status": "Source implementation and focused purpose/UI/system-map checks passed; runtime and actual Godot UID pending Lead GitHub check",
   "base": "fb02cb038ed2f0d840905357674e0c31dc7c1a23",
   "diagram": "docs/diagrams/construction_utility_truck.mmd",
   "contract": [
@@ -12,5 +12,20 @@
     "Parked utility appears distinctly in Vehicles and on rear map. Existing purchased M08 carry/tank path refuels it; shortage explains Vehicles/refuel action. Ordinary fleet, army dispatch, passengers and manufacture/P08 rules stay isolated.",
     "Event-clock service owned by ConstructionService; no autoload, new process polling, plugin, framework or tests. One brief lead-owned GitHub current-code demonstration only."
   ],
-  "acceptance": "Single actual truck + same untrained hauler physically delivers bulk M11, burns finite fuel, returns/releases; demonstrate fewer journeys and travel time versus documented25kg foot1.2m/s path, unchanged ordinary qualification rule and feasible honest foot fallback. Source/maps first; no local engine."
+  "acceptance": "Single actual truck + same untrained hauler physically delivers bulk M11, burns finite fuel, returns/releases; demonstrate fewer journeys and travel time versus documented25kg foot1.2m/s path, unchanged ordinary qualification rule and feasible honest foot fallback. Source/maps first; no local engine.",
+  "implementation": {
+    "owner": "ConstructionService owns ConstructionTruckService; actor.load stays authoritative for in-flight/destination promises, ledger owns actual people/stock/tanks/station retention.",
+    "loading": "Same worker walks/picks/carries/drops each <=25kg personal-allowance portion with existing stock/carry APIs; real accumulated M11 travels on the actual truck, with per-portion delivered credit and remaining promise decrement only after physical site drop.",
+    "routes": "Existing eight-metre clearance graph plus normal T01 turn radius. Tight corners use wider14m interior clearance and24m clear endpoint stubs; every final path is checked against current footprints/other carriers. Missing legal route falls back to feet. No invalid office-door spawn: legal nearby or rear staging, otherwise pending unspawned bundle and honest foot fallback.",
+    "fuel": "Canonical40 tank once,5000kg cargo payload, existing T01 conservative rear drive speed min(12m/s,10m*45deg/s)=7.85398m/s,2M08/km. Full actual outward+empty-return path fuel plus25% reserve required; actual fractional distance burned. Existing Vehicles physical purchased-M08 carries refuel only while stopped.",
+    "lifecycle": "Scoped construction_truck_id retains same worker through empty-handed loading gaps and defers pending duty until safe full-trip handoff. Cancel/access loss/office retirement releases unpicked claim, preserves actual hand/truck cargo and unloads at a real local recoverable pile. Resolved idle truck is parked or retired; no second identity for the office. Station failure enters safe recovery; a second physical boundary failure enters explicit Recovery blocked with existing Workers/Jobs Available-reassignment retry, rather than silently leaving Board/Exit at INF. Pending same-duty requests retry the same handoff without a second assignment.",
+    "ui": "Distinct actual Construction truck map outline/name and Vehicles row/status, with fuel shortage action naming existing purchased-fuel carry button. No invented F11 slot. Outbound dispatch/passenger and normal P08 station boundaries reject construction utility identities."
+  },
+  "verification_proposal": {
+    "owner": "Lead executes one brief current-change demonstration on GitHub; C does not run engine",
+    "input": "Ignored logs/construction-truck/current_change_demonstration.gd; not a committed test or regression runner",
+    "scope": "One minimal arranged Rear/Vehicles/Construction component with one actual untrained person and500M11. That same worker foot-delivers60M11 and builds the office normally, then hauls150M11 by one utility truck trip to actual unfinished workshop, returns and releases. Record real source/site/truck quantities, identity, no qualification grant, out-of-fleet identity, measured finite fuel/distance and simulated journey duration versus documented six personal foot trips. <=160 chronological boundaries; use existing45s GitHub limit.",
+    "limits": "Not ordinary connected-game acceptance, native input/render/FPS or benchmark. Current source handles cancellation/access/retirement and physical refuel; these interactions remain runtime-unverified unless Lead supplies a proportionate actual new-action observation. No broad scenarios/failure injection/suites."
+  },
+  "static_verification": "PASS: source parser/function inventory,62 focused purpose reviews, system-map update/check, generated source-linked UI HTML and whitespace. Lead requested unchanged regression fixture: its sole generated BaseDemo source-hash update was reverted. Combined ui_function_map --check therefore intentionally reports stale button-test inventory; HTML source/line consistency is verified separately. No engine/gameplay/regression run by C."
 }

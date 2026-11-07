@@ -339,6 +339,16 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
+    specs.append(('construction-utility-truck', 'Construction: office utility truck',
+                  'Completed office bundles one finite-fuel construction-only truck; a real idle hauler loads, drives and unloads M11. Foot fallback retains honest shortage feedback.',
+                  [(BASE, 'confirm_build_at', 'Place the actual Construction Office/site', ''),
+                   (CONSTRUCTION, 'settle', 'Completed office registers its one utility truck', ''),
+                   ('game/construction/construction_truck_service.gd', '_register', 'Create actual finite-fuel office bundle once', ''),
+                   ('game/staffing/rear_simulation.gd', '_start_job', 'Select same real hauling worker and reserve physical stock', ''),
+                   ('game/construction/construction_truck_service.gd', 'start', 'Retain exclusive worker and true destination promise', ''),
+                   ('game/construction/construction_truck_service.gd', '_finish', 'Physical loading, driving, unloading and safe return', ''),
+                   ('game/vehicles/vehicle_activity.gd', 'request_refuel', 'Existing Vehicles fuel carry command uses actual purchased M08', ''),
+                   (BASE, '_transport_truck_status', 'Explain construction identity, fuel action and retained hauler', '')]))
     debug_menu = 'game/debug/rear_debug_menu.gd'
     debug_actions = 'game/debug/rear_debug_actions.gd'
     receiving = 'game/procurement/receiving_simulation.gd'

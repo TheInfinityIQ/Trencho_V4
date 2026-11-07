@@ -24,6 +24,11 @@ func register_output(id: String, slot: int, bay_id: String = "heavy-bay") -> voi
 		_add_duty(crew_duty(id,station))
 	_add_duty("fuel:" + id)
 
+func register_construction(id: String) -> void:
+	var rear: RefCounted = _rear_ref.get_ref()
+	vehicles[id] = {"id":id,"utility":true,"slot":-1,"state":"Parked","deadline":INF,"route":[],"distance":0.0,"length":0.0,"burned":0.0,"bay_id":""}
+	_add_duty("fuel:"+id)
+
 func _add_duty(id: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	rear.requests[id] = {"id":id,"target":0,"positions":1,"priority":1,"created":rear.time,"order":rear._next(),"place":"vehicle-lane","manual":true}
@@ -52,8 +57,8 @@ func register_initial_parked(id: String, slot: int, driver: String) -> Dictionar
 func eligible(person: Dictionary, duty: String) -> bool:
 	var parts := duty.split(":")
 	if person.is_empty() or parts.size() < 2 or not vehicles.has(parts[1]) or person.owner != "army-blue" or person.health <= 0: return false
-	if parts[0] == "fuel": return parts.size() == 2
-	if parts[0] != "crew" or parts.size() != 3: return false
+	if parts[0] == "fuel": return parts.size() == 2 and str(person.get("construction_truck_id","")).is_empty()
+	if parts[0] != "crew" or parts.size() != 3 or vehicles[parts[1]].get("utility",false): return false
 	var hull: Dictionary = _rear_ref.get_ref().ledger.inspect_entity(parts[1])
 	return parts[2] in hull.vehicle_spec.stations and (person.qualification == "P08" or (hull.design_type == "T03" and parts[2] == "Gunner" and person.qualification == "P04"))
 
@@ -123,7 +128,7 @@ func complete_board(person_id: String) -> Dictionary:
 func request_exit(person_id: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var id: String = rear.ledger.inspect_entity(person_id).holder_id
-	if not vehicles.has(id): return
+	if not vehicles.has(id) or vehicles[id].get("utility",false): return
 	rear.actors[person_id].phase = "Vehicle Exit" if vehicles[id].state in ["In F10","Parked"] else "Vehicle Station"
 	rear.actors[person_id].deadline = rear.time + 3.0 if rear.actors[person_id].phase == "Vehicle Exit" else INF
 
@@ -214,7 +219,7 @@ func begin_fuel_deposit(person_id: String) -> void:
 func complete_fuel_deposit(person_id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var job: Dictionary = fuel_jobs.get(person_id,{})
-	if job.is_empty() or vehicles[job.hull].state not in ["In F10","Parked"]: return _result(false,"Fuel remains with worker until the same hull stops.")
+	if job.is_empty() or (vehicles[job.hull].state not in ["In F10","Parked"] and not (vehicles[job.hull].get("utility",false) and vehicles[job.hull].state == "Retired")): return _result(false,"Fuel remains with worker until the same hull stops.")
 	var result: Dictionary = rear.ledger.load_vehicle_fuel(person_id,job.hull)
 	if result.ok:
 		fuel_jobs.erase(person_id)
@@ -404,7 +409,7 @@ func settle() -> bool:
 			if not job.claim.is_empty() and rear.stores[rear.ledger.inspect_entity(job.source).holder_id].accessible:
 				rear._report(rear.actors[person_id])
 				changed = true
-			elif job.claim.is_empty() and vehicles[job.hull].state in ["In F10","Parked"]:
+			elif job.claim.is_empty() and (vehicles[job.hull].state in ["In F10","Parked"] or (vehicles[job.hull].get("utility",false) and vehicles[job.hull].state == "Retired")):
 				var route: Array = _path_to_hull(rear.ledger.inspect_entity(person_id).position,job.hull)
 				if not route.is_empty():
 					rear._move(rear.actors[person_id],"Vehicle Fuel Carry",route,1.2)
@@ -437,6 +442,12 @@ func snapshot() -> Dictionary:
 		var row: Dictionary = vehicles[id].duplicate(true)
 		row.hull = rear.ledger.inspect_entity(id)
 		row.readiness = readiness(id)
+		if row.get("utility",false) and rear.construction != null:
+			for trip in rear.construction.trucks.trucks.values():
+				if trip.id != id: continue
+				row.utility_blocker = trip.blocker
+				row.utility_worker = trip.worker
+				row.utility_phase = trip.phase
 		row.fuel_claims = []
 		for person_id in fuel_jobs:
 			if fuel_jobs[person_id].hull == id: row.fuel_claims.append(fuel_jobs[person_id].duplicate(true))
@@ -451,6 +462,7 @@ func audit() -> Array[String]:
 		if rear.ledger.inspect_entity(id).get("fleet_domain","") == "Military": continue # G12 actual HQ receipt ends rear ownership.
 		if row.state == "In F10" and rear.heavy_owner(vehicles[id].bay_id).bay_occupant != id: errors.append("Produced hull lost F10 occupancy: " + id)
 		if row.state in ["Moving to F11","Stopped on lane"] and rear.heavy_owner(vehicles[id].bay_id).bay_occupant != id: errors.append("F10 promise released before physical clearance: " + id)
+		if row.get("utility",false): continue
 		if row.state == "Parked" and rear.yard.occupied[row.slot] != id: errors.append("Produced hull lost F11 occupancy: " + id)
 		if id not in rear.ledger.rear_fleet_hulls(rear.PLAYER): errors.append("Produced hull lost rear fleet membership: " + id)
 	return errors

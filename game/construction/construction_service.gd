@@ -6,10 +6,12 @@ const Selectable = preload("res://game/production/selectable_production.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
 const Heavy = preload("res://game/production/heavy_production.gd")
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
+const Trucks = preload("res://game/construction/construction_truck_service.gd")
 const EPS := 0.000001
 const BOUNDS := Rect2(Vector2.ZERO,Vector2(240,180))
 var _rear_ref: WeakRef
 var instances: Dictionary = {}
+var trucks: RefCounted
 var activities: Dictionary = {}
 var office_desired: Dictionary = {"construction":0}
 var office_members: Dictionary = {} # real person ID -> F12 office while serving a site
@@ -19,6 +21,7 @@ var _sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	trucks = Trucks.new(rear)
 	if rear.empty_field_opening:
 		office_desired.clear()
 		return
@@ -45,6 +48,11 @@ func _footprint_preview(kind: String, center: Vector2, quarter_turn: bool) -> Di
 	var size: Vector2 = Catalog.footprint(kind,quarter_turn)
 	var footprint := Rect2(center-size/2.0,size)
 	if not BOUNDS.encloses(footprint.grow(1.0)): return _fail("Whole building and one-metre handling edge must fit the 240 by 180 metre rear.")
+	var rear: RefCounted = _rear_ref.get_ref()
+	for truck in trucks.trucks.values():
+		if not truck.get("created",false): continue
+		var at: Vector2 = rear.ledger.inspect_entity(truck.id,{},false).position
+		if footprint.grow(4.0).has_point(at): return _fail("Construction truck occupies this footprint/vehicle clearance. Let it return before placing here.")
 	var door := center-Vector2(size.x/2.0+1.0,0)
 	for row in instances.values():
 		if row.state in ["Dismantled","Cancelled"] and _rear_ref.get_ref().ledger.loose_stock_mass_at(row.id) <= EPS: continue
@@ -428,7 +436,7 @@ func _ready(row: Dictionary) -> bool:
 
 func next_boundary() -> float:
 	var rear: RefCounted = _rear_ref.get_ref()
-	var next := INF
+	var next: float = trucks.next_boundary()
 	for row in instances.values():
 		if row.state in ["Building","Dismantling"] and _workers(row) > 0 or (row.state == "Awaiting M11" and _ready(row)):
 			var required: float = 20.0 if row.state == "Dismantling" else float(row.work)
@@ -450,12 +458,12 @@ func advance_work(delta: float) -> void:
 			row.progress = minf(required,float(row.progress)+delta*_workers(row))
 			if (required-float(row.progress))/_workers(row) <= EPS: row.progress = required
 
-func advance_to(_next_time: float) -> void:
-	pass
+func advance_to(next_time: float) -> void:
+	trucks.advance_to(next_time)
 
 func settle() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	var changed := false
+	var changed: bool = trucks.settle()
 	for row in instances.values():
 		if row.state == "Clearing":
 			_queue_clearance(row,rear)

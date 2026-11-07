@@ -124,6 +124,56 @@ func create_heavy_output(admission: String, claimant: String, id: String, type: 
 	return _ok("One empty heavy output created.", id)
 
 
+func create_construction_truck(id: String, place: String, owner: String) -> Dictionary:
+	var result := add_carrier(id,place,owner,owner,"T01","Construction")
+	if not result.ok: return result
+	var hull: Records.Entity = _entities[id]
+	hull.description = "Construction-only utility truck; office bundle"
+	hull.vehicle_spec = preload("res://game/production/vehicle_specs.gd").TYPES.T01.duplicate(true)
+	hull.vehicle_spec.passenger_seats = 0
+	hull.unit_mass_kg = hull.vehicle_spec.mass
+	hull.health = int(hull.vehicle_spec.health)
+	hull.max_health = hull.health
+	hull.fuel = float(hull.vehicle_spec.tank_capacity)
+	_fuel_initial += hull.fuel
+	_event("Completed office supplied one finite-fuel construction utility truck",id)
+	return result
+
+func retain_construction_driver(person_id: String, truck_id: String) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(truck_id)
+	if person == null or hull == null or hull.fleet_domain != "Construction" or person.owner != hull.owner or person.health <= 0 or person.rear_place != "Occupied" or person.assignment != Records.Assignment.REAR_LABOUR or person.duty_id != "hauling" or person.pending_assignment != -1 or not person.construction_truck_id.is_empty() or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty():
+		return _reject("UTILITY_WORKER_BUSY","Only the same idle rear hauler may operate this construction truck.")
+	person.construction_truck_id = truck_id
+	return _ok("Same actual hauler retained exclusively for this utility trip.",person_id)
+
+func construction_driver_station(person_id: String, truck_id: String, entering: bool) -> Dictionary:
+	var person := _person(person_id)
+	var hull: Records.Entity = _entities.get(truck_id)
+	if person == null or hull == null or hull.fleet_domain != "Construction" or person.construction_truck_id != truck_id or person.owner != hull.owner or person.health <= 0 or (entering and hull.health <= 0):
+		return _reject("INVALID_UTILITY_DRIVER","The retained living hauler and their construction-only hull are required.")
+	if entering:
+		if not _colocated(person_id,truck_id) or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty(): return _reject("UTILITY_NOT_READY","Finish real loading and reach the truck before entering.")
+		for other in _entities.values():
+			if other is Records.Person and other.holder_id == truck_id: return _reject("UTILITY_OCCUPIED","The construction truck already has its actual driver.")
+		person.holder_id = truck_id
+		person.position = Vector2.ZERO
+		person.crew_station = "Driver"
+	else:
+		if person.holder_id != truck_id or person.crew_station != "Driver": return _reject("UTILITY_NOT_SEATED","Only this actual utility driver may leave.")
+		person.position = _world_position(truck_id)
+		person.holder_id = "rear"
+		person.crew_station = ""
+	return _ok("Construction-only station boundary; qualification unchanged.",person_id)
+
+func release_construction_driver(person_id: String, truck_id: String) -> Dictionary:
+	var person := _person(person_id)
+	if person == null or person.construction_truck_id != truck_id or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty(): return _reject("UTILITY_HANDOFF_PENDING","Finish actual cargo and station handoff first.")
+	person.construction_truck_id = ""
+	if person.pending_assignment != -1: _set_assignment(person,person.pending_assignment,person.pending_duty)
+	return _ok("Actual utility hauler released safely; qualifications unchanged.",person_id)
+
+
 func rear_fleet_hulls(owner: String) -> Array[String]:
 	var result: Array[String] = []
 	for entity in _entities.values():
@@ -213,6 +263,7 @@ func map_markers(excluded_owner: String = "army-red") -> Array[Dictionary]:
 		if entity.owner == excluded_owner or entity.kind not in [Records.Kind.PERSON, Records.Kind.CARRIER, Records.Kind.HEAVY_OBJECT, Records.Kind.STOCK]: continue
 		var marker := {"id": entity.id, "kind": kinds[entity.kind], "owner": entity.owner,
 			"design_type": entity.design_type, "holder_id": entity.holder_id, "position": _world_position(entity.id), "quantity": entity.quantity,
+			"fleet_domain":entity.fleet_domain,
 			"carrying_stock_id": entity.carrying_stock_id if entity is Records.Person else ""}
 		if entity is Records.Person:
 			marker.assignment = Records.ASSIGNMENT_NAMES[entity.assignment]
@@ -547,7 +598,7 @@ func set_rear_place(person_id: String, expected: String, next: String) -> Dictio
 func board_dispatch_passenger(person_id: String, hull_id: String) -> Dictionary:
 	var person := _person(person_id)
 	var hull: Records.Entity = _entities.get(hull_id)
-	if person == null or hull == null or hull.vehicle_spec.is_empty() or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not _colocated(person_id,hull_id):
+	if person == null or hull == null or hull.fleet_domain == "Construction" or hull.vehicle_spec.is_empty() or person.health <= 0 or not person.crew_station.is_empty() or not person.carrying_stock_id.is_empty() or not _colocated(person_id,hull_id):
 		return _reject("INVALID_PASSENGER", "A healthy actual passenger must finish reporting to the stopped hull.")
 	if person.holder_id == hull_id: return _reject("ALREADY_ONBOARD","The passenger is already aboard.")
 	person.holder_id = hull_id
@@ -733,6 +784,7 @@ func finish_carry_to_carrier(person_id: String, hull_id: String) -> Dictionary:
 	if person == null or hull == null or hull.vehicle_spec.is_empty() or person.carrying_stock_id.is_empty() or not _colocated(person_id,hull_id):
 		return _reject("INVALID_LOAD","A real worker and carried stock must reach this stopped hull.")
 	var carried := _stock(person.carrying_stock_id)
+	if hull.fleet_domain == "Construction" and (person.construction_truck_id != hull_id or carried.design_type != "M11" or _contents_mass(hull_id)+carried.quantity*carried.unit_mass_kg > float(hull.vehicle_spec.payload)+0.000001): return _reject("UTILITY_CARGO_ONLY","Only the retained construction hauler may load actual M11 within payload.")
 	var invalid := _check_transfer(carried,carried.quantity,hull_id,"")
 	if not invalid.is_empty(): return invalid
 	var loaded := _split_stock(carried,carried.quantity,hull_id)
@@ -795,7 +847,7 @@ func request_assignment(person_id: String, assignment: int, duty_id: String) -> 
 		return _reject("MISSING_DUTY", "An assigned person needs a named duty.")
 	if person.pending_assignment != -1:
 		return _reject("HANDOFF_PENDING", "Cancel or complete the existing pending duty handoff first.")
-	if not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not person.crew_station.is_empty():
+	if not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not person.crew_station.is_empty() or not person.construction_truck_id.is_empty():
 		person.pending_assignment = assignment
 		person.pending_duty = duty_id
 		_event("Duty requested; waiting for safe carry/station handoff", person_id)
@@ -826,7 +878,7 @@ func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: S
 	var person := _person(person_id)
 	if person == null or not (person.assignment == Records.Assignment.REAR_LABOUR or (person.assignment == Records.Assignment.HQ_DUTY and person.duty_id == "fixed-hq")):
 		return _reject("NOT_LABOUR", "An actual rear or HQ logistics worker is required for this carry.")
-	if not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or person.pending_assignment != -1 or not person.crew_station.is_empty():
+	if not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or (person.pending_assignment != -1 and person.construction_truck_id.is_empty()) or not person.crew_station.is_empty():
 		return _reject("PERSON_BUSY", "Finish the existing carry or pending handoff first.")
 	var stock := _stock(stock_id)
 	if stock != null and stock.unit_mass_kg * quantity + _contents_mass(person.id) > 25.0:
@@ -860,7 +912,7 @@ func complete_driver_entry(person_id: String, carrier_id: String) -> Dictionary:
 
 func complete_driver_exit(person_id: String, place_id: String) -> Dictionary:
 	var person := _person(person_id)
-	if person == null or person.crew_station != "Driver" or not _is_place(place_id) or not _colocated(person_id, place_id):
+	if person == null or not person.construction_truck_id.is_empty() or person.crew_station != "Driver" or not _is_place(place_id) or not _colocated(person_id, place_id):
 		return _reject("INVALID_STATION_EXIT", "Park at the real exit place and finish stationary handling first.")
 	person.holder_id = place_id
 	person.position = Vector2.ZERO
@@ -876,7 +928,7 @@ func complete_vehicle_station_entry(person_id: String, carrier_id: String, stati
 	if person == null or carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.vehicle_spec.is_empty() or station not in carrier.vehicle_spec.stations:
 		return _reject("INVALID_STATION", "Choose a real manufactured hull and one of its distinct stations.")
 	var qualified: bool = person.qualification == "P08" or (carrier.design_type == "T03" and station == "Gunner" and person.qualification == "P04")
-	if not qualified or person.owner != carrier.owner or person.health <= 0:
+	if carrier.fleet_domain == "Construction" or not person.construction_truck_id.is_empty() or not qualified or person.owner != carrier.owner or person.health <= 0:
 		return _reject("UNQUALIFIED_STATION", "This station needs its actual qualified living person.")
 	if person.assignment != Records.Assignment.REAR_LABOUR or person.duty_id != "crew:%s:%s" % [carrier_id, station] or person.pending_assignment != -1 or not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty() or not _colocated(person_id, carrier_id):
 		return _reject("PERSON_BUSY", "Finish exclusive reporting and stationary entry at this hull.")
@@ -893,7 +945,7 @@ func complete_vehicle_station_entry(person_id: String, carrier_id: String, stati
 func complete_vehicle_station_exit(person_id: String, carrier_id: String) -> Dictionary:
 	var person := _person(person_id)
 	var carrier: Records.Entity = _entities.get(carrier_id)
-	if person == null or carrier == null or person.holder_id != carrier_id or person.crew_station.is_empty():
+	if person == null or carrier == null or carrier.fleet_domain == "Construction" or person.holder_id != carrier_id or person.crew_station.is_empty():
 		return _reject("INVALID_STATION_EXIT", "Only an actual stopped-hull occupant can leave this station.")
 	var position := _world_position(carrier_id)
 	person.holder_id = "rear"
@@ -949,7 +1001,7 @@ func finish_carry(person_id: String, safe_place_id: String) -> Dictionary:
 	var deposited := _split_stock(carried, carried.quantity, safe_place_id)
 	_event("Carry physically deposited into safe storage", deposited.id)
 	person.carrying_stock_id = ""
-	if person.pending_assignment != -1:
+	if person.pending_assignment != -1 and person.construction_truck_id.is_empty():
 		_set_assignment(person, person.pending_assignment, person.pending_duty)
 	return _ok("Goods deposited once; safe duty handoff completed.", deposited.id)
 
@@ -1571,6 +1623,8 @@ func inspect_entity(id: String, snapshot_masses: Dictionary = {}, include_mass: 
 		result.qualification = person.qualification
 		result.rear_place = person.rear_place
 		result.crew_station = person.crew_station
+		result.construction_truck_id = person.construction_truck_id
+		if not person.construction_truck_id.is_empty(): result.blocked_reason = "Finish construction truck cargo/station handoff before changing duty."
 		result.service_seconds = person.service_seconds
 		result.leader_appointment = person.leader_appointment
 		result.bleed_remaining = maxf(0.0, person.bleed_until - _time) if person.assignment == Records.Assignment.WOUNDED else 0.0
@@ -1724,7 +1778,7 @@ func audit() -> Array[String]:
 			var hull: Records.Entity = _entities.get(entity.holder_id)
 			var valid: bool = hull != null and hull.kind == Records.Kind.CARRIER and entity.assignment in [Records.Assignment.REAR_LABOUR,Records.Assignment.FORMATION_DUTY,Records.Assignment.WOUNDED,Records.Assignment.RECOVERY,Records.Assignment.DEAD] and entity.carrying_stock_id.is_empty()
 			if valid and not hull.vehicle_spec.is_empty():
-				valid = entity.crew_station in hull.vehicle_spec.stations and (entity.qualification == "P08" or (hull.design_type == "T03" and entity.crew_station == "Gunner" and entity.qualification == "P04"))
+				valid = entity.crew_station in hull.vehicle_spec.stations and ((hull.fleet_domain == "Construction" and entity.construction_truck_id == hull.id and entity.duty_id == "hauling") or entity.qualification == "P08" or (hull.design_type == "T03" and entity.crew_station == "Gunner" and entity.qualification == "P04"))
 			else: valid = valid and entity.crew_station == "Driver" and entity.qualification == "P08"
 			if not valid: failures.append("Invalid occupied vehicle station: " + entity.id)
 			var key: String = entity.holder_id + ":" + entity.crew_station
