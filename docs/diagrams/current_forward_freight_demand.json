@@ -35,5 +35,6 @@
     "Existing assessment cadence explicitly governs need freshness; physical Ready guard remains unchanged and validates captured load/route quantity."
   ],
   "verification": "Source review and required map/whitespace maintenance initially; no local engine, regression, broad scenario, failure injection, matrix or benchmark. Current-production parsing only after normal publication; any brief direct new-code demonstration requires explicit reviewed scope.",
-  "next_owners": "B owns implementation after Designer behavior confirmation; A independent exact-head peer review; Designer game identity; lead final technical/checks/merge."
+  "next_owners": "B owns implementation after Designer behavior confirmation; A independent exact-head peer review; Designer game identity; lead final technical/checks/merge.",
+  "feedback": "After the existing load loop, already-computed net needs distinguish zero (neutral no-additional-forward-load message) from positive need without positive HQ quantity (waiting for actual HQ supplies). Never infer stock coverage or supply success from need retirement. Existing loader/handler/truck/queue reasons stay unchanged."
 }

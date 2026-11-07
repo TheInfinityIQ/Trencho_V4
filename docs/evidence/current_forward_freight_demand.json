@@ -1,5 +1,5 @@
 {
-  "status": "implemented_source_review_pending_not_engine_parsed_or_run",
+  "status": "implemented_source_review_with_lead_feedback_correction_no_engine",
   "base": "ffc4c828",
   "before_code_contracts": [
     "94097dc",
@@ -27,9 +27,12 @@
   ],
   "next_owners": "A exact-head technical peer; Designer game identity; lead final technical/current-production parsing/merge. B resolves concrete findings and submits the feature PR.",
   "static_maintenance": {
-    "source_map": "Three changed/new function purposes explicitly source-reviewed; final --check required at freeze.",
-    "ui_map": "Regenerated source links/button inventory; final --check required at freeze.",
+    "source_map": "Three changed/new function purposes explicitly source-reviewed; final freshness result reported with frozen-head handoff.",
+    "ui_map": "Current source links/button inventory regenerated; final freshness result reported with frozen-head handoff.",
     "whitespace": "git diff --check passed.",
     "meaning": "Static source grammar and metadata only; not Godot compilation or execution."
-  }
+  },
+  "source_observations": [
+    "Lead identified unsupported old footer cause after zero retirement. Corrected only feedback using existing computed needs: zero is neutral; positive unmet need with no available HQ load waits for HQ supplies. No additional stock read or admission behavior change."
+  ]
 }
