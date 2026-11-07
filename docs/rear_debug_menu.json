@@ -40,7 +40,7 @@
   "worker_delivery_amendment": {
     "request": "Dawson7November: Force deliver must also deliver workers",
     "before_code": "Diagram updated before adding personnel completion",
-    "status": "Implementation pending",
+    "status": "Implemented; focused worker-arrival check and review pending (author source checkpoint)",
     "requisites": [
       "No clock advance or duplicated hires",
       "Pending actual passengers only; do not move already-arrived/reassigned people",

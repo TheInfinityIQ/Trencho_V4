@@ -345,7 +345,10 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
     for action, title, domain in [
         ('force_deliver', 'Force deliver now', [
             (receiving, 'debug_deliver_resources', 'Finish pending freight and clear unload reservations', ''),
-            ('game/identity/identity_ledger.gd', 'debug_deposit_stock', 'Deposit actual stock and safely clear carry state', '')]),
+            ('game/identity/identity_ledger.gd', 'debug_deposit_stock', 'Deposit actual stock and safely clear carry state', ''),
+            (debug_actions, '_finish_people_delivery', 'Also finish pending personnel orders', ''),
+            (receiving, 'debug_deliver_people', 'Arrive the same purchased passengers and clear schedules', ''),
+            ('game/identity/identity_ledger.gd', 'complete_person_arrival', 'Make each actual arrival available in the rear', '')]),
         ('infinite_resources', 'Infinite resources (+1,000 each)', [
             (receiving, 'debug_order_raw_resources', 'Create this zero-cost raw-resource batch', ''),
             (receiving, 'debug_deliver_resources', 'Deliver only the new batch immediately', '')]),

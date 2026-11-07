@@ -159,6 +159,45 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 	return result
 
 
+func debug_deliver_people() -> Dictionary:
+	var ids: Array[String] = []
+	var arrived := 0
+	for order in _orders:
+		if order.kind != "Personnel" or order.state in ["Cancelled","Complete"]: continue
+		if order.state == "Ordered": _dispatch(order)
+		for person_id in order.passenger_ids:
+			var person: Dictionary = ledger.inspect_person_status(person_id)
+			# Player-owned passengers already arrived, even if reassigned/deployed.
+			if person.get("owner","") == PLAYER: continue
+			if person.get("owner","") != SUPPLIER or person.get("assignment","") != "Passenger":
+				return _reject("INVALID_DEBUG_PASSENGER","Only the same actual arriving passenger may be force-delivered.")
+			var moved: Dictionary = ledger.move_entity(person_id,"personnel",personnel_position)
+			if not moved.ok: return moved
+			var completed: Dictionary = ledger.complete_person_arrival(person_id,"personnel",PLAYER)
+			if not completed.ok: return completed
+			_walks = _walks.filter(func(walk: Dictionary) -> bool: return walk.person_id != person_id)
+			order.people_arrived += 1
+			order.people_reserved -= 1
+			order.people_exited = maxi(int(order.people_exited),int(order.people_arrived))
+			arrived += 1
+		if order.people_arrived != order.expected_people:
+			return _reject("INCOMPLETE_DEBUG_ARRIVAL","Personnel arrival counts do not match the actual purchased passengers.")
+		var moved: Dictionary = ledger.move_entity(order.id,"supplier-transit",_exit(order))
+		if not moved.ok: return moved
+		order.people_exited = order.expected_people
+		order.motion = {}
+		order.next_at = INF
+		order.admission = false
+		order.debug_delivered = true
+		_set_state(order,"Complete")
+		ids.append(order.id)
+	_event("DEBUG same purchased personnel delivered immediately",", ".join(ids))
+	var result := _ok("DEBUG: delivered %d arriving worker(s) immediately." % arrived,ids)
+	result.people = arrived
+	result.changed = not ids.is_empty()
+	return result
+
+
 func buy_people() -> Dictionary:
 	if personnel_admitted() >= PERSONNEL_LIMIT:
 		return _reject("PERSONNEL_QUEUE_FULL", "Both personnel vehicle commitments are occupied, including en-route/disembarking/clearing services.")

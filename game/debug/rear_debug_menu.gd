@@ -20,7 +20,7 @@ func _ready() -> void:
 	add_child(scroll)
 	var layout := UI.column(scroll,true)
 	UI.label(layout,"Prototype cheats · using these marks the current session DEBUG.",14,UI.ACCENT,true)
-	_add_action(layout,"force_deliver","Force deliver now","Immediately finish pending incoming resource orders, including unloading.")
+	_add_action(layout,"force_deliver","Force deliver now","Immediately deliver pending supplies and workers, including unloading and disembarking.")
 	_add_action(layout,"instant_build","Instant build","Complete all pending rear-base buildings without waiting for materials or labour.")
 	_add_action(layout,"infinite_resources","Infinite resources (+1,000 each)","One free, immediately delivered batch of all nine raw resources per click.")
 	result_label = UI.label(layout,START_MESSAGE,13,UI.MUTED,true)
