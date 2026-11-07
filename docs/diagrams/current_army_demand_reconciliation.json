@@ -7,11 +7,7 @@
       "game/battlefield/opening_resupply.gd",
       "game/logistics/rear_logistics.gd"
     ],
-    "C_separate_source_to_compose": [
-      "game/rear_base/base_demo.gd Cancel-enabled predicate",
-      "game/logistics/army_supply_view.gd informational-blocker classification"
-    ],
-    "records": "This contract/flow, proportional feature evidence, C own records, final regenerated combined source/UI/button maps. No team/workflow/test changes."
+    "records": "This contract/flow, proportional feature evidence and final regenerated source/UI/button maps only. C performs read-only feedback review; withdrawn Covered-state UI proposal is not composed. No team/workflow/test changes."
   },
   "authority": {
     "military": "Existing resupply tick computes current personal/rack deficits minus couriers, actual local/HQ unreserved stock and accepted forward freight, once. Changed shortage including zero publishes through existing signal before any forward-plan early return.",
@@ -27,24 +23,24 @@
     "coalescing": "Unchanged publication coalesces at source; unchanged target performs no wake/notification. Existing explicit intent/receipt invalidation remains owned by existing events."
   },
   "state_contract": {
-    "Covered": "Automatic row only, with no owned manifest remaining and no new uncovered work. cancelled false; explicit holds untouched. Existing visible reason is informational, not a red blocker.",
+    "Complete": "Reuse existing automatic request lifecycle Complete ONLY after no owned manifest remains and no new uncovered work. This retires additional demand; delivered/credited stay actual. cancelled false; explicit holds untouched. Existing guards disable/reject cancellation before hold writes and exclude its reason from red blockers.",
     "message": "No additional automatic load currently needed; stock or existing commitments cover this request. Physical deliveries and recipient issue keep their own progress.",
-    "guard": "Owner rejects automatic Covered cancellation before any hold write; C disables corresponding Cancel and omits its reason only from global blockers.",
     "active": "Accepted physical state/cancel stays intact even when new demand is zero. Missing manifest stays blocked. Terminal record first passes unchanged credit and clear path.",
-    "resume": "Later positive genuine uncovered quantity requeues Covered row normally without Resume; explicitly held/cancelled rows remain guarded. Manual rows never Covered."
+    "resume": "Later positive genuine uncovered quantity creates the next normal automatic row without Resume; explicitly held/cancelled rows remain guarded. Manual rows never retired by reconciliation.",
+    "representation_decision": "Latest lead correction withdrew Covered and its two UI edits before A production edits; existing Complete representation and existing guards suffice."
   },
   "acceptance": [
     "Fresh automatic need100 assessed30/0 limits new uncommitted commitments to30/0; illustrative arithmetic only, not a stock/threshold change.",
     "Publish all changed shortages before Pending/Ready or failed forward-plan early return; forward admission ownership unchanged.",
     "Actual received/accepted/manual/other commitments count exactly once, including unloaded-but-not-yet-credited lag.",
     "Never rewrite accepted manifest or real delivered/credited counters; preserve manual fixed quantities, cancellation holds and safe return.",
-    "Covered feedback and command eligibility agree; later genuine need remains automatic; no new poll/timer/cache/stock grant/rate/threshold/HQ6000 change."
+    "Neutral completion feedback and command eligibility agree; later genuine need remains automatic; no new poll/timer/cache/stock grant/rate/threshold/HQ6000 change."
   ],
   "verification": "Source review and required static metadata/whitespace maintenance only initially. No local engine, regression, broad scenario, failure injection, coverage matrix or benchmark. Required current-production CI parsing after publication; at most one necessary brief explicitly supplied/reviewed new-code demonstration later, not a suite.",
   "references": [
     "Designer accepted91/92 downward/zero proposal and prospective alignment",
-    "C/lead agreed Covered interface",
+    "C source consultation and latest lead existing Complete representation decision",
     "https://docs.godotengine.org/en/stable/classes/class_signal.html"
   ],
-  "next_owners": "A freezes implementation then composes C exact two-file patch; B independent exact-head technical peer; lead technical/check/publication/integration; Designer exact game-identity review."
+  "next_owners": "A freezes two-file implementation; C read-only feedback/guard review; B independent exact-head technical peer; lead technical/check/publication/integration; Designer exact game-identity review."
 }
