@@ -1,14 +1,15 @@
 {
-  "status": "prospective boundary only; awaiting verified Artist mapping and Designer assets-ready acceptance; no art or production edits",
+  "status": "Designer assets-ready requirement accepted; source boundary proposed; verified asset mapping pending",
   "base": "1d6851d6",
   "owner": "C only implementer; Artist/lead verified asset subset and provenance; Designer visual coverage/meaning; lead source claim, publication and bounded remote actual-build captures.",
   "priority": "Normal paused empty-field opening must visibly use cohesive art without adding people/buildings/stock or altering simulation. Prior two-icon pass remains intact.",
   "proposed_source_scope": {
     "primary": "game/rear_base/base_map.gd drawing only: ground, existing scene-owned character, fixed Supply Table/arrival landmark and existing placement ghost; later existing people/completed facilities/stock/carriers under exact approved mappings.",
     "secondary": "game/battlefield/battlefield_view.gd only if Designer includes matching exact known-unit coverage in this increment; preserve contact-report information boundary.",
-    "marker_boundary": "Existing kind/design_type/owner/holder/quantity fields and construction rows suffice for many mappings; any new role/status projection needs one concrete lead-approved additive field from already-looped entity, never new ledger inspection/scan.",
+    "marker_boundary": "identity_ledger.gd::map_markers narrow additive Person assignment/rear_place plus carried stock type/quantity from already-owned carrying_stock_id via direct record lookup, if needed for accepted role/count distinction. No inventory mass scan or new visible entities. Existing stock design_type/quantity already supports actual starting M11 labels.",
     "assets": "Small exact creator-verified subset, original licence/provenance and actual engine-produced import sidecars; no catalogue bulk imports or generated imagery.",
-    "validation": "Existing explicit texture-dependency import list changes only for approved compile dependencies if required. Lead owns bounded remote actual current-build capture and generated sidecars."
+    "validation": "Existing explicit texture-dependency import list changes only for approved compile dependencies if required. Lead owns bounded remote actual current-build capture and generated sidecars.",
+    "preview_hint": "base_demo.gd::preview_build_at only: attach already-selected kind to display preview, including illegal plan lacking kind, without changing validation/result/footprint or placement command."
   },
   "render_flow": [
     "Artist/lead supplies verified original files and precise role/state/source-rect mapping; Designer supplies assets-ready coverage. Commit final mapping before code.",
@@ -31,6 +32,18 @@
     "state": "PENDING_VERIFIED_MAPPING",
     "entries": []
   },
-  "capture_dependency": "Lead arranges bounded remote render of this exact build; C inspects returned real screenshots and resolves concrete art defects before final handoff. Static parsing alone is insufficient for assets-ready claim.",
-  "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features."
+  "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
+  "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features.",
+  "accepted_coverage": {
+    "opening": "Normal paused field: neutral player, coherent decorative grass/earth, Supply Table/arrival cue and actual starting M11 stock/count. Preserve2500 requisition,500 actual M11 and no granted workers/workshops/vehicles.",
+    "rear": "Actual unarmed rear workers, resource stacks/carry and empty-hand distinction with labels/counts; intended placement ghost/unfinished/complete category treatment inside true footprint/door/hit bounds; distinct related-art categories including School/Logistics/Materials/Vehicle Works/parking. No fake cargo/fuel/work state.",
+    "battlefield": "Own soldiers distinct from rear workers and exact known transport/armour roles at useful zoom only when verified art supplied. CONTACT uncertainty and actual terrain/objective/HQ/stop meaning preserved; explicit remaining roster gaps allowed."
+  },
+  "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
+  "real_missing_inputs": [
+    "Verified neutral/unarmed player/worker originals and matching ground/table/resource/facility-category art mappings from Artist/lead.",
+    "Current Person marker lacks role and carried material/count; proposed narrow scalar projection needs lead disposition.",
+    "Illegal placement preview can lack intended kind; proposed display-only hint in existing preview builder.",
+    "Root actual-build viewport captures of normal opening + labelled arranged rear-art example; battlefield only if this revision claims it."
+  ]
 }
