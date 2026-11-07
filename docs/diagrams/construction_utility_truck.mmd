@@ -1,0 +1,15 @@
+flowchart TD
+  Office[ConstructionService completed office] --> Bundle[One actual construction-only T01 utility identity; finite full tank]
+  Bundle --> Trucks[Office-owned ConstructionTruckService on rear event clock]
+  Haul[Rear selects actual pending-site M11 haul + idle assigned hauler] --> Trucks
+  Trucks --> Claims[Existing source claim + actor destination-space promise]
+  Claims --> Load[Same worker: walk, pick up <=25kg, carry, load actual truck]
+  Load --> Driver[Scoped ledger utility station; no qualification grant]
+  Driver --> Travel[Clear rear vehicle route; T01 speed and measured fuel burn]
+  Travel --> Unload[Same worker physically carries <=25kg portions to actual site]
+  Unload --> Return[Empty truck returns; safe station exit and same worker released]
+  Trucks --> Stop[Cancel, office retirement, pending duty, obstruction]
+  Stop --> Recover[Release unpicked claims; retain and physically unload cargo to recoverable local pile]
+  Fuel[Existing Vehicles physical M08 refuel command] --> Bundle
+  Trucks --> Fallback[Foot haul with explicit no-office, busy, route or fuel reason]
+  Bundle --> Boundary[Excluded from ordinary fleet, dispatch, passengers and P08 exception]

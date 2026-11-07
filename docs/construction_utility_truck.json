@@ -1,0 +1,16 @@
+{
+  "owner": "Developer C implements; Lead reviews, publishes, verifies remotely and integrates",
+  "status": "Pre-implementation source contract; runtime unverified",
+  "base": "fb02cb038ed2f0d840905357674e0c31dc7c1a23",
+  "diagram": "docs/diagrams/construction_utility_truck.mmd",
+  "contract": [
+    "One actual construction-domain T01-equivalent truck per completed Construction Office; no truck before completion or duplicate activation. One40-unit initial tank,5000kg payload, normal T01 rear speed and2units/km fuel consumption. No free refill.",
+    "Existing idle assigned hauling worker retains exclusive actual identity/duty through the trip. Temporary utility station is scoped by this truck identity, grants no training and cannot board ordinary hulls without P08.",
+    "Only actual M11 demand to Awaiting M11/Building construction sites selects truck. Same actor load participates in ordinary in-flight/source/destination accounting. Existing25kg hand carries physically load/unload the bulk cargo at clear roadside points; no remote stock transfer.",
+    "Existing rear vehicle path, T01 turning/speed and footprint clearance are rechecked. Empty return is budgeted in fuel. No time jump, new people, reserve-only cargo or multiplied goods.",
+    "Cancellation, office retirement, reassignment and obstruction release unpicked claims; same worker retains carried cargo, unloads to a real local recoverable pile when necessary and releases safely. Busy or unresolved old truck cannot start another job or be replaced.",
+    "Parked utility appears distinctly in Vehicles and on rear map. Existing purchased M08 carry/tank path refuels it; shortage explains Vehicles/refuel action. Ordinary fleet, army dispatch, passengers and manufacture/P08 rules stay isolated.",
+    "Event-clock service owned by ConstructionService; no autoload, new process polling, plugin, framework or tests. One brief lead-owned GitHub current-code demonstration only."
+  ],
+  "acceptance": "Single actual truck + same untrained hauler physically delivers bulk M11, burns finite fuel, returns/releases; demonstrate fewer journeys and travel time versus documented25kg foot1.2m/s path, unchanged ordinary qualification rule and feasible honest foot fallback. Source/maps first; no local engine."
+}
