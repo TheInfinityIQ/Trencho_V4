@@ -105,6 +105,75 @@
   "archive_verification": {
     "roguelike_archive": "def6c164bb58b4bef7b865c1100c1ad257508bca8bb916cbba092bc72039992d",
     "transparent_sheet": "c35f14ab9a23e2435b3082712fb13e9d3cf38a1110226d666eac7c2f84c537e8",
-    "status": "Verified original archive/licence and inspected sheet. NO person rect selected; await Artist exact body/clothes/hair and inspection-only composite approval."
+    "status": "Original character archive/sheet/licence verified; supplied five unarmed body/clothing/hair layers and root source-inspection composite visually inspected. Native AtlasTexture wrappers prepared, no person render until Designer approval."
+  },
+  "candidate_person_mapping": {
+    "state": "SOURCE_VERIFIED_AWAITING_DESIGNER_COMPOSITE_APPROVAL",
+    "provenance": "game/test_art/roguelike_characters/provenance.json",
+    "layers": [
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_body.tres",
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_trousers.tres",
+        "source_rect": [
+          51,
+          17,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_shoes.tres",
+        "source_rect": [
+          68,
+          17,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/teal_shirt.tres",
+        "source_rect": [
+          187,
+          0,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_hair.tres",
+        "source_rect": [
+          323,
+          0,
+          16,
+          16
+        ]
+      }
+    ],
+    "not_game_capture": true
+  },
+  "candidate_stock_mapping": {
+    "state": "SOURCE_VERIFIED_AWAITING_DESIGNER",
+    "sheet": "game/test_art/roguelike_indoor/indoor_sheet.png",
+    "plain_bin_rect": [
+      374,
+      68,
+      16,
+      16
+    ],
+    "blue_bin_rect": [
+      357,
+      68,
+      16,
+      16
+    ],
+    "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock."
   }
 }

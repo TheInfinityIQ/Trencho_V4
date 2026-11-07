@@ -1,0 +1,71 @@
+{
+  "pack": "Roguelike Characters pack",
+  "creator": "Kenney Vleugels / Kenney",
+  "creator_page": "https://kenney.nl/assets/roguelike-characters",
+  "creator_download_url": "https://opengameart.org/sites/default/files/Roguelike%20Characters%20pack.zip",
+  "licence": "CC0 1.0",
+  "archive_sha256": "def6c164bb58b4bef7b865c1100c1ad257508bca8bb916cbba092bc72039992d",
+  "archive_bytes": 144477,
+  "sheet_archive_entry": "Spritesheet/roguelikeChar_transparent.png",
+  "sheet_path": "game/test_art/roguelike_characters/character_sheet.png",
+  "sheet_sha256": "c35f14ab9a23e2435b3082712fb13e9d3cf38a1110226d666eac7c2f84c537e8",
+  "sheet_dimensions": [
+    918,
+    203
+  ],
+  "licence_archive_entry": "License.txt",
+  "licence_path": "game/test_art/roguelike_characters/license.txt",
+  "licence_sha256": "ad3e4820ff1bd0405070319b49d5f6a5e9d64e14d798b308cb4d6228941c4da4",
+  "original_bytes_modified": false,
+  "mapping_status": "SOURCE-INSPECTED CANDIDATE; Designer composite approval pending; not rendered yet",
+  "layers": [
+    {
+      "resource": "game/test_art/roguelike_characters/neutral_body.tres",
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "resource": "game/test_art/roguelike_characters/neutral_trousers.tres",
+      "source_rect": [
+        51,
+        17,
+        16,
+        16
+      ]
+    },
+    {
+      "resource": "game/test_art/roguelike_characters/neutral_shoes.tres",
+      "source_rect": [
+        68,
+        17,
+        16,
+        16
+      ]
+    },
+    {
+      "resource": "game/test_art/roguelike_characters/teal_shirt.tres",
+      "source_rect": [
+        187,
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "resource": "game/test_art/roguelike_characters/neutral_hair.tres",
+      "source_rect": [
+        323,
+        0,
+        16,
+        16
+      ]
+    }
+  ],
+  "layer_order": "body, trousers, shoes, teal shirt, hair; no armour/weapon/shield layers",
+  "inspection_evidence": "Root logs/free_asset_research/candidate_mapping_inspection.png visually inspected; source inspection only, not a game screenshot. Same original sheet/hash and supplied rects verified.",
+  "gameplay": "No person is spawned or granted; future mapping only existing neutral player/actual rear worker identities under accepted role predicate."
+}

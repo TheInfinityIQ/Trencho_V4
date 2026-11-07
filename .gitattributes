@@ -14,3 +14,4 @@
 # Preserve the verbatim third-party licence bytes, including original whitespace.
 game/test_art/tiny_battle/license.txt -text -diff
 game/test_art/roguelike_indoor/license.txt -text -diff
+game/test_art/roguelike_characters/license.txt -text -diff
