@@ -339,6 +339,30 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
+    debug_menu = 'game/debug/rear_debug_menu.gd'
+    debug_actions = 'game/debug/rear_debug_actions.gd'
+    receiving = 'game/procurement/receiving_simulation.gd'
+    for action, title, domain in [
+        ('force_deliver', 'Force deliver now', [
+            (receiving, 'debug_deliver_resources', 'Finish pending freight and clear unload reservations', ''),
+            ('game/identity/identity_ledger.gd', 'debug_deposit_stock', 'Deposit actual stock and safely clear carry state', '')]),
+        ('infinite_resources', 'Infinite resources (+1,000 each)', [
+            (receiving, 'debug_order_raw_resources', 'Create this zero-cost raw-resource batch', ''),
+            (receiving, 'debug_deliver_resources', 'Deliver only the new batch immediately', '')]),
+        ('instant_build', 'Instant build', [
+            (CONSTRUCTION, 'debug_complete_pending', 'Account remaining materials and complete pending sites', ''),
+            (CONSTRUCTION, '_complete_site', 'Release builders and reuse normal completion', ''),
+            (CONSTRUCTION, '_activate', 'Register actual facility services once', '')]),
+    ]:
+        specs.append(('debug-' + action, 'Debug: ' + title,
+                      'Explicit debug button command; no automatic grant or time jump. This modified session is marked DEBUG.',
+                      [(SHELL, '_build_header', 'Session > Debug tools', 'debug_menu.popup_centered'),
+                       (debug_menu, '_ready', 'Create the selected debug button', '"' + action + '"'),
+                       (debug_menu, '_add_action', 'Button emits its action key', 'action_requested.emit'),
+                       (SHELL, '_ready', 'Forward the command to Main', 'debug_action_requested.emit'),
+                       (MAIN, '_debug_action', 'Resolve the current session', 'DebugActions.execute'),
+                       (debug_actions, 'execute', 'Dispatch this explicit debug action', '')] + domain +
+                      [(BASE, '_result', 'Reconcile and notify existing views/planning', '')]))
     return [{'id': key, 'title': title, 'note': note,
              'nodes': [index.node(path + '::' + function, label, needle) for path, function, label, needle in steps]}
             for key, title, note, steps in specs]
