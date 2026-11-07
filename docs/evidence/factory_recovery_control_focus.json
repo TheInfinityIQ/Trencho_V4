@@ -1,0 +1,36 @@
+{
+  "status": "LOCAL_IMPLEMENTED_STATIC_MAINTENANCE_PASSED",
+  "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
+  "prior_contract": "c1bb4fe",
+  "branch": "codex/factory-recovery-control-focus",
+  "scope": "Three assigned production files: recovery action mapping/copy, existing button references/navigation and panel identity/current-click resolver. No backend or construction81 integration.",
+  "source_observations": [
+    "Stopped maps to Enable; enabled-paused maps to Pause/resume. Existing resume enables and clears pause; guidance itself invokes no command and promises no cancelled batch restoration.",
+    "Only recovery actions carry current session/model/actual site Dictionary/owner references; shallow action copy preserves reference identity. Other action dictionaries are flat and retain prior values.",
+    "Click validates current identity and resolves actual plan once; different next site/nonrecovery action rejects. Post-navigation checks revalidate captured identities plus actual enabled/paused without another Plan.view.",
+    "Same Work/exact facility branch does not call _select/_refresh/_load_production, preserving target/staff/recipe drafts; different selection uses existing synchronous select/load then focus.",
+    "Existing prebuilt buttons receive grab_focus and ScrollContainer.ensure_control_visible; no pressed emission, production/time/price/resource/assignment mutation.",
+    "No new polling/subscriptions/clock/cache/framework/layout; existing panel bind/model/exit clear view and identity envelope.",
+    "Construction81 and unused Covered proposal remain in separate preserved checkouts; no source from either composed."
+  ],
+  "maintenance": {
+    "source_map": "PASS zero pending purposes; nine affected functions/lambda source-reviewed",
+    "ui_map_button_inventory": "PASS current source/anchors; generated button fixture anchors/hashes only, no test logic added",
+    "whitespace": "git diff --check PASS",
+    "baseline_fingerprint": "Refresh records existing base team_workflow contents; no workflow document source edit in feature.",
+    "meaning": "Static grammar/metadata only; not Godot compilation or native focus/runtime acceptance."
+  },
+  "runtime": "NONE: no engine, scenario, test/regression, custom demonstration, profiling or GitHub checks.",
+  "unverified": [
+    "Godot compilation; actual native focus and scroll/reveal",
+    "Same/cross-factory focus and preservation of unsaved drafts through live controls",
+    "Real replacement/click timing and full ordinary loop/FPS"
+  ],
+  "publication": "Lead-owned; no push/PR/alternate authorization path attempted.",
+  "next": "A exact local technical peer review; lead technical, Designer identity and UX exact wording/focus source review; C fixes concrete findings.",
+  "production_normalized_utf8_lf_sha256": {
+    "game/rear_base/base_demo.gd": "13a956068450c55404526f082540f2890ad3bdf0dc65320f3f62ca0402e08563",
+    "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
+    "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03"
+  }
+}

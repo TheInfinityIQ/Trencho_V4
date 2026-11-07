@@ -51,6 +51,8 @@ var people: ItemList
 var jobs: ItemList
 var inspection: Label
 var production_status: Label
+var _production_pause_button: Button
+var _production_enable_button: Button
 var cart: Dictionary = {}
 var factory_plan_panel: VBoxContainer
 var army_supply_panel: VBoxContainer
@@ -893,9 +895,9 @@ func _production_panel(box: VBoxContainer) -> void:
 	ingredient_heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ingredient_checklist = VBoxContainer.new()
 	box.add_child(ingredient_checklist)
-	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
+	_production_pause_button = _button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
 	_button(box, "Cancel consumed batch / stop", func() -> void: _request_batch_cancel())
-	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
+	_production_enable_button = _button(box, "Enable facility", func() -> void: _result(_activity().resume()))
 	heavy_controls = VBoxContainer.new()
 	box.add_child(heavy_controls)
 	_label(heavy_controls,"Heavy targets request goods; acceptance reserves the bay/fleet place.").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1924,6 +1926,9 @@ func _refresh_workforce() -> void:
 		return person.id+" | "+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+" | "+person.phase)
 
 func _factory_plan_action(action: Dictionary) -> void:
+	if str(action.get("focus","")) in ["enable","pause"]:
+		_focus_factory_recovery(action)
+		return
 	var panel := str(action.get("panel", ""))
 	var id := str(action.get("facility_id", ""))
 	if panel == "Build" and not id.is_empty():
@@ -1975,3 +1980,22 @@ func _army_supply_action(requested: Dictionary) -> void:
 					observation_requested.emit(id)
 					break
 		_: _factory_plan_action(action)
+
+func _focus_factory_recovery(requested: Dictionary) -> void:
+	if session == null or session.simulation != simulation: return
+	var action: Dictionary = factory_plan_panel.current_recovery_action(requested)
+	if action.is_empty(): return
+	var id := str(action.facility_id)
+	var panel: Control = tabs.get_tab_control(tabs.current_tab)
+	if str(panel.get_meta("panel_title",panel.name)) != "Work" or _context_duty() != id:
+		_select("site",id)
+	# Recheck identities/state after selection without another plan query.
+	if session.simulation != simulation or not factory_plan_panel.recovery_identity_is_current(requested): return
+	if _context_duty() != id or _activity() != requested.owner: return
+	if action.focus == "enable" and _activity().enabled: return
+	if action.focus == "pause" and (not _activity().enabled or not _activity().paused): return
+	panel = tabs.get_tab_control(tabs.current_tab)
+	if str(panel.get_meta("panel_title",panel.name)) != "Work": return
+	var button: Button = _production_enable_button if action.focus == "enable" else _production_pause_button
+	button.grab_focus()
+	if panel is ScrollContainer: panel.ensure_control_visible(button)

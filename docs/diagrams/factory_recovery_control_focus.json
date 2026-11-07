@@ -1,5 +1,5 @@
 {
-  "status": "prospective acceptance frozen before code",
+  "status": "implemented locally; source/UI/button metadata and whitespace passed; no engine/runtime",
   "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
   "scope": [
     "factory_plan.gd stopped/paused navigation action mapping and truthful copy",
@@ -27,5 +27,11 @@
     "Recipe/target/staff/input guidance and all backend rules unchanged."
   ],
   "verification": "Static source/map/button maintenance only; no local engine, regression/scenario/failure/coverage/benchmark. Native focus/reveal not certified.",
-  "publication": "Lead-owned; no independent publication attempt or repeated human permission question."
+  "publication": "Lead-owned; no independent publication attempt or repeated human permission question.",
+  "evidence": "docs/evidence/factory_recovery_control_focus.json",
+  "click_query": "One Plan.view per explicit recovery click; post-navigation checks use references/scalar enabled/paused only. Existing refresh queries unchanged.",
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
+    "https://docs.godotengine.org/en/4.7/classes/class_scrollcontainer.html#class-scrollcontainer-method-ensure-control-visible"
+  ]
 }

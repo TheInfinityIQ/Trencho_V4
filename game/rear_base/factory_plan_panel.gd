@@ -15,7 +15,7 @@ func _ready() -> void:
 	UIKit.label(self, "Guided factory task", 18)
 	_summary = UIKit.label(self, "", 14, UIKit.INK, true)
 	_hint = UIKit.label(self, "", 14, UIKit.MUTED, true)
-	_action = UIKit.button(self, "Open next step", func() -> void: action_requested.emit(view.get("next_action", {}).duplicate(true)), true)
+	_action = UIKit.button(self, "Open next step", func() -> void: action_requested.emit(view.get("next_action", {}).duplicate()), true)
 	_action.disabled = true
 	visibility_changed.connect(_invalidate)
 	_invalidate()
@@ -55,6 +55,12 @@ func _refresh() -> void:
 	if not _dirty or not is_inside_tree() or not is_visible_in_tree() or not is_instance_valid(_session): return
 	_dirty = false
 	view = Plan.view(_session.simulation)
+	if str(view.next_action.get("focus","")) in ["enable","pause"]:
+		var id := str(view.next_action.facility_id)
+		view.next_action.session = _session
+		view.next_action.model = _session.simulation
+		view.next_action.site = _session.simulation.rear.construction.instances.get(id,{})
+		view.next_action.owner = _session.simulation.rear.construction.activities.get(id)
 	var lines: Array[String] = []
 	var names := {"todo":"To do", "active":"In progress — see cause below", "complete":"Done"}
 	for step in view.steps:
@@ -67,3 +73,22 @@ func _refresh() -> void:
 	_hint.text = str(view.next_action.reason)
 	_action.text = str(view.next_action.label)
 	_action.disabled = view.complete
+
+func recovery_identity_is_current(requested: Dictionary) -> bool:
+	if not is_inside_tree() or not is_visible_in_tree() or not is_instance_valid(_session): return false
+	if requested.get("session") != _session or requested.get("model") != _session.simulation: return false
+	var model: RefCounted = _session.simulation
+	var id := str(requested.get("facility_id",""))
+	var site: Dictionary = model.rear.construction.instances.get(id,{})
+	if site.is_empty() or not is_same(site,requested.get("site")): return false
+	var owner: RefCounted = model.rear.construction.activities.get(id)
+	return owner != null and owner == requested.get("owner")
+
+func current_recovery_action(requested: Dictionary) -> Dictionary:
+	if not recovery_identity_is_current(requested): return {}
+	var id := str(requested.facility_id)
+	var current: Dictionary = Plan.view(_session.simulation).next_action
+	if str(current.get("facility_id","")) != id or str(current.get("focus","")) not in ["enable","pause"]:
+		_invalidate()
+		return {}
+	return current
