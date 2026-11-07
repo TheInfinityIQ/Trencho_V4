@@ -27,3 +27,13 @@ The Game Designer owns vision, gameplay scope, meaningful choices and observable
 The old detailed [v0.2 specification](reference/gameplay_specification_v0_2.md) preserves catalogue values and historical rationale. It is not the current GDD or an instruction to retain old clocks, manual routine dispatch, prebuilt starting assets or archived assignments. No numerical rebalance is made by this documentation revision.
 
 Gameplay features take priority over polishing and benchmarks under Dawson's 5 November instruction. Preserve known limits and the eventual 60 FPS target; fix defects that prevent the current gameplay task or corrupt state. Godot version, language, source ownership, maps and development workflows remain engineering documentation and AGENTS.md responsibilities.
+
+## Automatic starter staffing — accepted 7 November 2026
+
+Dawson requested that every newly completed workplace have a default staffing request so the player need not configure its first worker count manually. This is an accepted requirement, not a claim of implementation. The lead owns its increment after the current Construction Office truck work.
+
+Designer starting defaults are one worker for each Receiving Bay, Workshop, Munitions Workshop, Materials Plant, Support Workshop and Logistics Centre; one eligible instructor for each School; two workers for each Vehicle Works and Construction Office. Storage Depots and Vehicle Parks request zero resident workers because their current functions have no resident staffing duty. These are starting requests, not maximum capacities or grants of people or qualifications.
+
+Requests use the existing shared workforce, eligibility, priorities and physical reporting rules. Requested, incoming and present staff remain distinct. The player may change the count or priority, including setting it to zero. Apply the default once on new facility completion; do not restore it after player edits, recipe changes, pause/resume or enabling a facility, and do not overwrite existing facilities' settings. Haulers, students and vehicle crews retain their separate duties; no person may fill two jobs at once. Explain unmet requests and qualification shortages clearly.
+
+Source: Dawson's direct Game Designer chat instruction on 7 November: “every building should have a default number of people request to work it once it's build so the player doesn't automatically need to do that.” Exact initial counts above are the Designer's implementation baseline, conveyed to the lead in the same discussion; engineering interfaces and assignment remain lead-owned.

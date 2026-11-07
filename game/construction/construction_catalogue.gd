@@ -1,6 +1,8 @@
 extends RefCounted
 ## GDD 8.1 physical facility values. F01/F08 are fixed and have no build recipe.
 const Layout = preload("res://game/staffing/rear_layout.gd")
+# One-time requested staff for actual new completions, never capacity or people grants.
+const STARTER_STAFFING := {"receiving":1,"workshop":1,"munitions":1,"materials":1,"support":1,"dispatch":1,"training":1,"vehicle_works":2,"construction":2,"depot":0,"park":0}
 const SPECS := {
 	"terminal":{"code":"F01","m11":0,"work":0.0,"fixed":true},
 	"receiving":{"code":"F02","m11":100,"work":160.0,"output_kg":5000.0},

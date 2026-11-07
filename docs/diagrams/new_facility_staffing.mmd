@@ -1,0 +1,12 @@
+flowchart TD
+  Complete[Actual NEW facility completion] --> Activate[Construction registers real duty and services]
+  Activate --> Existing{Duty/request already exists?}
+  Existing -->|Yes| Preserve[Preserve explicit count, priority and office intent]
+  Existing -->|No| Defaults[Record accepted count ONCE; office_desired for F12]
+  Defaults --> Pool[Existing allocator: currently Available workers only]
+  Pool --> Eligibility[Normal eligibility, priority and physical reporting]
+  Eligibility --> Visible[Workers / Jobs: requested, assigned, reporting, present and vacancies]
+  Preserve --> Visible
+  Edit[Player count/priority/zero edit] --> Normal[Existing normal shared-pool command]
+  Normal --> Visible
+  Legacy[Existing or legacy facilities / recipe / pause / enable] --> Unchanged[No default replay or backfill]

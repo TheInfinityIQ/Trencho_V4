@@ -100,6 +100,10 @@ func _refresh_row(row: Dictionary) -> void:
 	widgets.count.set_block_signals(false)
 	widgets.priority.select(simulation.rear.PRIORITIES.find(row.priority))
 	widgets.status.text = "%d present · %d assigned · %d reporting / active\n%d requested · %d vacancies" % [row.present,row.assigned,row.reporting_or_active,row.target,row.shortage]
+	if row.shortage > 0 and simulation.rear.requests[row.id].get("starter_request",false):
+		widgets.status.text += "\nStarter request waits for available eligible workers; committed jobs stay staffed."
+	if row.shortage > 0 and simulation.rear.construction.instances.has(row.id) and simulation.rear.construction.instances[row.id].kind == "training":
+		widgets.status.text += "\nInstructor vacancies need an available basic-trained worker; untrained workers cannot fill them."
 
 
 func _queue_row() -> void:

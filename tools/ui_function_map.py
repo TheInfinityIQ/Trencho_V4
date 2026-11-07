@@ -339,6 +339,15 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
+    specs.append(('new-facility-staffing', 'New facility: one-time staffing request',
+                  'Completion requests existing eligible workers once. Automatic filling preserves occupied duties; count/priority/zero edits become ordinary player instructions.',
+                  [(CONSTRUCTION, '_complete_site', 'Actual newly completed facility', ''),
+                   (CONSTRUCTION, '_activate', 'Register true duty/services and preserve existing intent', ''),
+                   (CONSTRUCTION, '_apply_starter_staffing', 'Record accepted starter request once', ''),
+                   (REAR, '_rebalance', 'Allocate actual available workers without automatic duty theft', ''),
+                   (REAR, '_report', 'Physical reporting remains required', ''),
+                   ('game/rear_base/workforce_panel.gd', '_refresh_row', 'Show requested/present/vacancy and instructor requirement', ''),
+                   (REAR, 'set_target', 'Player edits count/priority including zero; no default replay', '')]))
     specs.append(('construction-utility-truck', 'Construction: office utility truck',
                   'Completed office bundles one finite-fuel construction-only truck; a real idle hauler loads, drives and unloads M11. Foot fallback retains honest shortage feedback.',
                   [(BASE, 'confirm_build_at', 'Place the actual Construction Office/site', ''),

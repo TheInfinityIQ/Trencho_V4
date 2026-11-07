@@ -1,0 +1,36 @@
+{
+  "source_head": "ba06c127973fdcedb8a22067032d94ca98c22ce3",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/116",
+  "required_validation": 42421300540,
+  "direct_demonstration": 42421312726,
+  "artifact": 13593367322,
+  "result": "PASS",
+  "engine": "Godot4.7.2 stable official",
+  "scope": "One arranged actual debug-completion/current-staffing component; not ordinary gameplay, regression suite or FPS acceptance.",
+  "observed": [
+    "Actual Workshop completion records one automatic request without taking a committed low-priority hauler or creating people.",
+    "Actual paid eight-worker arrival fills the request with an available person; the existing hauler retains duty.",
+    "Assigned worker is reporting, not present, until physical63.4595235188802second walk completes.",
+    "Successful player zero/priority3 override clears starter protection and survives once-guard replay and later arrival.",
+    "New School leaves instructor request unfilled for untrained people; actual paid recovery instructor fills it and must physically report."
+  ],
+  "identities": {
+    "workshop": "site-0001",
+    "worker": "delivery-0001-person-01",
+    "school": "site-0002",
+    "instructor": "delivery-0002-person-01",
+    "total_actual_people": 10
+  },
+  "source_review_only": [
+    "Other catalogue counts and Construction Office pool",
+    "Pre-existing/pre-completion request preservation",
+    "Other automatic safe-release and pending duty interactions"
+  ],
+  "unverified": [
+    "Ordinary full factory-to-frontline loop",
+    "Native UI/input/rendering",
+    "60FPS"
+  ],
+  "static_checks": "10 reviewed purposes, current system map and independently checked source-linked UI HTML. Existing regression fixture remains unchanged; coupled UI/test-inventory check reports its preserved stale source hashes. No local engine or regression run.",
+  "carry_forward": "Final evidence/contract/system-map metadata follow-up changes no production source, project or workflow; direct result carries to byte-identical production."
+}
