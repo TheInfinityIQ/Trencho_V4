@@ -10,7 +10,7 @@
     "Click validates current identity and resolves actual plan once; different next site/nonrecovery action rejects. Post-navigation checks revalidate captured identities plus actual enabled/paused without another Plan.view.",
     "Same Work/exact facility branch does not call _select/_refresh/_load_production, preserving target/staff/recipe drafts; different selection uses existing synchronous select/load then focus.",
     "Existing prebuilt buttons receive grab_focus and ScrollContainer.ensure_control_visible; no pressed emission, production/time/price/resource/assignment mutation.",
-    "No new polling/subscriptions/clock/cache/framework/layout; existing panel bind/model/exit clear view and identity envelope.",
+    "No new polling/subscriptions/clock/cache/framework/layout; existing panel bind/model replacement clear view and its identity envelope; exit disconnects and unbinds the session, and identity guards reject detached clicks.",
     "Construction81 and unused Covered proposal remain in separate preserved checkouts; no source from either composed."
   ],
   "maintenance": {

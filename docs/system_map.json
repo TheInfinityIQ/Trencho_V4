@@ -244,7 +244,7 @@
     ]},
     "docs/evidence/factory_plan.json": {"role":"data","system":"docs","sha256":"9f16647a99bf672c6203e18de1b62a06f5c66616da57ca49e3f22927cee7d20b","lines":64,"purpose":"Supply structured settings, dependency pins or catalogue data for factory plan.","functions":[
     ]},
-    "docs/evidence/factory_recovery_control_focus.json": {"role":"data","system":"docs","sha256":"90dd462b17ef3ae1b3aaf410d032daa94c14a95cc9ee2b6f0e09dfccfcf8df79","lines":36,"purpose":"Supply structured settings, dependency pins or catalogue data for factory recovery control focus.","functions":[
+    "docs/evidence/factory_recovery_control_focus.json": {"role":"data","system":"docs","sha256":"5401ea94260a1ec2b98f1de2defd45755095ddf617d559804f21288594af272c","lines":36,"purpose":"Supply structured settings, dependency pins or catalogue data for factory recovery control focus.","functions":[
     ]},
     "docs/evidence/g01/a01-complete-handoff.png": {"role":"evidence_image","system":"docs","sha256":"815e4b0faa7e54b5fc8ef7d88398adf129294dd6ff5292c48b19b7fc9d3a6924","lines":0,"purpose":"Retain image/screenshot evidence for a01-complete-handoff; binary image contents are fingerprinted, not interpreted as source code.","functions":[
     ]},
