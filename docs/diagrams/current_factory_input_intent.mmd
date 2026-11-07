@@ -1,0 +1,13 @@
+flowchart TD
+    Command["Recipe / Stop / output target or real stock boundary"] --> Settle["Existing synchronous settlement"]
+    Supplier["Existing automatic factory supplier"] --> Origin["Validate actual owner; tag job BEFORE request_haul settles"]
+    Origin --> Settle
+    Settle --> Captured["Count actual captured actor.load portions once"]
+    Captured --> Intent["Query enduring intent once per affected factory"]
+    Intent --> Temporary["Ignore temporary pause/access/operators/batch as withdrawal"]
+    Temporary --> Reconcile["Reduce ONLY obsolete unselected automatic remainder"]
+    Reconcile --> Floor["Keep delivered + captured claim/carry floor"]
+    Floor --> Select["Existing hauler selection; NO per-candidate intent query"]
+    Select --> Physical["Existing claim / pickup / carry / real deposit"]
+    Physical --> Settle
+    Manual["Manual / other-owner / relocation requests"] --> Preserve["Fixed quantities and existing custody unchanged"]
