@@ -86,7 +86,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_demo_candidate",
         "branch": "codex/demo-feature-candidate",
-        "current_assignment": "Implement LOCAL five-fix composition overbc0bfef, adding frozen counte15eaf4 and cancellationcc030bd after completed source decisions. Preserve original three production files exactly; final base_demo must equalcc030bd plus exactlye15 count callback. B peer, lead technical and Designer final local candidate reviews preassigned. No public merge/network/engine."
+        "current_assignment": "Five-fix LOCAL candidate67857fd2c577e43b2a86bfaa96667ad61ce5d8dd COMPLETE and frozen; B peer, lead technical and Designer source decisions complete/no blocker. Preserve head and resolve concrete findings only. Lead owns combined source publication approval question and resulting permitted action; no generic continue dependency."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +96,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "Candidatebc0bfef and cancellationcc030bd independent source reviews COMPLETE/no blocker. Next preassigned action: peer review A final LOCAL five-fix composition; A owns readiness. Preservebc0bfef original source."
+        "current_assignment": "Independent final five-fix candidate67857fd exact-head source peer review COMPLETE/no blocker. Lead technical/Designer source decisions also complete. Lead owns combined publication scope/direct approval question; preserve original reviewed sources; no repeated review/check packet."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -245,10 +245,12 @@
     "human_playtest_requested_pending": false,
     "human_wait_qualification": "This reflects the developer/Designer/UI continuity reports; the Artist was contacted but no fresh response was observed.",
     "scoped_tool_wait": {
-      "owner": "Dawson direct approval in Developer C chat; C owns the affected push",
-      "action": "Normal publication of local4c87cb483d3222c751ab4390ebb75e4586dd7395 to codex/actual-works-reporting-exit in TheInfinityIQ/Trencho_V4",
-      "reason": "Automatic approval review rejected potential private-source egress because it did not accept relayed authorization as direct user permission.",
-      "rule": "No retry or alternate publication route. Local independent implementation/review is not held by this wait."
+      "owner": "Dawson direct approval in lead chat; lead owns requested publication actions",
+      "action": "Normal push of67857fd2c577e43b2a86bfaa96667ad61ce5d8dd to codex/demo-feature-candidate in TheInfinityIQ/Trencho_V4, then create its draft PR against codex/gameplay-demo-integration using existing supported Windows-backed GitHub connection",
+      "reason": "The candidate contains C source whose separate normal push was automatically rejected for unverifiable direct authorization to publish private source. Do not publish the same held source by another route without direct approval.",
+      "scope": "Branch publication and draft PR only; normal changed-script validation may run. No merge, extra runtime demonstration or credential extraction.",
+      "prior_separate_question": "C's4c87 bay-exit push question remains retained; publishing the consolidated candidate would make that separate source branch push unnecessary.",
+      "prepared_review_artifact": "Ignored logs/demo-feature-candidate/prepared_pr_body.md plus publication_scope.json; actual source/role decisions frozen"
     },
     "completed_approval_not_pending": "PR100 draft creation and its single45-second GitHub direct check were approved and completed; that grant is not a blanket halt on source development.",
     "ready_successor": {
@@ -258,7 +260,7 @@
       "status": "COMPLETE locally atcc030bd with all assigned local source decisions; A now owns actual combined-source preparation",
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first"
     },
-    "lead_next_action": "Follow A actual five-fix composition, process B peer/Designer/lead exact-head source decisions, then coordinate applicable publication permission. Earlier component reviews are complete, not pending. No local engine or regression work.",
+    "lead_next_action": "Ask the exact combined publication question after completing all local implementation/source reviews, then execute only the approved scope. The five-fix candidate/source decisions are complete; no gameplay question or requested human playtest is pending. Rejected publication is not retried. No local engine or regression work.",
     "publication": "This is a local operational record until separately published. It does not assert that new candidate branches or PRs exist remotely.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
@@ -289,6 +291,15 @@
       "ux": "No blocking source finding",
       "publication": "NONE; exact published-head reviews remain distinct",
       "runtime": "NONE"
+    },
+    {
+      "head": "67857fd2c577e43b2a86bfaa96667ad61ce5d8dd",
+      "branch": "codex/demo-feature-candidate",
+      "peer": "B complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer local combined source scope approved",
+      "publication": "NONE; direct combined source publication approval required",
+      "runtime": "NONE combined; only component-specific historical evidence"
     }
   ]
 }
