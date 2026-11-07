@@ -1,0 +1,15 @@
+flowchart TD
+  HQ[HQLogistics existing trained generic admitted reserve policy] --> Gate[Same eligibility, one E01/person, 30 E02 gate and personal capacity]
+  Gate --> Budget[Read actual unreserved E02 once; account pending rifle issue future minimum once]
+  Budget --> Cover[Existing stopped-hull / armed-person minimum order; named weapon promises and usable HQ rifles]
+  Cover --> Need[Publish only uncovered E01 count; no new stock or target]
+  Need --> Rear[RearLogistics existing request reconciliation/holds/accepted floor]
+  Rear --> Source[Only actual functional empty owned WEAPON in accessible rear store]
+  Source --> Dispatch[Existing named weapon_items staging, real handlers/truck/qualified crew]
+  Dispatch --> Receipt[Same weapon identity physically unloaded at HQ; return retained]
+  Receipt --> Issue[Existing HQ physical same-person issue, then existing formation/deployment]
+  Receipt --> Refresh[Invalidate current HQ need owner]
+  Refresh --> HQ
+  Hold[Explicit E01 cancel/hold/resume] --> Rear
+  Hold --> Refresh
+  Separate[OpeningResupply E02/E26 and STOCK forward couriers] --> Unchanged[Unchanged; no active-frontline rifle replacement claim]

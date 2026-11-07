@@ -2124,6 +2124,7 @@ func _army_supply_action(requested: Dictionary) -> void:
 	if action.is_empty(): return
 	match str(action.id):
 		"resume_automatic": _result(session.automatic_logistics.resume_automatic_supply("E02"))
+		"resume_rifle_equipment": _result(session.automatic_logistics.resume_automatic_supply("E01"))
 		"rear_requests":
 			show_panel("Supplies")
 			for index in _supply_views.get_tab_count():
