@@ -1,0 +1,93 @@
+{
+  "status": "implemented locally; actual remote import/engine parse and sidecar retrieval pending",
+  "base": "2560de91",
+  "owner": "C single implementation owner. Artist/lead verify creator-hosted CC0 downloads and exact files/provenance; Designer accepts imagery/entity meaning; lead grants final source/assets claim/publication.",
+  "source_boundary": {
+    "rear": "base_map.gd::_draw_contents: existing map_point transforms; completed building fill at183-188 and existing entity marker bodies at195-217 are potential sprite seams only after mapping. Preserve primitive fallback and draw status/selection/door/labels above art.",
+    "battlefield": "battlefield_view.gd::_draw loop165-177 / _draw_marker187-199: only existing Presentation.markers rows, same _screen position/cull and marker geometry; keep team/ownership/selection/labels above texture.",
+    "information": "battlefield_presentation.gd filters own physical units versus uncertain CONTACT reports. Do not edit this boundary or read enemy ledger state to select sprites. Unknown/unmapped/contact/state without approved mapping keeps existing primitive.",
+    "rear_marker": "Lead approved additive design_type in identity_ledger.map_markers from the already-looped entity; no additional scan/inspection/visibility change. Rear exact own PLAYER CARRIER T01 uses cached truck; other markers unchanged."
+  },
+  "mapping": {
+    "state": "APPROVED_TWO_ORIGINAL_ICONS",
+    "entries": [
+      {
+        "archive_entry": "Tiles/tile_0047.png",
+        "path": "game/test_art/tiny_battle/tile_0047.png",
+        "sha256": "f2f919bb5b951c5cc2beeb247052f233024d4a946f4a2ab90405af21672e7875",
+        "bytes": 197,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "palette_entries": 6,
+        "transparency_chunk_bytes": 1,
+        "palette_alpha": [
+          0
+        ],
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Completed actual rear production facility emblem only",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0132.png",
+        "path": "game/test_art/tiny_battle/tile_0132.png",
+        "sha256": "1197a974f091380562db338d40569aa9de5f36fef1ff1fde87d2f6adeb1743e7",
+        "bytes": 222,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "palette_entries": 10,
+        "transparency_chunk_bytes": 1,
+        "palette_alpha": [
+          0
+        ],
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Own blue physical CARRIER with exact design_type T01 in rear and battlefield only",
+        "modified": false
+      }
+    ],
+    "provenance": "game/test_art/tiny_battle/provenance.json",
+    "rear_factory": "Completed constructed production facility only; legacy production marker only with actual initial site Complete. Preserve existing fills/footprints/door/labels/outlines; aspect-preserving max16px emblem inside existing box. No schools/logistics/receiving art.",
+    "battlefield_truck": "Existing own blue visible physical CARRIER exact design_type T01. Aspect-preserving full16x16 texture within existing12x8 visual body, original fill/outline and selection remain. Symbolic box has no cargo-status meaning.",
+    "fallback": "Both rear and battlefield exact own physical T01 may use truck; all other/unknown CONTACT/people remain original shapes. No new ledger query.",
+    "rear_truck": "Rear existing physical CARRIER design_type T01 and entity.owner==rear.PLAYER only, aspect-preserving inside existing14x8 body with fill/colour retained; no cargo status meaning."
+  },
+  "render_flow": [
+    "Lead supplies verified small asset set and exact accepted role mapping.",
+    "Commit mapping/provenance before production integration.",
+    "Preload/cache exact textures at script/resource initialization only; no load/filesystem I/O or new node per entity in _draw.",
+    "Existing view obtains existing markers and transforms authoritative position/footprint as before.",
+    "If mapping and state apply, draw cached texture in existing visual box/aspect-preserving region. Otherwise retain primitive.",
+    "Draw existing colour/status/team/ownership/selection/door/label overlays above art; existing hit-test thresholds/collision/footprints unchanged."
+  ],
+  "acceptance": [
+    "Small cohesive verified set; exact provenance/licence retained with assets and Godot sidecars. No generated .godot/cache/download archives committed.",
+    "No gameplay/input/camera/hit-test/footprint/team/status/selection or information-boundary change.",
+    "No dynamic load/I/O/new entity nodes/polling/simulation queries introduced in drawing.",
+    "Unmapped/unsupported state remains readable through existing fallback markers.",
+    "No terrain/catalogue/UI redesign or new imagery selection by implementation owner."
+  ],
+  "verification": "No local engine/regression/benchmark. Inspect supplied images and dimensions/licence, focused source/static metadata and required platform validation only; native rendering/readability/performance remain unverified until permitted observation.",
+  "next": "Implement three production files: existing rear marker additive type, BaseMap, BattlefieldView; bounded validate.yml PNG import prerequisite. Root runs CI and commits actual sidecars.",
+  "import_boundary": "Whenever changed-script/direct-input validation needs Godot, import the explicit TWO declared feature PNG dependencies (including unchanged bytes on fresh runners) plus existing sidecars in an isolated minimal project at identical res://paths. One pinned remote headless editor import with short deadline; copy generated metadata/cache to checkout for parsing and retain metadata in artifact for root commit. No scan of repository assets/scripts/plugins, gameplay or local engine; no .godot binaries committed.",
+  "licence_bytes": "Vendor licence uses original whitespace/line endings; exact-file -text -diff Git attribute preserves immutable bytes and omits its verbatim whitespace from text diff checking. No production-source check relaxed.",
+  "import_rationale": "These are fixed compile-time preload dependencies. Changed-PNG filtering alone breaks fresh later runners when only dependent scripts change; preparing the same two tiny textures is compilation dependency setup, not unchanged gameplay verification.",
+  "evidence": "docs/evidence/test_art_rendering.json",
+  "references": [
+    "https://kenney.nl/assets/tiny-battle",
+    "https://opengameart.org/content/tiny-battle",
+    "https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html"
+  ]
+}

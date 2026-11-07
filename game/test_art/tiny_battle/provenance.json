@@ -1,0 +1,77 @@
+{
+  "pack": "Tiny Battle 1.0",
+  "creator": "Kenney",
+  "creator_page": "https://kenney.nl/assets/tiny-battle",
+  "creator_upload_page": "https://opengameart.org/content/tiny-battle",
+  "download_url": "https://opengameart.org/sites/default/files/kenney_tiny-battle.zip",
+  "licence": "CC0 1.0",
+  "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "archive_sha256": "7751ec7d9a07e57baa9fa1174d6f78fcd779a050377227afee77993c73cb5f9e",
+  "archive_bytes": 131452,
+  "licence_archive_entry": "License.txt",
+  "licence_local_path": "game/test_art/tiny_battle/license.txt",
+  "licence_sha256": "a3c76aa4832fcf26376699a976ee0c21980c62fae77e9a888258b68603c0ff49",
+  "licence_modified": false,
+  "assets": [
+    {
+      "archive_entry": "Tiles/tile_0047.png",
+      "path": "game/test_art/tiny_battle/tile_0047.png",
+      "sha256": "f2f919bb5b951c5cc2beeb247052f233024d4a946f4a2ab90405af21672e7875",
+      "bytes": 197,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "palette_entries": 6,
+      "transparency_chunk_bytes": 1,
+      "palette_alpha": [
+        0
+      ],
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Completed actual rear production facility emblem only",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0132.png",
+      "path": "game/test_art/tiny_battle/tile_0132.png",
+      "sha256": "1197a974f091380562db338d40569aa9de5f36fef1ff1fde87d2f6adeb1743e7",
+      "bytes": 222,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "palette_entries": 10,
+      "transparency_chunk_bytes": 1,
+      "palette_alpha": [
+        0
+      ],
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Own blue physical CARRIER with exact design_type T01 in rear and battlefield only",
+      "modified": false
+    }
+  ],
+  "interpretation": "Generic symbolic factory and T01 truck icons only; brown truck box is not actual loaded-cargo status. No armed or neutral person imagery included. Original indexed palette/tRNS PNGs unchanged.",
+  "excluded": "Whole pack, atlas, inspection enlargements, unused sprites, generated .godot cache.",
+  "engine_import_sidecars": [
+    {
+      "path": "game/test_art/tiny_battle/tile_0047.png.import",
+      "sha256": "cea9f8561b5b13546c5610472d3f8290d6d4e6ce417a2050c90af754e6b2d82a",
+      "origin": "Godot 4.7.2 pinned CI run42341589683"
+    },
+    {
+      "path": "game/test_art/tiny_battle/tile_0132.png.import",
+      "sha256": "2f745d97b782112f7b6a8e055042d3f800010ce7cb801c39db2b6845bea9425b",
+      "origin": "Godot 4.7.2 pinned CI run42341589683"
+    }
+  ]
+}

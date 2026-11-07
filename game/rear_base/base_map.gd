@@ -7,6 +7,9 @@ signal placement_cancelled()
 signal placement_rotated()
 const Layout = preload("res://game/staffing/rear_layout.gd")
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
+const FACTORY_ART: Texture2D = preload("res://game/test_art/tiny_battle/tile_0047.png")
+const TRUCK_ART: Texture2D = preload("res://game/test_art/tiny_battle/tile_0132.png")
+const PRODUCTION_KINDS := ["workshop","munitions","materials","support","vehicle_works"]
 var simulation: RefCounted
 var zoom: float = 1.0
 var pan := Vector2.ZERO
@@ -175,6 +178,8 @@ func _draw_contents() -> void:
 		var f: Array = Layout.FACILITIES[id]
 		var box := Rect2(map_point(f[1] - f[2] / 2), f[2] * scale)
 		draw_rect(box, Color("506574"))
+		if id in PRODUCTION_KINDS and simulation.rear.construction.instances.get("initial-"+id,{}).get("state","") == "Complete":
+			_draw_icon(FACTORY_ART,box)
 		draw_rect(box, Color("ffd37c") if id == selection else Color("8ea6b2"), false, 2)
 		draw_circle(map_point(f[4]), 3, Color("b3d69a"))
 		draw_string(font, box.position + Vector2(0, -4), f[0] + " " + id.replace("vehicle_works", "vehicles"), HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
@@ -183,6 +188,8 @@ func _draw_contents() -> void:
 		var box := Rect2(map_point(row.center-row.size/2.0),row.size*scale)
 		var fill := Color("558b76") if row.state == "Complete" else Color("a77745")
 		draw_rect(box,fill)
+		if row.state == "Complete" and row.kind in PRODUCTION_KINDS and simulation.rear.construction.activities.has(row.id):
+			_draw_icon(FACTORY_ART,box)
 		draw_rect(box,Color("ffd37c") if row.id == selection else Color("a8d7b2"),false,2)
 		draw_circle(map_point(row.door),3,Color("b3d69a"))
 		draw_string(font,box.position+Vector2(0,-4),row.kind+" "+row.id,HORIZONTAL_ALIGNMENT_LEFT,-1,12)
@@ -200,6 +207,8 @@ func _draw_contents() -> void:
 		if entity.kind in ["CARRIER", "HEAVY_OBJECT"]:
 			if entity.position.x < -10: continue
 			draw_rect(Rect2(point - Vector2(7, 4), Vector2(14, 8)), Color("dba274"))
+			if entity.kind == "CARRIER" and entity.design_type == "T01" and entity.owner == simulation.rear.PLAYER:
+				_draw_icon(TRUCK_ART,Rect2(point-Vector2(7,4),Vector2(14,8)))
 		if entity.kind != "PERSON": continue
 		# Passengers/drivers remain visibly on their carrier; don't draw them as loose workers.
 		if simulation.rear.ledger.entity_kind(entity.holder_id) == "CARRIER": continue
@@ -237,3 +246,9 @@ func _draw_contents() -> void:
 	draw_string(font,Vector2(12,size.y-68),"F10 bay: %s | fleet %d live + %d reserved / 8" % [bay,fleet.live,fleet.reserved],HORIZONTAL_ALIGNMENT_LEFT,-1,12)
 	draw_string(font, Vector2(12, size.y - 32), "240 x 180 m | green people / gold freight / orange vehicles", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 	draw_string(font, Vector2(12, size.y - 14), "Click to inspect | wheel zoom | middle-drag pan | Fit base", HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+
+func _draw_icon(texture: Texture2D, bounds: Rect2) -> void:
+	var dimensions := texture.get_size()
+	var factor := minf(1.0,minf(bounds.size.x/dimensions.x,bounds.size.y/dimensions.y))
+	var extent := dimensions*factor
+	draw_texture_rect(texture,Rect2(bounds.get_center()-extent/2.0,extent),false)
