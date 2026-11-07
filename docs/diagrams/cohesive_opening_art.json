@@ -1,5 +1,5 @@
 {
-  "status": "Designer assets-ready requirement accepted; source boundary proposed; verified asset mapping pending",
+  "status": "local implementation complete; static maintenance and root actual-build capture pending; NOT assets-ready",
   "base": "1d6851d6",
   "owner": "C only implementer; Artist/lead verified asset subset and provenance; Designer visual coverage/meaning; lead source claim, publication and bounded remote actual-build captures.",
   "priority": "Normal paused empty-field opening must visibly use cohesive art without adding people/buildings/stock or altering simulation. Prior two-icon pass remains intact.",
@@ -225,7 +225,9 @@
       "construction": "tile_0050",
       "park": "tile_0052 (no displayed car)"
     },
-    "facility_render": "Upright category art plus actual readable kind/instance/state label, fitted within existing true footprint; translucent intended-art ghost and actual unfinished progress bar. No rotated physical silhouette, cover, vehicle, service or ownership grant."
+    "facility_render": "Upright category art plus actual readable kind/instance/state label, fitted within existing true footprint; translucent intended-art ghost and actual unfinished progress bar. No rotated physical silhouette, cover, vehicle, service or ownership grant.",
+    "stock_callout": "Generic physical bin/counted label drawn after table/player with modest18px visual offset and leader to exact original stock anchor; label starts50px below anchor, table caption above. No physical position, holder, hit target or game entity changes.",
+    "readability": "Nearest filtering for pixel artwork; dark text outlines preserve actual names/counts on brighter decorative grass. Existing You/selection cue stays. Native readability pending real viewport inspection."
   },
   "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
   "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features.",
@@ -312,5 +314,6 @@
     "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock.",
     "labels": "Aggregate only already-visible physical stock rows by holder/type for one generic marker plus actual type/count; no one sprite per unit. Carry icon/count reads verified held-stock scalar fields only; empty hand gets no carry artwork."
   },
-  "battlefield_scope": "No new battlefield soldier/armour imagery in this increment. Prior verified T01 remains; other roster/animation gaps explicit. Do not claim a new battlefield art pass."
+  "battlefield_scope": "No new battlefield soldier/armour imagery in this increment. Prior verified T01 remains; other roster/animation gaps explicit. Do not claim a new battlefield art pass.",
+  "evidence": "docs/evidence/cohesive_opening_art.json"
 }

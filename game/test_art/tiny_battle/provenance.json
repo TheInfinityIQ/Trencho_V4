@@ -33,7 +33,7 @@
         16,
         16
       ],
-      "role": "Completed actual rear production facility emblem only",
+      "role": "Workshop/support manufacturing category at an actual site or clearly provisional intended-building ghost; state tint/progress and actual labels retained.",
       "modified": false
     },
     {
@@ -218,7 +218,7 @@
         16,
         16
       ],
-      "role": "Actual completed Vehicle Park flag category; no vehicle implied; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "role": "Vehicle Park category at an actual site or clearly provisional intended-building ghost; no displayed car, service or ownership grant.",
       "modified": false
     }
   ],

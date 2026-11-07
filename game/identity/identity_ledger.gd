@@ -211,9 +211,19 @@ func map_markers(excluded_owner: String = "army-red") -> Array[Dictionary]:
 	var kinds := Records.Kind.keys()
 	for entity in _entities.values():
 		if entity.owner == excluded_owner or entity.kind not in [Records.Kind.PERSON, Records.Kind.CARRIER, Records.Kind.HEAVY_OBJECT, Records.Kind.STOCK]: continue
-		markers.append({"id": entity.id, "kind": kinds[entity.kind], "owner": entity.owner,
+		var marker := {"id": entity.id, "kind": kinds[entity.kind], "owner": entity.owner,
 			"design_type": entity.design_type, "holder_id": entity.holder_id, "position": _world_position(entity.id), "quantity": entity.quantity,
-			"carrying_stock_id": entity.carrying_stock_id if entity is Records.Person else ""})
+			"carrying_stock_id": entity.carrying_stock_id if entity is Records.Person else ""}
+		if entity is Records.Person:
+			marker.assignment = Records.ASSIGNMENT_NAMES[entity.assignment]
+			marker.rear_place = entity.rear_place
+			marker.carried_type = ""
+			marker.carried_quantity = 0
+			var carried: Records.Entity = _entities.get(entity.carrying_stock_id)
+			if carried != null and carried.kind == Records.Kind.STOCK and carried.holder_id == entity.id and carried.quantity > 0:
+				marker.carried_type = carried.design_type
+				marker.carried_quantity = carried.quantity
+		markers.append(marker)
 	return markers
 
 

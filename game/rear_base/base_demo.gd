@@ -1099,6 +1099,7 @@ func preview_build_at(point: Vector2, full_validation: bool = true) -> void:
 	if not plan.has("footprint"):
 		var size: Vector2 = ConstructionCatalog.footprint(_construction_kind(),construction_turn.button_pressed)
 		plan.footprint = Rect2(point-size/2.0,size)
+	plan["visual_kind"] = _construction_kind()
 	base_map.placement_preview = plan
 	base_map.queue_redraw()
 	if feedback != null:
