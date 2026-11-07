@@ -209,6 +209,7 @@ func _draw_contents() -> void:
 	for x in range(0, 241, 20): draw_line(map_point(Vector2(x, 0)), map_point(Vector2(x, 180)), Color("2d4846"))
 	for y in range(0, 181, 20): draw_line(map_point(Vector2(0, y)), map_point(Vector2(240, y)), Color("2d4846"))
 	var font := ThemeDB.fallback_font
+	var facility_labels: Array[Dictionary] = []
 	for id in Layout.FACILITIES:
 		if character_enabled: continue
 		var f: Array = Layout.FACILITIES[id]
@@ -218,7 +219,7 @@ func _draw_contents() -> void:
 			_draw_facility_art(id,box)
 		draw_rect(box, Color("ffd37c") if id == selection else Color("8ea6b2"), false, 2)
 		draw_circle(map_point(f[4]), 3, Color("b3d69a"))
-		_draw_label(font, box.position + Vector2(0, -4), str(FACILITY_LABELS.get(id,id)), 12)
+		facility_labels.append({"at":box.position+Vector2(0,-4),"text":str(FACILITY_LABELS.get(id,id)),"size":12,"tint":Color.WHITE})
 	for row in simulation.rear.construction.instances.values():
 		if row.id.begins_with("initial-") or row.state in ["Cancelled","Dismantled"]: continue
 		var box := Rect2(map_point(row.center-row.size/2.0),row.size*scale)
@@ -228,12 +229,12 @@ func _draw_contents() -> void:
 			_draw_facility_art(row.kind,box,Color.WHITE if row.state == "Complete" else Color(1,1,1,0.35))
 		draw_rect(box,Color("ffd37c") if row.id == selection else Color("a8d7b2"),false,2)
 		draw_circle(map_point(row.door),3,Color("b3d69a"))
-		_draw_label(font,box.position+Vector2(0,-4),str(FACILITY_LABELS.get(row.kind,row.kind))+" "+row.id,12)
+		facility_labels.append({"at":box.position+Vector2(0,-4),"text":str(FACILITY_LABELS.get(row.kind,row.kind))+" "+row.id,"size":12,"tint":Color.WHITE})
 		if row.state in ["Awaiting M11","Building"]:
 			var progress := clampf(float(row.progress)/maxf(float(row.work),0.001),0.0,1.0)
 			draw_rect(Rect2(Vector2(box.position.x,box.end.y-4),Vector2(box.size.x,3)),Color("243d3c"))
 			draw_rect(Rect2(Vector2(box.position.x,box.end.y-4),Vector2(box.size.x*progress,3)),Color("ffd37c"))
-			_draw_label(font,box.position+Vector2(2,13),"%s · %d%%" % [str(row.state).replace("M11","materials"),roundi(progress*100.0)],10)
+			facility_labels.append({"at":box.position+Vector2(2,13),"text":"%s · %d%%" % [str(row.state).replace("M11","materials"),roundi(progress*100.0)],"size":10,"tint":Color.WHITE})
 	if placement_preview.has("footprint"):
 		var ghost: Rect2 = placement_preview.footprint
 		var tint := Color("90e2bf") if placement_preview.get("ok",false) else Color("ff817c")
@@ -241,8 +242,11 @@ func _draw_contents() -> void:
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),Color(tint,0.3))
 		var kind := str(placement_preview.get("visual_kind",""))
 		_draw_facility_art(kind,Rect2(map_point(ghost.position),ghost.size*scale),Color(tint,0.55))
-		_draw_label(font,map_point(ghost.position)+Vector2(0,-5),"Preview · "+str(FACILITY_LABELS.get(kind,kind)),12,tint)
+		facility_labels.append({"at":map_point(ghost.position)+Vector2(0,-5),"text":"Preview · "+str(FACILITY_LABELS.get(kind,kind)),"size":12,"tint":tint})
 		draw_rect(Rect2(map_point(ghost.position),ghost.size*scale),tint,false,2)
+	# Neighbouring facility/preview artwork must not paint over existing names/state.
+	for label: Dictionary in facility_labels:
+		_draw_label(font,label.at,label.text,label.size,label.tint)
 	var stock_groups: Dictionary = {}
 	for entity in simulation.rear.ledger.map_markers():
 		if entity.owner == "army-red": continue
@@ -360,6 +364,19 @@ func _draw_stock_groups(groups: Dictionary, font: Font) -> void:
 			_draw_stock_art(map_point(world_point),positions[world_point],font)
 
 func _draw_label(font: Font, at: Vector2, text: String, font_size: int = 12, tint: Color = Color.WHITE) -> void:
-	# Dark outline keeps actual names/counts legible on the brighter decorative grass.
-	draw_string_outline(font,at,text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,2,Color("16242b"))
-	draw_string(font,at,text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,tint)
+	var padding := 4.0
+	var available := size-Vector2.ONE*padding*2.0
+	if available.x <= 0.0 or available.y <= 0.0: return
+	var measured := font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size)
+	var ascent := font.get_ascent(font_size)
+	var descent := font.get_descent(font_size)
+	# Do not pull labels for fully offscreen world markers (such as HQ stock) into view.
+	var natural := Rect2(at-Vector2(0,ascent),Vector2(measured.x,ascent+descent))
+	if not natural.grow(2.0).intersects(Rect2(Vector2.ZERO,size)): return
+	var width := minf(measured.x,available.x)
+	var baseline := Vector2(
+		clampf(at.x,padding,maxf(padding,size.x-padding-width)),
+		clampf(at.y,padding+ascent,maxf(padding+ascent,size.y-padding-descent)))
+	# Keep the existing text/colour readable, clipping only strings wider than the viewport.
+	draw_string_outline(font,baseline,text,HORIZONTAL_ALIGNMENT_LEFT,width,font_size,2,Color("16242b"))
+	draw_string(font,baseline,text,HORIZONTAL_ALIGNMENT_LEFT,width,font_size,tint)
