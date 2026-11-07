@@ -264,6 +264,9 @@ func _draw_contents() -> void:
 			draw_rect(Rect2(point - Vector2(7, 4), Vector2(14, 8)), Color("dba274"))
 			if entity.kind == "CARRIER" and entity.design_type == "T01" and entity.owner == simulation.rear.PLAYER:
 				_draw_icon(TRUCK_ART,Rect2(point-Vector2(7,4),Vector2(14,8)))
+			if entity.get("fleet_domain","") == "Construction":
+				draw_rect(Rect2(point-Vector2(9,6),Vector2(18,12)),Color("ffd37c"),false,2)
+				_draw_label(font,point+Vector2(10,-7),"Construction truck",11,Color("ffd37c"))
 		if entity.kind != "PERSON": continue
 		# Passengers/drivers remain visibly on their carrier; don't draw them as loose workers.
 		if simulation.rear.ledger.entity_kind(entity.holder_id) == "CARRIER": continue

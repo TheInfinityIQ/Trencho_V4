@@ -1,0 +1,32 @@
+{
+  "source_head": "85b7efa737297fb49eeaa0e705fd31ed6b490434",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/115",
+  "required_validation": 42419826598,
+  "direct_demonstration": 42419837515,
+  "artifact": 13593051521,
+  "result": "PASS",
+  "engine": "Godot 4.7.2 stable official",
+  "scope": "One arranged current-change component, not ordinary gameplay or an FPS benchmark. Same actual untrained worker physically foot-delivers/builds its office before using its bundled truck for one real 150 M11 delivery and empty return.",
+  "observed": {
+    "event_boundaries": 59,
+    "worker": "demo-hauler",
+    "truck": "site-0001-utility-truck",
+    "payload_m11": 150,
+    "truck_trips": 1,
+    "distance_m": 404.99254733324,
+    "fuel_burned": 0.809985094666481,
+    "simulated_seconds": 240.654948907143,
+    "equivalent_25kg_foot_journeys": 6,
+    "calculated_foot_model_seconds": 1487.46715291341
+  },
+  "identity_and_custody": "No truck before office completion; exactly one actual construction-domain truck afterward. Same worker loads <=25kg portions, drives actual onboard cargo, deposits to actual unfinished site and returns/releases. Source/site quantities reconcile; no qualification or ordinary fleet membership granted. Finite initial fuel decreases by measured distance burn.",
+  "unverified": [
+    "Runtime cancellation/reassignment/obstruction/retirement recovery",
+    "Physical refuel GUI interaction",
+    "Ordinary connected-game progression",
+    "Native input/rendering and 60 FPS"
+  ],
+  "static_checks": "62 reviewed purposes; current system map and generated source-linked UI HTML. Existing regression fixture preserved unchanged: coupled UI/test-inventory check reports stale BaseDemo source hash; HTML consistency verified independently. No regression suite or local engine run.",
+  "uid": "Actual Godot-generated construction_truck_service.gd.uid retained from the direct demonstration artifact.",
+  "carry_forward": "Final follow-up changes are UID and documentation/map metadata only; production GDScript, project and workflow remain byte-identical to the demonstrated source."
+}

@@ -1927,6 +1927,11 @@ func _refresh_haul_rows(rows: Array) -> void:
 	_fill(jobs, _job_ids, rows, func(j: Dictionary) -> String: return "%s %s %d/%d | %s" % [j.id, j.type, j.delivered, j.requested, ("Missing hauling staff" if j.delivered < j.requested and simulation.rear._assigned("hauling") == 0 else j.blocker)])
 
 static func _transport_truck_status(row: Dictionary, delivery: Dictionary) -> String:
+	if row.get("utility",false):
+		var status := "Construction-only utility truck · %s\nFuel %.2f / %.0f · finite tank; no free refill.\nAn idle assigned hauler loads M11, drives and unloads for unfinished sites. No P08 needed for this truck; no army/passengers.\nTo refuel: buy M08 in Supplies, select an available worker and use the fuel carry button below." % [row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity]
+		if not str(row.get("utility_blocker","")).is_empty(): status += "\n"+str(row.utility_blocker)
+		if not str(row.get("utility_worker","")).is_empty(): status += "\nSame hauler: "+str(row.utility_worker)+" · "+str(row.get("utility_phase",""))
+		return status
 	var lines: Array[String] = [
 		"%s · %s" % [VEHICLE_NAMES[row.hull.design_type],row.state],
 		"Fuel %.1f / %.0f · Driver %s" % [row.hull.fuel,row.hull.vehicle_spec.tank_capacity,"seated" if row.readiness.driver else "required"]]
@@ -1955,7 +1960,7 @@ static func _transport_truck_status(row: Dictionary, delivery: Dictionary) -> St
 
 func _refresh_vehicle_controls(view: Dictionary, include_people: bool) -> void:
 	if include_people: _load_vehicle_people()
-	_fill(vehicle_rows,vehicle_ids,view.vehicles.rows,func(row: Dictionary) -> String: return "%s %s | %s | fuel %.1f/%.0f | F11 %d" % [row.id,row.hull.design_type,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,row.slot+1])
+	_fill(vehicle_rows,vehicle_ids,view.vehicles.rows,func(row: Dictionary) -> String: return ("Construction utility · %s | %s | fuel %.2f/%.0f" % [row.id,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity]) if row.get("utility",false) else ("%s %s | %s | fuel %.1f/%.0f | F11 %d" % [row.id,row.hull.design_type,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,row.slot+1]))
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:
 		vehicle_rows.select(0)
 		_load_vehicle_stations()
