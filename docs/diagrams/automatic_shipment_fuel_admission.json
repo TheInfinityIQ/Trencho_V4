@@ -1,0 +1,33 @@
+{
+  "status": "prospective_before_production_edits",
+  "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
+  "objective": "Keep an automatic rear shipment truck Parked until real fuel handling is finished and its actual tank covers the intended cargo trip and existing reserve.",
+  "scope": [
+    "game/logistics/rear_logistics.gd",
+    "game/dispatch/dispatch_service.gd",
+    "own contract/flow/evidence and required maps"
+  ],
+  "api": {
+    "Dispatch.accept_automatic_delivery(hull_id,type,quantity,site)": "One synchronous command boundary: validate current Parked/no-active-manifest/driven candidate, reject existing fuel_jobs for that hull, inspect actual contents/tank, constrain candidate units to actual remaining payload, measure prospective trip, reject insufficient tank before any mutation, then immediately call unchanged accept Strategic Delivery with actual candidate quantity. No exposed cached admission grant or yield.",
+    "Dispatch._route_preview(row, candidate_profile, prospective_load_kg=0)": "Factor existing route_preview calculation. Existing accepted route_preview delegates with zero added load and identical route/profile behavior. Prospective descriptor supplies actual hull/site/door/berth/home slot/Strategic Delivery, without creating a manifest. Reuse Routes.plan and its existing prospective_load_kg for intended cargo on outward legs; approach and unloaded return use actual existing contents. Same exact distances, surface/fuel rates and 25 percent reserve.",
+    "RearLogistics._advance_request": "Replace only automatic shipment acceptance call with new command; existing request/captured manifest/receipt/demand/hold/return handling unchanged. The wrapper owns actual candidate quantity, and existing manifest cargo is authoritative after capture."
+  },
+  "custody": [
+    "Before admission: no manifest, claims, yard reservation, crew/actor state, movement, cancellation or fuel transfer is created by preview.",
+    "Unfinished vehicle fuel_jobs reporting/pickup/carry/deposit remain under VehicleActivity; automatic load waits Parked. Reserved or carried M08 never augments tank_fuel.",
+    "Insufficient actual tank yields measured required/current fuel reason while Parked, so existing physical refuel controls remain legal.",
+    "Existing committed-state wake after actual tank handoff permits next finite automatic pass; no polling/timer/cache/new Resume/Depart/hold.",
+    "After successful synchronous preview+existing accept, existing Dispatch owns manifest, real staging/loading/departure/HQ unload/return. Departure rechecks current actual route/load/tank as before.",
+    "Existing manual accept, Fleet Transfer, accepted manifests and return paths retain their semantics."
+  ],
+  "payload_boundary": "Existing Routes prospective validation counts actual contents (including crew) plus candidate cargo against payload. Automatic candidate must use that same remaining payload rather than a nominal empty hull capacity; never sum a second gross estimate or count intended cargo twice.",
+  "cost": "Only finite automatic candidate admission; no new per-frame/per-hauler polling or broad snapshot. Fuel-job scan is hull-specific existing jobs. Reuse one authoritative route measurement; no second preview/permit cache across transactions. Necessary physical accept/depart checks remain.",
+  "acceptance": [
+    "Fuel ownership/insufficient tank leaves same hull Parked and request waiting without a physical manifest.",
+    "Candidate cargo quantity/mass is represented in prospective loaded route; actual tank alone pays approach/outward/return plus unchanged reserve.",
+    "Successful existing refuel handoff can lead to ordinary next automatic load, no manual Depart or new intent toggles.",
+    "Existing manual/accepted/other manifests, receipt/hold/demand and physical fuel custody remain unchanged."
+  ],
+  "verification": "Source review and required static metadata/whitespace maintenance only locally; no engine, regression, broad scenario, failure injection, matrix or benchmark. Required changed-code CI after publication; any one brief current-change demonstration separately reviewed first.",
+  "owners": "B implementation; lead prospective API/atomicity review and final integration; A exact-head peer; Designer identity. All permission/publication failures to lead."
+}
