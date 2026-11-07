@@ -1,5 +1,5 @@
 {
-  "status": "prospective source boundary only; awaiting Artist/lead verified paths and Designer mapping; no asset selected or production edit",
+  "status": "final two-icon mapping accepted by lead/Designer, frozen before production edits",
   "base": "2560de91",
   "owner": "C single implementation owner. Artist/lead verify creator-hosted CC0 downloads and exact files/provenance; Designer accepts imagery/entity meaning; lead grants final source/assets claim/publication.",
   "source_boundary": {
@@ -8,15 +8,59 @@
     "information": "battlefield_presentation.gd filters own physical units versus uncertain CONTACT reports. Do not edit this boundary or read enemy ledger state to select sprites. Unknown/unmapped/contact/state without approved mapping keeps existing primitive."
   },
   "mapping": {
-    "state": "PENDING_VERIFIED_ARTIST_LEAD_MAPPING",
-    "entries": [],
-    "required_per_entry": [
-      "exact logical entity kind/design/state eligibility",
-      "creator page and creator-hosted download URL",
-      "licence evidence and bundled CC0 text",
-      "local relative file path, SHA256, dimensions, alpha",
-      "source rect if atlas, render anchor/aspect-preserving target box and fallback"
-    ]
+    "state": "APPROVED_TWO_ORIGINAL_ICONS",
+    "entries": [
+      {
+        "archive_entry": "Tiles/tile_0047.png",
+        "path": "game/test_art/tiny_battle/tile_0047.png",
+        "sha256": "f2f919bb5b951c5cc2beeb247052f233024d4a946f4a2ab90405af21672e7875",
+        "bytes": 197,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "palette_entries": 6,
+        "transparency_chunk_bytes": 1,
+        "palette_alpha": [
+          0
+        ],
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Completed actual rear production facility emblem only",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0132.png",
+        "path": "game/test_art/tiny_battle/tile_0132.png",
+        "sha256": "1197a974f091380562db338d40569aa9de5f36fef1ff1fde87d2f6adeb1743e7",
+        "bytes": 222,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "palette_entries": 10,
+        "transparency_chunk_bytes": 1,
+        "palette_alpha": [
+          0
+        ],
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Own blue physical battlefield CARRIER with exact design_type T01 only",
+        "modified": false
+      }
+    ],
+    "provenance": "game/test_art/tiny_battle/provenance.json",
+    "rear_factory": "Completed constructed production facility only; legacy production marker only with actual initial site Complete. Preserve existing fills/footprints/door/labels/outlines; aspect-preserving max16px emblem inside existing box. No schools/logistics/receiving art.",
+    "battlefield_truck": "Existing own blue visible physical CARRIER exact design_type T01. Aspect-preserving full16x16 texture within existing12x8 visual body, original fill/outline and selection remain. Symbolic box has no cargo-status meaning.",
+    "fallback": "Rear map_markers has no design_type: keep generic vehicle fallback without new ledger query. Other types/unknown CONTACT/people remain original shapes."
   },
   "render_flow": [
     "Lead supplies verified small asset set and exact accepted role mapping.",
@@ -34,5 +78,6 @@
     "No terrain/catalogue/UI redesign or new imagery selection by implementation owner."
   ],
   "verification": "No local engine/regression/benchmark. Inspect supplied images and dimensions/licence, focused source/static metadata and required platform validation only; native rendering/readability/performance remain unverified until permitted observation.",
-  "next": "C hands this boundary to lead once; Artist/lead supplies verified paths/art mapping, then C completes final mapping and implements under claim."
+  "next": "C implements accepted two-view mapping plus minimal changed-PNG import prerequisite in validate.yml; root reviews/publishes and commits engine-produced sidecars after CI.",
+  "import_boundary": "PNG .import metadata must be produced by actual Godot remotely. Small workflow prerequisite imports only changed texture paths/sidecars in isolated minimal project with pinned engine and deadline, copies metadata/cache to checkout for changed-script parse, retains metadata as artifact for root commit; never commit .godot binaries. No full-project editor import or local engine."
 }
