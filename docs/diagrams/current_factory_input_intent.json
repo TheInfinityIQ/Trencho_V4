@@ -1,0 +1,44 @@
+{
+  "status": "prospective_before_production_edits",
+  "base": "ffc4c8282c1fed0eea7f61c2ec7d9181032af233",
+  "objective": "Retire only obsolete unselected AUTOMATIC factory input portions before new hauling admission, preserving enduring production intent and captured/manual custody.",
+  "scope": [
+    "game/logistics/rear_logistics.gd",
+    "game/staffing/rear_simulation.gd",
+    "game/production/fixed_production.gd",
+    "game/production/heavy_production.gd",
+    "own feature diagrams/evidence and final source/UI/button maps"
+  ],
+  "no_selectable_hook": "Selectable inherits the live production-owned intent query. Actual _recipe/_spec is already updated before _settle; the common pre-admission boundary sees it synchronously. No selectable source edit needed.",
+  "interfaces": {
+    "FixedProduction.automatic_input_intent()": "Return current input destination and whole selected-recipe missing input quantities. Disabled or output-target-satisfied intent returns no missing inputs. Ignore temporary paused/access/operator/staffing/batch eligibility. Reuse existing whole-recipe _missing and _target_satisfied rules; no fractional-batch recipe or input stockpile minimum.",
+    "HeavyProduction.automatic_input_intent()": "No accepted order means no automatic input intent. With an accepted order, defer to existing enabled/accepted-order target semantics; do not cancel or modify that order/batch/bay/fleet promise.",
+    "RearSimulation.request_haul optional automatic_factory RefCounted": "Validate registered current production owner, matching input destination and recipe type. Stamp immutable automatic_factory duty ID on new job BEFORE the existing internal _settle can select a portion. Existing manual callers/default remain unchanged.",
+    "RearLogistics._ensure_haul": "Pass the current actual production owner when creating automatic inputs, retaining existing current-demand eligibility and manual/other promise deduction. Do not change manual requested quantities.",
+    "RearSimulation._reconcile_factory_hauls()": "Run at common settlement boundary after due owners/actors/storage constraints, immediately BEFORE idle-hauler selection. Group explicitly tagged live jobs by current factory and destination/type; no origin inferred from matching endpoints. Reconcile all unselected portions once per affected owner."
+  },
+  "arithmetic": {
+    "protected": "Each job delivered + current actor.load counts across ALL Approach/Pickup/Source-blocked/Carry/Drop phases. Never use cumulative job.selected as current quantity.",
+    "coverage": "Current missing already excludes actual available local inputs. Subtract other live manual/other-owner requested-delivered promises once, then all same-owner captured load portions once. Distribute remaining permissible unselected quantity deterministically across that owner existing jobs, bounded by each old unselected remainder.",
+    "target": "delivered + captured + min(old unselected remainder, current remaining allocation). Never increase an old job here; ordinary supplier creates any later genuinely uncovered new work.",
+    "retirement": "Reduce only tagged automatic requested target and truthful job reason; never set cancelled, call cancel_job, release claims, reroute, alter stock/delivered/consumed/finished output or invent a Resume/hold.",
+    "removed_owner": "Missing current registered factory has no unselected intent; protected captured portions remain under existing safe handling. Identity is model-local duty ID; model replacement creates separate job/owner state."
+  },
+  "cost_and_order": [
+    "NO production/logistics/operator/stock query in _job_option or per-hauler/candidate. _start_job remains unchanged and observes reconciled requested floors.",
+    "At most one automatic_input_intent query per affected owner per existing immediate settlement transaction/changed boundary, only when that owner has an unselected automatic remainder. Use transaction-local dictionaries; no retained authoritative demand/history cache.",
+    "Build actor-load counts and outstanding promise groups in bounded local passes once before selection; reuse them for all jobs/haulers. Existing _missing reads local inputs and _target_satisfied reads output coverage at most once per affected owner, not once per candidate.",
+    "Existing _settle iterations repeat only for actual immediate state/handling/production changes. No new poll, timer, per-frame callback, generic invalidation or route-plan invalidation.",
+    "Creation provenance is atomic before internal settling; recipe/Stop/target changes are re-evaluated before every NEW selection, including synchronous command settling, so no next-frame cleanup window."
+  ],
+  "acceptance": [
+    "Genuine recipe/Stop/disabled/output-target withdrawal removes only obsolete automatic unselected portions before new selection.",
+    "Same ingredients still needed retain only genuinely uncovered whole-next-batch inputs; temporary pause/access/no staffing/operators/active batch ALONE is not withdrawal.",
+    "Accepted Heavy order semantics remain authoritative; no change to accepted production/order cancellation rules.",
+    "All captured claims/loads and real delivered/consumed/finished goods preserved; ordinary manual/other-owner/relocation quantities untouched.",
+    "Later actual need can queue uncovered automatic input work normally without a new hold/resume mechanism.",
+    "No new broad repeated reads across haulers/jobs, new source of stock/demand truth, resource/rate/pacing change or engine/regression campaign."
+  ],
+  "verification": "Source review and required static metadata/whitespace maintenance initially; no local engine, regression, broad scenario, failure injection, coverage matrix or benchmark. Required current-production CI after normal publication; any one necessary brief new-code input needs supplied exact scope and review before remote execution.",
+  "next_owners": "A implementation; B exact-head independent technical peer after forward feature freeze; C read-only feedback consultation if needed; Designer game identity; lead technical/checks/merge."
+}

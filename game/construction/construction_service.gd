@@ -383,6 +383,12 @@ func on_builder_reassigned(person_id: String, former_duty: String) -> void:
 	if rear.requests.has(former_duty): rear.requests[former_duty].target = maxi(0,int(rear.requests[former_duty].target)-1)
 	_sync_office(office)
 
+func cancellation_loss(id: String) -> Dictionary:
+	var row: Dictionary = instances.get(id,{})
+	if row.get("state","") != "Building": return {}
+	# Building is entered only after this stored site's first half was consumed.
+	return {"consumed_m11":int(row.m11)/2}
+
 func cancel(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual site.")
 	var row: Dictionary = instances[id]
