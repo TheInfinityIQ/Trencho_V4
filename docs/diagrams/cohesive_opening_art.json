@@ -1,0 +1,36 @@
+{
+  "status": "prospective boundary only; awaiting verified Artist mapping and Designer assets-ready acceptance; no art or production edits",
+  "base": "1d6851d6",
+  "owner": "C only implementer; Artist/lead verified asset subset and provenance; Designer visual coverage/meaning; lead source claim, publication and bounded remote actual-build captures.",
+  "priority": "Normal paused empty-field opening must visibly use cohesive art without adding people/buildings/stock or altering simulation. Prior two-icon pass remains intact.",
+  "proposed_source_scope": {
+    "primary": "game/rear_base/base_map.gd drawing only: ground, existing scene-owned character, fixed Supply Table/arrival landmark and existing placement ghost; later existing people/completed facilities/stock/carriers under exact approved mappings.",
+    "secondary": "game/battlefield/battlefield_view.gd only if Designer includes matching exact known-unit coverage in this increment; preserve contact-report information boundary.",
+    "marker_boundary": "Existing kind/design_type/owner/holder/quantity fields and construction rows suffice for many mappings; any new role/status projection needs one concrete lead-approved additive field from already-looped entity, never new ledger inspection/scan.",
+    "assets": "Small exact creator-verified subset, original licence/provenance and actual engine-produced import sidecars; no catalogue bulk imports or generated imagery.",
+    "validation": "Existing explicit texture-dependency import list changes only for approved compile dependencies if required. Lead owns bounded remote actual current-build capture and generated sidecars."
+  },
+  "render_flow": [
+    "Artist/lead supplies verified original files and precise role/state/source-rect mapping; Designer supplies assets-ready coverage. Commit final mapping before code.",
+    "Preload/cache fixed textures once. Existing redraw/movement/placement/session events remain unchanged; no animation clock/poll/node per entity.",
+    "Render ground with a bounded single/batched GPU texture path clipped to existing240x180 world bounds; no per-world-tile CPU loop/nodes. Restore draw transform before existing markers if a local texture transform is used.",
+    "Render only existing character_position and fixed Supply Table/arrival coordinate, preserving outlines/labels/player distinction and movement/collision/hit tests.",
+    "Render existing legal/illegal/provisional placement geometry with clear state tint/outline; no placed site or resource consumption invented for preview.",
+    "For later existing entities, use exact accepted visible role/state only; preserve faction/carry/status/selection/door overlays and primitive fallback. Unknown role/contacts stay fallback.",
+    "Actual current-build rendered screenshot of ordinary empty-field opening is mandatory; extra coverage captures only accepted real state/ordinary controls, never fake opening population or asset contact sheet."
+  ],
+  "acceptance_proposal": [
+    "Initial ordinary paused opening visibly includes coherent ground/player/Supply Table art; no unseen later truck/factory is needed to see the pass.",
+    "Geometry, camera/input, footprint/hit tests, selection, status/faction and uncertainty remain unchanged.",
+    "Placement remains visibly provisional with its actual valid/invalid reason and no hidden construction commit.",
+    "Existing marker fallback remains for unsupported/unverified roles; no armed worker or invented equipment/status.",
+    "No full-world tile loops, extra entity nodes/resource loads/polling or local engine.",
+    "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
+  ],
+  "mapping": {
+    "state": "PENDING_VERIFIED_MAPPING",
+    "entries": []
+  },
+  "capture_dependency": "Lead arranges bounded remote render of this exact build; C inspects returned real screenshots and resolves concrete art defects before final handoff. Static parsing alone is insufficient for assets-ready claim.",
+  "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features."
+}
