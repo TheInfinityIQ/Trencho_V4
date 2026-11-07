@@ -6,16 +6,17 @@ Read [developer onboarding](developer_onboarding.md) and current AGENTS before w
 
 | Developer | Chat | Current feature | Isolated checkout |
 | --- | --- | --- | --- |
-| A — Army Supply | `01a1ae78-5b3a-7993-87ca-7d316595fd7e` | Source/Designer clarification of genuine need versus actionable collection; PR95 remains stable | `trencho_dev_army` |
-| B — Operations & Transport | `01a1ae78-6945-7ae0-b03c-f2b5fadb56ad` | Current request selection and truthful truck handling/fuel/crew feedback | `trencho_dev_truck_handoff` |
-| C — Player Experience | `01a1ae78-77c2-7822-9322-328161666746` | Mount Getting started guidance and useful destination links | `trencho_dev_guidance_mount` |
-| Lead | `01a199a0-f08e-7f23-947f-62655a9ed233` | GitHub cleanup, exact-head review and gameplay integration | `trencho_lead_integration` |
+| A — Army Supply | `01a1ae78-5b3a-7993-87ca-7d316595fd7e` | Preserve receipt fix; independently review B's combined candidate | `trencho_dev_receipt_reconcile` |
+| B — Operations & Transport | `01a1ae78-6945-7ae0-b03c-f2b5fadb56ad` | Prepare local combined automatic-supply candidate | `trencho_dev_supply_candidate` |
+| C — Player Experience | `01a1ae78-77c2-7822-9322-328161666746` | Preserve staffing priority when Build changes count; next, batch cancellation confirmation | `trencho_dev_staff_count` |
+| Lead | `01a199a0-f08e-7f23-947f-62655a9ed233` | Dispatch next outcomes, exact-head review, integration and scoped publication dependencies | `trencho_lead_integration` |
 
 Checkouts are under `C:/Users/dawso/Developer/Projects/Godot/`. Never switch or edit
 the shared `trencho_v4` checkout, which was externally returned to main. New feature
-work starts from the published6b1dd28 checkpoint plus policy12005e3; approved older
-component PR heads remain historical exact-head contracts. Current branches and
-reviews are in [team state](team_integration_state.json).
+work starts from the exact base in its current lead assignment (6 November:
+integrationadfa557 unless explicitly stated otherwise). Approved older component
+PR heads remain historical exact-head contracts. Current branches, local preparation,
+scoped publication waits and reviews are in [team state](team_integration_state.json).
 
 Before editing, agree a bounded outcome, affected files, ownership and observable
 acceptance with the lead. Save a prospective diagram and command/event/cancellation
@@ -46,10 +47,17 @@ Dawson authorizes direct coordination with lead for delegation/technical review 
 Designer for gameplay clarification/design review. UI/UX and Artist retain their
 consultant roles. Communicate meaningful progress/handoffs without acknowledgement
 loops. Use feature-level Objective / Outcome / Next task briefings. Request the next
-bounded task after handoff; no invented feature, nested execution owner, autonomous
+bounded task after handoff; the lead must dispatch its next owner under the
+completion protocol in team_workflow.md, rather than wait for a generic human
+continue. No invented feature, nested execution owner, autonomous
 heartbeat or always-on service is established by these chats.
 
-## Integrated stage handoff
+## Historical integrated stage handoffs
+
+The entries below retain 5 November checkpoints, not current assignments. As of
+the 6 November continuity repair, PR89 and draft PR100 are open; the new combined
+candidate is LOCAL preparation, with its own exact-head review still required.
+
 
 PRs93–98 are merged into source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e on the review branch. Only PR89 remains open. The bounded combined-source design delta is approved; its brief manual UI demonstration is queued on GitHub, not a runtime pass. Developer A owns the next authoritative collection-readiness explanation, B owns observing that single remote job, and C awaits the next bounded feature. No local engine or regression run is permitted.
 

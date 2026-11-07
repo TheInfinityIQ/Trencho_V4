@@ -24,6 +24,10 @@ Changed heads require renewed review. Role decisions currently use COMMENT
 reviews under the shared GitHub account; do not claim native approval or merge
 without it occurring. Request the next bounded task after handoff; do useful
 independent work while clarification is pending, without unattended retry loops.
+Follow the completion/next-assignment protocol
+in team_workflow.md: every handoff names the next action and owner; the lead
+must dispatch review, integration or a ready successor in the active session.
+A tool approval holds its affected action, not independent accepted work.
 
 ## Onboard before editing
 

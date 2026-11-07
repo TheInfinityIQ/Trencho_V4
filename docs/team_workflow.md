@@ -37,3 +37,67 @@ Maintain the living system map and UI flowchart for project changes. The integra
 Use Objective, Outcome and Next task in progress/completion handoffs. Say Completed only for the particular result actually verified. Provide exact published revision, changed scope, actual checks, remaining limits and next task. Keep human feedback distinct from engineering results.
 
 GitHub carries current goals and status; repository documents carry lasting design and engineering decisions. The current GDD describes gameplay; historical detailed specifications preserve reference values and provenance rather than controlling implementation. Do not send acknowledgement-only loops or introduce another approval gate for ordinary work already authorized.
+
+## Completion, next assignment and blocked work
+
+Effective 6 November 2026 after Dawson reported an avoidable team stoppage.
+The existing rule to request another task was insufficient: completed handoffs
+waited on the lead, and the lead ended the active turn without dispatching the
+next owned outcome. No gameplay question or requested playtest caused that gap.
+The lead owns correcting it; a generic human “continue” is not a prerequisite.
+
+1. Before a bounded task completes, its owner reports the exact revision,
+   outcome, actual verification limits and next concrete action with its owner.
+   “Ready for more work” alone is not a complete handoff. Propose a source-backed
+   successor within the accepted demo; do not invent a feature to stay busy.
+2. The lead processes each completion during the active coordination session:
+   assign review/integration, dispatch the next ready bounded task, or record the
+   exact dependency and who will release it. Preassign a separable successor
+   when the next accepted outcome is already known. Developers may start that
+   successor after freezing the prior handoff; no new generic resume is needed.
+3. A completed trace with no defect closes that trace, not the team's delivery.
+   Do not repeat investigations, approval packets or checks to create activity.
+   An idle reviewer waiting on an explicitly owned implementation is acceptable;
+   the lead continues dispatching and integrating ready work.
+4. Keep blockers local to the affected action. A rejected push holds that push;
+   it does not hold unrelated authorized implementation or local review.
+   Preserve the rejection, never retry by an alternate route, and name the
+   precise approval needed. Keep a pending tool approval separate from a
+   gameplay question, missing lead assignment or human playtest.
+5. A human-wait handoff must contain the actual unanswered question or requested
+   playtest, its chat/build location and why dependent work cannot proceed.
+   Unverified whole-demo acceptance is not an implicit request for a playtest.
+   Continue independent accepted work while an answer or review is pending.
+6. Before the lead ends an active work turn, inspect completed team handoffs and
+   the existing team state. Every unfinished ready outcome needs a dispatched
+   owner; every waiting outcome needs a named dependency owner and next action.
+   A completed child or final status message must not silently complete #83.
+   If all useful work is genuinely gated, report the exact gates and questions.
+7. These are execution responsibilities, not an installed background service.
+   Use the existing thread tools to follow active work. Do not promise perpetual
+   workers, add a heartbeat/second controller, or schedule a job-tracking
+   automation. User pauses, tool permission boundaries and execution limits
+   still apply and must be reported honestly.
+
+The current assignments and scoped waits live in
+[team integration state](team_integration_state.json). GitHub remains the public
+execution record; local unpublished preparation must be labelled as such.
+
+~~~mermaid
+flowchart LR
+  Work[Owned bounded work] --> Handoff[Exact revision and result]
+  Handoff --> Lead[Lead dispatch decision]
+  Lead --> Review[Owned review or integration]
+  Lead --> Next[Preassigned next accepted task]
+  Lead --> Gate[Exact scoped dependency]
+  Review --> Lead
+  Next --> Work
+  Gate --> Independent[Continue independent ready work]
+  Gate --> Human[Ask precise question or request playtest if required]
+  Human --> Lead
+~~~
+
+The plan/execute/review loop is consistent with OpenAI's
+[long-horizon task guidance](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex).
+The task ownership and stopping rules above are project decisions, not claims
+that a Markdown file installs automatic continuation.

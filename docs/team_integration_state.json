@@ -1,5 +1,5 @@
 {
-  "updated_date": "2026-11-05",
+  "updated_date": "2026-11-06",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
     "title": "Trencho V4 Developer",
@@ -37,7 +37,7 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
     }
   ],
-  "current_work": "Operations developer fixes new automatic Logistics Centre selection using actual eligible handlers while preserving accepted manifests. PR99 diagnostic feature is integrated; ordinary supply-loop/FPS acceptance stays open.",
+  "current_work": "Local combined supply candidate (B), independent combined-source review (A), Build staffing-count priority preservation (C), then separately queued consumed-batch cancellation confirmation. Lead owns continuity, exact-head review and integration.",
   "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -84,9 +84,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_army",
-        "branch": "codex/dev-army-loop",
-        "current_assignment": "PR99 approved and integrated; waiting next bounded lead assignment."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_receipt_reconcile",
+        "branch": "codex/army-receipt-reconciliation",
+        "current_assignment": "Preserve receipt fix78bd7b6; independently review B's exact new combined supply candidate when ready. B owns readiness; no repeated old traces."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -94,9 +94,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_logistics_selection",
-        "branch": "codex/ready-logistics-centre",
-        "current_assignment": "New automatic shipment centre selection must skip requested-but-unfilled centres when another has an actual eligible idle handler; narrow authoritative single-pass readiness, accepted manifests unchanged. Startpointffd92ab; contract/diagram before edits; brief GitHub new-code check only."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
+        "branch": "codex/connected-supply-candidate",
+        "current_assignment": "LOCAL combined candidate frozen at bc0bfefdbdbb0812d8258b106eddf01654fca6f0, parentadfa557, combiningf7b1+78bd+4c87 production in three claimed files. Static maps/whitespace and exact composition comparisons passed; A/Designer/lead exact candidate source reviews requested. No engine/runtime/publication."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -104,9 +104,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_guidance_mount",
-        "branch": "codex/demo-guidance-mount",
-        "current_assignment": "Exact approved feature integrated; awaiting next bounded lead assignment."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
+        "branch": "codex/confirm-consumed-batch-cancel",
+        "current_assignment": "Count fix frozen locally at e15eaf4f2f703da8ee47b905bc29c665c4c8a7e3; lead and Designer provisional exact-head source reviews found no blocker, no engine/runtime/publication. C has transitioned without a generic resume to the separately preassigned consumed-active-batch cancellation confirmation; diagram before implementation."
       }
     ],
     "review_policy": {
@@ -115,7 +115,7 @@
       "default": "Pending until explicit review; do not merge",
       "native_github_approval": "Report actual submission separately from a recorded role review note"
     },
-    "lifecycle": "Lead assigns bounded tasks while active; no scheduled or always-on service.",
+    "lifecycle": "Lead dispatches and follows bounded active tasks; each completion routes to review, integration or an already assigned successor. No generic human continue dependency and no scheduled/always-on service.",
     "reviewed_prs": [
       {
         "pr": 93,
@@ -172,12 +172,22 @@
         "design": "approved roleCOMMENT5795066498",
         "scope": "Last actual supply-pickup assessment diagnostic and recipient text; decision gates unchanged",
         "integration": "merged into current review branch; exact production bytes preserved"
+      },
+      {
+        "pr": 100,
+        "sha": "f7b1c626ab5b5a8188c893ae2054c9d1e3414175",
+        "technical": "Exact-head scoped source/component approval in lead chat; no public COMMENT/native approval",
+        "design": "Exact-head scoped approval and evidence addendum in Designer chat; no public COMMENT/native approval",
+        "scope": "Actual eligible-handler selection for new automatic shipment only; captured manifests unchanged",
+        "verification": "Single authorized GitHub run42165822825 passed its supplied component case; not ordinary full-game supply/FPS acceptance",
+        "integration": "Draft open and unmerged; local composition candidate assigned separately"
       }
     ],
     "kind": "persistent_codex_project_chats",
     "supersedes": "Earlier temporary xhigh sub-agents; their source, branches, PRs and evidence are inherited, not new authorship.",
     "onboarding": "docs/developer_onboarding.md",
-    "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later."
+    "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later.",
+    "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work"
   },
   "repository_cleanup": {
     "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
@@ -227,5 +237,29 @@
     "credential_owner": "Existing named Windows credential; token never in repo/config/logs",
     "verified": "Deployed helper, MCP initialization/tools list and real Project3 read succeeded; native registered app tool projects_get returned private Project3.",
     "session_limit": "Resolved: registered mcp__github_projects tools are available; native projects_get read actual Project3 successfully."
+  },
+  "continuity_recovery": {
+    "date": "2026-11-06",
+    "reported_cause": "Finished bounded assignments and reviews waited for lead task dispatch; the lead ended coordination without a ready successor. Explicit stop-if-no-defect instructions closed traces, not the demo.",
+    "human_gameplay_question_pending": false,
+    "human_playtest_requested_pending": false,
+    "human_wait_qualification": "This reflects the developer/Designer/UI continuity reports; the Artist was contacted but no fresh response was observed.",
+    "scoped_tool_wait": {
+      "owner": "Dawson direct approval in Developer C chat; C owns the affected push",
+      "action": "Normal publication of local4c87cb483d3222c751ab4390ebb75e4586dd7395 to codex/actual-works-reporting-exit in TheInfinityIQ/Trencho_V4",
+      "reason": "Automatic approval review rejected potential private-source egress because it did not accept relayed authorization as direct user permission.",
+      "rule": "No retry or alternate publication route. Local independent implementation/review is not held by this wait."
+    },
+    "completed_approval_not_pending": "PR100 draft creation and its single45-second GitHub direct check were approved and completed; that grant is not a blanket halt on source development.",
+    "ready_successor": {
+      "owner": "C",
+      "after": "Freeze staff-count priority repair for exact-head review",
+      "outcome": "Confirm loss before cancelling a consumed active batch, without cancelling a replacement batch or changing material rules",
+      "status": "C reported transition underway after freezing count repair at e15eaf4; no generic continue needed",
+      "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first"
+    },
+    "lead_next_action": "Protocol supporting-developer source review found no blocker. Lead now processes combined candidate bc0bfef and count e15eaf4 exact-head reviews, while C implements the preassigned cancellation safeguard. Publish only through the applicable permitted path; no local engine or regression work.",
+    "publication": "This is a local operational record until separately published. It does not assert that new candidate branches or PRs exist remotely.",
+    "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   }
 }

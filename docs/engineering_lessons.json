@@ -100,6 +100,11 @@
       "failure": "A decision diagnostic converted an existing boolean short-circuit into an unconditional secondary gate evaluation. Technical review caught it before integration.",
       "evidence": "PR99 correctionb78030ba and exact reviewedff5d176e; technical review5795065501",
       "rule": "Diagnostic text must reuse authoritative results and preserve original predicate order, short-circuit behavior and call counts. Do not evaluate another gate solely to produce a more specific explanation. Distinguish locally submitted script bytes from actually executed artifact bytes and document serialization transformations."
+    },
+    {
+      "failure": "Completed bounded developer/review handoffs became idle while the lead awaited another human continue message, despite no pending gameplay question or requested playtest.",
+      "evidence": "Dawson's6November2026 stoppage report and Army/Operations/Player Experience/Designer/UI continuity reports; docs/team_workflow.md completion protocol.",
+      "rule": "Lead owns the next dispatch: process completion into owned review/integration, a preassigned accepted successor or an exact scoped dependency before ending active coordination. Separate tool approval from gameplay/playtest waits; preserve rejected actions while independent authorized work continues. Do not repeat old traces or invent busywork."
     }
   ],
   "design_review": [
