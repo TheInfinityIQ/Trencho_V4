@@ -1,0 +1,13 @@
+flowchart TD
+  Need[Current automatic request and real available cargo] --> Candidate[Same returned driven Parked hull]
+  Candidate --> Handling{Unfinished physical fuel job?}
+  Handling -->|Yes| Wait[Keep Parked and existing fuel custody]
+  Handling -->|No| Preview[Reuse Dispatch trip calculation with intended cargo and actual tank]
+  Preview --> Fuel{Actual tank covers trip and existing reserve?}
+  Fuel -->|No| Wait
+  Wait --> Worker[Existing M08 pickup carry and tank handoff]
+  Worker --> Wake[Existing committed-state wake]
+  Wake --> Candidate
+  Fuel -->|Yes| Accept[Same synchronous command calls existing accept]
+  Accept --> Physical[Existing manifest loading departure HQ unload and return]
+  Physical --> Candidate

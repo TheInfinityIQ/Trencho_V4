@@ -712,12 +712,79 @@ func _finish_task(row: Dictionary) -> void:
 	_clear_task(row)
 	if phase == "Passenger Board" and result.ok: rear.actors[worker].phase = "Passenger Seated"
 
-func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
+func _automatic_delivery_facts(hull_id: String, type: String, quantity: int, site_id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
+	if not dispatch_sites.has(site_id) or not rear.vehicles.vehicles.has(hull_id): return _fail("Choose a current dispatch site and actual rear truck.")
+	var vehicle: Dictionary = rear.vehicles.vehicles[hull_id]
+	if vehicle.state != "Parked" or not _active_manifest(hull_id).is_empty(): return _fail("The same truck must be Parked without an active manifest.")
+	for job in rear.vehicles.fuel_jobs.values():
+		if job.hull == hull_id: return _fail("Waiting for this truck's actual fuel pickup, carry and tank handoff to finish while Parked.")
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+	if hull.get("design_type","") not in ["T01","T02"] or not rear.vehicles.readiness(hull_id).transfer_crew_eligible: return _fail("A healthy actual qualified Driver must occupy this rear truck.")
+	var unit_mass: float = _unit_mass(type)
+	if quantity <= 0 or unit_mass <= 0.0: return _fail("Choose positive actual shipment cargo.")
+	var count: int = mini(quantity,maxi(0,int(floor((float(hull.vehicle_spec.payload)-float(hull.contents_mass_kg))/unit_mass))))
+	if count <= 0: return _fail("Actual contents leave no payload room for this shipment.")
+	var site: Dictionary = dispatch_sites[site_id]
+	var slot: int = int(vehicle.slot)
+	var row := {"hull":hull_id,"mode":"Strategic Delivery","dispatch_site":site_id,"dispatch_door":site.door,"berth_place":site.berth,"home_slot":slot,"route_profile":{}}
+	# Only derived geometry, not a visibility graph or complete world snapshot.
+	var geometry: Array = []
+	for building in rear.construction.instances.values():
+		if building.state in ["Cancelled","Dismantled"]: continue
+		geometry.append([building.id,building.kind,building.center,building.size,building.get("parking_slots",[]).duplicate()])
+	var known_hazards: Array = []
+	var memoizable: bool = not rear.ledger.route_hazard.is_valid()
+	if rear.mines != null and rear.ledger.route_hazard == rear.mines.route_blocker:
+		memoizable = true
+		for marker in rear.mines.knowledge.get(hull.owner,{}).values(): known_hazards.append([marker.position,marker.hazard])
+	var hull_inputs := {}
+	for key in ["id","design_type","owner","controller","holder_id","position","unit_mass_kg","contents_mass_kg","fuel","health","damage_immobilized","towing","towed_by","vehicle_spec","fleet_domain"]:
+		hull_inputs[key] = hull[key]
+	var signature := {"hull_inputs":hull_inputs,"type":type,"quantity":count,"site":site.duplicate(true),"slot":slot,
+		"home":rear.yard.PARKING_POSITIONS[slot],"parking_owner":rear.construction.parking_owner(slot),"geometry":geometry,
+		"rear_exit":rear.ledger.inspect_entity("rear-exit",{},false).position,"hq":hq_position,"queue":queue_position,
+		"route_hazard":rear.ledger.route_hazard,"known_hazards":known_hazards}
+	return {"ok":true,"quantity":count,"mass":count*unit_mass,"row":row,"signature":signature,"memoizable":memoizable}
+
+func accept_automatic_delivery(hull_id: String, type: String, quantity: int, site_id: String, blocked_attempt: Dictionary = {}) -> Dictionary:
+	var facts: Dictionary = _automatic_delivery_facts(hull_id,type,quantity,site_id)
+	if not facts.ok: return facts
+	if facts.memoizable and blocked_attempt.get("signature",{}) == facts.signature:
+		return {"ok":false,"measured":false,"fuel_blocked":true,"blocked_attempt":blocked_attempt,"message":blocked_attempt.message}
+	var plan: Dictionary = _route_preview_for(facts.row,{},float(facts.mass))
+	if not plan.ok:
+		plan.measured = true
+		return plan # Route/hazard failures never become a low-fuel bookmark.
+	if not plan.fuel_ok:
+		var message := "Keep this truck Parked for physical refuelling: %.2f tank fuel required for the cargo trip and 25 percent reserve, %.2f actually in tank. Reserved or carried M08 is not tank fuel." % [plan.required_fuel,plan.tank_fuel]
+		var attempt: Dictionary = {"signature":facts.signature,"message":message} if facts.memoizable else {}
+		return {"ok":false,"measured":true,"fuel_blocked":true,"blocked_attempt":attempt,"message":message}
+	# No yield or stored positive permit: re-read current ownership/inputs, then
+	# enter the existing authoritative acceptance transaction immediately.
+	var fresh: Dictionary = _automatic_delivery_facts(hull_id,type,quantity,site_id)
+	if not fresh.ok or fresh.signature != facts.signature:
+		return {"ok":false,"measured":true,"message":"Truck or route facts changed before automatic admission; no manifest was accepted."}
+	var result: Dictionary = accept(hull_id,"Strategic Delivery",[],{type:int(fresh.quantity)},[],site_id)
+	result.measured = true
+	return result
+
+func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 	var row: Dictionary = manifests.get(id,{})
 	if row.is_empty(): return _fail("Select an accepted physical manifest.")
+	return _route_preview_for(row,candidate)
+
+func _route_preview_for(row: Dictionary, candidate: Dictionary = {}, prospective_load_kg: float = 0.0) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var profile: Dictionary = candidate if not candidate.is_empty() else row.route_profile
+	var loaded_rear := {"strict_turns":false}
+	var loaded_corridor: Dictionary = profile.duplicate(true)
+	var loaded_dock := {}
+	if prospective_load_kg > 0.0:
+		loaded_rear.prospective_load_kg = prospective_load_kg
+		loaded_corridor.prospective_load_kg = prospective_load_kg
+		loaded_dock.prospective_load_kg = prospective_load_kg
 	var rear_exit: Vector2 = rear.ledger.inspect_entity("rear-exit").position
 	var segments: Array[Dictionary] = []
 	var road_start: Vector2 = hull.position
@@ -730,13 +797,13 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 		road_start = row.dispatch_door
 	var outward_route: Array = _rear_vehicle_path(row,road_start,rear_exit)
 	if outward_route.is_empty(): return _fail("No clear eight-metre road from this F07 berth to the rear exit.")
-	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,outward_route,{"strict_turns":false})
+	var outward_rear: Dictionary = Routes.plan(rear.ledger,row.hull,outward_route,loaded_rear)
 	if not outward_rear.ok: return _fail(outward_rear.reason)
 	segments.append(outward_rear)
-	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,queue_position],_crossing_profile(profile,[rear_exit,ENTRY,queue_position]))
+	var outward: Dictionary = Routes.plan(rear.ledger,row.hull,[rear_exit,ENTRY,queue_position],_crossing_profile(loaded_corridor,[rear_exit,ENTRY,queue_position]))
 	if not outward.ok: return _fail(outward.reason)
 	segments.append(outward)
-	var dock: Dictionary = Routes.plan(rear.ledger,row.hull,[queue_position,hq_position])
+	var dock: Dictionary = Routes.plan(rear.ledger,row.hull,[queue_position,hq_position],loaded_dock)
 	if not dock.ok: return _fail(dock.reason)
 	segments.append(dock)
 	if row.mode == "Strategic Delivery":
@@ -756,7 +823,7 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 		seconds += float(segment.seconds)
 		fuel += float(segment.fuel)
 	var required: float = fuel*1.25
-	return {"ok":true,"message":"Measured route and physical gross load.","distance":distance,"seconds":seconds,"fuel":fuel,"required_fuel":required,"tank_fuel":hull.fuel,"gross_kg":Routes.gross_kg(rear.ledger,row.hull),"profile":profile.duplicate(true),"segments":segments,"fuel_ok":hull.fuel+EPS >= required}
+	return {"ok":true,"message":"Measured route and physical gross load.","distance":distance,"seconds":seconds,"fuel":fuel,"required_fuel":required,"tank_fuel":hull.fuel,"gross_kg":Routes.gross_kg(rear.ledger,row.hull)+prospective_load_kg,"profile":profile.duplicate(true),"segments":segments,"fuel_ok":hull.fuel+EPS >= required}
 
 func set_route_profile(id: String, profile: Dictionary) -> Dictionary:
 	var row: Dictionary = manifests.get(id,{})

@@ -1,0 +1,41 @@
+{
+  "status": "prospective_before_production_edits",
+  "base": "0f3664049b7b03b02c9075943ef26e5ab9551401",
+  "objective": "Keep an automatic rear shipment truck Parked until real fuel handling is finished and its actual tank covers the intended cargo trip and existing reserve.",
+  "scope": [
+    "game/logistics/rear_logistics.gd",
+    "game/dispatch/dispatch_service.gd",
+    "own contract/flow/evidence and required maps"
+  ],
+  "api": {
+    "Dispatch.accept_automatic_delivery(hull_id,type,quantity,site)": "One synchronous command with optional prior FAILED-input bookmark only: fresh actual ownership/fueljob/candidate facts and signature; unchanged insufficient-fuel signature skips measurement; otherwise use common full-trip route measurement, return failure bookmark only after route success plus insufficient tank, or immediately call unchanged accept with actual intended quantity. Return measured flag to existing finite scheduler. No cached positive admission grant or yield.",
+    "Dispatch._route_preview(row, candidate_profile, prospective_load_kg=0)": "Factor existing route_preview calculation. Existing accepted route_preview delegates with zero added load and identical route/profile behavior. Prospective descriptor supplies actual hull/site/door/berth/home slot/Strategic Delivery, without creating a manifest. Reuse Routes.plan and its existing prospective_load_kg for intended cargo on outward legs; approach and unloaded return use actual existing contents. Same exact distances, surface/fuel rates and 25 percent reserve.",
+    "RearLogistics._advance_request": "Replace only automatic shipment acceptance call with new command; existing request/captured manifest/receipt/demand/hold/return handling unchanged. The wrapper owns actual candidate quantity, and existing manifest cargo is authoritative after capture."
+  },
+  "custody": [
+    "Before admission: no manifest, claims, yard reservation, crew/actor state, movement, cancellation or fuel transfer is created by preview.",
+    "Unfinished vehicle fuel_jobs reporting/pickup/carry/deposit remain under VehicleActivity; automatic load waits Parked. Reserved or carried M08 never augments tank_fuel.",
+    "Insufficient actual tank yields measured required/current fuel reason while Parked, so existing physical refuel controls remain legal.",
+    "Existing committed-state wake after actual tank handoff permits next finite automatic pass; no polling/timer/cache/new Resume/Depart/hold.",
+    "After successful synchronous preview+existing accept, existing Dispatch owns manifest, real staging/loading/departure/HQ unload/return. Departure rechecks current actual route/load/tank as before.",
+    "Existing manual accept, Fleet Transfer, accepted manifests and return paths retain their semantics."
+  ],
+  "payload_boundary": "Existing Routes prospective validation counts actual contents (including crew) plus candidate cargo against payload. Automatic candidate must use that same remaining payload rather than a nominal empty hull capacity; never sum a second gross estimate or count intended cargo twice.",
+  "cost": "Lead chose derived failed-attempt bookmark and finite candidate pass. At most one NEW expensive full-trip measurement per rendered RearLogistics policy turn; unchanged low-fuel attempt uses cheap current facts, not route solving. No per-hauler queries, new poll/timer, broad snapshot or persistent positive grant. Fresh measurement and synchronous existing acceptance follow changed facts.",
+  "acceptance": [
+    "Fuel ownership/insufficient tank leaves same hull Parked and request waiting without a physical manifest.",
+    "Candidate cargo quantity/mass is represented in prospective loaded route; actual tank alone pays approach/outward/return plus unchanged reserve.",
+    "Successful existing refuel handoff can lead to ordinary next automatic load, no manual Depart or new intent toggles.",
+    "Existing manual/accepted/other manifests, receipt/hold/demand and physical fuel custody remain unchanged."
+  ],
+  "verification": "Source review and required static metadata/whitespace maintenance only locally; no engine, regression, broad scenario, failure injection, matrix or benchmark. Required changed-code CI after publication; any one brief current-change demonstration separately reviewed first.",
+  "owners": "B implementation; lead prospective API/atomicity review and final integration; A exact-head peer; Designer identity. All permission/publication failures to lead.",
+  "blocked_attempt_bookmark": {
+    "owner": "Each RearLogistics request owns a dictionary keyed by candidate hull ID; discarded on accepted manifest, request completion/cancellation or model replacement. This stores ONLY successful-measurement/insufficient-tank failure inputs and reason, never a positive permit, route plan, demand quantity owner or fuel truth.",
+    "signature": "Fresh selected-hull derived route inputs only: ID/type/owner/controller/holder/position/unit mass/actual contents mass/tank/health/immobilization/tow/spec/fleet values. No whole inspect_entity result, description/history/ammunition/crew/passenger inspection dictionary is retained. Candidate Driver readiness is checked freshly before bookmark comparison. Actual cargo type/payload-bounded quantity, site/berth/door/home/parking/rear-exit/HQ/queue, Construction geometry and known mine active positions complete the inputs.",
+    "invalidations": "Any signature inequality forces fresh full measurement. Existing unfinished fuel handling is checked first from actual owner; completed handoff changes actual tank. Unknown custom hazard callable is not memoized because its mutable dependencies cannot be proven. Failed routes/hazards are never bookmarked. No success is bookmarked.",
+    "cursor": "Request-local cursor and finite visits-left pass inspect each current hull at most once per pass. Cheap blocked/invalid candidates can be skipped in that slice; at most one new full route measurement per _advance_request rendered process turn. After an expensive failed attempt, retain finite pass progress for a later turn to try another truck; finish drains to idle. Existing state wake starts the next finite pass; no new idle polling/timer. Every existing state wake resets only visits-left so a truck whose tank changed after its earlier visit is not missed; cursor persists to prevent first-candidate masking. Bookmarks remain conditional on freshly compared inputs."
+  },
+  "query_boundary": "No existing narrow ledger accessor exposes the combined selected-hull actual tank/spec/position/contents mass required here. Existing inspect_entity remains a transient owner read (including its existing crew/passenger scan); only explicit route inputs are retained. Existing readiness is queried rather than duplicating its eligibility policy. No new ledger API/global refactor.",
+  "intent_scope": "This guard covers scheduled physical fulfilment of BOTH automatic Army-intent rows and explicit RearLogistics.request_delivery rows. Explicit rear requested quantity and cancellation/hold intent remain unchanged. Direct manually commanded Dispatch.accept and Fleet Transfer remain unchanged; they are distinct from scheduler fulfilment of explicit rear requests."
+}

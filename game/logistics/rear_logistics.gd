@@ -61,6 +61,9 @@ func _wake() -> void:
 	if model == null or not model.empty_field_opening: return
 	_factory_remaining = maxi(_factory_remaining,model.rear._production_activities().size())
 	_delivery_remaining = maxi(_delivery_remaining,requests.size())
+	# A committed change may make an already visited truck ready. Start a
+	# fresh finite pass while retaining its cursor and failed-input bookmarks.
+	for row in requests.values(): row.erase("fuel_scan_remaining")
 	set_process(_factory_remaining > 0 or _delivery_remaining > 0)
 
 func _process(_delta: float) -> void:
@@ -213,6 +216,7 @@ func ensure_army_supply(type: String, quantity: int) -> void:
 	current.requested = target
 	if awaiting_need: current.awaiting_need = false
 	if str(current.manifest).is_empty() and target == int(current.delivered):
+		_clear_delivery_candidates(current)
 		_set_status(current,"Complete","No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.")
 	else:
 		_wake()
@@ -222,6 +226,7 @@ func cancel_request(id: String) -> Dictionary:
 	var row: Dictionary = requests.get(id,{})
 	if row.is_empty() or row.cancelled or row.state == "Complete": return {"ok":false,"requires_reconciliation":false,"message":"Select a live delivery request."}
 	row.cancelled = true
+	_clear_delivery_candidates(row)
 	_army_holds[row.type] = true
 	var rear: RefCounted = _model().rear
 	var manifest: Dictionary = rear.dispatch.manifests.get(row.manifest,{})
@@ -281,7 +286,9 @@ func _advance_request(row: Dictionary) -> bool:
 		# Dispatch already owns physical source pickup, staging and loading;
 		# adding a separate haul here would duplicate its reserved freight.
 		return false
-	if row.cancelled or row.delivered >= row.requested: return false
+	if row.cancelled or row.delivered >= row.requested:
+		_clear_delivery_candidates(row)
+		return false
 	if row.get("automatic",false) and row.get("awaiting_need",false):
 		_set_status(row,"Waiting","Waiting for current military need before another automatic load.")
 		return false
@@ -301,16 +308,36 @@ func _advance_request(row: Dictionary) -> bool:
 	if available <= 0:
 		_set_status(row,"Waiting","Manufacture or purchase the requested supplies; none are available for this shipment.")
 		return false
-	for hull_id in rear.vehicles.vehicles:
+	var hull_ids: Array = rear.vehicles.vehicles.keys()
+	if not row.has("fuel_attempts"): row.fuel_attempts = {}
+	if int(row.get("fuel_scan_remaining",0)) <= 0: row.fuel_scan_remaining = hull_ids.size()
+	var wait_reason := ""
+	while int(row.fuel_scan_remaining) > 0 and not hull_ids.is_empty():
+		var index: int = int(row.get("fuel_candidate_cursor",0))%hull_ids.size()
+		row.fuel_candidate_cursor = (index+1)%hull_ids.size()
+		row.fuel_scan_remaining -= 1
+		var hull_id: String = str(hull_ids[index])
 		if rear.vehicles.vehicles[hull_id].state != "Parked" or not rear.dispatch._active_manifest(hull_id).is_empty(): continue
-		var hull: Dictionary = rear.ledger.inspect_entity(hull_id,{},false)
-		if hull.design_type not in ["T01","T02"] or not rear.vehicles.readiness(hull_id).transfer_crew_eligible: continue
-		var quantity := mini(int(row.requested)-int(row.delivered),mini(available,int(floor(float(hull.vehicle_spec.payload)/rear.dispatch._unit_mass(row.type)))))
-		if quantity <= 0: continue
-		var accepted: Dictionary = rear.dispatch.accept(hull_id,"Strategic Delivery",[],{row.type:quantity},[],site_id)
-		if not accepted.ok: _set_status(row,"Waiting",str(accepted.message)); return false
-		row.manifest = accepted.id
-		_set_status(row,"Preparing","Workers must physically stage and load the accepted cargo.")
-		return true
-	_set_status(row,"Waiting","Build a transport truck, park it and seat a qualified Driver. Fuel and real loading remain required.")
+		var quantity: int = mini(int(row.requested)-int(row.delivered),available)
+		var accepted: Dictionary = rear.dispatch.accept_automatic_delivery(hull_id,str(row.type),quantity,site_id,row.fuel_attempts.get(hull_id,{}))
+		if accepted.ok:
+			_clear_delivery_candidates(row)
+			row.manifest = accepted.id
+			_set_status(row,"Preparing","Workers must physically stage and load the accepted cargo.")
+			return true
+		wait_reason = str(accepted.message)
+		if accepted.get("fuel_blocked",false) and not accepted.get("blocked_attempt",{}).is_empty():
+			row.fuel_attempts[hull_id] = accepted.blocked_attempt
+		else: row.fuel_attempts.erase(hull_id)
+		if accepted.get("measured",false):
+			_set_status(row,"Waiting",wait_reason)
+			# One new route measurement per rendered turn. Continue this finite
+			# candidate pass next turn so a low-fuel truck cannot mask another.
+			return int(row.fuel_scan_remaining) > 0
+	_set_status(row,"Waiting",wait_reason if not wait_reason.is_empty() else "Build a transport truck, park it and seat a qualified Driver. Fuel and real loading remain required.")
 	return false
+
+func _clear_delivery_candidates(row: Dictionary) -> void:
+	row.erase("fuel_attempts")
+	row.erase("fuel_scan_remaining")
+	row.erase("fuel_candidate_cursor")
