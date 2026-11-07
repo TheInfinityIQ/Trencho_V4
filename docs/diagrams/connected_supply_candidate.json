@@ -1,0 +1,30 @@
+{
+  "status": "local_composed_source_pending_exact_head_reviews",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "sources": {
+    "selection": "f7b1c626ab5b5a8188c893ae2054c9d1e3414175",
+    "receipt": "78bd7b6d1cf15609e05bd0616d318b936cf1f7e1",
+    "reporting": "4c87cb483d3222c751ab4390ebb75e4586dd7395"
+  },
+  "scope": "LOCAL composition only: dispatch_service.gd, rear_logistics.gd, staffing/rear_simulation.gd, the three features' own diagrams/evidence and regenerated combined maps. No base_demo/team/protocol changes. A's opening_resupply comment-only change is outside this production claim and is not copied.",
+  "ownership": {
+    "captured_manifest": "Existing manifest branch remains before new selection; actual site/berth/cargo/claims/crew/return/cancellation remain captured and unchanged.",
+    "receipt": "Commit delivered and credited high-water mark, then invalidate only current source's type publication under model/policy identity guard, then existing changed notification. No reentrant ensure/stock/time call.",
+    "new_selection": "One Dispatch-owned bounded actor-status pass and original shared handler predicate; preserve positive target/access and configured site order. No persistent cache or assignment.",
+    "reporting": "Current heavy owner and actual bay/site_door supply the ordinary reporting exit. Preserve full outward route or return no route, allowing existing blocked state; legacy empty-opening phantom owner excluded."
+  },
+  "acceptance": [
+    "Exact intended combined production deltas, no duplicate hunks or extra behavior",
+    "Counters precede invalidation and notification; accepted manifest branch preserved",
+    "Selection and ordinary reporting reuse existing ownership; custody and safe cancellation retained",
+    "Review changed functions and regenerate current combined source/UI/button maps; no stale copied maps"
+  ],
+  "verification": "Source/diff/hash and required static map/UI/whitespace verification only. No engine, regression, gameplay check, network, credential, API, push, PR or public merge. Local commit allowed for review.",
+  "evidence_limits": "PR100 has one standalone selector result and chat role approvals only; A/C records retain their own unexecuted/source-only limits. This candidate has NO combined runtime/ordinary-loop/native/FPS acceptance; requires A peer, lead technical and Designer exact-head review.",
+  "composition_verification": "Dispatch is byte-identical to PR100; Staffing byte-identical to C; rear_logistics is exactly PR100 plus A's sole inserted receipt block once. Nine feature records are byte-identical to their frozen sources. No production change outside the three-file claim.",
+  "production_sha256": {
+    "game/dispatch/dispatch_service.gd": "07309fac92950fd9b6a6e0675a6211c84abb9aed5ba07df62a17dd499a5f73ad",
+    "game/logistics/rear_logistics.gd": "dd812071723270af4a43d32ec96f34dc588d4810216331cc2bf4656931652d68",
+    "game/staffing/rear_simulation.gd": "5bf4ef299603708611d5bdd43475fbcd8660916dfe71bd8d895ecb57c9baac0b"
+  }
+}

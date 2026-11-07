@@ -1,0 +1,40 @@
+{
+  "status": "local_composed_source_pending_final_exact_head_reviews",
+  "objective": "Compose the frozen supply candidate with reviewed Build count-priority preservation and consumed-batch cancellation confirmation.",
+  "base": "bc0bfefdbdbb0812d8258b106eddf01654fca6f0",
+  "sources": {
+    "build_count_priority": "e15eaf4f2f703da8ee47b905bc29c665c4c8a7e3",
+    "consumed_batch_cancellation": "cc030bd7bd5adc521fb0e833a48ac8364f9d14e4"
+  },
+  "scope": "Only base_demo.gd composition, the two features own diagrams/evidence, this newly named contract/flow and final regenerated source/UI/button maps. No root protocol/team edits.",
+  "ownership": {
+    "supply": "Preserve all three bc0bfef production files byte-for-byte. Original frozen branches remain unchanged.",
+    "base_demo": "Final-reviewed cancellation source plus exactly the guarded Build current-priority callback from e15eaf4.",
+    "count": "Resolve selected site at submission, reject absent request, read its current priority and pass it with draft count to unchanged set_target.",
+    "cancellation": "Scene-owned single-use identity decision; current captured activity alone owns existing cancellation rules. Keep/dismiss has no domain command; valid confirm revalidates identities before existing cancel."
+  },
+  "acceptance": [
+    "Exact source composition with no additional production behavior",
+    "Preserve bc0bfef supply source and all original frozen component records",
+    "Regenerate final combined source/UI/button maps and review changed function purposes",
+    "Freeze LOCAL exact head for B peer, lead technical and Designer review"
+  ],
+  "review_dependency": "B exact-source review of cc030bd completed with no blocker; lead, Designer and UI/UX decisions reported complete by lead. Combined exact-head decisions remain pending.",
+  "verification": "Read-only source/diff/hash comparison and required static map/UI/button inventory/whitespace maintenance only. No engine, runtime check, regression, network, credentials, push, PR or lead-branch merge.",
+  "evidence_limits": "Component evidence is preserved verbatim with original limitations. No combined Godot compilation, runtime dialog/button, ordinary factory/supply/repeat loop, native input/rendering or FPS acceptance.",
+  "next_action_owner": "A prepares/finalizes local composition. B independently reviews final exact head; lead owns technical integration/publication decision and Designer exact-head review coordination.",
+  "composition_verification": "base_demo is byte-identical to cc030bd with exactly the e15eaf4 guarded current-priority callback substituted once. The original three bc0bfef production files and six feature records are byte-identical to their frozen sources. No other production file changed.",
+  "production_git_blob_sha256": {
+    "game/rear_base/base_demo.gd": "c03acc70c3eaf39a872d1f10102d050cd50fce8d2ea5840869960412c2612c99",
+    "game/dispatch/dispatch_service.gd": "07309fac92950fd9b6a6e0675a6211c84abb9aed5ba07df62a17dd499a5f73ad",
+    "game/logistics/rear_logistics.gd": "dd812071723270af4a43d32ec96f34dc588d4810216331cc2bf4656931652d68",
+    "game/staffing/rear_simulation.gd": "5bf4ef299603708611d5bdd43475fbcd8660916dfe71bd8d895ecb57c9baac0b"
+  },
+  "static_maintenance": {
+    "purpose_review": "Twenty changed/new functions and lambdas examined against component diffs. Their exact code hashes match reviewed component purposes; apply only those twenty reviews to newly generated combined map.",
+    "source_ui_button_maps": "Final combined maps must be regenerated and pass static freshness checks before local commit.",
+    "whitespace": "git diff --check required before local commit.",
+    "initial_tool_dependency": "First source map attempt lacked parser in new checkout. Used existing root .tools/gdscript-parser through process-local PYTHONPATH; no install/network/engine action.",
+    "meaning": "Static metadata/source grammar maintenance only. No Godot compilation or runtime acceptance."
+  }
+}

@@ -1,0 +1,15 @@
+flowchart TD
+    Handoff[Existing lawful fuel handoff / safe crew exit] --> Report[Existing ordinary _report command]
+    Report --> Current[Read same person origin and assigned destination]
+    Current --> Match{At a current actual heavy-owner bay?}
+    Match -->|No| Normal[Existing walk_path to destination]
+    Match -->|Yes| Door[Resolve that owner site_door]
+    Door --> Outward[Existing current-footprint walk_path door to destination]
+    Outward --> Clear{Nonempty onward route?}
+    Clear -->|Yes| Compose[Bay centre then own door then final destination]
+    Clear -->|No| Block[Empty path: Route blocked / infinite deadline]
+    Normal --> Move[Existing _move Reporting]
+    Compose --> Move
+    Move --> Arrival[Existing physical phase completion; presence only on arrival]
+    Ghost[Unused legacy owner in empty field] --> Ignore[No special exit permission]
+    Ignore --> Normal

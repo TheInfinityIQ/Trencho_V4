@@ -1,0 +1,14 @@
+flowchart TD
+    Click[Ordinary Cancel batch / stop] --> Current[Read selected actual activity and batch]
+    Current --> Consumed{Actual consumed batch exists?}
+    Consumed -->|No| Stop[Existing cancel/stop path]
+    Consumed -->|Yes| Capture[Capture current model/activity/facility/recipe/batch identity]
+    Capture --> Explain[Actual receipt loss and work warning; finished goods stay]
+    Explain --> Keep[Keep / Escape / close: clear request only]
+    Explain --> Confirm[Cancel batch and stop]
+    Confirm --> Take[Consume request once; revalidate identities]
+    Take -->|Current| Cancel[Captured owner.cancel; existing loss/stop rules]
+    Take -->|Stale| Reject[Nothing cancelled; review current batch]
+    Events[State / session / selection / recipe change] --> Validate[Pending identity check only]
+    Validate -->|Changed| Reject
+    Exit[Base exits / new model bind] --> Clear[Clear pending request; disconnect new subscriptions]

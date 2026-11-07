@@ -1,0 +1,41 @@
+{
+  "status": "implemented_locally_static_maintenance_passed_not_engine_parsed_executed_or_published",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "branch": "codex/confirm-consumed-batch-cancel",
+  "checkout": "trencho_dev_batch_cancel",
+  "production_scope": "Only ordinary cancellation callback and scene-owned confirmation/identity/lifecycle integration in game/rear_base/base_demo.gd. Count and bay repairs remain separate.",
+  "contract": "docs/diagrams/consumed_batch_cancel_confirmation.json",
+  "source_observations": [
+    "Opening actual nonempty consumed batch records current session/model/activity/duty/selection/recipe/batch identities and formats loss text from batch.receipt counts, current output and facility, without cancellation or reconciliation.",
+    "Empty batch invokes existing owner.cancel/stop directly, retaining Heavy cancellation of accepted-but-unconsumed order promises without a pointless consumed-loss prompt.",
+    "Keep/Escape/close clears only the UI request and hides the window. No domain mutation, reconciliation, speed change or implicit time freeze. Keep button explicitly receives focus after popup.",
+    "Confirm copies the pending dictionary, clears it before revalidation, compares exact current identities, then calls captured owner.cancel only. It never cancels a newly resolved different activity. Duplicate direct confirm sees empty request.",
+    "Existing shared-state subscription now passes through one thin handler retaining old refresh and checking only a nonempty pending decision. Model replacement, selected context/facility/recipe change and control reload invalidate stale decisions.",
+    "New handlers disconnect on node exit; new-model bind clears UI request. No persistent batch/receipt history, timer, deferred owner or frame polling.",
+    "Existing recipe-confirmation code, Pause command, domain Fixed/Heavy cancel, consumed-loss/refund/output-promise rules, costs/rates/finished goods unchanged."
+  ],
+  "static_maintenance": {
+    "source_map": "PASS; zero pending purpose reviews after all changed/new functions and affected lambdas examined",
+    "ui_map_button_inventory": "PASS; helper-button declarations/source anchors regenerated; native built-in dialog Keep/confirm signals also described in feature diagram/source",
+    "whitespace": "git diff --check PASS",
+    "initial_failure": "Initial second session.state_changed.connect expression violated existing one-anchor UI map expectation. Corrected to one existing subscription through a thin refresh/validation handler. Map tools/checks were not weakened.",
+    "retained_correction": "logs/consumed-batch-cancel/map-anchor-correction.json (ignored)",
+    "meaning": "Static metadata/source grammar maintenance only; not Godot compilation or runtime acceptance."
+  },
+  "runtime": "NONE. No local engine, old checker, regression suite, broad scenario, failure injection, coverage matrix, benchmark or GitHub check. No new runtime input prepared/submitted.",
+  "unverified": [
+    "Godot compilation and actual dialog creation/layout/default focus",
+    "Real Keep/Escape/close/confirm events and single-use behavior",
+    "Actual consumed batch loss/finished stock/no-active stop behavior through normal controls",
+    "Real selection/session/batch replacement timing and disconnection",
+    "Ordinary factory/supply loop, physical output, native input/rendering and FPS"
+  ],
+  "production_normalized_utf8_lf_sha256": "71c326576b56f4ab1d944f30d3320eb3963e40e93453d10866c6c8af97e8f73c",
+  "publication": "LOCAL ONLY. No branch push, PR, credential or check action. Rejected bay publication remains a separate action.",
+  "review_ownership": {
+    "technical": "Operations B independently reviews this exact local head/source; lead owns engineering integration.",
+    "design": "Designer reviews exact local source/experience, with UI/UX wording consultation separate.",
+    "final": "Exact published-head technical/Designer decisions remain required if/when publication is authorized."
+  },
+  "next_action": "B: independent technical source review of session/owner/batch identity, decline, no-active stop and lifecycle; Designer/UI/UX: exact-head meaning/wording review; C: resolve concrete findings in this same bounded slice; lead: coordinate review/composition and scoped publication permission. No generic continue required."
+}

@@ -143,6 +143,8 @@ var heavy_status: Label
 var bay_access: CheckBox
 var parking_access: CheckBox
 var parking_destination: OptionButton
+var _batch_cancel_dialog: ConfirmationDialog
+var _batch_cancel_request: Dictionary = {}
 var _pending_activity: RefCounted
 var scenario: OptionButton
 var declaration: Label
@@ -162,7 +164,8 @@ func _ready() -> void:
 		session.name = "GameSession"
 		add_child(session)
 	simulation = session.simulation
-	session.state_changed.connect(_request_refresh)
+	session.state_changed.connect(_on_session_state_changed)
+	session.simulation_changed.connect(_batch_cancel_model_changed)
 	session.time_advanced.connect(_on_time_advanced)
 	session.automatic_logistics.changed.connect(_on_logistics_changed)
 	theme = UIKit.make_theme()
@@ -238,6 +241,7 @@ func _ready() -> void:
 	confirmation.confirmed.connect(func() -> void: _result(_pending_activity.confirm_recipe(_pending_token)); _load_production())
 	confirmation.canceled.connect(func() -> void: _result(_pending_activity.decline_recipe(_pending_token)); _load_production())
 	add_child(confirmation)
+	_build_batch_cancel_dialog()
 	_load_production()
 	_load_store()
 	_load_vehicle_people()
@@ -480,6 +484,7 @@ func start_empty_field_session(refresh_rear_ui: bool = true) -> void:
 	_bind_started_session(refresh_rear_ui)
 
 func _bind_started_session(refresh_rear_ui: bool) -> void:
+	_keep_batch_cancel()
 	session.replace_simulation(simulation)
 	_displayed_time = -INF
 	_haul_draft_dirty = false
@@ -863,7 +868,7 @@ func _production_panel(box: VBoxContainer) -> void:
 	factory_plan_panel.bind(session)
 	factory_plan_panel.action_requested.connect(_factory_plan_action)
 	facility = _option(box, "Facility", ["workshop", "munitions", "materials", "support", "vehicle_works"])
-	facility.item_selected.connect(func(_index: int) -> void: _load_production(); _request_refresh())
+	facility.item_selected.connect(func(_index: int) -> void: _invalidate_batch_cancel(); _load_production(); _request_refresh())
 	context_status = _label(box,"")
 	context_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	context_staff = _spin(box,"Requested workers",8)
@@ -876,6 +881,7 @@ func _production_panel(box: VBoxContainer) -> void:
 	box.add_child(production_controls)
 	box = production_controls
 	recipe = _option(box, "Recipe / declared session access", [])
+	recipe.item_selected.connect(_batch_cancel_selection_changed)
 	_button(box, "Select recipe", _change_recipe)
 	mode = _option(box, "Production mode", ["Stock target", "Continuous"])
 	stock_target = _spin(box, "Minimum output units", 10000)
@@ -888,7 +894,7 @@ func _production_panel(box: VBoxContainer) -> void:
 	ingredient_checklist = VBoxContainer.new()
 	box.add_child(ingredient_checklist)
 	_button(box, "Pause / resume facility", func() -> void: _result(_activity().set_paused(not _activity().paused)))
-	_button(box, "Cancel consumed batch / stop", func() -> void: _result(_activity().cancel()))
+	_button(box, "Cancel consumed batch / stop", func() -> void: _request_batch_cancel())
 	_button(box, "Enable facility", func() -> void: _result(_activity().resume()))
 	heavy_controls = VBoxContainer.new()
 	box.add_child(heavy_controls)
@@ -969,7 +975,11 @@ func _construction_panel(box: VBoxContainer) -> void:
 		_result(simulation.rear.construction.set_builders(_construction_site(),int(construction_builders.value))))
 	_button(box,"Set facility staff",func() -> void:
 		var id: String = _construction_site()
-		_result(simulation.rear.set_target(id,int(construction_staff.value)) if simulation.rear.requests.has(id) else {"ok":false,"message":"Select a completed facility with staff positions."}))
+		if not simulation.rear.requests.has(id):
+			_result({"ok":false,"message":"Select a completed facility with staff positions."})
+			return
+		var priority := int(simulation.rear.requests[id].priority)
+		_result(simulation.rear.set_target(id,int(construction_staff.value),priority)))
 	construction_office = _spin(box,"Construction Office staff requested",4)
 	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
 	box = _section(parent,"Remove a site","Unfinished sites can be cancelled. Completed facilities require physical clearing and dismantling.")
@@ -1317,6 +1327,7 @@ func _activity() -> RefCounted:
 	return simulation.rear.production
 
 func _load_production() -> void:
+	_validate_batch_cancel()
 	var activity := _activity()
 	heavy_controls.visible = activity.has_method("accept_order")
 	bay_access.set_pressed_no_signal(activity.bay_accessible if activity.has_method("accept_order") else true)
@@ -1338,6 +1349,83 @@ func _load_store() -> void:
 	var entry: Dictionary = simulation.rear.stores[store.get_item_text(store.selected)]
 	capacity.set_value_no_signal(entry.capacity)
 	accessible.set_pressed_no_signal(entry.accessible)
+
+func _build_batch_cancel_dialog() -> void:
+	_batch_cancel_dialog = ConfirmationDialog.new()
+	_batch_cancel_dialog.name = "ConsumedBatchCancellation"
+	_batch_cancel_dialog.title = "Cancel active batch?"
+	_batch_cancel_dialog.min_size = Vector2i(620,260)
+	_batch_cancel_dialog.dialog_autowrap = true
+	_batch_cancel_dialog.ok_button_text = "Cancel batch and stop"
+	_batch_cancel_dialog.cancel_button_text = "Keep batch"
+	_batch_cancel_dialog.confirmed.connect(_confirm_batch_cancel)
+	_batch_cancel_dialog.canceled.connect(_keep_batch_cancel)
+	add_child(_batch_cancel_dialog)
+
+func _request_batch_cancel() -> void:
+	_keep_batch_cancel()
+	var activity := _activity()
+	if activity.batch.is_empty():
+		_result(activity.cancel())
+		return
+	var batch: Dictionary = activity.batch
+	var duty := _context_duty()
+	_batch_cancel_request = {"session":session,"simulation":simulation,"activity":activity,"duty":duty,
+		"kind":_selected_kind,"selection":_selected_id,"recipe":str(batch.recipe),"batch_id":str(batch.id)}
+	var consumed := {}
+	for portion in batch.receipt:
+		consumed[portion.type] = int(consumed.get(portion.type,0)) + int(portion.count)
+	var output: String = str(VEHICLE_NAMES.get(activity._spec.output_type,_material_label(activity._spec.output_type)))
+	_batch_cancel_dialog.dialog_text = "%s · %s / %s · %s\n\nCancel this batch and stop production here? Its consumed ingredients (%s) will not be refunded. Work already done on this batch will be lost, and its unfinished output will not be produced. Finished goods remain.\n\nTo suspend work without discarding this batch, keep it and use Pause / resume facility." % [WorkforcePanel.job_name(duty,simulation),batch.recipe,output,batch.id,_named_quantities(consumed)]
+	_batch_cancel_dialog.popup_centered_clamped(Vector2i(680,320))
+	_batch_cancel_dialog.get_cancel_button().grab_focus()
+
+func _batch_cancel_is_current(request: Dictionary) -> bool:
+	if request.is_empty() or not is_instance_valid(session) or not is_instance_valid(request.session): return false
+	if session != request.session: return false
+	if simulation != request.simulation or session.simulation != request.simulation: return false
+	if _context_duty() != request.duty or _selected_kind != request.kind or _selected_id != request.selection: return false
+	var activity := _activity()
+	if activity != request.activity or str(activity._recipe) != request.recipe: return false
+	return str(activity.batch.get("id","")) == request.batch_id and str(activity.batch.get("recipe","")) == request.recipe
+
+func _confirm_batch_cancel() -> void:
+	if _batch_cancel_request.is_empty(): return
+	var request := _batch_cancel_request
+	_keep_batch_cancel() # Single-use before validation or any domain command.
+	if not _batch_cancel_is_current(request):
+		_result({"ok":false,"requires_reconciliation":false,"message":"The batch changed. Nothing was cancelled. Review the current batch and try again."})
+		return
+	var activity: RefCounted = request.activity
+	_result(activity.cancel())
+
+func _keep_batch_cancel() -> void:
+	_batch_cancel_request = {}
+	if is_instance_valid(_batch_cancel_dialog): _batch_cancel_dialog.hide()
+
+func _invalidate_batch_cancel() -> void:
+	if _batch_cancel_request.is_empty(): return
+	_keep_batch_cancel()
+	_result({"ok":false,"requires_reconciliation":false,"message":"The batch changed. Nothing was cancelled. Review the current batch and try again."})
+
+func _on_session_state_changed() -> void:
+	_request_refresh()
+	_validate_batch_cancel()
+
+func _validate_batch_cancel() -> void:
+	if not _batch_cancel_request.is_empty() and not _batch_cancel_is_current(_batch_cancel_request): _invalidate_batch_cancel()
+
+func _batch_cancel_model_changed(_next: RefCounted) -> void:
+	_invalidate_batch_cancel()
+
+func _batch_cancel_selection_changed(_index: int) -> void:
+	_invalidate_batch_cancel()
+
+func _exit_tree() -> void:
+	_batch_cancel_request = {}
+	if is_instance_valid(session):
+		if session.state_changed.is_connected(_on_session_state_changed): session.state_changed.disconnect(_on_session_state_changed)
+		if session.simulation_changed.is_connected(_batch_cancel_model_changed): session.simulation_changed.disconnect(_batch_cancel_model_changed)
 
 func _change_recipe() -> void:
 	var activity := _activity()
@@ -1363,6 +1451,7 @@ func _result(result: Dictionary) -> void:
 	if is_node_ready(): _request_refresh()
 
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
+	if kind != _selected_kind or id != _selected_id: _invalidate_batch_cancel()
 	_selected_kind = kind
 	_selected_id = id
 	if open_panel:

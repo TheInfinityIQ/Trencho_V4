@@ -1,0 +1,15 @@
+flowchart TD
+    Physical[Existing Dispatch actual HQ drop] --> Ledger[Physical HQ stock and manifest.unloaded commit]
+    Ledger --> Clock[Existing synchronous military assessment may run]
+    Ledger --> Credit[Later existing RearLogistics receipt credit]
+    Credit --> New{unloaded exceeds credited?}
+    New -->|no| Quiet[No new invalidation]
+    New -->|yes| Commit[Commit delivered and credited together]
+    Commit --> Current{Weak source matches current model policy?}
+    Current -->|no| Notify[Existing changed notification]
+    Current -->|yes| Invalidate[Erase only this supply type publication key]
+    Invalidate --> Notify
+    Invalidate --> Normal[Next eligible existing military assessment]
+    Normal --> Coverage[Read current need courier local incoming and HQ coverage]
+    Coverage --> Coalesce[Existing enabled per-type request coalescing]
+    Coalesce --> Preserve[Keep holds manual targets and physical freight rules]

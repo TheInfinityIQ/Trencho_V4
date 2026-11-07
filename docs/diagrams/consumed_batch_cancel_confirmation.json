@@ -1,0 +1,44 @@
+{
+  "status": "implemented locally; static maps current; engine/runtime/publication pending",
+  "objective": "Ordinary Cancel consumed batch / stop requires an explicit current-batch loss decision before destroying consumed work.",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "ownership": "C: cancellation callback and minimal scene-owned dialog/lifecycle handlers in base_demo.gd plus feature docs/maps. No production-domain or other-owner edits. Separate from frozen bay and count patches.",
+  "authorities": {
+    "domain": "Existing activity owns enabled/batch/receipt/work/output promise/history and cancel material rules.",
+    "ui": "One scene-owned ConfirmationDialog and single-use pending request of identities only; not a second batch/history owner.",
+    "identity": "Capture current simulation and session simulation, activity reference, selected duty/kind/id, actual recipe, and current consumed batch ID. Revalidate immediately before committing."
+  },
+  "flow": [
+    "Click resolves actual current activity. Empty batch follows existing cancel/stop command without a loss prompt.",
+    "Nonempty actual batch means consumed inputs under existing FixedProduction lifecycle. Read actual receipt quantities, recipe/output and facility name; no broad snapshot.",
+    "Opening records decision identity and displays explicit lost consumed ingredients/no refund/lost work/no unfinished output, finished goods stay; Keep/default focus and explicit Cancel batch and stop choices. Pause/resume stays separate.",
+    "Keep/Escape/close clears request with no game command/reconciliation, pause or price/resource change. Normal time may continue.",
+    "Confirm consumes pending request once; compare current model/session, selected context/activity, current recipe/batch ID. If stale, close/reject with Nothing was cancelled. Otherwise call captured activity.cancel once through existing _result."
+  ],
+  "events": "One existing shared-state subscription goes through a thin handler retaining existing refresh plus pending-only scalar/object identity validation. Model replacement and real selection/recipe/control reload changes invalidate. No idle polling, timer, deferred query owner, cache or extra shared-state subscription.",
+  "lifecycle": "Dialog and pending request owned by Base node. New session subscriptions disconnect on exit. Stale completion/replacement/selection never targets successor work. Existing recipe confirmation unchanged.",
+  "experience": {
+    "title": "Cancel active batch?",
+    "keep": "Keep batch",
+    "destructive": "Cancel batch and stop",
+    "loss": "Actual consumed receipt item amounts not refunded; work lost; unfinished output not produced; finished goods remain. Keep and use Pause/resume to suspend.",
+    "stale": "The batch changed. Nothing was cancelled. Review the current batch and try again."
+  },
+  "frozen_acceptance": [
+    "An active consumed batch cannot be cancelled by the ordinary button before explicit confirmation.",
+    "Keep/dismiss performs no production mutation; no implicit pause/freeze.",
+    "Valid confirm targets captured same activity/recipe/batch once, preserving existing domain loss/stop semantics.",
+    "Session, selection, activity, recipe or batch replacement/completion cannot cancel different/new work; stale request is rejected/closed truthfully.",
+    "No active consumed batch uses existing stop path without pointless loss prompt; recipe-change confirmations and Pause behavior unchanged."
+  ],
+  "verification": "Source review and required static map maintenance only in this local increment. No local engine, suite, broad scenario, failure injection, coverage matrix, benchmark, PR/check submission or publication. Runtime dialog/input/loss/physical output remain unverified.",
+  "references": [
+    "GDD section6: cancellation of consumed work must explain loss before commitment.",
+    "Existing selectable recipe request/confirm token pattern and FixedProduction.cancel/HeavyProduction.cancel read directly.",
+    "https://docs.godotengine.org/en/4.7/classes/class_confirmationdialog.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_acceptdialog.html"
+  ],
+  "review": "UX consultation supplied exact loss/Keep/stale wording. Prospective design meaning is not final exact-head code approval; lead technical and Designer review required.",
+  "identity_detail": "Session Node identity is captured and checked as well as model/activity/duty/context/actual recipe/batch ID; consume single-use request before validation/command.",
+  "evidence": "docs/evidence/consumed_batch_cancel_confirmation.json"
+}
