@@ -2,54 +2,54 @@
   "schema_version": 1,
   "button_definitions": [
     {
-      "id": "game/ui/command_shell.gd::_build_header@97",
+      "id": "game/ui/command_shell.gd::_build_header@106",
       "path": "game/ui/command_shell.gd",
-      "line": 97,
+      "line": 106,
       "label": "[\"Ⅱ\", \"1×\", \"2×\"][value] [dynamic label]",
       "dynamic": true,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_header@109",
+      "id": "game/ui/command_shell.gd::_build_header@121",
       "path": "game/ui/command_shell.gd",
-      "line": 109,
+      "line": 121,
       "label": "Session",
       "dynamic": false,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_navigation@143",
+      "id": "game/ui/command_shell.gd::_build_navigation@156",
       "path": "game/ui/command_shell.gd",
-      "line": 143,
+      "line": 156,
       "label": "More systems",
       "dynamic": false,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_navigation@145",
+      "id": "game/ui/command_shell.gd::_build_navigation@158",
       "path": "game/ui/command_shell.gd",
-      "line": 145,
+      "line": 158,
       "label": "Getting started",
       "dynamic": false,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_navigation_button@149",
+      "id": "game/ui/command_shell.gd::_navigation_button@162",
       "path": "game/ui/command_shell.gd",
-      "line": 149,
+      "line": 162,
       "label": "title [dynamic label]",
       "dynamic": true,
       "prefix": "",
       "area": "Shell / navigation"
     },
     {
-      "id": "game/ui/command_shell.gd::_build_help@163",
+      "id": "game/ui/command_shell.gd::_build_help@176",
       "path": "game/ui/command_shell.gd",
-      "line": 163,
+      "line": 176,
       "label": "Close",
       "dynamic": false,
       "prefix": "",
@@ -804,7 +804,7 @@
     }
   ],
   "source_sha256": {
-    "game/ui/command_shell.gd": "3b25578d48042cfff90c335fc357790c2ea490e3aac957fdfef25637065de796",
+    "game/ui/command_shell.gd": "07df86926a86ea31a95e404b30346ff32e82bcd10b15412f5253904012d776e1",
     "game/rear_base/base_demo.gd": "3146827f08b55b9692bfc204e0398a2a31b82f0c2002330616646a168e7ade57",
     "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",

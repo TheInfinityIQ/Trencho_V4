@@ -467,10 +467,7 @@ func settle() -> bool:
 			var remaining: int = int(row.m11)-int(row.m11)/2
 			var result: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":remaining},"Completed "+row.id)
 			if not result.ok: continue
-			row.state = "Complete"
-			row.blocker = ""
-			_release_site_builders(row.id)
-			_activate(row,rear)
+			_complete_site(row,rear)
 			changed = true
 		elif row.state == "Dismantling" and float(row.progress) >= 20.0-EPS:
 			row.state = "Dismantled"
@@ -493,6 +490,37 @@ func settle() -> bool:
 				_return_site_stock(row,rear)
 			changed = true
 	return changed
+
+func debug_complete_pending() -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var completed := 0
+	var granted := 0
+	for row in instances.values():
+		if row.state not in ["Awaiting M11","Building"]: continue
+		_stop_haul(row,rear)
+		# Cancelling an active haul can settle a site already at its last boundary.
+		if row.state == "Complete": continue
+		var remaining: int = int(row.m11) if row.state == "Awaiting M11" else int(row.m11)-int(row.m11)/2
+		var missing := maxi(0,remaining-rear.ledger.available_stock_at(row.id,"M11"))
+		if missing > 0:
+			var added: Dictionary = rear.ledger.add_stock(row.id+"-debug-materials","M11",missing,1.0,row.id,rear.PLAYER)
+			if not added.ok: return added
+			granted += missing
+		var consumed: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":remaining},"DEBUG instant build "+row.id)
+		if not consumed.ok: return consumed
+		row.progress = float(row.work)
+		_complete_site(row,rear)
+		completed += 1
+	return {"ok":true,"changed":completed > 0,"completed":completed,"debug_materials":granted,
+		"message":"DEBUG: instantly completed %d building(s); supplied %d missing Building Materials." % [completed,granted]}
+
+
+func _complete_site(row: Dictionary, rear: RefCounted) -> void:
+	row.state = "Complete"
+	row.blocker = ""
+	_release_site_builders(row.id)
+	_activate(row,rear)
+
 
 func _activate(row: Dictionary, rear: RefCounted) -> void:
 	var spec: Dictionary = Catalog.SPECS[row.kind]

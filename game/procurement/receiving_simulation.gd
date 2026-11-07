@@ -92,6 +92,73 @@ func buy_resources(cart: Dictionary) -> Dictionary:
 	return _ok("Purchase committed. Cargo is incoming, not locally delivered.", ids)
 
 
+func debug_pending_resource_mass(ids: Array = []) -> int:
+	var mass := 0
+	for order in _orders:
+		if order.kind != "Freight" or order.state in ["Cancelled","Complete"] or (not ids.is_empty() and order.id not in ids): continue
+		for code in order.cargo:
+			mass += maxi(0,int(order.cargo[code])-int(order.unloaded.get(code,0)))
+	return mass
+
+
+func debug_order_raw_resources() -> Dictionary:
+	var cart := {}
+	for code in Catalog.MATERIALS: cart[code] = 1000
+	var quote: Dictionary = Catalog.quote(cart,2)
+	if not quote.ok: return quote
+	var ids: Array[String] = []
+	for vehicle in quote.vehicles:
+		var order := _new_order("Freight",0,vehicle.cargo)
+		order.debug_free = true
+		ids.append(order.id)
+	_event("DEBUG ordered1000 of each raw resource at zero cost",", ".join(ids))
+	return _ok("Free debug resource batch ordered.",ids)
+
+
+func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary:
+	if ledger.entity_kind(destination) != "PLACE":
+		return _reject("INVALID_DEBUG_STORAGE","Debug delivery needs an existing rear storage place.")
+	var pending := {}
+	for order in _orders:
+		if order.kind == "Freight" and order.state not in ["Cancelled","Complete"] and (ids.is_empty() or order.id in ids):
+			pending[order.id] = order
+	# Release reserved source portions before transferring any remaining cargo.
+	for worker in _workers.values():
+		var job: Dictionary = worker.job
+		if job.is_empty() or not pending.has(job.order_id): continue
+		var released: Dictionary = ledger.release_claim(job.claim_id)
+		if not released.ok: return released
+	for person_id in _workers:
+		var job: Dictionary = _workers[person_id].job
+		if job.is_empty() or not pending.has(job.order_id): continue
+		if job.phase in ["Carry","Drop"]:
+			var person: Dictionary = ledger.inspect_person_status(person_id)
+			var deposited: Dictionary = ledger.debug_deposit_stock(str(person.carrying_stock_id),destination,PLAYER)
+			if not deposited.ok: return deposited
+			var order: Dictionary = pending[job.order_id]
+			order.unloaded[job.code] = int(order.unloaded.get(job.code,0))+int(deposited.quantity)
+		_workers[person_id].job = {}
+	var completed: Array[String] = []
+	for order: Dictionary in pending.values():
+		if order.state == "Ordered": _dispatch(order)
+		for stock_id in order.stock_ids:
+			var deposited: Dictionary = ledger.debug_deposit_stock(stock_id,destination,PLAYER)
+			if not deposited.ok: return deposited
+			order.unloaded[deposited.type] = int(order.unloaded.get(deposited.type,0))+int(deposited.quantity)
+		var moved: Dictionary = ledger.move_entity(order.id,"supplier-transit",_exit(order))
+		if not moved.ok: return moved
+		order.motion = {}
+		order.next_at = INF
+		order.admission = false
+		order.debug_delivered = true
+		_set_state(order,"Complete")
+		completed.append(order.id)
+	_event("DEBUG incoming resource orders delivered immediately",", ".join(completed))
+	var result := _ok("DEBUG: delivered %d pending resource order(s) immediately." % completed.size(),completed)
+	result.changed = not completed.is_empty()
+	return result
+
+
 func buy_people() -> Dictionary:
 	if personnel_admitted() >= PERSONNEL_LIMIT:
 		return _reject("PERSONNEL_QUEUE_FULL", "Both personnel vehicle commitments are occupied, including en-route/disembarking/clearing services.")

@@ -1,0 +1,17 @@
+flowchart TD
+  Session[Session menu: Debug tools] --> Dialog[Scene-owned modal, button signals only]
+  Dialog --> Main[Main resolves CURRENT session model per click]
+  Main --> Debug[RearDebugActions: explicit debug commands]
+  Debug --> Deliver[Receiving: finish pending inbound resource orders]
+  Deliver --> Claims[Release unload claims, deposit actual carried and onboard stock once]
+  Claims --> Ledger[Ledger debug transfer: preserve quantity, ownership and clear carry safely]
+  Deliver --> Complete[Terminal order, release admission and schedules; no time jump]
+  Debug --> Resources[Create zero-cost orders for nine raw types x1000]
+  Resources --> Deliver
+  Debug --> Build[Construction: pending sites only]
+  Build --> Cancel[Cancel incoming hauls safely, release builders]
+  Cancel --> Material[Consume remaining build materials, grant only missing debug amount]
+  Material --> Activate[Reuse ordinary facility activation, stores, jobs and service registration]
+  Debug --> Storage[Finite debug overflow store at Supply Table, grows only on command]
+  Main --> Refresh[Existing after_command and notify_command invalidate planning and refresh views]
+  Refresh --> Mark[Mark modified session DEBUG; new game resets]

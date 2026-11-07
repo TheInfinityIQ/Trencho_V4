@@ -5,6 +5,7 @@ const Session = preload("res://game/main/game_session.gd")
 var _session: Node
 const Shell = preload("res://game/ui/command_shell.gd")
 const UIKit = preload("res://game/ui/ui_kit.gd")
+const DebugActions = preload("res://game/debug/rear_debug_actions.gd")
 const Base = preload("res://game/rear_base/base_demo.tscn")
 const Battlefield = preload("res://game/battlefield/battlefield_view.tscn")
 const REVIEWS: Dictionary = {
@@ -59,11 +60,19 @@ func _ready() -> void:
 		_session.set_speed(value)
 		_refresh_clock())
 	_shell.new_session_requested.connect(_start_playtest)
+	_shell.debug_action_requested.connect(_debug_action)
 	_shell.modal_visibility_changed.connect(func(blocked: bool) -> void:
-		_base.base_map.input_blocked = blocked)
+		if is_instance_valid(_base) and is_instance_valid(_base.base_map):
+			_base.base_map.input_blocked = blocked)
 	_session.state_changed.connect(_refresh_clock)
 	_session.time_advanced.connect(_refresh_clock)
 	_start_playtest()
+
+func _debug_action(action: String) -> void:
+	var result: Dictionary = DebugActions.execute(_session.simulation,action)
+	_base._result(result)
+	_shell.debug_menu.show_result(result)
+	_refresh_clock()
 
 func _navigate(action: String) -> void:
 	CallLog.record(&"main/main.gd::_navigate")
@@ -152,6 +161,7 @@ func _on_panel_changed(title: String) -> void:
 		_shell.set_navigation("ArmySupply" if title == "Supply" else title)
 
 func _start_playtest() -> void:
+	_shell.debug_menu.reset_feedback()
 	_base.hide()
 	_base.start_empty_field_session(false)
 	_show_base()
@@ -159,5 +169,6 @@ func _start_playtest() -> void:
 func _refresh_clock() -> void:
 	CallLog.record(&"main/main.gd::_refresh_clock")
 	var session: RefCounted = _base.simulation
+	_shell.set_debug_used(session.debug_used)
 	_shell.set_clock("%.1f s" % session.rear.time,session.speed,session.planning_status_text())
 	_shell.set_requisition(session.receiving.requisition_balance())
