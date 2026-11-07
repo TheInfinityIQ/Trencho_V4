@@ -874,6 +874,7 @@ func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
 		button.disabled = new_units <= 0 or source_available <= 0
 		button.tooltip_text = "Existing haul orders cover the local shortage; arrival is still required." if new_units <= 0 and missing > 0 else ("Ingredients are locally available." if missing <= 0 else ("Buy or manufacture this material; no accessible source stock is available." if source_available <= 0 else "Prepare up to %d units beyond existing haul orders. Review the fields in Haul, then click Order haul." % new_units))
 		row.set_meta("ingredient_detail",row.get_child(0).text)
+		row.set_meta("prepare_tooltip",button.tooltip_text)
 		var review := row.get_node_or_null("ReviewSupply") as Button
 		if review == null: continue
 		var request: Dictionary = _ingredient_supply_request(current,type) if new_units > 0 and source_available <= 0 else {}
@@ -917,6 +918,7 @@ func _hide_ingredient_supply_review(row: Control) -> void:
 		review.disabled = true
 		review.hide()
 	row.get_child(0).text = str(row.get_meta("ingredient_detail",row.get_child(0).text))
+	row.get_child(1).tooltip_text = str(row.get_meta("prepare_tooltip",""))
 
 func _review_ingredient_supply(row: Control) -> void:
 	if not is_instance_valid(row) or not row.is_inside_tree() or not row.is_visible_in_tree(): return
