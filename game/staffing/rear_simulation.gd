@@ -116,6 +116,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 	if not requests.has(id) or count < 0 or count > int(requests[id].positions) or priority < 0 or priority > 3:
 		return _result(false, "Target must fit actual catalogue positions and a valid priority.")
 	var r: Dictionary = requests[id]
+	r.erase("starter_request") # A successful player edit is now their ordinary instruction.
 	if r.target != count or r.priority != priority:
 		r.created = time
 		r.order = _next()
@@ -130,7 +131,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 			else:
 				ledger.cancel_assignment_request(person_id)
 				reassign_person(person_id, "Available")
-	_rebalance()
+	_rebalance(true)
 	_settle()
 	return _result(true, "Target recorded; actual people must report before being present.")
 
@@ -459,7 +460,7 @@ func walk_path(origin: Vector2, destination: Vector2) -> Array:
 		return construction.walking_path(origin,destination) if construction != null else [origin,destination]
 	return Layout.path(origin,destination)
 
-func _rebalance() -> void:
+func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
 	# incumbents within those counts before requesting any safe transfers.
 	var facts := {}
@@ -483,13 +484,13 @@ func _rebalance() -> void:
 		var best: Dictionary = {}
 		for r in requests.values():
 			if r.get("manual",false): continue
-			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id, facts):
+			if int(quotas.get(r.id, 0)) >= int(r.target) or not _any_eligible(remaining, r.id, facts, not player_edit and r.get("starter_request",false)):
 				continue
 			if best.is_empty() or _staff_before(r, best, quotas):
 				best = r
 		if best.is_empty():
 			break
-		var candidate := _choose_person(remaining, best.id, facts)
+		var candidate := _choose_person(remaining, best.id, facts, not player_edit and best.get("starter_request",false))
 		remaining.erase(candidate)
 		planned[candidate] = best.id
 		quotas[best.id] = int(quotas.get(best.id, 0)) + 1
@@ -510,14 +511,22 @@ func _rebalance() -> void:
 		if (a.id in ["yard", "training"]) != (b.id in ["yard", "training"]): return a.id in ["yard", "training"]
 		return a.order < b.order)
 	for r in ordered:
-		while int(keep.get(r.id, 0)) < int(quotas.get(r.id, 0)) and _any_eligible(free, r.id):
-			var id := _choose_person(free, r.id)
+		while int(keep.get(r.id, 0)) < int(quotas.get(r.id, 0)) and _any_eligible(free, r.id, {}, not player_edit and r.get("starter_request",false)):
+			var id := _choose_person(free, r.id, {}, not player_edit and r.get("starter_request",false))
 			free.erase(id)
 			reassign_person(id, r.id)
 			keep[r.id] = int(keep.get(r.id, 0)) + 1
+	var released := false
 	for id in free:
 		if ledger.inspect_person_status(id).assignment != "Available":
 			reassign_person(id, "Available")
+			released = released or ledger.inspect_person_status(id).assignment == "Available"
+	# A genuinely completed release may fill an automatic request in this event.
+	if released and fill_released:
+		for request in requests.values():
+			if request.get("starter_request",false) and int(request.target) > int(quotas.get(request.id,0)):
+				_rebalance(player_edit,false)
+				break # Exactly one extra pass, only for an unfilled automatic starter request.
 
 
 func _staff_before(a: Dictionary, b: Dictionary, counts: Dictionary) -> bool:
@@ -545,19 +554,21 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 	return true
 
 
-func _any_eligible(ids: Array, duty: String, facts: Dictionary = {}) -> bool:
+func _any_eligible(ids: Array, duty: String, facts: Dictionary = {}, starter_only: bool = false) -> bool:
 	for id in ids:
 		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if starter_only and person.assignment != "Available" and person.duty_id != duty: continue
 		if _eligible(person,duty): return true
 	return false
 
-func _choose_person(ids: Array, duty: String, facts: Dictionary = {}) -> String:
+func _choose_person(ids: Array, duty: String, facts: Dictionary = {}, starter_only: bool = false) -> String:
 	# Same lexicographic preference as the former sort, with one pass. Facts
 	# are supplied only during pure quota planning, never across reassignment.
 	var best := ""
 	var best_rank := 100
 	for id in ids:
 		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
+		if starter_only and person.assignment != "Available" and person.duty_id != duty: continue
 		if not _eligible(person,duty): continue
 		var qualification := 2 if person.qualification != "None" else (1 if person.basic_training else 0)
 		var rank: int = (0 if person.duty_id == duty else 6)+(0 if person.assignment == "Available" else 3)+qualification

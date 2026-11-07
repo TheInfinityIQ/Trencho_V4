@@ -3,14 +3,38 @@
   "base": "0fbaf640a7ad4c5e6bcf59aa9603e33a5c5e5cab",
   "design": "docs/design_brief.md#automatic-starter-staffing--accepted-7-november-2026",
   "diagram": "docs/diagrams/new_facility_staffing.mmd",
-  "status": "Pre-implementation source contract; runtime unverified",
-  "defaults": {"receiving":1,"workshop":1,"munitions":1,"materials":1,"support":1,"dispatch":1,"training":1,"vehicle_works":2,"construction":2,"depot":0,"park":0},
+  "status": "Frozen source implementation; runtime demonstration pending Lead GitHub execution and exact-head reviews",
+  "defaults": {
+    "receiving": 1,
+    "workshop": 1,
+    "munitions": 1,
+    "materials": 1,
+    "support": 1,
+    "dispatch": 1,
+    "training": 1,
+    "vehicle_works": 2,
+    "construction": 2,
+    "depot": 0,
+    "park": 0
+  },
   "contract": [
     "Apply once at actual new completion after real duty/services registration. Never backfill legacy facilities or replay on recipe/enable/pause. Existing request count/priority including explicit zero wins over default.",
     "Defaults request existing people, never create people/qualifications or teleport staff. School uses existing basic-trained instructor eligibility; F12 default also initializes its actual office_desired pool.",
-    "Do not steal occupied duties when adding an automatic request. Proposed completion-only available-worker allocator mode seeds current occupied/pending counts and reuses normal eligibility/priority/reporting. Player commands retain existing full allocator behavior; concrete boundary sent to Lead before source implementation.",
+    "Designer confirmed automatic creation and later automatic filling never displace occupied/committed/pending people. Requests retain starter_request until a successful player count/priority edit. Existing allocator filters starter candidates in both planning and actual assignment; automatic arrivals/safe release/office sync use protected mode, player edits opt into ordinary full redistribution. A bounded second pass only after genuine safe release fills newly free vacancies. No periodic scan, staffing tier or hidden quota.",
     "Existing haulers, students and vehicle crews stay separate. Depot/Park have no resident duty and request zero. Real counts/vacancies and instructor qualification requirement remain visible."
   ],
   "acceptance": "New completion creates exact default request and real eligible reporting; zero/priority edits persist and existing request intent/legacy settings are retained. No worker grant, instant arrival, qualification change or occupied-duty theft.",
-  "verification": "One ignored brief new-completion GitHub demonstration proposal only; no local engine, regression fixtures/suites/coverage/benchmark. Lead owns remote execution and exact-head integration."
+  "verification": "One ignored brief new-completion GitHub demonstration proposal only; no local engine, regression fixtures/suites/coverage/benchmark. Lead owns remote execution and exact-head integration.",
+  "implementation": {
+    "once": "Catalog.STARTER_STAFFING is read only after actual new duty/service registration; per-site starter_staffing_recorded prevents replay. Existing/pre-completion request is preserved, legacy initialization never calls defaults; Depot/Park have no resident duty.",
+    "allocation": "starter_request persists until validated successful count/priority edit. Automatic generic rebalances filter both planning and actual selection to Available or same-duty incumbents, using existing priority/eligibility/pending facts. Explicit set_target/set_office_staff use original redistribution; one extra pass after actual release can fill free vacancies.",
+    "office": "F12 initializes office_desired to2; automatic office sync does not reset player priority, pool accounting still subtracts those same office workers serving sites.",
+    "ui": "Existing Workers/Jobs counts remain real; shortage text explains available-worker protection and School basic-training requirement."
+  },
+  "verification_proposal": {
+    "input": "Ignored logs/new-facility-staffing/current_change_demonstration.gd",
+    "scope": "One arranged completion demonstration: actual low-priority committed hauler stays in place at Workshop completion and later paid worker arrival; default1 real available worker physically reports; explicit zero/priority override survives default replay and later arrival. Newly completed School cannot use untrained workers, then paid actual recovery instructor arrives/reporting under existing eligibility.",
+    "limits": "Lead GitHub45s current-change input only; no local engine, suites/failure injection/coverage/benchmark. Other catalogue counts/office pool/pre-existing-request intent are source reviewed, not runtime exercised. Not ordinary gameplay/native UI/FPS acceptance."
+  },
+  "static_verification": "PASS: changed GDScript parsed by source/function inventory,10 focused purpose reviews, system-map update/check (zero reviews pending), current source-linked UI HTML/anchors and whitespace. Accepted Designer section preserved; existing regression fixture unchanged. The combined UI checker still flags intentionally preserved fixture source hashes; HTML is verified separately, no checker/test-scope change. No new production file/UID needed; existing UID sidecars retained. No local engine or gameplay/regression run."
 }

@@ -301,17 +301,17 @@ func _office_site_count(office: String) -> int:
 		if office_members[person_id] == office and rear.ledger.inspect_entity(person_id).duty_id.begins_with("builders-"): count += 1
 	return count
 
-func _sync_office(office: String, priority: int = 1) -> void:
+func _sync_office(office: String, priority: int = -1, player_edit: bool = false) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var request: Dictionary = rear.requests[office]
 	request.target = maxi(0,int(office_desired.get(office,0))-_office_site_count(office))
-	request.priority = priority
+	if priority >= 0: request.priority = priority
 	request.created = rear.time
 	request.order = rear._next()
-	rear._rebalance()
+	rear._rebalance(player_edit)
 
 func set_office_staff(office: String, count: int, priority: int = 1) -> Dictionary:
-	if not is_office(office) or count < 0 or count > 4: return _fail("Choose a complete F12 and zero to four real office builders.")
+	if not is_office(office) or count < 0 or count > 4 or priority < 0 or priority > 3: return _fail("Choose a complete F12 and zero to four real office builders.")
 	var rear: RefCounted = _rear_ref.get_ref()
 	var assigned: Array[String] = []
 	for person_id in office_members:
@@ -326,7 +326,8 @@ func set_office_staff(office: String, count: int, priority: int = 1) -> Dictiona
 		_transferring = false
 		office_members.erase(person_id)
 	office_desired[office] = count
-	_sync_office(office,priority)
+	rear.requests[office].erase("starter_request")
+	_sync_office(office,priority,true)
 	rear._settle()
 	return {"ok":true,"message":"F12 builder staffing recorded; these same people may travel to sites."}
 
@@ -533,9 +534,16 @@ func _complete_site(row: Dictionary, rear: RefCounted) -> void:
 func _activate(row: Dictionary, rear: RefCounted) -> void:
 	var spec: Dictionary = Catalog.SPECS[row.kind]
 	var duty: String = row.id
+	var new_request := false
 	if Layout.FACILITIES[row.kind][3] > 0:
-		rear.ledger.add_place("duty-"+duty,row.kind+" copy staff entrance",row.door)
-		rear.requests[duty] = {"id":duty,"target":0,"positions":Layout.FACILITIES[row.kind][3],"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-"+duty}
+		if rear.ledger.entity_kind("duty-"+duty).is_empty(): rear.ledger.add_place("duty-"+duty,row.kind+" copy staff entrance",row.door)
+		if not rear.requests.has(duty):
+			rear.requests[duty] = {"id":duty,"target":0,"positions":Layout.FACILITIES[row.kind][3],"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-"+duty}
+			new_request = true
+		else:
+			# Preserve an existing/pre-completion explicit count and priority, including zero.
+			rear.requests[duty].positions = Layout.FACILITIES[row.kind][3]
+			rear.requests[duty].place = "duty-"+duty
 	for role in ["input","output"]:
 		var key: String = str(role)+"_kg"
 		if spec.has(key):
@@ -544,7 +552,7 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 			rear.stores[store_id] = {"id":store_id,"capacity":float(spec[key]),"accessible":true,"filter":[],"pile":false}
 			row[role+"_store"] = store_id
 	if row.kind == "training": rear.training.add_training_site(row.id,row.center,row.id)
-	if row.kind == "construction": office_desired[row.id] = 0
+	if row.kind == "construction" and not office_desired.has(row.id): office_desired[row.id] = int(rear.requests[duty].target)
 	if row.kind == "park": row.parking_slots = rear.yard.add_park(row.center)
 	if row.kind == "receiving":
 		rear.receiving.add_freight_berth(row.id,row.output_store,row.door-Vector2(2,0),row.id,row.door)
@@ -571,6 +579,19 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 		rear.additional_productions.append(activity)
 		activities[row.id] = activity
 	if row.kind == "materials": _publish_material_source(str(row.output_store),rear)
+	_apply_starter_staffing(row,rear,new_request)
+
+func _apply_starter_staffing(row: Dictionary, rear: RefCounted, new_request: bool) -> void:
+	if row.id.begins_with("initial-") or row.get("starter_staffing_recorded",false): return
+	row.starter_staffing_recorded = true
+	if not new_request or not rear.requests.has(row.id): return
+	var count: int = int(Catalog.STARTER_STAFFING.get(row.kind,0))
+	var request: Dictionary = rear.requests[row.id]
+	request.target = count
+	request.starter_request = true
+	if row.kind == "construction": office_desired[row.id] = count
+	# Services/eligibility are registered before the real shared pool reports staff.
+	rear._rebalance()
 
 func request_dismantle(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual facility.")
