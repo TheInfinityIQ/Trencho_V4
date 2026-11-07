@@ -738,7 +738,10 @@ func _automatic_delivery_facts(hull_id: String, type: String, quantity: int, sit
 	if rear.mines != null and rear.ledger.route_hazard == rear.mines.route_blocker:
 		memoizable = true
 		for marker in rear.mines.knowledge.get(hull.owner,{}).values(): known_hazards.append([marker.position,marker.hazard])
-	var signature := {"hull":hull,"type":type,"quantity":count,"site":site.duplicate(true),"slot":slot,
+	var hull_inputs := {}
+	for key in ["id","design_type","owner","controller","holder_id","position","unit_mass_kg","contents_mass_kg","fuel","health","damage_immobilized","towing","towed_by","vehicle_spec","fleet_domain"]:
+		hull_inputs[key] = hull[key]
+	var signature := {"hull_inputs":hull_inputs,"type":type,"quantity":count,"site":site.duplicate(true),"slot":slot,
 		"home":rear.yard.PARKING_POSITIONS[slot],"parking_owner":rear.construction.parking_owner(slot),"geometry":geometry,
 		"rear_exit":rear.ledger.inspect_entity("rear-exit",{},false).position,"hq":hq_position,"queue":queue_position,
 		"route_hazard":rear.ledger.route_hazard,"known_hazards":known_hazards}
