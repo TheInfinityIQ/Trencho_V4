@@ -8,7 +8,7 @@
     "own contract/flow/evidence and required maps"
   ],
   "api": {
-    "Dispatch.accept_automatic_delivery(hull_id,type,quantity,site)": "One synchronous command boundary: validate current Parked/no-active-manifest/driven candidate, reject existing fuel_jobs for that hull, inspect actual contents/tank, constrain candidate units to actual remaining payload, measure prospective trip, reject insufficient tank before any mutation, then immediately call unchanged accept Strategic Delivery with actual candidate quantity. No exposed cached admission grant or yield.",
+    "Dispatch.accept_automatic_delivery(hull_id,type,quantity,site)": "One synchronous command with optional prior FAILED-input bookmark only: fresh actual ownership/fueljob/candidate facts and signature; unchanged insufficient-fuel signature skips measurement; otherwise use common full-trip route measurement, return failure bookmark only after route success plus insufficient tank, or immediately call unchanged accept with actual intended quantity. Return measured flag to existing finite scheduler. No cached positive admission grant or yield.",
     "Dispatch._route_preview(row, candidate_profile, prospective_load_kg=0)": "Factor existing route_preview calculation. Existing accepted route_preview delegates with zero added load and identical route/profile behavior. Prospective descriptor supplies actual hull/site/door/berth/home slot/Strategic Delivery, without creating a manifest. Reuse Routes.plan and its existing prospective_load_kg for intended cargo on outward legs; approach and unloaded return use actual existing contents. Same exact distances, surface/fuel rates and 25 percent reserve.",
     "RearLogistics._advance_request": "Replace only automatic shipment acceptance call with new command; existing request/captured manifest/receipt/demand/hold/return handling unchanged. The wrapper owns actual candidate quantity, and existing manifest cargo is authoritative after capture."
   },
@@ -21,7 +21,7 @@
     "Existing manual accept, Fleet Transfer, accepted manifests and return paths retain their semantics."
   ],
   "payload_boundary": "Existing Routes prospective validation counts actual contents (including crew) plus candidate cargo against payload. Automatic candidate must use that same remaining payload rather than a nominal empty hull capacity; never sum a second gross estimate or count intended cargo twice.",
-  "cost": "Only finite automatic candidate admission; no new per-frame/per-hauler polling or broad snapshot. Fuel-job scan is hull-specific existing jobs. Reuse one authoritative route measurement; no second preview/permit cache across transactions. Necessary physical accept/depart checks remain.",
+  "cost": "Lead chose derived failed-attempt bookmark and finite candidate pass. At most one NEW expensive full-trip measurement per rendered RearLogistics policy turn; unchanged low-fuel attempt uses cheap current facts, not route solving. No per-hauler queries, new poll/timer, broad snapshot or persistent positive grant. Fresh measurement and synchronous existing acceptance follow changed facts.",
   "acceptance": [
     "Fuel ownership/insufficient tank leaves same hull Parked and request waiting without a physical manifest.",
     "Candidate cargo quantity/mass is represented in prospective loaded route; actual tank alone pays approach/outward/return plus unchanged reserve.",
@@ -29,5 +29,11 @@
     "Existing manual/accepted/other manifests, receipt/hold/demand and physical fuel custody remain unchanged."
   ],
   "verification": "Source review and required static metadata/whitespace maintenance only locally; no engine, regression, broad scenario, failure injection, matrix or benchmark. Required changed-code CI after publication; any one brief current-change demonstration separately reviewed first.",
-  "owners": "B implementation; lead prospective API/atomicity review and final integration; A exact-head peer; Designer identity. All permission/publication failures to lead."
+  "owners": "B implementation; lead prospective API/atomicity review and final integration; A exact-head peer; Designer identity. All permission/publication failures to lead.",
+  "blocked_attempt_bookmark": {
+    "owner": "Each RearLogistics request owns a dictionary keyed by candidate hull ID; discarded on accepted manifest, request completion/cancellation or model replacement. This stores ONLY successful-measurement/insufficient-tank failure inputs and reason, never a positive permit, route plan, demand quantity owner or fuel truth.",
+    "signature": "Fresh current full selected-hull inspection (actual identity/holder/position/fuel/contents/spec/crew/custody/damage facts); actual candidate type and payload-bounded quantity; selected dispatch site/berth/door; home slot/position and parking-owner geometry; rear-exit/HQ/queue endpoints; derived ordered Construction blocking rectangles and parking membership; actual route-hazard callable identity plus known mine hazard position/active values used by that callable. Fixed Layout geometry is immutable code. No visibility-graph solving or broad ledger snapshot for comparison.",
+    "invalidations": "Any signature inequality forces fresh full measurement. Existing unfinished fuel handling is checked first from actual owner; completed handoff changes actual tank. Unknown custom hazard callable is not memoized because its mutable dependencies cannot be proven. Failed routes/hazards are never bookmarked. No success is bookmarked.",
+    "cursor": "Request-local cursor and finite visits-left pass inspect each current hull at most once per pass. Cheap blocked/invalid candidates can be skipped in that slice; at most one new full route measurement per _advance_request rendered process turn. After an expensive failed attempt, retain finite pass progress for a later turn to try another truck; finish drains to idle. Existing state wake starts the next finite pass; no new idle polling/timer."
+  }
 }
