@@ -205,7 +205,7 @@
       "result": "Named refill continuity: actual courier receipt, cleared requests, selected recipient/Observe retention, next-cycle receipt reset and pure read/audit pass. Both maps pass; arranged component scope only."
     }
   ],
-  "next_action": "Lead processes the separate documentation PR, then scopes and assigns Designer next accepted91/92 implementation: reconcile decreased/zero genuine Army demand before additional AUTOMATIC shipment commitments, preserving accepted manifests, fixed manual quantities and explicit holds. Zero demand must not create a player hold; no rates/HQ6000/threshold changes. This is an implementation outcome, not a new scenario run. Do not restart old two-trip/mounted-guidance sequences; broad/deferred verification remains paused.",
+  "next_action": "Lead processes the separate documentation PR, and continues A already preassigned Designer-accepted91/92 implementation: reconcile decreased/zero genuine Army demand before additional AUTOMATIC shipment commitments, preserving accepted manifests, fixed manual quantities and explicit holds. Zero demand must not create a player hold; no rates/HQ6000/threshold changes. This is an implementation outcome, not a new scenario run. Do not restart old two-trip/mounted-guidance sequences; broad/deferred verification remains paused.",
   "limitations": [
     "Prototype completion and 60 FPS compliance are not established.",
     "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
@@ -242,7 +242,8 @@
       90,
       91,
       92
-    ]
+    ],
+    "main_validation": "validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406: changed-production parsing passed; optional demonstration SKIPPED. B independently observed actual head/jobs/steps; no ongoing watcher. No runtime acceptance added."
   },
   "player_launch": "Update a clean local main, open project.godot in Godot and press F5 for the paused empty-field main scene. Preserve existing local changes; the human root checkout was not pulled/reset/overwritten. This launch note is not a newly requested playtest or runtime pass."
 }

@@ -87,9 +87,9 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_delivery_handoff",
-        "branch": "codex/main-prototype-handoff",
-        "current_assignment": "Document-only main-adoption handoff from ab2a406 in the three assigned delivery/state records; prepare exact-head lead/Designer review and normal publication handoff. PR101 composition and protocol review are complete; preserve their original heads."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_current_demand",
+        "branch": "codex/reconcile-current-army-demand",
+        "current_assignment": "Three-document main-adoption handoff frozen for separate lead/Designer review/publication. A now implements the separately preassigned91/92 downward/zero automatic-demand reconciliation from mainab2a406, in its own checkout/branch and bounded source contract; preserve prior heads."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -99,7 +99,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "Cumulative PR89 supporting source review completed at3859e9b, recorded5809571546; PR89 merged into mainab2a406. No pending repeat review or implementation assignment. Lead dispatches next bounded accepted outcome or concrete current-source finding."
+        "current_assignment": "Cumulative PR89 source review and exact main validation observation COMPLETE; no watcher remains. B is preassigned independent source peer review of A current-demand reconciliation when A supplies its frozen exact head."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -109,7 +109,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
         "branch": "codex/confirm-consumed-batch-cancel",
-        "current_assignment": "Count/cancellation/reporting fixes integrated through PR101 and PR89 into mainab2a406. Original heads preserved; no pending separate publication or repeat component review. Lead assigns concrete current-source corrections or next accepted outcome."
+        "current_assignment": "Count/cancellation/reporting sources integrated into main; no pending separate publication. C supplies read-only feedback/guard consultation for A current-demand reconciliation; no overlapping edits or new UI claim."
       }
     ],
     "review_policy": {
@@ -284,7 +284,7 @@
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
       "record_kind": "completed successor history; never dispatch this already integrated work"
     },
-    "lead_next_action": "Publish/review the separate documentation handoff, then scope and assign Designer next accepted91/92 outcome: reconcile decreased or zero genuine Army demand before additional AUTOMATIC shipment commitments. Preserve accepted cargo/crew/site/return rules, fixed manual quantities and explicit holds; zero demand must not create a player cancellation hold. No rates/HQ6000/threshold changes. Source adoption89 and feature101 are complete; do not redispatch their reviews or deferred broad checks. Lead owns implementation assignment; no generic human continue or implied playtest gate.",
+    "lead_next_action": "Publish/review the separate documentation handoff, and continue the already preassigned A implementation of Designer next accepted91/92 outcome: reconcile decreased or zero genuine Army demand before additional AUTOMATIC shipment commitments. Preserve accepted cargo/crew/site/return rules, fixed manual quantities and explicit holds; zero demand must not create a player cancellation hold. No rates/HQ6000/threshold changes. Source adoption89 and feature101 are complete; do not redispatch their reviews or deferred broad checks. A owns bounded implementation, B its final source peer review, C read-only feedback/guard consultation; lead owns integration; no generic human continue or implied playtest gate.",
     "publication": "The partial prototype is merged into mainab2a406. This three-file documentation handoff is a separate local branch until normally published and reviewed; historical candidate receipts do not imply pending source-publication permission.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
@@ -327,7 +327,7 @@
     }
   ],
   "current_open_prs": [],
-  "current_open_prs_scope": "Zero open code PRs after89 merged to main,101 merged to integration and100 closed superseded. Dispositions supplied by lead; lead owns live readback. The forthcoming documentation handoff PR is separate and not included in this source-adoption snapshot.",
+  "current_open_prs_scope": "6 November2026 main-adoption snapshot: zero open code PRs after89/101 merged and100 closed superseded. Lead owns live readback. The forthcoming documentation handoff and new current-demand feature PRs are separate; this snapshot is not a perpetual live zero-PR assertion.",
   "main_adoption": {
     "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
     "reviewed_head": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
@@ -342,6 +342,7 @@
       92
     ],
     "player_launch": "Update a clean local main to the merged revision, open project.godot in Godot and press F5. The main scene starts in the paused empty field. Preserve local changes; no forced pull/reset or human-checkout update was performed by this handoff.",
-    "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance."
+    "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance.",
+    "validation": "Main validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406; changed-production parsing passed, optional demonstration SKIPPED. Lead supplied receipt; B independently read actual head/jobs/steps. No watcher or new run."
   }
 }
