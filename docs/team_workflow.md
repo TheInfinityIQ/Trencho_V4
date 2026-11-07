@@ -36,6 +36,23 @@ Maintain the living system map and UI flowchart for project changes. The integra
 
 Use Objective, Outcome and Next task in progress/completion handoffs. Say Completed only for the particular result actually verified. Provide exact published revision, changed scope, actual checks, remaining limits and next task. Keep human feedback distinct from engineering results.
 
+### Responsibility and permission questions
+
+Dawson's direct 6 November instruction: all developers, including UI/UX, bring
+questions about responsibilities, permissions, repository access and PR submission
+to the Lead Developer. Contributors use the same routing for integration questions.
+Do not ask Dawson directly for routine engineering or repository authorization.
+The lead resolves matters within standing authority, coordinates gameplay questions
+with the Game Designer and owns the established PR review and merge process.
+
+Report a rejected action to the lead with its exact revision/payload, destination,
+stated reason and work that can continue independently. Hold that action without
+bypassing its rejection. If direct human approval or a decision beyond delegated
+authority is genuinely required, the lead presents the concrete question to Dawson
+in the lead chat. Existing direct restrictions on whom an individual developer may
+contact remain binding; send peer-review coordination through the lead when needed.
+The Game Designer retains direct communication with Dawson about game design.
+
 GitHub carries current goals and status; repository documents carry lasting design and engineering decisions. The current GDD describes gameplay; historical detailed specifications preserve reference values and provenance rather than controlling implementation. Do not send acknowledgement-only loops or introduce another approval gate for ordinary work already authorized.
 
 ## Completion, next assignment and blocked work
