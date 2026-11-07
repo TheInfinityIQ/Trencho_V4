@@ -1,0 +1,665 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T18:25:39.233846+00:00",
+  "status": "research_complete_with_installed_engine_contract_probe",
+  "engine": {
+    "version": "4.7.2 stable Steam",
+    "commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "verification": "Installed binary report matches the fetched version.py at this exact engine commit.",
+    "docs_version": "4.7"
+  },
+  "scope": {
+    "engine_implementation_files": 11,
+    "cpp_files": 10,
+    "documentation_topics": 16,
+    "review_depth": "Focused source review of processing/queue/signal/timer/rendering/data-copy/profiling mechanisms relevant to this game; not a claim to audit the entire Godot engine.",
+    "gameplay_behavior_changes": false,
+    "new_first_party_code": "One opt-in synthetic SceneTree probe under the already ignored-for-import diagnostics/tests directory; no game scene or editor addon is changed."
+  },
+  "verdict": {
+    "alignment": "The direction of narrow queries, precise notifications and lightweight data models is consistent with Godot. The shared simulation clock and RefCounted models are valid design choices.",
+    "not_yet_established": "The complete architecture has not been proven efficient, and the proposed domain scheduler has not been implemented or benchmarked.",
+    "first_priority": "Reduce broad advanced-panel/diagnostic snapshot work and establish pure, scoped read models; preserve one authoritative game clock and ledger.",
+    "required_correction": "The existing refresh flag deduplicates pending work, not all work in one rendered/process frame."
+  },
+  "engine_sources": {
+    "engine_version": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/version.py",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "major = 4",
+          "line": 3,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/version.py#L3"
+        },
+        {
+          "symbol": "minor = 7",
+          "line": 4,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/version.py#L4"
+        },
+        {
+          "symbol": "patch = 2",
+          "line": 5,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/version.py#L5"
+        }
+      ]
+    },
+    "timer_notifications": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/timer.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "void Timer::_notification",
+          "line": 36,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/timer.cpp#L36"
+        }
+      ]
+    },
+    "scene_tree": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "void SceneTree::call_group_flagsp",
+          "line": 361,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp#L361"
+        },
+        {
+          "symbol": "bool SceneTree::physics_process",
+          "line": 639,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp#L639"
+        },
+        {
+          "symbol": "bool SceneTree::process",
+          "line": 688,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp#L688"
+        },
+        {
+          "symbol": "void SceneTree::process_timers",
+          "line": 793,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp#L793"
+        }
+      ]
+    },
+    "canvas_redraw": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/canvas_item.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "void CanvasItem::_redraw_callback",
+          "line": 143,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/canvas_item.cpp#L143"
+        },
+        {
+          "symbol": "void CanvasItem::queue_redraw",
+          "line": 553,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/canvas_item.cpp#L553"
+        }
+      ]
+    },
+    "node_processing": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/node.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "bool Node::_can_process",
+          "line": 911,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/node.cpp#L911"
+        },
+        {
+          "symbol": "void Node::set_process(bool",
+          "line": 1025,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/node.cpp#L1025"
+        }
+      ]
+    },
+    "signal_dispatch": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/object/object.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "Error Object::emit_signalp",
+          "line": 1179,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/object/object.cpp#L1179"
+        },
+        {
+          "symbol": "if (flags & CONNECT_DEFERRED)",
+          "line": 1288,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/object/object.cpp#L1288"
+        }
+      ]
+    },
+    "deferred_queue": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/object/message_queue.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "Error CallQueue::flush",
+          "line": 224,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/object/message_queue.cpp#L224"
+        }
+      ]
+    },
+    "label_updates": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/label.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "void Label::set_text",
+          "line": 1131,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/label.cpp#L1131"
+        }
+      ]
+    },
+    "dictionary_copy": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/variant/dictionary.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "Dictionary Dictionary::duplicate(bool",
+          "line": 591,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/variant/dictionary.cpp#L591"
+        },
+        {
+          "symbol": "Dictionary Dictionary::recursive_duplicate",
+          "line": 608,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/core/variant/dictionary.cpp#L608"
+        }
+      ]
+    },
+    "main_iteration": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/main/main.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "const int max_physics_steps = Engine::get_singleton()->get_user_max_physics_steps_per_frame()",
+          "line": 4955,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/main/main.cpp#L4955"
+        },
+        {
+          "symbol": "for (int iters = 0; iters < advance.physics_steps; ++iters)",
+          "line": 4970,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/main/main.cpp#L4970"
+        }
+      ]
+    },
+    "stack_capture": {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/modules/gdscript/gdscript_utility_functions.cpp",
+      "engine_commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "anchors": [
+        {
+          "symbol": "static inline void get_stack",
+          "line": 374,
+          "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/modules/gdscript/gdscript_utility_functions.cpp#L374"
+        }
+      ]
+    }
+  },
+  "documentation_sources": {
+    "processing": "https://docs.godotengine.org/en/4.7/tutorials/scripting/idle_and_physics_processing.html",
+    "object_deferred_signals": "https://docs.godotengine.org/en/4.7/classes/class_object.html",
+    "canvas_item": "https://docs.godotengine.org/en/4.7/classes/class_canvasitem.html",
+    "scene_tree": "https://docs.godotengine.org/en/4.7/classes/class_scenetree.html",
+    "timer": "https://docs.godotengine.org/en/4.7/classes/class_timer.html",
+    "engine_clock": "https://docs.godotengine.org/en/4.7/classes/class_engine.html",
+    "pausing": "https://docs.godotengine.org/en/4.7/tutorials/scripting/pausing_games.html",
+    "signals": "https://docs.godotengine.org/en/4.7/getting_started/step_by_step/signals.html",
+    "node_alternatives": "https://github.com/godotengine/godot-docs/blob/4.7/tutorials/best_practices/node_alternatives.rst",
+    "refcounted": "https://docs.godotengine.org/en/4.7/classes/class_refcounted.html",
+    "dictionary": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+    "static_typing": "https://docs.godotengine.org/en/4.7/tutorials/scripting/gdscript/static_typing.html",
+    "cpu_optimization": "https://docs.godotengine.org/en/4.7/tutorials/performance/cpu_optimization.html",
+    "general_optimization": "https://docs.godotengine.org/en/4.7/tutorials/performance/general_optimization.html",
+    "profiler": "https://docs.godotengine.org/en/4.7/tutorials/scripting/debug/the_profiler.html",
+    "thread_safety": "https://docs.godotengine.org/en/4.7/tutorials/performance/thread_safe_apis.html"
+  },
+  "documentation_caution": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/best_practices/data_preferences.html",
+      "note": "This page is explicitly marked not yet updated for 4.7. It was not used as decisive evidence for current performance behavior; dictionary semantics were checked in the matching implementation/API instead."
+    }
+  ],
+  "findings": [
+    {
+      "id": "G01",
+      "topic": "Processing callbacks and the custom simulation clock",
+      "assessment": "Aligned, with timing qualifications",
+      "engine_facts": "Godot invokes idle and physics callbacks; it does not require a custom logistics/strategy simulation to be implemented entirely as Node state or Timer callbacks.",
+      "engine_sources": [
+        "scene_tree",
+        "main_iteration"
+      ],
+      "documentation": [
+        "processing",
+        "engine_clock"
+      ],
+      "project_evidence": [
+        "game/main/game_session.gd::_physics_process",
+        "game/rear_base/base_simulation.gd::tick_live",
+        "game/staffing/rear_simulation.gd::advance_time"
+      ],
+      "conclusion": "Keep one authoritative game clock and ordered domain transitions. advance_time is a valid application API; its name and the use of RefCounted do not establish an engine misuse.",
+      "confidence": "Engine-source confirmed; project source observed"
+    },
+    {
+      "id": "G02",
+      "topic": "Frame budgets and physics catch-up",
+      "assessment": "Qualification required",
+      "engine_facts": "The main iteration can execute multiple physics steps before a rendered/process frame. The default maximum is eight.",
+      "engine_sources": [
+        "main_iteration"
+      ],
+      "documentation": [
+        "engine_clock"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_simulation.gd::_pump_live",
+        "game/rear_base/base_simulation.gd::PLANNING_FRAME_USEC"
+      ],
+      "conclusion": "The 4000-usec pure-planning allowance is constructed per _pump_live invocation in a physics callback. It is not a strict total rendered-frame budget, and it excludes other simulation/UI costs. A hard frame allowance would need explicit accounting shared across calls in that frame.",
+      "confidence": "Engine/source inference about possible scheduling; no claim that eight full budgets are currently consumed"
+    },
+    {
+      "id": "G03",
+      "topic": "Deferred work and refresh deduplication",
+      "assessment": "Earlier guarantee corrected",
+      "engine_facts": "Deferred calls drain during idle flushes, including calls queued by deferred calls; SceneTree flushes the queue at multiple points in physics/process iteration.",
+      "engine_sources": [
+        "deferred_queue",
+        "scene_tree"
+      ],
+      "documentation": [
+        "object_deferred_signals"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_demo.gd::_request_refresh",
+        "game/rear_base/base_demo.gd::_refresh"
+      ],
+      "conclusion": "The current pending boolean deduplicates while a refresh is queued. Resetting it when refresh executes allows another refresh in the same Engine.get_process_frames() interval. call_deferred is not an automatic next-frame delay or strict once-per-rendered-frame limiter.",
+      "confidence": "Documentation, pinned engine source and installed-binary probe confirmed"
+    },
+    {
+      "id": "G04",
+      "topic": "Signal delivery",
+      "assessment": "Mechanism aligned; notification scope needs work",
+      "engine_facts": "Ordinary connections invoke their callables during emit; CONNECT_DEFERRED places them in the message queue. Signals do not make handlers parallel or cheaper.",
+      "engine_sources": [
+        "signal_dispatch",
+        "deferred_queue"
+      ],
+      "documentation": [
+        "signals",
+        "object_deferred_signals"
+      ],
+      "project_evidence": [
+        "game/main/game_session.gd::time_advanced",
+        "game/rear_base/base_demo.gd::_request_refresh"
+      ],
+      "conclusion": "Existing signals are appropriate. Emit precise committed-change information and collect affected IDs; replacing polling with a generic signal that rebuilds everything would preserve most work. Preserve immediate safety/physical consequences where ordering requires them.",
+      "confidence": "Source and probe confirmed for delivery; notification design is a project recommendation"
+    },
+    {
+      "id": "G05",
+      "topic": "Rendering redraw versus application data refresh",
+      "assessment": "Engine already optimizes redraws; application reads remain excessive",
+      "engine_facts": "CanvasItem queues a pending redraw callback and suppresses duplicate pending requests. It checks visibility before draw notifications. This does not suppress arbitrary application queries executed before queue_redraw.",
+      "engine_sources": [
+        "canvas_redraw"
+      ],
+      "documentation": [
+        "canvas_item"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_demo.gd::_refresh",
+        "game/rear_base/base_simulation.gd::snapshot"
+      ],
+      "conclusion": "Reduce snapshot/export work before drawing. Godot cannot infer bindings or invalidation rules for custom RefCounted records and dictionaries. Continue using queue_redraw for custom CanvasItems rather than treating it as the cost of every UI refresh.",
+      "confidence": "Source and bounded redraw probe confirmed; snapshot pressure measured in the earlier architecture evidence"
+    },
+    {
+      "id": "G06",
+      "topic": "Assigning label text",
+      "assessment": "Engine already guards identical values",
+      "engine_facts": "Label::set_text returns immediately when the requested text equals existing text. Changed text dirties text and requests redraw/layout-related updates.",
+      "engine_sources": [
+        "label_updates"
+      ],
+      "documentation": [
+        "canvas_item"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_demo.gd::_refresh"
+      ],
+      "conclusion": "Avoid expensive queries and string construction before the setter. Adding equality checks around every unchanged label is not an established primary optimization; the setter already handles identical values.",
+      "confidence": "Pinned C++ source confirmed; no label-layout CPU profile obtained"
+    },
+    {
+      "id": "G07",
+      "topic": "Hidden panels and script processing",
+      "assessment": "Visibility and processing must be treated separately",
+      "engine_facts": "Node processing is governed by process flags/modes and tree pause, while CanvasItem visibility gates presentation. Hiding a Control does not implicitly disable its _process.",
+      "engine_sources": [
+        "node_processing",
+        "canvas_redraw"
+      ],
+      "documentation": [
+        "pausing",
+        "canvas_item"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_demo.gd::_request_refresh",
+        "game/main/game_session.gd::_physics_process"
+      ],
+      "conclusion": "Keep presentation queries gated by actual visibility/dirty state. Do not stop the authoritative simulation merely because a game screen is hidden if the intended world continues running.",
+      "confidence": "Pinned source and installed-binary hidden-control probe confirmed"
+    },
+    {
+      "id": "G08",
+      "topic": "Node versus RefCounted versus Resource",
+      "assessment": "Current separation is engine-appropriate",
+      "engine_facts": "Godot explicitly offers lightweight Object/RefCounted data APIs and Resource serialization/Inspector integration as alternatives to using Nodes for every record. Nodes remain useful for scene lifecycle, input and presentation.",
+      "engine_sources": [
+        "node_processing"
+      ],
+      "documentation": [
+        "node_alternatives",
+        "refcounted",
+        "cpu_optimization"
+      ],
+      "project_evidence": [
+        "game/identity/identity_records.gd",
+        "game/rear_base/base_simulation.gd",
+        "game/main/game_session.gd"
+      ],
+      "conclusion": "Keep entity/service data lightweight unless a specific feature benefits from Node lifecycle or Resource tooling. A node per person/job/item is a design option, not a required correction or demonstrated speedup. Retain careful ownership and weak references where cycles would otherwise form.",
+      "confidence": "Official design guidance and project source; not a comparative Node benchmark"
+    },
+    {
+      "id": "G09",
+      "topic": "Dictionary references, detached snapshots and copying",
+      "assessment": "Correct encapsulation goal; broad repeated copies need reduction",
+      "engine_facts": "Dictionaries share references by default. duplicate creates a new container; deep duplication recursively copies nested arrays/dictionaries and ordinary duplicate(true) still shares Resource references.",
+      "engine_sources": [
+        "dictionary_copy"
+      ],
+      "documentation": [
+        "dictionary"
+      ],
+      "project_evidence": [
+        "game/identity/identity_ledger.gd::inspect_entity",
+        "game/identity/identity_ledger.gd::snapshot",
+        "game/rear_base/base_simulation.gd::snapshot"
+      ],
+      "conclusion": "Detached exported facts can protect model ownership, but repeatedly constructing broad facts remains real work. Prefer narrow reads and carefully scoped reuse over a mutable global snapshot cache. Do not equate deep duplication with deep immutability of arbitrary Object/Resource graphs.",
+      "confidence": "API/source confirmed; repeated project export paths measured"
+    },
+    {
+      "id": "G10",
+      "topic": "Timers and exact simulation time",
+      "assessment": "Useful engine facility, not an automatic replacement for the shared clock",
+      "engine_facts": "Timer is driven by internal process/physics notifications. SceneTreeTimer is traversed by SceneTree after the corresponding node-processing phase. They are not independent background scheduler threads, and use engine-scaled or unscaled time according to their configuration.",
+      "engine_sources": [
+        "timer_notifications",
+        "scene_tree"
+      ],
+      "documentation": [
+        "timer",
+        "scene_tree",
+        "engine_clock"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_simulation.gd::set_speed",
+        "game/rear_base/base_simulation.gd::_accrue_live_wall_time"
+      ],
+      "conclusion": "Use engine timers for appropriate local presentation/delayed tasks. They do not automatically track this game's custom speed or preserve its explicit-time handoff/order semantics. Very short periodic timers and timer-per-record rewrites require measurement rather than assumption.",
+      "confidence": "Pinned source and official Timer contract"
+    },
+    {
+      "id": "G11",
+      "topic": "Tree pause, custom pause and SceneTreeTimer defaults",
+      "assessment": "Important integration pitfall",
+      "engine_facts": "SceneTree.create_timer defaults process_always to true. Such a timer can complete while the tree is paused; opting out holds it until unpause. Signal-connected methods can also run on nodes whose normal processing is paused.",
+      "engine_sources": [
+        "scene_tree",
+        "signal_dispatch",
+        "node_processing"
+      ],
+      "documentation": [
+        "scene_tree",
+        "pausing"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_simulation.gd::set_speed",
+        "game/main/game_session.gd::_physics_process"
+      ],
+      "conclusion": "Custom simulation.speed=0, SceneTree.paused and Engine.time_scale are distinct mechanisms. Define which systems pause; preserve quiet route preparation and pause-time management commands. Do not assume an awaited timer or signal automatically shares gameplay pause semantics.",
+      "confidence": "API/source plus installed-binary pause-timer probe"
+    },
+    {
+      "id": "G12",
+      "topic": "Determinism and wall-time accrual",
+      "assessment": "Clarify the scope of existing guarantees",
+      "engine_facts": "A fixed-rate callback schedules invocations; it does not make application code that consults monotonic wall time and work budgets deterministic.",
+      "engine_sources": [
+        "main_iteration",
+        "scene_tree"
+      ],
+      "documentation": [
+        "processing",
+        "engine_clock"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_simulation.gd::_accrue_live_wall_time",
+        "game/rear_base/base_simulation.gd::_pump_live",
+        "game/diagnostics/tests/gdunit/fixtures/read_path_baseline.json"
+      ],
+      "conclusion": "The playable session accrues elapsed real time and owes logical time, while explicit tests can drive supplied intervals. Existing frozen checkpoints protect their defined fixtures; they do not prove complete machine-independent live replays. Preserve this distinction in future scheduler tests.",
+      "confidence": "Application-source inference; no new live-replay determinism claim"
+    },
+    {
+      "id": "G13",
+      "topic": "Scoped read models and query purity",
+      "assessment": "Recommendation supported; purity migration still required",
+      "engine_facts": "Godot does not require query methods to be pure, but its container/ref semantics do not make cached application facts automatically safe.",
+      "engine_sources": [
+        "dictionary_copy"
+      ],
+      "documentation": [
+        "dictionary",
+        "signals"
+      ],
+      "project_evidence": [
+        "game/training/training_service.gd::snapshot",
+        "game/rear_base/base_demo.gd::_refresh"
+      ],
+      "conclusion": "Training.snapshot currently refreshes row state. Establish pure read boundaries or preserve its observable ordering before reusing/caching snapshots. Precise mutation revisions and visible-panel read models are proposed application changes, not an already implemented engine feature.",
+      "confidence": "Project source observed; recommendation based on measured read pressure"
+    },
+    {
+      "id": "G14",
+      "topic": "Engine groups and deferred unique calls",
+      "assessment": "Available batching tool with an argument-loss caveat",
+      "engine_facts": "GROUP_CALL_UNIQUE combined with GROUP_CALL_DEFERRED deduplicates a group/method call; different arguments are ignored and only the first payload is retained.",
+      "engine_sources": [
+        "scene_tree"
+      ],
+      "documentation": [
+        "scene_tree"
+      ],
+      "project_evidence": [
+        "docs/system_overhaul_plan.json::event_delivery_policy"
+      ],
+      "conclusion": "This can batch a notification that tells a component to drain an independently collected dirty-ID set. It is not a safe substitute for delivering every distinct entity-change payload and does not by itself provide our proposed gameplay deadline queue.",
+      "confidence": "API and pinned group-call implementation confirmed"
+    },
+    {
+      "id": "G15",
+      "topic": "Threads, typed GDScript, faster languages and server APIs",
+      "assessment": "Conditional follow-up options, not the first fix established by present evidence",
+      "engine_facts": "Active scene-tree access is not generally thread-safe; typed GDScript can use optimized opcodes; lower-level/server/language options have their own costs and intended uses.",
+      "engine_sources": [
+        "node_processing",
+        "signal_dispatch"
+      ],
+      "documentation": [
+        "thread_safety",
+        "static_typing",
+        "cpu_optimization"
+      ],
+      "project_evidence": [
+        "game/rear_base/base_simulation.gd::_pump_live",
+        "game/identity/identity_ledger.gd::inspect_entity"
+      ],
+      "conclusion": "Remove duplicated queries before increasing implementation complexity. If profiling justifies parallel pure planning, pass stable inputs and commit authoritative mutations in the owning context. None of these options automatically removes repeated ledger scans or snapshot construction.",
+      "confidence": "Official conditional guidance; no migration benchmark performed"
+    },
+    {
+      "id": "G16",
+      "topic": "Call stacks and performance attribution",
+      "assessment": "Current tooling is diagnostic evidence with overhead",
+      "engine_facts": "GDScript get_stack constructs a returned array of per-frame dictionaries. Godot's profiler distinguishes function time/calls and profiling itself has cost.",
+      "engine_sources": [
+        "stack_capture"
+      ],
+      "documentation": [
+        "cpu_optimization",
+        "profiler",
+        "general_optimization"
+      ],
+      "project_evidence": [
+        "game/diagnostics/function_call_log.gd::record",
+        "docs/evidence/inspect_entity_architecture.json::measurements"
+      ],
+      "conclusion": "Use counters/stack grouping to locate candidate work, then compare CPU self/total time, allocations where available and frame distributions with consistent instrumentation. The observed 81.46% UI-rooted inspection share is not an 81.46% CPU-time claim. Prior stack and counters-only runs are short separate observations, not a statistical overhead estimate.",
+      "confidence": "Pinned stack implementation and bounded project observations"
+    },
+    {
+      "id": "G17",
+      "topic": "Current performance thresholds",
+      "assessment": "Stall detector, not a 60-fps certificate",
+      "engine_facts": "At a 60-fps presentation target, the total frame interval is approximately 16.67 ms. Work and loading spikes require context-specific measurement.",
+      "engine_sources": [
+        "main_iteration"
+      ],
+      "documentation": [
+        "profiler",
+        "general_optimization"
+      ],
+      "project_evidence": [
+        "tools/run_gdunit4_performance.ps1::FrameLimitMs",
+        "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd"
+      ],
+      "conclusion": "The current default 100-ms gate intentionally catches severe stalls. Passing it does not establish smooth 60 fps. Keep the existing failure evidence; define normal-frame, interactive-action and startup/loading budgets separately before changing acceptance criteria.",
+      "confidence": "Arithmetic, official measurement guidance and current launcher defaults"
+    },
+    {
+      "id": "G18",
+      "topic": "Central dirty-work and deadline queues",
+      "assessment": "Reasonable proposed application architecture, not an engine prescription or proven full-game improvement",
+      "engine_facts": "Godot supplies callbacks, signals, deferred calls, timers and groups; it does not mandate one domain scheduler pattern for every game.",
+      "engine_sources": [
+        "scene_tree",
+        "timer_notifications",
+        "main_iteration"
+      ],
+      "documentation": [
+        "processing",
+        "signals",
+        "timer",
+        "cpu_optimization"
+      ],
+      "project_evidence": [
+        "game/staffing/rear_simulation.gd::advance_time",
+        "game/staffing/rear_simulation.gd::_settle",
+        "game/orders/order_service.gd::settle"
+      ],
+      "conclusion": "Deduplicated affected-service work and ordered logical deadlines can reduce needless rescanning while active motion continues. Pilot one service after collecting mutation/wakeup dependencies and preserve physical ordering, cancellation and stock invariants. Benchmark the implementation before claiming a whole-game speedup.",
+      "confidence": "Architectural inference supported by source/call measurements; not implemented"
+    }
+  ],
+  "experiment": {
+    "source": "game/diagnostics/tests/engine_contract_probe.gd",
+    "raw_report": "logs/engine-contracts-2026-11-03T18-15-51/report.json",
+    "result": "PASS",
+    "observations": {
+      "signal_order_before_idle": [
+        "before_emit",
+        "immediate",
+        "after_emit"
+      ],
+      "signal_order_after_idle": [
+        "before_emit",
+        "immediate",
+        "after_emit",
+        "deferred"
+      ],
+      "nested_deferred_process_frame_ids": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "three_pending_redraw_requests_draw_notifications": 1,
+      "hidden_control_process_callbacks": 3,
+      "hidden_draw_notifications": 0,
+      "process_frame_ids_with_multiple_pending_guard_refreshes": 39,
+      "maximum_refreshes_in_one_observed_process_frame": 2,
+      "default_SceneTreeTimer_fired_while_paused": true,
+      "opted_out_timer_held_then_resumed": true
+    },
+    "limits": "Tiny synthetic headless scene verifies callback semantics only. No GPU-rendering, full-game correctness, signal-cost or frame-rate benchmark is implied. Raw logs are ignored local artifacts; this document preserves the results.",
+    "source_sha256": "1715a83f581bd7e61d3a9188fec81e15bb2738218cd60ea6dc9f1c03a32c5718",
+    "installed_engine": {
+      "build": "steam",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (steam)",
+      "timestamp": 0
+    },
+    "same_frame_witness": [
+      {
+        "origin": "physics",
+        "physics_frame": 13,
+        "process_frame": 15
+      },
+      {
+        "origin": "process",
+        "physics_frame": 13,
+        "process_frame": 15
+      }
+    ],
+    "runtime_stderr_empty": true
+  },
+  "recommendations": [
+    {
+      "order": 1,
+      "action": "Profile the actual current opening and prepared busy training/HQ cases with consistent counters-only or profiler settings.",
+      "acceptance": "Separate idle/frame, UI-dispatch and load/restart costs; retain all earlier failures and identify measured CPU self/total hotspots."
+    },
+    {
+      "order": 2,
+      "action": "Extend narrow panel-specific queries to advanced panels and diagnostics; reuse derived facts only within pure, stable read boundaries.",
+      "acceptance": "Show fewer full exports and lower measured CPU/frame cost while preserving selected IDs, displayed facts and existing invariants."
+    },
+    {
+      "order": 3,
+      "action": "Introduce scoped committed-change notifications and explicit dirty-ID collection for presentation.",
+      "acceptance": "Pause-time commands, movement/progress, new sessions and all relevant mutation paths invalidate correct views. If strict once-per-process-frame updates are required, test them explicitly."
+    },
+    {
+      "order": 4,
+      "action": "Pilot deduplicated work and logical deadlines in one service, retaining active movement and exact physical handoff ordering.",
+      "acceptance": "Pass characterized ordering, cancellation, capacity, injury and material tests; benchmark both ordinary and busy sessions before expanding."
+    }
+  ],
+  "validation_limits": [
+    "No first-party gameplay implementation was modified in this investigation.",
+    "The synthetic probe and official documents establish engine semantics, not the optimal architecture for every game.",
+    "Call volume and API usage alone cannot establish CPU bottlenecks or a speedup.",
+    "Prior architecture measurement values remain historical and unchanged; only the inaccurate refresh-coalescing guarantee is corrected."
+  ]
+}

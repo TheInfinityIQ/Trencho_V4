@@ -1,5 +1,7 @@
 # Automated checks and GdUnit4 pilot
 
+Historical regression catalogue. Current work follows [current-change verification](current_change_verification.md) and AGENTS.md; the broad commands retained below are not an instruction to resume routine suites.
+
 Related task: [issue #60](https://github.com/TheInfinityIQ/Trencho_V4/issues/60). The original pilot adds two focused G01/G02 tests; the G03 extension adds two input cases below. Existing suites are retained, not mass-migrated.
 
 ## Repeatable commands
@@ -69,7 +71,7 @@ Inspect the actual images together with their matching state/selection/revision 
 
 The accepted G08 integration retained all eleven Domain cases and all five earlier Input cases, adding the two existing G08 Input cases: `test_blocked_wheel_then_real_road_travel_preserves_fuel_and_inspection` and `test_eye_and_ground_muzzle_then_independent_direct_and_blast_cover` (seven Input cases total). The default headless command also runs the G08 domain and callback/layout regressions; display input and rendering still require Linux CI's virtual display.
 
-The G08 cases export eight PNG/JSON pairs to `.artifacts/g08-rendered/`, after rendered frames. JSON records EVALUATION_HEAD, engine, image dimensions, raw-pixel SHA-256, selected fixture, actual numeric state, inspection text, Overview and scroll position. Movement metadata includes actual clock/pose/fuel; sight metadata explicitly labels static declared probes. See [G08's current evidence record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026) for checkpoints and [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) for the separate Designer-authorized foundation path.
+The G08 cases export eight PNG/JSON pairs to `.artifacts/g08-rendered/`, after rendered frames. JSON records EVALUATION_HEAD, engine, image dimensions, raw-pixel SHA-256, selected fixture, actual numeric state, inspection text, Overview and scroll position. Movement metadata includes actual clock/pose/fuel; sight metadata explicitly labels static declared probes. See [G08's current evidence record](g08_terrain.md#current-integration-and-evidence-path---27-october-2026) for checkpoints and [GDD23.7](reference/gameplay_specification_v0_2.md#237-g08-foundation-verification-path---27-october-2026) for the separate Designer-authorized foundation path.
 
 CI retains every accepted failure control and adds `./tools/prove_gdunit4_failure.ps1 -GodotPath '<godot>' -Suite Input -G08Movement` under Xvfb. This temporarily changes the full-road clock expectation from6 to7, requires the named G08 assertion to fail, restores source bytes and reruns the full healthy Input suite. Artifact images must be downloaded, checksum-verified and visually reviewed alongside their matching current-head metadata. Windows OS input/readability and full gameplay remain unverified; no native retry is authorized by this extension.
 

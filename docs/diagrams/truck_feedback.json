@@ -1,0 +1,49 @@
+{
+  "status": "planned_before_behavior_edits",
+  "objective": "Show the newly requested delivery's own receipt and truthful transport-truck fuel/handling state; keep crew choices physically rear-bound.",
+  "source_base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
+  "assigned_files": [
+    "game/rear_base/base_demo.gd request-selection, vehicle-person choices, truck-status rendering only",
+    "docs/diagrams/truck_feedback.json",
+    "docs/diagrams/truck_feedback.mmd",
+    "tools/checks/truck_feedback_direct.gd",
+    "docs/evidence/truck_feedback.json",
+    "required generated maps/button inventory",
+    "game/dispatch/dispatch_service.gd active_handling_status only: detached three-field selected-hull read"
+  ],
+  "accepted_design": "Designer direction in chat5November: select successful new request, failed request retains context and reason; distinguish reserved/carried/tank fuel, keep state advice non-mutating, preserve valid physically seated rear extraction. Exact-head approval remains pending.",
+  "acceptance": [
+    "Successful normal request click selects its returned stable ID and immediately renders that request's current receipt/cancel control",
+    "Failed command retains existing selection; existing failure message remains visible",
+    "T01/T02 status keeps actual tank fuel/Driver, distinguishes pending reservation from carried fuel awaiting tank handoff, renders active selected-hull manifest state/task/blocker",
+    "Only living player-owned rear actors with Occupied rear place appear as crew/fuel candidates; seated qualified rear crew remain in crew list for existing safe extraction"
+  ],
+  "ownership": {
+    "requests": "RearLogistics owns request IDs, quantities, delivered counts and statuses; UI owns selection only",
+    "fuel": "VehicleActivity/ledger own fuel jobs, reservations, carries and tank receipt; formatter reads supplied row only and never treats commitment as tank fuel",
+    "shipment": "Dispatch active_handling_status resolves selected hull through existing _active_manifest once and returns detached state/handling/blocker strings only; no mutable manifest is exposed, no full snapshot.",
+    "crew": "Ledger rear_place/owner/health/qualification and existing actor membership; existing allocation/extraction guards stay authoritative"
+  },
+  "events": "Existing successful command immediately refreshes request list once with preferred stable ID; normal scene-owned changed/tab events retain refresh policy. Programmatic ItemList.select does not emit item_selected, so the same explicit refresh renders the selected receipt. No polling/timer/subscriptions added.",
+  "cancellation": "Failed command cannot change selection. Cancellation remains with current selected request and owner; late/duplicate refresh preserves stable selection. Rear Held Home/None persons are excluded; Occupied seated crew remain selectable for safe extraction under existing stopped-hull rules. No cancellation/allocation semantics changed.",
+  "verification": {
+    "allowed": "One brief explicitly supplied current-change demonstration on existing GitHub workflow,45s process limit; changed production parse and strict source/UI maps. No local engine, regression tests/suites, broad scenarios or long workflow",
+    "demo": "Paused normal main-scene request clicks at two distinct quantities select their returned actual request and show0/N. Pure detached supplied facts demonstrate reserved/carried fuel and active manifest handling/blocker text. No hull/person/stock grants or simulated-time advancement. Demonstration input frozen before execution.",
+    "limits": "Direct demonstration does not establish physical fuel carry, extraction, two deliveries/returns, ordinary autonomous Army need, native rendering/input,1x pacing or60FPS. Existing full-chain checker remains deferred unchanged."
+  },
+  "lessons": [
+    "Do not infer physical receipt from reservation or available-only stock",
+    "Use stable actual identity instead of arbitrary prior/first row",
+    "Keep scene refresh finite and owner facts narrow",
+    "Preserve physical crew/custody and safe extraction; no new allocation owner"
+  ],
+  "official_sources": [
+    "https://docs.godotengine.org/en/4.7/classes/class_itemlist.html#class-itemlist-method-select",
+    "https://docs.godotengine.org/en/4.7/classes/class_optionbutton.html"
+  ],
+  "design_correction_contract": {
+    "review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/98#pullrequestreview-5794807977",
+    "acceptance": "An idle Parked truck advises inspection of actual Army needs, stock coverage, handling and transport eligibility, and explains enabled automatic fulfilment when physical requirements are met. It infers neither shortage nor a routine manual shipment. Existing explicit manual request control and all owners are unchanged.",
+    "verification": "Source review and required static maps/whitespace only for this wording correction; no rerun/regression/local-engine/full-chain check."
+  }
+}

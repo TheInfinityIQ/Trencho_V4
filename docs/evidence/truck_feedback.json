@@ -1,0 +1,66 @@
+{
+  "status": "designer_wording_corrected_pending_new_exact_head_reviews",
+  "objective": "Correct player context and physical-state feedback for delivery requests and rear transport trucks.",
+  "source_base": "6b1dd282bda64923d3f7ab935d3cc9a216e218b6",
+  "behavior": [
+    "Successful request click selects returned stable ID and renders that current request receipt",
+    "Transport status separates tank fuel, reserved fuel and carried fuel awaiting handoff; selected-hull owner read supplies active shipment handling/blocker",
+    "Crew and fuel choices require living player-owned Occupied rear actors; seated qualified rear crew remain visible for existing extraction"
+  ],
+  "source_inspection": "Read complete changed functions, existing request/refresh/list selection, vehicle fuel job pickup/deposit and readiness snapshot, Dispatch active-manifest resolution, and rear reassignment/extraction guards. Fuel job.state is not displayed because its Reporting label is not updated during carry.",
+  "contract": "docs/diagrams/truck_feedback.json and .mmd",
+  "verification": [
+    {
+      "check": "strict living system map and UI function map",
+      "result": "Passed locally without engine execution; no pending function-purpose reviews. Whitespace check passed."
+    },
+    {
+      "check": "existing GitHub Verify current code manual run269",
+      "source_commit": "5c3f1951f488cd98764a9e29bf02c28eee333318",
+      "run_id": 42147357328,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42147357328",
+      "result": "Success under existing45s direct process limit, Godot4.7.2.stable.official.ed1daf0bf. No engine/script ERROR lines in combined direct.log.",
+      "actual_request_receipt": {
+        "first": "rear-delivery-0001",
+        "new": "rear-delivery-0002",
+        "selected": "rear-delivery-0002",
+        "state": "Queued",
+        "delivered": 0,
+        "requested": 37,
+        "simulation_seconds": 0.0
+      },
+      "supplied_fact_receipt": "Pure formatter showed25 fuel units reserved versus25 carried awaiting tank handoff while actual supplied tank stayed0.0/100; supplied Loading/Cargo pickup/blocker strings were retained. These detached facts did not create stock, a hull, a person or physical work.",
+      "scope_note": "Workflow scope listed changed_scripts=[] because final commit changed map fingerprints only. The executed main-scene demonstration loaded current production dependencies; no separate changed-production parse is claimed.",
+      "artifact_id": 13470089332,
+      "artifact_sha256": "971b7639378a58ab183da16991d6ff65500536432337bed3d9dfc414a2f0a8bb",
+      "retained_actual_logs": "logs/truck-feedback/run269/artifact/direct.log and scope.txt; archive evidence.zip"
+    },
+    {
+      "check": "existing GitHub pull-request run270",
+      "run_id": 42147360241,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42147360241",
+      "result": "Success at the same source head; metadata/scope validation only, no gameplay claim."
+    }
+  ],
+  "manual_steps": [
+    "Launch game/main/main.tscn normally; pause. Open Supplies \u2192 Army requests, request100 rifle rounds, then37. The second row is selected and its own0/37 HQ-unloaded receipt appears immediately. Requests remain queued until normal prerequisites and time allow work.",
+    "Inspect an ordinarily manufactured supply truck under Vehicles. A purchased-fuel handling request shows reserved units before pickup and carried units pending tank handoff after pickup; tank amount remains separate. Once the ordinary shipment is active, inspect its handling and blocking reason in the truck status.",
+    "Driver/crew dropdown lists current living qualified rear people, including valid seated rear crew for Extract selected station occupant. People committed outside the occupied rear are excluded; existing physical assignment/extraction restrictions remain."
+  ],
+  "deferred": "tools/checks/supply_truck_playthrough.gd and docs/evidence/supply_truck_progression.json unchanged. Long900s proposal revoked before any execution and removed from publishable paths; original proposal retained only under this checkout's ignored logs as new provenance, not historical original logs.",
+  "limits": "No local engine run, regression test/suite, broad scenario, full two-delivery chain, actual fuel-carry or extraction execution, ordinary autonomous Army need, visible/native-input,1x pacing or60FPS certification. Compilation is not gameplay acceptance.",
+  "ownership": "Operations developer owns this bounded change; lead integration and exact-head lead technical/Designer design approvals remain pending.",
+  "unverified": "Failed-command context retention and Occupied-only/seated-crew selector filter have source review only in this increment. Physical fuel pickup/deposit, crew extraction, full shipments/returns, autonomous Army need, native rendering/input,1x pacing and60FPS remain unexecuted.",
+  "executed_source_sha256": {
+    "game/rear_base/base_demo.gd": "9b6bcaf2f64402c0115fe4022f0f3e1b38a6a4cf442f948b38e0d735bef65221",
+    "game/dispatch/dispatch_service.gd": "68459651202ad01d6593c3c59781177c32db7dd165f023e85e0e8776bf229ce3",
+    "tools/checks/truck_feedback_direct.gd": "fcb827a1af6d598c2af405c2213517e2b736021da22790cb7dc7ccbeae86b613"
+  },
+  "design_correction": {
+    "requested_at": "c4619625e76060441382a1ec4e5ccc9e65af18a3",
+    "review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/98#pullrequestreview-5794807977",
+    "change": "Only generic Parked advice changes: inspect actual Army needs/stock coverage/handling/transport eligibility; explain enabled automatic fulfilment of genuine requests when physical requirements permit. No routine manual request or shortage is inferred.",
+    "validation": "Current source read directly and formatter purpose re-reviewed. Required static map/UI/whitespace checks apply; no engine demonstration rerun solely for wording. Run269 remains evidence of the previous source before this wording correction, not execution of the corrected Parked message.",
+    "production_sha256_after_wording": "92b8131cd6bae1d31a23ab0c637ffde166c6d2ab8b445c4d4ad5ef38b6bfc0e9"
+  }
+}

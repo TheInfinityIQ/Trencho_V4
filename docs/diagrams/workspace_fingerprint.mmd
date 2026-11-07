@@ -1,0 +1,14 @@
+%% Design correction recorded before changing the runner, 2026-11-05.
+flowchart TD
+    Start[Start bounded task under workspace lock] --> Walk[Walk workspace without following links]
+    Walk --> Generated{Known generated directory?}
+    Generated -->|.git / .godot / .tools / .artifacts / builds / logs / caches| Prune[Prune before descending]
+    Generated -->|no| Link{Symbolic link?}
+    Link -->|yes| Target[Record target string without following]
+    Link -->|no| Deadline{Within fixed runtime deadline?}
+    Deadline -->|yes| Hash[Hash first-party file bytes]
+    Deadline -->|no| Stop[Record limit reached]
+    Hash --> Compare[Compare before and after fingerprints]
+    Target --> Compare
+    Compare --> Scope[Report outside-scope edits; preserve user files]
+    Scope --> Worker[Only then run the fixed checks and one coding worker]

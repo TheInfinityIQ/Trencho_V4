@@ -1,0 +1,419 @@
+{
+  "date": "2026-11-04",
+  "objective": "Bounded durable objective execution through inspection, implementation, independent verification and focused repair.",
+  "scope": "Development workflow only. Existing dirty game changes preserved; no game files edited by this task.",
+  "approach": {
+    "owner": "tools/agent_task.py alone owns retry/continuation",
+    "native": "Codex CLI persisted sessions, explicit session-ID resume, JSONL events and output schema",
+    "custom_requirement": "Installed exec has no overall attempts/wall-time controls; controller supplies these plus independent acceptance and durable accounting.",
+    "scheduling": "None: this is manually launched, not recurring work.",
+    "review": "One bounded read-only audit; lead integrated and verified fixes."
+  },
+  "versions": {
+    "python": "3.13.15",
+    "codex_cli": "0.166.0-alpha.6"
+  },
+  "source_hashes": {
+    "Run Agent Task.cmd": "a62c2d364ac48b414f3c4c53e413d568b494e8bbcb0bcc6ac45791307661cfd8",
+    "tools/agent_task.py": "2a0f2111ff351e96b802ef5fa525a77244b05b5caa43e4716d0a57ba133cdfd9",
+    "tools/agent_process.py": "0f23dfc9af94c5b9e0f10c05fc8df88889cddacbbbd711d7e1a780d128b50911",
+    "tools/agent_task_demo.py": "9ad28724b90fc61beb473fe8875f0007f580eba8e906a8f20d2280e32045a82b",
+    "tools/tests/test_agent_task.py": "bb5d78c47ad568c6d1e0f16b22127ae53f25bf22bdc558e897a5a7a3fb5d183f",
+    "docs/agent_workflow.md": "48fd0ca270ee83f8af09d31472f1d7b77612762873544db74e86fd8c4a9d506a",
+    "AGENTS.md": "b1050562f9dcf3bcf77d0316b4d018d7d7f1eaeb87f5e34d2eded8014c2949e2"
+  },
+  "files_changed": [
+    "Run Agent Task.cmd",
+    "tools/agent_task.py",
+    "tools/agent_process.py",
+    "tools/agent_task_demo.py",
+    "tools/tests/test_agent_task.py",
+    "docs/agent_workflow.md",
+    "AGENTS.md",
+    "docs/evidence/agent_workflow.json",
+    "docs/system_map.json",
+    "docs/ui_function_map.html"
+  ],
+  "configured_defaults": {
+    "attempts": 3,
+    "runtime_seconds": 600,
+    "worker_seconds": 120,
+    "check_seconds": 30,
+    "no_progress": 2,
+    "concurrent_workers_per_workspace": 1
+  },
+  "enforcement": {
+    "processes": "Windows suspended launch, owned kill-on-close Job Object, 50ms deadline/stop poll, up to 3s cleanup; metadata adds bounded/individual-file I/O overhead.",
+    "concurrency": "Nonblocking OS workspace lock; no second controller enters; automatic release on crash.",
+    "resume": "Reload under lock, conservatively charge unfinished reservation, verify actual files before worker; counts do not reset.",
+    "criteria": "Objective/controller/declared verifier input hashes and directly invoked file arguments; all acceptance commands must pass.",
+    "scope": "Post-change detection, not preventive sandbox; generated directories excluded, symlinks recorded without traversal.",
+    "trust": "Cooperative workers; writable local state is not hostile-worker-resistant.",
+    "unavailable_caps": "No hard token or money cap. Usage observed when native turn.completed is emitted; may be unknown after termination."
+  },
+  "verification": [
+    {
+      "command": "python -m unittest discover -s tools/tests -p test_agent_task.py -v",
+      "observed": "15 tests: 14 passed, 1 symlink-privilege skip; 22.749 seconds",
+      "log": "logs/agent-workflow-focused-tests.txt"
+    },
+    {
+      "command": "python -m unittest discover -s tools/tests -p test_*.py",
+      "observed": "27 tests: 26 passed, 1 symlink-privilege skip; 26.258 seconds",
+      "log": "logs/agent-workflow-all-tool-tests.txt"
+    },
+    {
+      "command": "python -m unittest discover -s tools/tests -p test_agent_task.py -k verification_cannot -v",
+      "observed": "1 test passed in 0.345 seconds after strengthening its assertion that injected green verification actually executes. The boundary clock advance is simulated; process timeout/crash tests use real elapsed time.",
+      "log": "logs/agent-workflow-deadline-boundary-test.txt"
+    },
+    {
+      "command": "git diff --check",
+      "observed": "Exit 0; no whitespace errors"
+    },
+    {
+      "commands": [
+        "python tools/system_map.py --check",
+        "python tools/ui_function_map.py --check"
+      ],
+      "evidence_log": "logs/agent-workflow-maintenance-checks.txt",
+      "note": "The final handoff requires both to exit 0 after all source/purpose/diagram updates."
+    }
+  ],
+  "demonstrations": [
+    {
+      "id": "20261104-163153-263c7223",
+      "status": "completed",
+      "attempts": 2,
+      "elapsed_seconds": 2.2701,
+      "stop_reason": "All fixed acceptance commands passed",
+      "worker_kind": "simulation",
+      "limits": {
+        "attempts": 3,
+        "runtime_seconds": 30,
+        "worker_seconds": 5,
+        "check_seconds": 3,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": true,
+          "classification": "passed"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-163153-263c7223/state.json",
+      "session_id": null,
+      "observed_usage": {},
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-2",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 0,
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "20261104-163155-66268254",
+      "status": "blocked",
+      "attempts": 0,
+      "elapsed_seconds": 0.1582,
+      "stop_reason": "Missing prerequisite: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\agent-workflow-final-demonstrations\\unavailable-required-input",
+      "worker_kind": "simulation",
+      "limits": {
+        "attempts": 3,
+        "runtime_seconds": 30,
+        "worker_seconds": 5,
+        "check_seconds": 3,
+        "no_progress": 2
+      },
+      "checks": [],
+      "state": "logs/agent-workflow/20261104-163155-66268254/state.json",
+      "session_id": null,
+      "observed_usage": {},
+      "command_outcomes": []
+    },
+    {
+      "id": "20261104-163155-214afbbf",
+      "status": "limit_reached",
+      "attempts": 1,
+      "elapsed_seconds": 1.5503,
+      "stop_reason": "Worker attempt budget exhausted",
+      "worker_kind": "simulation",
+      "limits": {
+        "attempts": 1,
+        "runtime_seconds": 30,
+        "worker_seconds": 5,
+        "check_seconds": 3,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": false,
+          "classification": "pre_existing"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-163155-214afbbf/state.json",
+      "session_id": null,
+      "observed_usage": {},
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "20261104-163157-61543ad5",
+      "status": "failed",
+      "attempts": 2,
+      "elapsed_seconds": 2.6383,
+      "stop_reason": "Repeated attempts made no measurable progress",
+      "worker_kind": "simulation",
+      "limits": {
+        "attempts": 4,
+        "runtime_seconds": 30,
+        "worker_seconds": 5,
+        "check_seconds": 3,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": false,
+          "classification": "pre_existing"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-163157-61543ad5/state.json",
+      "session_id": null,
+      "observed_usage": {},
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-2",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "20261104-163159-44eae90f",
+      "status": "limit_reached",
+      "attempts": 1,
+      "elapsed_seconds": 1.2326,
+      "stop_reason": "Worker stopped: timeout; inspect command stderr",
+      "worker_kind": "simulation",
+      "limits": {
+        "attempts": 3,
+        "runtime_seconds": 30,
+        "worker_seconds": 0.4,
+        "check_seconds": 3,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": false,
+          "classification": "pre_existing"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-163159-44eae90f/state.json",
+      "session_id": null,
+      "observed_usage": {},
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 124,
+          "reason": "timeout"
+        }
+      ]
+    },
+    {
+      "id": "20261104-162710-2ce2bbed",
+      "status": "completed",
+      "attempts": 1,
+      "elapsed_seconds": 41.5145,
+      "stop_reason": "All fixed acceptance commands passed",
+      "worker_kind": "codex",
+      "limits": {
+        "attempts": 2,
+        "runtime_seconds": 180,
+        "worker_seconds": 120,
+        "check_seconds": 10,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": true,
+          "classification": "passed"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-162710-2ce2bbed/state.json",
+      "session_id": "01a1a875-722e-7bc0-ae74-26dffe77bdf1",
+      "observed_usage": {
+        "1": {
+          "input_tokens": 132747,
+          "cached_input_tokens": 109056,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 735,
+          "reasoning_output_tokens": 74
+        }
+      },
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 0,
+          "reason": null
+        }
+      ]
+    },
+    {
+      "id": "20261104-163257-641d0c8e",
+      "status": "completed",
+      "attempts": 1,
+      "elapsed_seconds": 20.6354,
+      "stop_reason": "All fixed acceptance commands passed",
+      "worker_kind": "codex",
+      "limits": {
+        "attempts": 2,
+        "runtime_seconds": 180,
+        "worker_seconds": 120,
+        "check_seconds": 10,
+        "no_progress": 2
+      },
+      "checks": [
+        {
+          "id": "answer-is-42",
+          "passed": true,
+          "classification": "passed"
+        }
+      ],
+      "state": "logs/agent-workflow/20261104-163257-641d0c8e/state.json",
+      "session_id": "01a1a87a-bb5c-75f0-bfee-eceaf4e4569b",
+      "observed_usage": {
+        "1": {
+          "input_tokens": 70130,
+          "cached_input_tokens": 65280,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 345,
+          "reasoning_output_tokens": 17
+        }
+      },
+      "command_outcomes": [
+        {
+          "label": "check-1",
+          "exit_code": 1,
+          "reason": null
+        },
+        {
+          "label": "worker-1",
+          "exit_code": 0,
+          "reason": null
+        },
+        {
+          "label": "check-1",
+          "exit_code": 0,
+          "reason": null
+        }
+      ]
+    }
+  ],
+  "interruption_demonstrations": {
+    "actual_tests": [
+      "test_crash_resume_reconciles_without_replaying_completed_edit",
+      "test_stop_and_resume_preserves_attempts"
+    ],
+    "observed": "Passed on Windows. Forced controller termination killed its owned descendants; resume verified the already-written answer without a second worker and charged the full reserved allowance.",
+    "fixture_reasoning": "Deterministic simulation, with real processes, file edits, locks, stop commands, deadline enforcement and durable state."
+  },
+  "native_findings": {
+    "initial_probe": "Read-only native probe in the managed shell could not write global Codex session store; stderr retained in logs/agent-workflow-native-probe.",
+    "normal_store_access": "Approved execution with normal native session-store access succeeded; no credentials copied or safety config bypassed.",
+    "first_live": "Worker edited correctly but could not launch its Python verifier; blocked. Lead resumed the controller, which verified green without another worker.",
+    "final_live": "New isolated objective explicitly assigned verification to controller; real Codex edit and independent verifier completed automatically in one worker attempt, 20.6354 seconds.",
+    "prompt_experiment": "Per-objective role clarification only. Shared worker prompt unchanged; no general adoption based solely on this tiny comparison.",
+    "untested": [
+      "A second live codex exec resume model turn (installed help supports it; actual session ID capture and controller resume are demonstrated).",
+      "Real Windows symlink creation (WinError 1314 privilege denied).",
+      "POSIX fallback runtime/crash behavior and remote CI execution.",
+      "Arbitrary gameplay task quality; no game suite or performance run was part of this workflow task."
+    ]
+  },
+  "pre_existing_game_failure": {
+    "path": "docs/evidence/sixty_fps_acceptance.json",
+    "status": "Earlier 60 FPS acceptance remains failed; this work does not regrade or repair it."
+  },
+  "official_sources": [
+    "https://learn.chatgpt.com/docs/non-interactive-mode",
+    "https://learn.chatgpt.com/docs/cli/reference",
+    "https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex"
+  ],
+  "next_objective": "Give the lead one concrete objective in chat. It inspects, defines fixed task-specific acceptance/scope/prerequisites, then launches the manual controller as appropriate."
+}

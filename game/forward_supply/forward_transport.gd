@@ -12,6 +12,180 @@ var hq_position: Vector2
 var _rear_ref: WeakRef
 var jobs: Dictionary = {}
 var _sequence := 0
+var _route_sequence := 0
+var planning_revision := 0
+var _plans: Dictionary = {}
+var _plan_queue: Array[Dictionary] = []
+
+func request_deferred(key: String, hull: String, type: String, quantity: int, stop: String,
+		out: Array, home: Array, loader: String = "", unloader: String = "", reposition: bool = false) -> Dictionary:
+	if key.is_empty(): return _fail("A pending transport needs a stable request key.")
+	if _plans.has(key):
+		var prior: Dictionary = _plans[key]
+		if [prior.hull,prior.type,prior.quantity,prior.stop,prior.out,prior.home,prior.loader,prior.unloader,prior.reposition] != [hull,type,quantity,stop,out,home,loader,unloader,reposition]:
+			return _fail("An existing pending key cannot identify different freight, handlers or endpoints.")
+	if not _plans.has(key):
+		var request := {"key":key,"hull":hull,"type":type,"quantity":quantity,"stop":stop,"out":out.duplicate(),"home":home.duplicate(),"departure":false,
+			"loader":loader,"unloader":unloader,"reposition":reposition,"state":"Pending","message":"Preparing a physical route.","stage":"Capture","work":null,"prepared":{},"sources":{},"job":""}
+		_plans[key] = request
+		_plan_queue.append(request)
+		planning_revision += 1
+	var result: Dictionary = planning_status(key)
+	result.ok = true
+	return result
+
+func planning_status(key: String) -> Dictionary:
+	var request: Dictionary = _plans.get(key,{})
+	return {"state":request.get("state","Cancelled"),"message":request.get("message","Pending transport is unavailable."),"job":request.get("job","")}
+
+func has_planning_work() -> bool:
+	for request in _plan_queue:
+		if request.state in ["Pending","Ready"]: return true
+	return false
+
+func cancel_planning() -> void:
+	for request in _plan_queue:
+		if request.state in ["Pending","Ready"]:
+			request.state = "Cancelled"
+			request.message = "Pending route cancelled; no stock or hull was committed."
+			request.work = null
+			request.prepared = {}
+			if request.departure and jobs.has(request.delivery): _block_route(jobs[request.delivery],request.phase,"Pending departure cancelled; actual hull and cargo remain stopped.")
+	_plan_queue.clear()
+	planning_revision += 1
+
+func invalidate_planning() -> void:
+	for request in _plan_queue:
+		if request.state not in ["Pending","Ready"]: continue
+		request.state = "Pending"
+		request.stage = "Capture"
+		request.work = null
+		request.prepared = {}
+	planning_revision += 1
+
+func _planning_guard(request: Dictionary) -> Dictionary:
+	var rear: RefCounted = _rear()
+	if request.departure:
+		var row: Dictionary = jobs.get(request.delivery,{})
+		if row.is_empty() or row.state != "Planning Route" or row.get("planning_key","") != request.key:
+			return _fail("The exact physical delivery no longer awaits this departure.")
+		var hull: Dictionary = rear.ledger.inspect_entity(request.hull)
+		var destination: Vector2 = rear.ledger.inspect_entity(row.stop).position if request.phase == "Outbound" else hq_position
+		var error: String = _validate_points(request.out,hull.get("position",Vector2.INF),destination)
+		if error.is_empty(): error = _movement_blocker(request.hull,hull)
+		if not error.is_empty(): return _fail(error)
+		return {"ok":true,"hull":hull}
+	if request.reposition:
+		return rear.military.troop_transport._reposition_guard(request.hull,request.stop,request.out,request.home)
+	var hull: Dictionary = rear.ledger.inspect_entity(request.hull)
+	var stop: Dictionary = rear.ledger.inspect_entity(request.stop,{},false)
+	var blocker: String = _dispatch_blocker(request.hull,hull,request.loader,request.unloader)
+	if not blocker.is_empty(): return _fail(blocker)
+	if stop.get("kind","") != "PLACE" or request.stop in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
+		return _fail("A distinct actual forward stop is required.")
+	var sources := _plan_sources(request.type,request.quantity)
+	if not sources.ok: return sources
+	if float(sources.mass) > float(hull.vehicle_spec.payload)+EPS: return _fail("Actual freight exceeds the T01 payload.")
+	var error := _validate_points(request.out,hq_position,stop.position)
+	if error.is_empty(): error = _validate_points(request.home,stop.position,hq_position)
+	if not error.is_empty(): return _fail(error)
+	return {"ok":true,"hull":hull,"sources":sources}
+
+func _deny_plan(request: Dictionary, reason: String) -> bool:
+	request.state = "Blocked"
+	request.message = reason
+	request.work = null
+	request.prepared = {}
+	if request.departure and jobs.has(request.delivery): _block_route(jobs[request.delivery],request.phase,reason)
+	planning_revision += 1
+	return false
+
+func pump_planning(allow_commit: bool, max_units: int = 128, budget_usec: int = 4000) -> bool:
+	if max_units <= 0 or budget_usec <= 0: return false
+	var deadline: int = Time.get_ticks_usec()+budget_usec
+	while not _plan_queue.is_empty() and _plan_queue[0].state not in ["Pending","Ready"]:
+		_plan_queue.pop_front()
+		if Time.get_ticks_usec() >= deadline: return false
+	if _plan_queue.is_empty(): return false
+	var request: Dictionary = _plan_queue[0]
+	if not request.prepared.is_empty() and (request.prepared.world != _rear().combat.world or request.prepared.revision != _rear().combat.world.revision):
+		request.state = "Pending"
+		request.stage = "Capture"
+		request.work = null
+		request.prepared = {}
+	if request.stage == "Capture":
+		var guarded := _planning_guard(request)
+		if not guarded.ok: return _deny_plan(request,guarded.message)
+		request.sources = guarded.get("sources",{}).duplicate(true)
+		request.prepared = {"world":_rear().combat.world,"revision":_rear().combat.world.revision}
+		request.stage = "Outward"
+		return false
+	if request.state == "Ready":
+		if not allow_commit: return false
+		var guarded := _planning_guard(request)
+		if not guarded.ok: return _deny_plan(request,guarded.message)
+		if guarded.get("sources",{}) != request.sources: return _deny_plan(request,"The exact unreserved HQ portions changed before admission.")
+		var result: Dictionary
+		if request.departure:
+			var row: Dictionary = jobs[request.delivery]
+			if not _begin_route(row,request.out,request.phase,request.prepared): return _deny_plan(request,row.blocker)
+			result = {"ok":true,"id":row.id,"message":"Fresh prepared route admitted; same physical delivery is travelling."}
+		elif request.reposition:
+			result = _rear().military.troop_transport.request_reposition(request.hull,request.stop,request.out,request.home,request.prepared)
+		else:
+			result = _request_delivery(request.hull,guarded.sources,request.quantity,request.stop,request.out,request.home,request.loader,request.unloader,false,request.prepared)
+		if not result.ok: return _deny_plan(request,result.message)
+		request.state = "Admitted"
+		request.job = result.id
+		request.message = result.message
+		request.prepared = {}
+		planning_revision += 1
+		return true
+	if request.work == null:
+		var profile := {"world":request.prepared.world}
+		if request.stage == "Outward" and not request.reposition and not request.departure: profile.prospective_load_kg = request.sources.mass
+		request.work = Routes.begin_plan(_rear().ledger,request.hull,request.home if request.stage == "Homeward" else request.out,profile)
+		return false
+	request.work.step(max_units,maxi(1,deadline-Time.get_ticks_usec()))
+	if request.work.invalidated:
+		request.stage = "Capture"
+		request.work = null
+		request.prepared = {}
+		return false
+	if not request.work.done: return false
+	if not request.work.result.ok: return _deny_plan(request,str(request.work.result.reason))
+	if request.stage == "Outward":
+		request.prepared.outward = request.work.result
+		request.prepared.out_facts = request.work.input_facts
+		request.stage = "Homeward"
+	else:
+		request.prepared.homeward = request.work.result
+		request.prepared.home_facts = request.work.input_facts
+		request.state = "Ready"
+		request.message = "Route ready; waiting for fresh running-state admission."
+		planning_revision += 1
+	request.work = null
+	return false
+
+func has_ready_commit() -> bool:
+	for request in _plan_queue:
+		if request.state in ["Pending","Ready"]: return request.state == "Ready"
+	return false
+
+func prepared_route_error(prepared: Dictionary, hull: Dictionary, out: Array, home: Array, load_mass: float) -> String:
+	for key in ["outward","homeward","out_facts","home_facts"]:
+		if not prepared.has(key) or prepared[key].is_empty(): return "Both complete prepared route legs and their input facts are required."
+	if not prepared.outward.get("ok",false) or not prepared.homeward.get("ok",false): return "A blocked route cannot authorize departure."
+	if prepared.get("world") != _rear().combat.world or prepared.get("revision",-1) != _rear().combat.world.revision: return "Route world changed before admission."
+	for leg in [["out_facts",out,load_mass],["home_facts",home,0.0]]:
+		var facts: Dictionary = prepared.get(leg[0],{})
+		if facts.get("points",[]) != leg[1] or float(facts.get("profile",{}).get("prospective_load_kg",0.0)) != float(leg[2]): return "Prepared route endpoints or carried load changed."
+		if facts.is_empty() or not _rear().military.troop_transport._route_facts_match(facts,hull): return "Actual hull, crew, load or fuel changed before admission."
+	if _rear().ledger.route_hazard.is_valid():
+		for points in [out,home]:
+			var error: String = str(_rear().ledger.route_hazard.call(hull.owner,points))
+			if not error.is_empty(): return error
+	return ""
 
 
 func _init(rear: RefCounted) -> void:
@@ -23,44 +197,55 @@ func _init(rear: RefCounted) -> void:
 
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _request_delivery(hull_id,_plan_sources("",quantity,stock_id),quantity,stop_id,outbound_points,return_points,loader_id,unloader_id,true)
+
+
+func request_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _request_delivery(hull_id,_plan_sources(type,quantity),quantity,stop_id,outbound_points,return_points,loader_id,unloader_id,false)
+
+
+func _plan_sources(type: String, quantity: int, stock_id: String = "") -> Dictionary:
+	var ledger: RefCounted = _rear().ledger
+	var candidates: Array = [ledger.inspect_entity(stock_id)] if not stock_id.is_empty() else ledger.entities_at("hq-stock",["STOCK"],false)
+	var sources: Array[Dictionary] = []
+	var remaining: int = quantity
+	var mass := 0.0
+	for stock in candidates:
+		if quantity <= 0 or stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != _rear().PLAYER or stock.available <= 0: continue
+		if stock_id.is_empty() and (type.is_empty() or stock.design_type != type): continue
+		var count: int = mini(remaining,int(stock.available))
+		sources.append({"stock":stock.id,"quantity":count,"unit_mass_kg":stock.unit_mass_kg,"origin_id":stock.origin_id,"loaded":0,"claim":""})
+		mass += count*float(stock.unit_mass_kg)
+		remaining -= count
+		if remaining == 0: break
+	if quantity <= 0 or remaining != 0: return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
+	return {"ok":true,"sources":sources,"type":type if stock_id.is_empty() else str(candidates[0].design_type),"mass":mass}
+
+
+func _request_delivery(hull_id: String, plan: Dictionary, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String, single_source: bool, prepared: Dictionary = {}) -> Dictionary:
+	var preview: Dictionary = _preview_delivery(hull_id,plan,stop_id,outbound_points,return_points,loader_id,unloader_id,true,prepared)
+	if not preview.ok: return preview
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
-	var stock: Dictionary = rear.ledger.inspect_entity(stock_id)
-	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
-	if hull_committed(hull_id): return _fail("This physical hull already has an unfinished forward delivery.")
-	var ready: String = _hq_hull_blocker(hull_id,hull)
-	if not ready.is_empty(): return _fail(ready)
-	if stock.get("kind","") != "STOCK" or stock.holder_id != "hq-stock" or stock.owner != rear.PLAYER or quantity <= 0 or stock.available < quantity:
-		return _fail("Reserve a positive whole quantity of the player's unloaded, unpromised HQ stock.")
-	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
-		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
-	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id):
-		return _fail("The named actual HQ logistics loader is unavailable.")
-	if not _active_member(unloader_id): return _fail("Name one actual active formation member to unload at the destination.")
-	if not _empty_freight_hull(hull_id): return _fail("This one-type mission requires an empty T01 freight hold before loading.")
-	if float(quantity)*float(stock.unit_mass_kg) > float(hull.vehicle_spec.payload)+EPS:
-		return _fail("The requested physical freight exceeds the T01 payload.")
-	var route_error: String = _validate_points(outbound_points,hull.position,stop.position)
-	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,hq_position)
-	if not route_error.is_empty(): return _fail(route_error)
-	var outward: Dictionary = Routes.plan(rear.ledger,hull_id,outbound_points,{"world":rear.combat.world})
-	var home: Dictionary = Routes.plan(rear.ledger,hull_id,return_points,{"world":rear.combat.world})
-	if not outward.ok: return _fail("No legal physical outward route: " + str(outward.reason))
-	if not home.ok: return _fail("No legal physical HQ return: " + str(home.reason))
-	var danger: String = _known_route_danger(hull_id,outward.parts)
-	if danger.is_empty(): danger = _known_route_danger(hull_id,home.parts)
-	if not danger.is_empty(): return _fail(danger)
-	if float(hull.fuel)+EPS < 1.25*(float(outward.fuel)+float(home.fuel)):
-		return _fail("Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve.")
 	_sequence += 1
 	var id := "forward-delivery-%04d" % _sequence
-	var claimed: Dictionary = rear.ledger.request_stock(id,stock_id,quantity,id,"Forward T01 delivery",rear.PLAYER)
-	if not claimed.ok or rear.ledger.inspect_claim(id).reserved != quantity:
-		if claimed.ok: rear.ledger.release_claim(id)
-		return _fail("Exact HQ freight could not be committed without competing claims.")
-	jobs[id] = {"id":id,"hull":hull_id,"stock":stock_id,"type":stock.design_type,"quantity":quantity,
+	var claimed_ids: Array[String] = []
+	for index in plan.sources.size():
+		var source: Dictionary = plan.sources[index]
+		var stock: Dictionary = rear.ledger.inspect_entity(source.stock)
+		var valid: bool = _source_matches(stock,source,plan.type)
+		var claim: String = id if single_source else id+"-source-%04d" % (index+1)
+		var result: Dictionary = rear.ledger.request_stock(claim,source.stock,int(source.quantity),id,"Forward T01 delivery",rear.PLAYER) if valid else {"ok":false}
+		if result.ok: claimed_ids.append(claim)
+		if not result.ok or rear.ledger.inspect_claim(claim).get("reserved",0) != source.quantity:
+			for own_claim in claimed_ids: rear.ledger.release_claim(own_claim)
+			return _fail("Exact HQ freight could not be committed without competing claims.")
+		source.claim = claim
+	jobs[id] = {"id":id,"hull":hull_id,"stock":plan.sources[0].stock,"type":plan.type,"quantity":quantity,"sources":plan.sources,
 		"stop":stop_id,"loader":loader_id,"unloader":unloader_id,"outbound_points":outbound_points.duplicate(),
-		"return_points":return_points.duplicate(),"claim":id,"loaded":0,"unloaded":0,"loaded_items":[],
+		"return_points":return_points.duplicate(),"claim":plan.sources[0].claim,"loaded":0,"unloaded":0,"loaded_items":[],
 		"delivered_items":[],"state":"Loading","task":{},"route_plan":{},"route_points":[],
 		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
 		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
@@ -68,9 +253,85 @@ func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id:
 	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
 
 
+func preview_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _preview_delivery(hull_id,_plan_sources("",quantity,stock_id),stop_id,outbound_points,return_points,loader_id,unloader_id,false)
+
+
+func preview_delivery_type(hull_id: String, type: String, quantity: int, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
+	return _preview_delivery(hull_id,_plan_sources(type,quantity),stop_id,outbound_points,return_points,loader_id,unloader_id,false)
+
+
+func _preview_delivery(hull_id: String, plan: Dictionary, stop_id: String,
+		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String, require_ready: bool, prepared: Dictionary = {}) -> Dictionary:
+	var rear: RefCounted = _rear()
+	var hull: Dictionary = rear.ledger.inspect_entity(hull_id)
+	var stop: Dictionary = rear.ledger.inspect_entity(stop_id)
+	if hull.get("kind","") != "CARRIER" or hull.get("design_type","") != "T01" or hull.get("fleet_domain","") != "Military" or not rear.dispatch.military_hulls.has(hull_id) or not rear.military.vehicles.has(hull_id):
+		return _fail("Forward freight requires one admitted, attached actual military T01.")
+	var blocker: String = _dispatch_blocker(hull_id,hull,loader_id,unloader_id)
+	if require_ready and not blocker.is_empty(): return _fail(blocker)
+	if not plan.ok: return plan
+	if stop.get("kind","") != "PLACE" or stop_id in ["hq-stock","hq-berth","hq-reserve"] or stop.position.distance_to(hq_position) <= LOCAL_RADIUS:
+		return _fail("A distinct physical forward destination outside the HQ issue area is required.")
+	if float(plan.mass) > float(hull.vehicle_spec.payload)+EPS:
+		return _fail("The requested physical freight exceeds the T01 payload.")
+	# HQ stock can only load at HQ. Inspect this declared future departure while
+	# keeping the truck's actual current position explicit; do not move it, splice
+	# an invented approach, or silently replace an authored route's first point.
+	var route_error: String = _validate_points(outbound_points,hq_position,stop.position)
+	if route_error.is_empty(): route_error = _validate_points(return_points,stop.position,hq_position)
+	if not route_error.is_empty(): return _fail(route_error)
+	if not prepared.is_empty():
+		var error := prepared_route_error(prepared,hull,outbound_points,return_points,float(plan.mass))
+		if not error.is_empty(): return _fail(error)
+	var outward: Dictionary = prepared.outward if not prepared.is_empty() else Routes.plan(rear.ledger,hull_id,outbound_points,{"world":rear.combat.world,"prospective_load_kg":float(plan.mass)})
+	var home: Dictionary = prepared.homeward if not prepared.is_empty() else Routes.plan(rear.ledger,hull_id,return_points,{"world":rear.combat.world})
+	if not outward.ok: return _fail("No legal physical outward route: " + str(outward.reason))
+	if not home.ok: return _fail("No legal physical HQ return: " + str(home.reason))
+	var danger: String = _known_route_danger(hull_id,outward.parts)
+	if danger.is_empty(): danger = _known_route_danger(hull_id,home.parts)
+	if not danger.is_empty():
+		if require_ready: return _fail(danger)
+		if blocker.is_empty(): blocker = danger
+	if float(hull.fuel)+EPS < 1.25*(float(outward.fuel)+float(home.fuel)):
+		var fuel_blocker := "Actual tank fuel cannot cover the outward leg, HQ return and 25 percent reserve."
+		if require_ready: return _fail(fuel_blocker)
+		if blocker.is_empty(): blocker = fuel_blocker
+	return {"ok":true,"message":"Measured HQ round trip is available." if blocker.is_empty() else "HQ route preview available; dispatch is not ready. "+blocker,
+		"dispatch_ready":blocker.is_empty(),"dispatch_blocker":blocker,"route_origin":hq_position,"hull_position":hull.position,"hull_holder":hull.holder_id,
+		"reposition_required":hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position),"includes_reposition":false,
+		"distance":float(outward.distance)+float(home.distance),
+		"seconds":float(outward.seconds)+float(home.seconds),"fuel":float(outward.fuel)+float(home.fuel),
+		"required_fuel":1.25*(float(outward.fuel)+float(home.fuel)),"tank_fuel":float(hull.fuel),
+		"gross_kg":float(outward.gross_kg)}
+
+
+func _dispatch_blocker(hull_id: String, hull: Dictionary, loader_id: String, unloader_id: String) -> String:
+	var rear: RefCounted = _rear()
+	if hull_committed(hull_id) or (rear.military != null and rear.military.hull_committed(hull_id)):
+		return "This physical hull already has an unfinished forward or troop delivery."
+	var ready: String = _hq_hull_blocker(hull_id,hull)
+	if not ready.is_empty(): return ready
+	if not _loader_free(loader_id) or rear.forward_supply.person_committed(loader_id) or (rear.military != null and rear.military.person_committed(loader_id)):
+		return "The named actual HQ logistics loader is unavailable."
+	if not _active_member(unloader_id): return "Name one actual active formation member to unload at the destination."
+	if rear.military != null and rear.military.person_committed(unloader_id): return "This destination handler is committed to troop boarding or dismount."
+	if not _empty_freight_hull(hull_id): return "This one-type mission requires an empty T01 freight hold before loading."
+	return ""
+
+
 func interrupt_delivery(id: String) -> Dictionary:
 	var row: Dictionary = jobs.get(id,{})
-	if row.is_empty() or row.state not in ["Loading","Unloading","Outbound","Returning"]: return _fail("No active forward delivery to interrupt.")
+	if row.is_empty() or row.state not in ["Loading","Unloading","Outbound","Returning","Planning Route"]: return _fail("No active forward delivery to interrupt.")
+	if row.state == "Planning Route":
+		var request: Dictionary = _plans.get(str(row.get("planning_key","")),{})
+		if not request.is_empty():
+			request.state = "Cancelled"
+			request.work = null
+			request.prepared = {}
+			planning_revision += 1
 	row.paused_state = row.state
 	row.state = "Paused"
 	if not row.task.is_empty(): row.task.remaining_seconds = maxf(0.0,float(row.task.deadline)-_rear().time); row.task.deadline = INF
@@ -83,6 +344,11 @@ func resume_delivery(id: String, outbound_points: Array = [], return_points: Arr
 	var row: Dictionary = jobs.get(id,{})
 	if row.is_empty() or row.state not in ["Paused","Blocked Route","Stranded","Fuel Empty"]: return _fail("Only a paused or stopped real delivery can resume.")
 	var phase: String = row.paused_state if row.state == "Paused" else str(row.get("stopped_phase",""))
+	if phase == "Planning Route":
+		var points: Array = outbound_points if row.planning_phase == "Outbound" else return_points
+		if points.is_empty(): points = row.planning_points
+		var queued: bool = _begin_route(row,points,row.planning_phase)
+		return {"ok":queued,"message":row.blocker}
 	if phase in ["Loading","Unloading"]:
 		if not row.task.is_empty():
 			var actor: String = row.loader if phase == "Loading" else row.unloader
@@ -154,19 +420,27 @@ func settle() -> bool:
 
 func _schedule_load(row: Dictionary) -> bool:
 	if row.loaded >= row.quantity:
-		_rear().ledger.release_claim(row.claim)
+		for source in row.sources: _rear().ledger.release_claim(source.claim)
 		_begin_route(row,row.outbound_points,"Outbound")
 		return true
 	if not _loader_free(row.loader) or _rear().forward_supply.person_committed(row.loader):
 		row.blocker = "Waiting for the named actual HQ loader."
 		return false
-	var stock: Dictionary = _rear().ledger.inspect_entity(row.stock)
+	var index := 0
+	while index < row.sources.size() and row.sources[index].loaded >= row.sources[index].quantity: index += 1
+	if index >= row.sources.size(): row.blocker = "Actual source quotas no longer cover the requested load."; return false
+	var source: Dictionary = row.sources[index]
+	var stock: Dictionary = _rear().ledger.inspect_entity(source.stock)
+	var claim: Dictionary = _rear().ledger.inspect_claim(source.claim)
+	if not _source_matches(stock,source,row.type) or claim.get("source_id","") != source.stock or claim.get("claimant","") != row.id or int(claim.get("reserved",0)) != int(source.quantity)-int(source.loaded):
+		row.blocker = "The same reserved HQ source and exact remaining quota are required."
+		return false
 	var loader: Dictionary = _rear().ledger.inspect_entity(row.loader)
-	var portion: int = mini(row.quantity-row.loaded,int(floorf((25.0-float(loader.contents_mass_kg))/float(stock.unit_mass_kg))))
+	var portion: int = mini(int(source.quantity)-int(source.loaded),int(floorf((25.0-float(loader.contents_mass_kg))/float(stock.unit_mass_kg))))
 	if portion <= 0:
 		row.blocker = "HQ loader cannot carry one whole unit within 25 kg."
 		return false
-	row.task = {"phase":"Load Pickup","actor":row.loader,"source":row.stock,"portion":portion,"carry":"","deadline":_rear().time+HANDLING_SECONDS}
+	row.task = {"phase":"Load Pickup","actor":row.loader,"source":source.stock,"source_index":index,"claim":source.claim,"portion":portion,"carry":"","deadline":_rear().time+HANDLING_SECONDS}
 	row.blocker = "Named HQ loader handling actual reserved freight."
 	return true
 
@@ -178,21 +452,32 @@ func _finish_load(row: Dictionary) -> void:
 	if hull.holder_id != "hq-berth" or not hull.position.is_equal_approx(hq_position): _pause_task(row,"Hull moved during physical HQ loading."); return
 	if task.phase == "Load Pickup":
 		if not _loader_free(row.loader): _pause_task(row,"Named HQ loader became unavailable before pickup."); return
-		var stock: Dictionary = rear.ledger.inspect_entity(row.stock)
-		if stock.holder_id != "hq-stock": _pause_task(row,"Reserved HQ source moved before pickup."); return
-		var picked: Dictionary = rear.ledger.begin_carry(row.loader,row.stock,task.portion,row.claim)
+		var stock: Dictionary = rear.ledger.inspect_entity(task.source)
+		var pickup_source: Dictionary = row.sources[task.source_index]
+		if not _source_matches(stock,pickup_source,row.type): _pause_task(row,"Reserved HQ source changed before pickup."); return
+		var picked: Dictionary = rear.ledger.begin_carry(row.loader,task.source,task.portion,task.claim)
 		if not picked.ok: _pause_task(row,picked.message); return
 		task.carry = picked.entity_id
 		task.phase = "Load Drop"
 		task.deadline = rear.time+HANDLING_SECONDS
 		return
 	if not _task_actor_valid(row,row.loader): _pause_task(row,"HQ loader interrupted while holding real freight."); return
+	var source: Dictionary = row.sources[task.source_index]
+	var carried: Dictionary = rear.ledger.inspect_entity(task.carry)
+	if carried.get("holder_id","") != row.loader or carried.get("quantity",0) != task.portion or carried.get("design_type","") != row.type or carried.get("origin_id","") != source.origin_id or carried.get("unit_mass_kg",0) != source.unit_mass_kg:
+		_pause_task(row,"The exact planned portion must remain with its named loader.")
+		return
 	var loaded: Dictionary = rear.ledger.finish_carry_to_carrier(row.loader,row.hull)
 	if not loaded.ok: _pause_task(row,loaded.message); return
 	row.loaded_items.append(loaded.entity_id)
+	source.loaded += int(task.portion)
 	row.loaded += int(task.portion)
 	row.task = {}
 	row.blocker = ""
+
+
+func _source_matches(stock: Dictionary, source: Dictionary, type: String) -> bool:
+	return stock.get("kind","") == "STOCK" and stock.holder_id == "hq-stock" and stock.owner == _rear().PLAYER and stock.design_type == type and stock.unit_mass_kg == source.unit_mass_kg and stock.origin_id == source.origin_id
 
 
 func _schedule_unload(row: Dictionary) -> bool:
@@ -203,6 +488,12 @@ func _schedule_unload(row: Dictionary) -> bool:
 	var stop: Dictionary = _rear().ledger.inspect_entity(row.stop)
 	if hull.holder_id != row.stop or not hull.position.is_equal_approx(stop.position): row.blocker = "Same loaded hull must be stopped at the declared destination."; return false
 	var handler: Dictionary = _rear().ledger.inspect_entity(row.unloader)
+	if _rear().military != null and _rear().military.person_committed(row.unloader):
+		row.blocker = "Named unloader is committed to troop transport handling."
+		return false
+	if _rear().battlefield_operations != null and _rear().battlefield_operations.person_committed(row.unloader):
+		row.blocker = "Named unloader must stop tactical foot movement."
+		return false
 	if not _active_member(row.unloader) or not _on_foot(handler) or handler.position.distance_to(stop.position) > LOCAL_RADIUS+EPS or _rear().forward_supply.person_committed(row.unloader) or _other_work(row.unloader):
 		row.blocker = "Waiting for the named active dismounted destination handler within 20 m."
 		return false
@@ -269,20 +560,42 @@ func _advance_unloader(row: Dictionary, at: float) -> void:
 	else: _pause_task(row,moved.message)
 
 
-func _begin_route(row: Dictionary, points: Array, phase: String) -> bool:
+func _queue_departure(row: Dictionary, points: Array, phase: String) -> bool:
+	_route_sequence += 1
+	var key := "%s-route-%d" % [row.id,_route_sequence]
+	var home: Array = row.return_points if phase == "Outbound" else points
+	var queued := request_deferred(key,row.hull,"",0,row.stop,points,home,row.loader,row.unloader)
+	if not queued.ok: _block_route(row,phase,queued.message); return false
+	var request: Dictionary = _plans[key]
+	request.departure = true
+	request.delivery = row.id
+	request.phase = phase
+	row.planning_key = key
+	row.planning_phase = phase
+	row.planning_points = points.duplicate()
+	row.state = "Planning Route"
+	row.route_deadline = INF
+	row.blocker = "Preparing the actual %s route; hull and cargo remain at their physical stop." % phase.to_lower()
+	return true
+
+func _begin_route(row: Dictionary, points: Array, phase: String, prepared: Dictionary = {}) -> bool:
 	var rear: RefCounted = _rear()
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var destination: Vector2 = rear.ledger.inspect_entity(row.stop).position if phase == "Outbound" else hq_position
 	var error: String = _validate_points(points,hull.position,destination)
 	if error.is_empty(): error = _movement_blocker(row.hull,hull)
 	if not error.is_empty(): _block_route(row,phase,error); return false
-	var plan: Dictionary = Routes.plan(rear.ledger,row.hull,points,{"world":rear.combat.world})
+	if prepared.is_empty() and rear.military.troop_transport.incremental_planning: return _queue_departure(row,points,phase)
+	if not prepared.is_empty():
+		error = prepared_route_error(prepared,hull,points,row.return_points if phase == "Outbound" else points,0.0)
+		if not error.is_empty(): _block_route(row,phase,error); return false
+	var plan: Dictionary = prepared.outward if not prepared.is_empty() else Routes.plan(rear.ledger,row.hull,points,{"world":rear.combat.world})
 	if not plan.ok: _block_route(row,phase,"Route blocked: " + str(plan.reason)); return false
 	var danger: String = _known_route_danger(row.hull,plan.parts)
 	if not danger.is_empty(): _block_route(row,phase,danger); return false
 	var required: float = float(plan.fuel)
 	if phase == "Outbound":
-		var home: Dictionary = Routes.plan(rear.ledger,row.hull,row.return_points,{"world":rear.combat.world})
+		var home: Dictionary = prepared.homeward if not prepared.is_empty() else Routes.plan(rear.ledger,row.hull,row.return_points,{"world":rear.combat.world})
 		if not home.ok: _block_route(row,phase,"No legal return to HQ: " + str(home.reason)); return false
 		danger = _known_route_danger(row.hull,home.parts)
 		if not danger.is_empty(): _block_route(row,phase,danger); return false
@@ -478,6 +791,9 @@ func _known_route_danger(hull_id: String, parts: Array) -> String:
 	for target_id in rear.orders.contacts.get(company,{}):
 		var contact: Dictionary = rear.orders.contact(company,target_id)
 		if contact.is_empty() or float(contact.confidence) <= EPS or not contact.position.is_finite(): continue
+		# Public objectives and unarmed transport hulls do not supply hostile
+		# effective fire. Unknown people/armed contacts retain the conservative margin.
+		if contact.get("class","") in ["Resource","Route Hub","Observation","T01","T02"]: continue
 		var radius: float = float(THREAT_RANGE.get(str(contact.get("class","")),300.0))+float(contact.uncertainty_m)
 		for part in parts:
 			var from: Vector2 = part.from
@@ -497,6 +813,13 @@ func snapshot() -> Dictionary:
 func audit() -> Array[String]:
 	var errors: Array[String] = []
 	for row in jobs.values():
+		var planned := 0
+		var loaded := 0
+		for source in row.sources:
+			planned += int(source.quantity)
+			loaded += int(source.loaded)
+			if source.loaded < 0 or source.loaded > source.quantity: errors.append("Forward source quota exceeds its actual plan: " + row.id)
+		if planned != row.quantity or loaded != row.loaded: errors.append("Forward source totals disagree with manifest: " + row.id)
 		if row.loaded < 0 or row.unloaded < 0 or row.unloaded > row.loaded or row.loaded > row.quantity:
 			errors.append("Forward transport counters exceed their actual manifest: " + row.id)
 		if row.state == "Complete" and (row.unloaded != row.quantity or not row.return_completed):

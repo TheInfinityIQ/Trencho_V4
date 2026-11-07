@@ -1,0 +1,88 @@
+{
+  "feature": "Last authoritative supply pickup check for reported Rifle need without a collection",
+  "baseline": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
+  "status": "implemented_direct_diagnostic_verified_pending_exact_head_reviews_and_integration",
+  "behaviour": [
+    "Existing execution decision records one latest reason and game time; no extra gate evaluation.",
+    "Recipient detail reads once per reported squad lacking collection; existing collection state wins.",
+    "Current intent, parent and owner mismatch yields unassessed text; the session owns the diagnostic lifetime.",
+    "HQ/forward coverage and rear-production need remain separate; approved HQ6000 unchanged."
+  ],
+  "source_review": {
+    "context": "Same first-refusal order and short-circuit capability/threat call counts; existing collection-context boolean results unchanged.",
+    "withdrawal": "Original casualty, execution capability, short-circuited broken morale, dispersed cohesion and observed-strength evaluations retained; reasons reuse the actual predicates that were evaluated.",
+    "read": "Newly constructed scalar dictionary; no roster, capability, terrain, stock or world scan. Projection caches only within one call.",
+    "lifecycle": "Existing intent/parent/owner identities and active/acknowledged state guard the read; no global version, timer, subscription, commands or signals.",
+    "preservation": "Diff review caught and restored an unintended Windows default-code-page middle-dot conversion before commit; source files now read/written explicitly as UTF8."
+  },
+  "new_code_direct_check": {
+    "state": "PASS",
+    "script_local": "logs/collection-readiness/direct_check.gd (ignored; not a committed regression fixture)",
+    "scope": "One optional explicit GitHub45s script: supplied detached inputs exercise the actual normal transport-assignment decision recording, detached diagnostic read and next-operation unknown state. No stock, need, movement, combat, scenario or failure is injected; no natural need/normal urgency/full-loop claim.",
+    "code_commit": "31b73da0c18edddf4365c5ba1583c620cc1a032b",
+    "run_id": 42151066130,
+    "job_id": 127674161129,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151066130",
+    "artifact": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151066130/artifacts/13471249510",
+    "engine": "Godot4.7.2.stable.official.ed1daf0bf, Linux GitHub runner, headless",
+    "deadline_seconds": 45,
+    "result": "Changed two production scripts parsed successfully. Explicit direct script returned PASS for new normal transport-assignment diagnostic, detached-copy read and current-operation replacement. No SCRIPT ERROR or ERROR in actual engine output; workflow/job concluded success.",
+    "evidence_revision_note": "PASS applies to the recorded31b73da code revision. A later source-reviewed single-predicate correction restores the original withdrawal short-circuit; no additional demonstration was requested. New-head changed-production parsing is separate.",
+    "executed_source_sha256": {
+      "game/battlefield/squad_execution.gd": "8cb8c548d4b135f43517167f48a33cdcf3318fcd867793dc042f9f90728cea6b",
+      "game/battlefield/opening_resupply.gd": "d759fba7718b4cef03a984e5858995892f9bae20d13111a89139e6ba03143bb9"
+    },
+    "local_submitted_file_sha256": "79171fa646baf2cdb8f0313388d4ddc4703ff39770ae83b333abf5adaaa69faf",
+    "executed_artifact_script_sha256": "751b5bca1567b5bc478b1a88bd9978894f3a188c70eb2e91923b974abad65435",
+    "artifact_zip_sha256": "6a5f17ed3a738848e5f6544f9dc2be01ca3b488e8c96d9f2cdbc915bfe5179b8",
+    "script_serialization": "Workflow decodes the submitted UTF8 string, strips leading/trailing whitespace, then appends LF: (local_bytes.decode(\"utf-8\").strip()+\"\\n\").encode(\"utf-8\"). Interior CRLF remains; the final submitted CRLF becomes LF. This changes bytes, not script logic.",
+    "executed_hash_provenance": "Lead independently downloaded and inspected actual artifact13471249510, confirmed exact script hash and byte equality with the stated transformation. Developer independently reproduced the submitted-file transformation and matching actual hash; developer did not claim another artifact download."
+  },
+  "limits": [
+    "No local engine or regression/broad old-code check run.",
+    "No actual natural Rifle need, normal not-urgent/threat/withdrawal decision or full recipient UI was executed for this increment; those branches are source-reviewed.",
+    "Direct check, if successful, will cover supplied-input new diagnostic recording/read/replacement only.",
+    "No new manufacture, HQ/frontline physical receipt, operational recovery, repeat refill, native rendering/input, pacing or FPS claim. Full91 remains open."
+  ],
+  "consultation": "Lead accepted file ownership and one-small-diagnostic contract. Designer approved meaning/wording, UIUX consulted. Exact-head technical/design reviews remain pending.",
+  "source_sha256": {
+    "game/battlefield/squad_execution.gd": "8ed604883a78a98a0942927804391c995bf13f194a695f2bafd014a1d95cb2ac",
+    "game/battlefield/opening_resupply.gd": "d759fba7718b4cef03a984e5858995892f9bae20d13111a89139e6ba03143bb9"
+  },
+  "engine_reference": {
+    "url": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+    "why": "Return a newly constructed scalar dictionary; never expose mutable owner storage."
+  },
+  "input_correction": {
+    "reason": "Replaced proposed unavailable-destination input with normal transport-assignment input to avoid failure injection under current human policy. No engine execution occurred before this correction.",
+    "retained_local": "logs/collection-readiness/direct_check.unexecuted-draft.gd",
+    "sha256": "6f93b189f4668b38e3a908716c2928ffc7ff4c48d319c16da294568a5cd97500"
+  },
+  "static_checks": {
+    "system_map": "PASS, zero pending function purpose reviews",
+    "ui_function_map": "PASS, existing UI/button anchors unchanged",
+    "diff_check": "PASS",
+    "purpose_reviewed_functions": 5
+  },
+  "technical_review_correction": {
+    "finding": "The original withdrawing-or-broken predicate short-circuited when an earlier condition already selected withdrawal. The first diagnostic revision evaluated the pure broken comparison unconditionally.",
+    "correction": "Use if not withdrawing and broken_count > active.size()/2.0; keep the earlier actual casualty/capability reason when already withdrawing.",
+    "scope": "Single existing predicate guard, unchanged boolean decision outcome and restored original evaluation order. Later dispersed/strength predicates remain independently evaluated as before.",
+    "verification": "Lead requested and source-reviewed this one-predicate correction; corrected-source changed-production parsing passed in run42151679219 atb78030ba. No extra diagnostic demonstration or regression run requested."
+  },
+  "corrected_source_parse": {
+    "state": "PASS",
+    "commit": "b78030ba3d5817b888f487a553d80b3ccc27b2ce",
+    "run_id": 42151679219,
+    "job_id": 127676150340,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42151679219",
+    "result": "Changed production script parsing succeeded; optional gameplay demonstration skipped. Parsing is not gameplay acceptance."
+  },
+  "lead_integration": {
+    "component_sha": "ff5d176e196eb6ca7e9b29bdb246d1dea9ade191",
+    "branch": "codex/gameplay-demo-integration",
+    "technical_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/99#pullrequestreview-5795065501",
+    "design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/99#pullrequestreview-5795066498",
+    "production_preservation": "Exact byte comparison confirms both production scripts match approved component. No runtime rerun; prior direct result/source-correction/parse limits remain."
+  }
+}

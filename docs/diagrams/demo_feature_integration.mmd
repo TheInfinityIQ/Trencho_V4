@@ -1,0 +1,11 @@
+flowchart LR
+    Player --> Guide[Optional visible guidance]
+    Guide --> Navigation[Existing destination navigation]
+    Player --> Requests[Existing explicit request command]
+    Requests --> Logistics[Authoritative automatic logistics]
+    Logistics --> Truck[Existing physical Dispatch and vehicle owners]
+    Truck --> Facts[Detached handling and fuel facts]
+    Facts --> UI[Current selected request and truck feedback]
+    Rear[Committed rear changes] --> Guide
+    Army[Real demand and receipt owners] --> Guide
+    Objectives[Actual capture and income owner] --> Feedback[Battlefield feedback]

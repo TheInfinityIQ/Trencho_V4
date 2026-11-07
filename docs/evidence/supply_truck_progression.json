@@ -1,0 +1,30 @@
+{
+  "status": "in_progress_not_full_chain_passed",
+  "player_stage": "Factory expansion, actual school/basic/Driver, manufactured fueled parked truck and two player-requested newly manufactured ammunition deliveries to HQ. Genuine automatic frontline need and60FPS remain separate.",
+  "verification": [
+    {
+      "run": "20261105-185336-40d74260",
+      "result": "Earlier baseline/source gap and actual completed-factory stale selector failure retained; selector repaired."
+    },
+    {
+      "run": "20261105-192502-82b00985",
+      "result": "Stopped439.1804s during expansion before reviewed component sampling change; not a pass."
+    },
+    {
+      "run": "20261105-193435-01edf986",
+      "result": "Limit reached601.0203s; six facilities completed at3905sim seconds, then waiting instructor. No full pass."
+    },
+    {
+      "run": "20261105-194840-2b7eb889",
+      "result": "Limit reached601.0879s during first actual rear-to-HQ shipment. Before limit:25 ordinarily purchased people including instructor; all six facilities completed; actual instructor, Basic/Driver training, manufactured truck, physical boarding/fuel and parking, new200E02. Two deliveries/returns still unverified."
+    },
+    {
+      "path": "tools/checks/training_priority_check.gd",
+      "result": "Actual normal Jobs/Training count-edit baseline failed, then fixed check passed headlessly with empty final stderr; school built from actual purchased workers and startingM11. Isolated UI command evidence only."
+    }
+  ],
+  "fixture_revisions": "Original frozen checkers, source-proven buffer/sampling/workforce corrections and all bounded failed/stopped logs retained under logs/testable-supply-truck. No prices/recipes/rates/stock or performance limits altered.",
+  "current_limits": "Full physical command check600s has not finished two trips; a separately reviewed new objective will allow900s for this long component chain, preserving simulated deadlines and all FPS/action/call limits. This is verification runtime, not a performance pass.",
+  "not_tested": "No explicit manual-single-source/cancel-later-plant/current-carry retention case; those branches have peer source review only. No native input/rendering, ordinary autonomous new-need loop or60FPS certification.",
+  "review": "Lead exact integrated PR89 technical/design handoff remains pending publication; approved component PR93/94/95/96 do not establish the whole stage."
+}

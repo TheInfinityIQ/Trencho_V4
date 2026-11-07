@@ -1,0 +1,2537 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T18:53:09.346590+00:00",
+  "status": "bounded_training_slice_implemented_remaining_migrations_planned",
+  "objective": "Remove unrelated polling and read fanout through independently progressing domain owners, scoped committed events, owned timed completions and fresh authoritative input validation, preserving physical logistics and documented local ordering.",
+  "evidence": "docs/evidence/offline_docs_regression_review.json",
+  "parent_plan": "docs/system_overhaul_plan.json",
+  "inventory": "docs/overhaul_inventory.json",
+  "current_source": "docs/system_map.json",
+  "scope": {
+    "this_turn": "E15 implemented and benchmarked the bounded event-driven provisional placement slice; added missing populated-yard/current-pose tests and corrected viewport-local input in the wider matrix. Shared clock/event/timer architecture remains unfinished.",
+    "gameplay_implementation_this_turn": true,
+    "relationship_to_parent": "E14 revises the accepted timing and navigation requirements and adds justification and regression gates. Previously implemented bounded slices retain their evidence; all unsatisfied migration phases remain planned.",
+    "phase_boundary": "The first Train query/presentation split belongs to P01. P08's later notification/lifecycle work keeps its P02/P03 dependencies; narrow reads do not require implementing that entire phase now.",
+    "complete_rewrite": false,
+    "preserve": [
+      "One authoritative IdentityLedger and explicit local pause/speed/ordering policies. A shared simulation clock and cross-domain timestamp equality are no longer requirements; E14 supersedes that prior constraint.",
+      "Scene-owned input/presentation and data-oriented RefCounted services.",
+      "Empty-field default, current start position, resources and pause state.",
+      "Immediate movement/contact/damage consequences and physical delivery rules.",
+      "Explicit-time deterministic domain tests where applicable; live wall-clock timing is a separate measurement."
+    ],
+    "initial_review_scope": "Reference review, source recheck, isolated retained-domain test execution and a concrete regression-aware rollout plan.",
+    "implementation_evidence": "docs/evidence/placement_interaction_slice.json",
+    "prior_implementation_scope": {
+      "this_turn": "Implemented and validated the bounded training read/presentation slice, training-specific read-only rejection boundary, retained native/domain coverage and matched performance observations.",
+      "gameplay_implementation_this_turn": true,
+      "implementation_evidence": "docs/evidence/training_read_slice.json"
+    },
+    "current_revision_evidence": "E15 implements a bounded EV06/M1 slice under E14; no independent domain driver or native timer migration.",
+    "E14_plan_scope": {
+      "this_turn": "E14 source/documentation research and revised independent-domain/event-driven architecture plan with seven justified decisions and eight planned regression gates.",
+      "gameplay_implementation_this_turn": false,
+      "current_revision_evidence": "event_driven_domain_revision (E14); research/plan only"
+    }
+  },
+  "decisions": [
+    {
+      "id": "A01",
+      "decision": "Retire the live world-wide advance_time/_settle dispatcher by verified responsibility slices. Replace it with persistent local logistics/battlefield owners and explicit event/timer handoffs; no shared clock requirement remains.",
+      "reason": "Source-confirmed all-service scans and implicit dependencies motivate ownership separation. The user selected independent background progression. E14 EV01-EV07 record principles, alternatives, risks and planned validation; no new performance improvement is claimed."
+    },
+    {
+      "id": "A02",
+      "decision": "Narrow uncached active-panel reads before scheduling or caching.",
+      "reason": "Broad snapshots are directly visible in current Train refreshes. This is an isolated seam with an existing narrow-view pattern in Build/Supplies/Workers."
+    },
+    {
+      "id": "A03",
+      "decision": "Preserve current snapshot normalization first; migrate read purity separately.",
+      "reason": "Training.snapshot mutates row state/reason. Removing, memoizing or double-running it can change observable behavior or conceal a regression."
+    },
+    {
+      "id": "A04",
+      "decision": "Use direct, scoped notifications from actual state owners.",
+      "reason": "The project has explicit domain owners. Global event buses, new autoloads, editor plugins and node-per-entity migration add unnecessary lifecycle and invalidation obligations."
+    },
+    {
+      "id": "A05",
+      "decision": "Keep active movement continuous; pilot discrete eligibility/deadline work later.",
+      "reason": "Contact safety, fuel, arrival and earned-work boundaries require existing immediate order until an equivalent replacement is demonstrated."
+    }
+  ],
+  "evidence_state": {
+    "newly_executed": {
+      "headless_training_cases": 18,
+      "native_training_cases": 4,
+      "failures": 0,
+      "errors": 0,
+      "evidence": "docs/evidence/training_read_slice.json",
+      "limit": "22 distinct current training cases across two separately selected runs, not a single passing full performance run."
+    },
+    "prior_executed": [
+      {
+        "result": "13 frozen domain hashes and ten focused read/diagnostic guards passed.",
+        "evidence": "docs/evidence/overhaul_read_slice.json"
+      },
+      {
+        "result": "898 UI/construction scenarios; zero functional failures, five timing violations.",
+        "evidence": "docs/evidence/ui_acceptance_matrix.json"
+      },
+      {
+        "result": "Synthetic engine contracts passed.",
+        "evidence": "docs/evidence/godot_engine_efficiency_audit.json"
+      }
+    ],
+    "source_observed_gaps": [
+      "The default launcher now includes retained training domain/native tests; explicit training-only and UI-only selectors are available.",
+      "Training.snapshot still normalizes stored row states. The new scoped query deliberately preserves this side effect; query purity remains a later migration.",
+      "Detailed script CPU attribution and broader performance states remain incomplete.",
+      "Further regression-matrix areas remain planned; executed coverage is enumerated in the training evidence."
+    ],
+    "performance_open": "The new training slice improves the measured prepared scenario. Four matrix timing failures, one legacy live-menu timing failure and broader HQ/advanced-panel inspection amplification remain open.",
+    "planned_checks_are_not_passed": true,
+    "prior_execution_and_gaps_snapshot": {
+      "newly_executed": {
+        "training_domain_cases": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": "logs/retained-training-audit-2026-11-03T18-49-10-3628/gdunit-report/results.xml",
+        "limit": "Headless explicit-time domain checks only."
+      },
+      "prior_executed": [
+        {
+          "result": "13 frozen domain hashes and ten focused read/diagnostic guards passed.",
+          "evidence": "docs/evidence/overhaul_read_slice.json"
+        },
+        {
+          "result": "898 UI/construction scenarios; zero functional failures, five timing violations.",
+          "evidence": "docs/evidence/ui_acceptance_matrix.json"
+        },
+        {
+          "result": "Synthetic engine contracts passed.",
+          "evidence": "docs/evidence/godot_engine_efficiency_audit.json"
+        }
+      ],
+      "source_observed_gaps": [
+        "Current launcher excludes retained training domain/input tests from its default selection.",
+        "Training input test still expects the historical 12-worker opening and old controls; not executed this review.",
+        "The 13 existing hashes do not directly protect training.rows/course work or construction.instances.",
+        "Repeated query calls in training fixtures can normalize row states; existing tests do not prove read purity.",
+        "Native button receipts prove input delivery and stated contracts, not every successful domain outcome."
+      ],
+      "performance_open": "Advanced/HQ inspection amplification and the five recorded timing violations remain open. Counts and historical stack shares are not CPU attribution.",
+      "planned_checks_are_not_passed": true
+    }
+  },
+  "clock_decision_review": {
+    "decision_id": "A01",
+    "status": "bounded_read_and_live_frame_fixes_implemented_dispatcher_migration_pending",
+    "trigger": "The user explicitly relaxed shared-clock alignment and selected independent event/timer progression while either view is hidden.",
+    "requirement": "Both domains progress while hidden through their own owned events/timers and active physical work. Preserve explicit pause/speed intent and local/causal ordering; equal domain clocks and world-wide advancement are not required. E14 is the active requirement.",
+    "retirement_target": {
+      "scope": "Remove the live world-wide scheduling/reconciliation role of game/staffing/rear_simulation.gd::advance_time and its global _settle loop after responsibility-by-responsibility migration.",
+      "replacement": "Persistent local lifecycle owners drive affected work and discrete deadlines. A narrow custody coordinator handles causal transfer handoffs. Views bind to committed revisions; navigation does not advance or align domain clocks.",
+      "architecture_gate": "A new service must not require another entry in world-wide next-boundary, advance and settlement lists. Do not rename the same all-service dispatcher or move it wholesale into _process.",
+      "time_source_choice": "Prefer native engine mechanisms for each suitable local activity; no separate custom shared world clock is required. Timer pause/speed integration, short-deadline precision and local tie order must pass EV03/R29 before rollout. Keep current common user controls without treating local timestamps as interchangeable.",
+      "helpers": "Small domain update/step methods, ledger clock helpers and explicit-time test adapters may remain. They must not recreate a second authority or the retired global polling loop.",
+      "migration_gate": "Keep each responsibility under exactly one active driver. Preserve required ordering, no-UI behavior, physical safety, elapsed work and cancellation before disconnecting its legacy path.",
+      "caller_gate": "Inventory live, test, fixture and retained-demo callers. Migrate or explicitly adapt them; do not silently break retained consumers or hide the old implementation in ignored support code.",
+      "initial_slice": "S01/S02 still leave the existing driver intact to isolate read/UI changes. That is a temporary staging constraint, not the final architecture."
+    },
+    "coupling_review": {
+      "recorded_utc": "2026-11-03T21:01:32.719880+00:00",
+      "classification": "source_confirmed_structural_coupling_with_planned_remediation",
+      "evidence_scope": "Original structural coupling findings are retained. E13 refreshes current anchors and adds a bounded scene-owned live process-frame guard; advance_time policy and settlement order remain. _settle adds opt-in inclusive timing only. Runtime passes are separately bounded in the E13 evidence.",
+      "boundary_service_receivers": [
+        "vehicles",
+        "dispatch",
+        "hq",
+        "construction",
+        "military",
+        "combat",
+        "vehicle_combat",
+        "recovery",
+        "orders",
+        "objectives",
+        "forward_supply",
+        "battlefield_operations",
+        "field_structures",
+        "bridges",
+        "mines",
+        "demolition",
+        "receiving",
+        "training"
+      ],
+      "boundary_count_meaning": "18 conditional service next_boundary call sites, plus yard, production activities, actors and job aging. This is static structure, not a per-second frequency or proof all work is redundant.",
+      "consequences": [
+        {
+          "id": "CD01",
+          "classification": "source_observed",
+          "area": "Work amplification",
+          "source_functions": [
+            "game/staffing/rear_simulation.gd::advance_time",
+            "game/staffing/rear_simulation.gd::_settle"
+          ],
+          "observation": "A boundary in one service divides the global interval; each segment enumerates other service boundaries and is followed by broad settlement. Settlement repeats its service/actor/store checks when anything reports a change.",
+          "impact": "One activity's boundaries can increase unrelated reevaluation; cost grows with both world size and boundary frequency.",
+          "limit": "The 1000 settlement iterations are a convergence cap, not a claim that every invocation runs 1000 passes. CPU attribution and representative performance measurements remain required."
+        },
+        {
+          "id": "CD02",
+          "classification": "source_observed_with_regression_risk",
+          "area": "Implicit execution order",
+          "source_functions": [
+            "game/staffing/rear_simulation.gd::advance_time",
+            "game/staffing/rear_simulation.gd::_settle"
+          ],
+          "observation": "Accrual, actor movement, individual advance_to calls, ledger/rear clock changes and settlement occur in a fixed code order. More than one service can participate in the same completion/handoff.",
+          "impact": "Moving one service to an independent callback can alter which state another sees at a boundary. Required ordering must become a documented service/transition contract.",
+          "limit": "This identifies migration risk; it does not establish a current ordering bug."
+        },
+        {
+          "id": "CD03",
+          "classification": "source_observed",
+          "area": "Commands trigger world reconciliation",
+          "source_functions": [
+            "game/rear_base/base_demo.gd::_result",
+            "game/rear_base/base_simulation.gd::after_command",
+            "game/staffing/rear_simulation.gd::advance_time"
+          ],
+          "observation": "The UI defaults untagged legacy results to reconciliation. Explicit read-only Training rejections now bypass deferred session notification and after_command while retaining local feedback/refresh. Accepted Training and other legacy non-speed/non-inspection results still invoke after_command; in the live-planning branch it invalidates planning and calls advance_time(0.0,true), which settles before checking elapsed time.",
+          "impact": "Read-only Training rejection no longer performs global reconciliation. Accepted/no-op/other-service commands still require individual mutation-contract characterization before removing legacy guarantees.",
+          "limit": "Not every result follows this branch, and not every command is proven to duplicate work. Record actual command reasons/counts before removing existing guarantees.",
+          "baseline_observation": "Except for tagged speed/inspection results, the UI result path invokes after_command. In the live-planning branch it invalidates route planning and calls advance_time(0.0,true); advance_time settles before checking the elapsed interval.",
+          "evidence": "docs/evidence/training_read_slice.json"
+        },
+        {
+          "id": "CD04",
+          "classification": "source_observed_and_prior_bounded_attribution",
+          "area": "Broad notification and UI fanout",
+          "source_functions": [
+            "game/main/game_session.gd::_physics_process",
+            "game/rear_base/base_demo.gd::_request_refresh",
+            "game/rear_base/base_demo.gd::_refresh",
+            "game/battlefield/battlefield_view.gd::_request_refresh"
+          ],
+          "observation": "Session time/state notifications still reach both views. Rear refresh deduplicates only while pending; normal Build/Supplies/Workers/Train use narrow branches. Other advanced panels and HQ diagnostics still enter broad snapshots.",
+          "impact": "World progression can fan out into repeated presentation reads even when much displayed information is unchanged.",
+          "limit": "Expensive UI exports are a distinct read-path problem. Retiring the dispatcher alone does not fix them; prior inspect_entity call shares are not CPU shares.",
+          "prior_evidence": "docs/evidence/inspect_entity_architecture.json",
+          "followup": "E13 coalesces background wall-clock pumps per process frame; UI refresh remains deduplicated while pending, not guaranteed once per frame. Existing command/explicit-time paths retain their own semantics."
+        },
+        {
+          "id": "CD05",
+          "classification": "source_observed_design_consequence",
+          "area": "Central knowledge and maintenance",
+          "source_functions": [
+            "game/staffing/rear_simulation.gd::advance_time",
+            "game/staffing/rear_simulation.gd::_settle"
+          ],
+          "observation": "The world driver names domain services and their boundary/advance/settle interfaces individually.",
+          "impact": "Adding or migrating a service requires updating central orchestration and understanding unrelated settlement side effects. A service cannot fully own its lifecycle while the global driver remains responsible for its progress and reconciliation.",
+          "limit": "Shared coordination for a real physical transaction may remain appropriate; the target is to remove all-service knowledge and polling rather than prohibit every coordinator."
+        }
+      ],
+      "source_anchors": [
+        {
+          "function": "game/battlefield/battlefield_view.gd::_request_refresh",
+          "line": 62,
+          "end_line": 66,
+          "function_sha256": "f0c9e43ff8fc3d96ed1e32f09f9f0c8aad65d55e9209c41f195d72ae7aab2aa0",
+          "file_sha256": "fbf0c8904adab960d47c6ccd3b58b56dc64666c05b8dee342b93ba6b8029bf1e"
+        },
+        {
+          "function": "game/main/game_session.gd::_physics_process",
+          "line": 21,
+          "end_line": 38,
+          "function_sha256": "3e1169df0327341381a444741d388895a9afa4b9229e7af2ce2390792d811afc",
+          "file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_request_refresh",
+          "line": 229,
+          "end_line": 233,
+          "function_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+          "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_result",
+          "line": 1190,
+          "end_line": 1197,
+          "function_sha256": "910841b5ce79e21575b76f599c99de6e248b3a065cf44d66e14d0a9eb0173b11",
+          "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_refresh",
+          "line": 1350,
+          "end_line": 1481,
+          "function_sha256": "cb70566ed89afbdb8ab62bd70566e6b98d7bd96c5d6eabafe5c31cd590705515",
+          "file_sha256": "651659acb06a7df60a22fc96ad701baf834af865bda8675e71757c8301ffbd93"
+        },
+        {
+          "function": "game/rear_base/base_simulation.gd::after_command",
+          "line": 234,
+          "end_line": 247,
+          "function_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+          "file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::advance_time",
+          "line": 307,
+          "end_line": 383,
+          "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+          "file_sha256": "2867536a6eeca24d49f54cd2ba48aee695fd9921f2ff34a0204dcda090cae948"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::_settle",
+          "line": 557,
+          "end_line": 622,
+          "function_sha256": "834cce82dd08d47907e10dd39307dfd6635256763e751b08d182f1867c4659a0",
+          "file_sha256": "2867536a6eeca24d49f54cd2ba48aee695fd9921f2ff34a0204dcda090cae948"
+        }
+      ],
+      "target_decision": "Phase out the live world-wide advance_time/_settle dispatcher through verified service migrations. This is a planned architectural decision; implementation choices and measured performance remain unproven.",
+      "baseline_source_anchors": [
+        {
+          "function": "game/battlefield/battlefield_view.gd::_request_refresh",
+          "line": 62,
+          "end_line": 66,
+          "function_sha256": "f0c9e43ff8fc3d96ed1e32f09f9f0c8aad65d55e9209c41f195d72ae7aab2aa0",
+          "file_sha256": "fbf0c8904adab960d47c6ccd3b58b56dc64666c05b8dee342b93ba6b8029bf1e"
+        },
+        {
+          "function": "game/main/game_session.gd::_physics_process",
+          "line": 20,
+          "end_line": 30,
+          "function_sha256": "9ed37dda7b73daca31f4e8407e736d1897bc036510d6417e04d1a564dde03875",
+          "file_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_request_refresh",
+          "line": 229,
+          "end_line": 233,
+          "function_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+          "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_result",
+          "line": 1186,
+          "end_line": 1192,
+          "function_sha256": "e1eba5ac0acc0c3b5d1158179d1cf73cdf632802f42f00ce40c4e882c8ecb1ac",
+          "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_refresh",
+          "line": 1345,
+          "end_line": 1482,
+          "function_sha256": "a962771ed567c2aa22d2a4fea1a003f7346be3e21869c64127abaed7b414a6d2",
+          "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+        },
+        {
+          "function": "game/rear_base/base_simulation.gd::after_command",
+          "line": 230,
+          "end_line": 243,
+          "function_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+          "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::advance_time",
+          "line": 306,
+          "end_line": 382,
+          "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+          "file_sha256": "d44c6c9b89d7bd3af44e2eee291d1d82ccf1d67cea93ee6566927b7ae2f0fef4"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::_settle",
+          "line": 556,
+          "end_line": 601,
+          "function_sha256": "0062f8999eb7f3affcec04478d4b2aa14f8972db071503306022da5710ee432b",
+          "file_sha256": "d44c6c9b89d7bd3af44e2eee291d1d82ccf1d67cea93ee6566927b7ae2f0fef4"
+        }
+      ],
+      "updated_utc": "2026-11-04T00:26:49.388318+00:00",
+      "previous_source_anchors_before_E13": [
+        {
+          "function": "game/battlefield/battlefield_view.gd::_request_refresh",
+          "line": 62,
+          "end_line": 66,
+          "function_sha256": "f0c9e43ff8fc3d96ed1e32f09f9f0c8aad65d55e9209c41f195d72ae7aab2aa0",
+          "file_sha256": "fbf0c8904adab960d47c6ccd3b58b56dc64666c05b8dee342b93ba6b8029bf1e"
+        },
+        {
+          "function": "game/main/game_session.gd::_physics_process",
+          "line": 20,
+          "end_line": 30,
+          "function_sha256": "9ed37dda7b73daca31f4e8407e736d1897bc036510d6417e04d1a564dde03875",
+          "file_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_request_refresh",
+          "line": 229,
+          "end_line": 233,
+          "function_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_result",
+          "line": 1186,
+          "end_line": 1193,
+          "function_sha256": "910841b5ce79e21575b76f599c99de6e248b3a065cf44d66e14d0a9eb0173b11",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_refresh",
+          "line": 1346,
+          "end_line": 1477,
+          "function_sha256": "cb70566ed89afbdb8ab62bd70566e6b98d7bd96c5d6eabafe5c31cd590705515",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_simulation.gd::after_command",
+          "line": 230,
+          "end_line": 243,
+          "function_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+          "file_sha256": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::advance_time",
+          "line": 307,
+          "end_line": 383,
+          "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+          "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::_settle",
+          "line": 557,
+          "end_line": 602,
+          "function_sha256": "0062f8999eb7f3affcec04478d4b2aa14f8972db071503306022da5710ee432b",
+          "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+        }
+      ],
+      "previous_source_anchors_before_E15": [
+        {
+          "function": "game/battlefield/battlefield_view.gd::_request_refresh",
+          "line": 62,
+          "end_line": 66,
+          "function_sha256": "f0c9e43ff8fc3d96ed1e32f09f9f0c8aad65d55e9209c41f195d72ae7aab2aa0",
+          "file_sha256": "fbf0c8904adab960d47c6ccd3b58b56dc64666c05b8dee342b93ba6b8029bf1e"
+        },
+        {
+          "function": "game/main/game_session.gd::_physics_process",
+          "line": 21,
+          "end_line": 38,
+          "function_sha256": "3e1169df0327341381a444741d388895a9afa4b9229e7af2ce2390792d811afc",
+          "file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_request_refresh",
+          "line": 229,
+          "end_line": 233,
+          "function_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_result",
+          "line": 1186,
+          "end_line": 1193,
+          "function_sha256": "910841b5ce79e21575b76f599c99de6e248b3a065cf44d66e14d0a9eb0173b11",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_demo.gd::_refresh",
+          "line": 1346,
+          "end_line": 1477,
+          "function_sha256": "cb70566ed89afbdb8ab62bd70566e6b98d7bd96c5d6eabafe5c31cd590705515",
+          "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+        },
+        {
+          "function": "game/rear_base/base_simulation.gd::after_command",
+          "line": 234,
+          "end_line": 247,
+          "function_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+          "file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::advance_time",
+          "line": 307,
+          "end_line": 383,
+          "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+          "file_sha256": "2867536a6eeca24d49f54cd2ba48aee695fd9921f2ff34a0204dcda090cae948"
+        },
+        {
+          "function": "game/staffing/rear_simulation.gd::_settle",
+          "line": 557,
+          "end_line": 622,
+          "function_sha256": "834cce82dd08d47907e10dd39307dfd6635256763e751b08d182f1867c4659a0",
+          "file_sha256": "2867536a6eeca24d49f54cd2ba48aee695fd9921f2ff34a0204dcda090cae948"
+        }
+      ],
+      "E15_anchor_epoch_note": "Previous anchors retain the actual before-change source snapshot used in logs/gdunit4-performance-2026-11-04T14-07-15-22564; each of these eight method bodies is unchanged, while BaseDemo source lines/file fingerprint shifted."
+    },
+    "current_source_observations": [
+      "GameSession remains physics-callback driven; E13 permits one pump per engine process frame only for already wall-clock-driven live models. Explicit-delta models still receive every physics step.",
+      "Live tick_live accrues the full Time.get_ticks_usec interval on the next permitted pump; set_speed accrues the preceding interval before changing the speed policy.",
+      "BaseSimulation still owns owed simulation time and bounded planning/advance quanta. RearSimulation.advance_time still scans service boundaries, accrues work, moves actors and runs global settlement.",
+      "E13 removes repeated detailed cohesion/member and unused mounted/rack exports without deferring immediate safety or changing recipes, opening, engine rates or performance limits."
+    ],
+    "native_alternative": {
+      "candidate": "Use _physics_process(delta) for appropriate continuous physical updates and engine-driven callbacks, active processing or Timers for relevant activities. Domain services may remain lightweight models delegated to by scene-owned Nodes.",
+      "speed": "Existing Pause/1x/2x controls remain the default UX across local drivers. A deliberate engine-time-scale migration is possible but must not double-scale work or UI timing. Independent per-area controls are not introduced by this revision.",
+      "pause": "SceneTree.paused plus process modes can stop gameplay while UI and pure planning continue. Pause capability alone does not justify a custom clock.",
+      "domain_steps": "Small update/step methods remain useful for pure domain tests and reuse. Testing such methods does not require the whole current world-clock/settlement architecture.",
+      "risks_to_characterize": [
+        "Independent callback order must preserve required arrival, earned-work, cancellation and same-time completion behavior.",
+        "Global engine time scaling can affect UI delta-based animations/timers as well as gameplay; diagnostics and watchdogs must retain real-second meaning.",
+        "Rendering hitches, physics catch-up limits, paused commands and pending route preparation can produce different outcomes under a new timing policy.",
+        "Moving the same broad scans into _process does not remove their work. Active subscriptions/processing and narrow reads remain separate optimization tasks."
+      ]
+    },
+    "retention_rationale": "The current explicit-time driver expresses existing boundary ordering and has bounded characterization evidence. Keep it unchanged for S01/S02 so read/UI work can be compared in isolation, then retire its migrated responsibilities progressively. Temporary compatibility does not change the selected retirement target.",
+    "comparison_before_scheduler": {
+      "status": "planned_not_executed",
+      "scope": "Compare one representative activity under engine-driven ownership with its current explicit-time behavior before migrating that responsibility. The comparison selects and validates replacement details; the target is retirement of the world-wide dispatcher. A failed pilot blocks rollout of that slice until fixed, without certifying the legacy design as the final architecture.",
+      "acceptance": [
+        "Equivalent legal state transitions, physical handoffs, admission/consumption and exactly-once completion.",
+        "Pause, 1x/2x, staff/access changes, cancellation at a completion boundary, hitches and session replacement retain their intended behavior.",
+        "Tests can exercise domain rules without requiring wall-clock minutes to elapse.",
+        "Measure CPU/frame behavior and compare implementation complexity/ownership. Retain only clock/deadline machinery whose benefit is evidenced.",
+        "R25-R32 add independent hidden progression, explicit transfer custody and final-pose placement gates; no cross-domain equal-clock outcome is required."
+      ],
+      "regressions": [
+        "R05",
+        "R06",
+        "R10",
+        "R14",
+        "R15",
+        "R19",
+        "R22",
+        "R23"
+      ]
+    },
+    "source_functions": [
+      "game/main/game_session.gd::_physics_process",
+      "game/rear_base/base_simulation.gd::tick_live",
+      "game/rear_base/base_simulation.gd::_accrue_live_wall_time",
+      "game/rear_base/base_simulation.gd::_pump_live",
+      "game/rear_base/base_simulation.gd::_advance_live_quantum",
+      "game/staffing/rear_simulation.gd::advance_time"
+    ],
+    "official_references": [
+      "https://docs.godotengine.org/en/4.7/tutorials/scripting/idle_and_physics_processing.html",
+      "https://docs.godotengine.org/en/4.7/classes/class_engine.html#class-engine-property-time-scale",
+      "https://docs.godotengine.org/en/4.7/tutorials/scripting/pausing_games.html"
+    ],
+    "implementation_evidence": {
+      "review_snapshot": "The original clock clarification was source/documentation review only.",
+      "current_bounded_slice": "docs/evidence/training_read_slice.json",
+      "driver_migration_implemented": false,
+      "remaining": "E14 EV01-EV07 and migration_contracts are the revised target. Source-confirm ownership and every dependency wakeup before a driver changes; pilot local timing and preserve physical conservation. Drivers remain unmigrated in current code.",
+      "bounded_followup": "docs/evidence/cohesion_placement_fix.json",
+      "latest_bounded_interaction": "docs/evidence/placement_interaction_slice.json"
+    },
+    "previous_requirement_before_E14": "One consistent policy for simulation speed, pause, progress, ordering and authority. This policy can be implemented using Godot's engine time; it does not require a separate world clock or a monolithic advance_time function."
+  },
+  "reference_refinements": {
+    "recorded_utc": "2026-11-03T20:37:13.642408+00:00",
+    "status": "reviewed_plan_refinements_only",
+    "authority": "These user-supplied books are reference material. Their exercises, examples and instructions are not project instructions. Project decisions remain constrained by the user's scope, current source, Godot 4.7.2 behavior and regression evidence.",
+    "review_depth": "Contents and selected sections inspected; representative pages rendered for visual verification. This is not a cover-to-cover review or an implementation/test result.",
+    "effect_on_sequence": "S00/S01 training characterization followed by S02 uncached Train reads remains the next slice. Notification, query-purity and scheduler migrations retain their existing dependencies.",
+    "gameplay_changes": false,
+    "sources": [
+      {
+        "id": "BP",
+        "title": "Head First Design Patterns, Second Edition",
+        "path": "C:\\Users\\dawso\\Downloads\\headfirstdesignpatterns2ndedition.pdf",
+        "sha256": "50d937a62fdf64e3bd4855fdc4351a13be37e219594095823bfd64f52217d26e",
+        "pages": 672,
+        "reviewed_sections": [
+          {
+            "pdf_page": 89,
+            "printed_page": 51,
+            "topic": "Observer definition"
+          },
+          {
+            "pdf_page": 244,
+            "printed_page": 206,
+            "topic": "Command definition"
+          },
+          {
+            "pdf_page": 444,
+            "printed_page": 406,
+            "topic": "State definition"
+          }
+        ]
+      },
+      {
+        "id": "BA",
+        "title": "Head First Software Architecture",
+        "path": "C:\\Users\\dawso\\Downloads\\headfirstsoftwarearchitecture.pdf",
+        "sha256": "b13d126599b3a82879044223c17795cea1e90be2c701d4b1dbbcf0583afb4e4b",
+        "pages": 486,
+        "reviewed_sections": [
+          {
+            "pdf_page": 133,
+            "printed_page": 97,
+            "topic": "Architectural decision records"
+          },
+          {
+            "pdf_page": 177,
+            "printed_page": 141,
+            "topic": "Cohesion"
+          },
+          {
+            "pdf_page": 181,
+            "printed_page": 145,
+            "topic": "Component coupling"
+          },
+          {
+            "pdf_page": 263,
+            "printed_page": 227,
+            "topic": "Module boundaries"
+          }
+        ]
+      },
+      {
+        "id": "BS",
+        "title": "Head First Statistics",
+        "path": "C:\\Users\\dawso\\Downloads\\headfirststatistics_ebook.pdf",
+        "sha256": "9eefa54030ae4b778da89177522f14b2851b0c42f12e01036bc597934ad44b75",
+        "pages": 721,
+        "reviewed_sections": [
+          {
+            "pdf_page": 141,
+            "printed_page": 99,
+            "topic": "Percentiles"
+          },
+          {
+            "pdf_page": 462,
+            "printed_page": 420,
+            "topic": "Unrepresentative samples"
+          },
+          {
+            "pdf_page": 532,
+            "printed_page": 490,
+            "topic": "Confidence intervals"
+          }
+        ]
+      }
+    ],
+    "refinements": [
+      {
+        "id": "BR01",
+        "topic": "Observer",
+        "effect": "reinforces_existing_plan",
+        "source": "BP: PDF page 89",
+        "stages": [
+          "S03"
+        ],
+        "decisions": [
+          "A04"
+        ],
+        "regressions": [
+          "R06",
+          "R09",
+          "R10",
+          "R13"
+        ],
+        "application": "Use scoped Godot signals for facts that have committed, then invalidate affected views/services. Preserve immediate safety callbacks and explicit subscriber ownership.",
+        "clarification": "Notification alone does not make an arbitrary UI query cheap, detach its data, guarantee one refresh per frame or perform safe lifecycle rebinding. Those remain explicit project responsibilities.",
+        "planned_gate": "Each notification names its producer, committed facts/IDs, subscribers, teardown policy and delivery class; prove zero commands during view synchronization and no lost dirty IDs."
+      },
+      {
+        "id": "BR02",
+        "topic": "Command",
+        "effect": "reinforces_existing_plan_with_explicit_trace_contract",
+        "source": "BP: PDF page 244",
+        "stages": [
+          "S03"
+        ],
+        "regressions": [
+          "R06",
+          "R17",
+          "R19",
+          "R23"
+        ],
+        "application": "Give a user intent one validated domain entry and one reconciliation result. Record action/target/session IDs, acceptance and actual mutation/revision so UI receipts connect to the resulting game outcome.",
+        "representation": "An ordinary typed method/result is sufficient until queued requests, replay or another concrete requirement justifies a command object. This is not a new framework requirement.",
+        "cancellation": "Cancellation remains a domain operation with its own physical/refund rules. A generic undo command must not recreate consumed materials, delivered people or completed outputs.",
+        "planned_gate": "One input causes one intended domain command; rejected/no-op requests do not claim a mutation, and accepted commands retain their documented reconciliation and conservation behavior."
+      },
+      {
+        "id": "BR03",
+        "topic": "State",
+        "effect": "adds_transition_table_deliverable",
+        "source": "BP: PDF page 444",
+        "stages": [
+          "S04",
+          "S05",
+          "S06"
+        ],
+        "regressions": [
+          "R03",
+          "R05",
+          "R15",
+          "R16",
+          "R19"
+        ],
+        "application": "Before migrating an activity's driver, write its legal state transitions, guards and effects. First characterize current training presentation normalization; later distinguish canonical job state from derived display reasons.",
+        "table_fields": [
+          "activity/job type",
+          "current state",
+          "trigger and logical-time boundary",
+          "guard",
+          "authoritative owner",
+          "committed effects",
+          "next state",
+          "cancellation/refund policy",
+          "generation/deadline invalidation"
+        ],
+        "representation": "Choose enums, a transition table or separate state objects according to the real behavior variation and complexity. The book's state classes are an option rather than a requirement for every row or job.",
+        "planned_gate": "Exercise legal and rejected transitions, cancelled/completed terminal behavior and equal-time interruption; qualification/output/consumption effects occur exactly once."
+      },
+      {
+        "id": "BR04",
+        "topic": "Architecture",
+        "effect": "adds_decision_record_and_boundary_deliverables",
+        "source": "BA: PDF pages 133, 177, 181, 263",
+        "stages": [
+          "S02",
+          "S03",
+          "S04",
+          "S05",
+          "S06"
+        ],
+        "decisions": [
+          "A01",
+          "A02",
+          "A03",
+          "A04",
+          "A05"
+        ],
+        "regressions": [
+          "R12",
+          "R17",
+          "R21",
+          "R24"
+        ],
+        "application": "Keep tightly related rules with their actual owner. Declare the permitted read/command/notification boundary for each migrated slice so UI or another service does not gain a second authority.",
+        "decision_record_fields": [
+          "decision ID/title",
+          "decision status",
+          "implementation/evidence status",
+          "context and source anchors",
+          "alternatives considered",
+          "chosen decision and reason",
+          "consequences and remaining risks",
+          "governance/regression gates",
+          "rollback or superseding decision"
+        ],
+        "status_policy": "A selected architectural direction is not an implemented or passing result. Retain both decision status and implementation/evidence status.",
+        "planned_gate": "Expand the affected A01-A05 decision into a record when its implementation slice starts; link the state owner, regressions, measurements and rollback. Avoid creating records for trivial local edits."
+      },
+      {
+        "id": "BR05",
+        "topic": "Statistics",
+        "effect": "tightens_measurement_and_acceptance",
+        "source": "BS: PDF pages 141, 462, 532",
+        "stages": [
+          "S00",
+          "S02",
+          "S05",
+          "S06"
+        ],
+        "regressions": [
+          "R22",
+          "R23"
+        ],
+        "application": "Use representative states and repeated comparable runs; report spread and tail behavior as well as central values. Apply uncertainty methods only when their sampling assumptions fit the actual measurements.",
+        "project_inference": "Successive game frames share scene state, queued work and operating-system conditions. Frame count must not be presented as the same number of independent benchmark repetitions. This is an application of sampling principles to this project, not a claim the book specifically analyzes Godot frames.",
+        "planned_gate": "Record per-run distributions, sample counts, warm-up, run order and comparable logical work. Define the percentile calculation and regression tolerance before comparing implementations; report inconclusive evidence when variation overwhelms the observed change."
+      },
+      {
+        "id": "BR06",
+        "topic": "Pattern selection",
+        "effect": "clarifies_adoption_rule",
+        "sources": [
+          "BP",
+          "BA"
+        ],
+        "stages": [
+          "S02",
+          "S03",
+          "S04",
+          "S05",
+          "S06"
+        ],
+        "regressions": [
+          "R21",
+          "R22",
+          "R24"
+        ],
+        "application": "Apply a pattern to a named dependency, transition or action problem and choose a representation suited to GDScript and current ownership.",
+        "project_judgment": "The references do not by themselves establish a performance improvement, prescribe a Node per record, justify a new global bus, or require separate classes for every action/state.",
+        "planned_gate": "Every additional abstraction states the concrete problem, ownership/lifecycle cost and expected benefit; compare behavior and measured work before expanding its use."
+      }
+    ],
+    "verification_limits": "No new game implementation or runtime measurement was performed for this book review. The previously recorded nine domain-test passes and five open timing violations retain their original scope and status.",
+    "sequence_note_E14": "Original section review/history is retained. E13 bounded fixes are implemented; E14 migration_contracts now refines the next delivery sequence and removes the shared-clock constraint. No new book review or architecture benchmark was executed."
+  },
+  "first_slice": {
+    "title": "Uncached Train-panel view and focused rendering",
+    "status": "implemented_bounded_validation_with_open_broader_gates",
+    "parent_phases": [
+      "P00",
+      "P01"
+    ],
+    "affected_sources": [
+      "game/rear_base/base_simulation.gd",
+      "game/rear_base/base_demo.gd",
+      "game/training/training_service.gd",
+      "game/staffing/rear_simulation.gd (command-entry instrumentation only)",
+      "game/diagnostics/tests/gdunit/",
+      "game/training/tests/training_input_test.gd",
+      "tools/run_gdunit4_performance.ps1"
+    ],
+    "candidate_api": "Implemented BaseSimulation.training_view(course_id=\"\") and training_person_view(course_id); normal Train refresh uses fresh narrow reads and preserves Training.snapshot normalization.",
+    "required_preparation": [
+      "Trace every visible Train control, common header/HUD and selection detail to the fields it actually consumes. Do not call _refresh_core_ui unchanged: it also refreshes workforce and production context.",
+      "Audit each exporter that the new path would omit for writes, signals, normalization and command side effects. Add raw state/checkpoint guards for affected owners. If an omitted export performs necessary domain work, stop and make that responsibility explicit in a separately characterized change before removing the call.",
+      "Add positive active/reporting/queued/paused/completed/withdrawn Train fixtures and pre-query raw checkpoints. Cover zero people, one/two instructors, multiple training sites, unavailable course recipes and withdrawn/dead/removed selected people.",
+      "Integrate the nine passing retained domain cases through an explicit isolated selection; adapt stale native UI coverage to a legal current-world setup without changing the empty-field default.",
+      "Capture matched diagnostics-off Train CPU/refresh/frame and logical-time baselines before changing code."
+    ],
+    "intended_read_boundary": [
+      "Fresh detached purchasing/common HUD facts, reusing the existing narrow purchasing read where adequate.",
+      "One current training export with existing _refresh_states semantics preserved, plus allowed-course metadata and current instructor/access values.",
+      "Only the selected person/course/site details needed by the visible panel, with ownership and missing-ID behavior preserved.",
+      "No full rear/ledger, HQ, combat, dispatch, vehicle or unrelated production export in a normal Train refresh unless the dependency audit demonstrates a displayed dependency."
+    ],
+    "presentation_boundary": [
+      "Add an explicit normal Train branch beside existing narrow branches; keep HQ diagnostics as a separately selected diagnostic path.",
+      "Refresh Train list/status and the visible common HUD, without invoking hidden production/workforce rebuilds.",
+      "Preserve stable row IDs, selection, current captions/reasons and missing-selection handling; programmatic synchronization issues zero domain commands.",
+      "On entering Train, read current facts immediately. Later notification reductions must not leave hidden panels stale when shown.",
+      "Preserve current navigation behavior: show_panel resets the enclosing panel's vertical scroll; _fill preserves list selection/scroll by ID. Do not invent new reset behavior for unrelated drafts or panels."
+    ],
+    "exclusions": [
+      "No changes to training recipes, capacity, instructor eligibility, earned work, withdrawals or safe handoffs.",
+      "No global cache, ledger index, new scheduler, Timer cadence change, threading, global bus or autoload.",
+      "No default scenario, opening position, UI redesign or unrelated panel migration.",
+      "Do not run old/new snapshot paths on the same live model as a comparison; old reads may mutate state and double the workload."
+    ],
+    "equivalence_method": [
+      "Create two independently equivalent legal fixtures with identical explicit-time inputs. Capture raw state before any query/normalizing audit.",
+      "Run legacy view on fixture A and new view on fixture B at the same logical time; compare normalized visible values, raw before/after state and audits.",
+      "Repeat with reversed query order on additional independent fixtures and repeated reads without clock advancement; document expected normalization.",
+      "Exercise actual native Request course, instructor/access changes, selection and Withdraw inputs separately from programmatic refresh; count domain commands and inspect resulting raw rows.",
+      "Keep all 13 existing expected hashes unchanged; add new training checkpoints rather than refreshing expected values to fit the change."
+    ],
+    "exit": [
+      "R01-R12, R16, R20-R24 relevant to this slice pass; retained nine domain cases and ten existing guards still pass.",
+      "Source guard and diagnostic receipts show normal Train refresh does not invoke the broad BaseSimulation/Rear/Ledger snapshot chain.",
+      "Equivalent training normalization, selections, HUD values and domain outcomes are demonstrated in both empty and prepared populated states.",
+      "Matched CPU/refresh results improve outside baseline noise without losing logical-time progress or reducing real simulated work.",
+      "Native matrix is rerun with all new/unreached/known failures reported; no new functional or timing regression is concealed.",
+      "Map and clickable UI diagram are current with no pending purpose reviews."
+    ],
+    "rollback": "Keep this slice isolated in reviewable file changes. Restore only its query/presentation routing if parity or measured benefit fails; retain regression tests and evidence. Do not reset unrelated user work.",
+    "implementation": {
+      "evidence": "docs/evidence/training_read_slice.json",
+      "normal_read": "One purchasing/common-HUD view, one current training export and only the selected course person; no broad Base/Rear/Ledger world export and no cross-callback cache.",
+      "command_boundary": "Training results explicitly mark read-only rejections requires_reconciliation=false. Local feedback/refresh remains; accepted and untagged legacy results keep reconciliation. No blanket assumption that all failed commands are read-only.",
+      "clock": "advance_time and _settle implementations are unchanged by this slice and remain active.",
+      "measurement": {
+        "inspections_per_direct_refresh": {
+          "before": 153,
+          "after": 55
+        },
+        "direct_refresh_median_ms": {
+          "before": 4.3515,
+          "after": 0.9235
+        },
+        "process_cpu_seconds_per_wall_second_median": {
+          "before": 0.722068011880889,
+          "after": 0.49460354966171743
+        },
+        "world_exports_per_30_direct_refreshes": {
+          "before": 30,
+          "after": 0
+        },
+        "observed_inspections_per_wall_second": {
+          "before_range": [
+            23714.9367252411,
+            23720.9557926551
+          ],
+          "after_range": [
+            17810.192520652,
+            17820.5103730844
+          ]
+        }
+      },
+      "validation_limits": [
+        "Nine pre-change frozen training states and nine current read guards plus nine retained domain cases are covered; four current native cases cover selected legal empty/prepared UI workflows. This is bounded characterization, not all R01-R24 or every training state.",
+        "All ten original focused guards and 13 expected domain hashes passed unchanged. The 898-scenario matrix completed without functional-contract failures, but four matrix timing failures and one legacy live-menu timing failure remain.",
+        "Three matched 30-second counters-only observations before and after show lower direct-refresh costs and process CPU with comparable steady 1x progress; they do not supply script self/total attribution, statistical significance or broad late-game proof.",
+        "Partial/in-flight cancellation, arbitrary reorder/removal, corrupt-save behavior, long-run leak coverage, deep native 2x paths and additional representative performance states remain planned."
+      ]
+    },
+    "exit_assessment": {
+      "status": "bounded_training_checks_pass_broader_exit_gates_open",
+      "evidence": "docs/evidence/training_read_slice.json",
+      "limits": [
+        "Nine pre-change frozen training states and nine current read guards plus nine retained domain cases are covered; four current native cases cover selected legal empty/prepared UI workflows. This is bounded characterization, not all R01-R24 or every training state.",
+        "All ten original focused guards and 13 expected domain hashes passed unchanged. The 898-scenario matrix completed without functional-contract failures, but four matrix timing failures and one legacy live-menu timing failure remain.",
+        "Three matched 30-second counters-only observations before and after show lower direct-refresh costs and process CPU with comparable steady 1x progress; they do not supply script self/total attribution, statistical significance or broad late-game proof.",
+        "Partial/in-flight cancellation, arbitrary reorder/removal, corrupt-save behavior, long-run leak coverage, deep native 2x paths and additional representative performance states remain planned."
+      ],
+      "all_regression_matrix_cases_passed": false,
+      "full_performance_suite_passed": false
+    }
+  },
+  "rollout": [
+    {
+      "id": "S00",
+      "title": "Freeze comparable baselines and test selection",
+      "parent": [
+        "P00"
+      ],
+      "depends_on": [],
+      "status": "partially_evidenced_more_work_required",
+      "work": [
+        "Preserve current source hashes/13 expected hashes and known failing logs.",
+        "Explicitly inventory selected retained suites and their fixture assumptions.",
+        "Capture representative Train/control Build/HQ-diagnostic CPU and timing baselines; distinguish live from explicit-time drivers."
+      ],
+      "gates": [
+        "Newly executed nine training domain cases pass; already evidenced in this review.",
+        "Remaining baseline/performance and native training fixture work is still required; no scheduler work starts from unverified assumptions."
+      ],
+      "regressions": [
+        "R01",
+        "R02",
+        "R03",
+        "R22",
+        "R23",
+        "R24"
+      ],
+      "evidence": "docs/evidence/training_read_slice.json",
+      "remaining": "Train matched baselines and explicit test selection are evidenced. Detailed script CPU self/total and broader Build/HQ/prepared-state profiling remain incomplete."
+    },
+    {
+      "id": "S01",
+      "title": "Add Train and UI characterization before changing reads",
+      "parent": [
+        "P00",
+        "P01"
+      ],
+      "depends_on": [
+        "S00"
+      ],
+      "status": "bounded_training_characterization_complete",
+      "work": [
+        "Implement first_slice preparation and independent-fixture comparison helpers.",
+        "Add raw training checkpoints, query-order guards and command receipts.",
+        "Update retained native training interaction coverage to current startup/prepared states."
+      ],
+      "gates": [
+        "All new pre-change checks pass on current code with expected normalizing-read behavior documented.",
+        "Fixture setup uses public legal actions where practical; any prepared state is explicit and not called the normal opening."
+      ],
+      "regressions": [
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12"
+      ],
+      "evidence": "docs/evidence/training_read_slice.json",
+      "limits": [
+        "Nine pre-change frozen training states and nine current read guards plus nine retained domain cases are covered; four current native cases cover selected legal empty/prepared UI workflows. This is bounded characterization, not all R01-R24 or every training state."
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Implement only the uncached Train view",
+      "parent": [
+        "P01"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "implemented_bounded_validation_with_open_broader_gates",
+      "work": [
+        "Apply the first_slice query and presentation boundary.",
+        "Retain diagnostics mode and current normalizing Training.snapshot behavior.",
+        "Measure identical prepared scenarios with instrumentation modes separated."
+      ],
+      "gates": [
+        "Every first_slice exit condition is evidenced.",
+        "Any necessary state change previously hidden in an omitted exporter blocks elision until explicitly owned and tested."
+      ],
+      "regressions": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R16",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24"
+      ],
+      "evidence": "docs/evidence/training_read_slice.json",
+      "remaining_gates": [
+        "All ten original focused guards and 13 expected domain hashes passed unchanged. The 898-scenario matrix completed without functional-contract failures, but four matrix timing failures and one legacy live-menu timing failure remain.",
+        "Three matched 30-second counters-only observations before and after show lower direct-refresh costs and process CPU with comparable steady 1x progress; they do not supply script self/total attribution, statistical significance or broad late-game proof.",
+        "Partial/in-flight cancellation, arbitrary reorder/removal, corrupt-save behavior, long-run leak coverage, deep native 2x paths and additional representative performance states remain planned."
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Add scoped committed notifications and lifecycle protection",
+      "parent": [
+        "P02",
+        "P03",
+        "P08"
+      ],
+      "depends_on": [
+        "S02"
+      ],
+      "status": "planned",
+      "work": [
+        "Inventory actual mutation points and classify immediate safety effects versus after-commit notifications.",
+        "Add scene-owned subscriptions and merge dirty IDs before one pending wakeup; validate session/job generations.",
+        "Define command mutation/revision results before removing duplicate reconciliation.",
+        "Gate any once-per-process-frame coordinator with measured need; a pending flag alone makes no such guarantee.",
+        "E14 EV01/EV02: assign persistent local lifecycle owners and every cross-area/time dependency before changing drivers; keep legacy ownership exclusive during migration."
+      ],
+      "gates": [
+        "No observer sees half-committed state; no dropped dirty IDs or duplicate commands/completions.",
+        "New-game/close/reopen and paused user-command tests prove correct rebinding and no obsolete callback writes."
+      ],
+      "regressions": [
+        "R06",
+        "R07",
+        "R09",
+        "R10",
+        "R13",
+        "R14",
+        "R15",
+        "R18",
+        "R20",
+        "R21",
+        "R25",
+        "R26",
+        "R28",
+        "R29"
+      ],
+      "preliminary_slice": {
+        "evidence": "docs/evidence/training_read_slice.json",
+        "implemented": "Explicit read-only rejection marker for audited Training commands; UI skips session notification and after_command only when that marker is false.",
+        "not_implemented": "No scoped committed-change notifications, outbox, dirty-ID coordinator, generation framework or once-per-frame scheduler. Accepted commands retain legacy behavior."
+      }
+    },
+    {
+      "id": "S04",
+      "title": "Make queries pure, then evaluate reuse or indexes",
+      "parent": [
+        "P01",
+        "P02",
+        "P08"
+      ],
+      "depends_on": [
+        "S03"
+      ],
+      "status": "planned",
+      "work": [
+        "Move training row normalization into an explicit domain boundary with query-independent lifecycle tests.",
+        "Only then consider a callback-scoped read context; avoid cross-callback memoization as the first optimization.",
+        "Add ledger-owned relationship indexes only for measured hot queries, with a complete mutation/invalidation matrix and canonical-scan oracle."
+      ],
+      "gates": [
+        "The game reaches equivalent domain outcomes with no UI open and with repeated reads.",
+        "Mutating a nested read result cannot mutate authority or another result; every invalidation trigger has evidence.",
+        "Keep an uncached canonical reference path for tests; retire scans only after mutation coverage passes."
+      ],
+      "regressions": [
+        "R03",
+        "R04",
+        "R05",
+        "R11",
+        "R12",
+        "R13",
+        "R16",
+        "R17",
+        "R18",
+        "R21",
+        "R22"
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Pilot military/HQ dirty work and deadlines",
+      "parent": [
+        "P04"
+      ],
+      "depends_on": [
+        "S03",
+        "S04"
+      ],
+      "status": "planned",
+      "work": [
+        "Use the revised clock_decision_review and E14: the military/HQ reactive pilot owns only affected IDs; validate native local timed work and local/causal ordering without a shared-clock invariant or a generic world scheduler.",
+        "Name every dependency wakeup, deadline owner, stable same-time phase and cancellation generation.",
+        "Keep one active authority per responsibility; legacy still drives unmigrated jobs.",
+        "Retain continuous physical motion/contact logic and explicit-time stepping."
+      ],
+      "gates": [
+        "Polling is removed only after trigger/deadline parity and liveness are proven.",
+        "No lost time, early work, duplicate admissions, stale completion, leaked reservation or hidden enemy knowledge."
+      ],
+      "regressions": [
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R18",
+        "R19",
+        "R22",
+        "R23",
+        "R25",
+        "R26",
+        "R29",
+        "R31",
+        "R32"
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "Migrate remaining services individually",
+      "parent": [
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "depends_on": [
+        "S05"
+      ],
+      "status": "planned",
+      "work": [
+        "Use the parent phase dependencies, protected contracts I01-I18 and planned T01-T30; S06 is a summary, not permission to skip their gates.",
+        "Migrate one job/activity type and its cancellation/refund/rate rules at a time.",
+        "Retire the live world-wide advance_time dispatcher and global settlement once every responsibility has a verified owner, wakeup and necessary timed path; review all retained callers and prevent the same polling design reappearing behind another name.",
+        "Publish remaining gaps and final acceptance evidence.",
+        "E14 EV03-EV07 refine local timers, causal shipment custody, presentation synchronization and placement/physical processing. Apply migration_contracts and T31-T38 in addition to original unsatisfied parent gates."
+      ],
+      "gates": [
+        "Full proposed acceptance cases pass before full overhaul is declared complete.",
+        "All excluded states, unresolved timing issues and untested paths remain explicit."
+      ],
+      "regressions": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R18",
+        "R19",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R25",
+        "R26",
+        "R27",
+        "R28",
+        "R29",
+        "R30",
+        "R31",
+        "R32"
+      ],
+      "bounded_interaction_followup": {
+        "evidence": "docs/evidence/placement_interaction_slice.json",
+        "scope": "EV06/M1 only; no parent scheduling phase completed."
+      }
+    }
+  ],
+  "regression_matrix": [
+    {
+      "id": "R01",
+      "area": "Editor/startup/default",
+      "parent_tests": [
+        "T01",
+        "T29"
+      ],
+      "status": "new_gate_planned",
+      "check": "Open/import clean isolated project and normal Main with diagnostic addons absent. Assert current empty rear, current start coordinates, resources, pause state and intended camera/character behavior against source baseline; standalone prepared demo remains explicitly different."
+    },
+    {
+      "id": "R02",
+      "area": "Existing read reductions",
+      "parent_tests": [
+        "T02",
+        "T26"
+      ],
+      "status": "existing_evidence_new_run_required_after_code",
+      "check": "Retain all 13 expected hashes and ten guards; Build/Supplies/Workers/map reads still avoid broad world exports. Never regenerate hashes just to accept changed output."
+    },
+    {
+      "id": "R03",
+      "area": "Raw training state and query order",
+      "parent_tests": [
+        "T02",
+        "T12",
+        "T26"
+      ],
+      "status": "new_gate_planned",
+      "check": "Checkpoint raw training rows/sites/work/sequence and relevant actors/ledger before read/audit. Compare independent old/new fixtures, repeated reads, reversed order, no UI and hidden UI. Preserve first-slice normalization; later purity stage proves absence of mutation explicitly."
+    },
+    {
+      "id": "R04",
+      "area": "Positive training outcomes",
+      "parent_tests": [
+        "T12"
+      ],
+      "status": "nine_retained_domain_cases_passed_new_ui_gate_planned",
+      "check": "All eight courses, exact elapsed work, recipe prerequisites, zero/one/two instructors, multiple F06 sites, lost/restored access, actual reporting, qualification/body/gear conservation and single specialist. Exercise native successful Request course and Withdraw on legal prepared state."
+    },
+    {
+      "id": "R05",
+      "area": "Interruptions and custody",
+      "parent_tests": [
+        "T05",
+        "T08",
+        "T12",
+        "T14"
+      ],
+      "status": "retained_partial_evidence_new_gate_planned",
+      "check": "Withdraw queued/reporting/active/paused course; staff change, injury/death, old carry safe deposit and instructor reporting. Progress earned at old rate until change; no duplicated person, stolen freight, refunded earned work or duty overlap."
+    },
+    {
+      "id": "R06",
+      "area": "Signal and command feedback",
+      "parent_tests": [
+        "T06",
+        "T24"
+      ],
+      "status": "new_gate_planned",
+      "check": "Count domain command entries: repeated rendering/selection restoration sends zero; one user press/change sends intended command once. Include no-signal setters, rejected/no-op command, confirmation accept/cancel and synchronous reentrant observer."
+    },
+    {
+      "id": "R07",
+      "area": "Selection IDs and disabled options",
+      "parent_tests": [
+        "T03",
+        "T24"
+      ],
+      "status": "new_gate_planned",
+      "check": "Preserve ID through unchanged list, reorder and row text updates. Remove/withdraw selected row/person and lock/unlock course; ensure missing/disabled choice cannot trigger an invalid command. ItemList.select alone must not be assumed to rebuild detail."
+    },
+    {
+      "id": "R08",
+      "area": "Focus, drafts and scroll",
+      "parent_tests": [
+        "T03",
+        "T24"
+      ],
+      "status": "new_gate_planned",
+      "check": "Edit SpinBox text while refreshes arrive; retain focus/caret/unsubmitted draft where current behavior promises it. Keep list scroll/selection and current enclosing-panel scroll-reset behavior. Check course count, cart, haul draft and confirmation state across navigation."
+    },
+    {
+      "id": "R09",
+      "area": "Hidden/visible catch-up",
+      "parent_tests": [
+        "T03",
+        "T24",
+        "T25"
+      ],
+      "status": "new_gate_planned",
+      "check": "Advance or issue commands while Train/other panel hidden, then show it. Visible HUD/detail/options are current before next input. Hidden Controls are not assumed to stop processing; avoid moving required work into visibility-dependent code."
+    },
+    {
+      "id": "R10",
+      "area": "Simulation replacement and delayed work",
+      "parent_tests": [
+        "T07",
+        "T25"
+      ],
+      "status": "new_gate_planned",
+      "check": "New game/model replacement during pending refresh, deferred scroll restoration, confirmation and route work; destroy or detach views before callback. Old valid objects/generations cannot write to the new session. Disconnect surviving subscribers and reconnect once."
+    },
+    {
+      "id": "R11",
+      "area": "Detached read containers",
+      "parent_tests": [
+        "T02",
+        "T26"
+      ],
+      "status": "new_gate_planned",
+      "check": "Mutate nested arrays/dictionaries in returned view and selected detail; authority and a second independent view remain unchanged. Cover Resource references if introduced; read-only outer container alone is insufficient."
+    },
+    {
+      "id": "R12",
+      "area": "Omitted exporter side effects",
+      "parent_tests": [
+        "T02",
+        "T26"
+      ],
+      "status": "new_gate_planned",
+      "check": "Inventory all legacy exports removed by panel narrowing. Detect writes/signals/raw owner state changes and classify necessary normalization. Compare independent fixtures with/without UI reads; do not make necessary game behavior disappear when hidden exports stop running."
+    },
+    {
+      "id": "R13",
+      "area": "Dirty work and cache invalidation",
+      "parent_tests": [
+        "T06",
+        "T07",
+        "T08",
+        "T26"
+      ],
+      "status": "new_gate_planned_for_notifications_or_cache",
+      "check": "Two different IDs and different changes in the same frame both survive deduplication; dirtied-during-drain work is retained. Check insert/delete/transfer/split/merge, holder ancestry/mass, reservation changes, health/fuel/crew/assignment and failed/rolled-back transactions against canonical scans."
+    },
+    {
+      "id": "R14",
+      "area": "Pause and speed",
+      "parent_tests": [
+        "T04",
+        "T05"
+      ],
+      "status": "new_gate_planned",
+      "check": "Pause stops authoritative time/movement/earned work while legal commands and pure planning remain usable. Switch 1x/2x/pause mid-job; custom clock and engine timers obey explicit policy. Compare domain outcomes at equal logical times, recording wall-time debt.",
+      "E14_scope_clarification": "Apply to each local owner and required causal/physical ordering; cross-domain absolute time equality is no longer a requirement. Historical global-clock fixtures remain recorded and require deliberate adapters."
+    },
+    {
+      "id": "R15",
+      "area": "Same-time order and liveness",
+      "parent_tests": [
+        "T04",
+        "T05",
+        "T06",
+        "T07"
+      ],
+      "status": "new_gate_planned_for_scheduler",
+      "check": "Coarse/partitioned explicit advances and multiple physics steps per render agree on required normalized outcomes. Test deadline exactly at cancel/access/staff/rate change, large hitch, duplicate deadline and changed-then-restored state. No job strands because a wakeup was dropped.",
+      "E14_scope_clarification": "Apply to each local owner and required causal/physical ordering; cross-domain absolute time equality is no longer a requirement. Historical global-clock fixtures remain recorded and require deliberate adapters."
+    },
+    {
+      "id": "R16",
+      "area": "Building placement/cancellation",
+      "parent_tests": [
+        "T11"
+      ],
+      "status": "44_existing_scenarios_plus_new_cases_planned",
+      "check": "Rerun all 11 facilities in two orientations, rejected placement, started cancellation and completed rejection. Add partially delivered M11, haul/carry in flight, first-work consumption boundary, safe return haul, retired/occupied facilities and selection across cancellation; conserve materials and release capacity once."
+    },
+    {
+      "id": "R17",
+      "area": "Ledger conservation and admission",
+      "parent_tests": [
+        "T02",
+        "T08",
+        "T09",
+        "T10",
+        "T13",
+        "T14",
+        "T15"
+      ],
+      "status": "new_gate_planned_for_affected_services",
+      "check": "Canonical identity/custody/stock/fuel/gear/ammunition, rear population/fleet places, bay/parking capacity and incoming reservations balance before/after success/reject/cancel/death. A claim is not delivery or physical movement."
+    },
+    {
+      "id": "R18",
+      "area": "Safety and hidden information",
+      "parent_tests": [
+        "T16",
+        "T17",
+        "T18",
+        "T19",
+        "T20",
+        "T21",
+        "T22",
+        "T23"
+      ],
+      "status": "new_gate_planned_for_affected_services",
+      "check": "Continuous contact/damage/wreck consequences precede further movement. Route changes invalidate stale plans; fuel is charged for real distance. Indexes and observers preserve ownership and observed-versus-physical enemy knowledge."
+    },
+    {
+      "id": "R19",
+      "area": "Single authoritative completion path",
+      "parent_tests": [
+        "T07",
+        "T09",
+        "T10",
+        "T11",
+        "T12",
+        "T13",
+        "T14"
+      ],
+      "status": "new_gate_planned_for_scheduler",
+      "check": "Legacy and migrated code never complete the same responsibility. Job/session generation rejects cancelled/replaced work; exactly one output, refund/consumption rule and reservation release. Explicit-time fixture driver remains available or is deliberately migrated."
+    },
+    {
+      "id": "R20",
+      "area": "Native input and viewport",
+      "parent_tests": [
+        "T03",
+        "T24"
+      ],
+      "status": "existing_bounded_receipts_new_training_gate_planned",
+      "check": "Use native rendered runs for buttons/popup/options, keyboard/focus and small-window layouts. Verify viewport coordinate transforms at supported scaling. Headless runs do not certify native menus or pixel hit targets."
+    },
+    {
+      "id": "R21",
+      "area": "Cleanup and reference ownership",
+      "parent_tests": [
+        "T25",
+        "T29"
+      ],
+      "status": "new_gate_planned",
+      "check": "Repeat create/show/hide/replace/free cycles; no rising live node/reference count, orphan work, duplicate subscriptions or closures retaining old models. RefCounted cycles and deferred-deletion lifetime are checked explicitly."
+    },
+    {
+      "id": "R22",
+      "area": "Matched performance evidence",
+      "parent_tests": [
+        "T27",
+        "T28",
+        "T30"
+      ],
+      "status": "existing_open_issues_new_gate_planned",
+      "check": "Use performance_protocol below, record CPU self/total, frame and refresh percentiles, logical-time progress, counts and instrumentation mode. Improvement must be in matched states without lower simulation work or changed visual cadence."
+    },
+    {
+      "id": "R23",
+      "area": "Failure capture and reachability",
+      "parent_tests": [
+        "T03",
+        "T27",
+        "T28",
+        "T30"
+      ],
+      "status": "existing_harness_new_selection_gate_planned",
+      "check": "Default first issue pauses with logs, unique stacks, last input, raw/checkpoint state, screenshot and pending tests. Audit mode may continue with each issue retained. Retained-domain selections must appear explicitly in manifest; never equate source reachability/call count with executed coverage."
+    },
+    {
+      "id": "R24",
+      "area": "Living evidence and source anchors",
+      "parent_tests": [
+        "T29"
+      ],
+      "status": "required_each_slice",
+      "check": "Requery map and reread actual functions before edits; refresh inventory drift where relevant. Update map -> UI diagram/button manifest -> map, review every changed function purpose against code and pass both --check tools with zero pending reviews."
+    },
+    {
+      "id": "R25",
+      "area": "Independent background progression",
+      "parent_tests": [
+        "T31"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Hold each observation view, then hide both for a prepared interval with active logistics jobs, battlefield movement/combat and a shipment. Compare against equivalent fixtures with no navigation. Both owners complete expected local work; switch timing cannot change outcomes. No duplicated full model or frozen hidden-domain state."
+    },
+    {
+      "id": "R26",
+      "area": "Dependency wakeups and idle work",
+      "parent_tests": [
+        "T32"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "For every migrated activity, enumerate each blocking dependency and change it while the view is hidden, paused, or in transition. Prove exactly the affected jobs wake and liveness survives changed-then-restored state, rate/assignment/access changes, duplicate notifications and finite reentrant batches. Idle/blocked jobs perform no repeated eligibility scan."
+    },
+    {
+      "id": "R27",
+      "area": "Shipment state and conservation",
+      "parent_tests": [
+        "T33"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Use real prepared hull/cargo/crew. Exercise timer ready, blocked entry, berth/capacity release, physical approach, partial unload, delivery, interruption/resume, cancellation, return, destruction and old/duplicate receipt. Timer expiry cannot credit supplies. Audit one hull/manifest custody, actual fuel and on-map hazards, exactly-once delivered portions and no handoff depending on navigation."
+    },
+    {
+      "id": "R28",
+      "area": "View transitions and subscriptions",
+      "parent_tests": [
+        "T34"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Rapidly alternate views during active transfers/work, at a commit, and around new session/close/reopen. Subscribe/read revision races preserve changes; selected IDs/focus remain valid. Old generations cannot publish, connections do not grow, hidden views avoid structural exports, and transition callbacks issue no game commands or world settlement."
+    },
+    {
+      "id": "R29",
+      "area": "Local timer policy and tie boundaries",
+      "parent_tests": [
+        "T35"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Exercise Pause/1x/2x before/during countdown, rate/access/staff changes, timeout/cancel and arrival/damage ties, delayed frames, multiple physics steps per render, old callbacks and save/load rearming. Accrue prior-rate work, preserve remaining duration and required local order. Cross-domain transfer order is causal, without comparing unrelated absolute clocks or applying time scaling twice."
+    },
+    {
+      "id": "R30",
+      "area": "Actual pointer placement and fresh commit",
+      "parent_tests": [
+        "T36"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Use native input: select every supported building/rotation, move to arbitrary valid/invalid/far-edge positions, rapid same-frame move-and-click, stationary hover while geometry changes, zoom/pan, paused input, Escape/right-click cancel, placement cancellation/dismantle with retained stock and repeated placements. Hover does not run full route/connectivity validation; click validates final authoritative pose and all existing access rules. Verify collider/ghost lifetime and world transforms.",
+      "partial_execution": {
+        "evidence": "docs/evidence/placement_interaction_slice.json",
+        "status": "bounded_placement_checks_and_benchmarks_passed_wider_failure_retained",
+        "limits": "Independent drivers/timers and full 55-case/system acceptance are not covered. No Area2D performance benchmark. Vehicle-works cancellation still exceeds original limits."
+      }
+    },
+    {
+      "id": "R31",
+      "area": "Matched performance and failure capture",
+      "parent_tests": [
+        "T37"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Repeat affected actual-game placement, independent/background progress, simultaneous completions, blocked-transfer release and view switching at 1x in warmed matched runs. Enforce the E16 1000/60 ms whole-frame and synchronous-action ceiling and retain the 30000 inspection/s diagnostic limit and existing 0.25 s placement time-debt assertion; measure each local domain progress/debt after migration. Record CPU attribution, p50/p95/p99/max, end-to-end actions, completed work, memory/timer/connection counts and actual work per real second. Counters and unique-stack attribution runs are separated. First performance/functional issue pauses the selected run and writes the existing logs artifacts; no limit increases, dropped simulation work or hidden failures.",
+      "partial_execution": {
+        "evidence": "docs/evidence/placement_interaction_slice.json",
+        "status": "bounded_placement_checks_and_benchmarks_passed_wider_failure_retained",
+        "limits": "Independent drivers/timers and full 55-case/system acceptance are not covered. No Area2D performance benchmark. Vehicle-works cancellation still exceeds original limits."
+      },
+      "previous_check_before_E16": "Repeat affected actual-game placement, independent/background progress, simultaneous completions, blocked-transfer release and view switching at 1x in warmed matched runs. Retain the current 100 ms frame/action and 30000 inspection/s limits and existing 0.25 s placement time-debt assertion; measure each local domain progress/debt after migration. Record CPU attribution, p50/p95/p99/max, end-to-end actions, completed work, memory/timer/connection counts and actual work per real second. Counters and unique-stack attribution runs are separated. First performance/functional issue pauses the selected run and writes the existing logs artifacts; no limit increases, dropped simulation work or hidden failures.",
+      "active_target": "E16 supersedes the prior severe-stall criterion; whole-game compliance remains false."
+    },
+    {
+      "id": "R32",
+      "area": "Compatibility, source maps and coverage limits",
+      "parent_tests": [
+        "T38"
+      ],
+      "status": "planned_not_executed_E14",
+      "check": "Keep E13 cohesion/mounted-read fixes, frozen original fixtures and current default opening/resources/pause intact. Run affected retained-domain and native suites, then the complete selected acceptance suite before declaring the overhaul complete. Adapt old shared-clock fixtures only against explicitly changed local/causal requirements and preserve their historical expectations. Inventory retained live/demo callers; no plugin startup dependency. Update map, UI flowchart and button manifest, review changed function purposes, and pass both checks. Report excluded, unprepared and unreached cases; no claim of testing every function.",
+      "partial_execution": {
+        "evidence": "docs/evidence/placement_interaction_slice.json",
+        "status": "bounded_placement_checks_and_benchmarks_passed_wider_failure_retained",
+        "limits": "Independent drivers/timers and full 55-case/system acceptance are not covered. No Area2D performance benchmark. Vehicle-works cancellation still exceeds original limits."
+      }
+    },
+    {
+      "id": "R33",
+      "area": "Hard 60 FPS acceptance and non-bypassable failure capture",
+      "parent_tests": [
+        "T39"
+      ],
+      "status": "enforcement_guards_passed_game_fails",
+      "check": "Exercise 17 ms frame/action rejection with real pause/log output; attempted 100 ms overrides cannot weaken the ceiling. Actual uncapped 1x native runs must satisfy every frame plus existing progress/correctness guards. Capture over-budget source/state; do not run final-pose input/assertions after pause.",
+      "evidence": "docs/evidence/sixty_fps_acceptance.json"
+    }
+  ],
+  "performance_protocol": {
+    "entry": "Establish baseline variance before choosing a numerical regression tolerance; do not tune thresholds after seeing a failure.",
+    "matched_states": [
+      "Normal playable empty-field Build at 1x as an already narrowed control.",
+      "Prepared populated Train at 1x with actual reporting/active/paused students and legal instructor coverage; record fixture/time/work.",
+      "The same prepared Train state with HQ diagnostics enabled, measured separately.",
+      "Pause and 2x correctness/control observations; matched 2x performance when a clock/scheduler slice is affected."
+    ],
+    "procedure": [
+      "Run serially on the same engine, renderer, viewport, frame cap and source version; no imports/map generation or concurrent test project during measurement.",
+      "Initial screening protocol: three warmed 30-second observations per affected live scenario. Persist fixture inputs, logical start/end time, work completed and environment; record shorter action windows separately. Three runs are a starting screen, not a sample-size or statistical-confidence guarantee.",
+      "Time the normal path with diagnostics/stack capture off where possible; collect a counters-only run and a separate bounded stack-attribution run. Never compare stack-on before to stack-off after.",
+      "Use CPU profiler self and total time to distinguish exporter cost from caller fanout. Measure _refresh duration and end-to-end frame p50/p95/p99/max, action latency, logical-time debt and live planning progress.",
+      "Normalize counts by real second, logical second and UI refresh where relevant. A slower simulation or fewer visible updates cannot count as success.",
+      "Compare old/new on independent equivalent fixtures at matching logical times. Performance measurement must not call both implementations on one authority.",
+      "E16: record engine frame cap/VSync request and isolate intentional pacing from capacity; do not compare new uncapped input stress against old capped observations as an optimization speedup. Every over-budget frame remains a failure requiring attribution."
+    ],
+    "acceptance": [
+      "No new functional/audit/parity failure.",
+      "No median/p95/p99 CPU or frame regression beyond the baseline noise/tolerance established before the change; inspect distributions and outliers rather than only average counts.",
+      "A read-split slice demonstrates removal of specified unrelated snapshot chains and a reproducible refresh/CPU improvement in its target scenario.",
+      "E16 user requirement: every measured native frame and synchronous action must remain within 1000/60 ms (16.666666666666668 ms). Averages/p95/p99 alone cannot pass a run with an observed over-budget frame. Use uncapped capacity measurements with VSync disabled by request and retain raw observations. The 30000 inspection/s diagnostic budget and correctness/progress guards remain; prior 100 ms passes are historical severe-stall evidence only.",
+      "Known timing failures remain open and visible. A slice may have bounded passing evidence while the full-suite result remains failing; never report the whole suite green or silently whitelist the five existing violations."
+    ],
+    "sampling_and_uncertainty": {
+      "status": "planned_not_measured",
+      "replication": "Keep separately restarted matched runs as the replication unit. Preserve per-run data and account for run order, thermal/background drift and logical-time workload; do not assume every consecutive frame is an independent repetition.",
+      "comparison_order": "Pair comparable old/new runs with reset fixtures and recorded inputs; alternate or randomize their order when practical to expose order/drift effects. Keep instrumentation modes identical within a comparison.",
+      "percentiles": "Report per-run sample counts, observation duration, warm-up and the chosen quantile/interpolation convention consistently. Treat p99/max from short windows as descriptive; inspect raw stalls and add repeated runs when tails or between-run variation are unstable.",
+      "inference": "Choose sample size and an uncertainty method appropriate to the chosen run-level metric and dependence assumptions before making confidence claims. Report practical effect size and inconclusive comparisons; three run means or thousands of correlated frames do not automatically justify a confidence interval.",
+      "decision": "Functional failures and recorded severe stalls remain actionable even when an average improves. Never average away the five existing timing violations or compare unlike prepared states as a before/after result."
+    },
+    "failure_artifacts": [
+      "Source/engine/fixture identifiers and selection manifest.",
+      "Input receipt and last action, session/job IDs and logical/wall time.",
+      "CPU/frame/action measurements with diagnostic mode.",
+      "Per-second counts and unique call stacks in a separate attribution run.",
+      "Raw state and audited checkpoint, screenshot for native input, remaining/pending case list, engine errors."
+    ],
+    "prohibited_shortcuts": [
+      "Increasing budgets to get a pass.",
+      "Changing default opening/recipe rates/physical speed or dropping time.",
+      "Reducing polling/visual cadence without an explicit separate behavior decision.",
+      "Updating frozen expected hashes to match a failed refactor.",
+      "Treating fewer inspect_entity calls as sufficient proof of lower CPU or correct outcomes.",
+      "Restore the old 100 ms target, use average FPS to hide isolated drops, or omit overshoots to label a run 60 FPS compliant."
+    ],
+    "previous_severe_stall_acceptance_before_E16": "The existing 100ms frame/action and 30000 inspections/s defaults remain severe-stall gates until deliberately revised. They are not a 16.67ms/60fps target; a user-facing frame target remains an explicit decision."
+  },
+  "delivery_and_rollback": {
+    "before_code": "Record affected source hashes and current expected states, inspect existing user edits, and keep a small reviewable slice. No destructive reset of the shared workspace.",
+    "stop_conditions": [
+      "Any new functional error, audit violation or mismatch.",
+      "Lost dirty ID, obsolete callback side effect or duplicate completion.",
+      "Timing/call-budget failure without attributed explanation and saved artifacts.",
+      "Performance improvement caused by reduced logical-time progress/work.",
+      "Necessary hidden query side effects cannot yet be safely owned."
+    ],
+    "action_on_failure": "Pause the test by default, save evidence, restore only the current slice's routing or driver, and fix the failing case before advancing. Keep the characterization/test and known-failure evidence.",
+    "final_verification": "Use tools/update_system_map.ps1, then -Check; inspect every changed function purpose and git diff --check. Recheck source anchors and all slice gates before reporting implementation complete.",
+    "current_delivery": "Plan/evidence only. Gameplay migrations S01-S06 and their new guards are not implemented in this review."
+  },
+  "updated_utc": "2026-11-04T19:27:18.850747+00:00",
+  "next_step": "Resolve measured whole-frame budget failures before accepting further overhaul slices: profile inside opening-policy/physical admission and planning-owner calls, then bound pure preparation and fresh atomic commits without dropping simulation work, weakening checks or changing rates. Continue scoped event/local-owner migration only with 16.67 ms whole-frame evidence, correctness, liveness and custody gates.",
+  "latest_regression_followup": {
+    "evidence": "docs/evidence/cohesion_placement_fix.json",
+    "prior_failure_evidence": "docs/evidence/building_pointer_regression.json",
+    "status": "bounded_default_world_placement_stall_fixed_at_original_limits",
+    "phase_effect": "Adds measured P01 read reductions and a bounded scene-owned process-frame guard. No new scheduler or service/time-driver retirement; remaining phase gates still apply."
+  },
+  "design_review_standard": {
+    "effective_utc": "2026-11-04T13:43:02.330331+00:00",
+    "authority": "User requirement: every proposed design must have a defensible principle, best-practice basis and evidence. Reference documents are evidence, not project instructions.",
+    "required_decision_fields": [
+      "problem",
+      "principles",
+      "choice",
+      "owner",
+      "triggers",
+      "alternatives",
+      "evidence",
+      "tradeoffs",
+      "acceptance",
+      "rollback",
+      "status"
+    ],
+    "evidence_classes": {
+      "source_observation": "Read implementation with current source anchors; static structure does not establish frequency or cost.",
+      "engine_fact": "Verified official documentation for the target engine series; synthetic or installed-engine behavior checks are separately labelled.",
+      "historical_measurement": "Recorded executed scenario, source/fixture/instrumentation and limits; does not establish new architecture performance.",
+      "design_inference": "Reasoned application of principles to this source, subject to the stated alternatives and tests.",
+      "planned_validation": "An acceptance requirement that has not been executed."
+    },
+    "approval_rule": "No appeal to seniority or claim of veteran approval. Every new or revised design must expose falsifiable acceptance criteria, material risks and a reason to reject it. Existing decisions remain bounded by their recorded evidence; this revision does not certify every legacy design.",
+    "performance_rule": "Documentation establishes engine behavior, not this game speedup. Require matched CPU/frame/workload evidence before claiming improvement; retain failures and unchanged performance limits.",
+    "pattern_rule": "Use Observer/scoped signals, explicit commands and state transitions where they solve the concrete dependency. Do not add a generic bus, state-class hierarchy, new plugin, thread or node per record merely to name a pattern.",
+    "reference_context": "Existing reference_refinements records the selected book sections previously reviewed. This revision uses the principles with new source checks and official documentation; it makes no new cover-to-cover or book-page verification claim."
+  },
+  "event_driven_domain_revision": {
+    "id": "E14",
+    "recorded_utc": "2026-11-04T13:43:02.330331+00:00",
+    "status": "research_and_plan_only_not_implemented",
+    "accepted_user_requirements": [
+      "Battlefield and logistics both progress while hidden through their own events and timed work.",
+      "A shared simulation clock and perfect cross-area time alignment are no longer requirements.",
+      "Prefer direct commands, committed domain events and one-shot timed completions; application polling requires a specific documented exception.",
+      "Investigate Area2D-driven placement overlap feedback and remove repeated expensive hover validation.",
+      "Use an explicit timed supply handoff followed by actual battlefield arrival/unloading and delivery notifications.",
+      "A brief view transition may prepare the display; progression and essential handoffs cannot depend on switching views.",
+      "Justify every new design with principles, alternatives, evidence, risks and regression/performance gates."
+    ],
+    "supersedes": "Prior active recommendations to retain one common clock, including parent component_reviews.main.proposal and clock_decision_review.requirement. Historical source observations, measurements and tests remain historical evidence.",
+    "implementation_boundary": "E14 was plan-only. E15 implements provisional hover geometry and fresh full click validation in three runtime files, with bounded tests/benchmarks. EV01-EV05/EV07 architecture and independent clocks/timers/custody handoffs remain unimplemented.",
+    "source_observations": [
+      {
+        "id": "SO1",
+        "classification": "source_observation",
+        "finding": "The session still delegates live progression to BaseSimulation and RearSimulation. Local ownership is a proposed migration, not current independent drivers. The current frame guard is a bounded optimization, not dispatcher retirement.",
+        "anchors": [
+          "game/main/game_session.gd::_physics_process",
+          "game/rear_base/base_simulation.gd::tick_live",
+          "game/rear_base/base_simulation.gd::_advance_live_quantum"
+        ]
+      },
+      {
+        "id": "SO2",
+        "classification": "source_observation",
+        "finding": "Main currently hides/shows views over one shared data graph. FarmlandSession creates battlefield operations inside the same rear model and ledger. Splitting scheduling must first assign each activity a single owner; copying the model twice would duplicate authority.",
+        "anchors": [
+          "game/main/main.gd::_show_base",
+          "game/main/main.gd::_show_battlefield",
+          "game/scenario/farmland_session.gd::_create"
+        ]
+      },
+      {
+        "id": "SO3",
+        "classification": "source_observation",
+        "finding": "Placement hover is already mouse/camera/rotation event driven. BaseMap._process handles avatar movement, not a placement-preview poll. BaseDemo.preview_build_at invokes the full Construction.preview on each emitted hover; preview includes footprint, access and route checks.",
+        "anchors": [
+          "game/rear_base/base_map.gd::_gui_input",
+          "game/rear_base/base_map.gd::_process",
+          "game/rear_base/base_demo.gd::preview_build_at",
+          "game/rear_base/base_demo.gd::confirm_build_at",
+          "game/construction/construction_service.gd::preview",
+          "game/construction/construction_service.gd::_empty_field_preview",
+          "game/construction/construction_service.gd::place"
+        ]
+      },
+      {
+        "id": "SO4",
+        "classification": "source_observation",
+        "finding": "ForwardTransport scans job boundaries and settlement, but its routes also consume fuel, preserve real hull/cargo custody and resolve mines, hazards, terrain changes, unloading and return. A travel timer cannot replace every current route consequence.",
+        "anchors": [
+          "game/forward_supply/forward_transport.gd::next_boundary",
+          "game/forward_supply/forward_transport.gd::advance_to",
+          "game/forward_supply/forward_transport.gd::settle",
+          "game/forward_supply/forward_transport.gd::_begin_route",
+          "game/forward_supply/forward_transport.gd::_advance_route",
+          "game/forward_supply/forward_transport.gd::_finish_route"
+        ]
+      }
+    ],
+    "source_anchors": [
+      {
+        "function": "game/main/game_session.gd::_physics_process",
+        "line": 21,
+        "end_line": 38,
+        "function_sha256": "3e1169df0327341381a444741d388895a9afa4b9229e7af2ce2390792d811afc",
+        "file_sha256": "58c27f9230d61280ee90d92215f161fa928560f634cd37f3c761aa88cad37c94"
+      },
+      {
+        "function": "game/main/main.gd::_show_base",
+        "line": 74,
+        "end_line": 81,
+        "function_sha256": "5b69ea4c5daaf1cb4ee62f1b106452567e63486b81bffa33e1fd5f46d26aef8d",
+        "file_sha256": "288bb1e7a4a5ec93c0c0d15abb1e2daaebc62f0f0295940d76af450155ac8ae3"
+      },
+      {
+        "function": "game/main/main.gd::_show_battlefield",
+        "line": 87,
+        "end_line": 92,
+        "function_sha256": "ad70d8f5d5d4eb0edb92750f030cf99ba5efb317db557d709002afc59af2a1b0",
+        "file_sha256": "288bb1e7a4a5ec93c0c0d15abb1e2daaebc62f0f0295940d76af450155ac8ae3"
+      },
+      {
+        "function": "game/rear_base/base_simulation.gd::tick_live",
+        "line": 168,
+        "end_line": 177,
+        "function_sha256": "93266ee258902593e63305873dbedbcf9293e955ac010d29a0832990b900b39e",
+        "file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+      },
+      {
+        "function": "game/rear_base/base_simulation.gd::_advance_live_quantum",
+        "line": 223,
+        "end_line": 232,
+        "function_sha256": "964f267e6da27554b725e993b779680bdeee37e2f2a7d44c5cb0eaf9ae9109ce",
+        "file_sha256": "dcf88656831e65d02170653d5595db44f87c641920e9f7cf1c099d4b96086744"
+      },
+      {
+        "function": "game/rear_base/base_map.gd::_gui_input",
+        "line": 98,
+        "end_line": 157,
+        "function_sha256": "deeb88f2b0b3bdfb7c0517cc66e4d94eefd04dd6ee7552ef7a92b40ca4573c8f",
+        "file_sha256": "cccd9312cd72a105a661cd044e83db356db9a7c38028803abadb7477711771eb"
+      },
+      {
+        "function": "game/rear_base/base_map.gd::_process",
+        "line": 50,
+        "end_line": 59,
+        "function_sha256": "7836818fc40acb21c33726624dc9d7bb70d0a3399635a6a9077936f1e4978a59",
+        "file_sha256": "cccd9312cd72a105a661cd044e83db356db9a7c38028803abadb7477711771eb"
+      },
+      {
+        "function": "game/rear_base/base_demo.gd::preview_build_at",
+        "line": 884,
+        "end_line": 895,
+        "function_sha256": "2e3a038ed3b222c591dba247e36e31881884a575a3ea6a1dbfb7a0bc058319c1",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/rear_base/base_demo.gd::confirm_build_at",
+        "line": 897,
+        "end_line": 907,
+        "function_sha256": "fad8493168ba0f2e4c2fc36454bff833f325b83ec10e0a9f0328294723e187be",
+        "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      {
+        "function": "game/construction/construction_service.gd::preview",
+        "line": 32,
+        "end_line": 81,
+        "function_sha256": "90c095a43e97d71b4a954d21336d81f218ee2a6793949c52e4b0185a48fef287",
+        "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+      },
+      {
+        "function": "game/construction/construction_service.gd::_empty_field_preview",
+        "line": 83,
+        "end_line": 97,
+        "function_sha256": "bc55423a1477d5ea9b17abcd4d6bdd594de00ac796180b632caac99bbfc6b021",
+        "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+      },
+      {
+        "function": "game/construction/construction_service.gd::place",
+        "line": 117,
+        "end_line": 134,
+        "function_sha256": "503fbc309fc9a4721b09382f13bce67a0b25270e56e041b65be3f45c326093e5",
+        "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::next_boundary",
+        "line": 203,
+        "end_line": 208,
+        "function_sha256": "9b670da1090422d726dcf1bc727a1c8ad09458eb84732e7f8ee7d5692eb035bc",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::advance_to",
+        "line": 211,
+        "end_line": 214,
+        "function_sha256": "6f6bd3bfbabdddb1f0bb4a00a30bf3f4b82bdf62f050f8d34941122b1bf8cf0f",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::settle",
+        "line": 217,
+        "end_line": 229,
+        "function_sha256": "63bad3ed11d1a1ac2a4ad358453ab71b7b1cc01fe4ba160d6882f8c1398e9920",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::_begin_route",
+        "line": 374,
+        "end_line": 406,
+        "function_sha256": "89f3c272f5a0d97e3d3c7b7473c2d0b3211e8d11222f6a4b2b6d54aad7dce4d6",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::_advance_route",
+        "line": 409,
+        "end_line": 439,
+        "function_sha256": "22e00666d704466fdd2f62f4778614265397ec66aa5e1e54eb411610a28e1378",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/forward_supply/forward_transport.gd::_finish_route",
+        "line": 442,
+        "end_line": 460,
+        "function_sha256": "53d47307f9d2d04ef4e587e4fe51fbd4a0e2bff6982406b2819f19e2e66e6995",
+        "file_sha256": "0264438240101918e6484ddb32c836f5776de8b23a35fa2719361deac9c0eedd"
+      },
+      {
+        "function": "game/scenario/farmland_session.gd::_create",
+        "line": 15,
+        "end_line": 35,
+        "function_sha256": "293f25b4c3b247b44a08fbd8417e16037b3b33362a6ccb989d145bd0b2ed5d49",
+        "file_sha256": "8de8e1cace768a2f5f35479de92742f0517e963261dd8306b96502b3f483356b"
+      }
+    ],
+    "official_sources": {
+      "G1": {
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/best_practices/scene_organization.html",
+        "engine_fact": "The scene-organization guide recommends focused classes, loose coupling, parent-supplied dependencies and signals to respond to behavior."
+      },
+      "G2": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_timer.html",
+        "engine_fact": "Timer emits timeout, supports one_shot, paused and stop/start, and normally follows Engine.time_scale. It processes on frames; very short intervals can be inconsistent. A Timer does not provide a background thread or exact sub-frame execution."
+      },
+      "G3": {
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/scripting/pausing_games.html",
+        "engine_fact": "Process modes govern paused processing; SceneTree pause stops physics by default. Signals can still call connected methods on non-processing nodes, so process mode alone cannot guard domain mutations."
+      },
+      "G4": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_area2d.html",
+        "engine_fact": "Area2D tracks entering/exiting overlaps with collision masks. Overlap lists update on a physics step, not immediately after moving a shape."
+      },
+      "G5": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_physicsdirectspacestate2d.html",
+        "engine_fact": "intersect_shape queries the physics space at the supplied shape pose; result limits and collision filters must be chosen deliberately."
+      },
+      "G6": {
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/physics/ray-casting.html",
+        "engine_fact": "The physics guide identifies _physics_process as the safe callback for direct space queries because the space may otherwise be locked."
+      },
+      "G7": {
+        "url": "https://docs.godotengine.org/en/4.7/tutorials/scripting/idle_and_physics_processing.html",
+        "engine_fact": "_process is frame driven; _physics_process is fixed-rate and appropriate to physics. Processing can be enabled/disabled for active work."
+      },
+      "G8": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_scenetree.html#class-scenetree-method-create-timer",
+        "engine_fact": "SceneTree.create_timer creates an automatically released one-shot timer and defaults process_always to true. It is not a substitute for explicit job cancellation and pause ownership."
+      },
+      "G9": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_rect2.html",
+        "engine_fact": "Rect2 represents axis-aligned rectangle geometry and provides enclosure/intersection tests. This supports the query mechanism; E15 supplies the game-specific performance measurements."
+      },
+      "G10": {
+        "url": "https://docs.godotengine.org/en/4.7/classes/class_viewport.html#class-viewport-method-push-input",
+        "engine_fact": "push_input defaults to embedder coordinates; in_local_coords=true identifies viewport coordinates. E15 corrects the matrix helper without weakening its receipt or gameplay assertions."
+      }
+    },
+    "decisions": [
+      {
+        "id": "EV01",
+        "problem": "One shared scheduling/reconciliation path couples unrelated services; view nodes must not become simulation owners when drivers are split.",
+        "principles": [
+          "Single responsibility and high cohesion",
+          "Explicit ownership and dependency injection",
+          "Separation of simulation from presentation"
+        ],
+        "choice": "Persistent scene-owned LogisticsRuntime and BattlefieldRuntime, composed by GameSession, own local activities and timing. These are proposed responsibility names, not mandatory new files or a node per entity. Existing data services and one authoritative IdentityLedger can remain. No global equal-time invariant or mutual clock catch-up is required.",
+        "owner": "GameSession composes lifetimes and pause/speed policy; each domain runtime drives only its assigned responsibilities. A transfer coordinator owns inter-domain custody transitions.",
+        "triggers": [
+          "Command accepted by its domain",
+          "Committed relevant dependency changed",
+          "Owned timer expired",
+          "Active physical update"
+        ],
+        "alternatives": [
+          {
+            "option": "Keep a common all-service clock/settlement dispatcher",
+            "assessment": "Rejected as target: retains unrelated wakeups and hidden ordering; temporary legacy compatibility remains during migration."
+          },
+          {
+            "option": "Advance only the visible area or catch up on navigation",
+            "assessment": "Rejected: contradicts the user choice that both areas progress while hidden."
+          },
+          {
+            "option": "Run both old and new drivers over the same service",
+            "assessment": "Rejected: duplicate authority, elapsed work and completions."
+          }
+        ],
+        "evidence": [
+          "SO1",
+          "SO2",
+          "G1",
+          "G3",
+          "G7",
+          "Design inference: focused lifecycle owners remove the need for navigation-controlled work; performance remains to be measured."
+        ],
+        "tradeoffs": [
+          "Independent ownership does not imply parallel execution or extra CPU capacity; callbacks still run on the engine thread unless separately designed.",
+          "Shared ledger mutations remain atomic, with one writer/owner for each activity. Battlefield visibility must not gate hazard or movement effects.",
+          "Preserve current user-facing Pause/1x/2x controls as the default policy, applied to local owners. Equal rates may be convenient without synchronizing timestamps; independent speed controls are a separate future product decision.",
+          "Do not double-scale native timers and custom delta. Compare timestamps only within their domain; cross-domain order is causal/message based."
+        ],
+        "acceptance": [
+          "R25",
+          "R26",
+          "R29",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Revert a migrated responsibility to its legacy driver at a clean session/fixture boundary; never enable both. Preserve pre-slice source and state fixtures.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      },
+      {
+        "id": "EV02",
+        "problem": "Global settlement and broad state/time notifications reevaluate unrelated work and views, while implicit dependencies make dropped wakeups a regression risk.",
+        "principles": [
+          "Observer for facts after commit",
+          "Command/query separation",
+          "Explicit dependency graph and bounded reentrancy"
+        ],
+        "choice": "Call the owning service directly for an intent. After a consistent commit, emit typed, scoped facts carrying IDs/revisions. React only for affected subscriptions; blocked jobs register their actual wakeup dependency and stop. Use a small local finite outbox only where transaction/reentrancy semantics require it, with immediate safety effects kept inline.",
+        "owner": "Each service owns its mutations, emitted facts and subscriptions; the session supplies dependencies and invalidates old-session work.",
+        "triggers": [
+          "Inventory quantity/holder changed",
+          "Worker assigned, unassigned or incapacitated",
+          "Access/terrain revision changed",
+          "Berth or capacity released",
+          "Job entered a new state"
+        ],
+        "alternatives": [
+          {
+            "option": "One global untyped event bus or deferred world-changed broadcast",
+            "assessment": "Rejected: obscures dependencies and can reproduce broad fanout."
+          },
+          {
+            "option": "Replace every check with a synchronous signal chain",
+            "assessment": "Rejected: unbounded recursion and observation of partial commits remain possible."
+          },
+          {
+            "option": "Retry every blocked job on a repeating timer",
+            "assessment": "Rejected when a concrete dependency can notify it."
+          }
+        ],
+        "evidence": [
+          "SO1",
+          "G1",
+          "G3",
+          "Existing parent current_execution_order and clock_decision_review.coupling_review are source evidence, not new CPU attribution.",
+          "Design inference: fewer unrelated dependency edges reduce unnecessary reevaluation; test liveness and cost."
+        ],
+        "tradeoffs": [
+          "Every mutation capable of unblocking a job must publish the relevant fact. Missing producers can strand work; dependency coverage is a release gate.",
+          "Signals are notifications, not guaranteed transactions, queues or throttles. Deduplicate affected IDs without dropping later changes; cap reentrant batches and expose backlog.",
+          "Safety-critical contact/damage/custody consequences cannot wait behind a UI or planning budget. Paused signal handlers still need explicit command/automatic-work guards."
+        ],
+        "acceptance": [
+          "R26",
+          "R28",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Restore one characterized legacy reconciliation boundary for the affected owner if event liveness fails; retain scoped diagnostics and do not fall back to a second concurrent completion path.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      },
+      {
+        "id": "EV03",
+        "problem": "Checking every timed activity for its next boundary repeatedly adds work unrelated to actual completions; naive Timer conversion can break speed, cancellation and earned progress.",
+        "principles": [
+          "Schedule known work at its deadline",
+          "Explicit resource lifetime",
+          "Exactly-once effects within an idempotent state transition"
+        ],
+        "choice": "Use a stoppable one-shot Timer for an actual active discrete job/transfer, owned outside the view. Arm on state entry, stop on cancellation/blocking and rearm on a relevant rate/dependency change after accounting for earned work. Prefer this simple mechanism first; aggregate nearest-deadline scheduling only if representative timer/job scale measurements justify it.",
+        "owner": "The domain activity owns timer lifetime, remaining work and session/job generation. A timer is a wakeup mechanism; canonical job state remains data.",
+        "triggers": [
+          "Job admitted or resumed",
+          "Owned timeout",
+          "Relevant rate/assignment/access changed",
+          "Cancel, destroy, session replace or load"
+        ],
+        "alternatives": [
+          {
+            "option": "One repeating timer scans every service/job",
+            "assessment": "Rejected: recreates application polling."
+          },
+          {
+            "option": "Timer per entity, including idle entities",
+            "assessment": "Rejected: idle objects need no countdown."
+          },
+          {
+            "option": "Use SceneTreeTimer for every cancellable long-running job",
+            "assessment": "Not preferred: short-lived convenience timer needs separate stale-result/cancellation guards and has a pause-sensitive default."
+          }
+        ],
+        "evidence": [
+          "G2",
+          "G3",
+          "G8",
+          "SO4",
+          "Design inference: owned one-shot work avoids repeated application admission scans; native timers still process internally and are not inherently faster at every scale."
+        ],
+        "tradeoffs": [
+          "Native Timer is frame-quantized. Very short combat/physics deadlines may need an active local physics owner rather than a node per timeout.",
+          "Specify local duration units, rate/speed scaling and pause behavior. Engine time-scale adoption is a separate verified slice; current custom pause must stop automatic timers too.",
+          "At a rate change, accrue prior-rate work before recomputing remaining duration. Timeout/cancel ties need a stable local transition rule, not callback connection order.",
+          "Persist canonical state/remaining work and rearm on load; a Timer node is not the save format. Generation checks reject obsolete callbacks; stopping a timer does not emit timeout."
+        ],
+        "acceptance": [
+          "R26",
+          "R29",
+          "R32"
+        ],
+        "rollback": "Switch the activity back to its characterized deadline adapter at a clean boundary with remaining work preserved; test adapter and live driver invoke the same transition rules.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      },
+      {
+        "id": "EV04",
+        "problem": "A transfer crosses independently progressing domains and can race with capacity changes, duplicate callbacks, cancellation, destruction or session replacement.",
+        "principles": [
+          "Single source of truth and conservation",
+          "Explicit state machine and custody",
+          "Idempotent receiving boundary and causal ordering"
+        ],
+        "choice": "Use a shipment ID and a committed physical manifest. Loading completes in logistics; a named inter-area transit leg owns one timer; timeout requests battlefield entry once. The battlefield activates the same hull/cargo identity, performs its physical approach/unloading, then emits delivery_committed only for freight actually transferred. No view switch is required for any phase.",
+        "owner": "A narrow transfer coordinator owns transfer/custody state and transit duration. Logistics owns loading; battlefield owns local approach/hazard/unloading and its acknowledgement. These run in one process, so no distributed service or durable message broker is proposed.",
+        "triggers": [
+          "Loading committed",
+          "Transit timeout",
+          "Entry berth/space available",
+          "Physical destination reached",
+          "Unload committed",
+          "Hull destroyed/stranded",
+          "Explicit interrupt/resume/return"
+        ],
+        "alternatives": [
+          {
+            "option": "Timeout directly credits destination inventory",
+            "assessment": "Rejected: bypasses actual hull, cargo, arrival and unloading."
+          },
+          {
+            "option": "Spawn a second truck/inventory copy on receipt",
+            "assessment": "Rejected: duplicates authority and resources."
+          },
+          {
+            "option": "Apply outstanding shipments only when entering a view",
+            "assessment": "Rejected: hidden recipients and downstream events must progress."
+          },
+          {
+            "option": "Use a timer to replace every existing physical route",
+            "assessment": "Rejected: current route fuel, mines, contacts and terrain effects are real gameplay constraints."
+          }
+        ],
+        "evidence": [
+          "SO2",
+          "SO4",
+          "G2",
+          "G1",
+          "Design inference: explicit custody plus idempotent receipt protects conservation independently of clock equality."
+        ],
+        "tradeoffs": [
+          "The new abstract inter-area leg must have explicit endpoints and rules. It must not silently replace an existing hazardous on-map segment; retain physical movement/hazards there or separately justify and obtain a gameplay decision for abstraction.",
+          "If entry/unloading is blocked, retain cargo in its current custody, subscribe to capacity/berth changes and stop retrying. Timer expiration means transit ready, not delivered.",
+          "Receipt key includes session generation, shipment ID and transition generation; receiver validates current state and records acceptance before publishing effects. Duplicate receipt is a no-op.",
+          "Use one defined transit-duration owner and selected pause/speed policy. Send relative duration and causal sequence/revisions, not an absolute timestamp from another domain clock.",
+          "Enumerate ForwardTransport, dispatch, procurement, troop transport and opening/local resupply adapters before rollout. This source review characterizes ForwardTransport only; static related paths are candidates, not proven equivalent workflows."
+        ],
+        "acceptance": [
+          "R25",
+          "R27",
+          "R29",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Revert the transfer slice together with its sender/receiver adapters in a new session or a verified custody conversion. Never replay an accepted manifest or switch drivers mid-transfer without migration logic.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      },
+      {
+        "id": "EV05",
+        "problem": "A newly shown view needs fresh state without coupling simulation progress to visibility or rebuilding expensive data every frame.",
+        "principles": [
+          "Separation of model and presentation",
+          "Revision-based invalidation",
+          "Lifecycle-safe subscription"
+        ],
+        "choice": "On navigation, bind to the current session, subscribe, read a narrow detached view at a committed revision and apply subsequent relevant changes. Use a brief transition only while that display is prepared, keeping both domains running. This is presentation synchronization, not clock alignment, simulation catch-up or a full-world settle.",
+        "owner": "Main/view presenter owns transition/input readiness and subscriptions; domain owners retain simulation and pending deliveries.",
+        "triggers": [
+          "Navigation requested",
+          "Visible panel changed",
+          "Relevant committed revision changed",
+          "Session replaced"
+        ],
+        "alternatives": [
+          {
+            "option": "Fast-forward or synchronize both clocks on every switch",
+            "assessment": "Rejected: unnecessary under the selected independent background progression."
+          },
+          {
+            "option": "Always insert a fixed loading wait",
+            "assessment": "Rejected: adds latency without doing useful work."
+          },
+          {
+            "option": "Refresh both complete views on every time advance",
+            "assessment": "Rejected: retains unrelated structural reads."
+          }
+        ],
+        "evidence": [
+          "SO2",
+          "G1",
+          "G3",
+          "Design inference: revision-scoped reads avoid redundant presentation work; view preparation latency must be measured."
+        ],
+        "tradeoffs": [
+          "Subscribe before the initial read or reconcile a revision captured around it; a change during transition cannot be lost. Coalesce only the affected dirty fields/IDs.",
+          "Cancel old bind work by session/navigation generation. Rapid switch/back and session replacement must not apply stale results or duplicate subscriptions.",
+          "Hidden views keep only a lightweight dirty/revision indication and avoid structural exports/redraws. Required movement/collision owners stay outside those view branches.",
+          "A loading animation cannot conceal synchronous blocking work; if measured preparation is slow, bound or stage the pure read/application work without delaying authoritative events."
+        ],
+        "acceptance": [
+          "R25",
+          "R28",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Retain the current show/hide navigation while reverting only the presenter change; local simulation lifetimes remain independent of the transition.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      },
+      {
+        "id": "EV06",
+        "problem": "Each pointer movement invokes full route/connectivity validation; Area2D overlap feedback alone would miss access rules and can be stale at a same-frame click.",
+        "principles": [
+          "Separate cheap interaction feedback from authoritative commit",
+          "Use engine spatial facilities for spatial facts",
+          "Validate current state at the command boundary"
+        ],
+        "choice": "E15 uses fresh canonical Rect2 geometry on hover and shares exact footprint checks with full validation. Full routes/access remain on explicit preview and authoritative click; provisional feedback is amber. An Area2D mirror/comparative physics benchmark is deferred until a scale measurement and complete geometry/retained-stock event contract justify its cost. No claim is made that it would be slower or faster.",
+        "owner": "Placement presenter owns the ghost and provisional feedback. Construction service remains the authoritative validator/committer. A persistent geometry adapter derives colliders from committed construction state and owns their removal.",
+        "triggers": [
+          "Pointer/camera/orientation changed",
+          "Overlap entered/exited",
+          "Committed construction geometry revision changed",
+          "Place, cancel or dismantle command"
+        ],
+        "alternatives": [
+          {
+            "option": "Trust get_overlapping_areas immediately after moving the ghost",
+            "assessment": "Rejected: documented physics-step lag permits stale validation."
+          },
+          {
+            "option": "Area2D replaces entrance, road-width and connectivity rules",
+            "assessment": "Rejected: overlaps cannot establish those domain rules."
+          },
+          {
+            "option": "Keep full preview per mouse event or poll it in _process",
+            "assessment": "Rejected: retains expensive repeated path work."
+          },
+          {
+            "option": "Simple authoritative rectangle checks or a local spatial index",
+            "assessment": "Retain as comparison/fallback: the current game uses custom Control drawing and few rectangles may cost less than new physics adapters."
+          }
+        ],
+        "evidence": [
+          "SO3",
+          "G4",
+          "G5",
+          "G6",
+          "G3",
+          "Historical E12/E13 placement evidence identifies a regression scenario, not an Area2D speed comparison.",
+          "Design inference: isolating costly route work from pointer motion is the primary expected saving; Area2D superiority remains a benchmark question.",
+          "G9",
+          "G10",
+          "E15: docs/evidence/placement_interaction_slice.json; three failed native before runs, three passing 30-second hover/post-placement runs, separate equivalent-fixture query batches and retained wider failure."
+        ],
+        "tradeoffs": [
+          "Current map metres are transformed by Control zoom/pan. New colliders must use stable world coordinates; camera changes must not move authoritative geometry. Exclude the ghost and unrelated tactical colliders by masks.",
+          "Area2D overlap changes appear on physics steps. Final placement must check current authoritative geometry even if the physics adapter is stale. If using intersect_shape, run it in a safe physics callback and guard the captured pose/revision; do not query space blindly inside GUI input.",
+          "SceneTree pause normally stops physics. Placement while paused must still validate using authoritative model geometry or a deliberately verified active physics-space design. Do not unpause battlefield hazards just to update the ghost.",
+          "Cancel/dismantle geometry lifetime depends on actual retained stock/site rules, not merely hiding a node. Same-frame create/delete/rotate and resource changes require fresh validation.",
+          "Hover feedback can be provisional for access while moving; keep rejection feedback clear when the click fails. No claim that every safe-looking footprint has already passed full route validation."
+        ],
+        "acceptance": [
+          "R30",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Retain the current authoritative place/preview API and revert the ghost adapter if it fails parity or measured cost. A cheaper event-driven model-geometry hint remains valid without reintroducing full route scans per pointer event.",
+        "status": "bounded_provisional_interaction_implemented_in_E15_full_acceptance_incomplete",
+        "initial_choice_before_E15": "Pilot a world-space Area2D ghost with dedicated footprint collision layers and enter/exit signals for overlap feedback. Move its visual only for pointer/camera/orientation changes; coalesce redundant input poses. Remove full access/path validation from each hover. On placement command, validate current final pose, bounds, authoritative geometry/access and resource rules atomically. A hover hint never authorizes placement.",
+        "measured_followup": "Pointer dispatch medians about 9.7-10.1 ms before versus 0.024 ms after in six-site input stress. After p99 frames remain about 50 ms; 60fps and larger worlds are not established. Before runs aborted early, limiting frame-distribution comparisons."
+      },
+      {
+        "id": "EV07",
+        "problem": "A literal ban on all recurring work would prevent movement, collision, time-based physical effects and observation from progressing without button presses.",
+        "principles": [
+          "Use continuous updates for continuous state",
+          "Disable idle work",
+          "Measure before optimizing and make exceptions explicit"
+        ],
+        "choice": "Keep active physical actors/contact/hazards on the appropriate physics update; disable their application processing when inactive. Use deadlines for discrete completion and events for eligibility/availability. Rendering/progress interpolation may use _process while visible. Every remaining application poll needs an owner, observed variable, absent notification alternative, cadence rationale, stop condition, measured cost and regression test.",
+        "owner": "Local physical/observation service owns its active set; visible presenter owns interpolation; diagnostics own real-second counters.",
+        "triggers": [
+          "Actor starts/stops physical activity",
+          "Physics tick for active movement/contact",
+          "Visible animation/progress frame",
+          "Explicitly justified observation/AI cadence"
+        ],
+        "alternatives": [
+          {
+            "option": "Only button callbacks, no physical update loop",
+            "assessment": "Rejected: continuous movement/contact needs progression."
+          },
+          {
+            "option": "One repeating hook invokes every service",
+            "assessment": "Rejected: recreates world-wide polling."
+          },
+          {
+            "option": "One signal per frame to replace every _process call",
+            "assessment": "Rejected: renames recurring work and may add dispatch overhead."
+          }
+        ],
+        "evidence": [
+          "G7",
+          "G2",
+          "G4",
+          "SO4",
+          "Design inference: active-set and scoped dependency design address application work; native physics and timers still update internally."
+        ],
+        "tradeoffs": [
+          "No performance promise follows from replacing a function name with a signal or Timer. Record CPU/frame cost, not counts alone.",
+          "Observation/doctrine cadence can be intentional gameplay sampling; changing it needs separate behavioral justification. Combat visibility and local-knowledge rules remain protected.",
+          "Bound pure planning and presentation separately. Do not discard elapsed work or skip physical safety to satisfy a CPU budget.",
+          "Remaining poll registry starts as candidates requiring source/profiler verification; this plan does not assert that every current poll has been identified or eliminated."
+        ],
+        "acceptance": [
+          "R25",
+          "R26",
+          "R31",
+          "R32"
+        ],
+        "rollback": "Restore a measured prior active-update path for the affected owner if physical parity or liveness fails; keep explicit records of unresolved recurring work.",
+        "status": "proposed_not_implemented_or_benchmarked"
+      }
+    ],
+    "test_status": "E15 executes bounded R30/R31 placement/query cases and existing guards; the wider matrix retains its known vehicle-works cancellation performance failure. R25-R29 and full R30-R32/system acceptance remain unsatisfied; historical E13 evidence is not execution of these migrations.",
+    "review_verification": {
+      "production_manifest_before": "ee0e630b6c9addb8cee2fb4879635f378173cc80592e5a3cb04f052ad0f5af44",
+      "production_manifest_after": "ee0e630b6c9addb8cee2fb4879635f378173cc80592e5a3cb04f052ad0f5af44",
+      "production_source_changed": false,
+      "new_gameplay_tests_run": false,
+      "map_and_diagram_checks": "passed: every in-scope file/function matches, no pending purpose reviews, UI diagram matches current source/lines; rerun after final evidence fingerprint update",
+      "document_structure_checks": {
+        "status": "passed",
+        "recorded_utc": "2026-11-04T13:50:28.848461+00:00",
+        "checks": [
+          "Seven decisions have every required justification/ownership/evidence/acceptance/rollback field.",
+          "Eight new regression IDs and parent cases resolve; statuses remain planned/not executed.",
+          "Nineteen source anchors match current mapped hashes and lines.",
+          "Phase dependencies are acyclic; evidence/test/phase references resolve.",
+          "Frozen 166-script baseline inventory is preserved.",
+          "Production manifest unchanged; no gameplay tests run for this plan-only revision.",
+          "git diff --check passed."
+        ]
+      }
+    },
+    "shipment_transition_contract": {
+      "status": "proposed_characterize_all_existing_transport_paths_before_implementation",
+      "record": [
+        "session_generation",
+        "shipment_id",
+        "transition_generation",
+        "hull_id",
+        "manifest_entity_ids_and_quantities",
+        "current_custody",
+        "source_revision",
+        "receiver_acceptance_revision",
+        "transit_remaining_duration",
+        "blocked_dependency",
+        "terminal_outcome"
+      ],
+      "states": [
+        {
+          "from": "Loading",
+          "trigger": "Actual loading committed",
+          "guard": "Same hull, manifest, capacity and exclusive commitments remain valid",
+          "effect": "Commit departure/custody; start one inter-area transit duration",
+          "to": "InTransit"
+        },
+        {
+          "from": "InTransit",
+          "trigger": "Owned transit timeout",
+          "guard": "Current session/job generation and no prior accepted arrival",
+          "effect": "Emit transit_ready with shipment ID; attempt receiving admission once",
+          "to": "ReadyForEntry"
+        },
+        {
+          "from": "ReadyForEntry",
+          "trigger": "Initial attempt or named berth/capacity released",
+          "guard": "Receiver validates current authority and available entry",
+          "effect": "Record idempotent acceptance and transfer the same hull/cargo to battlefield ownership; emit entry_committed",
+          "to": "BattlefieldApproach"
+        },
+        {
+          "from": "BattlefieldApproach",
+          "trigger": "Actual physical destination reached",
+          "guard": "Hull survived and physically arrived with current cargo; preserve fuel/contact rules",
+          "effect": "Begin local unloading; wait on named local handler/access/capacity if blocked",
+          "to": "Unloading"
+        },
+        {
+          "from": "Unloading",
+          "trigger": "Actual local handling completed",
+          "guard": "Current carried portion, destination and capacity are valid",
+          "effect": "Commit each transferred portion once; emit delivery_committed with actual delivered IDs/quantities",
+          "to": "UnloadingOrDelivered"
+        },
+        {
+          "from": "Delivered",
+          "trigger": "Return policy admitted",
+          "guard": "Return route/crew/fuel commitments valid",
+          "effect": "Release delivered cargo commitment; start explicit return phases for the same hull",
+          "to": "Returning"
+        },
+        {
+          "from": "ActiveNonterminal",
+          "trigger": "Interrupt, cancellation, hull destruction or session replacement",
+          "guard": "Owner validates legal transition and current custody",
+          "effect": "Invalidate timeout; retain or resolve actual cargo/crew/fuel/reservations under characterized rules; never recreate delivered freight",
+          "to": "InterruptedStrandedCancelledOrDestroyed"
+        }
+      ],
+      "blocked_rule": "No repeating retry scan. Store exact dependency and subscribe; recheck current facts on the named wakeup. Record acceptance before publishing its fact. A blocked transfer remains represented and visible in diagnostics.",
+      "ordering_rule": "Causal transitions and per-owner stable tie rules replace cross-world timestamp equality. Within a physical transaction retain required immediate ordering. Timer ready, battlefield entry and delivery are separate facts.",
+      "conservation_oracle": "Audit entity identity, holders, quantities, reservations, fuel, crew commitments and delivered portions across every transition. Assert one movement owner and no duplicated hull or inventory."
+    },
+    "migration_contracts": {
+      "ownership_inventory_required": "Before driver changes, assign every affected activity, rear.time/ledger.time read, serialized deadline, cross-area dependency, cancellation and notification producer to one owner/time domain. Shared spatial/relationship services do not create a second actor driver.",
+      "legacy_bridge": "Each responsibility remains exclusively legacy-driven until its replacement is validated. Timed jobs and physical actors may migrate in different slices; temporary adapters have explicit owners and removal gates. Do not instantiate the full scenario twice.",
+      "time_default": "Keep current Pause/1x/2x user intent as the default across local owners; do not require clocks to be equal or add independent speed controls in this revision. Keep diagnostics/watchdogs real-time. Any later per-area speed policy needs its own product decision.",
+      "no_drop_rule": "An input event, stale timer or hidden view cannot drop accepted custody transitions. A hitch must not discard earned work or cause the legacy and migrated driver to both accrue it.",
+      "poll_exception_fields": [
+        "owner",
+        "observed_fact",
+        "why_no_usable_notification",
+        "cadence_and_reason",
+        "active_condition",
+        "stop_condition",
+        "CPU_and_call_cost",
+        "correctness_test",
+        "review_or_removal_condition"
+      ],
+      "proposed_poll_candidates_not_a_complete_audit": [
+        "Active motion/contact and local physical hazards",
+        "Intentional local observation/doctrine sampling",
+        "Visible progress interpolation",
+        "Real-second diagnostics/watchdog and bounded pure planning"
+      ],
+      "delivery_sequence": [
+        {
+          "step": "M0",
+          "parent": [
+            "P00",
+            "P01"
+          ],
+          "work": "Record current native 1x placement, hidden/background, transfer and view baselines; inventory time references, ownership and cross-area dependency producers. Read each current source path before adding fixtures.",
+          "gate": "Do not call map coverage execution or clear the open wider timing issues. Existing E13 source/performance evidence remains bounded."
+        },
+        {
+          "step": "M1",
+          "parent": [
+            "P01",
+            "P08"
+          ],
+          "work": "E15 isolates provisional canonical geometry from explicit full access checks and authoritative placement; source-equivalent shared footprint rules and tests preserve current admission. Further Area2D prototyping is conditional on measured need and a complete geometry event/lifetime contract.",
+          "gate": "R30/R31 placement subset passes; final pose and paused placement remain authoritative. No timing split is required to prove this slice.",
+          "initial_work_before_E15": "Isolate cheap event-driven placement feedback from full click validation. Compare Area2D prototype to model rectangle/spatial alternatives in the current Control map. Geometry adapter integration waits for characterized mutation boundaries.",
+          "status": "bounded_interaction_implemented; broader_guards_not_all_satisfied",
+          "evidence": "docs/evidence/placement_interaction_slice.json"
+        },
+        {
+          "step": "M2",
+          "parent": [
+            "P02",
+            "P03"
+          ],
+          "work": "Implement scoped committed events, command mutation receipts and dependency coverage with lifecycle generations. Define persistent local owner composition without activating duplicate drivers.",
+          "gate": "R26/R28/R29 liveness and safety subsets plus current characterization pass."
+        },
+        {
+          "step": "M3",
+          "parent": [
+            "P04",
+            "P05"
+          ],
+          "work": "Keep the existing military/HQ reactive pilot, then pilot one discrete logistics activity with an owned native one-shot timer, shared transition logic for explicit-time tests and background lifecycle coverage.",
+          "gate": "Required parent dependencies apply. Demonstrate R25/R26/R29/R31/R32 subsets before migrating more timers; neither parent phase is marked complete by one activity."
+        },
+        {
+          "step": "M4",
+          "parent": [
+            "P06"
+          ],
+          "work": "Migrate one complete sender/transit/receiver/unload/return supply path with real identities and the transfer state machine. Inventory other delivery/transport implementations before adapting them.",
+          "gate": "R27 conservation and duplicate/cancel/capacity cases pass with either view hidden. Define abstract-leg endpoints without bypassing on-map hazards."
+        },
+        {
+          "step": "M5",
+          "parent": [
+            "P07",
+            "P08"
+          ],
+          "work": "Migrate remaining physical/timed duties by their parent dependencies; add revision-based view binding and conditional transition without affecting background simulation.",
+          "gate": "R25-R32 affected subsets pass; every remaining application poll has a reviewed exception or migration owner."
+        },
+        {
+          "step": "M6",
+          "parent": [
+            "P09"
+          ],
+          "work": "Remove retired all-service advance_time/settlement responsibilities and legacy live callers only after their replacement paths pass. Update retained fixtures/adapters explicitly and publish the remaining coverage gaps.",
+          "gate": "Full selected suites and prepared acceptance scenarios pass at existing limits, both domains progress hidden, no double drivers, and map/diagram checks are clean."
+        }
+      ],
+      "rollback_policy": "Keep each slice reversible with source/fixture checkpoints and no competing authority. For timer/clock/custody changes, rollback uses a new session unless a state conversion is explicitly tested. Preserve original evidence and compare intended behavior changes against written contracts, not silently regenerated expected hashes."
+    },
+    "regression_ids": [
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32"
+    ],
+    "performance_evidence": {
+      "current_baseline": "docs/evidence/cohesion_placement_fix.json",
+      "classification": "historical_measurement_bounded_not_a_new_architecture_benchmark",
+      "scope": "E13 records three passing four-case actual 1x placement runs under unchanged severe-stall gates; worst recorded frame 99.585 ms. It does not prove a 60fps target or a passing full 47-case sweep.",
+      "new_comparisons": "planned_not_executed; use performance_protocol with R31 workload and real/logical progress recorded per owner.",
+      "forbidden_claims": [
+        "Signals or Timers automatically make this game faster",
+        "Area2D is faster than a small rectangle test without a matched benchmark",
+        "Independent local drivers run on parallel threads",
+        "Existing selected GdUnit cases execute every function",
+        "Passing historical placement cases proves the proposed architecture"
+      ],
+      "active_target": "E16: minimum 60 FPS, every observed frame within 1000/60 ms. E13/E15 severe-stall passes do not satisfy this target."
+    },
+    "implementation_followup": {
+      "evidence": "E15",
+      "path": "docs/evidence/placement_interaction_slice.json",
+      "recorded_utc": "2026-11-04T14:49:59.149606+00:00",
+      "status": "bounded_EV06_interaction_slice_implemented_remaining_decisions_proposed"
+    },
+    "performance_acceptance_followup": {
+      "evidence": "E16",
+      "path": "docs/evidence/sixty_fps_acceptance.json",
+      "minimum_fps": 60,
+      "maximum_frame_ms": 16.666666666666668,
+      "maximum_synchronous_action_ms": 16.666666666666668,
+      "all_measured_frames_required": true,
+      "measurement": "Uncapped with VSync disabled by request; retain raw intervals and actual cap metadata. Averages/percentiles do not override an over-budget observed frame.",
+      "game_compliant": false,
+      "historical_100ms_passes_are_not_sixty_fps_passes": true
+    },
+    "implementation_followup_E16": {
+      "evidence": "docs/evidence/sixty_fps_acceptance.json",
+      "scope": "Acceptance and diagnostic measurement only; no gameplay scheduling/strategy optimization claimed."
+    }
+  },
+  "latest_bounded_implementation": {
+    "evidence": "docs/evidence/placement_interaction_slice.json",
+    "parent_steps": [
+      "M0 placement characterization subset",
+      "M1 interaction slice"
+    ],
+    "status": "implemented_bounded_passes_with_known_broader_cancellation_failure",
+    "full_overhaul_complete": false,
+    "default_suite_cases": 55
+  },
+  "performance_acceptance": {
+    "evidence": "E16",
+    "path": "docs/evidence/sixty_fps_acceptance.json",
+    "minimum_fps": 60,
+    "maximum_frame_ms": 16.666666666666668,
+    "maximum_synchronous_action_ms": 16.666666666666668,
+    "all_measured_frames_required": true,
+    "measurement": "Uncapped with VSync disabled by request; retain raw intervals and actual cap metadata. Averages/percentiles do not override an over-budget observed frame.",
+    "game_compliant": false,
+    "historical_100ms_passes_are_not_sixty_fps_passes": true
+  },
+  "latest_performance_revision": {
+    "evidence": "docs/evidence/sixty_fps_acceptance.json",
+    "default_suite_cases": 58,
+    "enforcement_guards_passed": 13,
+    "game_compliant": false
+  }
+}

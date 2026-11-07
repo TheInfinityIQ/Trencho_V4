@@ -1,0 +1,760 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T22:42:47.094667+00:00",
+  "status": "bounded_training_slice_implemented_full_performance_suite_not_green",
+  "scope": {
+    "objective": "Establish training regression boundaries, remove normal Train's broad world-read dependency and move explicitly read-only training rejections off global reconciliation.",
+    "production_files": [
+      "game/rear_base/base_demo.gd",
+      "game/training/training_service.gd",
+      "game/rear_base/base_simulation.gd",
+      "game/staffing/rear_simulation.gd"
+    ],
+    "driver_migration": "RearSimulation.advance_time and global _settle are still active. No training time driver, deadline scheduler or committed-change outbox was replaced in this slice.",
+    "first_party_source_policy": "Retained tests/fixtures remain in the game source inventory. Isolated projects contain generated comparison snapshots and the pinned third-party test addon; no editor addon is enabled in the normal project.",
+    "preserved": "Empty opening/start, pause/speed and physical logistics rules, training durations/access/withdrawal/qualifications, nine frozen training projections and the existing 13 domain hashes."
+  },
+  "changes": [
+    {
+      "area": "Scoped Train view",
+      "implementation": "BaseSimulation.training_view combines purchasing/common HUD facts, one current training export and only selected-student facts. BaseDemo routes normal Train to it and uses a common training renderer. Other advanced panels and HQ diagnostics retain their existing broad path."
+    },
+    {
+      "area": "Local read reuse",
+      "implementation": "Training.snapshot retains _refresh_states normalization and reuses one fresh instructor list for its returned IDs and coverage. There is no cross-callback cache or new authority."
+    },
+    {
+      "area": "Command boundary",
+      "implementation": "Training results declare requires_reconciliation. Audited read-only rejected requests return false; BaseDemo skips after_command and session-wide notify_command for them while keeping local feedback/refresh. Legacy unannotated and accepted training results retain their reconciliation guarantees."
+    },
+    {
+      "area": "Diagnostics",
+      "implementation": "Record request/withdraw/access and staffing-target entries so tests can distinguish actual commands from presentation updates. No sampling or dropped-call shortcut was introduced."
+    },
+    {
+      "area": "Tests and launcher",
+      "implementation": "Add nine training read/result guards, update the obsolete native training suite to four current cases and explicitly select the nine retained domain cases. Default selection is now 36 aggregate cases; TrainingOnly selects 22 rendered or 18 headless cases, TrainingUiOnly selects four native cases."
+    },
+    {
+      "area": "Clickable chart",
+      "implementation": "Add source-checked Train read and command workflows and document conditional reconciliation/notification. Existing VS Code source links and static-graph uncertainty are preserved."
+    }
+  ],
+  "characterization": {
+    "pre_change_capture": "logs/gdunit4-performance-2026-11-03T21-50-30-11388",
+    "pre_change_result": "14 cases passed before production edits: five initial read/normalization guards and nine retained domain cases.",
+    "fixture": "game/diagnostics/tests/gdunit/fixtures/training_read_baseline.json",
+    "fixture_sha256": "8c2e3aed0e16daffbe147df5091961959c42f6abf945b0d4ad3f31782bb06183",
+    "states": [
+      "empty",
+      "queued",
+      "reporting",
+      "active",
+      "access_paused",
+      "instructor_paused",
+      "withdrawn",
+      "completed",
+      "multiple_sites"
+    ],
+    "expected_values": "Pre-query raw stored-script state, post-query state and visible-fact hashes captured from the original production sources and preserved unchanged.",
+    "comparison": "Compare independent equivalent worlds at equal explicit logical time, not old/new reads on the same mutable authority. A separate stale-reason guard proves current snapshot normalization is intentionally retained.",
+    "scope_limits": "Raw capture follows stored script fields, nested records and stable alias paths without calling service snapshots/audits. Weak references/callback identities and native engine object payloads such as RNG internals are not certified by these hashes.",
+    "additional_guards": "Detached nested output, missing selection, no-UI progress/withdrawal, selected withdrawn/completed/injured/dead students, command receipts, focus/selection, hidden-panel catch-up and session replacement.",
+    "remaining": "These cases do not establish every gameplay state, corrupt-save recovery or all proposed rollout acceptance tests."
+  },
+  "executed_tests": [
+    {
+      "root": "logs/training-read-baseline-2026-11-03T22-17-39-11436",
+      "report": "logs/training-read-baseline-2026-11-03T22-17-39-11436/gdunit-report/results.xml",
+      "report_sha256": "d615300f51c08a6adfa3f4be2e96951e94737723cf038d6e5899030eea119b42",
+      "cases": 4,
+      "problem_elements": 0,
+      "failing_cases": 0,
+      "problems": [],
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T22-39-29-39748",
+      "report": "logs/gdunit4-performance-2026-11-03T22-39-29-39748/gdunit-report/results.xml",
+      "report_sha256": "a45f430015b91fafba1e9f520402e061530b463be66288416c9ee610a7a36963",
+      "cases": 4,
+      "problem_elements": 0,
+      "failing_cases": 0,
+      "problems": [],
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T22-36-41-29468",
+      "report": "logs/gdunit4-performance-2026-11-03T22-36-41-29468/gdunit-report/results.xml",
+      "report_sha256": "3257a360b44547646cf4f49595b86e1568c196e85a483ffeaed77cebd4f5affc",
+      "cases": 18,
+      "problem_elements": 0,
+      "failing_cases": 0,
+      "problems": [],
+      "stderr_bytes": 0
+    },
+    {
+      "root": "logs/gdunit4-performance-2026-11-03T22-27-35-39592",
+      "report": "logs/gdunit4-performance-2026-11-03T22-27-35-39592/gdunit-report/results.xml",
+      "report_sha256": "691c7bf6efd0484fbcbbef153b0edebac4bba91c5d42a2b2ec6e57e10a8d4c44",
+      "cases": 35,
+      "problem_elements": 5,
+      "failing_cases": 3,
+      "problems": [
+        {
+          "case": "test_11_every_started_building_cancellation_keeps_consumed_materials_consumed",
+          "kind": "failure",
+          "message": "FAILED: res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:437"
+        },
+        {
+          "case": "test_12_every_runtime_button_and_menu_choice_in_game_and_retained_reviews",
+          "kind": "failure",
+          "message": "FAILED: res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:262"
+        },
+        {
+          "case": "test_12_every_runtime_button_and_menu_choice_in_game_and_retained_reviews",
+          "kind": "failure",
+          "message": "FAILED: res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:262"
+        },
+        {
+          "case": "test_12_every_runtime_button_and_menu_choice_in_game_and_retained_reviews",
+          "kind": "failure",
+          "message": "FAILED: res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:262"
+        },
+        {
+          "case": "test_03_observe_live_menu_actions_at_one_x",
+          "kind": "failure",
+          "message": "FAILED: res://game/diagnostics/tests/gdunit/menu_performance_test.gd:344"
+        }
+      ],
+      "stderr_bytes": 0
+    }
+  ],
+  "suite_accounting": {
+    "full_audit": "The 35-case full run preceded the final extra injury/death read guard. That extra guard is included in the subsequent passing 18-case headless selection. The passing native four-case run has the same final production hashes, giving 22 distinct current training cases exercised across the two selections.",
+    "original_read_guards": "All ten existing focused guards, including all 13 frozen domain checkpoints, passed in the full run.",
+    "matrix": {
+      "ui_actions": 854,
+      "construction_scenarios": 44,
+      "source_definitions": 76,
+      "unmatched_source_definitions": 0,
+      "functional_contract_failures": 0,
+      "timing_failed_scenarios": 4,
+      "observation_seconds": 0.05,
+      "limits": "Shortened audit windows preserve native input/contracts but do not certify per-action full-second inspection budgets."
+    },
+    "full_groups": [
+      {
+        "group": "group-01",
+        "scenarios": 22,
+        "failed_scenarios": 0,
+        "issue_reasons": {}
+      },
+      {
+        "group": "group-02",
+        "scenarios": 22,
+        "failed_scenarios": 1,
+        "issue_reasons": {
+          "frame_time_budget": 2,
+          "action_time_budget": 1
+        }
+      },
+      {
+        "group": "group-03",
+        "scenarios": 854,
+        "failed_scenarios": 3,
+        "issue_reasons": {
+          "frame_time_budget": 6,
+          "action_time_budget": 3
+        }
+      },
+      {
+        "group": "group-04",
+        "scenarios": 1,
+        "failed_scenarios": 0,
+        "issue_reasons": {}
+      },
+      {
+        "group": "group-05",
+        "scenarios": 1,
+        "failed_scenarios": 0,
+        "issue_reasons": {}
+      },
+      {
+        "group": "group-06",
+        "scenarios": 1,
+        "failed_scenarios": 0,
+        "issue_reasons": {}
+      },
+      {
+        "group": "group-07",
+        "scenarios": 3,
+        "failed_scenarios": 0,
+        "issue_reasons": {}
+      }
+    ],
+    "timing_failures": [
+      {
+        "label": "Started cancellation: vehicle_works",
+        "issues": [
+          {
+            "milliseconds": 129.265,
+            "reason": "frame_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 118.756,
+            "reason": "action_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 129.265,
+            "reason": "frame_time_budget"
+          }
+        ]
+      },
+      {
+        "label": "Main game > Start new game",
+        "issues": [
+          {
+            "milliseconds": 259.912,
+            "reason": "frame_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 186.671,
+            "reason": "action_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 259.912,
+            "reason": "frame_time_budget"
+          }
+        ]
+      },
+      {
+        "label": "Standalone rear > Start new empty-field game",
+        "issues": [
+          {
+            "milliseconds": 199.709,
+            "reason": "frame_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 183.391,
+            "reason": "action_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 199.709,
+            "reason": "frame_time_budget"
+          }
+        ]
+      },
+      {
+        "label": "HQ diagnostics > Start new game",
+        "issues": [
+          {
+            "milliseconds": 382.625,
+            "reason": "frame_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 185.134,
+            "reason": "action_time_budget"
+          },
+          {
+            "limit": 100,
+            "milliseconds": 382.625,
+            "reason": "frame_time_budget"
+          }
+        ]
+      }
+    ],
+    "legacy_live_menu_failure": {
+      "reason": "frame_time_budget",
+      "details": null,
+      "action": {
+        "index": 4,
+        "kind": "option",
+        "label": "Workers/Jobs > choose munitions",
+        "menu": "Workers/Jobs",
+        "path": "@Control@116374/@MarginContainer@116376/@VBoxContainer@116377/@HBoxContainer@116411/ContentHost/RearBase/@VBoxContainer@116446/@HBoxContainer@116461/@TabContainer@116466/Workers_Jobs/@VBoxContainer@116571/@OptionButton@116604",
+        "route": [
+          1,
+          1,
+          0,
+          2,
+          1,
+          0,
+          0,
+          4,
+          1,
+          1,
+          0,
+          4
+        ]
+      },
+      "elapsed_seconds": 0.117257
+    },
+    "verdict": "The full run contains five failure elements across three aggregate cases, all timing-related: four UI/building scenarios plus the earlier live-menu case. It is not a passing full performance suite.",
+    "tool_tests": {
+      "cases": 12,
+      "status": "passed",
+      "scope": "Source map and clickable-chart tests, including new Train path anchors."
+    },
+    "expected_current_selection_counts": {
+      "default": 36,
+      "training_rendered": 22,
+      "training_headless": 18,
+      "training_ui_only": 4
+    }
+  },
+  "measurement": {
+    "recorded_utc": "2026-11-03T22:42:47.094667+00:00",
+    "before": {
+      "root": "logs/training-read-baseline-2026-11-03T22-17-39-11436",
+      "report": "logs/training-read-baseline-2026-11-03T22-17-39-11436/ui-contracts/group-04/training_observations.json",
+      "runs": [
+        {
+          "trial": 0,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 4.545,
+            "p95": 4.89,
+            "p99": 5.303,
+            "max": 5.303
+          },
+          "direct_inspections": 4590,
+          "direct_repeats": 30,
+          "world_exports": 30,
+          "frame_ms": {
+            "n": 1801,
+            "median": 16.661,
+            "p95": 17.549,
+            "p99": 18.734,
+            "max": 29.924
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1801,
+            "median": 3.783,
+            "p95": 8.615,
+            "p99": 140.283,
+            "max": 140.283
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1801,
+            "median": 12.023,
+            "p95": 12.696,
+            "p99": 15.057,
+            "max": 15.057
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.403000116348267,
+            "cpu_seconds": 21.09375,
+            "cpu_seconds_per_wall_second": 0.7174012827443323
+          },
+          "wall_seconds": 30.009000062942505,
+          "start_model_time": 31.3999999999999,
+          "end_model_time": 61.4333333333315,
+          "model_seconds": 30.033333333331598,
+          "earned_work": 30.0333333333316,
+          "inspections_per_second": 23720.9557926551,
+          "ok": true
+        },
+        {
+          "trial": 1,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 4.3345,
+            "p95": 4.441,
+            "p99": 4.458,
+            "max": 4.458
+          },
+          "direct_inspections": 4590,
+          "direct_repeats": 30,
+          "world_exports": 30,
+          "frame_ms": {
+            "n": 1802,
+            "median": 16.668,
+            "p95": 17.661,
+            "p99": 18.719,
+            "max": 26.13
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1802,
+            "median": 3.704,
+            "p95": 14.402,
+            "p99": 132.436,
+            "max": 132.436
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1802,
+            "median": 11.38,
+            "p95": 14.719,
+            "p99": 15.362,
+            "max": 15.362
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.433000087738037,
+            "cpu_seconds": 21.34375,
+            "cpu_seconds_per_wall_second": 0.725163929479684
+          },
+          "wall_seconds": 30.016000032424927,
+          "start_model_time": 31.3499999999999,
+          "end_model_time": 61.3833333333315,
+          "model_seconds": 30.0333333333316,
+          "earned_work": 30.033333333331605,
+          "inspections_per_second": 23714.9367252411,
+          "ok": true
+        },
+        {
+          "trial": 2,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 4.3515,
+            "p95": 4.454,
+            "p99": 4.464,
+            "max": 4.464
+          },
+          "direct_inspections": 4590,
+          "direct_repeats": 30,
+          "world_exports": 30,
+          "frame_ms": {
+            "n": 1802,
+            "median": 16.666,
+            "p95": 17.143,
+            "p99": 17.5,
+            "max": 21.447
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1802,
+            "median": 3.062,
+            "p95": 3.961,
+            "p99": 132.438,
+            "max": 132.438
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1802,
+            "median": 10.424,
+            "p95": 13.238,
+            "p99": 13.373,
+            "max": 13.373
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.450999975204468,
+            "cpu_seconds": 21.265625,
+            "cpu_seconds_per_wall_second": 0.722068011880889
+          },
+          "wall_seconds": 30.015000104904175,
+          "start_model_time": 31.3666666666666,
+          "end_model_time": 61.3999999999982,
+          "model_seconds": 30.0333333333316,
+          "earned_work": 30.033333333331626,
+          "inspections_per_second": 23715.2274922987,
+          "ok": true
+        }
+      ]
+    },
+    "after": {
+      "root": "logs/gdunit4-performance-2026-11-03T22-39-29-39748",
+      "report": "logs/gdunit4-performance-2026-11-03T22-39-29-39748/ui-contracts/group-04/training_observations.json",
+      "runs": [
+        {
+          "trial": 0,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 0.9235,
+            "p95": 1.249,
+            "p99": 1.491,
+            "max": 1.491
+          },
+          "direct_inspections": 1650,
+          "direct_repeats": 30,
+          "world_exports": 0,
+          "frame_ms": {
+            "n": 1801,
+            "median": 16.668,
+            "p95": 17.311,
+            "p99": 18.289,
+            "max": 21.389
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1801,
+            "median": 3.807,
+            "p95": 4.638,
+            "p99": 31.037,
+            "max": 111.656
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1801,
+            "median": 7.707,
+            "p95": 8.43,
+            "p99": 9.47,
+            "max": 472.864
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.353999853134155,
+            "cpu_seconds": 14.296875,
+            "cpu_seconds_per_wall_second": 0.48705031925908077
+          },
+          "wall_seconds": 30.016000032424927,
+          "start_model_time": 31.1499999999999,
+          "end_model_time": 61.1666666666649,
+          "model_seconds": 30.016666666665003,
+          "earned_work": 30.01666666666499,
+          "inspections_per_second": 17820.5103730844,
+          "ok": true
+        },
+        {
+          "trial": 1,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 0.9295,
+            "p95": 1.042,
+            "p99": 1.081,
+            "max": 1.081
+          },
+          "direct_inspections": 1650,
+          "direct_repeats": 30,
+          "world_exports": 0,
+          "frame_ms": {
+            "n": 1801,
+            "median": 16.668,
+            "p95": 17.089,
+            "p99": 17.526,
+            "max": 22.598
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1801,
+            "median": 3.846,
+            "p95": 5.014,
+            "p99": 30.314,
+            "max": 30.314
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1801,
+            "median": 7.009,
+            "p95": 8.082,
+            "p99": 8.088,
+            "max": 8.088
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.414999961853027,
+            "cpu_seconds": 14.59375,
+            "cpu_seconds_per_wall_second": 0.49613292602162057
+          },
+          "wall_seconds": 30.01799988746643,
+          "start_model_time": 31.1333333333333,
+          "end_model_time": 61.1333333333316,
+          "model_seconds": 29.9999999999983,
+          "earned_work": 29.999999999998252,
+          "inspections_per_second": 17810.192520652,
+          "ok": true
+        },
+        {
+          "trial": 2,
+          "direct_refresh_ms": {
+            "n": 30,
+            "median": 0.9005000000000001,
+            "p95": 0.928,
+            "p99": 1.018,
+            "max": 1.018
+          },
+          "direct_inspections": 1650,
+          "direct_repeats": 30,
+          "world_exports": 0,
+          "frame_ms": {
+            "n": 1800,
+            "median": 16.654,
+            "p95": 17.468,
+            "p99": 18.201,
+            "max": 19.104
+          },
+          "engine_frame_monitor_ms": {
+            "n": 1800,
+            "median": 3.757,
+            "p95": 28.997,
+            "p99": 102.098,
+            "max": 102.098
+          },
+          "engine_physics_monitor_ms": {
+            "n": 1800,
+            "median": 7.474,
+            "p95": 8.046,
+            "p99": 8.088,
+            "max": 8.088
+          },
+          "cpu": {
+            "sample_interval_seconds": 29.348000049591064,
+            "cpu_seconds": 14.515625,
+            "cpu_seconds_per_wall_second": 0.49460354966171743
+          },
+          "wall_seconds": 30.001999855041504,
+          "start_model_time": 31.1333333333333,
+          "end_model_time": 61.1333333333316,
+          "model_seconds": 29.9999999999983,
+          "earned_work": 29.999999999998252,
+          "inspections_per_second": 17818.9908511515,
+          "ok": true
+        }
+      ]
+    },
+    "identical_harness_sha256": {
+      "game/diagnostics/tests/gdunit/fixtures/training_read_scenarios.gd": "fecf8069d81851727015be17246bf066357f04976b8e4c6ecdf83eab8308bd31",
+      "game/training/tests/training_input_test.gd": "967d67569fca06377558d2b6eb543669daf6794ee772ec940c873c1f29c5a560",
+      "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd": "e8426eb8201ae723051ea5d2a2fcfe97535a89a1d1a0909160c0058fe3973031"
+    },
+    "changed_production_files": {
+      "game/rear_base/base_demo.gd": {
+        "before": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8",
+        "after": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+      },
+      "game/training/training_service.gd": {
+        "before": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4",
+        "after": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1"
+      },
+      "game/rear_base/base_simulation.gd": {
+        "before": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003",
+        "after": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+      },
+      "game/staffing/rear_simulation.gd": {
+        "before": "d44c6c9b89d7bd3af44e2eee291d1d82ccf1d67cea93ee6566927b7ae2f0fef4",
+        "after": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+      }
+    },
+    "inspection_reduction_fraction": 0.6405228758169934,
+    "median_refresh_reduction_fraction": 0.7877743306905665,
+    "median_process_cpu_reduction_fraction": 0.31501805713101394,
+    "design": "Same installed Godot 4.7.2, pinned GdUnit4 6.2.2, gl_compatibility, 60 FPS cap, 1280x720 prepared Train fixture and identical three-file native harness. Four native cases executed in each matched run; three separately reset 30-second observations, with stack capture off.",
+    "summary": {
+      "inspections_per_direct_refresh": {
+        "before": 153,
+        "after": 55
+      },
+      "direct_refresh_median_ms": {
+        "before": 4.3515,
+        "after": 0.9235
+      },
+      "process_cpu_seconds_per_wall_second_median": {
+        "before": 0.722068011880889,
+        "after": 0.49460354966171743
+      },
+      "world_exports_per_30_direct_refreshes": {
+        "before": 30,
+        "after": 0
+      },
+      "observed_inspections_per_wall_second": {
+        "before_range": [
+          23714.9367252411,
+          23720.9557926551
+        ],
+        "after_range": [
+          17810.192520652,
+          17820.5103730844
+        ]
+      }
+    },
+    "quantiles": "Direct-call medians use the ordinary median; p95/p99 use nearest rank. Preserve each run and raw sample arrays. No confidence interval or significance claim is made from three runs.",
+    "cpu_scope": "Cumulative owned-process CPU is sampled every 0.5 seconds. The reported rate uses only samples strictly within each live window, covering about 29.4 of its 30 seconds. It is whole-process CPU, not script self/total attribution or machine-wide CPU percentage.",
+    "time_scope": "The same prepared active/paused cohort advances approximately 30 logical/work seconds in each observation. Live warm-up/microprobe overhead creates sub-second differences in starting logical time; these are comparable steady phases, not exact replay states.",
+    "frame_scope": "Measured frame medians remain about 16.67 ms under the cap; tails overlap. No whole-game FPS improvement is claimed.",
+    "monitor_caution": "Built-in engine monitor samples may lag and include earlier setup/synthetic-batch values in their tails. They are retained for inspection but are not used as clean per-window CPU or stall attribution.",
+    "excluded_comparison_run": {
+      "root": "logs/gdunit4-performance-2026-11-03T22-19-50-12384",
+      "reason": "Map generation overlapped part of the timed observation. Its passing functional checks are retained, but its timings are excluded from the matched comparison."
+    },
+    "initial_harness_runs": "Earlier fixture/input-routing/measurement-setup failures remain in logs. The final harness corrects physical builder reporting waits, supported list/popup navigation, focused-window key routing and re-entry into numeric editing; explicit domain fast-forward/raw capture/screenshot work is journaled outside live input observations."
+  },
+  "command_contract": {
+    "no_reconciliation": "Native Main starts in the real empty opening. Rejected course requests must produce no after_command, advance_time or notify_command entry and must not increment planning_view_revision.",
+    "accepted": "Native staffing, request/access/withdrawal inputs still issue their intended command once and preserve accepted reconciliation behavior.",
+    "compatibility": "The generic UI defaults unannotated results to reconciliation. This is not a blanket assumption that every failed command in every service is read-only."
+  },
+  "visual_qa": {
+    "path": "logs/gdunit4-performance-2026-11-03T22-39-29-39748/ui-contracts/group-03/training-small.png",
+    "inspected": true,
+    "scope": "960x640 prepared Train view, selected final row, preserved draft and scrollable controls. No layout redesign or default-opening change."
+  },
+  "source_anchors": [
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh",
+      "line": 1346,
+      "end_line": 1477,
+      "function_sha256": "cb70566ed89afbdb8ab62bd70566e6b98d7bd96c5d6eabafe5c31cd590705515",
+      "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh_training",
+      "line": 1500,
+      "end_line": 1505,
+      "function_sha256": "5f24035a6b15afb42cb847eda6fa92c0621c59ad108d6fa095664415c2498000",
+      "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh_training_controls",
+      "line": 1507,
+      "end_line": 1515,
+      "function_sha256": "69f1109cd4d161dfb039ca34e8ad2056f6d8a3076e6a953f43e90c48535ab3f0",
+      "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_result",
+      "line": 1186,
+      "end_line": 1193,
+      "function_sha256": "910841b5ce79e21575b76f599c99de6e248b3a065cf44d66e14d0a9eb0173b11",
+      "file_sha256": "5088d86a8b875f1c70e980bee91041eaf425e39dfc2ee388748f3f242264b75c"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::training_view",
+      "line": 323,
+      "end_line": 330,
+      "function_sha256": "f0b643f26edd17aca2fba032777bb14e4757bf3892d499d48cdbfbab3d302f4b",
+      "file_sha256": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::training_person_view",
+      "line": 315,
+      "end_line": 321,
+      "function_sha256": "d3c6a324374b08634180ee27e94277ed079f55eca3fc6c2897f1e58f46596da5",
+      "file_sha256": "677443d4d5e1b9faf272849c10b24a97612dabdadc092559c632b1f86477f45e"
+    },
+    {
+      "function": "game/training/training_service.gd::snapshot",
+      "line": 244,
+      "end_line": 249,
+      "function_sha256": "2c8aa3f732efc2af539b69da3e523d4bcf494a540a1f4e32dd3312a6df407a88",
+      "file_sha256": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1"
+    },
+    {
+      "function": "game/training/training_service.gd::_result",
+      "line": 265,
+      "end_line": 268,
+      "function_sha256": "d55f40953bab7e1559b5f1f77a627c17b8cd7696b6ea4852028ee961b0280b1b",
+      "file_sha256": "b67f0e699b73361ba3391760be5be9a66bad584abf561d768ddd7fd25110dca1"
+    },
+    {
+      "function": "game/staffing/rear_simulation.gd::advance_time",
+      "line": 307,
+      "end_line": 383,
+      "function_sha256": "ba0e888b796ea0f73c3964930a6e4b8794869e0edff16e30b83acfd2d57243b9",
+      "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+    },
+    {
+      "function": "game/staffing/rear_simulation.gd::_settle",
+      "line": 557,
+      "end_line": 602,
+      "function_sha256": "0062f8999eb7f3affcec04478d4b2aa14f8972db071503306022da5710ee432b",
+      "file_sha256": "26e551a34ce70e6f3a3f8c04b2b18cd81f08dac96f66200afc06d0caf606a0e1"
+    }
+  ],
+  "remaining_work": [
+    "The global dispatcher and settlement loops remain; transfer ownership, wakeups and required ordering service by service before their retirement.",
+    "Scoped committed-change notifications, read purity, generations for new scheduled work and the engine-driven activity pilot remain planned.",
+    "Other advanced panels/HQ diagnostics still have broad reads and unresolved inspection amplification.",
+    "New-game/workshop-cancellation/Workers timing failures remain open. No budgets were raised and no failing scenario was silently whitelisted.",
+    "Detailed script CPU self/total profiles and broader prepared gameplay states remain needed before choosing later scheduler migrations.",
+    "Additional in-flight/partial-delivery cancellation, arbitrary reorder/removal, long-run leak and corruption cases remain planned."
+  ],
+  "log_availability": "Logs and isolated snapshots are local ignored artifacts; they are not assumed present in a clean checkout. This retained evidence preserves selection, results, hashes, bounded metrics and limitations."
+}

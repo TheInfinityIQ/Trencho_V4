@@ -36,6 +36,7 @@ var dispatch_sites: Dictionary = {"dispatch":{"store":"dispatch","duty":"dispatc
 
 func _init(rear: RefCounted, at: Vector2 = HQ) -> void:
 	_rear_ref = weakref(rear)
+	if rear.empty_field_opening: dispatch_sites.clear()
 	hq_position = at
 	queue_position = at + (HQ_QUEUE - HQ)
 	rear.ledger.add_place("dispatch-berth","F07 real dispatch vehicle berth",Layout.door("dispatch"))
@@ -154,6 +155,12 @@ func _unit_mass(type: String) -> float:
 		if spec.output_type == type: return float(spec.unit_mass)
 	return -1.0
 
+func active_handling_status(hull_id: String) -> Dictionary:
+	var id: String = _active_manifest(hull_id)
+	if id.is_empty(): return {}
+	var row: Dictionary = manifests[id]
+	return {"state":str(row.state),"handling":str(row.task.get("phase","")),"blocker":str(row.blocker)}
+
 func _active_manifest(hull_id: String) -> String:
 	for id in manifests:
 		if manifests[id].hull == hull_id and manifests[id].state not in ["Complete","Cancelled","Safety Returned"]: return id
@@ -161,19 +168,27 @@ func _active_manifest(hull_id: String) -> String:
 
 func _reserve_cargo(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
+	var candidates: Array[Dictionary] = []
+	var captured := false
 	for type in row.cargo:
 		var have := 0
 		for item in row.weapon_items:
 			if item.type == type: have += 1
 		for item in row.stock_items:
 			if item.type == type: have += int(item.quantity)
-		for weapon in rear.ledger.snapshot().entities:
+		if have >= int(row.cargo[type]): continue
+		if not captured:
+			# Fresh direct-holder facts are sufficient for staging. Reservations
+			# recheck authoritative stock; recursive world masses are unrelated.
+			candidates = rear.ledger.entities_at_any(rear.stores.keys(),["WEAPON","STOCK"],false)
+			captured = true
+		for weapon in candidates:
 			if have >= int(row.cargo[type]): break
 			if weapon.kind != "WEAPON" or weapon.design_type != type or weapon.owner != rear.PLAYER or weapon_promises.has(weapon.id) or not rear.stores.has(weapon.holder_id) or weapon.loaded_rounds != 0: continue
 			weapon_promises[weapon.id] = row.id
 			row.weapon_items.append({"type":type,"id":weapon.id,"stage":"Staged" if weapon.holder_id == row.dispatch_store else "Source"})
 			have += 1
-		for stock in rear.ledger.snapshot().entities:
+		for stock in candidates:
 			if have >= int(row.cargo[type]): break
 			if stock.kind != "STOCK" or stock.design_type != type or stock.owner != rear.PLAYER or not rear.stores.has(stock.holder_id) or not rear.stores[stock.holder_id].accessible: continue
 			var count: int = mini(int(row.cargo[type])-have,mini(rear.ledger.available(stock.id),int(floor(25.0/_unit_mass(type)))))
@@ -418,11 +433,36 @@ func settle() -> bool:
 			changed = _schedule_cancel(row) or changed
 	return changed
 
+func ready_dispatch_site() -> String:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var candidates: Dictionary = {}
+	var candidate_duties: Dictionary = {}
+	for id in dispatch_sites:
+		var site: Dictionary = dispatch_sites[id]
+		if rear.stores[site.store].accessible and int(rear.requests[site.duty].target) > 0:
+			candidates[id] = site.duty
+			candidate_duties[site.duty] = true
+	if candidates.is_empty(): return ""
+	# One current person-status pass for all candidates, never one scan per site.
+	var ready_duties: Dictionary = {}
+	for id in rear.actors:
+		var person: Dictionary = rear.ledger.inspect_person_status(id)
+		var duty: String = person.duty_id
+		if candidate_duties.has(duty) and not ready_duties.has(duty) and _worker_ready_for_duty(person,duty,rear.actors[id]):
+			ready_duties[duty] = true
+		if ready_duties.size() == candidate_duties.size(): break
+	for id in candidates:
+		if ready_duties.has(candidates[id]): return id
+	return ""
+
+static func _worker_ready_for_duty(person: Dictionary, duty: String, actor: Dictionary) -> bool:
+	return person.duty_id == duty and person.pending_assignment == "None" and actor.phase == "Idle" and person.health > 0 and person.carrying_stock_id.is_empty() and person.carrying_weapon_id.is_empty()
+
 func _ready_worker(row: Dictionary) -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
 	for id in rear.actors:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.duty_id == row.dispatch_duty and p.pending_assignment == "None" and rear.actors[id].phase == "Idle" and p.health > 0 and p.carrying_stock_id.is_empty() and p.carrying_weapon_id.is_empty(): return id
+		if _worker_ready_for_duty(p,row.dispatch_duty,rear.actors[id]): return id
 	return ""
 
 func _start_task(row: Dictionary, phase: String, actors: Array, seconds: float, route: Array = []) -> void:
@@ -478,7 +518,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if source.is_empty() or not rear.stores[source.holder_id].accessible:
 			row.blocker = "Reserved cargo source is inaccessible; claim retained."
 			return false
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
 		if path.is_empty(): row.blocker = "No clear walking route to reserved cargo source."; return false
 		_start_task(row,"Stock Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
@@ -489,7 +529,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if item.stage != "Source": continue
 		if worker.is_empty(): row.blocker = "Real Dispatch worker needed to collect the reserved rifle."; return false
 		var source: Dictionary = rear.ledger.inspect_entity(item.id)
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
 		if path.is_empty(): row.blocker = "No clear walking route to actual rifle."; return false
 		_start_task(row,"Weapon Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
@@ -544,7 +584,7 @@ func _finish_task(row: Dictionary) -> void:
 	var result: Dictionary = {"ok":true}
 	if phase == "Gun Handling":
 		var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
-		var path: Array = Layout.path(owner.site_door,row.dispatch_door)
+		var path: Array = rear.walk_path(owner.site_door,row.dispatch_door)
 		if path.is_empty(): row.blocker = "Gun gear route to F07 blocked; same gun remains in F10."; _clear_task(row); return
 		result = rear.ledger.move_field_gun(task.gun,"rear",owner.site_door)
 		if not result.ok: row.blocker = result.message; _clear_task(row); return
@@ -569,7 +609,7 @@ func _finish_task(row: Dictionary) -> void:
 	elif phase == "Weapon Pickup":
 		result = rear.ledger.begin_weapon_carry(worker,row.weapon_items[task.item_index].id)
 	if phase in ["Stock Pickup","Weapon Pickup"] and result.ok:
-		var path: Array = Layout.path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
+		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
 		_start_task(row,"Stock Carry" if phase == "Stock Pickup" else "Weapon Carry",[worker],Layout.length(path)/1.2,path)
 		row.task.item_index = task.item_index
 		return
@@ -660,7 +700,7 @@ func _finish_task(row: Dictionary) -> void:
 		result = rear.ledger.move_field_gun(task.gun,"rear",row.dispatch_door)
 		if result.ok:
 			var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
-			var path: Array = Layout.path(row.dispatch_door,owner.site_door)
+			var path: Array = rear.walk_path(row.dispatch_door,owner.site_door)
 			_start_task(row,"Gun Return Carry",task.actors,Layout.length(path)/1.2,path)
 			row.task.gun = task.gun
 			return
@@ -720,7 +760,7 @@ func route_preview(id: String, candidate: Dictionary = {}) -> Dictionary:
 
 func set_route_profile(id: String, profile: Dictionary) -> Dictionary:
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Route edits require an accepted predeparture manifest.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Route edits require an accepted predeparture manifest.")
 	var preview: Dictionary = route_preview(id,profile)
 	if not preview.ok: return preview
 	row.route_profile = profile.duplicate(true)
@@ -923,7 +963,7 @@ func clear_route_hazard(id: String) -> Dictionary:
 func cancel(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Complete","Cancelled","Cancelling"]: return _fail("Only an accepted predeparture manifest can withdraw its own commitments once.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Complete","Cancelled","Cancelling"]: return _fail("Only an accepted predeparture manifest can withdraw its own commitments once.")
 	row.cancel_released = true
 	for person_id in row.passengers:
 		incoming_people.erase(person_id)
@@ -936,16 +976,20 @@ func cancel(id: String) -> Dictionary:
 	for item in row.weapon_items: weapon_promises.erase(item.id)
 	for item in row.stock_items:
 		if not item.claim.is_empty(): rear.ledger.release_claim(item.claim); item.claim = ""
-	row.state = "Cancelling"
+	if row.state == "Approaching Dispatch":
+		# Withdrawal does not stop the captured physical route. Its existing
+		# arrival handoff enters Cancelling at the real dispatch berth.
+		row.cancel_after_route = true
+	else:
+		row.state = "Cancelling"
 	if rear.ledger.inspect_entity(row.hull).holder_id == row.berth_place and not row.task.is_empty(): row.blocker = "Current handling must finish before actual unloading."
-	if rear.vehicles.vehicles[row.hull].state == "Dispatch Approach": row.cancel_after_route = true
 	rear._settle()
 	return {"ok":true,"message":"Commitments withdrawn once; anything already aboard needs physical cancellation unloading and vehicle return."}
 
 func change_mode(id: String, mode: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Only a live predeparture manifest can change mode.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Only a live predeparture manifest can change mode.")
 	if mode == row.mode: return {"ok":true,"message":"The same mode and claims remain."}
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	if mode not in ["Strategic Delivery","Fleet Transfer"] or (mode == "Strategic Delivery" and hull.design_type not in ["T01","T02"]): return _fail("Strategic Delivery accepts only T01/T02; old mode and claims remain.")
@@ -967,7 +1011,7 @@ func change_mode(id: String, mode: String) -> Dictionary:
 func add_field_gun(id: String, gun_id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var row: Dictionary = manifests.get(id,{})
-	if row.is_empty() or row.departed or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Add a field gun only to an accepted predeparture manifest.")
+	if row.is_empty() or row.departed or row.cancel_released or row.state in ["Cancelled","Cancelling","Complete"]: return _fail("Add a field gun only to an accepted predeparture manifest.")
 	var hull: Dictionary = rear.ledger.inspect_entity(row.hull)
 	var limit := 2 if hull.design_type == "T01" else (1 if hull.design_type == "T02" else 0)
 	if row.guns.size() >= limit: return _fail("This hull's field-gun limit is already used; old manifest remains.")

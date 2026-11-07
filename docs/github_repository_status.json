@@ -1,0 +1,163 @@
+{
+  "open_issues": 27,
+  "current_demo": [
+    83,
+    90,
+    91,
+    92
+  ],
+  "later_open": 23,
+  "open_milestones": 9,
+  "native_blocker_edges_remaining_on_open_issues": 0,
+  "open_issues_with_blocked_label": [],
+  "blocked_project_cards": [],
+  "duplicate_cards": [],
+  "missing_open_cards": [],
+  "superseded_issues": {
+    "34": {
+      "state": "closed",
+      "reason": "not_planned"
+    },
+    "37": {
+      "state": "closed",
+      "reason": "not_planned"
+    },
+    "42": {
+      "state": "closed",
+      "reason": "not_planned"
+    }
+  },
+  "parent_groups": {
+    "45": 7,
+    "46": 7,
+    "47": 7,
+    "48": 7,
+    "87": 6
+  },
+  "milestone_assignments": {
+    "1": [
+      1
+    ],
+    "2": [
+      2,
+      17,
+      18,
+      19
+    ],
+    "3": [
+      3
+    ],
+    "4": [
+      4,
+      47
+    ],
+    "5": [
+      5,
+      45
+    ],
+    "6": [
+      6,
+      33,
+      46,
+      48,
+      87
+    ],
+    "7": [
+      7,
+      35,
+      36
+    ],
+    "8": [
+      8,
+      38,
+      39,
+      40,
+      41
+    ],
+    "9": [
+      83,
+      90,
+      91,
+      92
+    ]
+  },
+  "preserved_pr86": {
+    "state": "closed",
+    "merged": false,
+    "branch": "refs/heads/codex/83-armies",
+    "sha": "542658309c15f80759906a5ea09076def2502515"
+  },
+  "active_prs": [
+    98,
+    97,
+    96,
+    95,
+    94,
+    93,
+    89
+  ],
+  "views": [
+    {
+      "id": "PVTV_lAHOAsBCfc4BouCWzgMPY3E",
+      "name": "Current demo",
+      "number": 1,
+      "filter": "is:open label:delivery:demo",
+      "layout": "TABLE_LAYOUT"
+    },
+    {
+      "id": "PVTV_lAHOAsBCfc4BouCWzgMPY7g",
+      "name": "Milestones",
+      "number": 2,
+      "filter": "is:open label:type:epic",
+      "layout": "TABLE_LAYOUT"
+    },
+    {
+      "id": "PVTV_lAHOAsBCfc4BouCWzgMPZB0",
+      "name": "Later backlog",
+      "number": 3,
+      "filter": "is:open label:delivery:later",
+      "layout": "TABLE_LAYOUT"
+    },
+    {
+      "id": "PVTV_lAHOAsBCfc4BouCWzgMPZDI",
+      "name": "History",
+      "number": 4,
+      "filter": "is:closed",
+      "layout": "TABLE_LAYOUT"
+    }
+  ],
+  "project_readme_updated": true,
+  "verified_date": "2026-11-05",
+  "source": "Live REST and GraphQL after mutations; all pages complete",
+  "designer_scope": "Approved in designated Designer chat before execution; independent final read-only check requested",
+  "closed_pr_manifest": "https://github.com/TheInfinityIQ/Trencho_V4/pull/86#issuecomment-6674829104",
+  "public_cleanup_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235",
+  "no_gameplay_acceptance_claim": true,
+  "integration_follow_up": {
+    "source_head": "7fd7ff08f0eb776c1eb7e9f029936fbd462d869e",
+    "merged_feature_prs": [
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99
+    ],
+    "currently_open_prs": [
+      89
+    ],
+    "combined_design_review": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89#pullrequestreview-5794892375",
+    "syntax_run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42148949547",
+    "brief_demo": {
+      "status": "queued",
+      "run": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42149002464"
+    },
+    "note": "Original active_prs field is the earlier cleanup snapshot, not current openPR inventory. No ordinary-gameplay/FPS acceptance.",
+    "army_collection_explanation": {
+      "pr": 99,
+      "approved_component": "ff5d176e196eb6ca7e9b29bdb246d1dea9ade191",
+      "evidence": "docs/evidence/army_collection_readiness.json"
+    }
+  }
+}

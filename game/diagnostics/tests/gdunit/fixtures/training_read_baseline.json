@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "kind": "frozen_pre_change_training_read_characterization",
+  "engine": "Godot 4.7.2 stable Steam",
+  "origin": "logs/gdunit4-performance-2026-11-03T21-50-30-11388",
+  "capture_path": "legacy_broad",
+  "state_scope": "Stored script fields, nested domain records and stable alias paths. Weak references and callback identities are excluded. Native engine objects are represented by class, so their internal payloads, including RNG state, are not certified by these hashes. No service snapshot or audit is called by raw capture.",
+  "source_sha256": {
+    "game/rear_base/base_simulation.gd": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003",
+    "game/rear_base/base_demo.gd": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8",
+    "game/training/training_service.gd": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4",
+    "game/staffing/rear_simulation.gd": "d44c6c9b89d7bd3af44e2eee291d1d82ccf1d67cea93ee6566927b7ae2f0fef4",
+    "game/diagnostics/tests/gdunit/fixtures/training_read_scenarios.gd": "fecf8069d81851727015be17246bf066357f04976b8e4c6ecdf83eab8308bd31"
+  },
+  "maintenance": "Preserve these expected hashes during this read slice. A later intentional normalization/clock migration requires separately reviewed characterization, not automatic recapture.",
+  "states": {
+    "access_paused": {
+      "after": "7721792929b4821c2e4018142c20719d4573db5219a353b18046712f4c05e219",
+      "before": "7721792929b4821c2e4018142c20719d4573db5219a353b18046712f4c05e219",
+      "counts": {
+        "Active": 0,
+        "Completed": 0,
+        "Paused": 12,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 0
+      },
+      "display": "780504669904bda452d8b3eaf192704b95d8aa17e4cc8ffbbd5ec0c8710e14d0",
+      "normalization_changed_state": false,
+      "time": 30
+    },
+    "active": {
+      "after": "b287ccf5643b4bab55cb8c6312f72921a189144cccab49c44ad7b5d6a4734c5b",
+      "before": "b287ccf5643b4bab55cb8c6312f72921a189144cccab49c44ad7b5d6a4734c5b",
+      "counts": {
+        "Active": 6,
+        "Completed": 0,
+        "Paused": 6,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 0
+      },
+      "display": "e7c7ee296d7ef1310538c0508785636205de76623e34db09ef9e357dbadff376",
+      "normalization_changed_state": false,
+      "time": 30
+    },
+    "completed": {
+      "after": "8bdd4a1f88aad1ae0c24a83731c89702ba969dec4d784e403fc53bb739634d4f",
+      "before": "8bdd4a1f88aad1ae0c24a83731c89702ba969dec4d784e403fc53bb739634d4f",
+      "counts": {
+        "Active": 0,
+        "Completed": 12,
+        "Paused": 0,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 0
+      },
+      "display": "ad558512936ff6ea124dab24e4c8b1d6b003d69593943bb285fb46ff8e21d304",
+      "normalization_changed_state": false,
+      "time": 180
+    },
+    "empty": {
+      "after": "6e2b2a356f83760c9e7da3e08fd65db32461f1afe3fe8b46857588b231b24ba3",
+      "before": "6e2b2a356f83760c9e7da3e08fd65db32461f1afe3fe8b46857588b231b24ba3",
+      "counts": {
+        "Active": 0,
+        "Completed": 0,
+        "Paused": 0,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 0
+      },
+      "display": "71a44e0777cebe4da4c6c6ad2fed575ac8fe2a69e7af926c2daf832bcf155cb2",
+      "normalization_changed_state": false,
+      "time": 0
+    },
+    "instructor_paused": {
+      "after": "8e4c679df60e509e8efe312a809d3c17fafe6336faaf1057f598425793f7639c",
+      "before": "8e4c679df60e509e8efe312a809d3c17fafe6336faaf1057f598425793f7639c",
+      "counts": {
+        "Active": 0,
+        "Completed": 0,
+        "Paused": 12,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 0
+      },
+      "display": "52693b9a985a20c2966f3a70db83e6e494c0f6f0fefb0225f440ce4ea8e56ee6",
+      "normalization_changed_state": false,
+      "time": 30
+    },
+    "multiple_sites": {
+      "after": "1cbcffc57ae57d678c832c869ff3c092752f21a59fd86c1bd9a6f7304b513aba",
+      "before": "1cbcffc57ae57d678c832c869ff3c092752f21a59fd86c1bd9a6f7304b513aba",
+      "counts": {
+        "Active": 6,
+        "Completed": 0,
+        "Paused": 2,
+        "Queued": 0,
+        "Reporting": 16,
+        "Withdrawn": 0
+      },
+      "display": "f2a0ce40c7844f7a4aa2e233f51b2d188dfa9ce641f6f68addee9959b6506755",
+      "normalization_changed_state": false,
+      "time": 465
+    },
+    "queued": {
+      "after": "766a31c3b8af791ae69f0220f6c7f2e1a7ac27fcf17f1d328ac05bb0e2ead116",
+      "before": "766a31c3b8af791ae69f0220f6c7f2e1a7ac27fcf17f1d328ac05bb0e2ead116",
+      "counts": {
+        "Active": 0,
+        "Completed": 0,
+        "Paused": 0,
+        "Queued": 11,
+        "Reporting": 1,
+        "Withdrawn": 0
+      },
+      "display": "76aa4863ea31939d9ed94f2d8787511fa1cb5c71dfd3dacdb946458aef06870c",
+      "normalization_changed_state": false,
+      "time": 0
+    },
+    "reporting": {
+      "after": "fd69a86eecda4b0f1d8861050a1d5b908c4b987f88f5baccea630ac7a9328273",
+      "before": "fd69a86eecda4b0f1d8861050a1d5b908c4b987f88f5baccea630ac7a9328273",
+      "counts": {
+        "Active": 0,
+        "Completed": 0,
+        "Paused": 0,
+        "Queued": 0,
+        "Reporting": 12,
+        "Withdrawn": 0
+      },
+      "display": "f1a9ff23acbc2af5675a79d1f60ac318779ae1c777b28f05f6487f4dd31c0539",
+      "normalization_changed_state": false,
+      "time": 0
+    },
+    "withdrawn": {
+      "after": "1fdce1dab392ff9e4ad7975b433fe4f6cc2dbe1c5b6d9bc1269c2d632848ce94",
+      "before": "1fdce1dab392ff9e4ad7975b433fe4f6cc2dbe1c5b6d9bc1269c2d632848ce94",
+      "counts": {
+        "Active": 6,
+        "Completed": 0,
+        "Paused": 5,
+        "Queued": 0,
+        "Reporting": 0,
+        "Withdrawn": 1
+      },
+      "display": "85ae01f0723bd5ef91843172d3c1af62a4113403c69f6dc271ebdb59fb76c52a",
+      "normalization_changed_state": false,
+      "time": 30
+    }
+  }
+}

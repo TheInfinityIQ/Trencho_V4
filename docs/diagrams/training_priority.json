@@ -1,0 +1,10 @@
+{
+  "status": "planned_before_fix",
+  "problem": "Changing Instructor target omits priority in set_target, resetting a player's existing selected-school priority to Normal. Higher-priority generic work can then retain the only qualified teacher.",
+  "authority": "Rear requests own target and priority; Training identifies actual active school duties. Existing Workers/Jobs exposes priority. The count edit owns only its requested count.",
+  "flow": "Resolve current active school -> read its current request priority -> submit changed count with that priority -> existing allocation, safe handoff and physical reporting -> existing UI event refresh.",
+  "events": "Existing value_changed command only. No new callback, timer, recurring read or allocation policy.",
+  "replacement_failure": "Reject absent or inactive school through existing duty lookup. Read the current model/request at click time; no saved priority or captured old model.",
+  "acceptance": "A school is physically constructed from ordinary purchased workers and initial Building Materials in an isolated rear component. Its normal Jobs control selects Emergency. Actual Training count edits2,0,1 preserve3 and set exact target. This tests UI command ownership, not teacher training, ordinary connected play or FPS.",
+  "safeguard": "Do not change allocator priorities/rates or auto-promote the school. Explain how to choose a priority above generic work only when the player wants it."
+}

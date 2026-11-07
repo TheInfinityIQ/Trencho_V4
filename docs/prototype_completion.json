@@ -1,0 +1,230 @@
+{
+  "objective": "Complete the connected empty-field prototype while preserving the strict 60 FPS acceptance ceiling.",
+  "status": "in_progress",
+  "implementation_base": {
+    "branch": "main",
+    "head": "800ec9d4b869fad630327d52b42a807baddf6ac0",
+    "working_tree": "The previous integrated local snapshot was published as3531bd7 on codex/gameplay-demo-integration. Current feature/design increments follow on that review branch.",
+    "owner": "Lead integrates; three explicitly authorized GPT6.1Sol xhigh developers own bounded features in separate worktrees, focused tests and draft PRs. Technical and Game Designer exact-commit reviews required."
+  },
+  "fixed_acceptance": [
+    {
+      "id": "PC01",
+      "criterion": "Ordinary main-scene launch preserves the approved paused empty field, player position, 2500 requisition, 500 M11, real worker purchase/arrival and current UI."
+    },
+    {
+      "id": "PC02",
+      "criterion": "Ordinary controls connect placement/cancellation, physical construction, staffing, purchased material handling and actual production without diagnostic grants or resets."
+    },
+    {
+      "id": "PC03",
+      "criterion": "Physical rear-to-HQ and HQ-to-unit supply reaches an autonomous battlefield and produces an explainable capability/consumption consequence."
+    },
+    {
+      "id": "PC04",
+      "criterion": "Transport returns and a second newly prepared physical supply cycle succeeds in the same continuing session."
+    },
+    {
+      "id": "PC05",
+      "criterion": "Pause, 1x, 2x, navigation and cancellation preserve identities, custody, earned work and elapsed simulation progress."
+    },
+    {
+      "id": "PC06",
+      "criterion": "Every measured gameplay frame and synchronous action remains at or below 1000/60 ms in the declared hardware/scenarios; preserve the existing inspection/progress limits, raw outliers and failures. Averages alone cannot pass."
+    }
+  ],
+  "work_items": [
+    {
+      "id": "P1",
+      "status": "optimization_paused_by_user_gameplay_blockers_only",
+      "purpose": "Remove reproduced synchronous simulation spikes before expanding workload.",
+      "previous_status": "historical_bounded_passes_current_full_native_regressions_pending"
+    },
+    {
+      "id": "P2",
+      "status": "implemented_current_component_checks_passed",
+      "purpose": "Connect routine physical production input/output handling to the empty-field opening.",
+      "acceptance_limit": "Ordinary full-session end-to-end acceptance remains pending."
+    },
+    {
+      "id": "P3",
+      "status": "implemented_component_checks_passed",
+      "purpose": "Connect requested automatic Logistics Centre-to-HQ fulfilment using existing physical transport owners.",
+      "acceptance_limit": "Ordinary full-session end-to-end acceptance remains pending."
+    },
+    {
+      "id": "P4",
+      "status": "pending",
+      "purpose": "Verify ordinary complete/repeated supply and autonomous consequence with the unchanged frame/action budget."
+    },
+    {
+      "id": "P5",
+      "status": "implemented_direct_change_verified",
+      "purpose": "Guide the ordinary factory setup with truthful causes and contextual existing controls.",
+      "acceptance_limit": "Factory goal90 remains open for ordinary player-experience completion."
+    },
+    {
+      "id": "P6",
+      "status": "implemented_direct_change_verified",
+      "purpose": "Expose actual rifle-ammunition need and physical supply stages, plus explicit cancellation recovery in ordinary Army needs navigation.",
+      "acceptance_limit": "Useful ordinary full delivery/replenishment remains open; this is not the multi-resource planner."
+    },
+    {
+      "id": "P7",
+      "status": "implemented_physical_component_verified",
+      "purpose": "Keep actual latest named-refill recipients and their current operation followable after requests clear, with truthful stock coverage.",
+      "acceptance_limit": "Arranged physical courier component passes; ordinary natural refill/return/repeated need and full useful rear production loop remain open."
+    },
+    {
+      "id": "P8",
+      "status": "implemented_physical_chain_verification_in_progress",
+      "purpose": "Connect actual empty-field Materials expansion, selected school/teacher/Driver, manufactured fueled truck and repeated HQ delivery through ordinary commands.",
+      "acceptance_limit": "All facilities/training/truck/fuel/park and new200rounds observed; fixed command deadline elapsed during first shipment, so two-load/return acceptance remains pending."
+    }
+  ],
+  "verification": [
+    {
+      "path": "logs/gdunit4-performance-2026-11-04T23-22-46-34440",
+      "result": "Blocked before gameplay by restricted runtime-directory access; not a compilation defect."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-04T23-24-03-12704",
+      "result": "Existing populated-field placement case fails at 23.89 ms; pointer dispatch maximum 0.138 ms; about 740 inspect_entity calls/s."
+    },
+    {
+      "path": "logs/prototype-policy-stages",
+      "result": "Opt-in attribution only. Initial policy 47.181 ms includes 43.999 ms synchronous supply-truck reposition; observed live tick later reaches 18.602 ms while policy is 2.834 ms. Nested inclusive timings cannot be summed."
+    },
+    {
+      "path": "logs/prototype-direct-clearance",
+      "result": "Earlier populated placement case passed all three phases, before the later automatic freight changes."
+    },
+    {
+      "path": "logs/prototype-logistics-direct",
+      "result": "Correction from raw report: workshop batch completed but the WEAPON assertion failed because R01 created generic STOCK. The two rear-to-HQ trips passed. The third case failed on an incorrect test input helper, corrected separately."
+    },
+    {
+      "path": "logs/prototype-request-buttons",
+      "result": "Actual new request/cancel buttons passed; paused ledger unchanged."
+    },
+    {
+      "path": "logs/prototype-forward-bounded-trip",
+      "result": "Two actual HQ-to-forward deliveries, real Engineer issue and same-hull returns passed in an explicitly arranged component."
+    },
+    {
+      "path": "logs/prototype-foot-and-freight",
+      "result": "First three forward cases passed, including interruption of a prepared physical departure. Walking case exposed a missing mass field in the new implementation; repaired and checked separately."
+    },
+    {
+      "path": "logs/prototype-scheduled-walking-isolated",
+      "result": "Two focused walking freshness / paused decision queue cases passed."
+    },
+    {
+      "path": "logs/prototype-passenger-approach-batched-check",
+      "result": "Prepared passenger approaches preserve ledger and attachment state; moved passenger rejects admission, unchanged cohort admits one real boarding job. Pure test chunks are grouped; this is not FPS evidence."
+    },
+    {
+      "path": "logs/prototype-report-delivery",
+      "result": "Native Timer preserves all three stimulus counts across completed windows; console queue drains and returns to idle."
+    },
+    {
+      "path": "logs/prototype-current-placement",
+      "result": "Populated placement passed at 15.266 ms peak, before later scheduling/output changes."
+    },
+    {
+      "path": "logs/prototype-bounded-console-placement",
+      "result": "Earlier runtime ordinary select/move/place/repeat case passed all six phases; peak 16.644 ms, action 5.208 ms, simulation debt <=0.016805 s at phase ends and AI age <=0.382905 s. This is one bounded scenario, not full-game certification."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T16-33-26-23940",
+      "result": "Real -LogisticsOnly launcher: 10 cases passed, no failures/errors/skips. R01 now creates one intact unloaded E01/E02-capacity-30 rifle; store mass and displayed physical output include it. Controlled component stepping is not native FPS or ordinary full-loop acceptance."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T17-17-03-28952",
+      "result": "Ordinary-menu launcher: all twelve 1x native phases passed; peak frame 14.069 ms, action 0.986 ms, no errors/skips, original limits retained."
+    },
+    {
+      "path": "logs/prototype-current-all-placement",
+      "result": "All six 1x native building-pointer cases / nineteen phases passed; peak frame 13.365 ms and action 5.44 ms, clean audits, original limits retained."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T17-21-55-23732",
+      "result": "Updated logistics launcher: eleven controlled components/report cases passed."
+    },
+    {
+      "path": "logs/prototype-reviewed-characterization",
+      "result": "Nine catalogue and nine training-read guards passed after documented contract/input corrections. Original frozen training baseline preserved."
+    },
+    {
+      "path": "logs/prototype-current-editor-import",
+      "result": "Actual Godot editor import clean; exit 0 and no stderr."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-29-07-35776",
+      "result": "Full current launcher: 74 declared, 67 reported, 63 passed, four native performance failures and seven unrun by fail-fast. No errors/skips; full acceptance failed. See prototype_regression_followup.json."
+    },
+    {
+      "path": "logs/prototype-objective-read-batch/pointer",
+      "result": "Latest six pointer-placement cases / nineteen phases pass at 16.274 ms peak frame, 6.291 ms peak action; no performance limits raised. Later navigation alignment separately checked by four live guards."
+    },
+    {
+      "path": "logs/prototype-objective-read-batch/guard",
+      "result": "All nineteen contact/read/counter/training guards pass after consolidating duplicate objective position reads."
+    },
+    {
+      "path": "logs/prototype-followup-editor-import",
+      "result": "Actual root Godot editor import exit 0, empty stderr."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-54-14-14316",
+      "result": "All twelve current logistics/report cases pass, including fixed manual/automatic request ownership, cancellation holds and already departed real cargo. Controlled components are not ordinary full-loop or native FPS certification."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328",
+      "result": "Full reviewed current selection: 75 declared, 69 reported, 65 pass, four performance failures, six cases unrun. All twelve logistics/report cases and current route/worker/live-clock/read/training guards pass. All-facility placement/rotation passes, but cancellation, pointer idle and both menu workloads still fail strict frames. Prototype and 60 FPS compliance remain incomplete."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-27-52-36668",
+      "result": "Clock starvation fix: normal 1x progresses to 330.495 seconds in 330.517 wall seconds, audit clean. Peak 30.888 ms and 4353 intervals over 60 FPS budget; FPS remains failed."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-53-02-24424",
+      "result": "Default headless functional selection: all 60 pass; sixteen desktop-dependent native cases explicitly omitted. Not visible FPS certification."
+    },
+    {
+      "path": "logs/agent-workflow/20261105-172652-c24cbef0",
+      "result": "Guided factory direct feature demonstration and required maps pass: actual purchased inputs, physical construction and100 new materials/100 ammunition. Explicit component time, not whole-demo/native-input/FPS acceptance."
+    },
+    {
+      "path": "logs/agent-workflow/20261105-175814-c8d41b12",
+      "result": "New Army needs opening/read/intent/lifecycle/navigation demonstration and both map checks pass headlessly. No full delivery/FPS certification."
+    },
+    {
+      "path": "logs/agent-workflow/20261105-181512-fb8e7ed6",
+      "result": "Named refill continuity: actual courier receipt, cleared requests, selected recipient/Observe retention, next-cycle receipt reset and pure read/audit pass. Both maps pass; arranged component scope only."
+    }
+  ],
+  "next_action": "Finish the two newly made ammunition deliveries and same-hull returns, integrate reviewed team components and directly verify the mounted guidance; keep native/ordinary autonomous/FPS limits explicit.",
+  "limitations": [
+    "Prototype completion and 60 FPS compliance are not established.",
+    "Performance is measured on declared hardware/scenarios, not guaranteed on arbitrary hardware or OS scheduling.",
+    "Historical shared-clock wording in delivery documents is superseded by the user's independently progressing domain requirement.",
+    "Pure component stepping and predeclared component arrangements do not prove ordinary control-path end-to-end completion.",
+    "The live dispatcher still uses the legacy shared settlement clock; independently progressing domain clock/event migration is not complete.",
+    "Latest dedicated native pointer/query run: eleven of twelve pass; sustained motion has an unresolved invalid-preview/coordinate contract failure. Older full-suite performance failures remain recorded. Background omissions do not satisfy native acceptance."
+  ],
+  "evidence": "docs/evidence/prototype_menu_performance.json",
+  "latest_evidence": "docs/evidence/supply_truck_progression.json",
+  "current_declared_default_cases": 60,
+  "current_declared_foreground_cases": 76,
+  "current_opt_in_endurance_cases": 1,
+  "implemented_feature_inventory": "docs/implemented_features.json",
+  "delivery_priority": {
+    "date": "2026-11-05",
+    "direction": "Gameplay/features first; polishing, optimization and benchmark-driven work paused by Dawson.",
+    "performance_target": "Retained for later acceptance; current failures remain recorded. It is not a prerequisite for every feature increment during this pause.",
+    "verification": "Brief direct checks of actual changed behavior when needed; routine full-suite runs and new coverage infrastructure deferred. Required source-map maintenance continues.",
+    "ownership": "Current developer integrates gameplay, UI/UX and art handoffs; consult the named team in docs/team_integration_state.json."
+  },
+  "current_review_branch": "codex/gameplay-demo-integration"
+}

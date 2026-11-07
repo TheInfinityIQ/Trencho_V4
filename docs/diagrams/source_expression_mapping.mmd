@@ -1,0 +1,12 @@
+%% Prospective correction before mapper changes; not a runtime/gameplay diagram.
+flowchart TD
+    Source[Normalized original Python source] --> AST[Standard Python AST: definition and expression positions]
+    AST --> Segment[Extract expression at its original source span]
+    Source --> Segment
+    Segment --> Calls[Source-authentic callee expressions]
+    Segment --> Returns[Compact source-authentic return expressions]
+    Calls --> Map[Same maintained map on developer machine and CI]
+    Returns --> Map
+    Map --> Check[Strict equality and reviewed purpose hashes remain required]
+    AST -->|missing source positions| Fail[Fail explicitly; do not guess or accept stale metadata]
+    Format[Version-dependent ast.unparse formatting] -. excluded from persisted expression facts .-> Map

@@ -1,6 +1,6 @@
 # G19 field structures and roads
 
-This implementation follows [GDD §§13, 14 and 16](game_design_document.md), issue [#27](https://github.com/TheInfinityIQ/Trencho_V4/issues/27), and the Designer's [G19 staging decision](https://github.com/TheInfinityIQ/Trencho_V4/issues/27#issuecomment-6515222949). G20 owns built bridges and the remaining full A23 crossing integration.
+This implementation follows [GDD §§13, 14 and 16](reference/gameplay_specification_v0_2.md), issue [#27](https://github.com/TheInfinityIQ/Trencho_V4/issues/27), and the Designer's [G19 staging decision](https://github.com/TheInfinityIQ/Trencho_V4/issues/27#issuecomment-6515222949). G20 owns built bridges and the remaining full A23 crossing integration.
 
 ## Ownership and physical handoff
 

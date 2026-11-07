@@ -1,0 +1,4 @@
+@echo off
+cd /d "%~dp0"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\run_menu_performance.ps1" %*
+pause

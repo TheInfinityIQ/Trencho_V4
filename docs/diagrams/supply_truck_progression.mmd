@@ -1,0 +1,29 @@
+%% Planned before implementation. Existing physical owners remain authoritative.
+flowchart TD
+    Opening[Approved empty field: purchases and placed buildings] --> Materials[Construct and staff Materials Plant]
+    Materials --> Output[Manufacture real Building Materials]
+    Output --> Sources[Completion of a Materials Plant publishes its output store as an allowed source for automatic site hauls]
+    Sites[Place later facilities] --> Haul[One existing material-haul demand per site]
+    Sources --> Haul
+    Haul --> Actual[Existing haulers select / reserve / carry / deposit actual stock]
+    Actual --> Build[Build Vehicle Works, Park, Training and Logistics Centre]
+    Build --> Train[Training selects its actual built school]
+    Train --> Hire[Hire first instructor through existing purchase / arrival rules]
+    Hire --> Courses[Actual basic training then vehicle-crew course]
+    Build --> Recipe[Existing R25 recipe and accepted bay/parking order]
+    Build --> Selection[Click completed factory: refresh current Production choices before resolving its stable ID]
+    Selection --> Recipe
+    Recipe --> Truck[Physically manufactured transport truck]
+    Courses --> Board[Qualified Driver walks and boards the actual hull]
+    Truck --> Fuel[Worker carries purchased fuel into the tank]
+    Board --> Drive[Same hull drives to its promised parking place]
+    Fuel --> Drive
+    Geometry[Current built geometry; template geometry only in legacy template sessions] --> Board
+    Geometry --> Fuel
+    Geometry --> Drive
+    Geometry --> Load[Actual logistics workers stage and load supplies]
+    Drive --> Load
+    Load --> Trip[Existing owned trip, HQ unloading and same-hull return]
+    Trip --> Repeat[Later explicit or genuine automatic need; new real load]
+    Cancel[Cancel site / haul / production / shipment] --> Existing[Existing intent, safe carry, custody and return rules]
+    Manual[Explicit single-source haul] -. remains source-specific .-> Actual

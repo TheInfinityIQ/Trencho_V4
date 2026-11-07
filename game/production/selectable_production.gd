@@ -93,8 +93,8 @@ func _select(recipe: String) -> Dictionary:
 	return {"ok": true, "message": _spec.facility + " selected " + recipe + "; only this recipe may work. Finished stock remains; actual local inputs, labour, access and space still govern starting."}
 
 
-func snapshot() -> Dictionary:
-	var view := super.snapshot()
+func snapshot(include_coverage_details: bool = true) -> Dictionary:
+	var view := super.snapshot(include_coverage_details)
 	view.declared_recipe_access = _declared_access.duplicate()
 	view.selected_recipe = _recipe
 	view.recipe_choices = _choices.duplicate()

@@ -1,0 +1,26 @@
+{
+  "status": "implemented_and_verified",
+  "objective": "Expose official GitHub Projects tools using the existing named Windows credential, without storing its token in the repo or MCP configuration.",
+  "authority": "User explicitly requested setup and reuse of existing Windows credential. TrenchoProjectsGitHub was verified as TheInfinityIQ with project scope and viewerCanUpdate for Project3.",
+  "flow": "Codex local HTTP header-helper command -> deployed helper reads only configured Generic Windows credential -> one Authorization JSON header through private helper stdout -> official https://api.githubcopilot.com/mcp/x/projects -> advertised Projects tools.",
+  "state": "Windows Credential Manager owns the credential. User Codex config owns only server URL/helper command/target name. Source and tests retained in repo; deployment copy lives in Codex profile for stability across checkout changes.",
+  "events": "Helper executes on client credential request; no background service, polling, scheduler, token cache or refresh/auth mutation.",
+  "failure": "Missing/undecodable/control-character credential exits nonzero without header output or secret-bearing diagnostics. Native buffer freed in finally. Existing config preserved/validated and backed up before adding one server.",
+  "verification": "Historical four dummy-value helper checks passed before replacement policy. Current direct setup proof: installed CLI parsed nonsecret server config; deployed helper captured privately; official MCP initialize/tools-list succeeded, actual Project3 read succeeded. No local engine or regression run; current chat tool-registry refresh not yet observed. Registered native mcp__github_projects tools subsequently appeared in the lead chat; projects_get successfully read actual private Project3. The earlier tool-registry refresh limitation is resolved.",
+  "references": [
+    "https://learn.chatgpt.com/docs/extend/mcp",
+    "https://learn.chatgpt.com/docs/config-file/config-reference",
+    "https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md",
+    "https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-credreadw",
+    "https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-credfree"
+  ],
+  "native_registered_tools": {
+    "available": [
+      "projects_get",
+      "projects_list",
+      "projects_write"
+    ],
+    "verified_read": "Native projects_get returned actual private Project3, Trencho_V4, number3",
+    "date": "2026-11-05"
+  }
+}

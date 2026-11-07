@@ -1,0 +1,52 @@
+{
+  "feature": "Follow the latest named Rifle refill after its active request clears",
+  "status": "implemented_physical_component_verified_ordinary_journey_open",
+  "diagram": "docs/diagrams/refill_continuity.mmd",
+  "design_contract": "docs/diagrams/refill_continuity.json",
+  "design_before_code": "Saved the prospective ownership/flow contract before a bounded native worker edited the three specified presentation files.",
+  "behaviour": [
+    "Current rifle requests and actual completed E02 issue jobs from the latest existing named squad cycle share stable person rows.",
+    "Current possession, current reported need and already issued quantity are separate; an erased fulfilled request is not recreated by presentation.",
+    "Existing collection/return/operation facts explain current activity without repeating eligibility/cohesion/capability queries.",
+    "The selected recipient and Observe remain available after receipt. A later named cycle does not inherit prior-cycle issued quantities.",
+    "Current military shortfall is explained after local/forward commitment/HQ coverage alongside available rear stock; the player is told to check existing deliveries before producing more. Destination shortfall is not necessarily new production.",
+    "No new planner/history owner, polling loop, stock change or military command was added."
+  ],
+  "verification": [
+    {
+      "path": "logs/agent-workflow/20261105-181512-fb8e7ed6",
+      "result": "One native worker implemented the slice, honestly reported denied Python execution, and stopped. Lead read/reviewed all changes, clarified follow-up/coverage wording, maintained purpose hashes/maps, then resumed fixed acceptance. Physical current-feature component and both map checks passed; active controller time159.6693 seconds."
+    },
+    {
+      "path": "tools/checks/refill_continuity_check.gd",
+      "result": "Explicitly arranged existing authored people and existing160 rounds with co-located pickup/deposit through an actual holder. Existing courier owners physically delivered20 rounds to each of8 named recipients; verified actual80 carried, zero reported need after source request removal, stable selection/Observe, read purity, next-cycle issued quantity reset and clean audit. Travel endpoints in fixture setup are arranged; this is not ordinary military demand or rear-to-front transport."
+    },
+    {
+      "path": "logs/refill-continuity/army-lifecycle",
+      "result": "Existing Army needs opening/intent/idle/hidden/burst/rebind/navigation/observation demonstration rerun after reader/panel changes: exit0 and empty stderr."
+    }
+  ],
+  "retained_failures": [
+    {
+      "run": "20261105-181204-eadf5485",
+      "result": "Lead stopped: checker top-level Panel preload alias shadowed a Godot class, before gameplay. Frozen original retained; corrected alias under a new contract."
+    },
+    {
+      "run": "20261105-181313-d47d27c0",
+      "result": "Lead stopped: fixture attempted a distant local stock transfer, correctly rejected by ledger co-location rules. Frozen original retained; no gameplay rule was weakened."
+    }
+  ],
+  "unchanged": "Approved6000 HQ-round opening, rates, costs, recipes, order/collection decisions, physical custody guards and performance limits.",
+  "limits": [
+    "The arranged80-round named target is not a naturally arising low-ammunition event.",
+    "Full ordinary useful rear-production delivery, return to current duty, a second natural need and eventual60FPS acceptance remain open.",
+    "Latest-cycle completed issue records are authoritative history; later ammunition use, injury or conflicting orders can still prevent combat.",
+    "Existing broad committed-state notifications are reused; independent domain clock/event migration is unfinished."
+  ],
+  "source_sha256": {
+    "game/battlefield/opening_resupply.gd": "597647e9378d4678010e622b86ad783a60510deb21bd546beb943e8e839320f3",
+    "game/logistics/army_supply_view.gd": "d4048cbfefb20ef1bdf633060fdfab266712be11ba23736bb2b51cc693ddd9e4",
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
+    "tools/checks/refill_continuity_check.gd": "8f6874bda566349d429e9bb837f30399f527b0faef2a0717c9d0df8bf7d2745a"
+  }
+}

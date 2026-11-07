@@ -41,7 +41,10 @@ func _init(rear: RefCounted, declared_access: Array[String] = [], instance_spec:
 	super(rear,"R25",CHOICES,["R25","R28"],declared_access,instance_spec)
 
 func _access() -> bool:
-	return not initial_selection_empty and recipe_accessible(_recipe) and bay_accessible and _rear_ref.get_ref().stores.vehicle_input.accessible
+	return not initial_selection_empty and recipe_accessible(_recipe) and bay_accessible and _rear_ref.get_ref().stores[_spec.input_store].accessible
+
+func logistics_demand() -> Dictionary:
+	return _logistics_demand(not _order.is_empty())
 
 func _empty_bay() -> bool:
 	return bay_occupant.is_empty() and _rear_ref.get_ref().ledger.entities_at(bay_id,["CARRIER","HEAVY_OBJECT"]).is_empty()
@@ -187,7 +190,7 @@ func set_parking_destination(slot: int) -> Dictionary:
 	rear._settle()
 	return _result(true,"Own replacement parking promise secured before releasing the old one.")
 
-func stock_coverage() -> Dictionary:
+func stock_coverage(_collect_excluded: bool = true) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var available := 0
 	if _spec.output_type == "E13":
@@ -214,8 +217,8 @@ func clearance_reason() -> String:
 		if person.qualification == "P08" and person.crew_station == "Driver" and person.health > 0: driver = true
 	return "Occupied bay: " + ("Awaiting Qualified Driver; " if not driver else "") + ("Fuel Empty; " if object.get("fuel",0.0) <= 0.0 else "") + "same hull remains in F10 until actual clearance."
 
-func snapshot() -> Dictionary:
-	var view := super.snapshot()
+func snapshot(include_coverage_details: bool = true) -> Dictionary:
+	var view := super.snapshot(include_coverage_details)
 	if initial_selection_empty: view.selected_recipe = ""
 	var rear: RefCounted = _rear_ref.get_ref()
 	view.order = _order.duplicate(true)

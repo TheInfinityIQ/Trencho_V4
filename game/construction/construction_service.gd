@@ -5,6 +5,7 @@ const Catalog = preload("res://game/construction/construction_catalogue.gd")
 const Selectable = preload("res://game/production/selectable_production.gd")
 const Fixed = preload("res://game/production/fixed_production.gd")
 const Heavy = preload("res://game/production/heavy_production.gd")
+const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 const EPS := 0.000001
 const BOUNDS := Rect2(Vector2.ZERO,Vector2(240,180))
 var _rear_ref: WeakRef
@@ -18,6 +19,9 @@ var _sequence := 0
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
+	if rear.empty_field_opening:
+		office_desired.clear()
+		return
 	for kind in Layout.FACILITIES:
 		var f: Array = Layout.FACILITIES[kind]
 		var id: String = "initial-"+str(kind)
@@ -26,7 +30,15 @@ func _init(rear: RefCounted) -> void:
 			"m11":int(Catalog.SPECS[kind].m11),"work":float(Catalog.SPECS[kind].work),
 			"progress":float(Catalog.SPECS[kind].work),"site_store":"","blocker":"","builders":{},"haul_job":""}
 
-func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dictionary:
+func placement_hint(kind: String, center: Vector2, quarter_turn: bool = false) -> Dictionary:
+	# A pointer hint is deliberately provisional. Only preview/place validates
+	# access routes, and place always reads the current final command position.
+	var shape := _footprint_preview(kind,center,quarter_turn)
+	shape.provisional = true
+	if shape.ok: shape.message = "Footprint clear. Click to check access and place."
+	return shape
+
+func _footprint_preview(kind: String, center: Vector2, quarter_turn: bool) -> Dictionary:
 	if not Catalog.SPECS.has(kind) or bool(Catalog.SPECS[kind].get("fixed",false)):
 		return _fail("F01 Terminal and F08 Personnel are fixed; choose a buildable F-series facility.")
 	if not center.is_finite(): return _fail("Choose a finite rear position.")
@@ -40,6 +52,16 @@ func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dicti
 		if footprint.grow(0.25).intersects(other.grow(0.25)):
 			return _fail("Footprint overlaps actual %s %s." % [row.kind,row.id])
 		if other.grow(0.25).has_point(door): return _fail("Entrance obstructed by an existing building.")
+	return {"ok":true,"kind":kind,"center":center,"size":size,"door":door,"footprint":footprint}
+
+func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dictionary:
+	var shape := _footprint_preview(kind,center,quarter_turn)
+	if not shape.ok: return shape
+	var size: Vector2 = shape.size
+	var door: Vector2 = shape.door
+	var footprint: Rect2 = shape.footprint
+	if _rear_ref.get_ref().empty_field_opening:
+		return _empty_field_preview(kind,center,size,door,footprint)
 	var access: Array = Layout.path(Layout.door("construction"),door)
 	if access.is_empty(): return _fail("No walking route from F12 builders to this entrance.")
 	for row in instances.values():
@@ -75,6 +97,22 @@ func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dicti
 		"m11":int(Catalog.SPECS[kind].m11),"work":float(Catalog.SPECS[kind].work),
 		"message":"Legal bounded footprint, entrance, walking access and eight-metre vehicle roads."}
 
+func _empty_field_preview(kind: String, center: Vector2, size: Vector2, door: Vector2, footprint: Rect2) -> Dictionary:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var table: Vector2 = rear.SUPPLY_TABLE
+	if footprint.grow(0.25).has_point(table): return _fail("Keep the Supply Table and its storage accessible.")
+	# Protect the actual starter service approaches, rather than phantom legacy roads.
+	for lane in [[Vector2(0,table.y-10),table+Vector2(0,-10)], [Vector2(0,table.y+10),table+Vector2(14,10)]]:
+		if _path_hits(lane,footprint.grow(4.0)): return _fail("Keep the Supply Table's arrival and freight access clear.")
+	if walking_path(table,door,footprint).is_empty(): return _fail("No walking access from the Supply Table to this entrance.")
+	for row in instances.values():
+		if row.state in ["Cancelled","Dismantled"]: continue
+		if footprint.grow(0.25).has_point(row.door): return _fail("Placement covers an existing site's entrance.")
+		if walking_path(table,row.door,footprint).is_empty(): return _fail("Placement blocks walking access to an existing site.")
+	return {"ok":true,"kind":kind,"center":center,"size":size,"door":door,"footprint":footprint,
+		"m11":int(Catalog.SPECS[kind].m11),"work":float(Catalog.SPECS[kind].work),
+		"message":"Legal footprint and walking access from the Supply Table."}
+
 func add_initial_park(id: String, center: Vector2) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if rear.time != 0.0 or instances.has(id): return _fail("Initial park must be unique and declared at time zero.")
@@ -99,7 +137,8 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 	var rear: RefCounted = _rear_ref.get_ref()
 	_sequence += 1
 	var id := "site-%04d" % _sequence
-	var added: Dictionary = rear.ledger.add_place(id,"%s physical construction site" % Catalog.SPECS[kind].code,center)
+	var at: Vector2 = plan.door if rear.empty_field_opening else center
+	var added: Dictionary = rear.ledger.add_place(id,"%s physical construction site" % Catalog.SPECS[kind].code,at)
 	if not added.ok: return added
 	rear.stores[id] = {"id":id,"capacity":float(plan.m11),"accessible":true,"filter":["M11"],"pile":false}
 	_register_builders(id,plan.door,rear)
@@ -107,8 +146,9 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,
 		"m11":plan.m11,"work":plan.work,"progress":0.0,"site_store":id,
 		"blocker":"Deliver %d real M11 from an accessible rear store." % plan.m11,"builders":{},"haul_job":""}
+	if rear.empty_field_opening: order_materials(id,"receiving",1,true)
 	rear._settle()
-	return {"ok":true,"id":id,"message":"Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
+	return {"ok":true,"id":id,"message":"Site placed; Building Materials are requested from the Supply Table and completed Materials Plants. Assign haulers and up to four builders." if rear.empty_field_opening else "Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
 
 func _path_hits(path: Array, box: Rect2) -> bool:
 	for index in range(1,path.size()):
@@ -121,18 +161,28 @@ func _path_hits(path: Array, box: Rect2) -> bool:
 	return false
 
 func vehicle_path(start: Vector2, goal: Vector2, ignored: Array = [], candidate: Rect2 = Rect2()) -> Array:
+	return _clearance_path(start,goal,ignored,candidate,4.0)
+
+func walking_path(start: Vector2, goal: Vector2, candidate: Rect2 = Rect2()) -> Array:
+	return _clearance_path(start,goal,[],candidate,0.25)
+
+func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: Rect2, clearance: float) -> Array:
 	var boxes: Array[Rect2] = []
 	for row in instances.values():
 		if row.id in ignored or row.kind == "park" or row.state in ["Cancelled","Dismantled"]: continue
-		boxes.append(Rect2(row.center-row.size/2.0,row.size).grow(4.0))
+		boxes.append(Rect2(row.center-row.size/2.0,row.size).grow(clearance))
 	if candidate.has_area():
-		var grown: Rect2 = candidate.grow(4.0)
+		var grown: Rect2 = candidate.grow(clearance)
 		if not grown.has_point(start) and not grown.has_point(goal): boxes.append(grown)
+	# A clear segment is already the shortest legal route. Use the same fresh
+	# bounds/obstacle test as graph edges before constructing and searching the
+	# visibility graph, including during authoritative placement validation.
+	if _vehicle_segment_clear(start,goal,boxes,clearance): return [start,goal]
 	var nodes: Array[Vector2] = [start,goal]
 	for box in boxes:
 		var outer: Rect2 = box.grow(0.5)
 		for corner in [outer.position,Vector2(outer.end.x,outer.position.y),outer.end,Vector2(outer.position.x,outer.end.y)]:
-			if BOUNDS.grow(-4.0).has_point(corner): nodes.append(corner)
+			if BOUNDS.grow(-clearance).has_point(corner): nodes.append(corner)
 	var distances: Array[float] = []
 	var previous: Array[int] = []
 	var visited: Array[bool] = []
@@ -148,7 +198,7 @@ func vehicle_path(start: Vector2, goal: Vector2, ignored: Array = [], candidate:
 		if nearest < 0 or distances[nearest] == INF or nearest == 1: break
 		visited[nearest] = true
 		for index in nodes.size():
-			if visited[index] or not _vehicle_segment_clear(nodes[nearest],nodes[index],boxes): continue
+			if visited[index] or not _vehicle_segment_clear(nodes[nearest],nodes[index],boxes,clearance): continue
 			var candidate_distance: float = distances[nearest]+nodes[nearest].distance_to(nodes[index])
 			if candidate_distance < distances[index]:
 				distances[index] = candidate_distance
@@ -161,8 +211,8 @@ func vehicle_path(start: Vector2, goal: Vector2, ignored: Array = [], candidate:
 		result.push_front(nodes[cursor])
 	return result
 
-func _vehicle_segment_clear(start: Vector2, goal: Vector2, boxes: Array[Rect2]) -> bool:
-	var road_bounds: Rect2 = BOUNDS.grow(-4.0)
+func _vehicle_segment_clear(start: Vector2, goal: Vector2, boxes: Array[Rect2], clearance: float = 4.0) -> bool:
+	var road_bounds: Rect2 = BOUNDS.grow(-clearance)
 	if not (road_bounds.has_point(start) or start == Vector2(240,91)) or not (road_bounds.has_point(goal) or goal == Vector2(240,91)): return false
 	for box in boxes:
 		if _path_hits([start,goal],box): return false
@@ -190,10 +240,10 @@ func _fail(message: String) -> Dictionary:
 
 func _register_builders(id: String, door: Vector2, rear: RefCounted) -> void:
 	var duty := "builders-" + id
-	rear.ledger.add_place("duty-" + duty, "F12 builders at " + id, door)
-	rear.requests[duty] = {"id":duty,"target":0,"positions":4,"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-" + duty,"manual":true}
+	rear.ledger.add_place("duty-" + duty, "Construction workers at " + id, door)
+	rear.requests[duty] = {"id":duty,"target":0,"positions":4,"priority":1,"created":rear.time,"order":rear._next(),"place":"duty-" + duty,"manual":not rear.empty_field_opening}
 
-func order_materials(id: String, source: String, priority: int = 1) -> Dictionary:
+func order_materials(id: String, source: String, priority: int = 1, automatic: bool = false) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual construction site.")
 	var row: Dictionary = instances[id]
 	if row.state != "Awaiting M11": return _fail("Only an awaiting site can request its build materials.")
@@ -205,12 +255,27 @@ func order_materials(id: String, source: String, priority: int = 1) -> Dictionar
 		if job.destination == id and job.type == "M11" and not job.cancelled: in_flight += maxi(0,int(job.requested)-int(job.delivered))
 	var needed: int = maxi(0,int(row.m11)-local-in_flight)
 	if needed == 0: return _fail("The complete M11 delivery is already here or committed.")
-	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority)
-	if result.ok: row.haul_job = result.id
+	var alternatives: Array = _manufactured_material_sources() if automatic else []
+	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority,alternatives)
+	if result.ok:
+		row.haul_job = result.id
+		if automatic: rear._job(str(result.id)).automatic_site = id
 	return result
 
+func _manufactured_material_sources() -> Array:
+	var sources: Array = []
+	for site in instances.values():
+		if site.kind == "materials" and site.state == "Complete" and site.has("output_store"): sources.append(str(site.output_store))
+	return sources
+
+func _publish_material_source(source: String, rear: RefCounted) -> void:
+	# A plant completion is a real membership event, not a recurring source scan.
+	for job in rear.jobs:
+		var site: Dictionary = instances.get(str(job.get("automatic_site","")),{})
+		if job.type == "M11" and not site.is_empty() and site.state == "Awaiting M11": rear.add_haul_source(str(job.id),source)
+
 func is_office(id: String) -> bool:
-	return id == "construction" or (instances.has(id) and instances[id].kind == "construction" and instances[id].state == "Complete")
+	return (id == "construction" and not _rear_ref.get_ref().empty_field_opening) or (instances.has(id) and instances[id].kind == "construction" and instances[id].state == "Complete")
 
 func _site_members(id: String) -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -259,6 +324,11 @@ func set_office_staff(office: String, count: int, priority: int = 1) -> Dictiona
 
 func _release_site_builders(id: String) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.empty_field_opening:
+		rear.requests["builders-"+id].target = 0
+		rear.requests["builders-"+id].positions = 0
+		rear._rebalance()
+		return
 	for person_id in _site_members(id):
 		var office: String = office_members[person_id]
 		_transferring = true
@@ -273,6 +343,7 @@ func set_builders(id: String, count: int, priority: int = 1) -> Dictionary:
 	var row: Dictionary = instances[id]
 	if row.state not in ["Awaiting M11","Building","Clearing","Dismantling"]: return _fail("This site has no active construction duty.")
 	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.empty_field_opening: return rear.set_target("builders-"+id,count,priority)
 	var members: Array[String] = _site_members(id)
 	while members.size() > count:
 		var person_id: String = members.pop_back()
@@ -317,11 +388,18 @@ func cancel(id: String) -> Dictionary:
 	var row: Dictionary = instances[id]
 	if row.state not in ["Awaiting M11","Building"]: return _fail("Only unfinished construction can be cancelled.")
 	var rear: RefCounted = _rear_ref.get_ref()
+	var profile := CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+	var started: int = Time.get_ticks_usec() if profile else 0
 	_stop_haul(row,rear)
+	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/haul_stop",Time.get_ticks_usec()-started)
+	if profile: started = Time.get_ticks_usec()
 	_release_site_builders(id)
+	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/builder_release",Time.get_ticks_usec()-started)
 	row.state = "Cancelled"
 	row.blocker = "Cancelled; delivered M11 is recoverable at this site."
+	if profile: started = Time.get_ticks_usec()
 	_return_site_stock(row,rear)
+	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/stock_return",Time.get_ticks_usec()-started)
 	return {"ok":true,"message":"Cancelled; half the build M11 was consumed only if work began. Remaining real M11 returns by hauling."}
 
 func _stop_haul(row: Dictionary, rear: RefCounted) -> void:
@@ -332,7 +410,7 @@ func _stop_haul(row: Dictionary, rear: RefCounted) -> void:
 func _return_site_stock(row: Dictionary, rear: RefCounted) -> void:
 	for stock in rear._stock_at(row.id):
 		if stock.design_type == "M11" and stock.available > 0:
-			rear.request_haul(row.id,"depot","M11",stock.available)
+			rear.request_haul(row.id,"receiving" if rear.empty_field_opening else "depot","M11",stock.available)
 
 func _workers(row: Dictionary) -> int:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -450,6 +528,7 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 		activity.mode = "Stock target"
 		rear.additional_productions.append(activity)
 		activities[row.id] = activity
+	if row.kind == "materials": _publish_material_source(str(row.output_store),rear)
 
 func request_dismantle(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual facility.")
@@ -488,6 +567,7 @@ func request_dismantle(id: String) -> Dictionary:
 			if not job.cancelled and job.destination == store_id and job.delivered < job.requested:
 				return _fail("An active haul still promises goods to this facility.")
 	if not rear.requests.has("builders-"+id): _register_builders(id,row.door,rear)
+	elif rear.empty_field_opening: rear.requests["builders-"+id].positions = 4
 	if activities.has(id): activities[id].enabled = false
 	if rear.requests.has(id): rear.set_target(id,0)
 	if row.kind == "receiving": rear.receiving.remove_freight_berth(id)
@@ -516,7 +596,7 @@ func _queue_clearance(row: Dictionary, rear: RefCounted) -> void:
 				if job.source == store_id and job.type == type and not job.cancelled:
 					already += maxi(0,int(job.requested)-int(job.delivered))
 			var needed: int = maxi(0,int(available_by_type[type])-already)
-			if needed > 0: rear._queue_haul(store_id,"depot",type,needed,1)
+			if needed > 0: rear._queue_haul(store_id,"receiving" if rear.empty_field_opening else "depot",type,needed,1)
 
 func _cleared(row: Dictionary, rear: RefCounted) -> bool:
 	for key in ["input_store","output_store"]:

@@ -1,0 +1,63 @@
+{
+  "reported_entry": "Normal F5 / Run Project; menus respond while simulation time stops around 308 seconds.",
+  "diagnosis": "Initial Rear.advance_time settlement can exceed the unchanged 4000 us cooperative allowance. The previous pre-interval check then returns without advancing any time, repeating indefinitely under sustained load. The user log retained physics/tick/settlement calls but almost no clock notifications. This is a load-dependent starvation condition, not a fixed 308-second stop.",
+  "source": "game/staffing/rear_simulation.gd::advance_time",
+  "change": "Require one positive fully settled interval before cooperative-budget yielding, unless the caller explicitly requested a planning stop. Keep elapsed remainder and existing transaction ordering, Pause, explicit endpoints and all performance ceilings.",
+  "tradeoff": "The allowance is cooperative, not a hard interrupt. An atomic interval can exceed it. This restores liveness; remaining costs still require optimization for 60 FPS.",
+  "evidence": [
+    {
+      "path": "logs/freeze-308/user-godot.log",
+      "scope": "Preserved user log; checksum in logs/freeze-308/objective.json."
+    },
+    {
+      "path": "logs/freeze-308/baseline",
+      "result": "New deterministic slow-initial-settlement regression fails before the fix; repeated positive requests make zero progress."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-37-08-18296",
+      "result": "Five headless live guards pass, including deliberate 6 ms initial settlement against 4 ms allowance and actual worker arrival at t=2 before yielding; retained remainder reaches t=10."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-27-52-36668",
+      "result": "One 330-real-second normal full-world 1x endurance case passes, same session, clean audit, no errors/skips. No fixture fast-forward.",
+      "wall_seconds": 330.516705,
+      "simulation_seconds": 330.49510700005,
+      "final_debt_seconds": 0.0,
+      "peak_frame_ms": 30.888,
+      "frames_over_60_fps_budget": 4353,
+      "fps_certified": false
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-37-22-29568",
+      "result": "All eighteen training domain/read guards pass."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-38-36-38400",
+      "result": "All twelve foreground logistics/report checks pass."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T19-37-41-24784",
+      "result": "Twelve pointer/query cases reported: eleven pass, one functional failure. Sustained pointer motion ends with an out-of-bounds preview and transform mismatch; its peak measured frame was 12.195 ms. This is not a performance-limit failure; unresolved native input issue, not dismissed as an OS effect. Pending post-placement phase is retained."
+    },
+    {
+      "path": "logs/freeze-308/editor-import",
+      "result": "Actual root editor imports headlessly, exit 0; inspect stderr for engine errors."
+    }
+  ],
+  "remaining": "Prototype completion, full repeated ordinary production-to-frontline supply acceptance, independent domain-clock migration and strict 60 FPS remain incomplete.",
+  "implemented_features": "docs/implemented_features.json",
+  "references": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_time.html",
+      "use": "Monotonic elapsed measurement uses get_ticks_usec."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/tutorials/performance/general_optimization.html",
+      "use": "Measure and retain actual frame costs; liveness is separate from performance acceptance."
+    }
+  ],
+  "source_parity": {
+    "path": "logs/freeze-308/production-source-parity.json",
+    "result": "All 220 production/project files in the native 330-second source manifest still match the current root byte hashes. Later edits changed tests, test launchers and documentation only."
+  }
+}

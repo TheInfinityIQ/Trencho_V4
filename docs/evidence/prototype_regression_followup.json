@@ -1,0 +1,303 @@
+{
+  "status": "in_progress_full_native_acceptance_failed",
+  "scope": "Follow-up to the earlier bounded menu/placement passes; historical passes remain historical. No frame/action/call/debt/AI limit was raised.",
+  "full_selection": {
+    "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328",
+    "snapshot": ".tools/gdunit4-performance/2026-11-05T18-59-35-32328",
+    "declared": 75,
+    "reported": 69,
+    "passed": 65,
+    "failures": [
+      {
+        "case": "test_11_every_started_building_cancellation_keeps_consumed_materials_consumed",
+        "detail": "UI contract failed: Started cancellation: munitions. Logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-02\n\tat '_complete' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:437\n\tat 'test_11_every_started_building_cancellation_keeps_consumed_materials_consumed' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:157\n\tat '_observe' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:432"
+      },
+      {
+        "case": "test_00_default_game_move_preview_place_and_repeat_at_one_x",
+        "detail": "Pointer placement failed; logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-03\n\tat '_finish' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:339\n\tat 'test_00_default_game_move_preview_place_and_repeat_at_one_x' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:41\n\tat '_observe' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:325"
+      },
+      {
+        "case": "test_03_observe_live_menu_actions_at_one_x",
+        "detail": "Performance run stopped at Warm up the opening at 1x. Inspect C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-59-35-32328/failure.json and summary.json; untested actions are not passes.\n\tat 'test_03_observe_live_menu_actions_at_one_x' in res://game/diagnostics/tests/gdunit/menu_performance_test.gd:345\n\tat '_issue' in res://game/diagnostics/menu_performance_suite.gd:448\n\tat '_process' in res://game/diagnostics/menu_performance_suite.gd:181"
+      },
+      {
+        "case": "test_ordinary_primary_and_management_panels_keep_pace_at_one_x",
+        "detail": "Ordinary menu failed: Ordinary game / open and observe Dispatch at 1x. Logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-14\n\tat '_finish' in res://game/diagnostics/tests/gdunit/prototype_live_ui_test.gd:98\n\tat 'test_ordinary_primary_and_management_panels_keep_pace_at_one_x' in res://game/diagnostics/tests/gdunit/prototype_live_ui_test.gd:79"
+      }
+    ],
+    "unrun": 6,
+    "errors": 0,
+    "skips": 0,
+    "native": true,
+    "frame_cap": 0,
+    "vsync_disabled": true,
+    "caller_stacks": false,
+    "optional_stage_and_frame_attribution": false,
+    "source_limit": "Current reviewed gameplay source, including observation/navigation and supply-intent fixes. Only subsequent documentation/map result metadata changed."
+  },
+  "changes": [
+    {
+      "path": "game/staffing/rear_layout.gd",
+      "principle": "Memoize only pure immutable geometry, bound memory and return detached results.",
+      "implementation": "Precompute fixed corner links and retain at most 128 exact endpoint-pair routes. Dynamic built footprints still use current ConstructionService geometry.",
+      "regression": "All fixed entrance pairs and blocked centres match the original uncached Dijkstra route arrays; mutation isolation and eviction checks pass."
+    },
+    {
+      "path": "game/identity/identity_ledger.gd",
+      "principle": "Batch repeated reads within a transaction, retain fresh validation at the later commit.",
+      "implementation": "Selected passenger masses share one fresh holder index; ordinary admission capture reuses its uninterrupted guard facts. Place/manifest metadata reads omit unused load mass.",
+      "regression": "Six forward components pass including preparation purity, moved passengers, changed loaded-ammunition mass, fresh fuel checks, unique admission and two real issues."
+    },
+    {
+      "path": "game/rear_base/base_simulation.gd",
+      "principle": "Separate bounded private preparation from indivisible physical admission.",
+      "implementation": "Newly Ready forward/troop work yields the remaining preparation allowance; a later running pump freshly admits it. Owed elapsed time remains retained."
+    },
+    {
+      "path": "game/rear_base/workforce_panel.gd",
+      "principle": "Bound UI construction and own queued work across lifecycle changes.",
+      "implementation": "Create one control group per returned frame; retain latest detached status, disconnect old queued work on bind and stop callbacks when prepared.",
+      "regression": "New row-lifecycle case passes; native populated Workers screen passes at 6.918 ms peak and 0.118 ms action in logs/prototype-coalesced-native/workers, versus the earlier 25.406 ms failure."
+    },
+    {
+      "path": "game/rear_base/base_demo.gd",
+      "principle": "Coalesce presentation at a rendered-frame boundary; update counts from committed events.",
+      "implementation": "One-shot refresh coalescing, explicit-refresh consumption and whole-second arrival countdowns for Workers; focused edits and current physical state are retained."
+    },
+    {
+      "path": "game/diagnostics/tests/gdunit/fixtures/ui_action_probe.gd",
+      "principle": "Avoid forced diagnostic disk synchronization inside measured gameplay.",
+      "implementation": "Buffer JSONL writes, flush at pause/finish/exit, keep heartbeat and first-failure snapshots immediate. A hard kill can lose the buffered tail; frozen limits and raw violations remain intact."
+    },
+    {
+      "path": "game/training/tests/training_input_test.gd",
+      "principle": "Assert the real state transition before testing a hidden view.",
+      "implementation": "Wait two frames and verify Build is selected before hidden course advancement; all four retained native training cases pass in the latest full run."
+    },
+    {
+      "path": "game/orders/order_service.gd",
+      "principle": "Avoid duplicate reads within an uninterrupted pure observation.",
+      "implementation": "Each squad observation lazily reads an objective position once, sharing that exact point across its observers; range, owner filtering, visibility, source ordering and 0.5-second report delay remain unchanged. Next observation reads fresh positions.",
+      "regression": "Current contact/read guards and frozen training suite all passed; native pointer acceptance also passed."
+    },
+    {
+      "path": "game/main/main.gd",
+      "principle": "Keep related presentation work in its reserved frame.",
+      "implementation": "After deferred navigation selects the current visible panel, consume its pending fresh read in that same presentation frame; direct refresh disconnects the queued duplicate.",
+      "regression": "Four live guards pass. Ordinary and broad menus still fail their strict frame gate, so this does not establish full FPS compliance."
+    },
+    {
+      "path": "game/logistics/rear_logistics.gd",
+      "principle": "Keep player intent separate from automatic demand; reconcile promises against actual custody.",
+      "implementation": "Manual quantities stay fixed. Automatic requests cover only remaining shortage after other promises and actual remaining cargo on cancelled departed manifests. Cancellation holds automatic regeneration until a new explicit request. Reopening invalidates the source notification so the next owned resupply tick publishes fresh need; replacement clears old intent.",
+      "regression": "All twelve current logistics/report cases passed, including two completed real return cycles, a third cancelled actual departure, manual/automatic promise accounting and session replacement. Controlled component stepping remains separate from ordinary complete-loop and FPS proof."
+    }
+  ],
+  "bounded_checks": [
+    {
+      "path": "logs/prototype-fixed-rear-geometry/parity",
+      "result": "Fixed geometry parity plus nine retained training-read cases pass; no performance claim."
+    },
+    {
+      "path": "logs/prototype-fresh-transport-and-cancel/forward",
+      "result": "All six current forward components pass; synthetic component stepping is not FPS evidence."
+    },
+    {
+      "path": "logs/prototype-staged-worker-rows/parity",
+      "result": "Both route and worker-lifecycle cases pass; no engine errors or ledger mutation."
+    },
+    {
+      "path": "logs/prototype-coalesced-native/workers",
+      "result": "One exact native Main game > Workers / Jobs case passed the strict frame/action gate. This filtered case does not certify all buttons."
+    }
+  ],
+  "retained_failures": [
+    {
+      "path": "logs/prototype-targeted-cancel-menu/cancellation",
+      "observation": "Munitions cancellation failed at 18.326 ms; before bounded full-route memo, material-return stage measured 11.093 ms. Invariants and real return rules remain required."
+    },
+    {
+      "path": "logs/prototype-staged-worker-rows/cancellation",
+      "observation": "Later depot observation recorded an unexplained 130.339 ms interval; not discarded or presented as a passing cancellation sweep."
+    },
+    {
+      "path": "logs/prototype-coalesced-native/cancellation",
+      "observation": "Receiving cancellation still failed at 17.558 ms. No completed all-facility cancellation pass exists for this source epoch."
+    },
+    {
+      "path": "logs/prototype-fresh-transport-and-cancel",
+      "observation": "The ad hoc runner mistakenly used -i as an include filter. Actual execution: forward six passed; cancellation-labelled run executed placement test_10 and runtime-button test_12, which failed Workers; long-menu-labelled run executed the other ten guard cases, not live test_03. These mislabeled attempts are not target-pass evidence; subsequent targeted invocations exclude every other declared case explicitly."
+    }
+  ],
+  "next_actions": [
+    "Attribute current native spikes using optional stage/frame scopes. The latest full run records a 16.638 ms first Battlefield draw; draw stages are now instrumented separately.",
+    "Finish all building-pointer/cancellation and ordinary/full menu workloads with unchanged 16.6667 ms limits; unrun cases must be reached.",
+    "Complete ordinary causal supply acceptance using the tested net-promise/cancellation rules; component passes do not establish the full autonomous manufacture-to-frontline loop.",
+    "Complete ordinary purchase/construction/manufacture/physical delivery/autonomous consumption plus a second new cycle in the same session; active production, 2x and sustained combat remain uncertified.",
+    "Continue the independent logistics/battlefield event-owner migration. The shared rear advance_time dispatcher is still present."
+  ],
+  "official_sources": [
+    "https://docs.godotengine.org/en/stable/tutorials/performance/general_optimization.html",
+    "https://docs.godotengine.org/en/stable/classes/class_object.html",
+    "https://docs.godotengine.org/en/stable/classes/class_fileaccess.html"
+  ],
+  "map_limit": "Reviewed source purposes and static UI graphs are maintenance evidence, not execution or complete test coverage.",
+  "latest_bounded_checks": [
+    {
+      "path": "logs/prototype-objective-read-batch/guard",
+      "result": "All 19 contact/read/counter/training guards passed, including the original frozen training hashes."
+    },
+    {
+      "path": "logs/prototype-objective-read-batch/pointer",
+      "result": "All six native pointer cases and 19 measured phases passed, without optional stage/frame attribution. Peak frame 16.274 ms, peak action 6.291 ms, peak measured inspect rate 3372.945489/s. Same strict limits; source manifest retained."
+    },
+    {
+      "path": "logs/prototype-aligned-navigation/live-guards",
+      "result": "All four retained live-clock/presentation/marker guards passed after navigation refresh alignment."
+    },
+    {
+      "path": "logs/prototype-followup-editor-import",
+      "result": "Actual root project editor import exited 0 with empty stderr; no editor test plugin required."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-54-14-14316",
+      "result": "Actual LogisticsOnly launcher: all 12 cases passed, zero failures/errors/skips. Includes every current supply-intent fix; no native full-game FPS claim."
+    }
+  ],
+  "latest_remaining_failures": [
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-02",
+      "result": "All-facility placement/rotation test passed; started-work cancellation failed munitions at 18.293 ms. Remaining cancellation cases and runtime-button case were not completed."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-03",
+      "result": "The full-run pointer fixture failed idle Build at 22.392 ms, despite the separate six-case/19-phase placement pass. No outlier discarded; later pointer cases unrun."
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328/failure.json",
+      "result": "Older broad menu run failed its complete measured opening warmup: {\"frame_ms\": 29.615, \"limit_ms\": 16.6666666666667}"
+    },
+    {
+      "path": "logs/gdunit4-performance-2026-11-05T18-59-35-32328/ui-contracts/group-14",
+      "result": "Ordinary menu progressed through earlier panels then failed Dispatch at 16.764 ms; this is not a complete twelve-phase pass."
+    }
+  ],
+  "mapping_status": "Required final source-map, UI-map and UI-tool-test results are stored under logs/prototype-followup-map-checks; final metadata-only freshness checks are repeated after this evidence update.",
+  "current_declared_default_cases": 75,
+  "historical_full_selection": {
+    "path": "logs/gdunit4-performance-2026-11-05T18-29-07-35776",
+    "snapshot": ".tools/gdunit4-performance/2026-11-05T18-29-07-35776",
+    "declared": 74,
+    "reported": 67,
+    "passed": 63,
+    "failures": [
+      {
+        "case": "test_10_every_buildable_facility_placement_rotation_rejection_and_cancellation",
+        "detail": "UI contract failed: Build support / rotated false. Logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-29-07-35776/ui-contracts/group-01\n\tat '_complete' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:437\n\tat 'test_10_every_buildable_facility_placement_rotation_rejection_and_cancellation' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:99\n\tat '_observe' in res://game/diagnostics/tests/gdunit/a_full_ui_test.gd:432"
+      },
+      {
+        "case": "test_00_default_game_move_preview_place_and_repeat_at_one_x",
+        "detail": "Pointer placement failed; logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-29-07-35776/ui-contracts/group-02\n\tat '_finish' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:339\n\tat 'test_00_default_game_move_preview_place_and_repeat_at_one_x' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:50\n\tat '_sweep' in res://game/diagnostics/tests/gdunit/building_pointer_test.gd:292"
+      },
+      {
+        "case": "test_03_observe_live_menu_actions_at_one_x",
+        "detail": "Performance run stopped at Build map action: build_place. Inspect C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-29-07-35776/failure.json and summary.json; untested actions are not passes.\n\tat 'test_03_observe_live_menu_actions_at_one_x' in res://game/diagnostics/tests/gdunit/menu_performance_test.gd:345\n\tat '_issue' in res://game/diagnostics/menu_performance_suite.gd:448\n\tat '_process' in res://game/diagnostics/menu_performance_suite.gd:181"
+      },
+      {
+        "case": "test_ordinary_primary_and_management_panels_keep_pace_at_one_x",
+        "detail": "Ordinary menu failed: Ordinary game / open and observe Battlefield at 1x. Logs: C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\gdunit4-performance-2026-11-05T18-29-07-35776/ui-contracts/group-13\n\tat '_finish' in res://game/diagnostics/tests/gdunit/prototype_live_ui_test.gd:98\n\tat 'test_ordinary_primary_and_management_panels_keep_pace_at_one_x' in res://game/diagnostics/tests/gdunit/prototype_live_ui_test.gd:79"
+      }
+    ],
+    "unrun": 7,
+    "errors": 0,
+    "skips": 0,
+    "native": true,
+    "frame_cap": 0,
+    "vsync_disabled": true,
+    "caller_stacks": false,
+    "optional_stage_and_frame_attribution": false,
+    "suites": [
+      {
+        "suite": "a_full_ui_test",
+        "reported": 1,
+        "failures": 1
+      },
+      {
+        "suite": "building_pointer_test",
+        "reported": 1,
+        "failures": 1
+      },
+      {
+        "suite": "cohesion_read_test",
+        "reported": 5,
+        "failures": 0
+      },
+      {
+        "suite": "forward_planning_test",
+        "reported": 6,
+        "failures": 0
+      },
+      {
+        "suite": "function_report_delivery_test",
+        "reported": 1,
+        "failures": 0
+      },
+      {
+        "suite": "live_frame_test",
+        "reported": 4,
+        "failures": 0
+      },
+      {
+        "suite": "menu_performance_test",
+        "reported": 11,
+        "failures": 1
+      },
+      {
+        "suite": "performance_budget_test",
+        "reported": 3,
+        "failures": 0
+      },
+      {
+        "suite": "placement_hint_test",
+        "reported": 6,
+        "failures": 0
+      },
+      {
+        "suite": "prototype_live_ui_test",
+        "reported": 1,
+        "failures": 1
+      },
+      {
+        "suite": "rear_layout_test",
+        "reported": 1,
+        "failures": 0
+      },
+      {
+        "suite": "rear_logistics_test",
+        "reported": 4,
+        "failures": 0
+      },
+      {
+        "suite": "training_read_test",
+        "reported": 9,
+        "failures": 0
+      },
+      {
+        "suite": "workforce_panel_test",
+        "reported": 1,
+        "failures": 0
+      },
+      {
+        "suite": "training_domain_test",
+        "reported": 9,
+        "failures": 0
+      },
+      {
+        "suite": "training_input_test",
+        "reported": 4,
+        "failures": 0
+      }
+    ],
+    "source_limit": "This 74-case full selection predates the later targeted observation/navigation and supply-intent fixes. The current 75-case selection has not been certified in full."
+  }
+}

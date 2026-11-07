@@ -1,48 +1,29 @@
 # Design brief
 
-## Current delivery — 30 October 2026
+Updated 5 November 2026. Read the [current GDD](game_design_document.md) for vision and player-facing rules, [playable delivery](playable_delivery.md) for the next outcomes and [team workflow](team_workflow.md) for ownership.
 
-Follow [playable delivery](playable_delivery.md), [team workflow](team_workflow.md) and [handoff](team_handoff.md). Dawson authorized a fresh designer/lead/two-developer team and one representative full-scale connected supply-to-battlefield delivery first. Gameplay requirements below remain; dated entry-scene and assignment statements are history. 2D overhead/Windows-first is authorized for this build; D01 certification remains open. The lead owns technical assignments and merges; the designer owns gameplay and experience acceptance.
+Trencho is a base-building and worker-management game supplying an autonomous battlefield. Start as a WASD-controlled rear character, place buildings, buy resources and workers, allocate labour and choose production. Workers perform physical work; the Logistics Centre automatically fulfils army supply requests through real transport to HQ. The army arranges onward supply and its own operations.
 
-Updated 26 October 2026. Project: Trencho V4; repository: Trencho_V4. The Game Designer directs scope. The [Game Design Document](game_design_document.md) contains the v0.2 gameplay baseline plus the governing [v0.2.1 planning amendment](game_design_document.md#23-project-planning-amendment-v021---25-october-2026). Read [AGENTS.md](../AGENTS.md) and [foundation decisions](foundation.md) for repository and engineering guidance.
+The challenge is building an effective base and allocating scarce people and resources. Ordinary UI actions should be easy to find and perform. The player does not manually command soldiers or compose every routine supply trip.
 
-## Established design scope
+## Approved opening and core rules
 
-Trencho V4 is a logistics management game supplying an autonomous battlefield. The player controls acquisition, rear facilities, staffing, production, training, shipment composition, dispatch and doctrine. The military AI controls organization, equipment issue, operations, tactical movement, engineering and combat. The player must be able to trace battlefield capability and failures back to physical people, supply and industrial decisions.
+- Character, 2,500 requisition, 500 Building Materials, no hired workers/workshops, and a Supply Table/arrival point at the field's edge.
+- Buy eight untrained workers for 140 requisition including transport; arrival is 90 seconds, followed by actual disembarkation. The shared pool supplies construction, hauling, production, training and crew duties.
+- Workers and materials must actually reach their work. Goods at HQ do not instantly appear in a remote weapon. No duplicate people, hidden replenishment or forced battlefield result.
+- Building Materials and Explosives are manufactured. Production inputs and onward shipments use actual available stock and physical handling.
+- Both areas must continue their applicable work while hidden; waiting in one area must not silently stop the other. Pause and speed controls describe player-visible behaviour, not a prescribed scheduling implementation.
 
-- Physical continuity: reservations do not move goods; production does not deliver them; HQ stock does not refill a distant unit. People have one identity, location and exclusive duty, competing between labour, training, crew duties and military service.
-- Delegated execution: Commander, Company, Platoon, Squad and individual roles retain distinct responsibilities. Orders travel down, observations and inability reports travel up. Vehicle and service elements use real personnel.
-- Core nodes: acquisition; manpower; production and training; internal logistics; dispatch and transport; HQ logistics; military organization; command and operations; objectives and economy; campaign and progression.
-- Campaign: five-position tug-of-war, temporary engagement access and persistent experience/card unlocks.
-- Current target includes troop transport, resource transport, technical, cannon-equipped APC carrying one squad plus crew, and tank.
-- Engineers build infrastructure, defensive structures and bridges using Building Materials. Explosives supplies mines, demolition and shell manufacture through a simplified common chain.
-- Procedural battlefields are 4,000 by 6,000 metres with one-metre tiles and one opposing HQ at each end. Natural terrain must also provide balanced, class-valid access. Rivers, lakes/ponds, forests, rocks, mountains, towns, farms, fields and swamp affect movement and observation.
-- No neutral NPCs or third-party battlefield factions in this edition. The GDD also excludes multiplayer, aircraft, boats and other explicitly listed future systems.
+## Delivery and wider scope
 
-## Proposed gameplay defaults
+Finish the ordinary self-sustaining factory, first useful automatic army delivery and repeat replenishment. Keep one representative full-size Farmland scenario for this demo. All five vehicle roles, engineering, medical/support systems, four procedural families, enemy logistics, campaign and persistence remain wider-game requirements.
 
-GDD section 1.2 identifies exact values, formulas, recipes, crew arrangements, caps, timings and generation thresholds as proposed defaults for review and playtesting. They give implementation a concrete baseline; they are not validated balance or evidence of a running game. Numerical changes require a recorded design revision rather than an undocumented substitute.
+Source-observed implementation and verification belong in [implemented features](implemented_features.json) and [prototype completion](prototype_completion.json). Closed foundation issues do not establish completed playable milestones.
 
-The GDD's overhead presentation, pause/1x/2x controls, operational travel distances and approximately 30-50 simulation-minute engagement target guide acceptance. Their details must be evaluated through observation. Do not compress the world or ranges to make an early demonstration appear complete.
+## Design and engineering responsibility
 
-## Delivery and open gates
+The Game Designer owns vision, gameplay scope, meaningful choices and observable requisites. The Developer owns systems, technical decisions, testing, integration and publication. UI/UX owns interaction/menu design in coordination with those roles. Current participants are recorded in [team integration state](team_integration_state.json).
 
-Milestones progress from rear economy and people through full procedural world, operational transport, autonomous infantry, engineering, full vehicles, support capabilities and a persistent campaign. The entire requested vehicle/engineering/procedural scope remains the current target.
+The old detailed [v0.2 specification](reference/gameplay_specification_v0_2.md) preserves catalogue values and historical rationale. It is not the current GDD or an instruction to retain old clocks, manual routine dispatch, prebuilt starting assets or archived assignments. No numerical rebalance is made by this documentation revision.
 
-The v0.2.1 amendment corrects sequencing: M3 closes on sustained contested objectives, requisition, retreat and resupply; full HQ outcomes are tested from M5 onward without changing assault eligibility. Early foundation evidence is separated from later casualty, firing and card-unlock integration. All complete final acceptance cases remain required. Each of the four map families needs its own validated full-size fallback.
-
-Gate status is recorded in [design decisions](design_decisions.md). D02's [cover-capacity definition](d02_cover_fairness.md) and D03's [people/capacity contract and matrix](d03_people_capacity.md) are accepted and merged in PR #52 and PR #53 respectively. G10 retains actual final-world validation, and D03's owning issues retain downstream gameplay evidence. D01 presentation/platform/full-map performance remains open. Measured prototypes and independent foundation work may proceed; production world presentation waits for its gate.
-
-## Engineering context
-
-Godot 4.7.2 standard edition is pinned; use GDScript by default. The entry scene opens the accepted [G03 staffing/hauling foundation](g03_staffing.md), with retained selectors for accepted [G02 procurement/receiving](g02_receiving.md) and [G01 accounting](g01_identity.md). Each review has its own declared state/clock; they are not a complete integrated engagement. These interfaces and their canvas scaling do not settle production world presentation. Compatibility rendering and window dimensions remain reversible bootstrap decisions, and no gameplay architecture, storage format or export target is prescribed by this design. For substantive changes, state the intended behaviour and acceptance criteria, then choose implementation details within [AGENTS.md](../AGENTS.md). Begin with the scoped task in [developer onboarding](developer_onboarding.md).
-
-Current integration (27 October 2026) retains accepted G03 as the default and adds reachable **G04 R01 Production** and **G08 Terrain & sight** reviews alongside G02/G01. [GDD23.7](game_design_document.md#237-g08-foundation-verification-path---27-october-2026) records the G08-specific evidence path; it does not establish Windows native verification or full playable M0. See [G08 evidence](g08_terrain.md#current-integration-and-evidence-path---27-october-2026) for the current assignment rather than the historical draft gates.
-
-The [connected rear-base integration](connected_rear_base.md) now becomes normal entry under the 27 October Designer assignment. It joins the accepted purchasing, receiving, exclusive staffing, hauling and existing production in one live prebuilt overhead scenario. Earlier review-entry descriptions above remain historical; all diagnostics stay reachable. Full construction, starting-scenario, world/military and M0 acceptance remain separate.
-
-The [non-heavy catalogue](production_catalogue.md) adds the remaining seventeen fixed recipes to that live base, with essential-only normal entry and explicit expanded-access new sessions. This completes the non-heavy recipe catalogue, not heavy production, actual cards, construction or full G04/M0.
-
-The [heavy manufacturing foundation](heavy_production.md) adds the six F10 recipes, real rear-fleet order admissions and one occupied output bay to the connected base. All29 catalogue rows exist; actual produced-hull driving/parking and field-gun collection remain G07/G12, and fullG04 acceptance is assessed against its staged criteria.
-
-The [connected F06 training](training_courses.md) adds basic/all seven specialist courses and the paid physical recovery-instructor arrival to the same base. Normal12ordinary/2500/no-goods initialization remains, with real training needed for the next G07 produced-hull continuation.
+Gameplay features take priority over polishing and benchmarks under Dawson's 5 November instruction. Preserve known limits and the eventual 60 FPS target; fix defects that prevent the current gameplay task or corrupt state. Godot version, language, source ownership, maps and development workflows remain engineering documentation and AGENTS.md responsibilities.

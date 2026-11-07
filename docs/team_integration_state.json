@@ -1,0 +1,317 @@
+{
+  "updated_date": "2026-11-06",
+  "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
+  "lead": {
+    "title": "Trencho V4 Developer",
+    "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+    "host_id": "local",
+    "owns": [
+      "Authoritative gameplay implementation",
+      "Technical choices",
+      "Final integration",
+      "Published review revisions",
+      "Focused verification and living map",
+      "Feature delegation and technical approval of developer PRs",
+      "Combined integration verification and testable player handoff",
+      "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer"
+    ],
+    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_lead_integration"
+  },
+  "consultants": [
+    {
+      "title": "Trencho â€” Game Designer",
+      "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
+      "host_id": "local",
+      "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
+    },
+    {
+      "title": "Trencho â€” UI/UX developer",
+      "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
+      "host_id": "local",
+      "scope": "Player interactions, menus, required information and reusable presentation handoffs."
+    },
+    {
+      "title": "Trencho - 2D Artist",
+      "thread_id": "6aecc998-2d4c-83e9-9cc3-8d7653edbe04",
+      "kind": "chatgpt",
+      "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
+    }
+  ],
+  "current_work": "Use developer_team.agents[*].current_assignment for each active developer task and continuity_recovery.lead_next_action for lead dispatch. No duplicate mutable assignment summary is maintained here.",
+  "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
+  "review_source": {
+    "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
+    "branch": "codex/gameplay-demo-integration",
+    "commit_resolution": "Use the exact commit sent by the lead; refs/heads/codex/gameplay-demo-integration is the current published review head. A future local edit is not reviewed until pushed.",
+    "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded.",
+    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89"
+  },
+  "scope_limits": [
+    "The existing GDD gameplay scope remains; feature priorities do not establish implementation or acceptance.",
+    "An eventual independent logistics/battlefield event/timer migration remains unfinished; historical shared-clock prose is superseded by user direction.",
+    "The demo is not complete, and strict 60 FPS is not certified.",
+    "Consultants report in their own chats; the lead reads results and controls integration. No archived developer assignment is implicitly resumed."
+  ],
+  "github_delivery_structure": {
+    "source": "Lead live REST/GraphQL post-cleanup verification5November2026; docs/github_repository_status.json",
+    "current_milestone": "https://github.com/TheInfinityIQ/Trencho_V4/milestone/9",
+    "current_open_goals": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "board": "https://github.com/users/TheInfinityIQ/projects/3",
+    "default_view": "Current demo",
+    "current_status": {
+      "83": "In Progress",
+      "90": "In Progress",
+      "91": "In Progress",
+      "92": "Backlog"
+    },
+    "wider_scope": "Eight open later milestones;23 open later outcomes labelled delivery:later/Backlog. Stale native blocker edges removed; real sequencing preserved in related-system references and bounded next actions.",
+    "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
+  },
+  "developer_team": {
+    "authority": "Dawson explicit request,2026-11-05",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "charter": "docs/developer_team.md",
+    "agents": [
+      {
+        "title": "Trencho â€” Developer A â€” Army Supply",
+        "thread_id": "01a1ae78-5b3a-7993-87ca-7d316595fd7e",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_demo_candidate",
+        "branch": "codex/demo-feature-candidate",
+        "current_assignment": "PR101 submitted/published and merged at65006544f27055875008d3c83408094d77b0dd21 after exact-head role decisions and validation. Preserve original sources; lead now owns cumulative PR89 integration workflow. A next supports review of the new PR decision protocol when exact head is ready."
+      },
+      {
+        "title": "Trencho â€” Developer B â€” Operations & Transport",
+        "thread_id": "01a1ae78-6945-7ae0-b03c-f2b5fadb56ad",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
+        "branch": "codex/connected-supply-candidate",
+        "current_assignment": "Cumulative supporting technical source review of lead PR89 againstmain800ec9 is active; production integration65006544, final docs-only head to follow. Identify concrete normal-main adoption blockers or no blocker; no local engine/regression. Lead owns final technical/check/merge disposition."
+      },
+      {
+        "title": "Trencho â€” Developer C â€” Player Experience",
+        "thread_id": "01a1ae78-77c2-7822-9322-328161666746",
+        "host_id": "local",
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
+        "branch": "codex/confirm-consumed-batch-cancel",
+        "current_assignment": "Count/cancellation/reporting fixes included unchanged in merged PR101. Original heads preserved; no remaining separate bay-push permission needed under Dawson's standing rule. Resolve concrete cumulative integration findings if assigned."
+      }
+    ],
+    "review_policy": {
+      "technical": "Lead explicit approval at current exact PR head; substantive lead code also gets supporting developer review",
+      "design": "Designer explicit game-identity approval at current exact PR head",
+      "default": "Pending or changes requested holds this PR; author/reviewer owns the next action. Lead merges after both approve and required checks pass, without another routine Dawson permission.",
+      "native_github_approval": "Report actual submission separately from a recorded role review note",
+      "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
+      "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
+    },
+    "lifecycle": "Lead dispatches and follows bounded active tasks; each completion routes to review, integration or an already assigned successor. No generic human continue dependency and no scheduled/always-on service.",
+    "reviewed_prs": [
+      {
+        "pr": 93,
+        "sha": "52ef961002419f1240adcab03de1419eee651c30",
+        "technical": "approved role review5794227658",
+        "design": "approved role review5794190558",
+        "scope": "Objective feedback only",
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 94,
+        "sha": "50d663a39a51880ce65e1193c4b9a16313d991fb",
+        "technical": "approved role review5794258289",
+        "design": "approved role review5794266035",
+        "scope": "Unmounted guidance component only",
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 95,
+        "sha": "62a12584148901eac223a9d7ef38963ea215b9a8",
+        "technical": "approved role review5794258428",
+        "design": "approved role review5794254642",
+        "scope": "Supply feedback only",
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 96,
+        "sha": "3429228ba88e9687f77360f622cc3286bcfd8eb9",
+        "technical": "approved role review5794390977",
+        "design": "approved role review5794323282",
+        "scope": "Physical approach cancellation",
+        "integration": "merged into review branch, source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 97,
+        "sha": "a3cf8e8ae2f4396382652e0eccfe3b5edd76fb42",
+        "technical": "approved roleCOMMENT5794821257",
+        "design": "approved roleCOMMENT5794785656",
+        "scope": "Mounted optional Getting started destination-only guidance",
+        "integration": "merged source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 98,
+        "sha": "2cea6a84b67e5f97aca0b88725dda2f6b8bef814",
+        "technical": "approved roleCOMMENT5794837745",
+        "design": "approved roleCOMMENT5794836007 after wording correction",
+        "scope": "Current request selection, physical-fact truck feedback and rear crew eligibility",
+        "integration": "merged source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e"
+      },
+      {
+        "pr": 99,
+        "sha": "ff5d176e196eb6ca7e9b29bdb246d1dea9ade191",
+        "technical": "approved roleCOMMENT5795065501",
+        "design": "approved roleCOMMENT5795066498",
+        "scope": "Last actual supply-pickup assessment diagnostic and recipient text; decision gates unchanged",
+        "integration": "merged into current review branch; exact production bytes preserved"
+      },
+      {
+        "pr": 100,
+        "sha": "f7b1c626ab5b5a8188c893ae2054c9d1e3414175",
+        "technical": "Exact-head scoped source/component approval in lead chat; no public COMMENT/native approval",
+        "design": "Exact-head scoped approval and evidence addendum in Designer chat; no public COMMENT/native approval",
+        "scope": "Actual eligible-handler selection for new automatic shipment only; captured manifests unchanged",
+        "verification": "Single authorized GitHub run42165822825 passed its supplied component case; not ordinary full-game supply/FPS acceptance",
+        "integration": "Closed unmerged as superseded by101; original branch/component evidence retained."
+      },
+      {
+        "pr": 101,
+        "sha": "67857fd2c577e43b2a86bfaa96667ad61ce5d8dd",
+        "technical": "APPROVED role COMMENT5809533328",
+        "design": "Final published game-identity APPROVED role COMMENT5809533421",
+        "scope": "Five-fix source composition; full ordinary demo/FPS acceptance remains open",
+        "verification": "Current-head validate42329715958/job128273199231 passed changed-production parsing; optional runtime demonstration skipped",
+        "integration": "Merged65006544f27055875008d3c83408094d77b0dd21 into review branch"
+      }
+    ],
+    "kind": "persistent_codex_project_chats",
+    "supersedes": "Earlier temporary xhigh sub-agents; their source, branches, PRs and evidence are inherited, not new authorship.",
+    "onboarding": "docs/developer_onboarding.md",
+    "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later.",
+    "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work"
+  },
+  "repository_cleanup": {
+    "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
+    "status": "completed_live_verified",
+    "rule": "Close duplicate/obsolete work with evidence and successor; retain valid unmet requirements/history. Remove stale blocked-by gates and give remaining work an actionable next step rather than claim completion.",
+    "designer_scope_review": "Approved before execution; successor contracts retained; Designer independently checked key rewritten bodies.",
+    "open_issues": 27,
+    "current_demo_issues": [
+      83,
+      90,
+      91,
+      92
+    ],
+    "later_open": 23,
+    "open_milestones": 9,
+    "native_blocker_edges_on_open_issues": 0,
+    "blocked_project_cards": 0,
+    "superseded_issues": [
+      42,
+      34,
+      37
+    ],
+    "closed_superseded_pr": 86,
+    "verification_record": "docs/github_repository_status.json",
+    "public_receipt": "https://github.com/TheInfinityIQ/Trencho_V4/issues/83#issuecomment-6674854235",
+    "active_prs_after_feature_integration": [
+      89
+    ],
+    "merged_feature_prs": [
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99
+    ]
+  },
+  "github_projects_connection": {
+    "server": "github_projects",
+    "endpoint": "https://api.githubcopilot.com/mcp/x/projects",
+    "tools": [
+      "projects_get",
+      "projects_list",
+      "projects_write"
+    ],
+    "credential_owner": "Existing named Windows credential; token never in repo/config/logs",
+    "verified": "Deployed helper, MCP initialization/tools list and real Project3 read succeeded; native registered app tool projects_get returned private Project3.",
+    "session_limit": "Resolved: registered mcp__github_projects tools are available; native projects_get read actual Project3 successfully."
+  },
+  "continuity_recovery": {
+    "date": "2026-11-06",
+    "reported_cause": "Finished bounded assignments and reviews waited for lead task dispatch; the lead ended coordination without a ready successor. Explicit stop-if-no-defect instructions closed traces, not the demo.",
+    "human_gameplay_question_pending": false,
+    "human_playtest_requested_pending": false,
+    "human_wait_qualification": "This reflects the developer/Designer/UI continuity reports; the Artist was contacted but no fresh response was observed.",
+    "scoped_tool_wait": {
+      "status": "RESOLVED by Dawson's direct6November standing PR workflow instruction;101branch published, PR created/reviewed/merged through existing supported connection",
+      "rule": "No routine extra per-PR publication/merge permission; genuine new tool rejections remain scoped and binding",
+      "prior_rejection": "Retained as history; no raw Git credential extraction or rejected-route retry occurred."
+    },
+    "completed_approval_not_pending": "PR100 draft creation and its single45-second GitHub direct check were approved and completed; that grant is not a blanket halt on source development.",
+    "ready_successor": {
+      "owner": "C",
+      "after": "Freeze staff-count priority repair for exact-head review",
+      "outcome": "Confirm loss before cancelling a consumed active batch, without cancelling a replacement batch or changing material rules",
+      "status": "HISTORICAL COMPLETION: cancellationcc030bd and combined67857fd completed and included in PR101 merged65006544. This is not a live assignment; current ownership is only agents[*].current_assignment and lead_next_action.",
+      "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
+      "record_kind": "completed successor history; never dispatch this already integrated work"
+    },
+    "lead_next_action": "Finish the new PR review decision protocol and its supporting review; process cumulative PR89 technical/game-identity decisions at final exact head and required checks, then merge when eligible. No human gameplay question or requested playtest currently blocks this work.",
+    "publication": "Continuity records are published on the integration branch; new current-head decisions are updated through ordinary PR handoffs.",
+    "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
+  },
+  "local_review_candidates": [
+    {
+      "head": "bc0bfefdbdbb0812d8258b106eddf01654fca6f0",
+      "branch": "codex/connected-supply-candidate",
+      "peer": "A complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer complete/source scope approved",
+      "publication": "NONE; final published-head PR reviews and applicable permissions remain distinct",
+      "runtime": "NONE combined; retained component evidence has its own limits"
+    },
+    {
+      "head": "e15eaf4f2f703da8ee47b905bc29c665c4c8a7e3",
+      "branch": "codex/preserve-facility-staff-priority",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer complete/no blocker",
+      "publication": "NONE",
+      "runtime": "NONE"
+    },
+    {
+      "head": "cc030bd7bd5adc521fb0e833a48ac8364f9d14e4",
+      "branch": "codex/confirm-consumed-batch-cancel",
+      "peer": "B complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer source scope approved",
+      "ux": "No blocking source finding",
+      "publication": "NONE; exact published-head reviews remain distinct",
+      "runtime": "NONE"
+    },
+    {
+      "head": "67857fd2c577e43b2a86bfaa96667ad61ce5d8dd",
+      "branch": "codex/demo-feature-candidate",
+      "peer": "B complete/no blocker",
+      "technical": "Lead complete/no blocker",
+      "design": "Designer local combined source scope approved",
+      "publication": "Published asPR101, exact head67857fd; both role decisions recorded; merged65006544 intointegration",
+      "runtime": "NONE combined; only component-specific historical evidence"
+    }
+  ],
+  "current_open_prs": [
+    89
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-05",
+  "objective": "Correct PR94 false Logistics Centre staffing advice when another completed centre already has requested and physically present handlers.",
+  "review_baseline": "fef7aaf1ff40d06fc498ab00b902560b4a7a7907",
+  "reported_by": "Designated Game Designer exact-commit review; lead agreed. Previous component technical signoff is superseded pending renewed review.",
+  "frozen_contract": "docs/diagrams/demo_guidance_logistics_selection.json",
+  "preserved_original_hashes": {
+    "docs/diagrams/demo_guidance.json": "e0573a70a260ab56f6a847e7eda895142579c534dc56c61e511e4c24bdc46406",
+    "tools/checks/demo_guidance_check.gd": "96fea77260fbbff00011a04241fc3f2bf80e0a50a43431e3d3673979cb7e737a"
+  },
+  "frozen_fix_input_hashes": {
+    "docs/diagrams/demo_guidance_logistics_selection.json": "084d5ce1edaefc811d456f0d561822b369fcacc653eac707225e56b6bb7adfb1",
+    "tools/checks/demo_guidance_logistics_check.gd": "ca94518509e656ab67df4649618627ddc8f2e8231d0552863a78cd4f93f01939"
+  },
+  "baseline": {
+    "result": "FAIL as expected",
+    "exit_code": 1,
+    "log": "logs/demo-guidance-logistics/baseline.stdout.log",
+    "error": "Ignore unstaffed copies; select the actual staffed centre: earlier unstaffed / later staffed",
+    "observed": "Both centres physically completed; site-0001 target0/present0 was selected although site-0002 had target1/present1. The displayed action incorrectly requested staffing."
+  },
+  "fix": "The existing narrow facilities reader prefers a completed dispatch copy with requested and present handlers. After finding one, later dispatch copies require neither another presence read nor another staffing target. When none qualify, advice explains that one usable centre needs handlers; it does not require staffing every copy.",
+  "strengthened_check": {
+    "result": "PASS",
+    "assertions": 21,
+    "exit_code": 0,
+    "stderr": "empty",
+    "log": "logs/demo-guidance-logistics/fixed.stdout.log",
+    "command": "godot --headless --path . --script res://tools/checks/demo_guidance_logistics_check.gd"
+  },
+  "observed": [
+    "Eight workers bought through existing command; two actual Logistics Centres physically constructed using approved starting M11 and actual hauling/builders",
+    "Earlier unstaffed/later staffed centre: later actual target1/present1 selected; Army needs navigation",
+    "Earlier staffed/later unstaffed after actual staffing commands: earlier target1/present1 selected; Army needs navigation",
+    "Both targets removed and actual handlers released: staffing action restored",
+    "All three selection reads preserved ledger, requests, construction instances and actor records; final physical audit passed"
+  ],
+  "regression": {
+    "checker": "tools/checks/demo_guidance_check.gd",
+    "unchanged": true,
+    "result": "PASS",
+    "assertions": 33,
+    "exit_code": 0,
+    "stderr": "empty",
+    "log": "logs/demo-guidance-logistics/original-regression.stdout.log"
+  },
+  "safeguards": "Existing state owners, commands, subscriptions and finite deferred refresh lifecycle remain. No new assignment, gameplay policy, broad live snapshot, polling, timer or readiness/history owner. Snapshot comparison exists only inside the retained direct checker.",
+  "limits": [
+    "Selector factory/truck-ready preconditions are detached arguments, not fabricated world entities; this checker certifies actual facilities/handlers only",
+    "Component mount, readable help height, current Training hire route and precise selection remain separate integrated PR89 obligations",
+    "No actual truck/course/delivery, genuine army need, native-input, ordinary full-demo or60FPS acceptance",
+    "Known performance failures and eventual60FPS target unchanged"
+  ],
+  "reviews": {
+    "lead_technical": "renewed exact-commit review pending",
+    "game_designer": "renewed exact-commit review pending",
+    "native_github_approval": "none claimed"
+  }
+}

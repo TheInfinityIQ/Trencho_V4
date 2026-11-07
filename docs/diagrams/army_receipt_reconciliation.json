@@ -1,0 +1,58 @@
+{
+  "objective": "After actual HQ receipt credit changes outstanding promises, permit the next normal military supply decision to reconcile genuine residual need even if its net quantity is unchanged.",
+  "baseline": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "status": "implemented_source_reviewed_pending_authorized_publication_and_verification",
+  "owner": "Army developer, lead-released receipt-credit prefix only. B retains _advance_request new-manifest selection tail/_ready_worker and Dispatch.",
+  "source_scope": [
+    "game/logistics/rear_logistics.gd::_advance_request newly credited receipt block through existing changed.emit",
+    "game/battlefield/opening_resupply.gd::invalidate_rear_supply_need comment only"
+  ],
+  "authoritative_state": {
+    "physical_goods_and_unload": "Ledger and Dispatch manifest.unloaded; unchanged.",
+    "receipt_accounting": "Existing RearLogistics row.delivered and per-manifest credited high-water mark.",
+    "genuine_deficit_and_coverage": "Existing OpeningResupply assessment; no copied/stale quantity owner.",
+    "cancellation_and_manual_intent": "Existing RearLogistics holds and fixed manual request targets; unchanged."
+  },
+  "commit_order": [
+    "Read actual manifest.unloaded and already credited amount.",
+    "Only for new positive receipt, commit both row.delivered and row.credited.",
+    "Resolve existing weak source and require current model identity plus actual current policy.resupply identity.",
+    "Invalidate ONLY row.type publication key through existing source API, before existing changed notification.",
+    "Next eligible normal military decision recalculates actual personal/courier/local/incoming/HQ coverage and emits current positive deficit; existing coalescer reconciles against fresh outstanding promises."
+  ],
+  "commands_events_timed_work": "No new signal, callback, ensure/queue command, stock query, clock advance, poll, timer, scheduler or cache owner. Existing invalidation erases only a publication key; next existing source decision owns assessment.",
+  "lifecycle": "Null/expired weak source and source not matching current session/model/policy are ignored. Existing model replacement lifetime remains; no global generation or retained source copy.",
+  "duplicate_cancellation_failure": "unloaded<=credited does nothing. Repeated real receipt invalidations coalesce by erasing the same key. Holds are never cleared; cancelled demand is not recreated. Actual cargo/claims/accepted manifests/returns and manual quantities remain untouched.",
+  "acceptance": [
+    "A newly credited receipt commits both accounting fields before per-type invalidation and public changed notification.",
+    "Only current source of current model may be invalidated; no stale Army quantity is used.",
+    "The next existing military assessment uses fresh coverage, so genuine need100 versus80 outstanding promises reconciles20 rather than another100.",
+    "No-new-credit read does not invalidate again; no new idle processing exists.",
+    "Cancellation holds, manual fixed quantities, existing stock6000HQ, thresholds, physical custody and B-owned selection/Dispatch source stay unchanged."
+  ],
+  "source_proof": "Source-derived conditional event-order gap, not observed ordinary gameplay: physical HQ deposit can be assessed within synchronous rear.advance_time before later Node receipt credit. Quantity-coalesced source publication then has no credit-driven invalidation edge.",
+  "design": "Designer confirmed residual-need behavior after actual commitments change, while retaining all coverage/holds/physical/manual rules. This is meaning clarification, not runtime certification or engineering prescription.",
+  "verification_policy": "No local engine/regression/broad scenario/failure injection/coverage/benchmark. Prepare at most one brief new-credit-to-invalidation input proposal if needed, but NO PR or check submission until lead coordinates user publication authorization/current frozen head. Raw Git credential fallback/secret extraction stopped; normal branch push separately authorized.",
+  "limits": [
+    "No ordinary shortage/receipt timing or whole-loop outcome has been executed for this change.",
+    "Read-only source proof does not certify natural need, manufacture-to-recipient supply, repeated replenishment, native input/rendering, pacing or FPS."
+  ],
+  "sources": [
+    {
+      "path": "game/logistics/rear_logistics.gd:223",
+      "why": "Actual receipt-accounting prefix and existing event-woken finite owner."
+    },
+    {
+      "path": "game/battlefield/opening_resupply.gd:369",
+      "why": "Existing per-type invalidation only erases publication key; source assessment below owns fresh coverage."
+    },
+    {
+      "path": "game/staffing/rear_simulation.gd:386",
+      "why": "Dispatch physical deposit can precede normal supply settlement in the same synchronous clock transaction."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_object.html#enum-object-connectflags",
+      "why": "Default immediate signal versus deferred idle callback; invalidation must precede existing public notification."
+    }
+  ]
+}

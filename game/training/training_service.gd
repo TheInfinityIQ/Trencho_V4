@@ -1,4 +1,5 @@
 extends RefCounted
+const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 ## F06: actual twelve students, two actual instructors and elapsed course time.
 const COURSES := {
 	"P01":{"name":"Basic infantry","seconds":120.0,"recipes":[]},
@@ -22,6 +23,9 @@ func _init(rear: RefCounted, access: Callable) -> void:
 	_rear_ref = weakref(rear)
 	_recipe_access = access
 	rear.requests.students = {"id":"students","target":0,"positions":12,"priority":1,"created":0.0,"order":rear._next(),"place":"duty-training"}
+	if rear.empty_field_opening:
+		training_sites.clear()
+		rear.requests.students.positions = 0
 
 func add_training_site(id: String, center: Vector2, duty: String) -> void:
 	training_sites.append({"id":id,"center":center,"duty":duty,"active":true})
@@ -57,6 +61,7 @@ func course_accessible(course: String) -> bool:
 	return false
 
 func request_course(course: String, count: int) -> Dictionary:
+	CallLog.record(&"training/training_service.gd::request_course")
 	if not course_accessible(course): return _result(false,"Course access absent; requires available declared recipe access, not a selected production recipe.")
 	if count <= 0 or count > _seat_capacity() - _unfinished().size(): return _result(false,"Course requests must fit actual reserved student places, including queued/reporting people.")
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -74,7 +79,7 @@ func _unfinished() -> Array[Dictionary]:
 
 func _eligible(person: Dictionary, course: String) -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
-	if not rear._eligible(person,"Available") or person.assignment == "Training" or person.duty_id == "training" or person.pending_assignment != "None" or not person.crew_station.is_empty(): return false
+	if not rear._eligible(person,"Available") or person.assignment == "Training" or _training_duty(str(person.duty_id)) or person.pending_assignment != "None" or not person.crew_station.is_empty(): return false
 	return not person.basic_training if course == "P01" else person.basic_training and person.qualification == "None"
 
 func student_position(id: String) -> Vector2:
@@ -101,7 +106,7 @@ func instructors() -> Array[String]:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var result: Array[String] = []
 	for id in rear.actors:
-		var p: Dictionary = rear.ledger.inspect_entity(id)
+		var p: Dictionary = rear.ledger.inspect_person_status(id)
 		if p.owner == rear.PLAYER and p.basic_training and p.health > 0 and p.assignment == "Rear Labour" and p.pending_assignment == "None" and p.carrying_stock_id.is_empty() and p.crew_station.is_empty() and rear.actors[id].phase == "Idle" and rear.requests.has(p.duty_id) and p.position.is_equal_approx(rear.ledger.inspect_entity(rear.requests[p.duty_id].place).position) and _training_duty(p.duty_id):
 			result.append(id)
 	return result
@@ -114,18 +119,20 @@ func _training_duty(duty: String) -> bool:
 func _present(row: Dictionary) -> bool:
 	if row.person_id.is_empty(): return false
 	var rear: RefCounted = _rear_ref.get_ref()
-	var p: Dictionary = rear.ledger.inspect_entity(row.person_id)
+	var p: Dictionary = rear.ledger.inspect_person_status(row.person_id)
 	return p.assignment == "Training" and p.duty_id == "students" and p.pending_assignment == "None" and p.health > 0 and p.carrying_stock_id.is_empty() and rear.actors[p.id].phase == "Idle" and p.position.is_equal_approx(student_position(p.id))
 
 func _active() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if not accessible: return result
+	var unfinished := _unfinished()
+	if unfinished.is_empty(): return result
 	var coverage: Dictionary = {}
 	for id in instructors():
-		var duty: String = _rear_ref.get_ref().ledger.inspect_entity(id).duty_id
+		var duty: String = _rear_ref.get_ref().ledger.inspect_person_status(id).duty_id
 		coverage[duty] = int(coverage.get(duty,0))+6
 	# Each actual instructor covers only students seated at that same F06.
-	for row in _unfinished():
+	for row in unfinished:
 		if row.seat < 0 or not _present(row) or not course_accessible(row.course): continue
 		var duty: String = training_sites[int(row.seat / STUDENT_LIMIT)].duty
 		if int(coverage.get(duty,0)) <= 0: continue
@@ -195,6 +202,7 @@ func _withdraw(row: Dictionary, reason: String) -> void:
 	row.seat = -1
 
 func withdraw(id: String) -> Dictionary:
+	CallLog.record(&"training/training_service.gd::withdraw")
 	var rear: RefCounted = _rear_ref.get_ref()
 	for row in _unfinished():
 		if row.id != id: continue
@@ -209,6 +217,7 @@ func withdraw(id: String) -> Dictionary:
 	return _result(false,"Choose an unfinished queued or actual student course.")
 
 func set_access(value: bool) -> Dictionary:
+	CallLog.record(&"training/training_service.gd::set_access")
 	accessible = value
 	_rear_ref.get_ref()._settle()
 	return _result(true,"Training access updated; completed qualifications and current elapsed work retained.")
@@ -236,7 +245,8 @@ func snapshot() -> Dictionary:
 	_refresh_states()
 	var counts := {"Queued":0,"Reporting":0,"Active":0,"Paused":0,"Completed":0,"Withdrawn":0}
 	for row in rows: counts[row.state] += 1
-	return {"accessible":accessible,"courses":COURSES.duplicate(true),"rows":rows.duplicate(true),"counts":counts,"student_places":_seat_capacity(), "training_sites":training_sites.duplicate(true),"reserved_student_places":_unfinished().size(),"instructors":instructors(),"coverage":instructors().size()*6,"instructor_target":_rear_ref.get_ref().requests.training.target}
+	var actual_instructors := instructors()
+	return {"accessible":accessible,"courses":COURSES.duplicate(true),"rows":rows.duplicate(true),"counts":counts,"student_places":_seat_capacity(), "training_sites":training_sites.duplicate(true),"reserved_student_places":_unfinished().size(),"instructors":actual_instructors,"coverage":actual_instructors.size()*6,"instructor_target":_rear_ref.get_ref().requests.training.target}
 
 func audit() -> Array[String]:
 	var failures: Array[String] = []
@@ -253,4 +263,6 @@ func audit() -> Array[String]:
 	return failures
 
 func _result(ok: bool,message: String) -> Dictionary:
-	return {"ok":ok,"message":message}
+	# Rejected requests above are read-only. Accepted legacy setters still need
+	# the current planning/reconciliation guarantees until their own migration.
+	return {"ok":ok,"message":message,"requires_reconciliation":ok}

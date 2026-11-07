@@ -1,5 +1,6 @@
 extends RefCounted
 ## G18 control and income over the shared G01/G15/G16 physical state and clock.
+const Records = preload("res://game/identity/identity_records.gd")
 const EPS := 0.000001
 const RADIUS := 25.0
 const RESOURCE_INCOME := 1.5
@@ -24,7 +25,7 @@ func register(place_id: String, kind: String) -> Dictionary:
 	for row in objectives.values():
 		if row.kind == kind: used += 1
 	if used >= limit: return {"ok":false,"message":"Scenario objective count exceeds the GDD kind limit."}
-	objectives[place_id] = {"id":place_id,"kind":kind,"position":place.position,"control":0.0,"owner":"","state":"Neutral","blue":[],"red":[],"blockers":[],"income":0.0,"last_at":_rear().time}
+	objectives[place_id] = {"id":place_id,"kind":kind,"position":place.position,"control":0.0,"owner":"","state":"Neutral","blue":[],"red":[],"blockers":[],"income":0.0,"last_at":_rear().time,"latest_change":{}}
 	_refresh()
 	return {"ok":true,"message":"Physical objective registered at 25 m radius; no owner or income granted."}
 
@@ -45,8 +46,9 @@ func advance_to(at: float) -> void:
 	var delta: float = at-_rear().time
 	if delta <= EPS: return
 	for row in objectives.values():
-		if row.kind == "Resource" and row.state != "Contested" and row.owner == _rear().PLAYER:
-			var credited: float = RESOURCE_INCOME*delta
+		var income_rate := _income_rate(row)
+		if income_rate > 0.0:
+			var credited: float = income_rate*delta
 			_rear().receiving.credit_objective_income(credited)
 			row.income += credited
 			_income_total += credited
@@ -58,6 +60,8 @@ func settle() -> bool:
 	var changed := _refresh()
 	for row in objectives.values():
 		var previous_owner: String = row.owner
+		var previous_state: String = row.state
+		var previous_income := _income_rate(row)
 		if (previous_owner == _rear().PLAYER and row.control <= EPS) or (previous_owner == "army-red" and row.control >= -EPS): row.owner = ""
 		if row.control >= 60.0-EPS: row.owner = _rear().PLAYER
 		elif row.control <= -60.0+EPS: row.owner = "army-red"
@@ -71,6 +75,10 @@ func settle() -> bool:
 		if state != row.state:
 			row.state = state
 			changed = true
+		if row.owner != previous_owner or row.state != previous_state:
+			# One bounded fact from this authority, never a UI-derived history.
+			row.latest_change = {"at":_rear().time,"from_owner":previous_owner,"to_owner":row.owner,
+				"from_state":previous_state,"to_state":row.state,"income_from":previous_income,"income_to":_income_rate(row)}
 	return changed
 
 func inspect(place_id: String) -> Dictionary:
@@ -80,7 +88,7 @@ func inspect(place_id: String) -> Dictionary:
 	var effective_rate: float = _rate(row)
 	if row.control >= 60.0-EPS and effective_rate > 0.0 or row.control <= -60.0+EPS and effective_rate < 0.0: effective_rate = 0.0
 	row["capture_rate"] = effective_rate
-	row["income_rate"] = RESOURCE_INCOME if row.kind == "Resource" and row.owner == _rear().PLAYER and row.state != "Contested" else 0.0
+	row["income_rate"] = _income_rate(row)
 	row["blocked_reason"] = "Both armies present: no capture progress or resource income." if row.state == "Contested" else ("No eligible armed dismounted people within 25 m." if row.blue.is_empty() and row.red.is_empty() else "")
 	return row
 
@@ -97,6 +105,9 @@ func audit() -> Array[String]:
 		if row.owner == _rear().PLAYER and row.control < -EPS or row.owner == "army-red" and row.control > EPS: failures.append("G18 owner/control contradiction: "+id)
 	return failures
 
+func _income_rate(row: Dictionary) -> float:
+	return RESOURCE_INCOME if row.kind == "Resource" and row.owner == _rear().PLAYER and row.state != "Contested" else 0.0
+
 func _rate(row: Dictionary) -> float:
 	if not row.blue.is_empty() and not row.red.is_empty(): return 0.0
 	if not row.blue.is_empty(): return float(mini(4,row.blue.size()))
@@ -111,7 +122,23 @@ func _refresh() -> bool:
 	var blue: Dictionary = {}
 	var red: Dictionary = {}
 	var blockers: Array[Dictionary] = []
-	var entities: Array = _rear().ledger.snapshot().entities
+	var ledger: RefCounted = _rear().ledger
+	var people: Array[Dictionary] = []
+	var reasons := {}
+	var armed_candidates: Array[String] = []
+	var positions: Array[Vector2] = []
+	for row in objectives.values(): positions.append(row.position)
+	for person in ledger.persons_near_any(positions,RADIUS+EPS,[_rear().PLAYER,"army-red"],false):
+		people.append(person)
+		var reason := ""
+		if ledger.entity_kind(person.holder_id) != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
+		elif person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"]: reason = "Wounded, recovering or dead people cannot capture."
+		elif _rear().combat.broken.has(person.id): reason = "Broken morale requires regrouping."
+		reasons[person.id] = reason
+		if reason.is_empty(): armed_candidates.append(person.id)
+	# Inspect held goods only for nearby people whose earlier physical blockers
+	# permit an ammunition check. Both queries retain canonical ledger order.
+	var entities: Array = ledger.entities_at_any(armed_candidates,["WEAPON","STOCK"],false)
 	var held_weapons: Dictionary = {}
 	var held_rounds: Dictionary = {}
 	for item in entities:
@@ -121,14 +148,9 @@ func _refresh() -> bool:
 		elif item.kind == "STOCK" and item.available > 0:
 			if not held_rounds.has(item.holder_id): held_rounds[item.holder_id] = {}
 			held_rounds[item.holder_id][item.design_type] = int(held_rounds[item.holder_id].get(item.design_type,0))+int(item.available)
-	for person in entities:
-		if person.kind != "PERSON" or person.owner not in [_rear().PLAYER,"army-red"]: continue
-		var reason := ""
-		var holder: Dictionary = _rear().ledger.inspect_entity(person.holder_id)
-		if holder.get("kind","") != "PLACE" or not str(person.crew_station).is_empty(): reason = "Still aboard or crewing a vehicle; physically dismount first."
-		elif person.health <= 0 or person.assignment in ["Wounded","Recovery","Dead"]: reason = "Wounded, recovering or dead people cannot capture."
-		elif _rear().combat.broken.has(person.id): reason = "Broken morale requires regrouping."
-		else:
+	for person in people:
+		var reason: String = reasons[person.id]
+		if reason.is_empty():
 			var armed := false
 			for weapon in held_weapons.get(person.id,[]):
 				if weapon.loaded_rounds > 0 or int(held_rounds.get(person.id,{}).get(weapon.ammo_type,0)) > 0: armed = true

@@ -1,0 +1,11 @@
+flowchart TD
+    Event[Existing committed event / visibility] --> Read[Read current surviving construction instances]
+    Read --> Copies[Completed Logistics Centre candidates]
+    Copies --> Staff[Current requested and physically present handlers]
+    Staff --> Any{Any completed centre qualifies?}
+    Any -->|Yes| Use[Select one qualifying centre; ignore unstaffed copies as requirements]
+    Use --> Army[Existing Army needs navigation]
+    Any -->|No| Fallback[Retain completed / unfinished fallback]
+    Fallback --> Cause[Explain actual staffing / construction preparation]
+    Release[Actual reassignment / cancellation / replacement] --> Event
+    Owner[Existing owners retain all goods, people and work] -. Read only .-> Read

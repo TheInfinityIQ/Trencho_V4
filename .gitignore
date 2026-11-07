@@ -1,6 +1,8 @@
 # Godot generated data (keep .uid and .import sidecars in version control).
 .godot/
 *.translation
+__pycache__/
+*.py[cod]
 
 # Local tools, check output, and exported builds.
 .tools/
@@ -8,6 +10,7 @@
 # Acquired and verified by tools/setup_gdunit4.ps1; never hand-edit the dependency.
 /addons/gdUnit4/
 builds/
+logs/
 
 # Local editor and operating-system state.
 .idea/

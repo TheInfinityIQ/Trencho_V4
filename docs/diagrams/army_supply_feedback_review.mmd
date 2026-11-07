@@ -1,0 +1,10 @@
+flowchart TD
+  A[Existing Army read computes available stock and HQ-forward commitments] --> B{Gap after shown coverage?}
+  B -->|No| C[Keep existing covered supply-stage explanation]
+  B -->|Yes| D[Review rear deliveries]
+  D --> E[Explicit: reserved or onboard rear-HQ cargo is omitted]
+  E --> F[Check existing request and actual manifest cargo before extra production]
+  G[Requested manifest quantity] -. not proof .-> H[Physical cargo]
+  I[Existing Dispatch handling and Ledger custody] --> H
+  H -. not newly queried by this fix .-> E
+  F --> J[No demand, stock, cancellation or operation mutation]

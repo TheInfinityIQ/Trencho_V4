@@ -1,0 +1,27 @@
+%% Prospective design before implementation. Separate physical jobs, not a proven runtime lineage.
+flowchart TD
+    Player[Player opens Army needs] --> Panel[Scene-owned ArmySupplyPanel]
+    Session[Current GameSession] -->|committed state / replacement| Dirty[Dirty visible presentation]
+    Intent[RearLogistics intent owner] -->|changed| Dirty
+    Panel -->|shown| Dirty
+    Dirty --> Coalesce[One deferred visible refresh; no idle timer or frame polling]
+    Coalesce --> Query[Pure ArmySupplyView.view of current session]
+    Query --> Need[Reported rifle requests + actual carried rounds + courier commitments]
+    Query --> Stock[Available rear / HQ / forward stock]
+    Query --> Trips[Actual separate rear and forward job quantities and blockers]
+    Query --> Hold[Owner-provided cancellation hold]
+    Need --> Display[Need, physical stages, blockers and useful existing actions]
+    Stock --> Display
+    Trips --> Display
+    Hold --> Display
+    Display -->|production / building / workers / rear requests| Existing[Existing exact controls; retain drafts]
+    Display -->|observe selected friendly recipient| Observe[Existing battlefield observation; no tactical command]
+    Display -->|explicit resume automatic supply| Resume[RearLogistics.resume_automatic_supply]
+    Resume --> Clear[Clear only cancellation intent and invalidate published need]
+    Clear --> Next[Next owned military resupply event recomputes genuine shortage]
+    Next --> Demand[Existing rear_supply_needed event]
+    Demand --> Intent
+    Intent --> Physical[Existing real hauling, loading, travel, HQ unload]
+    Physical --> Forward[Existing military forward freight and local issue]
+    Forward --> Need
+    Session -->|replacement / panel exit| Disconnect[Disconnect old subscriptions and reject stale work]

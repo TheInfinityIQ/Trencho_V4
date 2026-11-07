@@ -1,0 +1,835 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-03T18:53:09.346590+00:00",
+  "status": "review_complete_migration_not_implemented",
+  "request": "Review the supplied local Godot documentation and recheck the overhaul plan with explicit regression prevention.",
+  "authority": "The archive is reference material. Its build instructions and examples do not authorize project changes. No documentation build, conf.py or archive-provided tool/install instructions were executed. GdUnit setup was used separately for the authorized isolated test run.",
+  "scope": {
+    "game_changes_this_review": false,
+    "method": "Read relevant guides/API sections directly from the ZIP, compare selected guides with versioned documentation, check sensitive UI semantics in exact installed-engine source, reread affected game paths and run retained training domain tests in an isolated project.",
+    "depth": "Targeted review of the topics inventoried below, not a semantic review of all 1635 RST files or a new execution of every retained game test.",
+    "prior_engine_review": "docs/evidence/godot_engine_efficiency_audit.json",
+    "prior_runtime_architecture": "docs/evidence/inspect_entity_architecture.json",
+    "plan": "docs/engine_aligned_migration_plan.json",
+    "graph_uncertainty": "The living map records static candidates; these anchors and file reachability alone do not establish execution or test coverage."
+  },
+  "archive": {
+    "path": "C:\\Users\\dawso\\Downloads\\godot-docs-master.zip",
+    "bytes": 217418131,
+    "sha256": "69c95d98aeb5d77e7906ec2fa83f055d9bb2b3b07c62b7e9832f4b2eede5c039",
+    "commit": "56033f3fbc86be897bb1f11847a37f6f67f8a88e",
+    "entries": 3737,
+    "rst_members": 1635,
+    "uncompressed_bytes": 250660892,
+    "root": "godot-docs-master/",
+    "access": "Read directly with zipfile; not extracted or executed.",
+    "branch": "master/latest",
+    "branch_evidence": [
+      {
+        "member": "index.rst",
+        "observation": "Identifies the documentation as the master branch."
+      },
+      {
+        "member": "conf.py",
+        "line": 74,
+        "observation": "Default documentation version is latest; read as text only."
+      },
+      {
+        "member": "conf.py",
+        "line": 160,
+        "observation": "GitHub documentation version is master."
+      },
+      {
+        "member": "conf.py",
+        "line": 170,
+        "observation": "godot_is_latest is true."
+      }
+    ],
+    "commit_verification": "ZIP comment commit resolves in the official godotengine/godot-docs repository; commit timestamp 2026-10-31T13:17:00Z. The commit identifier, rather than the archive filename, is the reference epoch.",
+    "commit_url": "https://github.com/godotengine/godot-docs/commit/56033f3fbc86be897bb1f11847a37f6f67f8a88e",
+    "class_references_included": true,
+    "compatibility_policy": "Treat examples as master documentation. Confirm version-sensitive behavior against Godot 4.7 documentation and installed 4.7.2 source or an isolated behavior probe before implementation."
+  },
+  "installed_engine": {
+    "version": "4.7.2 stable Steam",
+    "commit": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "previous_verification": "docs/evidence/godot_engine_efficiency_audit.json"
+  },
+  "documentation_members": {
+    "scenes": {
+      "member": "tutorials/best_practices/scene_organization.rst",
+      "sha256": "8ed1bd0902869741c791cfa331f6f2fc4e032a81cb3ef59470cebbab165867ae",
+      "lines": 494
+    },
+    "node_alternatives": {
+      "member": "tutorials/best_practices/node_alternatives.rst",
+      "sha256": "511b73fea51baca6fa9a3100d1ade874c15ecae09a14f610d346b02e86137d2b",
+      "lines": 63
+    },
+    "signals": {
+      "member": "getting_started/step_by_step/signals.rst",
+      "sha256": "877579921a005b4985383a6fc69f5f5487be552c431c3acb8c9581a0c90de406",
+      "lines": 564
+    },
+    "resources": {
+      "member": "tutorials/scripting/resources.rst",
+      "sha256": "711d54a1508047bd1a0f6f01f9513062f244da5968c016830732b86a5ffc470a",
+      "lines": 412
+    },
+    "general_optimization": {
+      "member": "tutorials/performance/general_optimization.rst",
+      "sha256": "77720cab8f34413819c13880384e74da10fd8d8225db6a938afb6e0fbb52a5fe",
+      "lines": 305
+    },
+    "cpu": {
+      "member": "tutorials/performance/cpu_optimization.rst",
+      "sha256": "adb9a33aa34c0267a7fc49c277cf504af969d160f8e05303181b94a03c40eae4",
+      "lines": 277
+    },
+    "threads": {
+      "member": "tutorials/performance/thread_safe_apis.rst",
+      "sha256": "578eaed11c56a2ae5ca5b82e54f078d906c6dd169a6c15f04252ef0822ba2c54",
+      "lines": 148
+    },
+    "profiling": {
+      "member": "tutorials/scripting/debug/the_profiler.rst",
+      "sha256": "18954c43dbbebcbf9d044e31b5f423bc5012ab18983d829a9425235941ba7759",
+      "lines": 170
+    },
+    "pausing": {
+      "member": "tutorials/scripting/pausing_games.rst",
+      "sha256": "e66a46443bb96fc60bfa6869ce2627efb8f91a31d225585fcc0bfcb99906a4a3",
+      "lines": 138
+    },
+    "typing": {
+      "member": "tutorials/scripting/gdscript/static_typing.rst",
+      "sha256": "84f39c1033244ea9d0463d0be77f1759e661fcf34dde018b0468597912502124",
+      "lines": 678
+    },
+    "object": {
+      "member": "classes/class_object.rst",
+      "sha256": "8127d84e05f5e5db742a37708cbe2eec40c673f85496f69a3364e4e9c92cd6f3",
+      "lines": 1830
+    },
+    "scenetree": {
+      "member": "classes/class_scenetree.rst",
+      "sha256": "294d93dab68736744e5f6f3a1c56d901af38e47c76c15956703e98b4ec17a227",
+      "lines": 926
+    },
+    "resource": {
+      "member": "classes/class_resource.rst",
+      "sha256": "dc79a8e54873444a76b4da8bb5b8976820a19ee0dfef968f539527577297333c",
+      "lines": 532
+    },
+    "refcounted": {
+      "member": "classes/class_refcounted.rst",
+      "sha256": "bde45c10c768f545f104fd4a04ddc8a15ad1f6263e3139195daeeafc440421b6",
+      "lines": 126
+    },
+    "dictionary": {
+      "member": "classes/class_dictionary.rst",
+      "sha256": "46098f0101bb1293e9dac1d1ae7ef068e84d4c1390656e49b691f8a8d6b63a28",
+      "lines": 1010
+    },
+    "array": {
+      "member": "classes/class_array.rst",
+      "sha256": "01b978f1b96b09eb074417a058669b6f93542e96f62f84c0fcba851df8b7bf54",
+      "lines": 1580
+    },
+    "basebutton": {
+      "member": "classes/class_basebutton.rst",
+      "sha256": "4a915b6f86c6588e7eac93c024ebebe15557fc2c849457fe9ded478d98fd7b41",
+      "lines": 577
+    },
+    "optionbutton": {
+      "member": "classes/class_optionbutton.rst",
+      "sha256": "4722175cca7825757540b63bbfe5908f5392c028c5b561d68e10cfeab4035f59",
+      "lines": 820
+    },
+    "itemlist": {
+      "member": "classes/class_itemlist.rst",
+      "sha256": "412a1f9e298c9e891b42b01d786f0e7358aefc07c48b6f701abf1a17075c6f32",
+      "lines": 1915
+    },
+    "range": {
+      "member": "classes/class_range.rst",
+      "sha256": "69758a065971ce404bb2ee63cacdbf6cf75b3959bc6965a5940e3fb0031a3fef",
+      "lines": 343
+    },
+    "spinbox": {
+      "member": "classes/class_spinbox.rst",
+      "sha256": "aac75fef309c0d5e108e84749700b95d2f9bed2fff0b5aa47b113b46f90f1100",
+      "lines": 862
+    },
+    "node": {
+      "member": "classes/class_node.rst",
+      "sha256": "29e22df5eb4e2abc070bc505ead83c61a45c79d836d3f420494209eb08ad4960",
+      "lines": 3239
+    },
+    "canvasitem": {
+      "member": "classes/class_canvasitem.rst",
+      "sha256": "b7517a89fbe06bce3489de9de4899644877ecff38af9cddd5e1536c00dbf4f16",
+      "lines": 1770
+    },
+    "control": {
+      "member": "classes/class_control.rst",
+      "sha256": "25ffdf34bee0ff8ccf8142df8df58c62bfc4211e344104b225b4fab4c84d3467",
+      "lines": 4299
+    },
+    "viewport": {
+      "member": "classes/class_viewport.rst",
+      "sha256": "69ad810d40e1fb118bfbda00162de64731f14738fefcec4e7184a36c8ac93fde",
+      "lines": 2764
+    },
+    "engine": {
+      "member": "classes/class_engine.rst",
+      "sha256": "d990c372db72d7dc5a33d2ba3abf93a662e4a996e5fc7879966c557d00de7b35",
+      "lines": 803
+    },
+    "timer": {
+      "member": "classes/class_timer.rst",
+      "sha256": "898b8bf3ba7d704c050e229edf4e46169edb19cd088c58ad6df1bb54b9216782",
+      "lines": 316
+    },
+    "autoloads": {
+      "member": "tutorials/best_practices/autoloads_versus_regular_nodes.rst",
+      "sha256": "47affe7254084d26efc095d1dae5f28ae0f212ba8b20b2b5caa55d906d16c0b5",
+      "lines": 107
+    },
+    "logic": {
+      "member": "tutorials/best_practices/logic_preferences.rst",
+      "sha256": "6e70bbe53d04e62cc5cfbf5dcefbb8a757f8a304593df3909530b5298b2ca836",
+      "lines": 196
+    },
+    "processing": {
+      "member": "tutorials/scripting/idle_and_physics_processing.rst",
+      "sha256": "d6dfcc13830579741db224c3330c81c769f8166bc62f196ee1bbf0960cfd9b53",
+      "lines": 106
+    }
+  },
+  "selected_version_comparison": [
+    {
+      "topic": "node_alternatives",
+      "comparison": "Identical to the fetched 4.7 guide."
+    },
+    {
+      "topic": "signals",
+      "comparison": "Identical to the fetched 4.7 guide."
+    },
+    {
+      "topic": "threads",
+      "comparison": "Only instancing/instantiating wording differed in the compared guide."
+    },
+    {
+      "topic": "typing",
+      "comparison": "Only type-inference wording differed in the compared guide."
+    }
+  ],
+  "comparison_limit": "These four comparisons do not establish equivalence of the entire master archive with 4.7.",
+  "installed_source_crosschecks": [
+    {
+      "path": "scene/gui/item_list.cpp",
+      "line": 429,
+      "symbol": "ItemList::select",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/item_list.cpp#L429"
+    },
+    {
+      "path": "scene/gui/item_list.cpp",
+      "line": 575,
+      "symbol": "ItemList::clear",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/item_list.cpp#L575"
+    },
+    {
+      "path": "scene/gui/range.cpp",
+      "line": 215,
+      "symbol": "Range::set_value_no_signal",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/range.cpp#L215"
+    },
+    {
+      "path": "scene/gui/option_button.cpp",
+      "line": 198,
+      "symbol": "OptionButton::_select",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/option_button.cpp#L198"
+    },
+    {
+      "path": "scene/gui/option_button.cpp",
+      "line": 525,
+      "symbol": "OptionButton::select",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/option_button.cpp#L525"
+    },
+    {
+      "path": "scene/gui/control.cpp",
+      "line": 2999,
+      "symbol": "Control::grab_focus",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/control.cpp#L2999"
+    },
+    {
+      "path": "scene/gui/control.cpp",
+      "line": 4736,
+      "symbol": "Control::grab_focus binding",
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/gui/control.cpp#L4736"
+    }
+  ],
+  "findings": [
+    {
+      "id": "OD01",
+      "classification": "documentation_and_current_source",
+      "observation": "A scene-owned session with RefCounted domain services is a valid Godot design. The engine does not require a Node or Timer per record.",
+      "evidence": [
+        {
+          "topic": "node_alternatives",
+          "member": "tutorials/best_practices/node_alternatives.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/best_practices/node_alternatives.rst#L1"
+        },
+        {
+          "topic": "scenes",
+          "member": "tutorials/best_practices/scene_organization.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/best_practices/scene_organization.rst#L1"
+        },
+        {
+          "topic": "autoloads",
+          "member": "tutorials/best_practices/autoloads_versus_regular_nodes.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/best_practices/autoloads_versus_regular_nodes.rst#L1"
+        }
+      ],
+      "consequence": "Keep current ownership and clock while narrowing reads. A new global event bus or autoload is not required."
+    },
+    {
+      "id": "OD02",
+      "classification": "source_observed_and_previously_measured",
+      "observation": "Build, Supplies and Workers/Jobs already use scoped reads. Train and other advanced panels enter the broad BaseSimulation.snapshot path and update many hidden controls.",
+      "source_functions": [
+        "game/rear_base/base_demo.gd::_refresh",
+        "game/rear_base/base_simulation.gd::snapshot"
+      ],
+      "prior_measurement": "Prepared training fixture: approximately 17196 inspect_entity calls/s normally and 34563/s with HQ diagnostics; these are different instrumented states, not a before/after comparison.",
+      "evidence": [
+        {
+          "topic": "cpu",
+          "member": "tutorials/performance/cpu_optimization.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/performance/cpu_optimization.rst#L1"
+        },
+        {
+          "topic": "general_optimization",
+          "member": "tutorials/performance/general_optimization.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/performance/general_optimization.rst#L1"
+        }
+      ],
+      "consequence": "Start with an uncached Train view and the visible Train controls/common HUD, after full dependency and side-effect characterization. Do not regress already narrow common panels."
+    },
+    {
+      "id": "OD03",
+      "classification": "source_observed_regression_risk",
+      "observation": "Training.snapshot calls _refresh_states, which writes state/reason on unfinished rows. It also evaluates instructor coverage repeatedly. It is not currently a purely observational export.",
+      "source_functions": [
+        "game/training/training_service.gd::snapshot",
+        "game/training/training_service.gd::_refresh_states",
+        "game/training/training_service.gd::_active",
+        "game/training/training_service.gd::instructors"
+      ],
+      "consequence": "First preserve its current normalization semantics once per equivalent Train read. Prove raw-state and call-order behavior before a separate purity migration. Do not memoize or shadow-run old/new reads on the same model."
+    },
+    {
+      "id": "OD04",
+      "classification": "source_observed_coverage_gap",
+      "observation": "The 13 frozen read-path hashes cover ledger, military, HQ and receiving data; they do not directly include training.rows/course progress or construction.instances. Audits add useful invariants but are not full state equality.",
+      "source_functions": [
+        "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd::_checkpoint"
+      ],
+      "consequence": "Keep the original hashes unchanged and add independent raw training/construction checkpoints. Sample raw state before queries, snapshots or audits that may normalize presentation state."
+    },
+    {
+      "id": "OD05",
+      "classification": "executed_bounded_correctness",
+      "observation": "Nine retained training domain tests passed in this review, including all eight courses, instructor shortages, access loss, partitioned time, withdrawal, recovery reservations and safe carry handoffs.",
+      "result": "retained_training_execution",
+      "consequence": "Reuse these tests as an explicit domain gate. They do not establish native UI interaction, query purity or live 1x performance."
+    },
+    {
+      "id": "OD06",
+      "classification": "source_observed_test_selection_and_stale_expectations",
+      "observation": "The normal performance launcher excludes retained /tests/ files outside diagnostics/tests/gdunit. The retained training input test assumes 12 workers at Main startup, obsolete button captions and old tab indexes.",
+      "source_files": [
+        "tools/run_gdunit4_performance.ps1",
+        "game/training/tests/training_input_test.gd"
+      ],
+      "consequence": "Add an explicit retained-domain selection when implementation starts and adapt the UI test to the current empty-field opening or an honestly named prepared fixture. Do not restore the old opening to satisfy stale assertions.",
+      "limit": "The stale UI expectations were identified by source review; that UI test was not executed this turn."
+    },
+    {
+      "id": "OD07",
+      "classification": "documentation_and_installed_source",
+      "observation": "ItemList programmatic selection does not emit item_selected. Range.set_value_no_signal and BaseButton.set_pressed_no_signal suppress their command signals. OptionButton can select a disabled item programmatically.",
+      "evidence": [
+        {
+          "topic": "itemlist",
+          "member": "classes/class_itemlist.rst",
+          "line": 1250,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_itemlist.rst#L1250"
+        },
+        {
+          "topic": "range",
+          "member": "classes/class_range.rst",
+          "line": 303,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_range.rst#L303"
+        },
+        {
+          "topic": "basebutton",
+          "member": "classes/class_basebutton.rst",
+          "line": 494,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_basebutton.rst#L494"
+        },
+        {
+          "topic": "optionbutton",
+          "member": "classes/class_optionbutton.rst",
+          "line": 649,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_optionbutton.rst#L649"
+        }
+      ],
+      "consequence": "View synchronization must issue zero domain commands; actual user inputs issue the intended command once. Restore IDs and derived selection explicitly, and validate disabled/removed options rather than relying on a signal to do it."
+    },
+    {
+      "id": "OD08",
+      "classification": "documentation_and_prior_engine_probe",
+      "observation": "Ordinary signals are synchronous; deferred work can run later in the same idle cycle. GROUP_CALL_UNIQUE ignores argument differences. Hidden Controls can continue processing.",
+      "evidence": [
+        {
+          "topic": "object",
+          "member": "classes/class_object.rst",
+          "line": 909,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_object.rst#L909"
+        },
+        {
+          "topic": "object",
+          "member": "classes/class_object.rst",
+          "line": 1010,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_object.rst#L1010"
+        },
+        {
+          "topic": "scenetree",
+          "member": "classes/class_scenetree.rst",
+          "line": 290,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_scenetree.rst#L290"
+        },
+        {
+          "topic": "processing",
+          "member": "tutorials/scripting/idle_and_physics_processing.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/scripting/idle_and_physics_processing.rst#L1"
+        }
+      ],
+      "prior_probe": "docs/evidence/godot_engine_efficiency_audit.json::experiment",
+      "consequence": "Merge dirty IDs before scheduling; never infer once-per-frame behavior from a pending flag or call_deferred. Commit consistent state before notifications; preserve immediate contact/damage behavior."
+    },
+    {
+      "id": "OD09",
+      "classification": "documentation_and_source_observed_lifecycle_risk",
+      "observation": "The UI survives simulation replacement. _fill schedules deferred scroll restoration. queue_free is deferred and an old simulation may remain a valid object. Freed signal targets disconnect automatically, but surviving subscribers need explicit rebinding.",
+      "source_functions": [
+        "game/main/game_session.gd::replace_simulation",
+        "game/rear_base/base_demo.gd::_bind_started_session",
+        "game/rear_base/base_demo.gd::_fill"
+      ],
+      "evidence": [
+        {
+          "topic": "node",
+          "member": "classes/class_node.rst",
+          "line": 2859,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_node.rst#L2859"
+        },
+        {
+          "topic": "object",
+          "member": "classes/class_object.rst",
+          "line": 1010,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_object.rst#L1010"
+        }
+      ],
+      "consequence": "Characterize queued refresh/selection/scroll work across replacement and close/reopen. Use scene-owned subscriptions and session/job generations for new deferred work; object validity alone does not prove current authority.",
+      "limit": "A stale scroll callback is a plausible regression scenario, not a reproduced current bug."
+    },
+    {
+      "id": "OD10",
+      "classification": "documentation",
+      "observation": "Arrays/dictionaries share references; deep duplication recursively copies containers but does not guarantee independent Resources. Read-only containers are shallow. RefCounted cycles can prevent release.",
+      "evidence": [
+        {
+          "topic": "dictionary",
+          "member": "classes/class_dictionary.rst",
+          "line": 428,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_dictionary.rst#L428"
+        },
+        {
+          "topic": "dictionary",
+          "member": "classes/class_dictionary.rst",
+          "line": 801,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_dictionary.rst#L801"
+        },
+        {
+          "topic": "array",
+          "member": "classes/class_array.rst",
+          "line": 668,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_array.rst#L668"
+        },
+        {
+          "topic": "array",
+          "member": "classes/class_array.rst",
+          "line": 1021,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_array.rst#L1021"
+        },
+        {
+          "topic": "resource",
+          "member": "classes/class_resource.rst",
+          "line": 342,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_resource.rst#L342"
+        },
+        {
+          "topic": "refcounted",
+          "member": "classes/class_refcounted.rst",
+          "line": 28,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_refcounted.rst#L28"
+        }
+      ],
+      "consequence": "Require detached read results and nested alias tests before sharing snapshots or adding caches. Keep domain references weak where ownership would otherwise cycle; avoid UI retaining obsolete models."
+    },
+    {
+      "id": "OD11",
+      "classification": "documentation_and_prior_engine_probe",
+      "observation": "Timers run through engine callbacks; SceneTreeTimer defaults to processing while the tree is paused. Custom simulation.speed is separate from Engine.time_scale. Multiple physics steps can occur in one rendered frame.",
+      "evidence": [
+        {
+          "topic": "scenetree",
+          "member": "classes/class_scenetree.rst",
+          "line": 619,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_scenetree.rst#L619"
+        },
+        {
+          "topic": "timer",
+          "member": "classes/class_timer.rst",
+          "line": 248,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_timer.rst#L248"
+        },
+        {
+          "topic": "engine",
+          "member": "classes/class_engine.rst",
+          "line": 148,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/classes/class_engine.rst#L148"
+        },
+        {
+          "topic": "pausing",
+          "member": "tutorials/scripting/pausing_games.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/scripting/pausing_games.rst#L1"
+        }
+      ],
+      "consequence": "Retain one authoritative game clock and explicit-time fixtures. Define pause, speed changes, debt, equal-time order and cancellation before any deadline pilot. The existing 4ms planning limit is per pump call, not a guaranteed whole-rendered-frame limit."
+    },
+    {
+      "id": "OD12",
+      "classification": "documentation_and_source_observed_measurement_limits",
+      "observation": "Function-entry counts do not measure self CPU time or prove redundancy. Stack capture, audits, rendering, OS scheduling and delayed simulated-time progress can all change wall-time results.",
+      "evidence": [
+        {
+          "topic": "profiling",
+          "member": "tutorials/scripting/debug/the_profiler.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/scripting/debug/the_profiler.rst#L1"
+        },
+        {
+          "topic": "cpu",
+          "member": "tutorials/performance/cpu_optimization.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/performance/cpu_optimization.rst#L1"
+        },
+        {
+          "topic": "general_optimization",
+          "member": "tutorials/performance/general_optimization.rst",
+          "line": 1,
+          "url": "https://github.com/godotengine/godot-docs/blob/56033f3fbc86be897bb1f11847a37f6f67f8a88e/tutorials/performance/general_optimization.rst#L1"
+        }
+      ],
+      "consequence": "Collect CPU self/total, refresh time, frame percentiles and logical-time progress in matched scenarios. Separate diagnostics-off counters from stack attribution. Keep current severe-stall budgets visible; passing 100ms does not certify 60fps."
+    }
+  ],
+  "retained_training_execution": {
+    "report": "logs/retained-training-audit-2026-11-03T18-49-10-3628/gdunit-report/results.xml",
+    "sha256": "f2c4c79fd3cf0e22b4f0fb8b915f3d7e322f7e51f3c468c682660f68b88c21e2",
+    "root_attributes": {
+      "id": "2026-11-03",
+      "name": "report_1",
+      "tests": "9",
+      "failures": "0",
+      "skipped": "0",
+      "flaky": "0",
+      "time": "0.000"
+    },
+    "cases": [
+      "test_canonical_durations_prerequisites_and_access_use_declared_recipe_not_selected_recipe",
+      "test_all_eight_courses_take_exact_elapsed_time_after_actual_reporting_and_grant_no_gear_or_body",
+      "test_a11_twelve_students_one_instructor_progress_six_pause_newest_then_two_cover_all",
+      "test_access_instructor_loss_and_partitioned_time_preserve_elapsed_progress",
+      "test_withdrawal_basic_retention_single_specialist_and_queued_course_do_not_replace_completed_qualification",
+      "test_carry_to_student_safe_handoff_and_withdraw_pending_request_preserve_person_and_freight",
+      "test_recovery_one_pending_shared_personnel_and_population_reservations_are_atomic",
+      "test_normal_zero_unloader_recovery_basic_and_p08_keep_same_identity_no_goods_or_bay_clearance",
+      "test_carrying_instructor_reports_only_after_safe_deposit_and_students_wait_without_labour_overlap"
+    ],
+    "problem_elements": 0,
+    "stderr_bytes": 0,
+    "status": "passed",
+    "engine_version": "4.7.2 stable Steam",
+    "gdunit_version": "6.2.2",
+    "source_sha256": "f04980a8206296ea2d01bcb006fd69083f602d870d425ff834b7904091d10cac",
+    "selection": "Only game/training/tests/training_domain_test.gd in a fresh isolated copy; other retained suites excluded.",
+    "elapsed_seconds_reported_by_runner": 1.736,
+    "exit_code_reported_by_runner": 0,
+    "mode": "headless explicit-time domain correctness; stack capture disabled",
+    "isolation": "Game production sources and this retained suite copied to .tools/retained-training-audit/2026-11-03T18-49-10-3628; pinned test addon installed only there.",
+    "reproducibility": "setup_gdunit4.ps1 -TargetProject ISOLATED; import ISOLATED; run GdUnitCmdTool with -a res://game/training/tests/training_domain_test.gd -c -rd res://audit_reports -rc 1 --ignoreHeadlessMode under --headless.",
+    "report_time_caution": "Top-level XML time attribute is 0.000; use per-test times and the console total, not that attribute.",
+    "log_availability": "Ignored local artifacts are not assumed available in a clean checkout; this evidence preserves selection, source hash, result and test names.",
+    "limits": [
+      "No retained training UI test execution.",
+      "No new live performance run.",
+      "Repeated snapshot calls within existing fixtures can normalize row state, so this is not a read-purity test."
+    ]
+  },
+  "source_anchors": [
+    {
+      "function": "game/rear_base/base_demo.gd::_request_refresh",
+      "line": 229,
+      "end_line": 233,
+      "function_sha256": "aad954d6b079a04d1a5b41417b64b04211022ecbdbdb494e11d7927d18c4be06",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::show_panel",
+      "line": 262,
+      "end_line": 272,
+      "function_sha256": "ae97116de56fbb5999a416ffa9573aac7adfb96d11ecf6f56b84fd8e17557c99",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_bind_started_session",
+      "line": 408,
+      "end_line": 442,
+      "function_sha256": "e2b3892a5f63b9e5415836775a94f43e68dd32b17ab484a99696470c3b92b039",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh_core_ui",
+      "line": 524,
+      "end_line": 528,
+      "function_sha256": "39173bddc7dabe5474a36a10c0b5b2f7f0fb8da7de76925f30b2af7580278dd1",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh_resource_hud",
+      "line": 530,
+      "end_line": 553,
+      "function_sha256": "2cad039a3b1b4f570856510584adf5599b15beb6a2fad83491a677ba5af8b6b2",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh_production_context",
+      "line": 555,
+      "end_line": 570,
+      "function_sha256": "5feca0f174dba7b5672694420b69a396ccf4383dde4dd6d5d7f9fcf14604bdb6",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_training_panel",
+      "line": 931,
+      "end_line": 953,
+      "function_sha256": "7df2b0bc4e2cd3262ac5ef96854f8358d577b8b589a5fb7d52ae1d34b1a1fca1",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_load_courses",
+      "line": 1129,
+      "end_line": 1136,
+      "function_sha256": "e058d586415bfb7a2fb82383b151b7d2c9d79f3a117ee8ddfef334011d153265",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_fill",
+      "line": 1229,
+      "end_line": 1250,
+      "function_sha256": "bed11d654e89303311337dcc4cea15aedb1654a8ddb52a53d747e6add6a83e6d",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_demo.gd::_refresh",
+      "line": 1345,
+      "end_line": 1482,
+      "function_sha256": "a962771ed567c2aa22d2a4fea1a003f7346be3e21869c64127abaed7b414a6d2",
+      "file_sha256": "455bd06ef9e245d2f8050cd18d72a323c0330eed443f3bf3233ee67ad3a05ad8"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::tick_live",
+      "line": 164,
+      "end_line": 173,
+      "function_sha256": "93266ee258902593e63305873dbedbcf9293e955ac010d29a0832990b900b39e",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::_pump_live",
+      "line": 182,
+      "end_line": 217,
+      "function_sha256": "e03dda5a2c326a1a962a6e2f7acb21576d9307c45085d5ff8bcb3066ace95fa6",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::after_command",
+      "line": 230,
+      "end_line": 243,
+      "function_sha256": "198fde30349094e442190f8ee3d5a6be6d2dd6e644e7e97ebe147590d408453b",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::purchasing_view",
+      "line": 286,
+      "end_line": 294,
+      "function_sha256": "b4da52ee51fdbe00cdb9bd74b608bd4e0638c505a7df55bc3e586aa7e6f5d8cf",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::construction_view",
+      "line": 296,
+      "end_line": 306,
+      "function_sha256": "db8e4dce872e54a450fd5ff01cc024c96a8da1d036cb99dc81de017bc2ef5d06",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::workforce_view",
+      "line": 309,
+      "end_line": 313,
+      "function_sha256": "39f93fd7b1da9a83d5acf70fe272615fa3623017f57271ba36f3a819b4a2c1a3",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/rear_base/base_simulation.gd::snapshot",
+      "line": 315,
+      "end_line": 327,
+      "function_sha256": "914a2a4f6ab4b89255a8cc802fb23c6fa7f88e2dfaae2ee44265832d02badd69",
+      "file_sha256": "fa04add8cef7eacd0747ca4fa07f1984a8712bda0fd835ad610f0fa437aed003"
+    },
+    {
+      "function": "game/main/game_session.gd::_physics_process",
+      "line": 20,
+      "end_line": 30,
+      "function_sha256": "9ed37dda7b73daca31f4e8407e736d1897bc036510d6417e04d1a564dde03875",
+      "file_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+    },
+    {
+      "function": "game/main/game_session.gd::replace_simulation",
+      "line": 33,
+      "end_line": 40,
+      "function_sha256": "9ed1ded71c55bb444e57c8cde1b6baa5b0e5454b18d4af6ca512529a21331793",
+      "file_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+    },
+    {
+      "function": "game/main/game_session.gd::notify_command",
+      "line": 49,
+      "end_line": 52,
+      "function_sha256": "ce10894a28476d32f7ad06b7961314c52caa27f1da303c4c16134295a697e2ef",
+      "file_sha256": "13fbf5b681ba16930c6d6289b886bba7916e84c6a01dc5fae1bc650077465369"
+    },
+    {
+      "function": "game/training/training_service.gd::request_course",
+      "line": 62,
+      "end_line": 70,
+      "function_sha256": "83b4e0cfc5522e65f31cd7b4cc2d69ca91b93d9576c7fedd85ee002dddf7bce6",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::instructors",
+      "line": 103,
+      "end_line": 110,
+      "function_sha256": "4475f72b44b11be960a79a40947a94e7d589d99f870b30a5b123c446b949d734",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::_active",
+      "line": 123,
+      "end_line": 139,
+      "function_sha256": "babcc6a779a54e11bedcee73b9d396fe775448c0d8f65c43cb33119b28a12c06",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::settle",
+      "line": 152,
+      "end_line": 193,
+      "function_sha256": "3c9563d75d598ed91ece5233022b856c520f2f2a85ee05a93d340b6445ee2284",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::withdraw",
+      "line": 202,
+      "end_line": 214,
+      "function_sha256": "94de76c2280a8f91d4872a4a3b899b9c2b950c7dba74596825b049100ae44b8a",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::_refresh_states",
+      "line": 221,
+      "end_line": 238,
+      "function_sha256": "9ba19877b504d46ef06d90230a1d33d465571618da131a5fed4cadf9940399ba",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/training/training_service.gd::snapshot",
+      "line": 240,
+      "end_line": 244,
+      "function_sha256": "b92e26bbad03810335f8f9db5bafbdcb5bacd5dfa53c0cebc610a94c1a33ae11",
+      "file_sha256": "495fed37b66eb136e35808ae8b9b921a5d3a9be88241481d2520bae5f2e6ffd4"
+    },
+    {
+      "function": "game/diagnostics/tests/gdunit/fixtures/read_path_scenarios.gd::_checkpoint",
+      "line": 87,
+      "end_line": 98,
+      "function_sha256": "97fa4f843d5b98897cf258d95c4f9504c08114bc0a1ebab882961ffe3d074a91",
+      "file_sha256": "123bcd76962b3258db26cdd78596a47643b35ca07a71cd323f2d1f2fc550b405"
+    },
+    {
+      "function": "game/construction/construction_service.gd::cancel",
+      "line": 350,
+      "end_line": 360,
+      "function_sha256": "2c7fd79f1707cadca2778d5487ee34d646160fc2b2a855aae20483166bce7b87",
+      "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+    },
+    {
+      "function": "game/construction/construction_service.gd::advance_work",
+      "line": 389,
+      "end_line": 402,
+      "function_sha256": "922a8360dcb98bffa3c87a5c94f110c7d9505eb59c0be7a0412ef7eca842e524",
+      "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+    },
+    {
+      "function": "game/construction/construction_service.gd::settle",
+      "line": 407,
+      "end_line": 446,
+      "function_sha256": "a72416326d28c640436507bcc4992567709628efd1cf832710efecdfc4f40bce",
+      "file_sha256": "7e16465b36c1ae1a4992b4ab36a23b2acca77aa5b065c138b882aab682f20e14"
+    }
+  ],
+  "source_files": {
+    "game/training/tests/training_domain_test.gd": "f04980a8206296ea2d01bcb006fd69083f602d870d425ff834b7904091d10cac",
+    "game/training/tests/training_input_test.gd": "454e510616c6f307fe2fb3ce95232a126b947e10577f6b75a6ea8de79e7ef7a6",
+    "tools/run_gdunit4_performance.ps1": "dca250d54621c3b43a89e049e0ba3cf54e1b7c2bbfa696cd331ff1d14951b6d6",
+    "game/rear_base/base_map.gd": "cccd9312cd72a105a661cd044e83db356db9a7c38028803abadb7477711771eb",
+    "game/main/main.gd": "288bb1e7a4a5ec93c0c0d15abb1e2daaebc62f0f0295940d76af450155ac8ae3",
+    "game/scenario/farmland_session.gd": "8de8e1cace768a2f5f35479de92742f0517e963261dd8306b96502b3f483356b",
+    "project.godot": "fcae048ca68c965d363a74641766a86dd008b0b2fb9ffed67db76b9ad75b537c"
+  },
+  "unresolved": {
+    "previous_ui_matrix": "898 bounded scenarios: zero recorded functional failures, five timing violations. Those violations remain open; no green full-game result is claimed.",
+    "previous_inspection_issue": "Prepared advanced/HQ paths still exceed the inspection budget. The common playable Build opening is a different state and is not evidence that all entity-call amplification is fixed.",
+    "cpu_attribution": "Representative matched before/after CPU profiles and long live training observations are still required.",
+    "whole_game_coverage": "No assertion that every function, every legal state or every business result has been tested."
+  }
+}

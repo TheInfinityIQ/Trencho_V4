@@ -1,0 +1,10 @@
+{
+  "status": "implemented_focused_case_verified_remote_check_required",
+  "problem": "Required GitHub check fails strict map equality despite identical source hashes and local success. The official CPython3.12.3 formatter reproduces two return-expression differences against local3.13.15, including nested f-string quotes in Run.execute and source_link.",
+  "evidence": "docs/evidence/system_map_portability.json",
+  "owner": "tools/system_map.py::python_functions retains AST-based discovery, implementation hashes and graph uncertainty; it extracts expression text at original normalized source spans instead of reformatting it through ast.unparse.",
+  "contract": "Persist source-authentic callees and compact return text. Missing source spans fail explicitly. Definition discovery, source lines, current hash review and strict equality checks stay in force; no source is excluded and no stale map is accepted.",
+  "check": "One focused portability/source-expression regression case, required map checks and the real GitHub required check; no gameplay or broad local suite rerun.",
+  "principle": "Persist authoritative source facts instead of incidental formatter output. Cross-environment reproducibility belongs in the tool contract.",
+  "official_reference": "https://docs.python.org/3/library/ast.html#ast.unparse"
+}

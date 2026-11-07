@@ -1,0 +1,17 @@
+{
+  "status": "implemented_physical_component_verified",
+  "problem": "The new Army needs view lists only current requests, which the owner erases when filled. The selected recipient and Observe action can disappear precisely when the player wants to follow the result.",
+  "authority": "Game Designer's read-only review of published cf95dc0; current user requires diagram-before-code and useful gameplay continuity.",
+  "owners": "Existing opening_resupply owns named cycles/job IDs; forward_supply owns physical issue receipts; squad_execution owns collection/return/operation state. The presentation adds no new physical decision or accumulating history owner.",
+  "query": "Extend rifle_supply_view with current requests plus recipients of completed real E02 issue jobs referenced by the latest existing named squad cycle. Inspect only those indexed job IDs, deduplicate person identities, batch current rounds once, and group commitments once. Mark active reported need separately from historical issued quantity. Non-active followed rows have zero reported need, not a new computed request.",
+  "presentation": "Retain recipient identity through request removal using these authoritative rows; include readable receipt/current activity detail. Use current execution status as reported information, not repeated eligibility/cohesion/capability validation. Current possession may fall after use; prior receipt does not promise combat success or continued health.",
+  "coverage": "Show the military rear-to-HQ supply shortfall after actual local stock, existing forward freight commitments and available HQ stock. Separately show already available rear stock and direct players to check existing deliveries before manufacturing more. A destination shortfall is not automatically a new-manufacture quantity. This is a pure current-deficit explanation, with no emitted request or forecast/reorder policy.",
+  "lifecycle": "Keep existing committed-state/visibility/replacement subscriptions and deferred coalescing. No new timer, process/physics polling or time_advanced subscription. Session replacement clears; a later named cycle replaces previous-cycle follow-up rather than growing a journal.",
+  "direct_check": "A short explicitly arranged component uses the authored opening's existing people and existing ammunition, places them at the actual stop and requests a named80-round refill. Actual courier pickup/carry/drop must complete before history is shown. Verify disappearance of current requests does not remove the selected recipient/Observe, receipt is separate from current rounds/need, batched reads stay pure and a later named cycle replaces prior follow-up. This arrangement is not a naturally arising shortage, ordinary full delivery, return-to-duty or60FPS demonstration.",
+  "unchanged": "6000 HQ starting rounds, all prices/rates/recipes, military collection decisions, reserve policy, orders and combat remain unchanged.",
+  "references": [
+    "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "docs/engineering_lessons.json"
+  ],
+  "evidence": "docs/evidence/refill_continuity.json"
+}

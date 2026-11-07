@@ -1,0 +1,12 @@
+flowchart TD
+    Decision[Existing own Rifle decision] --> Context[Existing urgency and collection context]
+    Context --> Survival[Existing threat and final withdrawal results]
+    Survival --> Latest[Replace one last-assessed scalar diagnostic]
+    Survival --> Collection[Unchanged collection decision and physical owners]
+    Latest --> Accessor[Detached read guarded by current intent parent and owner]
+    Accessor --> Projection[Existing recipient projection once per reported squad]
+    Collection --> Present{Actual collection exists?}
+    Present -->|yes| Actual[Show actual collection state]
+    Present -->|no| Projection
+    Projection --> Detail[Last supply pickup check at time and recorded reason]
+    Accessor -->|new operation not assessed| Unknown[Supply pickup has not been checked for this operation yet]

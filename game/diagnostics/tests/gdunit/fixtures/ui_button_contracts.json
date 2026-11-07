@@ -1,0 +1,807 @@
+{
+  "schema_version": 1,
+  "button_definitions": [
+    {
+      "id": "game/ui/command_shell.gd::_build_header@97",
+      "path": "game/ui/command_shell.gd",
+      "line": 97,
+      "label": "[\"Ⅱ\", \"1×\", \"2×\"][value] [dynamic label]",
+      "dynamic": true,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_build_header@109",
+      "path": "game/ui/command_shell.gd",
+      "line": 109,
+      "label": "Session",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_build_navigation@143",
+      "path": "game/ui/command_shell.gd",
+      "line": 143,
+      "label": "More systems",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_build_navigation@145",
+      "path": "game/ui/command_shell.gd",
+      "line": 145,
+      "label": "Getting started",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_navigation_button@149",
+      "path": "game/ui/command_shell.gd",
+      "line": 149,
+      "label": "title [dynamic label]",
+      "dynamic": true,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/ui/command_shell.gd::_build_help@163",
+      "path": "game/ui/command_shell.gd",
+      "line": 163,
+      "label": "Close",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Shell / navigation"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_ready@183",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 183,
+      "label": "[\"Pause\", \"1x\", \"2x\"][value] [dynamic label]",
+      "dynamic": true,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_ready@187",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 187,
+      "label": "Fit base",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_ready@193",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 193,
+      "label": "title [dynamic label]",
+      "dynamic": true,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_ready@198",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 198,
+      "label": "Advanced panels",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@407",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 407,
+      "label": "Request delivery to HQ",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@412",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 412,
+      "label": "Cancel remaining delivery",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@415",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 415,
+      "label": "Hire 8 workers · 140 requisition · 90 s travel",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@428",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 428,
+      "label": "Cancel selected undispatched order",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@445",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 445,
+      "label": "Buy resources",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@456",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 456,
+      "label": "Specialist recovery details",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@457",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 457,
+      "label": "Buy recovery instructor · 120 requisition",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@462",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 462,
+      "label": "Start new empty-field game",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@469",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 469,
+      "label": "Legacy session options",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_orders_panel@472",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 472,
+      "label": "Start diagnostic session",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Supplies"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_staff_panel@531",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 531,
+      "label": "Reassign selected person",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Workers / Jobs"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_haul_panel@699",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 699,
+      "label": "Order haul",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Hauling"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_haul_panel@700",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 700,
+      "label": "Clear haul draft",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Hauling"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_haul_panel@706",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 706,
+      "label": "Cancel selected haul",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Hauling"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_refresh_ingredients@843",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 843,
+      "label": "\"Prepare haul: \"+_material_label(type) [dynamic label]",
+      "dynamic": true,
+      "prefix": "Prepare haul: ",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@885",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 885,
+      "label": "Select recipe",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@888",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 888,
+      "label": "Apply production order",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@896",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 896,
+      "label": "Pause / resume facility",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@897",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 897,
+      "label": "Cancel consumed batch / stop",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@898",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 898,
+      "label": "Enable facility",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@902",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 902,
+      "label": "Accept heavy order",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@909",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 909,
+      "label": "Apply heavy access",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_production_panel@911",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 911,
+      "label": "Change promised parking",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Production"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_inspect_panel@926",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 926,
+      "label": "Apply store settings",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Inspection"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@945",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 945,
+      "label": "Place on field",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@946",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 946,
+      "label": "Cancel placement",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@952",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 952,
+      "label": "Exact placement coordinates",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@959",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 959,
+      "label": "Turn footprint 90 degrees",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@962",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 962,
+      "label": "Preview legal site",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@963",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 963,
+      "label": "Place physical site",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@972",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 972,
+      "label": "Deliver Building Materials to site",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@974",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 974,
+      "label": "Set builders",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@976",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 976,
+      "label": "Set facility staff",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@986",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 986,
+      "label": "Cancel unfinished site",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_construction_panel@988",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 988,
+      "label": "Dismantle completed facility",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Build"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_training_panel@1056",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1056,
+      "label": "Build a Training facility",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Training"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_training_panel@1059",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1059,
+      "label": "Hire instructor · 120 requisition",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Training"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_training_panel@1070",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1070,
+      "label": "Request course",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Training"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_training_panel@1076",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1076,
+      "label": "Withdraw selected course",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Training"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_training_panel@1082",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1082,
+      "label": "Training facility accessible",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Training"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1090",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1090,
+      "label": "Vehicle production",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1091",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1091,
+      "label": "Driver training",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1092",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1092,
+      "label": "Buy fuel",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1100",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1100,
+      "label": "Report and board selected station",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1103",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1103,
+      "label": "Extract selected station occupant",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1107",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1107,
+      "label": "Carry purchased fuel into this tank",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_vehicles_panel@1110",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1110,
+      "label": "Drive SAME F10 hull to promised F11 place",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Vehicles"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1136",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1136,
+      "label": "Add requested cargo line",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1140",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1140,
+      "label": "Clear requested cargo lines",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1141",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1141,
+      "label": "Accept named manifest and claims",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1152",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1152,
+      "label": "Depart complete selected manifest",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1154",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1154,
+      "label": "Preview measured route and gross load",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1158",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1158,
+      "label": "Apply measured route before departure",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1160",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1160,
+      "label": "Change selected manifest mode before departure",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1162",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1162,
+      "label": "Add same F10 field gun to selected manifest",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1164",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1164,
+      "label": "Cancel selected predeparture manifest",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1166",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1166,
+      "label": "Request safe return before HQ receipt",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1168",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1168,
+      "label": "Report observed unsafe forward route",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_dispatch_panel@1170",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1170,
+      "label": "Clear observed route hazard",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Dispatch"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_hq_panel@1182",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1182,
+      "label": "Issue stock to person",
+      "dynamic": false,
+      "prefix": "",
+      "area": "HQ diagnostics (optional)"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_hq_panel@1185",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1185,
+      "label": "Issue intact weapon to person",
+      "dynamic": false,
+      "prefix": "",
+      "area": "HQ diagnostics (optional)"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_hq_panel@1188",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1188,
+      "label": "Load matching rounds into HQ hull rack",
+      "dynamic": false,
+      "prefix": "",
+      "area": "HQ diagnostics (optional)"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_hq_panel@1191",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1191,
+      "label": "Refuel HQ hull from unloaded M08",
+      "dynamic": false,
+      "prefix": "",
+      "area": "HQ diagnostics (optional)"
+    },
+    {
+      "id": "game/rear_base/base_demo.gd::_hq_panel@1195",
+      "path": "game/rear_base/base_demo.gd",
+      "line": 1195,
+      "label": "Cancel selected issue; return any carried stock",
+      "dynamic": false,
+      "prefix": "",
+      "area": "HQ diagnostics (optional)"
+    },
+    {
+      "id": "game/rear_base/workforce_panel.gd::_ready@35",
+      "path": "game/rear_base/workforce_panel.gd",
+      "line": 35,
+      "label": "Hire 8 workers · 140 requisition · 90 s travel",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Workers / Jobs"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@40",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 40,
+      "label": "Preview route, load and fuel",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@41",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 41,
+      "label": "Start physical delivery",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@45",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 45,
+      "label": "Pause selected delivery",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@46",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 46,
+      "label": "Resume selected delivery",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@60",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 60,
+      "label": "Issue at forward stop",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@62",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 62,
+      "label": "Pause selected local issue",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@63",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 63,
+      "label": "Resume selected carried issue",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/forward_supply/forward_delivery_panel.gd::_ready@70",
+      "path": "game/forward_supply/forward_delivery_panel.gd",
+      "line": 70,
+      "label": "Diagnostics: individual issue and freight origins",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Forward supply / advanced"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@21",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 21,
+      "label": "Open next step",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@24",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 24,
+      "label": "Show preparation overview",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@28",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 28,
+      "label": "Open Training",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@29",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 29,
+      "label": "Open Vehicles",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    },
+    {
+      "id": "game/ui/demo_guidance_panel.gd::_ready@30",
+      "path": "game/ui/demo_guidance_panel.gd",
+      "line": 30,
+      "label": "Review Army needs",
+      "dynamic": false,
+      "prefix": "",
+      "area": "Standalone rear controls"
+    }
+  ],
+  "source_sha256": {
+    "game/ui/command_shell.gd": "3b25578d48042cfff90c335fc357790c2ea490e3aac957fdfef25637065de796",
+    "game/rear_base/base_demo.gd": "c03acc70c3eaf39a872d1f10102d050cd50fce8d2ea5840869960412c2612c99",
+    "game/rear_base/workforce_panel.gd": "12663feed34d70781f9625089043c6973e7d996c49f70870de610654d3d9e960",
+    "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
+    "game/rear_base/factory_plan_panel.gd": "c2b240170fd9c53e7470ca7b02aec2d5ff7952ee71cf1c1186a6be97977a9bae",
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
+    "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089"
+  },
+  "limits": "Source obligations plus concrete runtime instances in prepared profiles. A dynamic factory match is not proof of every possible argument or gameplay state."
+}

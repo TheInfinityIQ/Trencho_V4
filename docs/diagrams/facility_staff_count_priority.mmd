@@ -1,0 +1,9 @@
+flowchart TD
+    Draft[Player edits selected facility count draft] --> Click[Set facility staff button]
+    Click --> ID[Resolve current selected site ID]
+    ID --> Exists{Existing authoritative staffing request?}
+    Exists -->|No| Reject[Existing clear completed-facility rejection]
+    Exists -->|Yes| Priority[Read that request current priority now]
+    Priority --> Submit[Existing set_target ID count priority]
+    Submit --> Owner[Existing count/capacity validation and physical staffing owner]
+    Owner --> Result[Target recorded; actual reporting still required]

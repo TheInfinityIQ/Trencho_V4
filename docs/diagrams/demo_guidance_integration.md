@@ -1,0 +1,14 @@
+# Demo guidance integration handoff
+
+Lead-owned seam; not yet mounted by this component branch. Keep technical and Designer review pending until the exact published revision is reviewed.
+
+1. In `command_shell.gd`, preload `res://game/ui/demo_guidance_panel.gd`, retain one `demo_guidance_panel: VBoxContainer`, and construct it inside the existing Getting started column. Replace the long static process paragraphs with this adaptive component; keep the keyboard controls and existing close/navigation controls. Use a scroll container if the combined help height can exceed the available viewport. The wider four-stage overview starts collapsed.
+2. Forward `demo_guidance_panel.action_requested(action)` to the shell's existing `navigation_requested.emit(action)` (existing internal values: `Work`, `Train`, `Vehicles`, `Build`, `Supplies`, `Workers/Jobs`, `ArmyNeeds`). This is navigation only. Keep current menu drafts and existing command confirmations intact.
+3. After main creates the shared session and shell, call `shell.demo_guidance_panel.bind(_session)`. The panel owns its state/replacement/logistics/visibility subscriptions and disconnects on exit; no clock callback or external refresh call is needed.
+4. Open Getting started and press the contextual action: approved opening should open Workers / Jobs. Training, Vehicles and Army needs links remain available regardless of the suggested order. Verify the actual shell mount, destination change and readable height in the combined branch; this component checker does not certify those integrations.
+
+Read contract: `DemoGuidance.view(session)` reads existing FactoryPlan (real Completed R26/R02 history), current construction instances, actual rear actor qualifications, current training course rows/instructors, registered transport hulls/readiness/manifests and existing ArmySupplyView. No full training snapshot is used because that normalizes stored display state. Crew counts exclude people without an occupied rear place; requested/training/military people are never described as free seated crew. A nonzero fuel tank is a preparation fact, not full route fuel admission.
+
+The panel emits a navigation String and cannot select a specific facility/person/hull through this deliberately minimal seam. Existing destination controls retain their selections; richer contextual selection can be an agreed follow-up rather than modifying lead-owned navigation here. The existing Production factory task retains its precise facility/field focus links.
+
+Evidence limits: direct component stepping is not ordinary full-loop acceptance. This branch does not produce a trained Driver or truck, deliver a new rear shipment, certify frontend/native input or 60 FPS, or complete #83/#90/#91/#92. Approved opening/6000 HQ rounds, recipes, prices, timers and backend policies are unchanged. Lead truck integration and subsequent gameplay acceptance remain outstanding.

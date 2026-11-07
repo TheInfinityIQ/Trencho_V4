@@ -1,0 +1,68 @@
+{
+  "feature": "Army needs: rifle-ammunition supply facts and explicit cancellation recovery",
+  "status": "implemented_direct_change_verified_full_demo_open",
+  "diagram": "docs/diagrams/army_supply_view.mmd",
+  "design_contract": "docs/diagrams/army_supply_view.json",
+  "design_before_code": "The prospective diagram/owner contract was saved before lead model/navigation implementation and supplied to the isolated UI developer before the panel handoff. Static design is not a runtime trace.",
+  "behaviour": [
+    "Ordinary Army needs navigation exposes reported rifle needs, carried/committed ammunition, separate accessible rear/HQ/forward stocks and actual request receipts.",
+    "Physical forward loaded/unloaded counters are cumulative handling facts, not present cargo or invented rear-to-forward lineage.",
+    "Explicit idempotent resume clears only a cancellation hold and cancelled automatic mapping; genuine need is recomputed at the next existing owner decision.",
+    "Batch stock counts across holders and personal ammunition/commitments avoid per-recipient world reads. A request-free opening skips personal-round reads.",
+    "Scene-owned UI coalesces visible committed-state/intent notifications, retains widgets and recipient identity, disconnects old bindings and rejects stale actions.",
+    "Ordinary production/workforce/request navigation reuses existing controls; observation focuses a validated friendly identity without a tactical command."
+  ],
+  "verification": [
+    {
+      "path": "logs/agent-workflow/20261105-175814-c8d41b12",
+      "result": "All three fixed checks passed in14.1077 seconds: new-feature headless demonstration, living system map and clickable UI map. No repair worker invocation was needed."
+    },
+    {
+      "path": "tools/checks/army_supply_check.gd",
+      "result": "Pass: actual6000 HQ/zero rear opening, absent reported shortage, read purity/detachment, manual cancellation/hold and idempotent resume preserving cancelled request/no new request/no goods mutation while paused, idle/hidden/burst/rebind UI lifecycle, ordinary main-scene integration, exact request subtab, valid friendly observation/missing-identity rejection and clean model audit."
+    },
+    {
+      "path": "logs/army-supply/editor-import",
+      "result": "Actual root editor imported headlessly with exit0 and empty stderr."
+    },
+    {
+      "path": "logs/army-supply/fixture-review.json",
+      "result": "Source review caught a disconnected factory-component fixture before first feature-check execution. Original draft preserved; the checked fixture uses the actual connected authored opening, without changing stock/rates/limits."
+    }
+  ],
+  "handoff": {
+    "ui_commit": "82dfdf5eb807e566b191b87c82d79e6c9b257acc",
+    "integrated_as": "ae020de",
+    "scope": "Only scene-owned army_supply_panel.gd and its UID. Lead reviewed the complete panel and supplied authoritative data/actions/navigation plus combined verification."
+  },
+  "unchanged": "No starting stock, recipe, price, physical rate, clock policy or performance ceiling changed. No fabricated military shortage or test cargo grant.",
+  "limits": [
+    "Rifle ammunition only; this is not the complete multi-resource military demand planner.",
+    "The check verifies this new view and intent commands, not a useful ordinary full delivery/replenishment cycle, native input,1x pacing or60FPS.",
+    "Non-empty reported-recipient/forward-job states and cancelled automatic-source republishing were reviewed in source but are not demonstrated by this brief opening fixture.",
+    "The panel reuses the broad committed-state signal while visible; independently progressing domain-clock and scoped event migration is unfinished.",
+    "Historical frame failures remain open while polishing/optimization are paused."
+  ],
+  "principles": {
+    "ownership": "One authoritative intent owner and existing physical owners; commands and read-only projections stay separate.",
+    "events": "Observer-style scene subscriptions and finite deferred presentation; no new time/frame polling.",
+    "cost": "Batch the few required facts once per visible committed update; no world export in the new reader.",
+    "safety": "Idempotent explicit intent recovery, weak lifecycle references, callback generations and click-time action validation."
+  },
+  "official_references": [
+    "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "https://docs.godotengine.org/en/stable/classes/class_object.html#class-object-method-call-deferred",
+    "https://docs.godotengine.org/en/stable/classes/class_weakref.html"
+  ],
+  "source_sha256": {
+    "game/logistics/army_supply_view.gd": "c7cf05bb47a5f126503617f1f39eae96afaec4e525831fb9e064e2deda8db53e",
+    "game/logistics/army_supply_panel.gd": "90dcb65153b5ad53a0e66be5e0073a9fbc1109c5abc5969b05cada584f64a60e",
+    "game/logistics/rear_logistics.gd": "b7e1e974f235d3c6048e34cefd33a0a71c363fc03e7e7b2b20769d01c7fd14b4",
+    "game/battlefield/opening_resupply.gd": "42b78e88db011ad35f89d086af5dff26add7597e69e22b4b0563f04ac87ad570",
+    "game/identity/identity_ledger.gd": "0f2a6d1bc7c1cc134126ea7421dfff72d4c36206aee06ff456846464aa34fc0e",
+    "game/rear_base/base_demo.gd": "47c27ef1234dad46e3f03a3458f9158de508396f57538d3b758aa281737024ac",
+    "game/main/main.gd": "d55fda279f0b84de14db881bfcfa29cebad5a4187bc13ec30ed38599346c37f5",
+    "game/battlefield/battlefield_view.gd": "74d7b976d1e0c87a1bc474f025a01450eaf69062cb6037491432d7ec7b85a9cc",
+    "tools/checks/army_supply_check.gd": "fc3b906a6e558ed40b462d3edc28a2f438edda1f6104b255e8404d3e5cf561a7"
+  }
+}

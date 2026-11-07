@@ -1,0 +1,123 @@
+{
+  "scope": "Concrete project failures and safeguards to apply before each new system; observations do not imply every caller or scenario is fixed.",
+  "lessons": [
+    {
+      "failure": "Repeated broad entity/world reads multiplied work during UI and placement interactions.",
+      "evidence": "docs/evidence/cohesion_placement_fix.json",
+      "rule": "Read the smallest authoritative facts needed, once per real update; scope invalidation and keep preview queries read-only. A high call count alone does not identify cost or establish a fix."
+    },
+    {
+      "failure": "Expensive initial settlement exhausted a cooperative allowance before any positive clock interval, starving simulation indefinitely.",
+      "evidence": "docs/evidence/clock_stall_308.json",
+      "rule": "Separate liveness from work allowance; preserve complete atomic consequences and unadvanced elapsed debt. Measure remaining costs honestly rather than skipping simulation to satisfy a budget."
+    },
+    {
+      "failure": "Native test scene setup foregrounded its window and warped the user's actual cursor.",
+      "evidence": "docs/evidence/background_test_policy.json",
+      "rule": "Routine direct checks are headless; foreground native input requires a reported issue that needs it. A minimized window alone does not prevent cursor takeover."
+    },
+    {
+      "failure": "Catalogue presence, source reachability and handler receipts were mistaken for complete gameplay outcomes.",
+      "evidence": "docs/prototype_completion.json",
+      "rule": "Describe actual physical outcomes separately from implemented services, synthetic arrangements, static diagrams and unverified ordinary play. Never turn an unresolved failure into a passing claim."
+    },
+    {
+      "failure": "Cancellation and automatic demand could recreate player-cancelled work or overpromise existing freight.",
+      "evidence": "docs/evidence/prototype_regression_followup.json",
+      "rule": "Keep player intent separate from automatic demand, reconcile against real custody, and invalidate/reopen intent explicitly. Idempotent repeated/late events must not create another physical result."
+    },
+    {
+      "failure": "Deferred UI work and old sessions can retain stale references or duplicate refreshes.",
+      "evidence": "docs/evidence/training_read_slice.json",
+      "rule": "Use scene-owned subscriptions, one finite pending wakeup, current-session lookup or generation guards, safe disconnects and fresh reads when a hidden view becomes visible. Do not add idle polling as a substitute for lifecycle ownership."
+    },
+    {
+      "failure": "The bounded agent runner hashed old generated .artifacts worktrees and builds during startup despite documenting their exclusion, delaying any worker progress.",
+      "evidence": "logs/factory-plan/fingerprint-fix.json; tools/tests/test_agent_task.py::test_snapshot_excludes_generated_builds_and_artifacts_but_tracks_source",
+      "rule": "Make documented fingerprint exclusions executable and check generated-output churn separately from retained first-party source. Stop a stalled owned run before changing its protected controller; review a fresh contract rather than silently mutating an active experiment."
+    },
+    {
+      "failure": "The first factory direct check treated900 simulated seconds as enough for two sites sharing two haulers, even though construction still had30 real M11 in flight.",
+      "evidence": "logs/factory-plan/direct-check-correction.json",
+      "rule": "Base direct-check waiting on actual travel, handling, workforce and queue semantics. When a verifier assumes an unsupported gameplay deadline, retain the failure and diagnose physical state before reviewing a new contract. Never accelerate recipes, grant resources or weaken performance limits to satisfy it."
+    },
+    {
+      "failure": "The factory walkthrough requested a100-unit M11 stock minimum while140 starting M11 already remained. Production correctly did not start, but the initial guidance could suggest missing ingredients instead of the already-covered target.",
+      "evidence": "logs/factory-plan/stock-target-correction.json",
+      "rule": "Distinguish a minimum stock target from a new-manufacture quantity, existing coverage from physical availability, and historical production from present storage. Explain the authoritative no-work cause before suggesting purchases or extra labour."
+    },
+    {
+      "failure": "A draft Army needs checker reused the disconnected factory model, which has no authored battlefield policy or approved HQ stock. Source review caught the mismatch before its first execution.",
+      "evidence": "logs/army-supply/fixture-review.json; docs/evidence/army_supply_view.json",
+      "rule": "Choose the actual authored context required by the feature. Preserve a mistaken fixture and document corrections; a disconnected component cannot establish connected-opening behaviour, and source review is not an executed pass."
+    },
+    {
+      "failure": "A locally current source map failed required Linux CI because Python3.12 and3.13 ast.unparse formatted nested f-string quotes differently, despite identical original source and reviewed hashes.",
+      "evidence": "docs/evidence/system_map_portability.json",
+      "rule": "Persist original source-span facts for reproducible documentation; formatter output is not an authoritative cross-version serialization. Keep strict checks and verify the actual remote environment instead of assuming a local pass proves publication."
+    },
+    {
+      "failure": "Two draft refill checker arrangements failed before testing the requested continuity: a top-level Panel alias collided with a Godot class, then a distant local stock transfer correctly failed co-location. Both owned runs were stopped before changing protected inputs.",
+      "evidence": "docs/evidence/refill_continuity.json; logs/refill-continuity/checker-correction.json; logs/refill-continuity/local-transfer-correction.json",
+      "rule": "Use non-conflicting preload names and read physical admission contracts before arranging a component. Preserve invalid fixtures/failures, correct a reviewed new contract, and never weaken correct custody/distance guards to make it pass."
+    },
+    {
+      "failure": "Objective feedback inferred no opposing capture presence from any exit from Contested; the friendly side can leave while enemies remain. Designer review caught the false claim.",
+      "evidence": "PR93 reviews5794145836/5794190558; docs/evidence/objective_feedback.json on52ef961",
+      "rule": "State transitions establish only their actual facts. Check both directions and neutral/owned contexts before translating a transition into a player claim."
+    },
+    {
+      "failure": "Guidance selected the first completed Logistics Centre and claimed a staffing blocker even when a later copy was actually staffed.",
+      "evidence": "PR94 review5794182998 and corrected50d663a; docs/evidence/demo_guidance_logistics_selection.json",
+      "rule": "An arbitrary first instance is not aggregate capability. Select an actual qualifying instance or use an explicit bounded aggregate, and test reversed ordering plus no eligible instance."
+    },
+    {
+      "failure": "Supply feedback treated unreserved available stock as full coverage and prescribed manufacture while real cargo was reserved, loaded or departed to HQ.",
+      "evidence": "PR95 corrected62a1258; docs/evidence/army_supply_feedback.json",
+      "rule": "Available inventory excludes commitments. Reconcile custody accurately or disclose uncounted cargo; incomplete coverage cannot establish a need to manufacture."
+    },
+    {
+      "failure": "Cancelling a truck approach overwrote the physical route state before its existing arrival handoff could execute, stranding the hull in its lane.",
+      "evidence": "PR96 exact3429228; docs/evidence/dispatch_cancel_approach.json",
+      "rule": "Separate cancellation intent from physical phase ownership. Withdraw once, preserve captured safe work, and reach the existing completion/return handoff before changing physical phase."
+    },
+    {
+      "failure": "Training target callback omitted the independent priority argument, resetting a chosen Emergency school to the default Normal priority.",
+      "evidence": "docs/diagrams/training_priority.json; tools/checks/training_priority_check.gd; logs/testable-supply-truck/training-priority-baseline and training-priority-fixed",
+      "rule": "A command that edits one dimension must preserve other user choices. Read the current owner at submission; test the actual UI command, not just the domain setter."
+    },
+    {
+      "failure": "Adding a checker lambda shifted anonymous ordinal IDs; previously useful purpose text then described a different body. Inspection caught the mismatch before completion.",
+      "evidence": "logs/testable-supply-truck/map-purpose-correction-v5.txt and reviewed current source",
+      "rule": "Review anonymous-function purposes against their current bodies after insertions. Numeric or stable-looking IDs do not prove descriptions still match implementation."
+    },
+    {
+      "failure": "A Windows-default text read decoded newly written UTF-8 repository/overview text with a legacy encoding; a later UnicodeDecodeError stopped a handoff update before writing. Source hashes stayed intact.",
+      "evidence": "Current GitHub setup/integration handoff,5November2026; Project3 overview re-read explicitly as UTF-8 and corrected.",
+      "rule": "Always specify UTF-8 for repository JSON/Markdown/source reads and writes; preserve source bytes during merges. Verify the actual published text, not only counts or round-tripped corrupted strings. Never repair encoding by dropping invalid characters."
+    },
+    {
+      "failure": "A decision diagnostic converted an existing boolean short-circuit into an unconditional secondary gate evaluation. Technical review caught it before integration.",
+      "evidence": "PR99 correctionb78030ba and exact reviewedff5d176e; technical review5795065501",
+      "rule": "Diagnostic text must reuse authoritative results and preserve original predicate order, short-circuit behavior and call counts. Do not evaluate another gate solely to produce a more specific explanation. Distinguish locally submitted script bytes from actually executed artifact bytes and document serialization transformations."
+    },
+    {
+      "failure": "Completed bounded developer/review handoffs became idle while the lead awaited another human continue message, despite no pending gameplay question or requested playtest.",
+      "evidence": "Dawson's6November2026 stoppage report and Army/Operations/Player Experience/Designer/UI continuity reports; docs/team_workflow.md completion protocol.",
+      "rule": "Lead owns the next dispatch: process completion into owned review/integration, a preassigned accepted successor or an exact scoped dependency before ending active coordination. Separate tool approval from gameplay/playtest waits; preserve rejected actions while independent authorized work continues. Do not repeat old traces or invent busywork."
+    },
+    {
+      "failure": "Completed work was held for routine publication/merge consent even after lead ownership existed, while ambiguous pending/rejected review combinations had no explicit correction route. Duplicated current assignment summaries also drifted after handoffs.",
+      "evidence": "Dawson's6November direct PR workflow clarification; docs/team_workflow.md PR review and merge decisions; source integration PR101.",
+      "rule": "Lead merges only after current-head technical and Designer approval plus required checks, then reads back the result and dispatches next work. Route rejection to concrete author corrections, pending review to its reviewer, contradictions to lead+Designer, and genuine unresolved human intent to one precise question. Keep live assignments in one record and preserve scoped tool rejections without inventing repeated consent gates."
+    }
+  ],
+  "design_review": [
+    "What owns the authoritative state?",
+    "Which actual event or command causes each update?",
+    "Why is each repeated/continuous callback necessary?",
+    "What happens on cancellation, replacement, destruction or a late duplicate event?",
+    "What observable player outcome demonstrates this increment?"
+  ],
+  "current_priority": "Gameplay/features first. Polishing, optimization and benchmark campaigns remain paused; fix defects that block the current feature or corrupt physical state."
+}

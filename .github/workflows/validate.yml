@@ -100,7 +100,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout --signal=TERM --kill-after=5s 45s xvfb-run -a "$GODOT_BIN" --path . --rendering-method gl_compatibility --audio-driver Dummy --script res://.artifacts/current-change/direct_check.gd > .artifacts/current-change/direct.log 2>&1
+          timeout --signal=TERM --kill-after=5s 45s "$GODOT_BIN" --headless --path . --audio-driver Dummy --script res://.artifacts/current-change/direct_check.gd > .artifacts/current-change/direct.log 2>&1
           cat .artifacts/current-change/direct.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/current-change/direct.log; then exit 1; fi
       - name: Retain only current-change evidence

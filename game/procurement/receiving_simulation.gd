@@ -23,6 +23,7 @@ var ledger := Ledger.new()
 var receiving_position := RECEIVING
 var freight_berths: Array[Dictionary] = [{"store":"receiving","berth":FREIGHT_BERTH,"receiving_position":RECEIVING,"duty":"receiving","site":"initial-receiving"}]
 var personnel_position := PERSONNEL
+var supply_table_access := false
 var route: Callable
 # Optional shared-store contract: returns currently legal free kilograms.
 var receiving_room: Callable
@@ -52,6 +53,17 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	personnel_position = ledger.inspect_entity("personnel").position
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
+
+
+func configure_supply_table() -> void:
+	# Same purchase/admission/handling service, with no F02/F08 prerequisite.
+	assert(_time == 0.0 and _orders.is_empty())
+	supply_table_access = true
+	freight_berths[0].berth = receiving_position + Vector2(0,-10)
+	freight_berths[0].site = "supply-table"
+
+func requisition_balance() -> float:
+	return _money
 
 
 func quote_resources(cart: Dictionary) -> Dictionary:
@@ -96,9 +108,8 @@ func buy_people() -> Dictionary:
 
 
 func recovery_instructor_offer() -> Dictionary:
-	for person in ledger.snapshot().entities:
-		if person.kind == "PERSON" and person.owner == PLAYER and person.basic_training and person.health > 0 and Rect2(0,0,240,180).has_point(person.position):
-			return {"available":false,"message":"A basic-trained person remains in the rear; assign an actual instructor."}
+	if ledger.has_trained_person_in(PLAYER, Rect2(0,0,240,180)):
+		return {"available":false,"message":"A basic-trained person remains in the rear; assign an actual instructor."}
 	for order in _orders:
 		if order.get("recovery_instructor",false) and order.state != "Cancelled" and order.people_arrived < 1:
 			return {"available":false,"message":"One recovery instructor is already pending; wait for physical Personnel receipt."}
@@ -261,11 +272,7 @@ func _outside_rear_places() -> int:
 func rear_population() -> int:
 	# This bounded simulation owns rear people only. Forward/strategic membership
 	# is deliberately not inferred; the shared-world policy remains D03.
-	var count: int = 0
-	for entity in ledger.snapshot().entities:
-		if entity.kind == "PERSON" and entity.owner == PLAYER and entity.get("rear_place","None") in ["Occupied","Held Home"]:
-			count += 1
-	return count
+	return ledger.count_rear_people(PLAYER)
 
 
 func receiving_kg(slot: int = 0) -> int:
@@ -304,7 +311,7 @@ func resource_counts(code: String) -> Dictionary:
 	return result
 
 
-func snapshot() -> Dictionary:
+func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	var orders: Array[Dictionary] = []
 	for order in _orders:
 		var view := order.duplicate(true)
@@ -313,7 +320,7 @@ func snapshot() -> Dictionary:
 	return {"time": _time, "money": _money, "income": _income, "spent": _spent, "refunds": _refunds,
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
 		"order_sequence": _order_sequence, "job_sequence": _job_sequence,
-		"events": _events.duplicate(true), "ledger": ledger.snapshot(), "recovery_offer":recovery_instructor_offer(),
+		"events": _events.duplicate(true), "ledger": ledger.snapshot() if include_diagnostics else null, "recovery_offer":recovery_instructor_offer(),
 		"freight_berths":freight_berths.duplicate(true),"freight_limit":freight_limit()}
 
 
@@ -521,7 +528,7 @@ func _finish_worker_phase(id: String) -> void:
 
 func _sync_workers() -> void:
 	for id in _workers.keys():
-		var person := ledger.inspect_entity(id)
+		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
@@ -611,14 +618,17 @@ func _set_state(order: Dictionary, state: String) -> void:
 
 
 func _gate(order: Dictionary) -> Vector2:
+	if supply_table_access: return Vector2(0,receiving_position.y-10 if order.kind == "Freight" else personnel_position.y+10)
 	return FREIGHT_GATE if order.kind == "Freight" else Vector2(0, 100)
 
 
 func _berth(order: Dictionary) -> Vector2:
+	if supply_table_access and order.kind != "Freight": return personnel_position+Vector2(6+order.slot*8,10)
 	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 
 
 func _exit(order: Dictionary) -> Vector2:
+	if supply_table_access: return _gate(order)-Vector2(12,0)
 	return FREIGHT_EXIT if order.kind == "Freight" else Vector2(-12, 100)
 
 

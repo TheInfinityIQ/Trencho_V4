@@ -1,0 +1,19 @@
+{
+  "scope": "Required publication-check blocker in the source map; no gameplay change or broader local regression campaign.",
+  "original_failure": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42126235365/job/127591046875",
+  "observation": "The required tool tests passed, then strict map equality failed with unchanged source hashes and no pending purpose reviews. Official CPython3.12.3 ast.unparse reproduces two return-expression quote differences versus local3.13.15, in Run.execute and source_link.",
+  "diagnosis": "logs/army-supply/ast-portability-differences.json",
+  "reference_source": "https://raw.githubusercontent.com/python/cpython/v3.12.3/Lib/ast.py",
+  "reference_sha256": "d16626aa5c054bcc45221e56f84e55051b046caf0f8be1fe4902ea71534fb735",
+  "official_contract": "https://docs.python.org/3/library/ast.html#ast.unparse",
+  "correction": "Keep AST discovery/ownership and current implementation hashes; obtain persisted callee/return text from its actual normalized source spans. Missing spans fail. Strict equality, source inventory and purpose-review requirements remain enabled.",
+  "diagram": "docs/diagrams/source_expression_mapping.mmd",
+  "direct_check": {
+    "case": "tools.tests.test_system_map.SystemMapTests.test_python_expression_metadata_is_formatter_independent",
+    "before": "Failed when simulated formatter versions changed the same source's facts.",
+    "after": "Passed while preserving original nested-f-string spelling and actual callee names.",
+    "logs": ["logs/army-supply/portability-before.stderr", "logs/army-supply/portability-after.stderr"]
+  },
+  "publication_check": "Verify the correction's actual required GitHub check on PR89; local success alone did not establish cross-environment equality. Final remote verdict belongs to that published commit's check run.",
+  "limits": ["CPython3.12 formatter was exercised on the local3.13 AST for diagnosis; that is not a full3.12 runtime claim.", "This does not establish gameplay acceptance or FPS."]
+}
