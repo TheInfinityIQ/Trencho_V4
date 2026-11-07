@@ -58,6 +58,42 @@
       ],
       "role": "Own blue physical CARRIER with exact design_type T01 in rear and battlefield only",
       "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0001.png",
+      "path": "game/test_art/tiny_battle/tile_0001.png",
+      "sha256": "cf3b3df8669e621af90944fb3155b15f13adf203dda464e6149d7318f3660713",
+      "bytes": 144,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 2,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Decorative nonblocking repeated grass in existing rear field bounds; no cover/road/terrain benefit",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0016.png",
+      "path": "game/test_art/tiny_battle/tile_0016.png",
+      "sha256": "b6914abcd3f8c0aa9ae411e16ef3cccb366556e2c2742c1d8321f98bb7da8047",
+      "bytes": 184,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Neutral fixed Supply Table arrival cue only; not ownership or a replacement table/resource prop",
+      "modified": false
     }
   ],
   "interpretation": "Generic symbolic factory and T01 truck icons only; brown truck box is not actual loaded-cargo status. No armed or neutral person imagery included. Original indexed palette/tRNS PNGs unchanged.",

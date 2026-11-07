@@ -29,8 +29,48 @@
     "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
   ],
   "mapping": {
-    "state": "PENDING_VERIFIED_MAPPING",
-    "entries": []
+    "state": "PARTIAL_VERIFIED_GROUND_AND_ARRIVAL_CUE; people/table/resources/categories pending",
+    "entries": [
+      {
+        "archive_entry": "Tiles/tile_0001.png",
+        "path": "game/test_art/tiny_battle/tile_0001.png",
+        "sha256": "cf3b3df8669e621af90944fb3155b15f13adf203dda464e6149d7318f3660713",
+        "bytes": 144,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 2,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Decorative nonblocking repeated grass in existing rear field bounds; no cover/road/terrain benefit",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0016.png",
+        "path": "game/test_art/tiny_battle/tile_0016.png",
+        "sha256": "b6914abcd3f8c0aa9ae411e16ef3cccb366556e2c2742c1d8321f98bb7da8047",
+        "bytes": 184,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Neutral fixed Supply Table arrival cue only; not ownership or a replacement table/resource prop",
+        "modified": false
+      }
+    ],
+    "ground_render": "One GPU tiled texture rectangle in existing240x180 world bounds under existing grid, using local draw transform reset before any marker; no world-tile loop/nodes or terrain/collision change.",
+    "arrival_render": "Neutral flag at existing fixed Supply Table anchor, retain table fallback and label; does not claim a table prop is already sourced.",
+    "import_dependencies": "Extend existing explicit minimal-project texture import list with these two exact PNGs. Other verified compile dependencies remain; no project scan."
   },
   "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
   "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features.",
@@ -47,5 +87,10 @@
   "approved_additions": {
     "person_marker": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
     "preview": "Attach separately named visual_kind from already-selected kind in BaseDemo.preview_build_at, including invalid plans. Never overwrite authoritative plan/validation keys or alter footprint, commands or placement permission."
+  },
+  "archive_verification": {
+    "roguelike_archive": "def6c164bb58b4bef7b865c1100c1ad257508bca8bb916cbba092bc72039992d",
+    "transparent_sheet": "c35f14ab9a23e2435b3082712fb13e9d3cf38a1110226d666eac7c2f84c537e8",
+    "status": "Verified original archive/licence and inspected sheet. NO person rect selected; await Artist exact body/clothes/hair and inspection-only composite approval."
   }
 }
