@@ -1,0 +1,50 @@
+{
+  "status": "prospective_before_production_edits",
+  "base": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+  "objective": "Align additional automatic rear-to-HQ commitments with fresh decreased/zero genuine military demand without touching accepted physical loads.",
+  "scope": {
+    "A": [
+      "game/battlefield/opening_resupply.gd",
+      "game/logistics/rear_logistics.gd"
+    ],
+    "C_separate_source_to_compose": [
+      "game/rear_base/base_demo.gd Cancel-enabled predicate",
+      "game/logistics/army_supply_view.gd informational-blocker classification"
+    ],
+    "records": "This contract/flow, proportional feature evidence, C own records, final regenerated combined source/UI/button maps. No team/workflow/test changes."
+  },
+  "authority": {
+    "military": "Existing resupply tick computes current personal/rack deficits minus couriers, actual local/HQ unreserved stock and accepted forward freight, once. Changed shortage including zero publishes through existing signal before any forward-plan early return.",
+    "rear": "Existing automatic request owns mutable requested target; manual quantities remain fixed. Rear reads request/manifest accounting only, not stock/time or force-refresh.",
+    "physical": "Existing Dispatch alone owns accepted manifest/cargo/claims/crew/site/return/cancellation. Reconciliation never edits them or delivered/credited."
+  },
+  "arithmetic": {
+    "uncredited_receipt": "max(0, manifest.unloaded[type] - request.credited[manifest.id]); actual HQ receipt already participates in source coverage, so exclude this lag from every outstanding rear promise.",
+    "other_promises": "For noncancelled other request: max(0, requested-delivered-uncredited_receipt). Cancelled departed nonterminal cargo contributes only max(0,cargo-unloaded), preserving existing physical rule. Completed rows contribute none.",
+    "uncovered": "max(0, published shortage - other promises)",
+    "accepted_floor": "Current live accepted manifest contributes max(0,cargo-unloaded); missing owned record conservatively retains unresolved old remainder and stays blocked. Terminal record contributes no future cargo; uncredited actual receipts remain separately protected.",
+    "current_target": "delivered + uncredited_receipt + max(uncovered, accepted_floor). Recompute only automatic mutable target; never lower below physical accounting.",
+    "coalescing": "Unchanged publication coalesces at source; unchanged target performs no wake/notification. Existing explicit intent/receipt invalidation remains owned by existing events."
+  },
+  "state_contract": {
+    "Covered": "Automatic row only, with no owned manifest remaining and no new uncovered work. cancelled false; explicit holds untouched. Existing visible reason is informational, not a red blocker.",
+    "message": "No additional automatic load currently needed; stock or existing commitments cover this request. Physical deliveries and recipient issue keep their own progress.",
+    "guard": "Owner rejects automatic Covered cancellation before any hold write; C disables corresponding Cancel and omits its reason only from global blockers.",
+    "active": "Accepted physical state/cancel stays intact even when new demand is zero. Missing manifest stays blocked. Terminal record first passes unchanged credit and clear path.",
+    "resume": "Later positive genuine uncovered quantity requeues Covered row normally without Resume; explicitly held/cancelled rows remain guarded. Manual rows never Covered."
+  },
+  "acceptance": [
+    "Fresh automatic need100 assessed30/0 limits new uncommitted commitments to30/0; illustrative arithmetic only, not a stock/threshold change.",
+    "Publish all changed shortages before Pending/Ready or failed forward-plan early return; forward admission ownership unchanged.",
+    "Actual received/accepted/manual/other commitments count exactly once, including unloaded-but-not-yet-credited lag.",
+    "Never rewrite accepted manifest or real delivered/credited counters; preserve manual fixed quantities, cancellation holds and safe return.",
+    "Covered feedback and command eligibility agree; later genuine need remains automatic; no new poll/timer/cache/stock grant/rate/threshold/HQ6000 change."
+  ],
+  "verification": "Source review and required static metadata/whitespace maintenance only initially. No local engine, regression, broad scenario, failure injection, coverage matrix or benchmark. Required current-production CI parsing after publication; at most one necessary brief explicitly supplied/reviewed new-code demonstration later, not a suite.",
+  "references": [
+    "Designer accepted91/92 downward/zero proposal and prospective alignment",
+    "C/lead agreed Covered interface",
+    "https://docs.godotengine.org/en/stable/classes/class_signal.html"
+  ],
+  "next_owners": "A freezes implementation then composes C exact two-file patch; B independent exact-head technical peer; lead technical/check/publication/integration; Designer exact game-identity review."
+}

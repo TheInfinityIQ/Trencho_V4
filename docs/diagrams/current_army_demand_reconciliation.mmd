@@ -1,0 +1,14 @@
+flowchart TD
+    Tick["Existing military supply decision"] --> Coverage["Current deficits less courier/local/forward/HQ coverage once"]
+    Coverage --> Publish["Coalesce and emit changed shortage INCLUDING zero"]
+    Publish --> Guard["Rear current-model / explicit-hold / cancelled guards"]
+    Guard --> Math["Other promises exclude actual uncredited HQ receipts"]
+    Math --> Target["Automatic target = delivered + uncredited + max(uncovered, accepted remaining)"]
+    Target --> Active{"Owned physical manifest remains?"}
+    Active -->|Yes| Physical["Preserve actual stages, receipt credit, safe return and cancel"]
+    Active -->|No and no new work| Covered["Covered: neutral reason, no hold, reject Cancel"]
+    Active -->|No and new work| Queue["Queued: existing physical acceptance path"]
+    Covered -->|Later positive fresh need| Queue
+    Publish --> Forward["Existing forward-plan status/admission gates UNCHANGED"]
+    Physical --> Receipt["Existing receipt high-water mark and source invalidation"]
+    Receipt --> Tick
