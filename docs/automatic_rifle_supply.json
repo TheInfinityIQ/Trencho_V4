@@ -1,0 +1,17 @@
+{
+  "owner":"Developer C implementation; Lead technical review/publication/integration and Designer game identity review",
+  "base":"0953e96213aa83a119e63663079721c0075b80e2",
+  "status":"Accepted bounded HQ reserve scope; pre-implementation contract, runtime unverified",
+  "diagram":"docs/diagrams/automatic_rifle_supply.mmd",
+  "existing_need":"HQLogistics._auto_request already equips actual trained generic admitted HQ Reserve people with one intact E01, then minimum30E02. It writes a shortage string but emits no rear request. Existing RearLogistics/Dispatch already transports individual WEAPON identities from rear source through physical staging/loading/HQ unload/return.",
+  "quantity_contract":[
+    "Only existing _auto_person_ready generic unarmed HQ Reserve recipients; retain existing any-held-E01 rule, busy ownership, same30E02 admission gate and25kg personal issue capacity. No frontline replacement or new formation population target.",
+    "Read available unreserved HQ E02 once. Existing pending Person Weapon issue to same eligible generic recipient accounts its future minimum ammo once (unissued loaded weapon rounds count only when not already counted on that person); Person Stock claims are already excluded by available stock, never subtract them twice.",
+    "Use same sorted recipient order and armed-person minimum-ammo-first policy. Consume only feasible whole per-person minimum coverage in this detached arithmetic, never reserve or mutate ammo. A new unarmed recipient needs actual current remaining30-minus-held loose coverage before counting a rifle; usable unpromised HQ rifle covers that person and its actual loaded rounds reduce later ammo use. Newly requested R01 rifles are empty. The same finite30-round coverage cannot authorize multiple new unarmed recipients.",
+    "Subtract actual usable owned HQ weapons and matching named issue promises once at HQ owner. RearLogistics separately subtracts other manual/automatic/in-transit outstanding shipment coverage and protects immutable accepted cargo floor; actual HQ receipt is not subtracted a second time.",
+    "Demand publication is event-owned in HQ settlement/bind invalidation. E01 cancellation/hold/resume and receipt/terminal callbacks invalidate HQ owner; E02/E26 keep their existing OpeningResupply owner. No timer, generic planner or new polls.",
+    "Keep rifles as functional empty owned WEAPON identities in accessible rear sources and named manifest weapon_items; never synthesize E01 STOCK or ship all production. Existing crew/fuel/capacity/travel/loading/return/issue owners remain authoritative. HQ6000 starting rifle rounds unchanged."
+  ],
+  "feedback":"Minimal HQ rifle gap/loading/receipt/local issue context alongside ammunition; explicit E01 resume action distinct from E02-only ammunition resume.",
+  "verification":"One ignored brief current-change proposal, Lead-owned GitHub execution. No local engine, regression suite/fixtures, old scenarios, failure matrices or benchmark. Whole ordinary game/formation deployment/native input/FPS unverified."
+}
