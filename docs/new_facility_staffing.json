@@ -3,7 +3,7 @@
   "base": "0fbaf640a7ad4c5e6bcf59aa9603e33a5c5e5cab",
   "design": "docs/design_brief.md#automatic-starter-staffing--accepted-7-november-2026",
   "diagram": "docs/diagrams/new_facility_staffing.mmd",
-  "status": "Frozen source implementation; runtime demonstration pending Lead GitHub execution and exact-head reviews",
+  "status": "Implemented; one brief remote completion/late-arrival/reporting/player-override/instructor demonstration passed; ordinary/native/FPS acceptance remains open.",
   "defaults": {
     "receiving": 1,
     "workshop": 1,
@@ -36,5 +36,6 @@
     "scope": "One arranged completion demonstration: actual low-priority committed hauler stays in place at Workshop completion and later paid worker arrival; default1 real available worker physically reports; explicit zero/priority override survives default replay and later arrival. Newly completed School cannot use untrained workers, then paid actual recovery instructor arrives/reporting under existing eligibility.",
     "limits": "Lead GitHub45s current-change input only; no local engine, suites/failure injection/coverage/benchmark. Other catalogue counts/office pool/pre-existing-request intent are source reviewed, not runtime exercised. Not ordinary gameplay/native UI/FPS acceptance."
   },
-  "static_verification": "PASS: changed GDScript parsed by source/function inventory,10 focused purpose reviews, system-map update/check (zero reviews pending), current source-linked UI HTML/anchors and whitespace. Accepted Designer section preserved; existing regression fixture unchanged. The combined UI checker still flags intentionally preserved fixture source hashes; HTML is verified separately, no checker/test-scope change. No new production file/UID needed; existing UID sidecars retained. No local engine or gameplay/regression run."
+  "static_verification": "PASS: changed GDScript parsed by source/function inventory,10 focused purpose reviews, system-map update/check (zero reviews pending), current source-linked UI HTML/anchors and whitespace. Accepted Designer section preserved; existing regression fixture unchanged. The combined UI checker still flags intentionally preserved fixture source hashes; HTML is verified separately, no checker/test-scope change. No new production file/UID needed; existing UID sidecars retained. No local engine or gameplay/regression run.",
+  "evidence": "docs/evidence/new_facility_staffing.json"
 }
