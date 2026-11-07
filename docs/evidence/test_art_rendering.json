@@ -1,0 +1,52 @@
+{
+  "status": "LOCAL_SOURCE_IMPLEMENTED_REMOTE_IMPORT_PENDING",
+  "base": "2560de91",
+  "branch": "codex/test-art-integration",
+  "before_code_mapping_commits": [
+    "366f30675f45f89d1cf309ed9ee3ef4af6c2840a",
+    "bc2b059",
+    "857ea6a"
+  ],
+  "scope": "Three production scripts (two renderers, additive rear marker design_type), bounded validate.yml two-texture dependency import, two original PNGs/unchanged licence/provenance, exact vendor-licence byte-preservation attribute, own records/maps. No other art/gameplay/UI changes.",
+  "provenance": "game/test_art/tiny_battle/provenance.json",
+  "asset_verification": [
+    "Archive bytes131452/SHA2567751ec7d9a07e57baa9fa1174d6f78fcd779a050377227afee77993c73cb5f9e verified against supplied original.",
+    "Both originals visually inspected against original atlas and existing inspection enlargement; enlargement/atlas/zip/188 unused tiles not delivered.",
+    "IHDR verified16x16, bit depth4, indexed PNG colour type3; palette entries6(factory)/10(truck), tRNS one-byte alpha0. No RGBA conversion or image editing.",
+    "Original licence bytes match staged Git blob SHA256a3c76aa4832fcf26376699a976ee0c21980c62fae77e9a888258b68603c0ff49. Exact-file -text/-diff preserves original newline/trailing whitespace; production-source checks unchanged. Creator and creator upload both list CC0."
+  ],
+  "source_observations": [
+    "Only completed actual production sites get factory emblem. Footprint fill/outline/door/labels remain; no factory image on schools, logistics, receiving or unfinished sites.",
+    "Rear exact physical CARRIER T01 with PLAYER ownership and existing battlefield own-blue exact T01 get truck. Image box is symbolic, not loaded-cargo state. Other carriers/heavy/people/unknown contacts keep original markers.",
+    "Rear map_markers adds design_type directly from entity already projected; no new scan/inspection/world position/owner/visibility change. Battlefield Presentation and hit-testing/movement/camera/input code untouched.",
+    "Textures preloaded once at script initialization; draw only reads cached texture dimensions and draws within existing visual bounds. No load(), filesystem I/O, new nodes, polling or gameplay queries added.",
+    "Existing selection/ownership/team/status/door/text overlays retained; sprites do not enlarge gameplay or click footprints."
+  ],
+  "import_prerequisite": {
+    "trigger": "Existing engine-needed flag also true for either exact PNG or .import change, including asset/sidecar-only commits. Docs-only updates unchanged.",
+    "dependency_scope": "Whenever engine needed, two explicit PNG paths plus any existing sidecars copied at identical res://relative paths into temporary minimal project. Unchanged preload dependencies still prepared on fresh caller-only jobs.",
+    "execution": "One pinned remote headless --import (documented import-and-quit),45-second subprocess deadline/1-minute step; no repository scripts/plugins/editor scan or gameplay.",
+    "outputs": "Actual generated .import metadata copied to checkout and .artifacts/current-change/texture-sidecars/<relative>.png.import; minimal imported cache copied to checkout .godot/imported for existing changed-script parsing only; import log/hash receipt retained. Root retrieves/commits actual sidecars, never cache.",
+    "actual_result": "NOT EXECUTED by C. No local engine, remote CI dispatch or generated sidecars claimed. Root owns actual import/parse run and sidecar commit."
+  },
+  "static_maintenance": {
+    "source_map": "PASS zero pending purposes; five changed/new functions source-reviewed",
+    "ui_map": "PASS current source/anchors; no button behavior changes",
+    "workflow_python": "PASS ast.parse of two changed Python blocks; not executed",
+    "whitespace": "git diff --check PASS",
+    "meaning": "Static maintenance only. PNG import/actual Godot parsing still pending root CI."
+  },
+  "runtime": "NONE. No local engine, gameplay demo/regression/scenario/failure/coverage/benchmark or performance claim.",
+  "unverified": [
+    "Pinned Godot PNG import and dependent script parsing until root CI",
+    "Actual native sprite legibility/alpha/scaling/overlay appearance and preserved click behavior",
+    "Ordinary gameplay, physical supply loop and FPS"
+  ],
+  "next": "Root technical plus Designer exact-head source review/publication; root runs bounded remote import/parse, retrieves/commits actual .import sidecars and requests proportionate final-head confirmation. C addresses concrete findings only.",
+  "source_normalized_utf8_lf_sha256": {
+    "game/rear_base/base_map.gd": "fd895c361b6f745227e7dc44ffc58cc502989b2383657e8e818493d48efeadd3",
+    "game/battlefield/battlefield_view.gd": "029195dd31e399fb95c14f8ec3df1672fc02e896dd6224a51bfa363301ca5ff3",
+    "game/identity/identity_ledger.gd": "e847a9a03bfe6756ad27632b9f5df1dc2839cef877140fef9245d82c7ee9118c",
+    ".github/workflows/validate.yml": "c7170c92e76559a15e0ffa41fae1bd612824985c1c170457d0537d7f6b71329e"
+  }
+}

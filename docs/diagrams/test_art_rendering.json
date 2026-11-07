@@ -1,5 +1,5 @@
 {
-  "status": "final two-icon mapping accepted by lead/Designer, frozen before production edits",
+  "status": "implemented locally; actual remote import/engine parse and sidecar retrieval pending",
   "base": "2560de91",
   "owner": "C single implementation owner. Artist/lead verify creator-hosted CC0 downloads and exact files/provenance; Designer accepts imagery/entity meaning; lead grants final source/assets claim/publication.",
   "source_boundary": {
@@ -54,7 +54,7 @@
           16,
           16
         ],
-        "role": "Own blue physical battlefield CARRIER with exact design_type T01 only",
+        "role": "Own blue physical CARRIER with exact design_type T01 in rear and battlefield only",
         "modified": false
       }
     ],
@@ -83,5 +83,11 @@
   "next": "Implement three production files: existing rear marker additive type, BaseMap, BattlefieldView; bounded validate.yml PNG import prerequisite. Root runs CI and commits actual sidecars.",
   "import_boundary": "Whenever changed-script/direct-input validation needs Godot, import the explicit TWO declared feature PNG dependencies (including unchanged bytes on fresh runners) plus existing sidecars in an isolated minimal project at identical res://paths. One pinned remote headless editor import with short deadline; copy generated metadata/cache to checkout for parsing and retain metadata in artifact for root commit. No scan of repository assets/scripts/plugins, gameplay or local engine; no .godot binaries committed.",
   "licence_bytes": "Vendor licence uses original whitespace/line endings; exact-file -text -diff Git attribute preserves immutable bytes and omits its verbatim whitespace from text diff checking. No production-source check relaxed.",
-  "import_rationale": "These are fixed compile-time preload dependencies. Changed-PNG filtering alone breaks fresh later runners when only dependent scripts change; preparing the same two tiny textures is compilation dependency setup, not unchanged gameplay verification."
+  "import_rationale": "These are fixed compile-time preload dependencies. Changed-PNG filtering alone breaks fresh later runners when only dependent scripts change; preparing the same two tiny textures is compilation dependency setup, not unchanged gameplay verification.",
+  "evidence": "docs/evidence/test_art_rendering.json",
+  "references": [
+    "https://kenney.nl/assets/tiny-battle",
+    "https://opengameart.org/content/tiny-battle",
+    "https://docs.godotengine.org/en/4.7/tutorials/editor/command_line_tutorial.html"
+  ]
 }

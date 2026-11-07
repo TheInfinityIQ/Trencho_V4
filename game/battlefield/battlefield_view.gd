@@ -5,6 +5,7 @@ const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 const WORLD_SIZE := Vector2(4000.0, 6000.0)
 const Presentation = preload("res://game/battlefield/battlefield_presentation.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
+const TRUCK_ART: Texture2D = preload("res://game/test_art/tiny_battle/tile_0132.png")
 const PANEL_WIDTH := 350.0
 var session: Node
 var simulation: RefCounted
@@ -172,7 +173,8 @@ func _draw() -> void:
 		elif entity.kind == "CONTACT":
 			_draw_marker(entity.position, Color("e4a47c"), _contact_label(entity), font,entity.id)
 		elif entity.kind == "CARRIER" and entity.design_type in ["T01", "T02", "T03", "T04", "T05"] and entity.position.x >= 240.0:
-			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), _unit_label(entity) if zoom >= 8 or entity.id == selected_id else "", font,entity.id,true)
+			var texture: Texture2D = TRUCK_ART if entity.design_type == "T01" and entity.get("affiliation",entity.owner) == "army-blue" else null
+			_draw_marker(entity.position, Color("74c8ed") if entity.get("affiliation",entity.owner) == "army-blue" else Color("e48378"), _unit_label(entity) if zoom >= 8 or entity.id == selected_id else "", font,entity.id,true,Color.TRANSPARENT,texture)
 		elif entity.kind == "PERSON" and not entity.get("aboard",false) and entity.rear_place != "Occupied" and entity.holder_id not in ["hq-berth", "hq-stock", "hq-reserve"]:
 			_draw_marker(entity.position, Color("b8e9fa") if entity.owner == "army-blue" else Color("f2aea0"), _unit_label(entity) if entity.id == selected_id else "", font, entity.id)
 	if profile: CallLog.record_duration(&"battlefield/battlefield_view.gd::_draw/marker_draw",Time.get_ticks_usec()-stage_started)
@@ -184,7 +186,7 @@ func _draw() -> void:
 	if CallLog.enabled: CallLog.record_duration(&"battlefield/battlefield_view.gd::_draw",Time.get_ticks_usec()-started_usec)
 
 
-func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "", carrier: bool = false, ownership_colour: Color = Color.TRANSPARENT) -> void:
+func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, entity_id: String = "", carrier: bool = false, ownership_colour: Color = Color.TRANSPARENT, texture: Texture2D = null) -> void:
 	var point := _screen(position)
 	if not _map_rect().grow(-10).has_point(point): return
 	var id := entity_id if not entity_id.is_empty() else title
@@ -193,6 +195,10 @@ func _draw_marker(position: Vector2, colour: Color, title: String, font: Font, e
 		draw_arc(point,8.0,0.0,TAU,32,ownership_colour,2.0)
 	if carrier:
 		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),colour)
+		if texture != null:
+			var dimensions := texture.get_size()
+			var extent: Vector2 = dimensions*minf(1.0,minf(12.0/dimensions.x,8.0/dimensions.y))
+			draw_texture_rect(texture,Rect2(point-extent/2.0,extent),false)
 		draw_rect(Rect2(point-Vector2(6,4),Vector2(12,8)),Color("172633"),false,1)
 	else: draw_circle(point, 6.0 if id == selected_id else 4.0, colour)
 	if id == selected_id: draw_arc(point, 10.0, 0.0, TAU, 24, Color.WHITE, 1.5)
