@@ -5,7 +5,8 @@
   "source_boundary": {
     "rear": "base_map.gd::_draw_contents: existing map_point transforms; completed building fill at183-188 and existing entity marker bodies at195-217 are potential sprite seams only after mapping. Preserve primitive fallback and draw status/selection/door/labels above art.",
     "battlefield": "battlefield_view.gd::_draw loop165-177 / _draw_marker187-199: only existing Presentation.markers rows, same _screen position/cull and marker geometry; keep team/ownership/selection/labels above texture.",
-    "information": "battlefield_presentation.gd filters own physical units versus uncertain CONTACT reports. Do not edit this boundary or read enemy ledger state to select sprites. Unknown/unmapped/contact/state without approved mapping keeps existing primitive."
+    "information": "battlefield_presentation.gd filters own physical units versus uncertain CONTACT reports. Do not edit this boundary or read enemy ledger state to select sprites. Unknown/unmapped/contact/state without approved mapping keeps existing primitive.",
+    "rear_marker": "Lead approved additive design_type in identity_ledger.map_markers from the already-looped entity; no additional scan/inspection/visibility change. Rear exact own PLAYER CARRIER T01 uses cached truck; other markers unchanged."
   },
   "mapping": {
     "state": "APPROVED_TWO_ORIGINAL_ICONS",
@@ -60,7 +61,8 @@
     "provenance": "game/test_art/tiny_battle/provenance.json",
     "rear_factory": "Completed constructed production facility only; legacy production marker only with actual initial site Complete. Preserve existing fills/footprints/door/labels/outlines; aspect-preserving max16px emblem inside existing box. No schools/logistics/receiving art.",
     "battlefield_truck": "Existing own blue visible physical CARRIER exact design_type T01. Aspect-preserving full16x16 texture within existing12x8 visual body, original fill/outline and selection remain. Symbolic box has no cargo-status meaning.",
-    "fallback": "Rear map_markers has no design_type: keep generic vehicle fallback without new ledger query. Other types/unknown CONTACT/people remain original shapes."
+    "fallback": "Both rear and battlefield exact own physical T01 may use truck; all other/unknown CONTACT/people remain original shapes. No new ledger query.",
+    "rear_truck": "Rear existing physical CARRIER design_type T01 and entity.owner==rear.PLAYER only, aspect-preserving inside existing14x8 body with fill/colour retained; no cargo status meaning."
   },
   "render_flow": [
     "Lead supplies verified small asset set and exact accepted role mapping.",
@@ -78,6 +80,7 @@
     "No terrain/catalogue/UI redesign or new imagery selection by implementation owner."
   ],
   "verification": "No local engine/regression/benchmark. Inspect supplied images and dimensions/licence, focused source/static metadata and required platform validation only; native rendering/readability/performance remain unverified until permitted observation.",
-  "next": "C implements accepted two-view mapping plus minimal changed-PNG import prerequisite in validate.yml; root reviews/publishes and commits engine-produced sidecars after CI.",
-  "import_boundary": "PNG .import metadata must be produced by actual Godot remotely. Small workflow prerequisite imports only changed texture paths/sidecars in isolated minimal project with pinned engine and deadline, copies metadata/cache to checkout for changed-script parse, retains metadata as artifact for root commit; never commit .godot binaries. No full-project editor import or local engine."
+  "next": "Implement three production files: existing rear marker additive type, BaseMap, BattlefieldView; bounded validate.yml PNG import prerequisite. Root runs CI and commits actual sidecars.",
+  "import_boundary": "PNG .import metadata must be produced by actual Godot remotely. Small workflow prerequisite imports only changed texture paths/sidecars in isolated minimal project with pinned engine and deadline, copies metadata/cache to checkout for changed-script parse, retains metadata as artifact for root commit; never commit .godot binaries. No full-project editor import or local engine.",
+  "licence_bytes": "Vendor licence uses original whitespace/line endings; exact-file -text -diff Git attribute preserves immutable bytes and omits its verbatim whitespace from text diff checking. No production-source check relaxed."
 }

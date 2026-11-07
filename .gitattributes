@@ -10,3 +10,6 @@
 *.wav binary
 *.glb binary
 *.blend binary
+
+# Preserve the verbatim third-party licence bytes, including original whitespace.
+game/test_art/tiny_battle/license.txt -text -diff
