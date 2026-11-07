@@ -1,0 +1,11 @@
+flowchart TD
+  A[Existing ingredient facts] --> B{New haul needed and no source?}
+  B -->|no| C[Existing Prepare haul / coverage feedback]
+  B -->|yes| D{Existing purchase field and actual factory?}
+  D -->|no| E[Existing explanation only]
+  D -->|yes| F[Review material supply with captured identities]
+  F --> G[Click: revalidate exact context and current narrow facts]
+  G -->|stale or no longer needed| H[Hide stale link; existing refresh updates]
+  G -->|valid| I[Supplies / Purchase]
+  I --> J[Focus and reveal exact existing cart field]
+  J --> K[Player separately reviews deliveries and quantities]
