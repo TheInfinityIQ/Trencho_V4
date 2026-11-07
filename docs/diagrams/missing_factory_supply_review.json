@@ -1,5 +1,5 @@
 {
-  "status": "prospective acceptance frozen before production edits",
+  "status": "implemented locally; source/UI/button metadata and whitespace passed; no engine/runtime",
   "base": "849826ddb7724ae2f3c8dbeccf23ea1ed8844ddc",
   "scope": "C base_demo.gd existing ingredient-row action and existing Supplies/Purchase/cart-field navigation only; own feature docs/maps/button anchors. No backend/global API/framework.",
   "owner": "C implementation; B technical peer; lead technical/publication; Designer identity; UX wording.",
@@ -23,5 +23,10 @@
   ],
   "identity_note": "Legacy actual initial site uses initial-<duty> mapping; ordinary constructed site uses exact duty ID. Require actual Complete site plus matching owner duty. Capture real Dictionary reference, not detached view row.",
   "verification": "Source/static metadata only; no local engine/regression/scenario/failure/coverage/benchmark. Native focus and nested reveal unverified.",
-  "publication": "Root-owned; no author push/PR/permission retry."
+  "publication": "Root-owned; no author push/PR/permission retry.",
+  "evidence": "docs/evidence/missing_factory_supply_review.json",
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
+    "https://docs.godotengine.org/en/4.7/classes/class_scrollcontainer.html#class-scrollcontainer-method-ensure-control-visible"
+  ]
 }

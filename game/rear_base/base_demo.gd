@@ -57,6 +57,7 @@ var cart: Dictionary = {}
 var factory_plan_panel: VBoxContainer
 var army_supply_panel: VBoxContainer
 var _supply_views: TabContainer
+var _purchase_catalogue_scroll: ScrollContainer
 var workforce_panel: VBoxContainer
 var resource_hud: Label
 var purchase_quote: Label
@@ -436,6 +437,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 	delivery_cancel_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var catalogue: VBoxContainer = _section(purchase,"Raw supplies","Whole kg · price per kg")
 	var catalogue_scroll := ScrollContainer.new()
+	_purchase_catalogue_scroll = catalogue_scroll
 	catalogue_scroll.custom_minimum_size.y = 160
 	catalogue_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	catalogue.add_child(catalogue_scroll)
@@ -847,6 +849,10 @@ func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
 			ingredient_checklist.add_child(row)
 			_label(row,"").autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			_button(row,"Prepare haul: "+_material_label(type),_prepare_ingredient_haul.bind(str(type),str(current.recipe),str(current.input_store)))
+			if cart.has(type):
+				var review := _button(row,"Review "+_material_label(type)+" supply",_review_ingredient_supply.bind(row))
+				review.name = "ReviewSupply"
+				review.hide()
 	for row in ingredient_checklist.get_children():
 		var type: String = str(row.get_meta("type"))
 		var physical := 0
@@ -867,6 +873,81 @@ func _refresh_ingredients(current: Dictionary, rear_view: Dictionary) -> void:
 		var button: Button = row.get_child(1)
 		button.disabled = new_units <= 0 or source_available <= 0
 		button.tooltip_text = "Existing haul orders cover the local shortage; arrival is still required." if new_units <= 0 and missing > 0 else ("Ingredients are locally available." if missing <= 0 else ("Buy or manufacture this material; no accessible source stock is available." if source_available <= 0 else "Prepare up to %d units beyond existing haul orders. Review the fields in Haul, then click Order haul." % new_units))
+		row.set_meta("ingredient_detail",row.get_child(0).text)
+		var review := row.get_node_or_null("ReviewSupply") as Button
+		if review == null: continue
+		var request: Dictionary = _ingredient_supply_request(current,type) if new_units > 0 and source_available <= 0 else {}
+		row.set_meta("supply_request",request)
+		review.visible = not request.is_empty()
+		review.disabled = request.is_empty()
+		if not request.is_empty():
+			review.tooltip_text = "No accessible unreserved %s is available for a new haul. Review existing deliveries and raw supplies; ingredients must arrive and be hauled to this factory." % _material_label(type)
+			row.get_child(0).text += "\n" + review.tooltip_text
+			button.tooltip_text = review.tooltip_text
+
+func _ingredient_supply_request(current: Dictionary, type: String) -> Dictionary:
+	var field := cart.get(type) as SpinBox
+	if not is_instance_valid(field) or not field.is_inside_tree(): return {}
+	var duty := _context_duty()
+	var service: RefCounted = simulation.rear.construction
+	var site: Dictionary = service.instances.get(duty,service.instances.get("initial-"+duty,{}))
+	if site.get("state","") != "Complete": return {}
+	var owner := _activity()
+	if str(current.recipe) != owner._recipe or str(current.input_store) != owner._spec.input_store or owner._spec.duty != duty: return {}
+	return {"session":session,"model":simulation,"service":service,"site":site,"site_id":str(site.id),
+		"owner":owner,"duty":duty,"recipe":str(current.recipe),"input_store":str(current.input_store),
+		"type":type,"field":field,"kind":_selected_kind,"selection":_selected_id}
+
+func _ingredient_supply_is_current(request: Dictionary) -> bool:
+	if request.is_empty() or not is_instance_valid(session) or not is_instance_valid(request.session): return false
+	if session != request.session or simulation != request.model or session.simulation != request.model: return false
+	if simulation.rear.construction != request.service or _context_duty() != request.duty: return false
+	if _selected_kind != request.kind or _selected_id != request.selection: return false
+	var site: Dictionary = request.service.instances.get(request.site_id,{})
+	if not is_same(site,request.site) or site.get("state","") != "Complete": return false
+	var owner := _activity()
+	if owner != request.owner or owner._recipe != request.recipe or owner._spec.input_store != request.input_store: return false
+	if owner._spec.duty != request.duty or not owner._spec.inputs.has(request.type): return false
+	return is_instance_valid(request.field) and request.field == cart.get(request.type) and request.field.is_inside_tree()
+
+func _hide_ingredient_supply_review(row: Control) -> void:
+	row.set_meta("supply_request",{})
+	var review := row.get_node_or_null("ReviewSupply") as Button
+	if review != null:
+		review.disabled = true
+		review.hide()
+	row.get_child(0).text = str(row.get_meta("ingredient_detail",row.get_child(0).text))
+
+func _review_ingredient_supply(row: Control) -> void:
+	if not is_instance_valid(row) or not row.is_inside_tree() or not row.is_visible_in_tree(): return
+	var request: Dictionary = row.get_meta("supply_request",{})
+	if not _ingredient_supply_is_current(request):
+		_hide_ingredient_supply_review(row)
+		return
+	var owner: RefCounted = request.owner
+	var type := str(request.type)
+	var open := _input_hauls(request.input_store,type,simulation.rear.jobs)
+	var needed: int = maxi(0,int(owner._missing().get(type,0))-int(open.open))
+	if needed <= 0:
+		_hide_ingredient_supply_review(row)
+		return
+	for id in simulation.rear.stores:
+		if id == request.input_store or not simulation.rear.stores[id].accessible: continue
+		if simulation.rear.ledger.available_stock_at(id,type) > 0:
+			_hide_ingredient_supply_review(row)
+			return
+	var purchase_index := -1
+	for index in _supply_views.get_tab_count():
+		if _supply_views.get_tab_title(index) == "Purchase": purchase_index = index; break
+	if purchase_index < 0: return
+	if not show_panel("Supplies"): return
+	_supply_views.current_tab = purchase_index
+	if not _ingredient_supply_is_current(request): return
+	var field: SpinBox = request.field
+	field.get_line_edit().grab_focus()
+	_purchase_catalogue_scroll.ensure_control_visible(field)
+	var panel: Control = tabs.get_tab_control(tabs.current_tab)
+	if panel is ScrollContainer: panel.ensure_control_visible(_purchase_catalogue_scroll)
 
 func _production_panel(box: VBoxContainer) -> void:
 	factory_plan_panel = FactoryPlanPanel.new()

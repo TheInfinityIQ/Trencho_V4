@@ -1,0 +1,31 @@
+{
+  "status": "LOCAL_IMPLEMENTED_STATIC_MAINTENANCE_PASSED",
+  "base": "849826ddb7724ae2f3c8dbeccf23ea1ed8844ddc",
+  "prior_contract": "e23bf08",
+  "branch": "codex/review-missing-factory-supply",
+  "scope": "Only base_demo.gd ingredient link and existing purchase scroll/field navigation plus own records/generated metadata. No backend/catalogue/producer/global API changes.",
+  "source_observations": [
+    "Eligibility reuses current missing/open-haul/source_available display facts; existing cart field and real Complete factory context required. Local/open-haul covered, available source or manufactured-only ingredient has no new purchase link.",
+    "Label Review material supply and visible reason mention possible deliveries/raw supplies and actual arrival/hauling; no claim that new purchase is required. Eligible disabled Prepare tooltip uses same neutral explanation; actual Prepare semantics unchanged.",
+    "Rendered row stores session/model/Construction/actual site Dictionary/current owner/selected duty/context/recipe/input/type/exact field; legacy actual initial-site mapping supported. No snapshot authority retained.",
+    "Click validates captured context and current one-ingredient deficit/open-haul/source stock before navigation; no Model.snapshot or new per-frame stock read.",
+    "Stale/replaced/no-longer-needed/source-available link clears/hides without Work refresh or control reload; existing committed refresh can repopulate. All drafts untouched by rejection.",
+    "Valid action opens existing Supplies/Purchase, focuses existing exact field and reveals inner catalogue then outer Supplies. No set_value, autofill, buy, reserve, queue, assign, target/recipe/mode/speed/pause/after_command call.",
+    "Earlier construction/recovery and unused proposal checkouts remain separate; root owns publication."
+  ],
+  "maintenance": {
+    "source_map": "PASS zero pending purpose reviews; six affected functions source-reviewed",
+    "ui_map_button_inventory": "PASS current source/anchors; generated button fixture only, no test logic/scenario added",
+    "whitespace": "git diff --check PASS",
+    "meaning": "Static source grammar/metadata only; not Godot compilation or native/runtime acceptance."
+  },
+  "runtime": "NONE: no local engine, tests/regressions, scenarios, failure injection, custom demonstration, profiling or remote checks.",
+  "unverified": [
+    "Godot parsing and native click/focus/nested scroll reveal/layout",
+    "Live draft preservation and exact replacement/receipt/source arrival timing",
+    "Full ordinary factory/supply loop and FPS"
+  ],
+  "publication": "None by C; lead-owned normal publication/reviews/checks/merge.",
+  "next": "B exact-head technical peer; lead technical; Designer identity and UX wording/interaction. C fixes concrete findings.",
+  "production_normalized_utf8_lf_sha256": "c0d3234b79068030402d0e8aa643459c9df08cb8835060948ba941b4034aad0a"
+}
