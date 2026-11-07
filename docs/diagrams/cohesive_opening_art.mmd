@@ -1,0 +1,20 @@
+flowchart TD
+  A[Verified Artist subset + Designer coverage] --> B[Final mapping before code]
+  B --> C[Preloaded fixed texture resources]
+  D[Existing state and redraw events] --> E[Draw only actual opening/world]
+  C --> E
+  E --> F[One/batched ground texture path]
+  E --> G[Existing player and Supply Table]
+  E --> H[Existing placement preview/state]
+  E --> I[Existing exact known entities only]
+  F --> J[Preserve geometry + overlays + fallback]
+  G --> J
+  H --> J
+  I --> J
+  J --> K[Root bounded remote actual-build capture]
+  K --> L[C inspects real opening screenshots]
+  L --> M[Concrete fixes then final exact-build handoff]
+  N[Already-projected Person] --> O[Assignment/rear place + held STOCK direct lookup]
+  O --> I
+  P[Already-selected build kind] --> Q[Separate visual_kind only]
+  Q --> H

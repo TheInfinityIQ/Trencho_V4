@@ -1,0 +1,319 @@
+{
+  "status": "local implementation complete; static maintenance and root actual-build capture pending; NOT assets-ready",
+  "base": "1d6851d6",
+  "owner": "C only implementer; Artist/lead verified asset subset and provenance; Designer visual coverage/meaning; lead source claim, publication and bounded remote actual-build captures.",
+  "priority": "Normal paused empty-field opening must visibly use cohesive art without adding people/buildings/stock or altering simulation. Prior two-icon pass remains intact.",
+  "proposed_source_scope": {
+    "primary": "game/rear_base/base_map.gd drawing only: ground, existing scene-owned character, fixed Supply Table/arrival landmark and existing placement ghost; later existing people/completed facilities/stock/carriers under exact approved mappings.",
+    "secondary": "game/battlefield/battlefield_view.gd only if Designer includes matching exact known-unit coverage in this increment; preserve contact-report information boundary.",
+    "marker_boundary": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
+    "assets": "Small exact creator-verified subset, original licence/provenance and actual engine-produced import sidecars; no catalogue bulk imports or generated imagery.",
+    "validation": "Existing explicit texture-dependency import list changes only for approved compile dependencies if required. Lead owns bounded remote actual current-build capture and generated sidecars.",
+    "preview_hint": "Attach separately named visual_kind from already-selected kind in BaseDemo.preview_build_at, including invalid plans. Never overwrite authoritative plan/validation keys or alter footprint, commands or placement permission."
+  },
+  "render_flow": [
+    "Artist/lead supplies verified original files and precise role/state/source-rect mapping; Designer supplies assets-ready coverage. Commit final mapping before code.",
+    "Preload/cache fixed textures once. Existing redraw/movement/placement/session events remain unchanged; no animation clock/poll/node per entity.",
+    "Render ground with a bounded single/batched GPU texture path clipped to existing240x180 world bounds; no per-world-tile CPU loop/nodes. Restore draw transform before existing markers if a local texture transform is used.",
+    "Render only existing character_position and fixed Supply Table/arrival coordinate, preserving outlines/labels/player distinction and movement/collision/hit tests.",
+    "Render existing legal/illegal/provisional placement geometry with clear state tint/outline; no placed site or resource consumption invented for preview.",
+    "For later existing entities, use exact accepted visible role/state only; preserve faction/carry/status/selection/door overlays and primitive fallback. Unknown role/contacts stay fallback.",
+    "Actual current-build rendered screenshot of ordinary empty-field opening is mandatory; extra coverage captures only accepted real state/ordinary controls, never fake opening population or asset contact sheet."
+  ],
+  "acceptance_proposal": [
+    "Initial ordinary paused opening visibly includes coherent ground/player/Supply Table art; no unseen later truck/factory is needed to see the pass.",
+    "Geometry, camera/input, footprint/hit tests, selection, status/faction and uncertainty remain unchanged.",
+    "Placement remains visibly provisional with its actual valid/invalid reason and no hidden construction commit.",
+    "Existing marker fallback remains for unsupported/unverified roles; no armed worker or invented equipment/status.",
+    "No full-world tile loops, extra entity nodes/resource loads/polling or local engine.",
+    "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
+  ],
+  "mapping": {
+    "state": "VERIFIED_REAR_OPENING_AND_CORE_MAPPING_FROZEN; actual build captures pending",
+    "entries": [
+      {
+        "archive_entry": "Tiles/tile_0001.png",
+        "path": "game/test_art/tiny_battle/tile_0001.png",
+        "sha256": "cf3b3df8669e621af90944fb3155b15f13adf203dda464e6149d7318f3660713",
+        "bytes": 144,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 2,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Decorative nonblocking repeated grass in existing rear field bounds; no cover/road/terrain benefit",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0016.png",
+        "path": "game/test_art/tiny_battle/tile_0016.png",
+        "sha256": "b6914abcd3f8c0aa9ae411e16ef3cccb366556e2c2742c1d8321f98bb7da8047",
+        "bytes": 184,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Neutral fixed Supply Table arrival cue only; not ownership or a replacement table/resource prop",
+        "modified": false
+      },
+      {
+        "role": "Existing Supply Table plain wooden table",
+        "texture": "game/test_art/roguelike_indoor/indoor_sheet.png",
+        "source_rect": [
+          119,
+          0,
+          16,
+          16
+        ],
+        "provenance": "game/test_art/roguelike_indoor/provenance.json",
+        "sha256": "ab482e791c26bf7e483fbd9e2ead88d487502da362cc650b62ade3734c002b6c",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0044.png",
+        "path": "game/test_art/tiny_battle/tile_0044.png",
+        "sha256": "587d4e69b66fae9ca8eb5997804c07481b700f95289d0b29b2378e62bd3ef593",
+        "bytes": 201,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "School/personnel administrative building; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0045.png",
+        "path": "game/test_art/tiny_battle/tile_0045.png",
+        "sha256": "1a2a71f4a4cf3948fb077a06635b76900bf3224297fdf26d81326e3bf77d729e",
+        "bytes": 195,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Receiving/storage/Logistics warehouse category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0046.png",
+        "path": "game/test_art/tiny_battle/tile_0046.png",
+        "sha256": "3512d5ecad71b1f7625d00d13ffdb57420e3e8947a0e25c0ed7ce0fb79b58d19",
+        "bytes": 209,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Vehicle Works garage category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0048.png",
+        "path": "game/test_art/tiny_battle/tile_0048.png",
+        "sha256": "6645aff06b981e2db5f4e760cbd16256a6fbe053ad233e614d510fc6322634ab",
+        "bytes": 205,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Munitions industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0049.png",
+        "path": "game/test_art/tiny_battle/tile_0049.png",
+        "sha256": "827407d8d0fdecf6a292a01d72946d2ea3a16e0084bd7b727efb406b9f147ced",
+        "bytes": 205,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Materials Plant industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0050.png",
+        "path": "game/test_art/tiny_battle/tile_0050.png",
+        "sha256": "7b477a0defe2e58d7f6a76a399a6c160368b0e8d7fd7f78ae48046198969f584",
+        "bytes": 201,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Construction Office/legacy Terminal administration category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0052.png",
+        "path": "game/test_art/tiny_battle/tile_0052.png",
+        "sha256": "fda229339b7ff7a668823b92d39544bf7b2bd6c1a3633e71e2cd25bbb0a167f7",
+        "bytes": 187,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Actual completed Vehicle Park flag category; no vehicle implied; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      }
+    ],
+    "ground_render": "One GPU tiled texture rectangle in existing240x180 world bounds under existing grid, using local draw transform reset before any marker; no world-tile loop/nodes or terrain/collision change.",
+    "arrival_render": "Neutral flag next to verified plain table at existing fixed Supply Table anchor. Preserve label/input/arrival rules; no supplied stock or ownership implied.",
+    "import_dependencies": "Extend existing explicit minimal-project texture import list with these two exact PNGs. Other verified compile dependencies remain; no project scan.",
+    "facility_categories": {
+      "terminal": "tile_0050",
+      "personnel": "tile_0044",
+      "receiving": "tile_0045",
+      "depot": "tile_0045",
+      "workshop": "tile_0047 (existing)",
+      "munitions": "tile_0048",
+      "materials": "tile_0049",
+      "training": "tile_0044",
+      "dispatch": "tile_0045",
+      "support": "tile_0047 (existing manufacturing family)",
+      "vehicle_works": "tile_0046",
+      "construction": "tile_0050",
+      "park": "tile_0052 (no displayed car)"
+    },
+    "facility_render": "Upright category art plus actual readable kind/instance/state label, fitted within existing true footprint; translucent intended-art ghost and actual unfinished progress bar. No rotated physical silhouette, cover, vehicle, service or ownership grant.",
+    "stock_callout": "Generic physical bin/counted label drawn after table/player with modest18px visual offset and leader to exact original stock anchor; label starts50px below anchor, table caption above. No physical position, holder, hit target or game entity changes.",
+    "readability": "Nearest filtering for pixel artwork; dark text outlines preserve actual names/counts on brighter decorative grass. Existing You/selection cue stays. Native readability pending real viewport inspection."
+  },
+  "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
+  "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features.",
+  "accepted_coverage": {
+    "opening": "Normal paused field: neutral player, coherent decorative grass/earth, Supply Table/arrival cue and actual starting M11 stock/count. Preserve2500 requisition,500 actual M11 and no granted workers/workshops/vehicles.",
+    "rear": "Actual unarmed rear workers, resource stacks/carry and empty-hand distinction with labels/counts; intended placement ghost/unfinished/complete category treatment inside true footprint/door/hit bounds; distinct related-art categories including School/Logistics/Materials/Vehicle Works/parking. No fake cargo/fuel/work state.",
+    "battlefield": "Own soldiers distinct from rear workers and exact known transport/armour roles at useful zoom only when verified art supplied. CONTACT uncertainty and actual terrain/objective/HQ/stop meaning preserved; explicit remaining roster gaps allowed."
+  },
+  "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
+  "real_missing_inputs": [
+    "Root actual-build viewport captures of normal opening plus clearly labelled arranged rear-art example, including actual new preview/unfinished/carry appearances where supported. No assets-ready claim before image inspection/review."
+  ],
+  "approved_additions": {
+    "person_marker": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
+    "preview": "Attach separately named visual_kind from already-selected kind in BaseDemo.preview_build_at, including invalid plans. Never overwrite authoritative plan/validation keys or alter footprint, commands or placement permission."
+  },
+  "archive_verification": {
+    "roguelike_archive": "def6c164bb58b4bef7b865c1100c1ad257508bca8bb916cbba092bc72039992d",
+    "transparent_sheet": "c35f14ab9a23e2435b3082712fb13e9d3cf38a1110226d666eac7c2f84c537e8",
+    "status": "Original character archive/sheet/licence verified; supplied five unarmed body/clothing/hair layers and root source-inspection composite visually inspected. Native AtlasTexture wrappers prepared, no person render until Designer approval."
+  },
+  "candidate_person_mapping": {
+    "state": "DESIGNER_APPROVED_FIVE_LAYER_UNARMED_CIVILIAN",
+    "provenance": "game/test_art/roguelike_characters/provenance.json",
+    "layers": [
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_body.tres",
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_trousers.tres",
+        "source_rect": [
+          51,
+          17,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_shoes.tres",
+        "source_rect": [
+          68,
+          17,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/teal_shirt.tres",
+        "source_rect": [
+          187,
+          0,
+          16,
+          16
+        ]
+      },
+      {
+        "resource": "game/test_art/roguelike_characters/neutral_hair.tres",
+        "source_rect": [
+          323,
+          0,
+          16,
+          16
+        ]
+      }
+    ],
+    "not_game_capture": true,
+    "predicate": "Existing scene-owned player or actual own rear_place Occupied Person with Available/Rear Labour/Training/Strategic Crew assignment. Unknown/formation/wounded roles keep primitive fallback; player retains You and existing selection/identity halo."
+  },
+  "candidate_stock_mapping": {
+    "state": "DESIGNER_APPROVED_PLAIN_GENERIC_PHYSICAL_STOCK_BIN",
+    "sheet": "game/test_art/roguelike_indoor/indoor_sheet.png",
+    "plain_bin_rect": [
+      374,
+      68,
+      16,
+      16
+    ],
+    "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock.",
+    "labels": "Aggregate only already-visible physical stock rows by holder/type for one generic marker plus actual type/count; no one sprite per unit. Carry icon/count reads verified held-stock scalar fields only; empty hand gets no carry artwork."
+  },
+  "battlefield_scope": "No new battlefield soldier/armour imagery in this increment. Prior verified T01 remains; other roster/animation gaps explicit. Do not claim a new battlefield art pass.",
+  "evidence": "docs/evidence/cohesive_opening_art.json"
+}

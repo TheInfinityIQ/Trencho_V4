@@ -1,0 +1,45 @@
+{
+  "pack": "Roguelike Indoor pack",
+  "creator": "Kenney Vleugels / Kenney",
+  "creator_upload_page": "https://opengameart.org/content/roguelike-indoor-pack",
+  "download_url": "https://opengameart.org/sites/default/files/Roguelike%20Indoor%20pack.zip",
+  "licence": "CC0 1.0",
+  "licence_archive_entry": "License.txt",
+  "licence_path": "game/test_art/roguelike_indoor/license.txt",
+  "licence_sha256": "b3d697b7d67c4f5860487361de23bf0e72192709bf7eba7d88853b2a2baeb967",
+  "archive_sha256": "6a75149014c4230bb0f1c40ba1c1a8bcc749ca3d0731e1e31f35c5ea14c47354",
+  "archive_bytes": 210263,
+  "sheet_archive_entry": "Spritesheet/roguelikeIndoor_transparent.png",
+  "sheet_path": "game/test_art/roguelike_indoor/indoor_sheet.png",
+  "sheet_sha256": "ab482e791c26bf7e483fbd9e2ead88d487502da362cc650b62ade3734c002b6c",
+  "sheet_dimensions": [
+    457,
+    305
+  ],
+  "modified": false,
+  "mappings": [
+    {
+      "role": "Existing fixed Supply Table only; plain complete round wooden table, no food/gold/material quantity implied",
+      "source_rect": [
+        119,
+        0,
+        16,
+        16
+      ],
+      "verification": "Original sheet plus inspection-only nearest-neighbour table crop visually inspected; complete top-row column7 table,16px cells/1px spacing.",
+      "anchor": "Existing map_point(Vector2(10,90)); image is visual only, original input/collision/arrival semantics unchanged."
+    },
+    {
+      "role": "Designer-approved generic actual physical stock symbol only; label actual type/count, no fullness/capacity/content or new container-entity claim",
+      "source_rect": [
+        374,
+        68,
+        16,
+        16
+      ],
+      "verification": "Root actual source-inspection composite visually inspected by C and Designer; plain bin only, not blue bin.",
+      "anchor": "Existing physical-stock marker position or actual person carrying stock. Carry requires actual STOCK held by same person."
+    }
+  ],
+  "excluded": "Archive, magenta sheet, previews and other furniture are not used. Original transparent sheet retained for native region drawing; no cropped/edited deliverable image."
+}

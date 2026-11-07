@@ -52,7 +52,7 @@ jobs:
           subprocess.run(["git", "diff", "--check", base, head], check=True)
           changed = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=ACMR", "-z", base, head]).decode().split("\0")
           scripts = [p for p in changed if p.startswith("game/") and p.endswith(".gd") and "/tests/" not in p]
-          textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png"]
+          textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
           texture_update = any(p in textures or p in [t + ".import" for t in textures] for p in changed)
           (output / "scripts.json").write_text(json.dumps(scripts), encoding="utf-8")
           direct = os.environ.get("DIRECT_CHECK", "").strip()
@@ -82,14 +82,14 @@ jobs:
           unzip -q "$archive"
           chmod +x "Godot_v${version}-stable_linux.x86_64"
           echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
-      - name: Import only the two declared texture dependencies
+      - name: Import only the declared texture dependencies
         if: steps.scope.outputs.engine == 'true'
         timeout-minutes: 1
         shell: python
         run: |
           import hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
           output = pathlib.Path(".artifacts/current-change")
-          textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png"]
+          textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
           # These exact preload dependencies are needed even when only a caller changes.
           project = pathlib.Path(tempfile.mkdtemp(prefix="trencho-texture-import-", dir=os.environ["RUNNER_TEMP"]))
           (project / "project.godot").write_text('config_version=5\n[application]\nconfig/name="Texture dependency import"\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n', encoding="utf-8")
@@ -109,7 +109,7 @@ jobs:
           except subprocess.TimeoutExpired as error:
               log = error.stdout or b""
               (output / "texture-import.log").write_text(log.decode(errors="replace") if isinstance(log, bytes) else log, encoding="utf-8")
-              raise SystemExit("Two-texture dependency import exceeded its 45-second deadline.")
+              raise SystemExit("Declared texture dependency import exceeded its 45-second deadline.")
           (output / "texture-import.log").write_text(result.stdout, encoding="utf-8")
           print(result.stdout, flush=True)
           if result.returncode or re.search(r"^\s*(SCRIPT ERROR:|ERROR:)", result.stdout, re.MULTILINE):
@@ -128,13 +128,13 @@ jobs:
           cache = project / ".godot/imported"
           if not cache.is_dir():
               raise SystemExit("Godot did not produce the isolated texture import cache.")
-          # The isolated project contains only the two declared PNGs, never game scripts/plugins.
+          # The isolated project contains only the declared PNGs, never game scripts/plugins.
           destination = pathlib.Path(".godot/imported")
           destination.mkdir(parents=True, exist_ok=True)
           for imported in cache.iterdir():
               if imported.is_file():
                   shutil.copy2(imported, destination / imported.name)
-          (output / "texture-import.json").write_text(json.dumps({"textures": receipt, "scope": "Two declared compile dependencies only; no game project/editor/plugin scan or gameplay."}, indent=2) + "\n", encoding="utf-8")
+          (output / "texture-import.json").write_text(json.dumps({"textures": receipt, "scope": "Declared compile dependencies only; no game project/editor/plugin scan or gameplay."}, indent=2) + "\n", encoding="utf-8")
       - name: Parse changed production scripts only
         if: steps.scope.outputs.engine == 'true'
         timeout-minutes: 3

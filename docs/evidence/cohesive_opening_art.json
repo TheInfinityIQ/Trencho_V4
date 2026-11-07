@@ -1,0 +1,71 @@
+{
+  "status": "LABEL_CORRECTION_SOURCE_CHECKPOINT_NOT_ASSETS_READY",
+  "base": "1d6851d6",
+  "branch": "codex/cohesive-opening-art",
+  "scope": "BaseMap drawing, Person-only marker display fields, separate BaseDemo visual_kind hint, explicit texture dependency lists; original CC0 resources/AtlasTexture wrappers/provenance, own records/maps. No new battlefield art or gameplay changes.",
+  "mapping": "docs/diagrams/cohesive_opening_art.json",
+  "source_observations": [
+    "Normal opening keeps2500req/actual500M11/no workers/workshops/vehicles. Existing scene-owned player gets approved neutral layers, existing Supply Table gets verified round table/neutral arrival cue, field gets one tiled GPU grass draw. No scenery stock/people added.",
+    "Person sprite only for existing own Occupied rear Available/Rear Labour/Training/Strategic Crew; other roles/aboard markers preserve fallback. Existing player You/halo and selection/ownership cues remain.",
+    "Carried type/count requires actual positive STOCK physically held by same person via direct lookup; no reserved-only or stale-pointer cargo art.",
+    "Physical stock groups retain holder/owner/exact position and sum existing quantity only, labelled physical rather than available. Generic bin has no fullness/capacity/content/container-entity claim. Starting500 is actual marker quantity, not hard-coded decoration.",
+    "Root named stock overlap resolved: small18px offset with leader to real anchor, stock drawn after table/player, separate count baseline50px below; table caption above. Dark text outlines support brighter grass. Native readability still pending.",
+    "Related category art plus actual friendly labels inside existing footprint/door geometry; real progress ratio and translucent unfinished/preview state. visual_kind is separate display hint; validation/placement commands unchanged.",
+    "Textures/layers are preloaded once; no load/I/O/new nodes/polls/clocks or simulation mutation in draw. No CPU loop across ground tiles; original transforms/hit tests/collisions/selection/visibility unchanged.",
+    "Existing minimal import architecture retained; explicit lists now exactly13 PNG compile dependencies, including native AtlasTexture backing sheets. No full-project editor import."
+  ],
+  "asset_verification": {
+    "sources": [
+      "Kenney Tiny Battle",
+      "Kenney Roguelike Characters",
+      "Kenney Roguelike Indoor"
+    ],
+    "bytes": "All retained original PNG/sheet/raw-licence SHA256 match their recorded ZIP provenance; source-only crops/composite inspected. No image conversion/generated art.",
+    "people": "Designer approved exact five-layer unarmed teal composite before rendering; no weapon/armour/shield regions.",
+    "table": "Complete single round table119,0,16,16; wrong multi-table Artist assembly not used.",
+    "stock": "Designer approved only plain bin374,68,16,16, with actual labels/counts.",
+    "categories": "Actual original numbered blue tiles inspected before reversible category mapping, frozen before code.",
+    "imports": "PASS: actual pinned-Godot isolated13-texture import on GitHub42346783813, exact source4ee8a584af6934fcac365836dc7b6b2f64608fe7; retained source/sidecar hashes verified by lead and actual sidecars committed. No local engine/cache."
+  },
+  "static_maintenance": "Focused _draw_contents and _draw_label purpose/source review for the two actual-image blockers. Retain unchanged asset/import/dependency evidence. Final static maps/UI anchors/whitespace supplied with correction head; no local engine.",
+  "capture": {
+    "status": "Actual 1dc54d9ef0c959934e580d73ac97ead8c5fda393 images inspected by C and Designer; two label blockers corrected in source, updated exact-head captures pending lead.",
+    "screenshots": [
+      {
+        "file": "opening-current-build.png",
+        "source_head": "1dc54d9ef0c959934e580d73ac97ead8c5fda393",
+        "sha256": "aaac756995356febfeb1d872ab29b4af634cb9e031055c57b9f56a29cbdb3f0c"
+      },
+      {
+        "file": "rear-arranged-art-example.png",
+        "source_head": "1dc54d9ef0c959934e580d73ac97ead8c5fda393",
+        "sha256": "fb779b50edf87e0a449385db06080290f92bfc0a53920465c68f8a0e5cfb9c8b"
+      }
+    ],
+    "normal": "Actual paused empty-field opening FIRST; preserve2500req/500M11/0workers. Never substitute source inspection/contact sheet.",
+    "arranged": "Separate conspicuously labelled existing expanded/prebuilt rear-art example, not ordinary progress. Existing base.scenario.select(1); base._start_session(); base.session.set_speed(0); root._show_base().",
+    "new_site_and_ghost": [
+      "Use actual construction.place(\"materials\",Vector2(220,150)); check returned ok rather than force success. Apply existing base._result(result) and refresh UI. This is actual Awaiting M11/0 work, not fabricated progress.",
+      "base.show_panel(\"Build\"); base.select_build_kind(\"training\"); base.preview_build_at(Vector2(220,165)). Expected overlapping new site gives genuine invalid School preview; visual_kind still identifies intended building. Keep actual returned validity/reason."
+    ],
+    "limits": "Carry appearance unobserved; no new battlefield/animation acceptance. No extra progression or gameplay runs requested. Updated actual exact-head screenshots required for both label corrections; previous captures do not prove corrected rendering.",
+    "observed": "Actual opening: paused,2500req,local500M11,zero workers,neutral unarmed You/table/arrival/bin. Separate explicitly labelled arranged rear: category artwork and actual Awaiting materials/0% site with invalid overlapping School ghost. Two blockers: right-edge site text clipped; Support Workshop name covered by later Materials Plant artwork. No other blocking meaning issue identified in Designer batch.",
+    "label_correction": "Queue existing facility/site/state/preview labels until all facility/preview artwork is drawn. Fit originally intersecting label bounds within padded viewport using actual font metrics; retain original offscreen culling, text, tint and true anchors/geometry. No state/query/input changes."
+  },
+  "runtime": "No local engine or gameplay runs by C. Lead actual13-texture import/changed-production parse passed at initial source; actual1dc54d9 captures reviewed. Corrected-source engine parse and updated actual screenshots pending lead.",
+  "next": "Lead publishes correction and runs required changed-script parse plus bounded updated viewport capture; C inspects corrected images before assets-ready handoff.",
+  "source_normalized_utf8_lf_sha256": {
+    "game/rear_base/base_map.gd": "811048fcba7a4728c7c4d9bcac347f785bc211acf09529654507926d24e3dee3",
+    "game/rear_base/base_demo.gd": "3146827f08b55b9692bfc204e0398a2a31b82f0c2002330616646a168e7ade57",
+    "game/identity/identity_ledger.gd": "577c0ed66850aee97fb585b5423f583724ccb37768ec2e8b3f8588e0322b725d",
+    ".github/workflows/validate.yml": "11b28f41c1b3c205f28482abd5318abff01da301a5d95cd5f47deabc728c647f"
+  },
+  "lead_import_evidence": {
+    "run": 42346783813,
+    "artifact": 13563857933,
+    "source_head": "4ee8a584af6934fcac365836dc7b6b2f64608fe7",
+    "changed_production_parse": "PASS: identity_ledger.gd,base_demo.gd,base_map.gd",
+    "actual_texture_count": 13,
+    "captured_viewport": "pending final source head"
+  }
+}
