@@ -29,7 +29,7 @@
     "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
   ],
   "mapping": {
-    "state": "VERIFIED_OPENING_PERSON_TABLE_GROUND_AND_PHYSICAL_STOCK; distinct categories pending source selection",
+    "state": "VERIFIED_REAR_OPENING_AND_CORE_MAPPING_FROZEN; actual build captures pending",
     "entries": [
       {
         "archive_entry": "Tiles/tile_0001.png",
@@ -79,11 +79,153 @@
         "provenance": "game/test_art/roguelike_indoor/provenance.json",
         "sha256": "ab482e791c26bf7e483fbd9e2ead88d487502da362cc650b62ade3734c002b6c",
         "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0044.png",
+        "path": "game/test_art/tiny_battle/tile_0044.png",
+        "sha256": "587d4e69b66fae9ca8eb5997804c07481b700f95289d0b29b2378e62bd3ef593",
+        "bytes": 201,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "School/personnel administrative building; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0045.png",
+        "path": "game/test_art/tiny_battle/tile_0045.png",
+        "sha256": "1a2a71f4a4cf3948fb077a06635b76900bf3224297fdf26d81326e3bf77d729e",
+        "bytes": 195,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Receiving/storage/Logistics warehouse category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0046.png",
+        "path": "game/test_art/tiny_battle/tile_0046.png",
+        "sha256": "3512d5ecad71b1f7625d00d13ffdb57420e3e8947a0e25c0ed7ce0fb79b58d19",
+        "bytes": 209,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Vehicle Works garage category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0048.png",
+        "path": "game/test_art/tiny_battle/tile_0048.png",
+        "sha256": "6645aff06b981e2db5f4e760cbd16256a6fbe053ad233e614d510fc6322634ab",
+        "bytes": 205,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Munitions industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0049.png",
+        "path": "game/test_art/tiny_battle/tile_0049.png",
+        "sha256": "827407d8d0fdecf6a292a01d72946d2ea3a16e0084bd7b727efb406b9f147ced",
+        "bytes": 205,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Materials Plant industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0050.png",
+        "path": "game/test_art/tiny_battle/tile_0050.png",
+        "sha256": "7b477a0defe2e58d7f6a76a399a6c160368b0e8d7fd7f78ae48046198969f584",
+        "bytes": 201,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Construction Office/legacy Terminal administration category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
+      },
+      {
+        "archive_entry": "Tiles/tile_0052.png",
+        "path": "game/test_art/tiny_battle/tile_0052.png",
+        "sha256": "fda229339b7ff7a668823b92d39544bf7b2bd6c1a3633e71e2cd25bbb0a167f7",
+        "bytes": 187,
+        "width": 16,
+        "height": 16,
+        "bit_depth": 4,
+        "png_colour_type": 3,
+        "source_rect": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "role": "Actual completed Vehicle Park flag category; no vehicle implied; symbolic upright category plus actual label, not a physical equipment/capability grant",
+        "modified": false
       }
     ],
     "ground_render": "One GPU tiled texture rectangle in existing240x180 world bounds under existing grid, using local draw transform reset before any marker; no world-tile loop/nodes or terrain/collision change.",
     "arrival_render": "Neutral flag next to verified plain table at existing fixed Supply Table anchor. Preserve label/input/arrival rules; no supplied stock or ownership implied.",
-    "import_dependencies": "Extend existing explicit minimal-project texture import list with these two exact PNGs. Other verified compile dependencies remain; no project scan."
+    "import_dependencies": "Extend existing explicit minimal-project texture import list with these two exact PNGs. Other verified compile dependencies remain; no project scan.",
+    "facility_categories": {
+      "terminal": "tile_0050",
+      "personnel": "tile_0044",
+      "receiving": "tile_0045",
+      "depot": "tile_0045",
+      "workshop": "tile_0047 (existing)",
+      "munitions": "tile_0048",
+      "materials": "tile_0049",
+      "training": "tile_0044",
+      "dispatch": "tile_0045",
+      "support": "tile_0047 (existing manufacturing family)",
+      "vehicle_works": "tile_0046",
+      "construction": "tile_0050",
+      "park": "tile_0052 (no displayed car)"
+    },
+    "facility_render": "Upright category art plus actual readable kind/instance/state label, fitted within existing true footprint; translucent intended-art ghost and actual unfinished progress bar. No rotated physical silhouette, cover, vehicle, service or ownership grant."
   },
   "capture_dependency": "Root arranges bounded remote captures at final source revision: normal opening plus explicitly labelled arranged rear-art example, battlefield only for claimed coverage. C inspects real viewport images before assets-ready handoff. No old screenshots/contact sheets or altered opening population.",
   "next": "Return source scope once to lead; implement only after verified mapping and final claim. No repeated audits or extra features.",
@@ -94,8 +236,7 @@
   },
   "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
   "real_missing_inputs": [
-    "Visually verified distinct facility-category mappings, reversible after actual-source inspection and before-code mapping freeze.",
-    "Root actual-build viewport captures of normal opening + labelled arranged rear-art example; battlefield only if this revision claims it."
+    "Root actual-build viewport captures of normal opening plus clearly labelled arranged rear-art example, including actual new preview/unfinished/carry appearances where supported. No assets-ready claim before image inspection/review."
   ],
   "approved_additions": {
     "person_marker": "Person-only assignment/rear_place plus carried_type/carried_quantity via carrying_stock_id direct _entities lookup. Require actual STOCK with holder_id==same person ID; absent/invalid/not physically held yields empty type/count0. No scan/inspect, visibility or mutation changes; existing marker fields preserved.",
@@ -170,5 +311,6 @@
     ],
     "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock.",
     "labels": "Aggregate only already-visible physical stock rows by holder/type for one generic marker plus actual type/count; no one sprite per unit. Carry icon/count reads verified held-stock scalar fields only; empty hand gets no carry artwork."
-  }
+  },
+  "battlefield_scope": "No new battlefield soldier/armour imagery in this increment. Prior verified T01 remains; other roster/animation gaps explicit. Do not claim a new battlefield art pass."
 }

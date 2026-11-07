@@ -94,6 +94,132 @@
       ],
       "role": "Neutral fixed Supply Table arrival cue only; not ownership or a replacement table/resource prop",
       "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0044.png",
+      "path": "game/test_art/tiny_battle/tile_0044.png",
+      "sha256": "587d4e69b66fae9ca8eb5997804c07481b700f95289d0b29b2378e62bd3ef593",
+      "bytes": 201,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "School/personnel administrative building; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0045.png",
+      "path": "game/test_art/tiny_battle/tile_0045.png",
+      "sha256": "1a2a71f4a4cf3948fb077a06635b76900bf3224297fdf26d81326e3bf77d729e",
+      "bytes": 195,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Receiving/storage/Logistics warehouse category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0046.png",
+      "path": "game/test_art/tiny_battle/tile_0046.png",
+      "sha256": "3512d5ecad71b1f7625d00d13ffdb57420e3e8947a0e25c0ed7ce0fb79b58d19",
+      "bytes": 209,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Vehicle Works garage category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0048.png",
+      "path": "game/test_art/tiny_battle/tile_0048.png",
+      "sha256": "6645aff06b981e2db5f4e760cbd16256a6fbe053ad233e614d510fc6322634ab",
+      "bytes": 205,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Munitions industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0049.png",
+      "path": "game/test_art/tiny_battle/tile_0049.png",
+      "sha256": "827407d8d0fdecf6a292a01d72946d2ea3a16e0084bd7b727efb406b9f147ced",
+      "bytes": 205,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Materials Plant industrial category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0050.png",
+      "path": "game/test_art/tiny_battle/tile_0050.png",
+      "sha256": "7b477a0defe2e58d7f6a76a399a6c160368b0e8d7fd7f78ae48046198969f584",
+      "bytes": 201,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Construction Office/legacy Terminal administration category; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
+    },
+    {
+      "archive_entry": "Tiles/tile_0052.png",
+      "path": "game/test_art/tiny_battle/tile_0052.png",
+      "sha256": "fda229339b7ff7a668823b92d39544bf7b2bd6c1a3633e71e2cd25bbb0a167f7",
+      "bytes": 187,
+      "width": 16,
+      "height": 16,
+      "bit_depth": 4,
+      "png_colour_type": 3,
+      "source_rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "role": "Actual completed Vehicle Park flag category; no vehicle implied; symbolic upright category plus actual label, not a physical equipment/capability grant",
+      "modified": false
     }
   ],
   "interpretation": "Generic symbolic factory and T01 truck icons only; brown truck box is not actual loaded-cargo status. No armed or neutral person imagery included. Original indexed palette/tRNS PNGs unchanged.",
@@ -109,5 +235,7 @@
       "sha256": "2f745d97b782112f7b6a8e055042d3f800010ce7cb801c39db2b6845bea9425b",
       "origin": "Godot 4.7.2 pinned CI run42341589683"
     }
-  ]
+  ],
+  "archive_tile_count": 198,
+  "category_verification": "Actual original individual PNGs visually inspected with IDs in source-only facility_source_inspection.png before selection; not a game capture. No health/weapon/vehicle ownership inferred from imagery."
 }
