@@ -1,0 +1,32 @@
+{
+  "status": "implemented locally; source/UI/button metadata and whitespace passed; no engine/runtime",
+  "base": "849826ddb7724ae2f3c8dbeccf23ea1ed8844ddc",
+  "scope": "C base_demo.gd existing ingredient-row action and existing Supplies/Purchase/cart-field navigation only; own feature docs/maps/button anchors. No backend/global API/framework.",
+  "owner": "C implementation; B technical peer; lead technical/publication; Designer identity; UX wording.",
+  "flow": [
+    "Reuse existing missing/open-haul/source_available presentation facts. Only uncovered new haul need>0, accessible unreserved source=0 and an existing valid cart[type] field permits Review material supply. No buy instruction if local/open-haul covered; manufactured-only items retain explanation.",
+    "At current rendering capture session/model/Construction/actual site Dictionary/current owner/selected duty/context/actual recipe/input store/type/exact cart field. No snapshot truth duplication.",
+    "Explicit click revalidates same live identities/context/recipe/store/type/field, then reads only current ingredient deficit/open hauls and same-type available source stock. No Model.snapshot or added frame reads.",
+    "Stale/replaced/changed/no-longer-needed click cannot navigate; clear/hide its stale link and let the existing committed presentation refresh repopulate it, without reloading production controls or overwriting drafts.",
+    "Valid click opens existing Supplies/Purchase, focuses exact existing cart field and reveals both inner catalogue and outer Supplies scroll. No quantity edit, autofill, buy, reserve, haul order, assignment, recipe/target/mode/speed or pause command."
+  ],
+  "copy": {
+    "label": "Review {material} supply",
+    "reason": "No accessible unreserved {material} is available for a new haul. Review existing deliveries and raw supplies; ingredients must arrive and be hauled to this factory."
+  },
+  "acceptance": [
+    "Purchasable uncovered-zero-source ingredient has a direct truthful navigation path.",
+    "Local/haul-covered and source-available rows keep existing Prepare haul semantics; nonpurchasable has no purchase link.",
+    "All cart/haul/production/staff/recipe drafts unchanged by success or stale rejection.",
+    "Same captured model/site/owner/recipe/store/type/field only; never redirect another factory/material.",
+    "No polling/subscription/backend/catalogue/producer expansion or broad click snapshot."
+  ],
+  "identity_note": "Legacy actual initial site uses initial-<duty> mapping; ordinary constructed site uses exact duty ID. Require actual Complete site plus matching owner duty. Capture real Dictionary reference, not detached view row.",
+  "verification": "Source/static metadata only; no local engine/regression/scenario/failure/coverage/benchmark. Native focus and nested reveal unverified.",
+  "publication": "Root-owned; no author push/PR/permission retry.",
+  "evidence": "docs/evidence/missing_factory_supply_review.json",
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-is-same",
+    "https://docs.godotengine.org/en/4.7/classes/class_scrollcontainer.html#class-scrollcontainer-method-ensure-control-visible"
+  ]
+}

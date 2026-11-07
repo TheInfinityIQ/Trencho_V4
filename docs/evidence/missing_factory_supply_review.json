@@ -1,0 +1,37 @@
+{
+  "status": "LOCAL_IMPLEMENTED_SOURCE_REVIEWED",
+  "base": "849826ddb7724ae2f3c8dbeccf23ea1ed8844ddc",
+  "prior_contract": "e23bf08",
+  "branch": "codex/review-missing-factory-supply",
+  "scope": "Only base_demo.gd ingredient link and existing purchase scroll/field navigation plus own records/generated metadata. No backend/catalogue/producer/global API changes.",
+  "source_observations": [
+    "Eligibility reuses current missing/open-haul/source_available display facts; existing cart field and real Complete factory context required. Local/open-haul covered, available source or manufactured-only ingredient has no new purchase link.",
+    "Label Review material supply and visible reason mention possible deliveries/raw supplies and actual arrival/hauling; no claim that new purchase is required. Eligible disabled Prepare tooltip uses same neutral explanation; actual Prepare semantics unchanged.",
+    "Rendered row stores session/model/Construction/actual site Dictionary/current owner/selected duty/context/recipe/input/type/exact field; legacy actual initial-site mapping supported. No snapshot authority retained.",
+    "Click validates captured context and current one-ingredient deficit/open-haul/source stock before navigation; no Model.snapshot or new per-frame stock read.",
+    "Stale/replaced/no-longer-needed/source-available link clears/hides, removes the added review reason and restores the original Prepare-haul tooltip captured before its review-specific override. No Work refresh or control reload; existing committed refresh can repopulate. All drafts untouched by rejection.",
+    "Valid action opens existing Supplies/Purchase, focuses existing exact field and reveals inner catalogue then outer Supplies. No set_value, autofill, buy, reserve, queue, assign, target/recipe/mode/speed/pause/after_command call.",
+    "Earlier construction/recovery and unused proposal checkouts remain separate; root owns publication."
+  ],
+  "maintenance": {
+    "source_map": "Initial six-function static maintenance passed; two correction functions re-reviewed; corrected-tree freshness result supplied in exact-head handoff.",
+    "ui_map_button_inventory": "Initial freshness passed; regenerate only affected source anchors/hashes for the two-line correction, no test logic/scenario added.",
+    "whitespace": "Corrected-tree git diff --check and staged result supplied in exact-head handoff.",
+    "meaning": "Static source grammar/metadata only; not Godot compilation or native/runtime acceptance."
+  },
+  "runtime": "NONE: no local engine, tests/regressions, scenarios, failure injection, custom demonstration, profiling or remote checks.",
+  "unverified": [
+    "Godot parsing and native click/focus/nested scroll reveal/layout",
+    "Live draft preservation and exact replacement/receipt/source arrival timing",
+    "Full ordinary factory/supply loop and FPS"
+  ],
+  "publication": "None by C; lead-owned normal publication/reviews/checks/merge.",
+  "next": "B exact-head technical peer; lead technical; Designer identity and UX wording/interaction. C fixes concrete findings.",
+  "production_normalized_utf8_lf_sha256": "050689e4b8a5e61c334683bd341fd1f4cf81a3ad93702e713403a1a85c8a1633",
+  "finding_correction": {
+    "integrated_parent": "4dea7af75aa58411666703d55ae9b6df7185d751",
+    "finding": "B identified a leftover Review-supply reason on the disabled Prepare tooltip after stale rejection.",
+    "code_delta": "Two added lines: capture existing Prepare tooltip before override; restore it (or clear absent metadata) when hiding stale review. No other behavior change.",
+    "review": "Only _refresh_ingredients and _hide_ingredient_supply_review purpose/source re-reviewed; unchanged evidence reused. Final affected metadata/whitespace results reported with frozen head in handoff."
+  }
+}
