@@ -1,0 +1,12 @@
+flowchart TD
+  Assess[Existing military need and coverage assessment] --> Publish[Publish changed rear shortage including zero]
+  Publish --> Pending{Owned forward key Pending or Ready?}
+  Pending -->|No| Existing[Existing admitted or ordinary new-plan handling]
+  Pending -->|Yes| Compare{Captured quantity exceeds current need?}
+  Compare -->|No| Preserve[Keep useful unadmitted plan]
+  Compare -->|Yes| Retire[Retire only this unadmitted freight key]
+  Retire --> Positive{Positive current load?}
+  Positive -->|Yes| New[Prepare fresh key and routes]
+  Positive -->|No| Quiet[No additional forward load]
+  New --> Ready[Ready physical guard and atomic admission]
+  Ready --> Job[Existing physical Loading job owns claims and cargo]
