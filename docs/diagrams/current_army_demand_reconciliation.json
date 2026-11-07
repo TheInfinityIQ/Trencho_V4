@@ -24,7 +24,7 @@
   },
   "state_contract": {
     "Complete": "Reuse existing automatic request lifecycle Complete ONLY after no owned manifest remains and no new uncovered work. This retires additional demand; delivered/credited stay actual. cancelled false; explicit holds untouched. Existing guards disable/reject cancellation before hold writes and exclude its reason from red blockers.",
-    "message": "No additional automatic load currently needed; stock or existing commitments cover this request. Physical deliveries and recipient issue keep their own progress.",
+    "message": "No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.",
     "active": "Accepted physical state/cancel stays intact even when new demand is zero. Missing manifest stays blocked. Terminal record first passes unchanged credit and clear path.",
     "resume": "Later positive genuine uncovered quantity creates the next normal automatic row without Resume; explicitly held/cancelled rows remain guarded. Manual rows never retired by reconciliation.",
     "representation_decision": "Latest lead correction withdrew Covered and its two UI edits before A production edits; existing Complete representation and existing guards suffice.",
@@ -44,5 +44,6 @@
     "C source consultation and latest lead existing Complete representation decision",
     "https://docs.godotengine.org/en/stable/classes/class_signal.html"
   ],
-  "next_owners": "A freezes two-file implementation; C read-only feedback/guard review; B independent exact-head technical peer; lead technical/check/publication/integration; Designer exact game-identity review."
+  "next_owners": "A freezes two-file implementation; C read-only feedback/guard review; B independent exact-head technical peer; lead technical/check/publication/integration; Designer exact game-identity review.",
+  "integration_note": "Before-code base remains ab2a406. Final branch ordinarily merges docs-only mainbdad2ff without history rewrite; two lead-assigned onboarding/charter target phrases now default main/current lead target. Designer exact931 feedback correction removes unsupported coverage cause; zero may also mean withdrawn need. No additional production change, rule or stock read."
 }

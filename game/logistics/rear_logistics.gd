@@ -213,7 +213,7 @@ func ensure_army_supply(type: String, quantity: int) -> void:
 	current.requested = target
 	if awaiting_need: current.awaiting_need = false
 	if str(current.manifest).is_empty() and target == int(current.delivered):
-		_set_status(current,"Complete","No additional automatic load currently needed; stock or existing commitments cover this request. Physical deliveries and recipient issue keep their own progress.")
+		_set_status(current,"Complete","No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.")
 	else:
 		_wake()
 		changed.emit()

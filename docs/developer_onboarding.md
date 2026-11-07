@@ -96,8 +96,8 @@ satisfy a fixture. Keep the eventual60FPS target and known failures visible.
 Use one bounded execution owner, not nested workers/Goals/schedulers. Preserve
 unrelated changes and UID/import sidecars; no reset/clean/force-push.
 
-Push a dedicated branch and draft PR against the lead's current integration
-branch. Report problem/result, diagram, actual checks/failures, limits and usable
+Push a dedicated branch and draft PR against the lead-specified current target,
+default `main` after PR89 adoption. Report problem/result, diagram, actual checks/failures, limits and usable
 player steps. Request exact-head technical/design review. Publication is not
 acceptance. Use feature-level Objective / Outcome / Next task updates and say
 Completed only for the result actually verified.

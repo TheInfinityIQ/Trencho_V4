@@ -17,10 +17,10 @@
     "Original real receipt high-water mark and invalidation precede changed notification. New helper reads only existing narrow row/manifest accounting; no stock/coverage/clock read in callback, new timer or poll.",
     "Session replacement still disconnects prior source, clears requests/holds and binds current source; no new source subscription or lifetime owner."
   ],
-  "feedback": "Existing Complete means retired rear-request lifecycle, not credited delivery or recipient capability. No additional automatic load currently needed; stock or existing commitments cover this request. Physical deliveries and recipient issue keep their own progress.",
+  "feedback": "Existing Complete means retired rear-request lifecycle, not credited delivery or recipient capability. No additional automatic load currently needed. Physical deliveries and recipient issue keep their own progress.",
   "representation": "Lead withdrew Covered/UI expansion; no C proposal files composed. C read-only exact-source feedback review remains separate.",
   "static_maintenance": {
-    "source_map": "Five changed/new functions source-reviewed; no pending purpose reviews after explicit reviewed-purpose update. Final freshness check required before commit.",
+    "source_map": "Final combined bdad+feature+routing tree being regenerated after feedback correction; final purpose/freshness checks required before commit.",
     "ui_button_map": "PASS; current source anchors/line inventory regenerated and checked. No UI production changes or new regression coverage.",
     "whitespace": "PASS git diff --check; final staged check required before commit.",
     "meaning": "Static source grammar and metadata maintenance only; not Godot compilation or execution.",
@@ -37,7 +37,7 @@
   ],
   "production_normalized_utf8_lf_sha256": {
     "game/battlefield/opening_resupply.gd": "0e622a1bc851a5e6c13ea86092ab66a1a66b6dc5bf958dcbedc6076407004759",
-    "game/logistics/rear_logistics.gd": "7906d5d51c7843c84b64719f8532206174313160f4a0087a807166b0643f2712"
+    "game/logistics/rear_logistics.gd": "71249e1c1d05fc73335ae7ce96e58f5fd93f2c0f069465b265e27aa4a24d35ef"
   },
   "next_owners": "C final feedback/guard source review; B independent technical exact-head review; lead technical/CI/publication/integration; Designer exact-head game identity. A handles concrete findings.",
   "prepared_direct_check": {
@@ -48,5 +48,7 @@
     "scope": "One detached actual reconciliation callback sequence with supplied100/30/0 component values; no military source bound, no tree/tick/stock commands. Real Session/Model/Logistics owners; no stub framework. Only uncommitted request retirement and unchanged hold/receipt counters observed.",
     "not_covered": "Source event/forward Pending/Ready gate, accepted manifests, receipt lag, other/manual promises, explicit holds, terminal reassessment, session replacement, physical/ordinary/native/FPS. These remain source-reviewed only.",
     "review_owner": "Lead reviews exact script/hash/need before any one remote submission; no submission authorized by preparation."
-  }
+  },
+  "final_integration": "Ordinary merge of docs-only mainbdad2ff into existing feature branch; original published931e239 preserved. Two separately authorized routing phrases default main/current lead target. Production delta from931 is ONLY Designer-requested neutral feedback string in rear_logistics; opening_resupply and all arithmetic/ownership/event behavior remain identical.",
+  "review_status": "B931 technical source no-blocker; C931 guards no-blocker. Designer/C requested neutral feedback correction, implemented here; final exact-head reaffirmations still required."
 }

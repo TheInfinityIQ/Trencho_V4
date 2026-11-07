@@ -42,7 +42,7 @@ known failures for later; do not relabel a suite or weaken acceptance. The forme
 900-second truck checker proposal is revoked.
 
 Each developer implements, publishes their branch and creates a draft PR against
-`codex/gameplay-demo-integration`. They request lead technical and Game Designer
+the lead-specified current target, default `main` after PR89 adoption. They request lead technical and Game Designer
 gameplay review with exact PR/SHA, evidence, limits and usable player steps. Both
 role decisions are required at the submitted head; changes require renewed review.
 Current shared-account signoffs are COMMENT reviews, not native GitHub APPROVED.
