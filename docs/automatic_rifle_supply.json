@@ -1,7 +1,7 @@
 {
   "owner": "Developer C implementation; Lead technical review/publication/integration and Designer game identity review",
   "base": "0953e96213aa83a119e63663079721c0075b80e2",
-  "status": "Frozen source implementation; remote current-change demonstration and exact-head role reviews pending Lead",
+  "status": "Implemented; one brief actual R01-to-automatic-physical-HQ-issue/return demonstration passed remotely. Ordinary progression, field replacement and native/FPS acceptance remain open.",
   "diagram": "docs/diagrams/automatic_rifle_supply.mmd",
   "existing_need": "HQLogistics._auto_request already equips actual trained generic admitted HQ Reserve people with one intact E01, then minimum30E02. It writes a shortage string but emits no rear request. Existing RearLogistics/Dispatch already transports individual WEAPON identities from rear source through physical staging/loading/HQ unload/return.",
   "quantity_contract": [
@@ -26,5 +26,6 @@
     "scope": "One bounded arranged new-link demonstration: two actual declared time-zero HQ Reserve ledger identities/admission records with one actual30-round stack generate only one feasible rifle need. Existing debug-completed facilities, initial canonical parked T01/actualP08, actual production/dispatch workers and real2M01+1M02 input manufacture one empty R01 weapon; existing automatic logistics stages/loads/transports/unloads/issues that same weapon and returns the same truck. E01 hold survives E02 resume and clears only explicit E01 resume.",
     "limits": "Lead owns one GitHub45s input, <=120 chronological boundaries and finite per-event logistics turns. Explicit arranged initial admissions/truck/facilities/inputs; no forced carrying/work phases or fabricated desired quantities. Not ordinary full factory, formation/deployment, active-frontline rifle replacement, native UI/FPS, broad scenario or regression. Production Farmland6000 unchanged; fixture30 only demonstrates finite existing gate."
   },
-  "static_verification": "Changed GDScript source parser/function inventory and21 focused purposes; final system-map/current-source UI HTML/whitespace receipt supplied with frozen handoff. Regression fixture/checker unchanged: coupled UI --check flags preserved source hashes, HTML verified separately. No new production file/UID requirement. No local engine, GitHub run, regression/failure/scenario suite or benchmark by C."
+  "static_verification": "Changed GDScript source parser/function inventory and21 focused purposes; final system-map/current-source UI HTML/whitespace receipt supplied with frozen handoff. Regression fixture/checker unchanged: coupled UI --check flags preserved source hashes, HTML verified separately. No new production file/UID requirement. No local engine, GitHub run, regression/failure/scenario suite or benchmark by C.",
+  "evidence": "docs/evidence/automatic_rifle_supply.json"
 }

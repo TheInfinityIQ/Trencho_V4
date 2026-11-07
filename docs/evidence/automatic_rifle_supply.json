@@ -1,0 +1,36 @@
+{
+  "source_head": "525186a88ede28ed4c08ac10be572f6cf743226c",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/117",
+  "required_validation": 42424046936,
+  "direct_demonstration": 42424058176,
+  "artifact": 13594626423,
+  "result": "PASS",
+  "engine": "Godot4.7.2 stable official",
+  "scope": "One arranged current-code manufacture-to-HQ-issue component, with declared initial reserve admissions, debug-completed facilities, canonical truck/qualified driver/workers and real inputs. Not ordinary progression or a regression suite.",
+  "observed": [
+    "Two actual eligible unarmed HQ reserve people with one real30-round stack produce only one uncovered rifle need.",
+    "E01 cancellation creates its own hold; E02 resume leaves that hold intact; proper E01 resume uses HQ demand owner.",
+    "Real R01 consumes actual inputs and creates one empty E01 WEAPON.",
+    "Existing automatic logistics physically stages and loads that named weapon, travels to HQ, unloads and issues the same identity to the same actual person. No routine manual manifest/Depart.",
+    "One shipment only; same actual truck returns to actual parking. Named recipient holds the rifle and30rounds; second person does not get a rifle from nonexistent ammo coverage."
+  ],
+  "identities": {
+    "rifle": "site-0001-r01-batch-0001-E01",
+    "recipient": "demo-hq-a",
+    "truck": "demo-truck"
+  },
+  "simulated_seconds": 594.639765580495,
+  "source_review_only": [
+    "Stopped-hull ammunition priority and other finite-budget/pending issue combinations",
+    "Event invalidation/model replacement and other manual/accepted cargo interactions",
+    "Native UI rifle hold/resume interaction"
+  ],
+  "unverified": [
+    "Ordinary complete factory-to-frontline loop and later genuine replenishment",
+    "Formation/deployment outcome",
+    "Active-frontline lost/broken rifle replacement (separate scope)",
+    "Native input/rendering and60FPS"
+  ],
+  "static_checks": "21 focused reviewed purposes; current system map and independently rendered source-linked UI HTML. Existing regression fixture and scenario sources unchanged, including HQ6000 rifle rounds. Coupled UI/test-inventory check reports intentionally preserved stale source hashes. No local engine or regression run.",
+  "carry_forward": "Final evidence/contract/system-map metadata follow-up changes no production scripts, project or workflow; direct result carries to byte-identical production."
+}
