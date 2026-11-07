@@ -8,7 +8,5 @@ flowchart TD
   Retire --> Positive{Positive current load?}
   Positive -->|Yes| New[Prepare fresh key and routes]
   Positive -->|No| Quiet[No additional forward load]
-  New --> Guard[Running Ready: one source-owned current-need check]
-  Guard -->|Current| Ready[Fresh physical guard and atomic admission]
-  Guard -->|Obsolete or expired source| Blocked[No claims or job; next policy assessment owns fresh preparation]
+  New --> Ready[Unchanged physical Ready guard and atomic admission]
   Ready --> Job[Existing physical Loading job owns claims and cargo]

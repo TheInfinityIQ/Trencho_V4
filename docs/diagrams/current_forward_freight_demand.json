@@ -1,5 +1,5 @@
 {
-  "status": "prospective_final_admission_guard_before_its_production_edits",
+  "status": "prospective_cadence_resolution_final_before_source_freeze",
   "base": "ffc4c828",
   "objective": "Retire or reprepare only automatic unadmitted HQ-to-forward freight when current military need decreases or reaches zero.",
   "scope": [
@@ -18,14 +18,13 @@
     "military": "Existing source alone computes demand and coverage. Do not multiply those reads across route chunks or add a stored demand copy.",
     "policy": "Track only this policy-owned key and captured type/quantity as identity; compare against its existing fresh assessment before the Pending/Ready return.",
     "transport": "A narrow per-key retirement operation accepts only Pending/Ready ordinary freight without an admitted job, never departures/repositions; release only private planning state.",
-    "physical": "Once admitted, existing jobs, reservations, captured cargo, crew, handlers, departure, return and issue rules remain authoritative.",
-    "admission": "Optional explicit source-owned callable on this automatic plan only. A weak source reference rejects expired/replaced policy, wrong owned key/type/stop or no-longer-automatic source. Immediately before physical Ready guard, recompute unchanged authoritative need once and reject an oversized quantity without claims or job mutation. Manual and other plan kinds have no callback."
+    "physical": "Once admitted, existing jobs, reservations, captured cargo, crew, handlers, departure, return and issue rules remain authoritative."
   },
   "proposed_transitions": [
     "At the existing owned assessment, unchanged or increased need preserves a still-useful smaller plan; lower positive need retires its unadmitted plan and prepares a fresh key/route for the smaller load.",
     "Zero need retires only that unadmitted plan without reserving or moving goods. Later genuine positive need uses ordinary policy preparation.",
     "A missing, blocked or already admitted key follows existing completion/ownership handling; never globally cancel unrelated plans.",
-    "Lead clarified a final once-per-actual-Ready-admission current-fact guard in addition to existing assessment retirement. Reuse one source helper for the unchanged need/coverage calculation; no need reads during route chunks or paused Ready waits."
+    "Final lead/Designer reconciliation uses ONLY existing military assessment cadence, superseding the interim stronger Ready-time suggestion. Physical Ready guard remains unchanged; no additional need/stock read or callback. Reason: preserve accepted decision cadence and authoritative need ownership without a source-read multiplier."
   ],
   "acceptance": [
     "Changed-zero/positive rear publication from PR103 stays before pending-plan early return.",
@@ -33,7 +32,7 @@
     "No physical job/claim/cargo/manual/departure/reposition mutation or cancellation from demand retirement.",
     "Old session/source cannot retire new session work; key-specific guard rejects admitted/foreign-kind work.",
     "No additional polling, clock advance, demand cache, per-route-chunk stock scan, threshold or balance change.",
-    "A newer coverage change between policy assessments is checked once before actual Ready admission; rejected plan stays unadmitted and the existing policy assessment owns subsequent fresh preparation."
+    "Existing assessment cadence explicitly governs need freshness; physical Ready guard remains unchanged and validates captured load/route quantity."
   ],
   "verification": "Source review and required map/whitespace maintenance initially; no local engine, regression, broad scenario, failure injection, matrix or benchmark. Current-production parsing only after normal publication; any brief direct new-code demonstration requires explicit reviewed scope.",
   "next_owners": "B owns implementation after Designer behavior confirmation; A independent exact-head peer review; Designer game identity; lead final technical/checks/merge."
