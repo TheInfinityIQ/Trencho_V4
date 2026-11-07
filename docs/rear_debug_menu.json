@@ -17,6 +17,15 @@
     "https://docs.godotengine.org/en/4.7/classes/class_acceptdialog.html"
   ],
   "verification": "One brief GitHub current-change demonstration invoking the actual three menu buttons; changed script parsing and source/UI map maintenance. No local engine, regression suite or benchmark.",
-  "status": "Implemented; source review and brief remote current-change demonstration pending",
-  "storage": "One physical debug-supplies store12metres below Receiving, beside the protected Supply Table approach. Finite capacity grows by explicit undelivered payload mass; normal store capacities unchanged."
+  "status": "Implemented; full focused new-button check passed, final bounded modal layout capture pending",
+  "storage": "One physical debug-supplies store12metres below Receiving, beside the protected Supply Table approach. Finite capacity grows by explicit undelivered payload mass; normal store capacities unchanged.",
+  "verification_evidence": {
+    "source": "4533f12f1de649cb7fe53400da3ad996aa5db4b1",
+    "required_run": 42351214540,
+    "direct_run": 42351214298,
+    "artifact": 13565272676,
+    "result": "PASS actual3button signals; free quantities/cost/time, force no duplication, real activation once, model reset, active-carry deposit and ledger consistency",
+    "visual_finding": "First remote image exposed oversized dialog/hidden Close. Fixed with bounded native window and scrolling content; new layout-only capture required. Domain production code remains unchanged.",
+    "uids": "Two original engine-generated UID strings retained from direct run; no local engine or caches"
+  }
 }

@@ -9,9 +9,16 @@ const START_MESSAGE := "Debug deliveries appear beside the Supply Table. No time
 func _ready() -> void:
 	title = "Debug tools"
 	exclusive = true
-	min_size = Vector2i(580,390)
+	wrap_controls = false
+	size = Vector2i(600,460)
+	min_size = Vector2i(600,440)
 	get_ok_button().text = "Close"
-	var layout := UI.column(self)
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(540,320)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	add_child(scroll)
+	var layout := UI.column(scroll,true)
 	UI.label(layout,"Prototype cheats · using these marks the current session DEBUG.",14,UI.ACCENT,true)
 	_add_action(layout,"force_deliver","Force deliver now","Immediately finish pending incoming resource orders, including unloading.")
 	_add_action(layout,"instant_build","Instant build","Complete all pending rear-base buildings without waiting for materials or labour.")
