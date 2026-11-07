@@ -1,0 +1,20 @@
+flowchart TD
+  Submit[Developer publishes PR and requests both reviews] --> Reviews[Lead technical and Designer game identity decisions]
+  Reviews --> Decision{Both approve this head?}
+  Decision -->|Changes requested| Fix[Developer owns concrete corrections]
+  Fix --> NewHead[New head receives proportionate delta reviews]
+  NewHead --> Reviews
+  Decision -->|Review pending| Owner[Lead follows up named reviewer]
+  Owner --> Reviews
+  Decision -->|Yes| Checks{Required checks pass and head unchanged?}
+  Checks -->|Failure| Repair[Author fixes current change or owner resolves infrastructure]
+  Repair --> NewHead
+  Checks -->|Yes| Merge[Lead merges with expected head guard]
+  Merge --> Verify[Read back merge and dispatch next work]
+  Decision -->|Conflicting requirements| Resolve[Lead and Designer reconcile accepted outcome]
+  Resolve -->|Resolved| Fix
+  Resolve -->|Human decision genuinely required| Human[Ask one precise question and record affected scope]
+  Human --> Resolve
+  Owner -.-> Other[Independent ready work continues]
+  Repair -.-> Other
+  Human -.-> Other

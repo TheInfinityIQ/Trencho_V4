@@ -67,3 +67,6 @@ candidate is LOCAL preparation, with its own exact-head review still required.
 PRs93–98 are merged into source7fd7ff08f0eb776c1eb7e9f029936fbd462d869e on the review branch. Only PR89 remains open. The bounded combined-source design delta is approved; its brief manual UI demonstration is queued on GitHub, not a runtime pass. Developer A owns the next authoritative collection-readiness explanation, B owns observing that single remote job, and C awaits the next bounded feature. No local engine or regression run is permitted.
 
 PR99 is also integrated after exact-head technical5795065501 and Designer5795066498 approval. It records the last authoritative supply-pickup check, preserving actual gate order and physical rules. Operations’ bounded observation of the old combined UI run ended with no runner/jobs/artifacts; no watcher remains. Component99 direct evidence is separate and does not establish the ordinary supply loop.
+
+
+Dawson's 6 November standing PR rule is in [review and merge decisions](team_workflow.md#pr-review-and-merge-decisions): submit, request both reviews, correct concrete findings, then lead merges the current approved head after required checks. No routine per-merge human permission is added. Exact-head rejection/pending/change/failure routes have named owners; independent ready work continues.

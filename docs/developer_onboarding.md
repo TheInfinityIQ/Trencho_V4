@@ -106,3 +106,6 @@ After onboarding, message the lead with your checkout/branch, current PR/head,
 what you read, readiness, concrete concerns and request for the next assignment.
 
 The latest replacement AGENTS supersedes conflicting verification prose in historical contracts/evidence and earlier team instructions. Those records are provenance, not permission to rerun deferred work.
+
+
+Dawson's 6 November standing PR rule is in [review and merge decisions](team_workflow.md#pr-review-and-merge-decisions): submit, request both reviews, correct concrete findings, then lead merges the current approved head after required checks. No routine per-merge human permission is added. Exact-head rejection/pending/change/failure routes have named owners; independent ready work continues.

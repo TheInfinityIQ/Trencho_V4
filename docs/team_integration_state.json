@@ -86,7 +86,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_demo_candidate",
         "branch": "codex/demo-feature-candidate",
-        "current_assignment": "Five-fix LOCAL candidate67857fd2c577e43b2a86bfaa96667ad61ce5d8dd COMPLETE and frozen; B peer, lead technical and Designer source decisions complete/no blocker. Preserve head and resolve concrete findings only. Lead owns combined source publication approval question and resulting permitted action; no generic continue dependency."
+        "current_assignment": "PR101 submitted/published and merged at65006544f27055875008d3c83408094d77b0dd21 after exact-head role decisions and validation. Preserve original sources; lead now owns cumulative PR89 integration workflow. A next supports review of the new PR decision protocol when exact head is ready."
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -96,7 +96,7 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "Independent final five-fix candidate67857fd exact-head source peer review COMPLETE/no blocker. Lead technical/Designer source decisions also complete. Lead owns combined publication scope/direct approval question; preserve original reviewed sources; no repeated review/check packet."
+        "current_assignment": "Cumulative supporting technical source review of lead PR89 againstmain800ec9 is active; production integration65006544, final docs-only head to follow. Identify concrete normal-main adoption blockers or no blocker; no local engine/regression. Lead owns final technical/check/merge disposition."
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -106,14 +106,16 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
         "branch": "codex/confirm-consumed-batch-cancel",
-        "current_assignment": "Cancellation safeguard frozencc030bd7bd5adc521fb0e833a48ac8364f9d14e4 with B/lead/Designer/UX provisional LOCAL source decisions complete/no blocker. Count e15 and bay4c87 preserved. A owns new local composition; C owns concrete corrections if review finds any. No engine/runtime/publication."
+        "current_assignment": "Count/cancellation/reporting fixes included unchanged in merged PR101. Original heads preserved; no remaining separate bay-push permission needed under Dawson's standing rule. Resolve concrete cumulative integration findings if assigned."
       }
     ],
     "review_policy": {
-      "technical": "Lead approval for each developer PR, exact submitted commit",
-      "design": "Designated Game Designer approval for every PR including the lead, exact submitted commit",
-      "default": "Pending until explicit review; do not merge",
-      "native_github_approval": "Report actual submission separately from a recorded role review note"
+      "technical": "Lead explicit approval at current exact PR head; substantive lead code also gets supporting developer review",
+      "design": "Designer explicit game-identity approval at current exact PR head",
+      "default": "Pending or changes requested holds this PR; author/reviewer owns the next action. Lead merges after both approve and required checks pass, without another routine Dawson permission.",
+      "native_github_approval": "Report actual submission separately from a recorded role review note",
+      "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
+      "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
     "lifecycle": "Lead dispatches and follows bounded active tasks; each completion routes to review, integration or an already assigned successor. No generic human continue dependency and no scheduled/always-on service.",
     "reviewed_prs": [
@@ -180,7 +182,16 @@
         "design": "Exact-head scoped approval and evidence addendum in Designer chat; no public COMMENT/native approval",
         "scope": "Actual eligible-handler selection for new automatic shipment only; captured manifests unchanged",
         "verification": "Single authorized GitHub run42165822825 passed its supplied component case; not ordinary full-game supply/FPS acceptance",
-        "integration": "Draft open and unmerged; local composition candidate assigned separately"
+        "integration": "Closed unmerged as superseded by101; original branch/component evidence retained."
+      },
+      {
+        "pr": 101,
+        "sha": "67857fd2c577e43b2a86bfaa96667ad61ce5d8dd",
+        "technical": "APPROVED role COMMENT5809533328",
+        "design": "Final published game-identity APPROVED role COMMENT5809533421",
+        "scope": "Five-fix source composition; full ordinary demo/FPS acceptance remains open",
+        "verification": "Current-head validate42329715958/job128273199231 passed changed-production parsing; optional runtime demonstration skipped",
+        "integration": "Merged65006544f27055875008d3c83408094d77b0dd21 into review branch"
       }
     ],
     "kind": "persistent_codex_project_chats",
@@ -245,12 +256,9 @@
     "human_playtest_requested_pending": false,
     "human_wait_qualification": "This reflects the developer/Designer/UI continuity reports; the Artist was contacted but no fresh response was observed.",
     "scoped_tool_wait": {
-      "owner": "Dawson direct approval in lead chat; lead owns requested publication actions",
-      "action": "Normal push of67857fd2c577e43b2a86bfaa96667ad61ce5d8dd to codex/demo-feature-candidate in TheInfinityIQ/Trencho_V4, then create its draft PR against codex/gameplay-demo-integration using existing supported Windows-backed GitHub connection",
-      "reason": "The candidate contains C source whose separate normal push was automatically rejected for unverifiable direct authorization to publish private source. Do not publish the same held source by another route without direct approval.",
-      "scope": "Branch publication and draft PR only; normal changed-script validation may run. No merge, extra runtime demonstration or credential extraction.",
-      "prior_separate_question": "C's4c87 bay-exit push question remains retained; publishing the consolidated candidate would make that separate source branch push unnecessary.",
-      "prepared_review_artifact": "Ignored logs/demo-feature-candidate/prepared_pr_body.md plus publication_scope.json; actual source/role decisions frozen"
+      "status": "RESOLVED by Dawson's direct6November standing PR workflow instruction;101branch published, PR created/reviewed/merged through existing supported connection",
+      "rule": "No routine extra per-PR publication/merge permission; genuine new tool rejections remain scoped and binding",
+      "prior_rejection": "Retained as history; no raw Git credential extraction or rejected-route retry occurred."
     },
     "completed_approval_not_pending": "PR100 draft creation and its single45-second GitHub direct check were approved and completed; that grant is not a blanket halt on source development.",
     "ready_successor": {
@@ -260,8 +268,8 @@
       "status": "COMPLETE locally atcc030bd with all assigned local source decisions; A now owns actual combined-source preparation",
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first"
     },
-    "lead_next_action": "Ask the exact combined publication question after completing all local implementation/source reviews, then execute only the approved scope. The five-fix candidate/source decisions are complete; no gameplay question or requested human playtest is pending. Rejected publication is not retried. No local engine or regression work.",
-    "publication": "This is a local operational record until separately published. It does not assert that new candidate branches or PRs exist remotely.",
+    "lead_next_action": "Finish the new PR review decision protocol and its supporting review; process cumulative PR89 technical/game-identity decisions at final exact head and required checks, then merge when eligible. No human gameplay question or requested playtest currently blocks this work.",
+    "publication": "Continuity records are published on the integration branch; new current-head decisions are updated through ordinary PR handoffs.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
   "local_review_candidates": [
@@ -298,8 +306,11 @@
       "peer": "B complete/no blocker",
       "technical": "Lead complete/no blocker",
       "design": "Designer local combined source scope approved",
-      "publication": "NONE; direct combined source publication approval required",
+      "publication": "Published asPR101, exact head67857fd; both role decisions recorded; merged65006544 intointegration",
       "runtime": "NONE combined; only component-specific historical evidence"
     }
+  ],
+  "current_open_prs": [
+    89
   ]
 }

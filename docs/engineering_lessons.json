@@ -105,6 +105,11 @@
       "failure": "Completed bounded developer/review handoffs became idle while the lead awaited another human continue message, despite no pending gameplay question or requested playtest.",
       "evidence": "Dawson's6November2026 stoppage report and Army/Operations/Player Experience/Designer/UI continuity reports; docs/team_workflow.md completion protocol.",
       "rule": "Lead owns the next dispatch: process completion into owned review/integration, a preassigned accepted successor or an exact scoped dependency before ending active coordination. Separate tool approval from gameplay/playtest waits; preserve rejected actions while independent authorized work continues. Do not repeat old traces or invent busywork."
+    },
+    {
+      "failure": "Completed work was held for routine publication/merge consent even after lead ownership existed, while ambiguous pending/rejected review combinations had no explicit correction route. Duplicated current assignment summaries also drifted after handoffs.",
+      "evidence": "Dawson's6November direct PR workflow clarification; docs/team_workflow.md PR review and merge decisions; source integration PR101.",
+      "rule": "Lead merges only after current-head technical and Designer approval plus required checks, then reads back the result and dispatches next work. Route rejection to concrete author corrections, pending review to its reviewer, contradictions to lead+Designer, and genuine unresolved human intent to one precise question. Keep live assignments in one record and preserve scoped tool rejections without inventing repeated consent gates."
     }
   ],
   "design_review": [

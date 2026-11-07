@@ -1,6 +1,6 @@
 # Team workflow
 
-Updated 5 November 2026 under Dawson's direct instruction to align design and development. [Current participants and publication](team_integration_state.json) govern; historical assignments are context, not active authority.
+Updated 6 November 2026 under Dawson's direct instruction to align design and development. [Current participants and publication](team_integration_state.json) govern; historical assignments are context, not active authority.
 
 ## Responsibilities
 
@@ -101,3 +101,97 @@ The plan/execute/review loop is consistent with OpenAI's
 [long-horizon task guidance](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex).
 The task ownership and stopping rules above are project decisions, not claims
 that a Markdown file installs automatic continuation.
+
+
+## PR review and merge decisions
+
+Dawson's standing 6 November instruction: developer submits a PR, then requests
+Lead Developer technical review and Game Designer game-identity review. The lead
+merges after both approve the current version and required repository checks
+pass. Routine publication, recording these role decisions and an eligible merge
+do not require another permission question to Dawson. This supersedes the
+earlier per-action publication/merge holds; genuine new tool rejections still
+must be respected and explained.
+
+The [review lifecycle diagram](diagrams/pr_review_lifecycle.mmd) was recorded
+before this decision table. These are project responsibilities, not a new
+scheduler or automatic merge service.
+
+| Lead decision | Designer decision | Next action and owner |
+| --- | --- | --- |
+| Approve | Approve | Lead checks current head, required checks, draft/merge state and unresolved blocking findings; records decisions, makes ready and merges when eligible. |
+| Approve | Changes requested | Developer addresses the concrete design requirement. Lead checks engineering implications; both review the resulting head. Lead does not override game identity. |
+| Changes requested | Approve | Developer fixes the technical finding. Designer approval does not bypass it; both review the resulting head with attention proportional to the delta. |
+| Changes requested | Changes requested | Lead consolidates both finding sets into one owned correction plan. Developer implements it; reviewers decide the new head. |
+| Approve | Pending | Designer owns the missing review; lead dispatches/follows it. No implicit approval from silence or elapsed time. |
+| Pending | Approve | Lead owns the missing technical review and its disposition. |
+| Changes requested | Pending | Developer can fix the known technical issue; Designer reviews the resulting version. Lead keeps the design reviewer assigned. |
+| Pending | Changes requested | Developer can address the known design requirement; lead reviews the resulting version. |
+| Pending | Pending | Developer requests both named reviews with exact PR/head, outcome, evidence and limits; lead owns dispatch and follows the actual review dependency. |
+
+An explicit approval, a request for changes and a pending decision are distinct.
+General comments or an old head's approval do not imply current approval.
+Reviewers separate blocking findings from optional suggestions. A suggestion
+must not silently become an unowned merge hold; required corrections state the
+observed problem, expected result and responsible developer.
+
+### Changes, disagreement and operational failures
+
+- **New commits or a substantive merge conflict resolution:** re-evaluate both
+  decisions at the new exact head. Review the actual delta and affected
+  interactions; preserve earlier evidence without rerunning unchanged work.
+  A reviewer may reaffirm an unchanged area explicitly. Never use stale approval.
+- **Technical/design requirements conflict:** lead and Designer compare feasible
+  alternatives against the accepted game. Lead owns engineering feasibility;
+  Designer owns game identity. Developer does not guess between contradictory
+  instructions. Escalate to Dawson only for an unresolved change to his intent,
+  material compromise or authority question, with a recommendation and precise
+  affected scope. Neither reviewer can silently overrule the other.
+- **Required check fails:** developer owns a current-code failure; lead owns
+  diagnosing an infrastructure/permission failure and routing its actual
+  remedy. Do not raise limits, remove checks, run deferred regression suites or
+  broaden verification to make a green result. A queued/missing result is not a
+  pass. Observe the owned run and act on a real change rather than busy polling.
+- **Draft, conflict, stale head or merge race:** lead makes an approved PR ready,
+  coordinates ordinary conflict resolution in the developer branch, and reads
+  the current head/checks again. Merge uses the expected-head guard. A refusal
+  causes state refresh and appropriate correction/review, not a blind retry,
+  force push or branch-protection bypass.
+- **Reviewer unavailable or review still pending:** lead requests the specific
+  review and continues other ready accepted work. A task may wait on a named
+  review; the team does not require a generic human continue. If no independent
+  work remains, state who owns the missing review and the exact next action.
+- **Duplicate or superseded PR:** lead identifies the real successor and
+  preserved work, then closes the redundant PR with an explanation. Do not
+  merge the same feature twice or delete its branch/evidence to hide history.
+- **Closed/reopened or withdrawn scope:** inspect the actual current head,
+  unresolved findings and remaining requirement before resuming. Closure is not
+  proof the feature was delivered; a still-valid missing outcome gets an owner.
+- **Tool/authentication rejection:** hold only the rejected action, retain its
+  stated reason and ask for the precise missing authority when actually needed.
+  Continue independent work; do not probe credentials, switch routes to bypass
+  rejection or invent a repeated per-merge consent gate after standing authority
+  already covers the action.
+- **Human question or playtest genuinely required:** state the question or exact
+  build/action to try, why it is required, and what can continue independently.
+  Unverified whole-demo acceptance alone does not create a new playtest gate.
+
+Record each role, exact SHA, decision, blocking findings and actual verification
+scope on the PR. With the current shared GitHub account, explicit role approvals
+are recorded as COMMENT reviews; they are not native GitHub APPROVED. Repository
+protections remain binding: if a native independent approval is required, obtain
+it through a supported authorized identity instead of treating a comment as a
+platform override. Lead-authored substantive code also receives supporting
+developer review; the Designer still reviews its game identity.
+
+Immediately before merge, the lead confirms the PR is open/ready, the current
+head matches both role decisions, required checks have passed and blocking
+findings are resolved. Immediately afterward, read back the merged commit/state,
+update the integration handoff and dispatch the next accepted outcome. A merge
+is source integration, not full-game, playtest or FPS acceptance.
+
+Primary references: GitHub's
+[pull request review decisions](https://docs.github.com/en/pull-requests/reference/pull-request-reviews)
+and [merge API](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request).
+The two-role policy and continuation routes above implement Dawson's project
+instruction; they are not claims that GitHub COMMENT reviews are native approval.
