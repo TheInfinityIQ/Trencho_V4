@@ -395,10 +395,19 @@ func _dispatch_requested_freight(stop: Dictionary) -> void:
 	if not _freight_request.is_empty():
 		var pending: Dictionary = transport.planning_status(_freight_request)
 		freight_status = str(pending.message)
-		if pending.state in ["Pending","Ready"]: return
-		_freight_request = ""
-		if pending.state != "Admitted": return
+		if pending.state in ["Pending","Ready"]:
+			# Only our unadmitted key is compared with this existing assessment.
+			# A smaller replacement needs fresh source/load capture and routes.
+			if not needs.has(pending.type) or int(pending.quantity) <= int(needs[pending.type]): return
+			var retired: Dictionary = transport.cancel_pending_freight(_freight_request)
+			if not retired.ok: freight_status = str(retired.message); return
+			_freight_request = ""
+		else:
+			_freight_request = ""
+			if pending.state != "Admitted": return
+	var has_uncovered_need := false
 	for type in needs:
+		if int(needs[type]) > 0: has_uncovered_need = true
 		var quantity: int = mini(int(needs[type]),int(hq.available.get(type,0)))
 		if quantity <= 0: continue
 		var loaders: Array[String] = rear.dispatch.free_hq_handlers(1,true)
@@ -424,7 +433,7 @@ func _dispatch_requested_freight(stop: Dictionary) -> void:
 			return
 		freight_status = "Waiting for a driven supply truck to return to HQ."
 		return
-	freight_status = "Outstanding freight is committed or local supply covers current need."
+	freight_status = "Waiting for actual supplies at HQ for the current forward need." if has_uncovered_need else "No additional automatic forward load currently needed. Physical deliveries and recipient issue keep their own progress."
 
 func _tick_racks(stop: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()

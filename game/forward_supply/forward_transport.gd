@@ -36,7 +36,23 @@ func request_deferred(key: String, hull: String, type: String, quantity: int, st
 
 func planning_status(key: String) -> Dictionary:
 	var request: Dictionary = _plans.get(key,{})
-	return {"state":request.get("state","Cancelled"),"message":request.get("message","Pending transport is unavailable."),"job":request.get("job","")}
+	return {"state":request.get("state","Cancelled"),"message":request.get("message","Pending transport is unavailable."),"job":request.get("job",""),
+		"type":request.get("type",""),"quantity":int(request.get("quantity",0))}
+
+func cancel_pending_freight(key: String) -> Dictionary:
+	var request: Dictionary = _plans.get(key,{})
+	if request.is_empty() or request.state not in ["Pending","Ready"] or request.departure or request.reposition or not str(request.job).is_empty():
+		return _fail("Only this unadmitted freight plan can be retired; physical jobs and other plan kinds retain their owners.")
+	# Private route work has no physical claims. Keep the terminal key receipt,
+	# but remove only this candidate from the queue; other plans keep their work.
+	request.state = "Cancelled"
+	request.message = "Unadmitted freight plan retired after current military need decreased."
+	request.work = null
+	request.prepared = {}
+	request.sources = {}
+	_plan_queue.erase(request)
+	planning_revision += 1
+	return {"ok":true,"message":request.message}
 
 func has_planning_work() -> bool:
 	for request in _plan_queue:

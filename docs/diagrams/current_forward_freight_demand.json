@@ -1,0 +1,40 @@
+{
+  "status": "prospective_cadence_resolution_final_before_source_freeze",
+  "base": "ffc4c828",
+  "objective": "Retire or reprepare only automatic unadmitted HQ-to-forward freight when current military need decreases or reaches zero.",
+  "scope": [
+    "game/battlefield/opening_resupply.gd",
+    "game/forward_supply/forward_transport.gd",
+    "own feature contract/flow/evidence and required maps"
+  ],
+  "source_trace": [
+    "OpeningResupply owns _freight_request and creates monotonically new army-freight keys after its existing military deficit/local/HQ/incoming/courier assessment.",
+    "ForwardTransport.request_deferred captures quantity and rejects changing payload under an existing key. Pending/Ready route work owns no physical claims or job.",
+    "OpeningResupply currently computes fresh needs and rear publication, then returns for Pending/Ready without relating the captured forward quantity to the new needs.",
+    "ForwardTransport Ready admission freshly checks physical sources, hull, crew and routes; _request_delivery alone reserves HQ portions and creates a physical Loading job.",
+    "Base live pump alternates settled simulation advances and planning; the military policy assesses on its existing one-second decision boundary. Ready admission can occur between those assessments."
+  ],
+  "ownership": {
+    "military": "Existing source alone computes demand and coverage. Do not multiply those reads across route chunks or add a stored demand copy.",
+    "policy": "Track only this policy-owned key and captured type/quantity as identity; compare against its existing fresh assessment before the Pending/Ready return.",
+    "transport": "A narrow per-key retirement operation accepts only Pending/Ready ordinary freight without an admitted job, never departures/repositions; release only private planning state.",
+    "physical": "Once admitted, existing jobs, reservations, captured cargo, crew, handlers, departure, return and issue rules remain authoritative."
+  },
+  "proposed_transitions": [
+    "At the existing owned assessment, unchanged or increased need preserves a still-useful smaller plan; lower positive need retires its unadmitted plan and prepares a fresh key/route for the smaller load.",
+    "Zero need retires only that unadmitted plan without reserving or moving goods. Later genuine positive need uses ordinary policy preparation.",
+    "A missing, blocked or already admitted key follows existing completion/ownership handling; never globally cancel unrelated plans.",
+    "Final lead/Designer reconciliation uses ONLY existing military assessment cadence, superseding the interim stronger Ready-time suggestion. Physical Ready guard remains unchanged; no additional need/stock read or callback. Reason: preserve accepted decision cadence and authoritative need ownership without a source-read multiplier."
+  ],
+  "acceptance": [
+    "Changed-zero/positive rear publication from PR103 stays before pending-plan early return.",
+    "No old oversized automatic Pending/Ready quantity survives the next current owned assessment.",
+    "No physical job/claim/cargo/manual/departure/reposition mutation or cancellation from demand retirement.",
+    "Old session/source cannot retire new session work; key-specific guard rejects admitted/foreign-kind work.",
+    "No additional polling, clock advance, demand cache, per-route-chunk stock scan, threshold or balance change.",
+    "Existing assessment cadence explicitly governs need freshness; physical Ready guard remains unchanged and validates captured load/route quantity."
+  ],
+  "verification": "Source review and required map/whitespace maintenance initially; no local engine, regression, broad scenario, failure injection, matrix or benchmark. Current-production parsing only after normal publication; any brief direct new-code demonstration requires explicit reviewed scope.",
+  "next_owners": "B owns implementation after Designer behavior confirmation; A independent exact-head peer review; Designer game identity; lead final technical/checks/merge.",
+  "feedback": "After the existing load loop, already-computed net needs distinguish zero (neutral no-additional-forward-load message) from positive need without positive HQ quantity (waiting for actual HQ supplies). Never infer stock coverage or supply success from need retirement. Existing loader/handler/truck/queue reasons stay unchanged."
+}
