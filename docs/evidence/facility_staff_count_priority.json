@@ -1,0 +1,29 @@
+{
+  "status": "local_callback_fix_static_maintenance_passed_not_engine_parsed_or_executed",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "branch": "codex/preserve-facility-staff-priority",
+  "checkout": "trencho_dev_staff_count",
+  "production_scope": "Only Build Set facility staff callback in game/rear_base/base_demo.gd.",
+  "source_review": [
+    "Selected site ID is resolved at button press, then requests.has guards priority lookup. Existing absent-request message and rejection path retained.",
+    "Current request.priority is read after the guard, at submission, and passed with draft count to unchanged set_target. No domain API/default or count/capacity rule change.",
+    "No callback writes selection or draft count, changes success wording, or adds a cache, control, event or polling. Training precedent and UI/UX consultation followed."
+  ],
+  "static_maintenance": {
+    "source_map": "PASS; no pending purpose reviews",
+    "ui_map_button_inventory": "PASS; source lines/current controls regenerated",
+    "whitespace": "git diff --check PASS",
+    "meaning": "Static metadata/source parsing only, not Godot compilation or runtime behavior."
+  },
+  "runtime": "NONE. No local engine, old checkers, regression, broad scenario, failure injection, coverage matrix, benchmark or GitHub check.",
+  "unverified": [
+    "Actual button submission/runtime lookup and count result",
+    "Actual user input/rendered UI",
+    "Physical worker assignment/reporting/presence and ordinary game/FPS"
+  ],
+  "contract": "docs/diagrams/facility_staff_count_priority.json",
+  "production_normalized_utf8_lf_sha256": "ff13a16e7023ee510fc1c4b1954ebb88b0365e216334e1ccc0a5646b23d887b4",
+  "publication": "No push/PR/check/credential action; frozen bay branch remains independent and unchanged.",
+  "reviews": "Request exact local-head lead/Designer source review. Final published-head approvals remain required; no approval inferred from UI/UX consultation.",
+  "next_action_owner": "Lead reviews local head/coordinates eventual publication. C transitions to separately preassigned consumed-batch cancellation confirmation in new checkout/branch; no generic continue needed."
+}

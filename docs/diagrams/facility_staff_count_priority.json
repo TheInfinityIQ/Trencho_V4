@@ -1,0 +1,23 @@
+{
+  "status": "implemented locally; static maps current; engine/runtime/publication pending",
+  "objective": "Build Set facility staff changes count without resetting the selected facility current priority.",
+  "base": "adfa55730c9ad233c19813d8a5d5e1e62d9c94ff",
+  "ownership": "Developer C: only Build Set facility staff callback in game/rear_base/base_demo.gd plus contract/evidence/maps. Frozen reporting-exit branch unchanged.",
+  "authoritative_state": "Existing simulation.rear.requests[selected_id].priority at button submission; no UI/default/cached copy.",
+  "command": "Resolve current selected site ID; if absent from requests retain existing clear rejection, without priority lookup. Otherwise submit current priority and draft count to existing rear.set_target.",
+  "lifecycle": "Existing UI button press and _result handling only. No new events, timers, polling, deferred work, cache or owner. Existing _result/refresh and set_target retain their responsibilities.",
+  "acceptance": [
+    "Current selected facility priority is preserved when its count is submitted, including a priority changed elsewhere after entering the draft.",
+    "Missing/unknown/uncompleted selected site retains Select a completed facility with staff positions rejection before dictionary lookup.",
+    "Count/capacity validation, selected site, draft count, priority controls and requested-vs-present semantics unchanged."
+  ],
+  "non_goals": "No domain default/API change, broader staffing repair, layout/wording redesign, resource/rate/pacing change or automatic assignment.",
+  "prospective_verification": "Source review and required static maps/whitespace only now. No engine run, regression, broad scenario, failure injection, matrix, benchmark or GitHub check. If separately authorized later, prepare only one positive current-callback submission using supplied selection/request facts; do not fabricate a completed facility or claim real arrival.",
+  "consultation": "UI/UX confirmed guard-before-lookup, draft-until-button semantics, independent priority and existing wording; consultation is not runtime or exact-head role approval.",
+  "references": [
+    "Existing Training instructor-count callback reads current priority before calling set_target.",
+    "https://docs.godotengine.org/en/4.7/classes/class_basebutton.html#class-basebutton-signal-pressed"
+  ],
+  "publication": "No push/PR/check/credential route authorized for this slice. Local commit for exact-head source review only.",
+  "evidence": "docs/evidence/facility_staff_count_priority.json"
+}

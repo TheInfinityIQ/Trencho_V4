@@ -1,0 +1,15 @@
+flowchart TD
+    Supply["Frozen bc0bfef supply candidate: three production files unchanged"] --> Compose["LOCAL demo feature composition"]
+    Count["e15eaf4: guarded current-priority Build callback"] --> Compose
+    Cancel["cc030bd: reviewed cancellation UI source"] --> Compose
+    Compose --> Build["Build submits draft count with current request priority"]
+    Compose --> Active{"Actual consumed batch?"}
+    Active -->|No| Stop["Existing cancel / stop command"]
+    Active -->|Yes| Ask["Capture identities and show actual consumed-loss decision"]
+    Ask -->|Keep / dismiss| Clear["Clear UI request only"]
+    Ask -->|Confirm| Consume["Consume UI request once and validate current identities"]
+    Consume -->|Stale| Reject["Nothing cancelled; review current batch"]
+    Consume -->|Current| Domain["Captured activity owns existing cancellation"]
+    Build --> Maps["Regenerate final combined maps; source review only"]
+    Domain --> Maps
+    Maps --> Review["B peer / lead technical / Designer exact-head review"]
