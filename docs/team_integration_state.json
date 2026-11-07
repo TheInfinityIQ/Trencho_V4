@@ -265,8 +265,9 @@
       "owner": "C",
       "after": "Freeze staff-count priority repair for exact-head review",
       "outcome": "Confirm loss before cancelling a consumed active batch, without cancelling a replacement batch or changing material rules",
-      "status": "COMPLETE locally atcc030bd with all assigned local source decisions; A now owns actual combined-source preparation",
-      "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first"
+      "status": "HISTORICAL COMPLETION: cancellationcc030bd and combined67857fd completed and included in PR101 merged65006544. This is not a live assignment; current ownership is only agents[*].current_assignment and lead_next_action.",
+      "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
+      "record_kind": "completed successor history; never dispatch this already integrated work"
     },
     "lead_next_action": "Finish the new PR review decision protocol and its supporting review; process cumulative PR89 technical/game-identity decisions at final exact head and required checks, then merge when eligible. No human gameplay question or requested playtest currently blocks this work.",
     "publication": "Continuity records are published on the integration branch; new current-head decisions are updated through ordinary PR handoffs.",
