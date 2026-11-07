@@ -46,6 +46,11 @@ func _access() -> bool:
 func logistics_demand() -> Dictionary:
 	return _logistics_demand(not _order.is_empty())
 
+func automatic_input_intent() -> Dictionary:
+	# A selected heavy recipe is not another accepted bay/fleet order.
+	if _order.is_empty(): return {"destination":_spec.input_store,"missing":{}}
+	return super.automatic_input_intent()
+
 func _empty_bay() -> bool:
 	return bay_occupant.is_empty() and _rear_ref.get_ref().ledger.entities_at(bay_id,["CARRIER","HEAVY_OBJECT"]).is_empty()
 

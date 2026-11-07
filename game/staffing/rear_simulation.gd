@@ -135,10 +135,14 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 	return _result(true, "Target recorded; actual people must report before being present.")
 
 
-func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1, alternative_sources: Array = []) -> Dictionary:
+func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1, alternative_sources: Array = [], automatic_factory: RefCounted = null) -> Dictionary:
 	if not stores.has(source) or not stores.has(destination) or source == destination or type.is_empty() or count <= 0 or priority < 0 or priority > 3:
 		return _result(false, "Hauling needs distinct actual stores, one type, positive count and priority.")
+	if automatic_factory != null and (automatic_factory not in _production_activities() or automatic_factory._spec.input_store != destination or not automatic_factory._spec.inputs.has(type)):
+		return _result(false,"Automatic input hauling needs its current actual production owner and ingredient store/type.")
 	var result := _queue_haul(source, destination, type, count, priority)
+	# Record provenance before internal settling can reserve an actual portion.
+	if automatic_factory != null: _job(str(result.id)).automatic_factory = str(automatic_factory._spec.duty)
 	for candidate in alternative_sources:
 		add_haul_source(str(result.id),str(candidate))
 	_settle()
@@ -667,6 +671,8 @@ func _settle() -> void:
 		var storage_facts: Dictionary = ledger.loose_stock_summaries(stores.keys(),PLAYER)
 		for id in stores.keys():
 			changed = _reconcile_store(id,storage_facts[id]) or changed
+		# Intent changes apply before ANY new haul selection in this transaction.
+		changed = _reconcile_factory_hauls() or changed
 		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/actors_stores",Time.get_ticks_usec()-stage_started)
 		if profile_stages: stage_started = Time.get_ticks_usec()
 		for a in actors.values():
@@ -768,6 +774,60 @@ func _finish_phase(a: Dictionary) -> void:
 			_job(a.load.job).blocker = "Source unreachable for 10 seconds; claim released, demand retained"
 			_job(a.load.job).source_release_at = time
 			_release_load(a)
+
+
+func _reconcile_factory_hauls() -> bool:
+	# Transaction-local facts, shared across every hauler/candidate below.
+	# Untagged jobs retain their manual/other-owner intent; never guess origin.
+	var captured := {}
+	for actor in actors.values():
+		var id: String = str(actor.load.get("job",""))
+		if not id.is_empty(): captured[id] = int(captured.get(id,0))+int(actor.load.count)
+	var totals := {}
+	var groups := {}
+	var affected := {}
+	for job in jobs:
+		if job.cancelled or int(job.requested) <= int(job.delivered): continue
+		var destination: String = str(job.destination)
+		var type: String = str(job.type)
+		if not totals.has(destination): totals[destination] = {}
+		totals[destination][type] = int(totals[destination].get(type,0))+int(job.requested)-int(job.delivered)
+		var owner: String = str(job.get("automatic_factory",""))
+		if owner.is_empty(): continue
+		if not groups.has(owner): groups[owner] = {}
+		if not groups[owner].has(destination): groups[owner][destination] = {}
+		if not groups[owner][destination].has(type): groups[owner][destination][type] = []
+		groups[owner][destination][type].append(job)
+		if int(job.requested) > int(job.delivered)+int(captured.get(job.id,0)): affected[owner] = true
+	if affected.is_empty(): return false
+	var owners := {}
+	for activity in _production_activities(): owners[str(activity._spec.duty)] = activity
+	var changed := false
+	for owner in affected:
+		var activity: RefCounted = owners.get(owner)
+		var intent: Dictionary = activity.automatic_input_intent() if activity != null else {}
+		for destination in groups[owner]:
+			for type in groups[owner][destination]:
+				var owned: Array = groups[owner][destination][type]
+				var own_promised := 0
+				var own_captured := 0
+				for job in owned:
+					own_promised += int(job.requested)-int(job.delivered)
+					own_captured += int(captured.get(job.id,0))
+				var missing: int = int(intent.get("missing",{}).get(type,0)) if intent.get("destination","") == destination else 0
+				var other_promised: int = maxi(0,int(totals[destination][type])-own_promised)
+				var unselected: int = maxi(0,missing-other_promised-own_captured)
+				for job in owned:
+					var floor_count: int = int(job.delivered)+int(captured.get(job.id,0))
+					var keep: int = mini(maxi(0,int(job.requested)-floor_count),unselected)
+					unselected -= keep
+					var target: int = floor_count+keep
+					if target == int(job.requested): continue
+					totals[destination][type] += target-int(job.requested)
+					job.requested = target
+					job.blocker = "Complete" if target == int(job.delivered) else "Captured input portions retained; obsolete unselected automatic remainder retired."
+					changed = true
+	return changed
 
 
 func _start_job(a: Dictionary) -> bool:
