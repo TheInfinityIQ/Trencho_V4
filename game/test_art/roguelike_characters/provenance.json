@@ -17,7 +17,7 @@
   "licence_path": "game/test_art/roguelike_characters/license.txt",
   "licence_sha256": "ad3e4820ff1bd0405070319b49d5f6a5e9d64e14d798b308cb4d6228941c4da4",
   "original_bytes_modified": false,
-  "mapping_status": "SOURCE-INSPECTED CANDIDATE; Designer composite approval pending; not rendered yet",
+  "mapping_status": "Designer visually approved root five-layer unarmed teal civilian composite; body/clothes/shoes/hair only, no weapon/armour/shield.",
   "layers": [
     {
       "resource": "game/test_art/roguelike_characters/neutral_body.tres",
@@ -67,5 +67,5 @@
   ],
   "layer_order": "body, trousers, shoes, teal shirt, hair; no armour/weapon/shield layers",
   "inspection_evidence": "Root logs/free_asset_research/candidate_mapping_inspection.png visually inspected; source inspection only, not a game screenshot. Same original sheet/hash and supplied rects verified.",
-  "gameplay": "No person is spawned or granted; future mapping only existing neutral player/actual rear worker identities under accepted role predicate."
+  "gameplay": "Render existing scene-owned player with retained unmistakable You/halo cue and actual eligible rear workers only; never spawn a person or grant labour."
 }

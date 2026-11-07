@@ -29,7 +29,7 @@
     "Handoff includes current commit/build, actual rendered capture paths/hash and exact capture actions plus provenance/validation limits; no old screenshots/contact sheets as game evidence."
   ],
   "mapping": {
-    "state": "VERIFIED_GROUND_ARRIVAL_AND_TABLE; people/resources/category coverage pending",
+    "state": "VERIFIED_OPENING_PERSON_TABLE_GROUND_AND_PHYSICAL_STOCK; distinct categories pending source selection",
     "entries": [
       {
         "archive_entry": "Tiles/tile_0001.png",
@@ -94,8 +94,7 @@
   },
   "confirmed_starting_stock": "base_simulation.gd:130 declares actual start-supply-table-M11,500 units,holder receiving. Draw its current existing marker quantity; never create decoration stock or hard-code remaining500.",
   "real_missing_inputs": [
-    "Exact visually verified neutral player/worker body/clothes/hair layer rects and Designer inspection-composite approval.",
-    "Verified related facility-category mappings and resource/material symbol mapping, or Designer-approved honest labelled generic physical stock symbol.",
+    "Visually verified distinct facility-category mappings, reversible after actual-source inspection and before-code mapping freeze.",
     "Root actual-build viewport captures of normal opening + labelled arranged rear-art example; battlefield only if this revision claims it."
   ],
   "approved_additions": {
@@ -108,7 +107,7 @@
     "status": "Original character archive/sheet/licence verified; supplied five unarmed body/clothing/hair layers and root source-inspection composite visually inspected. Native AtlasTexture wrappers prepared, no person render until Designer approval."
   },
   "candidate_person_mapping": {
-    "state": "SOURCE_VERIFIED_AWAITING_DESIGNER_COMPOSITE_APPROVAL",
+    "state": "DESIGNER_APPROVED_FIVE_LAYER_UNARMED_CIVILIAN",
     "provenance": "game/test_art/roguelike_characters/provenance.json",
     "layers": [
       {
@@ -157,10 +156,11 @@
         ]
       }
     ],
-    "not_game_capture": true
+    "not_game_capture": true,
+    "predicate": "Existing scene-owned player or actual own rear_place Occupied Person with Available/Rear Labour/Training/Strategic Crew assignment. Unknown/formation/wounded roles keep primitive fallback; player retains You and existing selection/identity halo."
   },
   "candidate_stock_mapping": {
-    "state": "SOURCE_VERIFIED_AWAITING_DESIGNER",
+    "state": "DESIGNER_APPROVED_PLAIN_GENERIC_PHYSICAL_STOCK_BIN",
     "sheet": "game/test_art/roguelike_indoor/indoor_sheet.png",
     "plain_bin_rect": [
       374,
@@ -168,12 +168,7 @@
       16,
       16
     ],
-    "blue_bin_rect": [
-      357,
-      68,
-      16,
-      16
-    ],
-    "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock."
+    "meaning": "Generic physical stock container only, actual type/count text required; no implied contents, water/food/gold or duplicated stock.",
+    "labels": "Aggregate only already-visible physical stock rows by holder/type for one generic marker plus actual type/count; no one sprite per unit. Carry icon/count reads verified held-stock scalar fields only; empty hand gets no carry artwork."
   }
 }

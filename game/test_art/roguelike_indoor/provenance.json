@@ -28,6 +28,17 @@
       ],
       "verification": "Original sheet plus inspection-only nearest-neighbour table crop visually inspected; complete top-row column7 table,16px cells/1px spacing.",
       "anchor": "Existing map_point(Vector2(10,90)); image is visual only, original input/collision/arrival semantics unchanged."
+    },
+    {
+      "role": "Designer-approved generic actual physical stock symbol only; label actual type/count, no fullness/capacity/content or new container-entity claim",
+      "source_rect": [
+        374,
+        68,
+        16,
+        16
+      ],
+      "verification": "Root actual source-inspection composite visually inspected by C and Designer; plain bin only, not blue bin.",
+      "anchor": "Existing physical-stock marker position or actual person carrying stock. Carry requires actual STOCK held by same person."
     }
   ],
   "excluded": "Archive, magenta sheet, previews and other furniture are not used. Original transparent sheet retained for native region drawing; no cropped/edited deliverable image."
