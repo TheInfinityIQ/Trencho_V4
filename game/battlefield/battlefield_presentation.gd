@@ -24,9 +24,12 @@ static func _entity_marker(rear: RefCounted, entity: Dictionary) -> Dictionary:
 		if entity.id != "hq-berth" and not rear.objectives.objectives.has(entity.id) and not rear.orders.objective_markers.has(entity.id): return {}
 		var row: Dictionary = entity.duplicate()
 		if rear.objectives.objectives.has(entity.id):
-			var owner: String = str(rear.objectives.objectives[entity.id].owner)
+			var objective: Dictionary = rear.objectives.objectives[entity.id]
+			var owner: String = str(objective.owner)
 			row["ownership_label"] = ownership_label(owner,rear.PLAYER)
 			row["ownership_colour"] = ownership_colour(owner,rear.PLAYER)
+			row["objective_kind"] = str(objective.kind)
+			row["objective_state"] = str(objective.state)
 		return row
 	elif entity.kind in ["PERSON","CARRIER"]:
 		var affiliation: String = str(entity.controller).trim_suffix("-hq") if entity.kind == "CARRIER" else str(entity.owner)

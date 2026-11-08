@@ -1,6 +1,6 @@
 # Current objective ownership and state in the 3D RTS view
 
-PRE-CODE contract, baseline `f29b02403cb998de6e3bcf7c77b730a9b45e5f3c`, branch `codex/3d-field-objectives`. No production implementation, executable or engine observation in this planning increment. Lead owns scope disposition and any later single remote demonstration. [Diagram](diagrams/3d_field_objectives.mmd), [fixed proposal](current_change/field_objectives.md), [status](3d_field_objectives.json).
+Contract published before source, baseline `f29b02403cb998de6e3bcf7c77b730a9b45e5f3c`, branch `codex/3d-field-objectives`. The source candidate is recorded below; no engine observation or runtime acceptance yet. Lead owns integration and the single remote demonstration. [Diagram](diagrams/3d_field_objectives.mmd), [fixed proposal](current_change/field_objectives.md), [status](3d_field_objectives.json).
 
 ## Confirmed narrow defect and existing authority
 
@@ -51,3 +51,9 @@ Acceptance: a current permitted registered objective has exactly one ground anch
 The single proposed direct observation uses untouched existing resource-centre-blue at the normal paused opening, one reachable normal-camera size500 view and one image/current selection. No time advance, unit staging, forced owner/control/state, synthetic signal or capture replay. It can establish only initial neutral representation/colour/state/terrain/selection, not a real ownership/state transition. Transition behavior is source-reviewed and runtime acceptance explicitly OPEN until a later genuinely scoped actual capture opportunity. Do not close that gap using a fake event or broad combat setup. Whole-map label overlap, all nine simultaneous visibility, native input/FPS and complete battlefield acceptance also remain unverified.
 
 Planning checks: JSON/document/map/whole branch-delta whitespace checks only, including all added files. Preserve the repaired main's exact base64 failure-log representation and prior evidence; no evidence mutation belongs to this objective plan. No local engine, executable or automatic process.
+
+## Source candidate after approved pre-code publication
+
+Lead approved exact pre-code `914d799f34047487de60b6c2445c2326795f35ab` before implementation. The candidate adds the two permitted objective scalars in Policy, scene-owned ground anchors with complete scalar-view equality guards, cached two-line ownership/state cues and explicit existing title-formatter dependency, plus World/Preview composition and current pick/invalidation integration. Registered objectives leave the timed legacy proxy loop; unsupported places and existing people/trucks/contacts keep their previous path. No objective, identity, order, income, inspection, asset or workflow source changed.
+
+Five changed production scripts and the single ignored untouched-objective proposal pass syntax parsing; final map/purpose/HTML and entire branch-delta checks are reported in the frozen handoff. Lead owns actual new script UIDs, one35s rendered/45s wrapper observation, image/receipt and role acceptance. Actual ownership/contested/controlled transition runtime acceptance remains OPEN, even if that initial neutral observation passes. No engine process by this source owner.
