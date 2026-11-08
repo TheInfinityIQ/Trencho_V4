@@ -1,0 +1,72 @@
+{
+  "source_head": "e2c4bc105e3398ff4604447a66312ea91ed8ef84",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/122",
+  "required_validation": 42439883021,
+  "direct_demonstration": 42440000707,
+  "artifact": 13600943661,
+  "result": "PASS",
+  "engine": "Godot4.7.2stable official; X11 Mesa llvmpipe software OpenGL",
+  "scope": "One current3Dconstruction1x demonstration in software-rendered X11 child, <=35s within45s workflow process. Native input/FPS/full-game unverified.",
+  "child_script_sha256": "24528396d92016a7489fdf1fb7d65a748016b53a912a3ee9a87e6566b39cd54a",
+  "observed": [
+    "Single actual1x flow through the production3D entry and programmatic focused input. Capture/reacquisition click submits no construction.",
+    "Manager-overlap placement is rejected by the shared occupation gate and retains the draft.",
+    "A clear world target creates exactly one actual site-0001; success clears draft and existing management selects that identity.",
+    "Existing selected unfinished/unconsumed-site cancellation produces Cancelled and physical-recovery feedback; explicit speed remains1.",
+    "Three actual current-state views retained for Lead/Designer/UX review: provisional footprint, actual site volume and cancellation result."
+  ],
+  "source_reviewed": [
+    "Current live manager capsule and rotated Catalog footprint are checked in provisional/full/world/numeric paths; body binding follows world lifetime including hidden rear. No extra reach, art-based bounds, teleport, phantom2D body or second full route check.",
+    "Consumed-loss cancellation safeguard, economy/custody and Construction.place/cancel authority remain unchanged.",
+    "Unchanged camera/pointer and unrelated session notifications cannot continually discard a fresh intent; relevant geometry owns collider refresh."
+  ],
+  "captures": {
+    "construction_provisional": {
+      "path": "docs/evidence/3d_construction/construction_provisional.png",
+      "sha256": "cad83cde95599904b8e9644e524091c61676e1daea4a808474f6ae1fe66837c8"
+    },
+    "construction_placed": {
+      "path": "docs/evidence/3d_construction/construction_placed.png",
+      "sha256": "9097df5aa3103d39ab42524fbbc22b6c1497904c1560fe6e72b9e9f401142032"
+    },
+    "construction_cancelled": {
+      "path": "docs/evidence/3d_construction/construction_cancelled.png",
+      "sha256": "d1a41b73cf2f1df3893f30b1e50ecdff55f53f37776dbd7f07ffb4a06a5421d0"
+    }
+  },
+  "visual_disposition": "Lead, Game Designer and UI/UX personally viewed allthree actual final images. Designer source+boundedvisual APPROVED at this capturedsource; historical attempt wording and worldlabel occlusion findings CLOSED. This does not approve complete facility art, native controls, ordinary loop or FPS.",
+  "history": [
+    {
+      "source": "87a4674f93032af77823694642bd7f557d288bdd",
+      "required": 42437837412,
+      "manual": 42437839898,
+      "artifact": 13600845051,
+      "result": "Engine parse FAIL; no gameplay",
+      "finding": "Dynamic event-position comparisons required explicit bool declarations."
+    },
+    {
+      "source": "687b4c58f5c1de0f82d346c6828a422ed63d74c1",
+      "required": 42438130282,
+      "manual": 42438131132,
+      "artifact": 13600307847,
+      "result": "Dependency parse FAIL; no gameplay",
+      "finding": "Dynamic cancelled-goods predicate required explicit bool. Remaining new inference boundaries reviewed together."
+    },
+    {
+      "source": "2705b808cf8fbfc2ebaaee07773805f9935e7783",
+      "required": 42438457801,
+      "direct": 42438510686,
+      "artifact": 13600044741,
+      "result": "Functional1xPASS; Designer visual changes requested",
+      "finding": "Prior rejection looked current beside a new amber candidate and the site label was occluded. Historical wording and site-only anchor/alignment corrected. Designer then approved actual manager occupation protection, replacing the old bounds rejection in the same flow."
+    }
+  ],
+  "unverified": [
+    "Native OS input/focus and both-perspective timing",
+    "Runtime numeric/full-preview/rotated overlap, consumed-loss confirmation and full stale/roof/camera combinations; source reviewed only, no expanded matrix",
+    "Complete facility models/animations, fullterrain/spatial/rear/battlefield migration",
+    "Ordinary full/repeated supply loop and strict60FPS"
+  ],
+  "verification_policy": "No local engine, regression suite, broad scenario or benchmark. Same brief current-feature process and unchanged35s child/45s workflow limits; no error-gate or gameplay threshold relaxed.",
+  "carry_forward": "Final evidence/map/plan metadata leaves production scripts/assets/imports/workflow byte-identical to this demonstrated source. Previous3D01/3D02 receipts retain their original scope."
+}

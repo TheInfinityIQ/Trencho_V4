@@ -62,3 +62,15 @@ Use the current collision shape's world X/Z centre and actual CapsuleShape3D rad
 Relevant APIs: [CapsuleShape3D radius](https://docs.godotengine.org/en/stable/classes/class_capsuleshape3d.html) is the physical shape dimension; [CollisionShape3D](https://docs.godotengine.org/en/stable/classes/class_collisionshape3d.html) supplies that shape to its physics-body parent and a disabled shape has no effect. Keep this a small scene-occupation check, not a general collision/ledger framework.
 
 The SAME one1x proposal may replace the former bounds rejection with a genuine near-foot manager-overlap rejection, then perform the same clear placement, selection, unconsumed cancellation and three captures. No additional scenario or limit increase. Numeric/full-preview/rotation coverage remains source-reviewed rather than an expanded runtime matrix. The earlier UI corrections and actual functional result at2705b808 remain recorded; current final identity/images remain Lead-owned.
+
+## Scoped current-feature result
+
+At `e2c4bc105e3398ff4604447a66312ea91ed8ef84`, required `42439883021` and the same brief rendered1x direct `42440000707` passed. Actual programmatic world input rejected manager occupation, retained its draft, placed exactly one clear site, selected its returned identity, then used existing unconsumed cancellation while preserving1x speed. Stored [evidence](evidence/3d_construction_commands.json) and three actual captures separate observed behavior from source-reviewed numeric/full-preview/rotation/consumed-loss/native/FPS limits. Facility volumes remain provisional. Earlier parse failures and the first functional pass with visual changes requested remain recorded; they are not rewritten as complete passes.
+
+Two current-view corrections keep prior failure text explicitly historical and place the site label above its own volume. Dynamic engine-boundary locals use explicit types; a text parser alone did not establish engine semantic compilation. No local engine, old suite, broad matrix or benchmark was run.
+
+## Scoped current-feature result
+
+At `e2c4bc105e3398ff4604447a66312ea91ed8ef84`, required `42439883021` and the same brief rendered1x direct `42440000707` passed. Actual programmatic world input rejected manager occupation, retained its draft, placed exactly one clear site, selected its returned identity, then used existing unconsumed cancellation while preserving1x speed. Stored [evidence](evidence/3d_construction_commands.json) and three actual captures separate observed behavior from source-reviewed numeric/full-preview/rotation/consumed-loss/native/FPS limits. Facility volumes remain provisional. Earlier parse failures and the first functional pass with visual changes requested remain recorded; they are not rewritten as complete passes.
+
+Two current-view corrections keep prior failure text explicitly historical and place the site label above its own volume. Dynamic engine-boundary locals use explicit types; a text parser alone did not establish engine semantic compilation. No local engine, old suite, broad matrix or benchmark was run.
