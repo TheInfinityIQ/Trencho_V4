@@ -1,0 +1,18 @@
+flowchart TD
+    Source[Original Kenney archive / exact license / GLB + texture hashes] --> Import[Lead-owned isolated data import and actual sidecars]
+    Import --> Bounds[Measured imported bounds + authored front / offset metadata]
+    Site[Existing ConstructionService row: stable site identity] --> State{Actual state is Complete?}
+    State -->|No| Existing[Truthful unfinished / cancelled-goods / transitional proxy]
+    State -->|Yes| Mapping{Accepted kind + orientation asset mapping?}
+    Mapping -->|No| Provisional[Explicit provisional facility volume]
+    Mapping -->|Yes| Fit[Uniform fit + source facade anchor]
+    Bounds --> Fit
+    Catalog[Current Catalog footprint / quarter-turn dimensions] --> Fit
+    Door[Actual outside row.door + west-facing approach] --> Fit
+    Fit --> Agree{Uniform bounds and readable west-facing approach agree?}
+    Agree -->|No| Provisional
+    Agree -->|Yes| Shell[Completed exterior only, attached to actual site ID]
+    Shell --> Occlusion[Explicit picking / camera occlusion agreement]
+    Shell --> Label[Readable identity / state, calibrated clear anchor]
+    Authority[Ledger / custody / labour / recipes / clock] -. unchanged, no visual writes .-> Site
+    Existing --> Recovery[Real remaining goods and hauling remain authoritative]
