@@ -18,9 +18,11 @@ class PlacementCamera:
 		_ray_projection = ray_projection
 		pose_changed.emit(self)
 
+const RearWorkers = preload("res://game/preview_3d/rear_workers.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
+var rear_workers: RearWorkers = RearWorkers.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -95,6 +97,9 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	rts.far = 14000
 	field_root.add_child(rts)
 	refresh_rear()
+	rear_workers.name = "RearWorkers"
+	rear_root.add_child(rear_workers)
+	rear_workers.bind(model,_add_human)
 
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
@@ -111,13 +116,11 @@ func _build_player(pose: RefCounted) -> void:
 	collider.position.y = 0.9
 	player.add_child(collider)
 	manager_collision = collider
-	player_visual = _asset("manager.fbx",1.8)
-	player.add_child(player_visual)
-	var skin := StandardMaterial3D.new()
-	skin.albedo_texture = load("res://game/preview_3d/assets/manager_skin.png")
-	skin.roughness = 1.0
-	for mesh in player_visual.find_children("*","MeshInstance3D",true,false): mesh.material_override = skin
-	_bind_idle(player_visual)
+	player_visual = _add_human(player)
+	var identity: Label3D = _label(player_visual,"You\nManager",Vector3(0,2.15,0),0.012)
+	identity.name = "ManagerIdentity"
+	identity.modulate = Color("f4cd7c")
+	identity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	player.add_child(eye)
 	eye.position.y = 1.62
 	eye.rotation.x = -0.18
@@ -133,6 +136,19 @@ func _build_player(pose: RefCounted) -> void:
 	third.near = 0.15
 	third.far = 500
 	third.current = true
+
+func _add_human(parent: Node3D) -> Node3D:
+	# Keep the existing manager's import, skin and post-attachment idle binding.
+	var visual: Node3D = _asset("manager.fbx",1.8)
+	parent.add_child(visual)
+	var skin: StandardMaterial3D = StandardMaterial3D.new()
+	skin.albedo_texture = load("res://game/preview_3d/assets/manager_skin.png")
+	skin.roughness = 1.0
+	for child: Node in visual.find_children("*","MeshInstance3D",true,false):
+		var mesh: MeshInstance3D = child as MeshInstance3D
+		mesh.material_override = skin
+	_bind_idle(visual)
+	return visual
 
 func _asset(file: String, height: float) -> Node3D:
 	var model: PackedScene = load("res://game/preview_3d/assets/"+file)

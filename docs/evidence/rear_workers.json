@@ -1,0 +1,65 @@
+{
+  "source_head": "1541f28c2aa6ce5247cd88256ac803989ff4ce63",
+  "pre_code_commit": "1a749d2d915058157d40d79213c2a7ed3006274e",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/125",
+  "required_validation": 42450137343,
+  "direct_demonstration": 42450178511,
+  "artifact": 13605381687,
+  "result": "PASS",
+  "scope": "One explicitly arranged real rear worker with actual three-unit M11 carry, one genuine ledger movement endpoint event and a single manager/worker reference.35s software-rendered child inside45s process; no hiring/hauling loop, dead/away/boarding matrix, native/FPS or full-game claim.",
+  "child_script_sha256": "5d45a624a8e9703c90ea939daf9dcdae48dfef093940d0cc75f75d95c12bdcfe",
+  "observed": {
+    "worker_id": "arranged-worker",
+    "worker_position_xyz": [
+      22,
+      0,
+      90
+    ],
+    "movement_start_xz": [
+      10,
+      90
+    ],
+    "movement_finish_xz": [
+      22,
+      90
+    ],
+    "movement_events": 1,
+    "actual_held_stock": "portion-0081",
+    "carried_type": "M11",
+    "carried_quantity": 3,
+    "manager_staged_position_xyz": [
+      18,
+      0,
+      94
+    ],
+    "worker_collision_objects": 0,
+    "new_import_inputs": 0,
+    "warning": "Software-driver VSync warning only."
+  },
+  "capture": {
+    "path": "docs/evidence/rear_workers/rear_worker_reference.png",
+    "sha256": "dce80126cbbec90e38605ab046275661e9293479c357032f78477e4681a1b19a"
+  },
+  "actual_engine_uid": {
+    "path": "game/preview_3d/rear_workers.gd.uid",
+    "sha256": "a7e3461e153fa524d715956981931e92e517e603ba0a68bd0b448189521f844c",
+    "origin": "Actual Godot ResourceUID.create_id after successful current-change process; artifact13605381687."
+  },
+  "review": "Exact-source source and captured visual review decisions are recorded in PR125. Final metadata-only carry-forward is required before merge.",
+  "history": [
+    {
+      "source": "81cbfb57d1707bacfe2f8c1e66c38f33c9dbfe2d",
+      "direct": 42449801128,
+      "artifact": 13605261796,
+      "functional_result": "PASS",
+      "visual_result": "Long manager label overlapped the worker duty line. Original image/logs preserved in the original artifact and ignored per-run folder; not accepted as final readability."
+    }
+  ],
+  "limits": [
+    "Explicitly arranged worker and actual three-unit carry; not ordinary hiring, hauling or input-earned movement.",
+    "Dead/away/carrier-held filters and replacement lifecycle are source-reviewed, not a runtime matrix.",
+    "Neutral idle and actual endpoint updates do not establish walking, carrying or working animation.",
+    "Opaque shells may hide workers; no relocation, interiors or extra commands.",
+    "No local engine, old flow, regression suite, broad matrix, benchmark, native input, FPS or full-loop acceptance."
+  ]
+}

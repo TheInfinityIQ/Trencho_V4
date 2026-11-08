@@ -254,6 +254,30 @@ func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 
 
+func rear_worker_views(actor_ids: Array, owner: String) -> Array[Dictionary]:
+	# Detached presentation facts for supplied rear IDs only. No inventory,
+	# claims, carried-mass or occupant scans; movement does not call this query.
+	var rows: Array[Dictionary] = []
+	for id: String in actor_ids:
+		var person: Records.Person = _entities.get(id) as Records.Person
+		if person == null or person.owner != owner or person.health <= 0 or person.assignment == Records.Assignment.DEAD or person.rear_place != "Occupied": continue
+		var holder: Records.Entity = _entities.get(person.holder_id)
+		if holder == null or holder.kind != Records.Kind.PLACE: continue
+		var at: Vector2 = _world_position(id)
+		if not at.is_finite(): continue
+		var row: Dictionary = {"id":id,"owner":person.owner,"health":person.health,
+			"assignment":Records.ASSIGNMENT_NAMES[person.assignment],"duty_id":person.duty_id,
+			"rear_place":person.rear_place,"holder_kind":"PLACE","position":at,
+			"carried_id":"","carried_type":"","carried_count":0}
+		var held: Records.Entity = _entities.get(person.carrying_stock_id)
+		if held != null and held.kind == Records.Kind.STOCK and held.holder_id == id and held.quantity > 0:
+			row.carried_id = held.id
+			row.carried_type = held.design_type
+			row.carried_count = held.quantity
+		rows.append(row)
+	return rows
+
+
 func map_markers(excluded_owner: String = "army-red") -> Array[Dictionary]:
 	# Drawing needs positions and marker types, not inventories, masses or crew.
 	CallLog.record(&"identity/identity_ledger.gd::map_markers")

@@ -1,0 +1,16 @@
+flowchart TD
+    Actors[Existing rear actor IDs] --> Query[Narrow keyed detached ledger projection]
+    Person[Person owner / health / assignment / rear place / holder] --> Query
+    Stock[Actual keyed held Stock: type + quantity] --> Query
+    State[Session command / settlement state event] --> Coalesce[One pending membership and cargo refresh]
+    Coalesce --> Query
+    Query --> Visuals[One scene-owned eligible worker visual per real ID]
+    Move[Existing entity_moved: committed endpoint] --> Cached[Only affected cached visual position and heading]
+    Cached --> Visuals
+    Human[Already imported mesh / skin / idle at 1.8 m] --> Visuals
+    Role[Worker ID + actual role + actual cargo count] --> Visuals
+    Manager[Separate controlled manager: You label] -. never worker roster .-> Visuals
+    Replace[World replacement / exit tree] --> Disconnect[Disconnect old ledger; bind current owner]
+    Disconnect --> Coalesce
+    Rules[Workforce / custody / routes / clock unchanged] -. read only .-> Query
+    Visible[Rear root visibility only] -. never pauses gameplay .-> Visuals

@@ -201,6 +201,12 @@
       "source": "Commercial 2.1, building-a",
       "status": "Implemented, imported and source/bounded-visual accepted: one arranged quarter-turn Office, actual manager, palette, roof and SpringArm. Final-head decisions and merge state are in PR124. No earned completion, native or FPS claim.",
       "evidence": "docs/evidence/office_exterior.json"
+    },
+    "rear_worker_presentation_candidate": {
+      "pr": 125,
+      "contract": "docs/3d_rear_workers.md",
+      "evidence": "docs/evidence/rear_workers.json",
+      "status": "One real rear-worker visual per eligible identity, actual carry cue and affected-ID ledger endpoint updates implemented; bounded arranged observation passed. Exact-head review/merge state belongs to PR125. Idle-only, filters source-reviewed, full workforce/animation/native/FPS acceptance open."
     }
   },
   "performance_and_verification": {

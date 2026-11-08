@@ -1,0 +1,38 @@
+{
+  "status": "Implemented and current-change arranged worker/carry/movement observation passed; exact-head visual decisions and merge state are recorded in PR125. No ordinary hiring/hauling, full animation, native or FPS acceptance.",
+  "baseline": "2e03004c55a07515ef0c1af33989e17735bddd39",
+  "pre_code_commit": "1a749d2",
+  "contract": "docs/3d_rear_workers.md",
+  "demonstration_definition": "docs/current_change/rear_workers.md",
+  "source": {
+    "projection": "game/identity/identity_ledger.gd::rear_worker_views",
+    "presenter": "game/preview_3d/rear_workers.gd",
+    "human_factory": "game/preview_3d/world_presenter.gd::_add_human",
+    "session_forwarding": "game/preview_3d/preview.gd::_state_changed"
+  },
+  "authority": "Ledger and existing services own people, held stock, movement, routes and time. The scene reads detached facts and never issues gameplay commands.",
+  "membership": "Only supplied rear actor IDs are queried. Direct Person facts must identify a living player-owned person with Occupied rear place and a PLACE holder. Dead, carrier-held, non-player and away/frontline states are not rendered as loose rear workers. These filters are source-reviewed, not a runtime matrix.",
+  "read_cost": "Keyed Person, immediate holder and actual held Stock lookups plus keyed holder-chain position. No inspect_entity/status, global entity, inventory, claim, mass or occupant scan in the projection. No projection or inspection on movement.",
+  "events": "Existing session state changes coalesce membership/role/cargo refreshes. Existing entity_moved updates only an already eligible cached visual and heading. The scene disconnects its old ledger on exit; existing Preview session ownership routes to the replacement world. No time_advanced or per-frame roster polling.",
+  "visuals": "Existing imported human mesh, skin and neutral idle at 1.8 m. Worker ID and actual assignment/duty plus actual held type/count are labelled. You is separately identified as the controlled manager and remains outside the worker set. A parcel cue represents custody rather than additional stock.",
+  "new_import_inputs": [],
+  "fixed_observation": "One explicitly arranged real rear actor, actual three-unit M11 carry, one genuine ledger endpoint event and a single worker/manager screenshot. No ordinary hire/haul loop or failure matrix.",
+  "verification": "Pinned syntax parsing passed the four changed production scripts and the single ignored proposal. No engine, regression or benchmark run by C. Exact current maps/purposes accompany the source handoff.",
+  "limits": [
+    "Neutral idle and endpoint position changes do not establish walk, carry, loading or work animation.",
+    "Opaque facility geometry may hide authoritative workers inside existing bays; visuals do not move them outside or create interiors.",
+    "Worker visuals add no collision body or commands. Existing management remains the control surface.",
+    "Hidden-area progression, native input, full gameplay and FPS are not accepted by the arranged reference."
+  ],
+  "first_actual_observation": {
+    "source": "81cbfb57d1707bacfe2f8c1e66c38f33c9dbfe2d",
+    "required_validation": 42449796720,
+    "direct_demonstration": 42449801128,
+    "artifact": 13605261796,
+    "functional_result": "PASS: one actual worker, held M11 count, committed endpoint and identity checks.",
+    "visual_disposition": "Changes requested: the long manager label overlapped the worker duty line. Original image and functional result are preserved.",
+    "approved_correction": "Only manager identity text becomes two lines, You then Manager. Colour, placement, worker labels, camera and exact observation proposal remain unchanged."
+  },
+  "evidence": "docs/evidence/rear_workers.json",
+  "actual_engine_uid": "game/preview_3d/rear_workers.gd.uid, retained byte-for-byte from the successful current-change artifact."
+}
