@@ -1,5 +1,5 @@
 {
-  "status": "Production source prepared; fixed current-change remote observation and actual script UIDs pending Lead.",
+  "status": "Implemented; actual new-feature commissioning/pose/image and same-hull HQ-receipt eligibility observation passed at46cf6d57. Two actual script UIDs retained. Exact final-head review/merge state belongs to PR127; no earned factory/dispatch, manager blocking, native or FPS claim.",
   "baseline": "fa0950b9f449a132865a74cbd6068daffb3f02ae",
   "pre_code_commit": "82707f6",
   "contract": "docs/3d_rear_t01.md",
@@ -25,12 +25,12 @@
   ],
   "fixed_observation": "One staged PLACE, actual admission/create_heavy_output/void register_output and keyed postconditions, one canonical pose, one staged manager/new Rear T01 image, then same hull staged at actual HQ berth and public receipt. Owner and registry persist while domain/controller and visual eligibility change. Not earned factory, route, dispatch or Army attachment.",
   "registration_api": "register_output returns void; assert registry/domain/identity postconditions. Dictionary APIs alone have ok assertions; no backend signature changed.",
-  "verification": "Pinned syntax parser passed six affected production scripts and one ignored proposal. Source comparison confirms unchanged Utility membership/state/cache/lifecycle and extracted selected body/geometry/pose. Maps/purposes/HTML maintained with handoff. No local engine or regression run.",
+  "verification": "Six changed production scripts parsed in Godot and the fixed direct process passed. Shared utility body extraction/source identity reviewed, current image inspected; no old utility runtime or image audit.",
   "limits": [
-    "Actual new Rear T01 image/receipt behavior awaits Lead remote observation.",
     "No old Utility ray/SpringArm/model/image audit repeated. No supplier/T02-T05/Army art or enemy knowledge expansion.",
     "Manager blocking absent; query masks/geometry unchanged. Detailed payload/index/driver seating/interiors, fuel display and dispatch phase remain deferred.",
     "Construction exclusion, alternate holder/Strategic Delivery, damage/wreck/recovery and replacement lifecycle are source-reviewed, not a runtime matrix.",
     "No ordinary factory/haul/transfer loop, native input, FPS, regression suite or full vehicle parity acceptance."
-  ]
+  ],
+  "evidence": "docs/evidence/rear_t01.json"
 }
