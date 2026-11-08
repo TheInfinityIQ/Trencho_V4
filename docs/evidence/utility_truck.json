@@ -1,0 +1,85 @@
+{
+  "source_head": "26e9fb0d778fb17df6509171c68540a656952936",
+  "implementation_head": "a6847f315a1012390ce2155c77bbc403f25a0abc",
+  "pre_code_commit": "1771b17",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/126",
+  "required_validation": 42504672978,
+  "direct_demonstration": 42504678319,
+  "artifact": 13626103966,
+  "result": "PASS",
+  "scope": "One expressly arranged Complete Office uses existing service creation for one actual utility hull. One committed pose, own palette, two measured primitive camera/picking shapes, cab hit/open-bed miss, actual SpringArm and one manager/truck reference.35s software-rendered child inside45s process; no construction/haul loop, manager blocking, seating/payload, lifecycle matrix, native/FPS or full vehicle acceptance.",
+  "child_script_sha256": "b57d36a63a3083431b0168f963928728d402332ac2f37c548c17fa5f9e6a66f1",
+  "observed": {
+    "hull_id": "arranged-office-utility-truck",
+    "creation": "Existing construction.trucks.settle over one explicitly arranged Complete Office; no fabricated created flag.",
+    "canonical_position_xz": [
+      36,
+      80
+    ],
+    "canonical_facing_degrees": 228.012782440892,
+    "body_root_scale": [
+      1,
+      1,
+      1
+    ],
+    "body": "AnimatableBody3D",
+    "sync_to_physics": true,
+    "collision_layer": 4,
+    "collision_mask": 0,
+    "manager_mask": 1,
+    "pick_arm_mask": 5,
+    "imported_meshes": 5,
+    "model_bounds_xyz_m": [
+      2.7,
+      2.34,
+      4.941206
+    ],
+    "canonical_reservation_length_width_m": [
+      7,
+      2.7
+    ],
+    "queried_boxes": 2,
+    "cab_ray_hit_y": 2.34,
+    "above_rear_bed_ray": "MISS",
+    "real_spring_arm_hit_length_m": 1.375,
+    "manager_staged_xyz": [
+      31.5,
+      0,
+      75
+    ],
+    "palette": "res://game/preview_3d/assets/car_kit/textures/colormap.png",
+    "warning": "Software-driver VSync warning only; no script/import errors."
+  },
+  "actual_sidecars_and_uid": [
+    {
+      "path": "game/preview_3d/assets/car_kit/truck_flat.glb.import",
+      "sha256": "5ee7a153822efd6c10c80884dc4ac0777cab933a075e6b2c48fa3ab77829fe7a",
+      "origin": "Exact actual isolated Godot import artifact13626103966."
+    },
+    {
+      "path": "game/preview_3d/assets/car_kit/textures/colormap.png.import",
+      "sha256": "e7e27251bdf36701058603da487bb82a130917b2260978a16740cce1126dd497",
+      "origin": "Exact actual isolated Godot import artifact13626103966."
+    },
+    {
+      "path": "game/preview_3d/utility_trucks.gd.uid",
+      "sha256": "565b0c35101eb840467f64b4b260b0e5889b49a041764a7427e3d4f642b20a63",
+      "origin": "Actual Godot ResourceUID.create_id after successful current-change process; artifact13626103966."
+    }
+  ],
+  "capture": {
+    "path": "docs/evidence/utility_truck/utility_truck_reference.png",
+    "sha256": "6d948806aac2727631010b4f8ebd10a476ef801bebe6b4fe76f7746f1e1d645b"
+  },
+  "review": "Lead, Designer and UI/UX personally viewed this exact image and accepted the bounded source, selected appearance, human scale and readable identity/phase labels at26e9fb0. Query measurements remain engineering evidence, not visual observations by Designer/UX. Exact final-head role decisions and merge state belong to PR126; shared-account COMMENT records are not native GitHub APPROVED reviews.",
+  "limits": [
+    "One expressly arranged Complete Office, actual service-created hull and staged ledger/manager pose; not earned construction or ordinary hauling.",
+    "Manager-versus-truck physical blocking is absent. Camera/picking obstruction does not establish full vehicle interaction or 3D02.",
+    "Two conservative primitive boxes omit thin rear rims above deck; no full-height shape over rear bed air.",
+    "Detailed payload/count/index, seating, interiors and wheel/work animation are deferred. Open bed art is not an empty-inventory claim.",
+    "Disabled/retired/recovering/wreck and crew distinctions are source-reviewed, not a runtime matrix.",
+    "The 3D identity/phase/condition label omits fuel to avoid a stale value between state boundaries; management and backend fuel are unchanged.",
+    "No local engine, old gameplay loop, regression suite, broad matrix, benchmark, native input, FPS or full vehicle parity acceptance.",
+    "Required/direct jobs report changed_scripts=[] for the CI-only parent delta; the direct process actually loads and instantiates the changed scripts."
+  ]
+}

@@ -328,7 +328,7 @@
     "third_segment": "Not proposed; two conservative measured boxes follow the low body/deck and actual cab-above-deck union.",
     "known_approximation": "Boxes are conservative AABBs, not triangle-perfect. The open rear bed has no full-height box; thin rear rims above the deck are not separate shapes in this bounded query approximation. Manager blocking is absent, not vehicle physical parity."
   },
-  "status": "Production source prepared; actual Godot imports, fixed current-change observation and visual acceptance pending Lead.",
+  "status": "Implemented and imported; bounded current-build source/visual acceptance from Lead, Designer and UI/UX at26e9fb0. Exact final-head decisions and merge state belong to PR126. This is partial queried presentation, not manager blocking or full vehicle parity.",
   "baseline": "20ccb777920417c93c71e5f30c01a6fecc0d81aa",
   "pre_code_commit": "1771b17",
   "contract": "docs/3d_utility_truck.md",
@@ -369,12 +369,13 @@
     "game/preview_3d/assets/car_kit/truck_flat.glb",
     "game/preview_3d/assets/car_kit/textures/colormap.png"
   ],
-  "remote_owner": "Lead adds exactly two import inputs, actual engine sidecars and helper UID; runs fixed observation; creates draft PR and integrates.",
-  "verification": "Pinned GDScript syntax parser passed four changed production scripts and the single ignored current-change proposal. No local engine, regression or benchmark run. Import/render/queried-shape evidence remains pending Lead.",
+  "remote_owner": "Lead retained exact actual two import sidecars, new script UID and one current-build image; exact-head decisions and integration state are in PR126.",
+  "verification": "Original/derived bytes independently verified; actual isolated import and bounded arranged service-created truck/pose/query-shape/human-reference observation passed at26e9fb0. Exact review/merge state belongs to PR126; no full vehicle/native/FPS acceptance.",
   "limits": [
     "Two conservative boxes omit thin rear rims above deck; no full-height bed box.",
     "Detailed payload/count/index, seating/interiors and wheel/work animation deferred. Open bed is not an empty-inventory claim.",
     "Arranged service-created hull observation is not earned construction/haul, a lifecycle matrix, native input, FPS or full vehicle parity."
   ],
-  "display_scope": "Identity, actual phase/condition and verified retained-person/Driver facts only. Fuel deliberately omitted from 3D label/projection: driving burns between state boundaries and movement stays pose-only. Existing management retains fuel information; backend consumption unchanged."
+  "display_scope": "Identity, actual phase/condition and verified retained-person/Driver facts only. Fuel deliberately omitted from 3D label/projection: driving burns between state boundaries and movement stays pose-only. Existing management retains fuel information; backend consumption unchanged.",
+  "evidence": "docs/evidence/utility_truck.json"
 }

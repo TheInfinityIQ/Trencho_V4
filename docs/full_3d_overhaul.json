@@ -211,7 +211,8 @@
     "utility_truck_presentation_candidate": {
       "manifest": "docs/3d_utility_truck_assets.json",
       "contract": "docs/3d_utility_truck.md",
-      "status": "Approved actual Construction hull presentation source implemented. Selected Car Kit flatbed, canonical pose and two camera/picking boxes. Manager blocking, payload/seating art and full parity deferred; actual import/observation pending Lead."
+      "status": "Actual Construction hull presentation implemented/imported; one bounded arranged service-created hull, canonical pose, own palette, two queried boxes and manager reference passed. Exact-head review/merge state belongs to PR126. Manager blocking, detailed payload/seating, ordinary hauling and full parity remain open.",
+      "evidence": "docs/evidence/utility_truck.json"
     }
   },
   "performance_and_verification": {

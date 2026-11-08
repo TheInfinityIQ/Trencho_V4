@@ -1,6 +1,6 @@
 # Selected Construction Office utility-truck presentation contract
 
-**Selected:** original Kenney Car Kit 3.1 `Models/GLB format/truck-flat.glb`, bundled CC0. Lead approved the exact selected contract and two-box approximation before implementation on `codex/3d-utility-truck`, based on worker merge `20ccb777920417c93c71e5f30c01a6fecc0d81aa`. This document and the ownership diagram are committed before production code. Actual import/visual acceptance remains pending; no local engine or regression run. Only this candidate's geometry was inspected; the supplied truck/delivery-flat thumbnails were viewed but their models were not inspected.
+**Selected:** original Kenney Car Kit 3.1 `Models/GLB format/truck-flat.glb`, bundled CC0. Lead approved the exact selected contract and two-box approximation before implementation on `codex/3d-utility-truck`, based on worker merge `20ccb777920417c93c71e5f30c01a6fecc0d81aa`. This document and the ownership diagram are committed before production code. Actual import and bounded source/visual acceptance are recorded below; no local engine or regression run. Only this candidate's geometry was inspected; the supplied truck/delivery-flat thumbnails were viewed but their models were not inspected.
 
 ## Exact source and transformed fit
 
@@ -10,7 +10,7 @@ Five scene roots are four separate wheel meshes and the combined body. Apply the
 
 Uniform factor `min(7/2.74511421, 2.7/1.5) = 1.8` is width-limited. The visible exterior is **4.94121 m long, 2.70 m wide and 2.34 m high**, leaving 1.0294 m at each end within the unchanged 7×2.7 m canonical reservation. Lead and Designer accepted this inset; do not stretch the length or change the service footprint. Normalize externally to the full horizontal centre and minimum ground Y, preserving original wheel/body pivots. Keep the queried body root at scale 1.
 
-Tyres are about 1.08 m in diameter, wheelbase 2.556 m and wheel-centre track 1.62 m. Cab top is 2.34 m and body underside 0.27 m. The actual rear deck plane is source Y 0.61, X±0.45, Z[-1.2225572,0.0774428]: fitted deck height 1.098 m, width 1.62 m and length 2.34 m. These proportions are credible beside the existing 1.8 m human; actual current-build appearance is still pending.
+Tyres are about 1.08 m in diameter, wheelbase 2.556 m and wheel-centre track 1.62 m. Cab top is 2.34 m and body underside 0.27 m. The actual rear deck plane is source Y 0.61, X±0.45, Z[-1.2225572,0.0774428]: fitted deck height 1.098 m, width 1.62 m and length 2.34 m. These proportions are credible beside the existing 1.8 m human; actual current-build appearance was accepted in the scoped reference below.
 
 ## Front, cab and loading evidence
 
@@ -52,3 +52,9 @@ Existing construction registry/created flags, keyed hull pose/physical state and
 The 3D label shows actual identity, phase, hull condition and verified retained-person/Driver facts. It deliberately omits fuel: driving burns fuel between state boundaries, while movement reads remain pose-only. Existing management retains fuel information; backend fuel and consumption remain unchanged.
 
 C owns the assigned presenter, keyed detached hull/retained-person views, canonical pose getter, exact source assets and current maps. Lead owns exactly two new data imports, actual sidecars/new helper UID, remote evidence, draft PR and integration. The fixed observation is recorded in [the committed definition](current_change/utility_truck.md); the executable proposal stays ignored. Later evidence should show actual identity, fit, human scale, canonical pose, useful camera/pick silhouette and truthful scalar crew/phase state; it cannot establish detailed payload, seating, manager blocking, ordinary utility-truck work, native/FPS or full vehicle parity. No old construction/truck loop, extra model search, local engine or runtime matrix is included.
+
+## Actual current-change receipt
+
+Required validation 42504672978 and the single current-change observation 42504678319 passed at `26e9fb0d778fb17df6509171c68540a656952936`. Existing settle created the actual hull from an explicitly arranged Complete Office. The canonical `(36,80)` position and 228.012782° heading match the synchronized queried body; all five imported meshes and own palette resolve with 2.7×2.34×4.941206 m bounds. Exactly two measured boxes provide a cab hit at Y2.34, an above-bed miss and real SpringArm retraction to 1.375 m. Only the software-driver VSync warning remains.
+
+The [stored image and receipt](evidence/utility_truck.json) preserve the full actual manager/truck reference, truthful phase label and staged/camera-only caption. Actual generated two import sidecars and new script UID are retained unchanged. Lead, Designer and UI/UX personally viewed this exact reference and accepted its appearance, scale and readable labels at `26e9fb0`. Exact final-head role decisions belong to [PR #126](https://github.com/TheInfinityIQ/Trencho_V4/pull/126). This does not establish ordinary construction/haul, manager blocking, payload/seating, lifecycle runtime coverage, native input, FPS or full vehicle parity. No local engine or old scenario was run.
