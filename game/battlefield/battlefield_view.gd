@@ -236,6 +236,13 @@ func _refresh() -> void:
 	_displayed_time = rear.time
 	_displayed_speed = simulation.speed
 	_displayed_planning_revision = simulation.planning_view_revision
+	var text := inspection_text()
+	if _inspector.text != text: _inspector.text = text
+	if CallLog.enabled: CallLog.record_duration(&"battlefield/battlefield_view.gd::_refresh",Time.get_ticks_usec()-started_usec)
+
+func inspection_text() -> String:
+	# Shared permitted inspection for both 2D and opt-in 3D observation.
+	var rear: RefCounted = simulation.rear
 	var selected: Dictionary = Presentation.inspect(rear,selected_id)
 	if selected.is_empty():
 		selected_id = _default_objective()
@@ -310,8 +317,7 @@ func _refresh() -> void:
 		for deployment in opening.get("deployments",[]):
 			text += "\n\nAPC DEPLOYMENT\n%s · %s\nDestination: %s\n%s" % [deployment.hull,deployment.state,_site_label(deployment.stop),deployment.blocker]
 			if not str(deployment.get("supply_stop","")).is_empty(): text += "\nSupply rendezvous: "+_site_label(str(deployment.supply_stop))
-	if _inspector.text != text: _inspector.text = text
-	if CallLog.enabled: CallLog.record_duration(&"battlefield/battlefield_view.gd::_refresh",Time.get_ticks_usec()-started_usec)
+	return text
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear

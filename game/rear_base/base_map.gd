@@ -54,7 +54,11 @@ var placement_active := false
 var input_blocked := false
 ## The player is a scene-owned avatar, never a free member of the worker pool.
 var character_enabled := false
-var character_position := Vector2(16, 90)
+const ManagerPose = preload("res://game/preview_3d/manager_pose.gd")
+var manager_pose: RefCounted = ManagerPose.new()
+var character_position: Vector2:
+	get: return manager_pose.ground_position
+	set(value): manager_pose.ground_position = value
 const CHARACTER_SPEED := 5.0
 
 func begin_placement() -> void:

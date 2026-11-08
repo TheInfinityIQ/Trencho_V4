@@ -53,14 +53,16 @@ jobs:
           changed = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=ACMR", "-z", base, head]).decode().split("\0")
           scripts = [p for p in changed if p.startswith("game/") and p.endswith(".gd") and "/tests/" not in p]
           textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
-          texture_update = any(p in textures or p in [t + ".import" for t in textures] for p in changed)
+          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb"]
+          dependencies = textures + models
+          asset_update = any(p in dependencies or p in [t + ".import" for t in dependencies] for p in changed)
           (output / "scripts.json").write_text(json.dumps(scripts), encoding="utf-8")
           direct = os.environ.get("DIRECT_CHECK", "").strip()
           if direct:
               (output / "direct_check.gd").write_text(direct + "\n", encoding="utf-8")
           (output / "scope.txt").write_text(f"revision={head}\nbase={base}\nchanged_scripts={scripts}\ndirect_check={bool(direct)}\nSyntax checks are not gameplay acceptance. No regression suites run.\n", encoding="utf-8")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
-              stream.write(f"engine={'true' if scripts or direct or texture_update else 'false'}\n")
+              stream.write(f"engine={'true' if scripts or direct or asset_update else 'false'}\n")
               stream.write(f"direct={'true' if direct else 'false'}\n")
           print((output / "scope.txt").read_text())
       - name: Download and verify pinned Godot only when needed
@@ -82,7 +84,7 @@ jobs:
           unzip -q "$archive"
           chmod +x "Godot_v${version}-stable_linux.x86_64"
           echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${version}-stable_linux.x86_64" >> "$GITHUB_ENV"
-      - name: Import only the declared texture dependencies
+      - name: Import only the declared texture and 3D dependencies
         if: steps.scope.outputs.engine == 'true'
         timeout-minutes: 1
         shell: python
@@ -90,13 +92,18 @@ jobs:
           import hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
           output = pathlib.Path(".artifacts/current-change")
           textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
-          # These exact preload dependencies are needed even when only a caller changes.
-          project = pathlib.Path(tempfile.mkdtemp(prefix="trencho-texture-import-", dir=os.environ["RUNNER_TEMP"]))
-          (project / "project.godot").write_text('config_version=5\n[application]\nconfig/name="Texture dependency import"\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n', encoding="utf-8")
-          for relative in textures:
+          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb"]
+          dependencies = textures + models
+          # Only these data assets enter the isolated project; no game scripts or plugins.
+          # FBX uses pinned Godot's built-in ufbx importer, not an external converter.
+          project = pathlib.Path(tempfile.mkdtemp(prefix="trencho-asset-import-", dir=os.environ["RUNNER_TEMP"]))
+          (project / "project.godot").write_text('config_version=5\n[application]\nconfig/name="Declared asset dependency import"\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n', encoding="utf-8")
+          for relative in dependencies:
               source = pathlib.Path(relative)
               if not source.is_file():
-                  raise SystemExit("Missing declared texture dependency: " + relative)
+                  raise SystemExit("Missing declared asset dependency: " + relative)
+              if source.read_bytes().startswith(b"version https://git-lfs.github.com/spec/v1"):
+                  raise SystemExit("Declared asset is an unresolved LFS pointer: " + relative)
               target = project / relative
               target.parent.mkdir(parents=True, exist_ok=True)
               shutil.copy2(source, target)
@@ -109,32 +116,32 @@ jobs:
           except subprocess.TimeoutExpired as error:
               log = error.stdout or b""
               (output / "texture-import.log").write_text(log.decode(errors="replace") if isinstance(log, bytes) else log, encoding="utf-8")
-              raise SystemExit("Declared texture dependency import exceeded its 45-second deadline.")
+              raise SystemExit("Declared asset dependency import exceeded its 45-second deadline.")
           (output / "texture-import.log").write_text(result.stdout, encoding="utf-8")
           print(result.stdout, flush=True)
           if result.returncode or re.search(r"^\s*(SCRIPT ERROR:|ERROR:)", result.stdout, re.MULTILINE):
               raise SystemExit(result.returncode or 1)
           receipt = []
-          for relative in textures:
+          for relative in dependencies:
               sidecar = project / (relative + ".import")
               if not sidecar.is_file():
-                  raise SystemExit("Godot did not produce the declared texture sidecar: " + relative)
+                  raise SystemExit("Godot did not produce the declared asset sidecar: " + relative)
               destination = pathlib.Path(relative + ".import")
               shutil.copy2(sidecar, destination)
-              retained = output / "texture-sidecars" / (relative + ".import")
+              retained = output / ("model-sidecars" if pathlib.Path(relative).suffix in [".fbx", ".glb"] else "texture-sidecars") / (relative + ".import")
               retained.parent.mkdir(parents=True, exist_ok=True)
               shutil.copy2(sidecar, retained)
               receipt.append({"source": relative, "source_sha256": hashlib.sha256(pathlib.Path(relative).read_bytes()).hexdigest(), "sidecar_sha256": hashlib.sha256(sidecar.read_bytes()).hexdigest()})
           cache = project / ".godot/imported"
           if not cache.is_dir():
-              raise SystemExit("Godot did not produce the isolated texture import cache.")
-          # The isolated project contains only the declared PNGs, never game scripts/plugins.
+              raise SystemExit("Godot did not produce the isolated asset import cache.")
+          # Copy only actual engine-generated imports from the isolated data-only project.
           destination = pathlib.Path(".godot/imported")
           destination.mkdir(parents=True, exist_ok=True)
           for imported in cache.iterdir():
               if imported.is_file():
                   shutil.copy2(imported, destination / imported.name)
-          (output / "texture-import.json").write_text(json.dumps({"textures": receipt, "scope": "Declared compile dependencies only; no game project/editor/plugin scan or gameplay."}, indent=2) + "\n", encoding="utf-8")
+          (output / "texture-import.json").write_text(json.dumps({"assets": receipt, "scope": "Declared PNG/FBX/GLB dependencies only; no game project/editor/plugin scan, external converter or gameplay."}, indent=2) + "\n", encoding="utf-8")
       - name: Parse changed production scripts only
         if: steps.scope.outputs.engine == 'true'
         timeout-minutes: 3
