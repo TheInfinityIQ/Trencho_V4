@@ -19,10 +19,12 @@ class PlacementCamera:
 		pose_changed.emit(self)
 
 const RearWorkers = preload("res://game/preview_3d/rear_workers.gd")
+const UtilityTrucks = preload("res://game/preview_3d/utility_trucks.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_workers: RearWorkers = RearWorkers.new()
+var utility_trucks: UtilityTrucks = UtilityTrucks.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -100,6 +102,9 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	rear_workers.name = "RearWorkers"
 	rear_root.add_child(rear_workers)
 	rear_workers.bind(model,_add_human)
+	utility_trucks.name = "UtilityTrucks"
+	rear_root.add_child(utility_trucks)
+	utility_trucks.bind(model)
 
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
