@@ -4,7 +4,7 @@ Accepted pre-code contract. Baseline PR122 merge92a75717c3967948be08fc0a16f13ebf
 
 ## Candidate set and provenance
 
-Original Kenney City Kit Industrial2.0 CC0 archive supplied by Lead: SHA2565b381164e5760f3830a2dbee43b972deee38b2a695d091b56e238ab2910c96d2, root logs/industrial-asset-inspection/industrial.zip. C viewed its four tiny thumbnails and inspected the bundled license, exact selected GLB nodes/POSITION bounds and texture dependency. Exact members/hashes/bounds are in source_notes.json; NORMAL bounds are not geometry bounds.
+Original Kenney City Kit Industrial2.0 CC0 archive supplied by Lead: SHA2565b381164e5760f3830a2dbee43b972deee38b2a695d091b56e238ab2910c96d2, root logs/industrial-asset-inspection/industrial.zip. C viewed its four tiny thumbnails and inspected the bundled license, exact selected GLB nodes/POSITION bounds and texture dependency. Exact members/hashes and derivations are in [the asset manifest](3d_facility_assets.json); raw source bounds remain in the ignored inspection notes; NORMAL bounds are not geometry bounds.
 
 | Original model | Actual candidate kind | Catalog dimensions, normal / quarter turn |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ Lead owns the explicit minimal isolated import list and actual remote-generated 
 
 Acceptance: current-build completed shells bind to actual Complete IDs, fit uniformly, retain readable west entrance/approach and truthful other states, and agree with picking/camera/labels without gameplay/custody changes. Author per-facility/orientation limits/fallback in the mapping metadata. After assignment, use the one bounded new-asset render chosen by Lead to resolve fit; thumbnails alone are not readiness. Any arranged view is labelled and cannot establish earned construction or ordinary full-loop/FPS/native acceptance. No new run now.
 
-Diagram: ownership.mmd. Inspection notes: source_notes.json.
+Diagram: [completed exterior ownership](diagrams/3d_facility_exteriors.mmd). Asset receipt: [manifest](3d_facility_assets.json).
 
 
 ## Relevant API rationale before implementation
@@ -52,3 +52,17 @@ Diagram: ownership.mmd. Inspection notes: source_notes.json.
 [Mesh.create_trimesh_shape](https://docs.godotengine.org/en/stable/classes/class_mesh.html) builds a ConcavePolygonShape3D from actual imported geometry. [ConcavePolygonShape3D](https://docs.godotengine.org/en/stable/classes/class_concavepolygonshape3d.html) is intended for static level geometry, not the moving CharacterBody3D. Therefore attach the bounded shell occluder to a StaticBody3D on presentation bit4; retain the existing simple reserved-footprint movement collider and its manager mask1. No backend terrain/combat/ledger height follows from these meshes. Import-format guidance is recorded with the asset manifest; only declared GLBs and palette enter the isolated importer.
 
 Rendering maps only Complete rows; source-front/yaw and approach offsets are explicit small metadata. Uniform fit uses measured bounds and can preserve a common scale across both quarter-turn reservations while keeping the west facade stable. Actual viewport evidence decides whether a mapping is readable or must stay provisional. No general fitter, interiors or machinery semantics.
+
+## Source handoff and unverified visual choices
+
+`facility_shells.gd` owns four loaded scenes and shared per-mesh static occlusion shapes for this presenter lifetime. It reads Complete rows, measures rotated imported bounds and fits a common square envelope with 0.4m inset, so swapped reservations use identical scale and retain the west facade. The presenter keeps its existing hidden 3m layer1 reservation, marks its ground perimeter and draws the approach from the unchanged row.door. No gameplay geometry is inferred from the exterior. Ground picking and the actual SpringArm use mask5; manager mask1 remains unchanged. The geometry snapshot includes kind/door/orientation as well as existing state/size/goods so visual changes rebuild at event boundaries.
+
+All four source-front candidates are +Z rotated -90 degrees toward west. Front fractions along fitted Z are Office/warehouse0.5, Workshop0.8, Materials0.65. These are authored starting choices, not visual acceptance; the one actual render must confirm the visible facade, apparent scale, marker and labels. An incompatible legacy non-west approach remains explicitly provisional. Other kinds have no exterior mapping. The same warehouse art does not merge Receiving, Storage and Logistics identities or capabilities.
+
+Proposed direct observation is ignored `logs/3d-facility-exteriors/current_asset_view.gd`, not a production scene or regression suite. It explicitly arranges four Complete rows (one per new model, Workshop quarter-turned), records actual fitted bounds and identities, observes one actual roof ray plus the real SpringArm against that roof and captures an arranged overview. It does not earn construction or run an old construction/manager flow. Lead owns its bounded remote execution, sidecars and review. No engine execution, import, native input, actual visual approval, complete roster, full loop or FPS result is claimed by this source handoff.
+
+[Official glTF import guidance](https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/available_formats.html) recommends glTF and describes external texture dependencies; the isolated importer needs exactly the four new GLBs and their declared palette. The original license is retained for provenance, not an engine import. There is no Blender/converter dependency.
+
+## Local verification of this handoff
+
+Direct static checks parsed only the three changed production GDScript files and the ignored visual proposal with the repository's pinned GDScript syntax parser. A byte comparison against the supplied archive confirmed exactly one recorded URI byte differs in each GLB, unchanged binary chunks and exact palette/license bytes. The living map and function purposes are current; the HTML was rendered independently without modifying the preserved button-contract fixture. These are source/provenance checks, not Godot compilation or visual/gameplay acceptance. No local engine, regression suite or old flow was run. Actual generated sidecars, import, rendering, roof/camera observations and visual review remain Lead-owned pending work.

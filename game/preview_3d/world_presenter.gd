@@ -19,6 +19,7 @@ class PlacementCamera:
 		pose_changed.emit(self)
 
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
+const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
@@ -41,6 +42,7 @@ var marker_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
 var _site_snapshot: Dictionary = {}
+var _facility_shells: RefCounted = FacilityShells.new()
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -125,7 +127,7 @@ func _build_player(pose: RefCounted) -> void:
 	eye.add_child(arm)
 	arm.spring_length = 5.5
 	arm.margin = 0.2
-	arm.collision_mask = 1
+	arm.collision_mask = 5
 	arm.add_excluded_object(player.get_rid())
 	arm.add_child(third)
 	third.near = 0.15
@@ -237,7 +239,7 @@ func refresh_rear() -> bool:
 	var next: Dictionary = {}
 	for row in simulation.rear.construction.instances.values():
 		var goods: bool = row.state in ["Cancelled","Dismantled"] and simulation.rear.ledger.loose_stock_mass_at(row.id) > 0.000001
-		next[row.id] = [row.center,row.size,row.state,goods]
+		next[row.id] = [row.center,row.size,row.state,goods,row.kind,row.door,row.quarter_turn]
 	if next == _site_snapshot: return false
 	_site_snapshot = next
 	for child in _collision_root.get_children():
@@ -249,11 +251,42 @@ func refresh_rear() -> bool:
 				_box(_collision_root,Vector3(row.center.x,0.04,row.center.y),Vector3(row.size.x,0.08,row.size.y),Color(0.95,0.7,0.3,0.4))
 				_label(_collision_root,"%s · %s · goods await hauling" % [row.id,row.state],Vector3(row.center.x,1.5,row.center.y),0.02)
 			continue
-		_box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
-		var site_label: Label3D = _label(_collision_root,"%s · %s · provisional volume" % [row.id,row.state],Vector3(row.center.x,4.5,row.center.y),0.02)
+		var exterior: Dictionary = _facility_shells.build(row)
+		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
+		var label_at: Vector3 = Vector3(row.center.x,4.5,row.center.y)
+		var description: String = "provisional volume"
+		if exterior.ok:
+			reservation.hide() # Existing layer1 ground reservation still blocks walking.
+			var shell: Node3D = exterior.node
+			_collision_root.add_child(shell)
+			var bounds: AABB = exterior.bounds
+			_mark_facility_approach(row,exterior.entrance)
+			label_at.y = bounds.end.y + 0.6
+			description = str(row.kind) + " · exterior"
+		elif row.state == "Complete":
+			description += " · " + str(exterior.reason)
+		var site_label: Label3D = _label(_collision_root,"%s · %s · %s" % [row.id,row.state,description],label_at,0.02)
 		site_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 
 	return true
+
+func _mark_facility_approach(row: Dictionary, entrance: Vector3) -> void:
+	var center: Vector2 = row.center
+	var size: Vector2 = row.size
+	var colour: Color = Color("b3ae91")
+	# Thin edge strips show reserved inset space without implying an interior.
+	for side: float in [-1.0,1.0]:
+		_box(_collision_root,Vector3(center.x+side*size.x/2.0,0.025,center.y),Vector3(0.12,0.05,size.y),colour)
+		_box(_collision_root,Vector3(center.x,0.025,center.y+side*size.y/2.0),Vector3(size.x,0.05,0.12),colour)
+	var approach: Vector2 = row.door
+	var bend: Vector3 = Vector3(approach.x,0.06,center.y+entrance.z)
+	var end: Vector3 = Vector3(center.x+entrance.x,0.06,bend.z)
+	var start: Vector3 = Vector3(approach.x,0.06,approach.y)
+	_box(_collision_root,(start+bend)/2.0,Vector3(0.6,0.08,maxf(absf(start.z-bend.z),0.6)),Color("d6bd82"))
+	_box(_collision_root,(bend+end)/2.0,Vector3(maxf(end.x-bend.x,0.6),0.08,0.6),Color("d6bd82"))
+	_box(_collision_root,start,Vector3(1.1,0.12,1.1),Color("f4cd7c"))
+	var sign: Label3D = _label(_collision_root,"SERVICE APPROACH",start+Vector3(0,0.8,0),0.008)
+	sign.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 
 func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
