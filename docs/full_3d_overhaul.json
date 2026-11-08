@@ -1,7 +1,7 @@
 {
   "status": "3D01 and3D02A merged;3D03A construction commands/occupation protection implemented and scopedchecked. Full staged3D migration remains inprogress.",
   "baseline": "5b3e3aac1a01e16e8f1b4295c00742515efae8fd",
-  "design_owner": "Game Designer: docs/design_brief.md, Full 3D direction — 7 November 2026",
+  "design_owner": "Game Designer: docs/design_brief.md, Full 3D direction \u2014 7 November 2026",
   "engineering_owner": "Lead Developer; one implementation owner per bounded feature/worktree",
   "diagram": "docs/diagrams/full_3d_overhaul.mmd",
   "requested_result": {
@@ -229,7 +229,7 @@
     "field_person_presentation_plan": {
       "manifest": "docs/3d_field_persons.json",
       "contract": "docs/3d_field_persons.md",
-      "status": "Sourcec4d8cc0 original functional current-change PASS; actual static-person appearance NOT accepted at min100 due5.477px body/cue overlap. Original evidence preserved. Designer-approved focused min10/max6500 and hollow-near<=40 correction, same real camera/pan/scale; pre-code amendment before source, one close-only observation pending. No other scope expansion."
+      "status": "Sourcec4d8cc0 original functional PASS; static-person appearance NOT accepted at min100. Original evidence preserved. Pre-code amendment6d98808b published before focused two-script min10/max6500 and cached hollow-near<=40 correction. Same actual camera/pan/scale; source syntax PASS, one Lead close-only observation and visual acceptance pending. No other scope expansion."
     }
   },
   "performance_and_verification": {

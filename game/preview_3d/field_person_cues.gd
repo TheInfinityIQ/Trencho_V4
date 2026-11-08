@@ -2,8 +2,10 @@ extends Control
 ## Screen primitives use cached permitted anchors, never ledger or holder reads.
 const Persons = preload("res://game/preview_3d/field_persons.gd")
 const CUE_RADIUS: float = 6.0
+const NEAR_SIZE: float = 40.0
 var points: Dictionary[String,Vector2] = {}
 var selected_id: String = ""
+var near_view: bool = false
 var _presenter: Persons
 var _camera: Camera3D
 var _world_points: Dictionary[String,Vector3] = {}
@@ -27,6 +29,7 @@ func bind(presenter: Persons, camera: Camera3D) -> void:
 	_status.clear()
 	_presenter = presenter
 	_camera = camera
+	near_view = is_instance_valid(_camera) and _camera.size <= NEAR_SIZE
 	_projection_valid = false
 	if _presenter != null:
 		_presenter.changed.connect(_on_changed)
@@ -77,6 +80,7 @@ func _refresh_projection() -> void:
 	_camera_projection = projection
 	_viewport_size = viewport_size
 	_projection_valid = true
+	near_view = _camera.size <= NEAR_SIZE
 	for id: String in _world_points: _project(id)
 	queue_redraw()
 
@@ -98,7 +102,7 @@ func _draw() -> void:
 		var outline: PackedVector2Array = diamond.duplicate()
 		outline.append(diamond[0])
 		draw_polyline(outline,Color.BLACK,3.0,true)
-		if status[1]: draw_polyline(outline,colour,1.5,true)
+		if status[1] or near_view: draw_polyline(outline,colour,1.5,true)
 		else: draw_colored_polygon(diamond,colour)
 		if id != selected_id: continue
 		draw_arc(at,9,0,TAU,24,Color.BLACK,4,true)

@@ -1,19 +1,19 @@
 {
-  "status": "Original fixed functional observation PASS at c4d8cc0; static-art visual CHANGES REQUESTED. Focused min10/hollow-nearcue amendment approved; correction source and one close-only image pending.",
+  "status": "Original fixed functional observation PASS at c4d8cc0; static-art visual CHANGES REQUESTED. Approved min10/hollow-nearcue source correction implemented; one Lead close-only observation and visual acceptance pending.",
   "baseline": "07ee29b407e31e464e08fb3f0a19091314ba1db2",
   "contract": "docs/3d_field_persons.md",
   "diagram": "docs/diagrams/3d_field_persons.mmd",
   "fixed_definition": "docs/current_change/field_persons.md",
   "population": "Existing permitted friendly-owned non-Occupied PERSON, excluding aboard people. Assignment !=Records.Assignment.DEAD is living, INCLUDING health0 WOUNDED; actual DEAD retains abstract cue. WOUNDED/RECOVERY state is preserved without readiness/corpse claims.",
   "information_boundary": "CONTACT stays abstract at current reported position/confidence; no true enemy position or enemy human/model. PLACE/CARRIER proxies unchanged.",
-  "readability": "Fixed6px screen cue and existing18px nearest inspection at sizes100..6500, same actual ground anchor; selected actual ID/state only. Crowd overlap remains a limit; no giant world model or clustering.",
+  "readability": "Current correction: fixed6px screen cue, hollow at camera size<=40, existing18px nearest inspection at sizes10..6500 and same actual ground anchor. Far strategic drawing unchanged. Original min100 result remains historical evidence.",
   "events": "ONE current coalesced permitted membership result, affected-ID events and cached reverse holder/ancestor dependencies; parent movement refreshes only dependents. Current root PLACE is immutable through canonical movement API. No time-loop fallback or support claim for private unsignalled mutations.",
   "assets": "Cleared human model/skin with one sampled neutral bone pose cached per world and transient animator disposed; subsequent field humans static, no retained per-person AnimationPlayer. Existing manager/worker animated defaults preserved.",
   "new_data_imports": [],
   "observation": "One actual existing initial-hq-01 and one genuine staged endpoint on terrain; overview/close actual cue selection with exactly two scoped images in the SAME brief process. No new grant/mock marker/earned army move or matrix.",
   "contact_disposition": "Designer8November explicitly deferred solid contact: current production query-only identity/commission/restore preserved, accepted contact requirements remain deferred; no broad yield/creation refusal.",
   "limits": [
-    "Actual static-pose/cue/terrain/inspection acceptance pending Lead remote observation; source completion is not acceptance.",
+    "Original functional PASS retained; current correction runtime and actual static-person visual acceptance pending Lead close-only observation. Source parsing is not gameplay or visual acceptance.",
     "No enemy/vehicle/terrain/animation overhaul, new knowledge/control, collision/contact implementation, native/FPS or full population performance claim.",
     "Aboard/nonliving/absent/replacement distinctions source-reviewed, not runtime cases."
   ],
@@ -26,12 +26,12 @@
     "pick_visibility": "game/preview_3d/preview.gd::_select_marker"
   },
   "visibility": "PERSON pick flushes the same current-camera projected visibility cache as the cue; offscreen/behind/invalid people cannot be edge-picked. Strict nearest<18 and current row ordering remain; nonPERSON behavior unchanged.",
-  "verification": "Pinned syntax parser passed five changed production scripts and the single ignored fixed proposal. No local engine or old suite/matrix. Actual static pose, terrain/selection/captures pending one Lead process.",
+  "verification": "Syntax parser passed the two corrected production scripts and new close-only proposal. No local engine or old suite/matrix. Lead owns one new close-only rendered process; runtime and visual result pending.",
   "new_engine_uid_paths": [
     "game/preview_3d/field_persons.gd.uid",
     "game/preview_3d/field_person_cues.gd.uid"
   ],
-  "camera_evidence": "Both proposed captures preserve production RTS rotation and height, reachable X/Z pan only and zoom6500to100. True-scale human may remain small at actual minimum zoom; fixed cue/inspection provide strategic readability.",
+  "camera_evidence": "Original two images retain production pitch/height and zoom6500to100 with visual NOT ACCEPTED. New close-only proposal reaches min10 through current wheel input, retaining normal pitch/height/reachable pan/world scale; image pending.",
   "first_observation": {
     "source": "c4d8cc077acfcfff03119f2d8133206556f5d2b3",
     "required": 42515331718,
@@ -47,6 +47,11 @@
     "hollow_near_size_at_most": 40,
     "scope": "Same pitch/height/reachable pan/world scale, same6px cue/18px selection/order/state colours; far strategic drawing unchanged. Existing camera projection events/cache only.",
     "definition": "docs/current_change/field_person_close.md",
-    "status": "Approved amendment committed before production correction."
+    "status": "Two-script correction implemented after published pre-code amendment; one close-only Lead process and visual review pending.",
+    "pre_code_commit": "6d98808b52001f102000988c8ad73d581fde1e13",
+    "changed_production_scripts": [
+      "game/preview_3d/preview.gd",
+      "game/preview_3d/field_person_cues.gd"
+    ]
   }
 }

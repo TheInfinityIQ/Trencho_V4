@@ -286,7 +286,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_RIGHT and _base._placing_building:
 			_cancel_preview()
 		elif battlefield_open and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
-			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),100,6500)
+			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),10,6500)
 			_field_cues.request_projection()
 	if event is InputEventMouseMotion:
 		var moved_pointer: bool = _pointer != event.position
