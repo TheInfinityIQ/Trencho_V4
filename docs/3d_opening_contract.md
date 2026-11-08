@@ -53,3 +53,9 @@ The same focused delivery corrects unhandled Escape ownership: a visible decisio
 
 
 Permitted RTS rows are retained across the full 4x6km map, including the westmost 240m. The legacy rear-boundary visibility condition applies only to carriers, matching the existing carrier rendering distinction. Hidden rear-carrier proxies remain in cached permitted membership; actual motion updates show/hide them at the boundary without a full ledger or membership scan. Contacts continue to use reported positions, never true enemy poses. This is a presentation correction, not a new observation authority or scenario.
+
+## Current rendered receipt
+
+At `78fcb2a`, required run `42434202516` and one brief rendered direct run `42434204247` passed. Lead viewed all three actual fresh captures: the real manager now has relaxed arms, first-person table/materials render without a body clipping into view, and RTS terrain plus permitted inspection are visible. The imported clip is `Root|Idle` with 40 tracks and its live left-arm pose matches the Idle key. Management Escape, same-manager toggle/movement, preview no-spend and same-session return passed programmatic observations. Actual engine-generated sidecars are retained. See [scoped evidence](evidence/3d_opening.json) and its stored captures. Earlier failed and visually rejected runs remain recorded; they are not rewritten as passes.
+
+This completes the bounded rendered observation, not native input, full-game, final asset coverage or 60 FPS acceptance. Default F5 remains the existing main. To inspect this separate preview, open `game/preview_3d/preview.tscn` and use Run Current Scene (F6); Tab manages, V switches perspective, and the HUD documents RTS controls. Building placement is deliberately preview only.

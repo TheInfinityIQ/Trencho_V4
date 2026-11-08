@@ -1,5 +1,5 @@
 {
-  "status": "Cohesive stylized 3D direction accepted by Dawson; selected assets provisional. Initial idle-pose correction awaits actual rendered proof; walking/carry/full roster are not ready.",
+  "status": "Accepted cohesive stylized direction; actual relaxed idle, manager/table/materials and RTS ground rendered at78fcb2a. Opt-in preview only; walking/carry/full roster unfinished.",
   "creator": "Kenney",
   "license": "CC0 1.0; original bundled License.txt bytes preserved.",
   "archives": {
@@ -87,14 +87,14 @@
     "Walking/carry/build/load animation and retargeting are not ready; only original idle clip is included.",
     "No first-person arms or cargo interaction. Manager is not free labour.",
     "Field units remain permitted symbolic 3D markers, including reported contact uncertainty/age/confidence; full roster models and terrain/placement parity remain later phases.",
-    "Quaternius files excluded: exact archive/version redistribution terms unresolved.",
-    "Actual import sidecars/UIDs and first/third/RTS captures must come from Lead remote run before visual acceptance."
+    "Quaternius files excluded: exact archive/version redistribution terms unresolved."
   ],
   "remote_findings": {
     "required_run": "42431861192 passed isolated import and changed-script engine parsing at b739067.",
     "failed_direct_run": "42431874777: actual third-person image had no manager; RTS image had no ground. C inspected all three preserved PNGs and direct.log. The idle file was animation-only; terrain triangles used opposite front-face winding. The demonstration also incorrectly compared post-running funds to initial2500, ignoring normal objective income.",
     "corrections_pending_remote_proof": "Applied at4e9931c: separate real model and idle FBX, external normalization, clockwise terrain faces and paused preview before/after funds comparison. Second run proved visible manager/ground and direct action; initial neutral pose still needed correction. No economy rule changed.",
-    "second_run": "Required42432650743 and direct42432652286 passed at4e9931c, with actual visible avatar/terrain. Third-person image still showed T-pose. First-non-RESET clip selection corrected to explicit Idle; a repeat actual imported pose record and rendered view remain required."
+    "second_run": "Required42432650743 and direct42432652286 passed at4e9931c, with actual visible avatar/terrain. Third-person image still showed T-pose. First-non-RESET clip selection corrected to explicit Idle; a repeat actual imported pose record and rendered view remain required.",
+    "final_run": "Required42434202516 and direct42434204247 PASS at78fcb2a. Lead viewed three fresh captures: relaxed manager arms, first-person table/bundles and RTS ground. Actual imported Root|Idle40tracks and live/key arm match. Actual UIDs/import sidecars retained; native/FPS/full roster unverified."
   },
   "style_direction": "Accepted: cohesive stylized 3D with readable detail and lower asset performance cost. No measured performance or final model approval follows from this choice."
 }
