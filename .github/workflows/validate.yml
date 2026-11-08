@@ -141,6 +141,12 @@ jobs:
           for imported in cache.iterdir():
               if imported.is_file():
                   shutil.copy2(imported, destination / imported.name)
+          # Keep the actual isolated import's UID map with its generated resources.
+          # Its res:// paths refer only to the exact declared data assets above.
+          resource_uids = project / ".godot/uid_cache.bin"
+          if not resource_uids.is_file():
+              raise SystemExit("Godot did not produce the isolated asset UID cache.")
+          shutil.copy2(resource_uids, destination.parent / "uid_cache.bin")
           (output / "texture-import.json").write_text(json.dumps({"assets": receipt, "scope": "Declared PNG/FBX/GLB dependencies only; no game project/editor/plugin scan, external converter or gameplay."}, indent=2) + "\n", encoding="utf-8")
       - name: Parse changed production scripts only
         if: steps.scope.outputs.engine == 'true'
