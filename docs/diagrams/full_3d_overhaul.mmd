@@ -1,0 +1,29 @@
+flowchart TD
+  User[Player input] --> Mode[One scene-owned input and view mode owner]
+  Mode --> Rear[Same rear manager state and CharacterBody3D]
+  Rear --> Third[Third-person pivot / SpringArm3D / Camera3D]
+  Rear --> First[First-person eye / Camera3D]
+  Mode --> RTS[Independent pan / zoom / inspection RTS camera]
+  Mode --> UI[Existing management / modal / placement UI]
+  UI --> Commands[Validated commands to existing authoritative owners]
+  Rear --> Pose[One authoritative player / entity pose]
+  Commands --> Session[One live session and existing game services]
+  Session --> Ledger[Identity / holders / actual goods / claims / workers]
+  Session --> Jobs[Construction / production / training / transport / HQ issue]
+  Session --> Army[Autonomous army / combat / terrain / orders]
+  Pose --> Space[Explicit ground / height / local / world conversion boundaries]
+  Ledger --> Space
+  Army --> Space
+  Space --> Models[3D presenters by actual entity ID]
+  Jobs --> Events[Committed events and finite work / motion snapshots]
+  Events --> Models
+  Events --> UI
+  Models --> World[Real 3D ground / buildings / people / vehicles / cargo]
+  First --> World
+  Third --> World
+  RTS --> World
+  World --> Picking[Physics-safe picking / collision / overlap observations]
+  Picking --> Commands
+  Hidden[Camera elsewhere] --> Continue[Applicable simulation keeps progressing]
+  Continue --> Session
+  Note[Presentation never creates goods, workers, jobs or elapsed time] -.-> Models
