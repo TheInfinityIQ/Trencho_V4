@@ -1,5 +1,5 @@
 {
-  "status": "Provisional assets; actual remote import and visual review pending. Not final style or full animation readiness.",
+  "status": "Cohesive stylized 3D direction accepted by Dawson; selected assets provisional. Initial idle-pose correction awaits actual rendered proof; walking/carry/full roster are not ready.",
   "creator": "Kenney",
   "license": "CC0 1.0; original bundled License.txt bytes preserved.",
   "archives": {
@@ -80,7 +80,8 @@
     "Furniture GLBs: embedded BIN geometry and PBR wood materials; no external images/buffers. Table source bounds [0,0,-0.447373331] to [0.841487944,0.326733977,0]; box [0,0,-0.212499991] to [0.212499991,0.281,0]. Runtime centers models and normalizes heights to table1m, box0.65m, manager1.8m.",
     "Explicit manager_skin.png override on every real manager mesh; no reliance on renamed FBX texture resolution. Idle bone tracks bind by matching bone names, dropping unrelated imported-root tracks. First person hides the whole third-person visual; third camera uses SpringArm.",
     "Five material bundles are a labeled representative visualization of physical receiving-holder M11, not five extra stocks. Committed state refresh reads actual holder contents; no frame/hover inventory scan.",
-    "No file reaches1MB; binary attributes used, no LFS pointers or large assets. Wider files require LFS before addition."
+    "No file reaches1MB; binary attributes used, no LFS pointers or large assets. Wider files require LFS before addition.",
+    "Original idle FBX contains Root|0.Targeting Pose (0.033333s) and Root|Idle (1.066667s). Bind explicitly selects Idle instead of first non-RESET and applies its first pose immediately with advance(0)."
   ],
   "gaps": [
     "Walking/carry/build/load animation and retargeting are not ready; only original idle clip is included.",
@@ -92,6 +93,8 @@
   "remote_findings": {
     "required_run": "42431861192 passed isolated import and changed-script engine parsing at b739067.",
     "failed_direct_run": "42431874777: actual third-person image had no manager; RTS image had no ground. C inspected all three preserved PNGs and direct.log. The idle file was animation-only; terrain triangles used opposite front-face winding. The demonstration also incorrectly compared post-running funds to initial2500, ignoring normal objective income.",
-    "corrections_pending_remote_proof": "Separate real model and idle FBX; external normalization; clockwise terrain faces; paused preview compares before/after actual funds while preserving initial2500 check. No economy rule changed. Repeat actual images and direct action remain required."
-  }
+    "corrections_pending_remote_proof": "Applied at4e9931c: separate real model and idle FBX, external normalization, clockwise terrain faces and paused preview before/after funds comparison. Second run proved visible manager/ground and direct action; initial neutral pose still needed correction. No economy rule changed.",
+    "second_run": "Required42432650743 and direct42432652286 passed at4e9931c, with actual visible avatar/terrain. Third-person image still showed T-pose. First-non-RESET clip selection corrected to explicit Idle; a repeat actual imported pose record and rendered view remain required."
+  },
+  "style_direction": "Accepted: cohesive stylized 3D with readable detail and lower asset performance cost. No measured performance or final model approval follows from this choice."
 }

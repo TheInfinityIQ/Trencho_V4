@@ -86,7 +86,7 @@
     }
   ],
   "assets": {
-    "art_direction": "User preference question pending: cohesive stylized versus realistic military/industrial. Stylized is a recommendation, not an accepted choice. Camera/spatial contracts can proceed independently.",
+    "art_direction": "Dawson accepted cohesive stylized 3D with readable detail and lower asset performance cost. This accepts the style direction; selected models remain provisional pending actual visual review.",
     "consultation": "Artist consultation received: provisional flat-shaded Kenney family, Furniture/Nature/Building/Car kits and Animated Characters candidates. Exact Protagonists 1.1 and Furniture 2.0 bundled CC0 licenses inspected for 3D-01; selected files and gaps recorded in docs/3d_opening_assets.json. Quaternius redistribution/version terms unresolved; not cleared.",
     "candidates": [
       {"role": "Animated character candidates", "url": "https://kenney.nl/assets/animated-characters-protagonists", "verified": "Creator page lists 3D Animated Characters and CC0; precise rig/action/first-person suitability still needs file inspection."},
@@ -108,7 +108,7 @@
     "designer": "Accepted first/third same rear manager and separate RTS observer; wrote the transferred design-brief section. Initial rear-only access and existing terrain/gameplay semantics; first slice requires coherent actual3Dassets and current-build visual evidence.",
     "ui_ux": "Read-only interaction proposal incorporated as recommendations. Its2.5m proximity shortcut is deferred, not a new rule; its broader first-slice placement/worker activity proposal is staged after the Designer's narrower opening/preview slice.",
     "source_impact": "Developer C read-only handoff confirms holder-relative ledger coordinates, scene-owned player exception, height-probe axis mismatch, planar vehicle/range cost semantics and permitted marker/contact boundary. No production edits or engine runs by consultants.",
-    "artist": "Artist consultation observed. Provisional candidates and archive inspection are recorded in the 3D-01 contract/assets manifest. Final visual direction and wider animation/roster coverage remain unaccepted."
+    "artist": "Artist consultation observed. Provisional candidates and archive inspection are recorded in the 3D-01 contract/assets manifest. Cohesive stylized 3D direction is accepted; individual models and wider animation/roster coverage remain provisional."
   },
   "sources": [
     {"topic": "Character movement", "url": "https://docs.godotengine.org/en/stable/classes/class_characterbody3d.html", "use": "Scripted character collision, walls/slopes and move_and_slide; engineering choice, not gameplay feature authorization."},

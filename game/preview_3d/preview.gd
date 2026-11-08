@@ -201,11 +201,15 @@ func _input(event: InputEvent) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if world == null or _modal_open() or not get_window().has_focus(): return
 	if event is InputEventKey and event.pressed and not event.echo:
+		# A decision modal retained GUI ownership above. Escape handles one layer.
+		if event.physical_keycode == KEY_ESCAPE:
+			if management_open: _set_management(false)
+			elif _base._placing_building: _cancel_preview()
+			else: _set_management(true)
+			get_viewport().set_input_as_handled()
+			return
 		if management_open: return
 		match event.physical_keycode:
-			KEY_ESCAPE:
-				if _base._placing_building: _cancel_preview()
-				else: _set_management(true)
 			KEY_V: _toggle_camera()
 			KEY_R:
 				if not battlefield_open and _base._placing_building:

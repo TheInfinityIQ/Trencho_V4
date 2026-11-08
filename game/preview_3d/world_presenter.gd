@@ -289,13 +289,15 @@ func _bind_idle(visual: Node3D) -> void:
 	var source_scene: PackedScene = load("res://game/preview_3d/assets/manager_idle.fbx")
 	var source: Node3D = source_scene.instantiate()
 	var animator := AnimationPlayer.new()
+	animator.name = "ManagerIdle"
 	animator.root_node = NodePath("..")
 	visual.add_child(animator)
 	var library := AnimationLibrary.new()
 	animator.add_animation_library("idle",library)
 	for player_source in source.find_children("*","AnimationPlayer",true,false):
 		for clip_name in player_source.get_animation_list():
-			if clip_name == "RESET": continue
+			# The source also includes 0.Targeting Pose; it is not neutral idle.
+			if not str(clip_name).to_lower().ends_with("idle"): continue
 			var clip: Animation = player_source.get_animation(clip_name).duplicate(true)
 			for index in range(clip.get_track_count()-1,-1,-1):
 				var path := clip.track_get_path(index)
@@ -307,7 +309,10 @@ func _bind_idle(visual: Node3D) -> void:
 			if clip.get_track_count() == 0: continue
 			clip.loop_mode = Animation.LOOP_LINEAR
 			library.add_animation("standing",clip)
+			animator.set_meta("source_clip",str(clip_name))
 			animator.play("idle/standing")
+			# Apply the neutral pose before the first paused opening is rendered.
+			animator.advance(0.0)
 			source.free()
 			return
 	source.free()
