@@ -1,0 +1,26 @@
+{
+  "status": "PRE-CODE proposal only; Lead population/cue/event review pending. No production code, executable or engine run.",
+  "baseline": "42155540640a60f361eb2d9151cc66ec0d563e41",
+  "branch": "codex/3d-field-t01",
+  "contract": "docs/3d_field_t01.md",
+  "diagram": "docs/diagrams/3d_field_t01.mmd",
+  "fixed_definition": "docs/current_change/field_t01.md",
+  "existing_actor": "start-blue-vehicle-02: normal Farmland empty-rear session still calls BattlefieldStart.apply; Military T01, owner army-blue, controller army-blue-hq, actual Driver and military attachment, PLACE pad at1970,640.",
+  "population": "CURRENT permitted CARRIER IDs intersect keyed actual canonical T01 spec, player owner/control, Military, PLACE-held finite pose, health>0 and uncleared. No registry/coordinate admission or hidden enemy facts.",
+  "fallback": "Other permitted carriers preserve current abstract proxy behavior and legacy geographic rule; contacts use report facts only. Actual Rear Strategic Delivery remains Rear at HQ and during return.",
+  "ownership": "One scene-owned detailed field model per eligible actual ID. Actual Fleet Transfer HQ domain/control receipt, not owner/registry/position, hands presentation ownership over; release previous rear detailed body before field admission.",
+  "proposed_sources": [
+    "game/identity/identity_ledger.gd: keyed field_t01_view and narrow facing-change signal",
+    "game/preview_3d/field_t01_trucks.gd: scene-owned permitted-ID model and event cache",
+    "game/preview_3d/field_t01_cues.gd: cached truck screen cue and shared pick visibility",
+    "game/preview_3d/world_presenter.gd: composition, terrain pose and exclusive detailed-model handoff",
+    "game/preview_3d/preview.gd: existing invalidations, cue and pick integration"
+  ],
+  "art": "Reuse cleared T01Presentation truck_flat.glb and original geometry/normalizer/query-only layer4 mask0 unchanged; field caller adds actual terrain Y.",
+  "cue_proposal": "12x8px cyan rectangle at actual ground anchor, hollow size<=40, amber actual immobilization; existing strict18px/order ties and current projection cache; camera10..6500/-65degrees/Y3400 unchanged.",
+  "event_gap": "Facing path: Records default0, canonical move_entity derives travel heading then emits entity_moved, set_vehicle_facing normalizes finite surviving hull yaw but only logs today. Propose one affected-ID signal only on actual normalized setter change; preserve return/log semantics and avoid a second per-move redraw or polling.",
+  "observation": "ONE existing actual military T01, ONE same-holder endpoint+Vector2(6,8), ONE set_vehicle_facing135 update through new keyed event, actual terrain and same-ID inspection, ONE normal size20 image. Preserve actual crew/cargo/stock/control; no commissioning/receipt setup or old Rear scenario.",
+  "verification": "Source trace only at planning baseline. No production implementation, executable, runtime or visual acceptance.",
+  "new_assets_imports": [],
+  "contact": "Designer-deferred solid contact remains deferred; no physics or gameplay authority change."
+}
