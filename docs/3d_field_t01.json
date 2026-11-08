@@ -1,5 +1,5 @@
 {
-  "status": "PRE-CODE proposal only; Lead population/cue/event review pending. No production code, executable or engine run.",
+  "status": "Source candidate implemented after Lead-approved pre-code6d5a0bd; one Lead-owned remote current-change episode and visual acceptance pending.",
   "baseline": "42155540640a60f361eb2d9151cc66ec0d563e41",
   "branch": "codex/3d-field-t01",
   "contract": "docs/3d_field_t01.md",
@@ -20,7 +20,15 @@
   "cue_proposal": "12x8px cyan rectangle at actual ground anchor, hollow size<=40, amber actual immobilization; existing strict18px/order ties and current projection cache; camera10..6500/-65degrees/Y3400 unchanged.",
   "event_gap": "Facing path: Records default0, canonical move_entity derives travel heading then emits entity_moved, set_vehicle_facing normalizes finite surviving hull yaw but only logs today. Propose one affected-ID signal only on actual normalized setter change; preserve return/log semantics and avoid a second per-move redraw or polling.",
   "observation": "ONE existing actual military T01, ONE same-holder endpoint+Vector2(6,8), ONE set_vehicle_facing135 update through new keyed event, actual terrain and same-ID inspection, ONE normal size20 image. Preserve actual crew/cargo/stock/control; no commissioning/receipt setup or old Rear scenario.",
-  "verification": "Source trace only at planning baseline. No production implementation, executable, runtime or visual acceptance.",
+  "verification": "Syntax parser PASS for six changed production scripts and the ignored exact-scope proposal. No local engine or old scenario. Lead owns one new35s/45s rendered episode, actual UIDs, image/result and role acceptance.",
   "new_assets_imports": [],
-  "contact": "Designer-deferred solid contact remains deferred; no physics or gameplay authority change."
+  "contact": "Designer-deferred solid contact remains deferred; no physics or gameplay authority change.",
+  "pre_code_commit": "6d5a0bd756dd29cb999ed91f679d8773c106b99a",
+  "release_gate": "FieldT01Trucks._refresh calls RearT01Trucks.release_if_ineligible for that SAME supplied ID immediately before body creation; synchronously detach any formerly Rear body after keyed canonical rejection, or deny field admission if still Rear-eligible. No second roster scan or deferred ordering assumption.",
+  "fallback_events": "Detailed removal coalesces existing current Policy refresh; unsupported current permitted carriers retain legacy abstract proxies. Detailed IDs are excluded from timed proxy pose updates.",
+  "new_engine_uid_paths": [
+    "game/preview_3d/field_t01_trucks.gd.uid",
+    "game/preview_3d/field_t01_cues.gd.uid"
+  ],
+  "physics_sync": "Derived canonical terrain transform cached in presenter before synchronized body assignment; cue anchor and equality guard use same derived facts, not potentially old body.global_position. Same episode asserts committed/body/cue point agreement within0.01px after existing awaits."
 }

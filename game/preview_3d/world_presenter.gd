@@ -22,6 +22,7 @@ const RearWorkers = preload("res://game/preview_3d/rear_workers.gd")
 const UtilityTrucks = preload("res://game/preview_3d/utility_trucks.gd")
 const RearT01Trucks = preload("res://game/preview_3d/rear_t01_trucks.gd")
 const FieldPersons = preload("res://game/preview_3d/field_persons.gd")
+const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
@@ -29,6 +30,7 @@ var rear_workers: RearWorkers = RearWorkers.new()
 var utility_trucks: UtilityTrucks = UtilityTrucks.new()
 var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
 var field_persons: FieldPersons = FieldPersons.new()
+var field_t01_trucks: FieldT01Trucks = FieldT01Trucks.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -118,6 +120,10 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	rear_t01_trucks.name = "RearT01Trucks"
 	rear_root.add_child(rear_t01_trucks)
 	rear_t01_trucks.bind(model)
+	_markers_root.add_child(field_t01_trucks)
+	field_t01_trucks.changed.connect(_field_t01_changed)
+	field_t01_trucks.removing.connect(_field_t01_removing)
+	field_t01_trucks.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,rear_t01_trucks.release_if_ineligible)
 
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
@@ -351,15 +357,18 @@ func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
 	var present: Dictionary = {}
 	var people: Dictionary = {}
+	var carriers: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
 		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
 		else: people.erase(row.id)
+		if row.kind == "CARRIER": carriers[row.id] = row
 	field_persons.reconcile(people.values())
+	field_t01_trucks.reconcile(carriers.values())
 	_proxy_rows.clear()
 	for row in marker_rows:
-		if row.kind == "PERSON" or people.has(row.id): continue
+		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id): continue
 		_proxy_rows.append(row)
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
@@ -386,6 +395,17 @@ func _field_person_changed(id: String) -> void:
 
 func _field_person_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
+
+func _field_t01_changed(id: String) -> void:
+	var body: Node3D = field_t01_trucks.bodies[id]
+	if markers.has(id) and markers[id] != body:
+		var old: Node3D = markers[id]
+		old.get_parent().remove_child(old)
+		old.queue_free()
+	markers[id] = body
+
+func _field_t01_removing(id: String, body: Node3D) -> void:
+	if markers.get(id) == body: markers.erase(id)
 
 func show_preview(plan: Dictionary) -> void:
 	var rect: Rect2 = plan.footprint

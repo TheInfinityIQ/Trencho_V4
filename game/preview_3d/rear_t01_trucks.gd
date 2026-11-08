@@ -49,6 +49,13 @@ func _on_entity_moved(id: String, _start: Vector2, _finish: Vector2) -> void:
 	else:
 		T01Presentation.apply_pose(bodies[id],pose)
 
+func release_if_ineligible(id: String) -> bool:
+	# Synchronous same-ID gate: field admission cannot rely on deferred refresh.
+	if not bodies.has(id): return true
+	if not _ledger.rear_t01_pose(id,_model.rear.PLAYER).is_empty(): return false
+	_remove_body(id)
+	return true
+
 func _remove_body(id: String) -> void:
 	var body: AnimatableBody3D = bodies[id]
 	remove_child(body)
