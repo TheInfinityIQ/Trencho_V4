@@ -1,0 +1,20 @@
+{
+  "status": "Frozen pre-code plan only; Lead review/implementation assignment pending. No production PERSON model/cue change yet.",
+  "baseline": "07ee29b407e31e464e08fb3f0a19091314ba1db2",
+  "contract": "docs/3d_field_persons.md",
+  "diagram": "docs/diagrams/3d_field_persons.mmd",
+  "fixed_definition": "docs/current_change/field_persons.md",
+  "population": "Existing permitted friendly-owned non-Occupied PERSON, excluding aboard people. Assignment !=Records.Assignment.DEAD is living, INCLUDING health0 WOUNDED; actual DEAD retains abstract cue. WOUNDED/RECOVERY state is preserved without readiness/corpse claims.",
+  "information_boundary": "CONTACT stays abstract at current reported position/confidence; no true enemy position or enemy human/model. PLACE/CARRIER proxies unchanged.",
+  "readability": "Fixed6px screen cue and existing18px nearest inspection at sizes100..6500, same actual ground anchor; selected actual ID/state only. Crowd overlap remains a limit; no giant world model or clustering.",
+  "events": "ONE current coalesced permitted membership result, affected-ID events and cached reverse holder/ancestor dependencies; parent movement refreshes only dependents. Current root PLACE is immutable through canonical movement API. No time-loop fallback or support claim for private unsignalled mutations.",
+  "assets": "Cleared human model/skin with one sampled neutral bone pose cached per world and transient animator disposed; subsequent field humans static, no retained per-person AnimationPlayer. Existing manager/worker animated defaults preserved.",
+  "new_data_imports": [],
+  "observation": "One actual existing initial-hq-01 and one genuine staged endpoint on terrain; overview/close actual cue selection with exactly two scoped images in the SAME brief process. No new grant/mock marker/earned army move or matrix.",
+  "contact_disposition": "Designer8November explicitly deferred solid contact: current production query-only identity/commission/restore preserved, accepted contact requirements remain deferred; no broad yield/creation refusal.",
+  "limits": [
+    "No implementation or actual image acceptance from this plan.",
+    "No enemy/vehicle/terrain/animation overhaul, new knowledge/control, collision/contact implementation, native/FPS or full population performance claim.",
+    "Aboard/nonliving/absent/replacement distinctions source-reviewed, not runtime cases."
+  ]
+}

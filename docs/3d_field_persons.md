@@ -1,0 +1,49 @@
+# Friendly battlefield PERSON presentation: pre-code contract
+
+Plan only on `codex/3d-field-persons`, based on main `07ee29b407e31e464e08fb3f0a19091314ba1db2`. Lead reviews this frozen contract before implementation assignment. No production or asset change is part of this plan. Solid vehicle contact is deferred by Designer on 8 November: existing query-only identity/commission/restore behavior remains. No broad yield or creation-refusal rule is authorized.
+
+## Exact population and information boundary
+
+Consume the PERSON rows from the ONE existing coalesced `FieldPolicy.markers` result. That policy permits actual friendly-owned people whose rear_place is not Occupied; this includes loose HQ staff/reserve and other friendly non-rear people, not just soldiers attached to a military roster. The existing aboard flag excludes CARRIER-held people from loose presentation. Keep that exact permitted boundary; no new force/qualification/weapon/assignment is granted by displaying a person.
+
+Living eligible people (actual assignment != Records.Assignment.DEAD) get the already cleared human model at true 1.8 m scale. A narrowly keyed detached fact read supplies current actual identity/position/holder/health/assignment for these already permitted IDs and rejects absent/nonfriendly/rear-Occupied/aboard or nonfinite states. Membership remains bounded by FieldPolicy; the new read cannot widen it or expose enemy position.
+
+Important authoritative state facts: injure_person can set health zero with assignment WOUNDED and a bleed deadline; only kill_person sets assignment DEAD. Never infer death from health zero or invent a second life-state policy. FieldPolicy/ledger battlefield_markers do NOT remove these records. Preserve actual DEAD permitted identities as an ABSTRACT nonliving strategic cue, without an upright living human or invented corpse animation. WOUNDED and RECOVERY retain their living identity and actual state; their provisional static posture is not a claim of readiness or physical capability. A small cached amber status cue and selected actual assignment text distinguish those states without a casualty animation or new health rule. Aboard, absent or no-longer-permitted IDs lose the loose model and cue on current membership reconciliation; an affected keyed event may remove an invalid cached entry immediately. Dead/nonliving treatment is an explicit proposed presentation distinction for Lead review, not a rewrite of gameplay death/membership policy.
+
+CONTACT stays an abstract existing proxy at the report's position/age/confidence/uncertainty. Never instantiate this human for CONTACT, look up enemy truth for a cue, or infer an enemy unit model/type. PLACE and CARRIER proxies and their current policies remain unchanged. No battlefield orders, movement authority, combat information, terrain, vehicle or enemy-model overhaul.
+
+## One scene-owned person representation
+
+A small field-person presenter owns one root/anchor per eligible actual ID under the existing field view. Anchor feet are `(planar.x, combat.world.ground(actual_position), planar.y)`; the model is grounded/normalised externally using the existing human asset conventions. Do not put PERSON humans at the old cube's ground+15 m or scale them to the old 10 m cube. Use the existing manager model/skin only as explicitly provisional FRIENDLY PERSON art, with no invented soldier equipment or visual type claim.
+
+Use one sampled provisional neutral pose, no continuous animation or walking/shooting/work behavior. For the first field human in a world, use the existing attach/skin/idle binding, apply the neutral clip at time zero, capture bone pose transforms by bone name, stop with keep_state=true, synchronously dispose the transient animator, and explicitly reapply the detached snapshot to that first skeleton before presentation. Later field humans receive that detached pose through a static factory path with no animator creation. Thus no per-person AnimationPlayer remains, including distant markers. Manager/worker animated defaults stay unchanged. The cached pose is visual only and makes no injury/readiness claim; actual static result must be observed in this new feature. No new asset, import or licence.
+
+World's public ID-to-marker map retains the person's ground anchor for existing inspection/picking. The person presenter alone frees its nodes; world/cue references are removed first, so there is no second loose representation or double free. Non-PERSON branches keep their existing proxy ownership.
+
+## Strategic readability and picking
+
+At RTS orthographic sizes 100..6500, a true-scale human cannot itself stay legible. Add one mouse-ignoring screen-space cue layer using cached projected ground anchors: fixed 6 px radius/diamond and existing 18 px nearest-pick radius, independent of zoom. A selected cue shows `Friendly person`, actual ID and actual assignment/condition (including WOUNDED/RECOVERY without readiness language) in readable screen text. Nonliving permitted entries use an abstract unfilled cue and actual nonliving label; no upright human.
+
+Cue and existing selection use the SAME projected anchor and actual ID, not a fabricated marker or expanded world mesh. Preserve the existing marker_rows order and strict nearest-distance comparison within 18 px: equal-distance ties keep the first currently permitted row. Do not sort/reprioritise by assignment, cue state or new model. Keep current inspection as the only action; do not issue orders or capture new input. Overlay is visible only for the existing RTS world view when management is closed; UI keeps its input precedence. Off-screen/behind/nonfinite anchors do not produce clickable on-screen ghosts.
+
+Camera pan/zoom/view and viewport-resize events reproject only cached anchors, not ledger records. A person movement event reprojects only that ID. Coalesced canvas redraw draws cached primitives; it performs no roster/inspect/holder queries. One cue cannot guarantee individually separated people when several occupy the same pixel; existing nearest-pick ambiguity is an explicit crowd limit, not permission for clustering, extra army controls or rescaling people.
+
+## Membership, movement and replacement
+
+Reuse the existing coalesced state-driven marker membership result; do not call FieldPolicy.markers a second time in the new helper. Bind actual ledger entity_moved and person_position_changed for affected cached IDs and holder/boarding facts, plus current state boundaries for admission/removal. Keyed current pose/facts refresh only the affected person, ground it from existing terrain and invalidate its cached cue. New eligible membership is coalesced, not discovered by a per-frame scan.
+
+The keyed person view also returns detached holder/ancestor IDs while resolving its position. Cache reverse dependencies from those IDs to the already represented people; a canonical parent movement event refreshes only that parent's cached dependents. Reparent/person-fact events replace those links; removal/replacement clears them. Public add_place currently creates an unparented PLACE, and move_entity rejects PLACE, so current loose PLACE-held people have static canonical roots. Do not assume away dependency correctness: any later supported PLACE-rebase API must emit the same canonical pose/dependency event. Private unsignalled record mutation is not claimed supported; there is no fleet/occupant scan or all-person fallback.
+
+Remove PERSON work from refresh_marker_positions' time_advanced loop; no per-frame inspect_entity, full marker roster rebuild, all-person holder-chain walk or all-person pose query for this feature. Existing CONTACT report and other proxy behavior remain separate. Displaying/hidden field view never advances the model or pauses the services.
+
+On model/world replacement, detach old person/cue subscriptions, clear old ID references and bind only the new world/model. Deferred membership/cue work must check current lifetime. Carrier-held people remain absent as loose people; a death changes representation without replacing the identity. These non-exercised transitions are source-reviewed, not a runtime matrix.
+
+## Fixed one-feature observation and delivery limits
+
+See [the committed definition](current_change/field_persons.md). Use actual existing normal-opening HQ person `initial-hq-01`, not a new grant or mock marker. One explicitly staged genuine ledger endpoint, current terrain/ID/anchor, constant-pixel cue and actual inspection, then exactly TWO scoped screenshots in that SAME brief process: overview cue/actual inspection and close true-scale person. Overview-to-close zoom checks belong to that same observation, not a multi-actor scenario matrix. Executable stays ignored; Lead owns its one remote process under unchanged 35-second child / 45-second wrapper and actual new script UIDs if implementation adds helpers.
+
+No local engine, regression suite, old gameplay/asset/image audit, native/FPS/full population performance claim. No contact implementation, new enemy truth, equipment, soldier type, animation, terrain or vehicle parity is inferred. The next deliverable after plan review is separately assigned implementation, not an automatic source change.
+
+## Official drawing and static-pose primitives
+
+[AnimationPlayer.stop(keep_state=true)](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer-method-stop) leaves the visual state; stopping alone still leaves a node, so the selected field path samples/caches bone transforms and disposes the transient animator. [CanvasItem.queue_redraw](https://docs.godotengine.org/en/stable/classes/class_canvasitem.html#class-canvasitem-method-queue-redraw) coalesces redraw requests; the cue control draws cached primitives only. These choices are not a measured performance guarantee.
