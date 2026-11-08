@@ -254,6 +254,32 @@ func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 
 
+func rear_t01_pose(id: String, player: String) -> Dictionary:
+	# Current ownership, not registry retention or geography, admits this hull.
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.design_type != "T01" or hull.vehicle_spec.is_empty() or hull.fleet_domain != "Rear" or hull.owner != player or hull.controller != player or hull.wreck_cleared: return {}
+	var holder: Records.Entity = _entities.get(hull.holder_id)
+	if holder == null or holder.kind != Records.Kind.PLACE: return {}
+	var at: Vector2 = _world_position(id)
+	if not at.is_finite() or not is_finite(hull.facing_degrees): return {}
+	return {"id":id,"owner":hull.owner,"controller":hull.controller,"fleet_domain":hull.fleet_domain,
+		"holder_id":hull.holder_id,"position":at,"facing_degrees":hull.facing_degrees}
+
+
+func rear_t01_views(registry_rows: Array, player: String) -> Array[Dictionary]:
+	# Only supplied registered IDs; Construction utility rows are a separate owner.
+	var rows: Array[Dictionary] = []
+	for registered: Dictionary in registry_rows:
+		if bool(registered.get("utility",false)): continue
+		var id: String = str(registered.get("id",""))
+		var row: Dictionary = rear_t01_pose(id,player)
+		if row.is_empty(): continue
+		var hull: Records.Entity = _entities[id]
+		row.merge({"health":hull.health,"damage_immobilized":hull.damage_immobilized,"state":hull.state})
+		rows.append(row)
+	return rows
+
+
 func construction_truck_pose(id: String, owner: String) -> Dictionary:
 	# Keyed canonical pose only; movement never requests inventory or occupants.
 	var hull: Records.Entity = _entities.get(id)

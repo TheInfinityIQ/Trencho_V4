@@ -1,0 +1,62 @@
+{
+  "source_head": "46cf6d57ae4dddf1e67c5220ab9d993fc9d8e426",
+  "pre_code_commit": "82707f6b4bd9c1751ca2ebe44e8e545009a1c692",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/127",
+  "required_validation": 42506729144,
+  "direct_demonstration": 42506733383,
+  "artifact": 13627950713,
+  "result": "PASS",
+  "scope": "One explicitly staged Rear T01 through actual commissioning/registration APIs, one canonical endpoint and manager/truck image, then the same hull at the actual public HQ receipt boundary; retained registry/owner cannot leave a stale Rear visual.35s rendered child inside45s process. No earned factory/dispatch/transfer, Army attachment, utility re-audit, lifecycle/holder matrix, manager blocking, native/FPS or full vehicle claim.",
+  "child_script_sha256": "47b9251a64221a8da26bf79f916583a276006a872c9472ea939ab3f029892ca7",
+  "observed": {
+    "hull_id": "arranged-rear-t01",
+    "commissioning": "One explicitly staged PLACE, actual reserve_rear_hull, create_heavy_output with canonical T01 specification, and void register_output with observed registry postconditions.",
+    "rear_position_xz": [
+      38,
+      82
+    ],
+    "rear_facing_degrees": 45.0000012522391,
+    "owner_before_after": "army-blue",
+    "controller_before": "army-blue",
+    "controller_after": "army-blue-hq",
+    "domain_before": "Rear",
+    "domain_after": "Military",
+    "receipt_place": "hq-berth",
+    "rear_registry_retained": true,
+    "rear_body_after_receipt": false,
+    "same_hull_id_retained": true,
+    "construction_duplicate_for_hull": false,
+    "manager_staged_xyz": [
+      33.5,
+      0,
+      77
+    ],
+    "new_data_import_inputs": 0,
+    "warning": "Software-driver VSync warning only."
+  },
+  "actual_engine_uids": [
+    {
+      "path": "game/preview_3d/rear_t01_trucks.gd.uid",
+      "sha256": "8ee32f57bb01b2fbe9ef96cb28abed34240680524a3804a0fb70f03897918b06",
+      "origin": "Actual Godot ResourceUID.create_id after successful current-change process; artifact13627950713."
+    },
+    {
+      "path": "game/preview_3d/t01_presentation.gd.uid",
+      "sha256": "dc50b402cc89b955a17811372c3b8490ae4ee053b2aa6dc0083dc29cc6d38ba8",
+      "origin": "Actual Godot ResourceUID.create_id after successful current-change process; artifact13627950713."
+    }
+  ],
+  "capture": {
+    "path": "docs/evidence/rear_t01/rear_t01_reference.png",
+    "sha256": "b20c9482ee72d9c384c97bb373029dbb71bb69ef161db654595799415e6d7902"
+  },
+  "review": "Lead, Designer and UI/UX personally viewed the actual image and accepted the bounded source, scale, appearance and separate readable labels at46cf6d57. The later HQ receipt/eligibility removal is separate engineering evidence, not a screenshot observation. Exact final-head role decisions and merge state belong to PR127; shared-account COMMENT records are not native GitHub APPROVED reviews.",
+  "limits": [
+    "Explicit staged commissioning and HQ placement/receipt, not earned factory work, dispatch travel, delivered transport or Army organisation/rendering.",
+    "One new Rear T01 body/pose/image and actual receipt eligibility removal; no old Utility ray/arm/image re-audit.",
+    "Construction exclusion, alternate holder/Strategic Delivery, damage/wreck/recovery and replacement lifecycle are source-reviewed, not a runtime matrix.",
+    "Same accepted shared art/two query boxes; manager blocking, payload/index, seating, interiors and full animation remain deferred.",
+    "No raw asset, import dependency, workflow or backend ownership rule changes.",
+    "No local engine, old scenario, regression suite, broad matrix, benchmark, native input, FPS or full vehicle parity acceptance."
+  ]
+}
