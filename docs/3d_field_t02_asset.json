@@ -1,5 +1,5 @@
 {
-  "status": "PRE-CODE candidate; Designer approved explicitly PROVISIONAL closed commercial-style transport meaning after thumbnail view. Lead exact provenance/source/fit review and current in-game image acceptance pending; no integration/import or engine.",
+  "status": "Lead approved exact pre-code8517b022 and independently verified source/fit. Approved URI-only derivative integrated at recorded path/hash; actual remote import/current model image/role acceptance pending. No local engine or metadata fabrication.",
   "archive": {
     "existing_path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\car-asset-inspection\\car-kit.zip",
     "bytes": 4814237,
@@ -253,5 +253,12 @@
   "canonical_t02": "Unchanged6.8x2.5 reservation; fittedlength5.4166662693 leaves0.69166686535m per end. No seating/capacity/mass/equipment inference from art.",
   "proposed_data_dependency": "game/preview_3d/assets/car_kit/delivery.glb ONLY, URI-case derivative as recorded. Root owns declaration of CI import dependency and actual .import receipt; no new palette/licence/download/workflow.",
   "appearance_gap_condition": "Troop-specific final art/interior remains deferred, not a blocker or new sourcing task for this approved provisional slice. No visible seating/equipment/capability inferred from the body volume.",
-  "designer_role_condition": "Actual selected T02 cue and current readable type/role inspection must say Personnel transport (T02), not only Military T02 or generic delivery; other types/inspector facts unchanged."
+  "designer_role_condition": "Actual selected T02 cue and current readable type/role inspection must say Personnel transport (T02), not only Military T02 or generic delivery; other types/inspector facts unchanged.",
+  "integrated_resource": {
+    "path": "game/preview_3d/assets/car_kit/delivery.glb",
+    "sha256": "8953ed77f9b3114dfe13eaa2d958adb1bd9f2c4c7463ce7716f3bfdcfe19f2e0",
+    "bytes": 240264,
+    "source_pre_code": "8517b022d616b9564e5f77a2263d2203851bc711",
+    "import_metadata": "Pending actual Root-owned remote delivery.glb.import; no local import"
+  }
 }

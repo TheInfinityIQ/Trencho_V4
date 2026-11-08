@@ -253,6 +253,11 @@
       "manifest": "docs/3d_field_objectives.json",
       "evidence": "docs/evidence/field_objectives.json",
       "status": "Implemented current permitted objective ground anchors and ownership/state labels with retained-view updates and coalesced freshness. One untouched Neutral initial view/selection/image passed. Actual capture/ownership-state transitions, all-nine layout, native/FPS and full battlefield acceptance remain OPEN. Exact-head reviews/merge belong to PR132."
+    },
+    "field_t02_presentation_plan": {
+      "manifest": "docs/3d_field_t02.json",
+      "contract": "docs/3d_field_t02.md",
+      "status": "Approved pre-code8517b022 before bounded source candidate: exact T01/T02 in-place shared presenter/cue/getter, original T01 helper/assets unchanged, one provisional closed delivery exterior with actual Personnel transport (T02) cue/body/inspection. Root owns one new-T02 existing-hull/endpoint/normal image35s/45s process and declared import dependency/actual metadata. No local engine/workflow or old observation rerun; full troop transport/final art/native acceptance and objective transitions remain open."
     }
   },
   "performance_and_verification": {

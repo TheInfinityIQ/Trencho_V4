@@ -214,6 +214,7 @@ func _site_label(id: String) -> String:
 func _unit_label(entity: Dictionary) -> String:
 	if entity.kind == "CARRIER":
 		var label := "APC (T04)" if entity.design_type == "T04" else str(entity.design_type)
+		if entity.design_type == "T02": label = "Personnel transport (T02)"
 		return label+" · "+str(int(str(entity.id).get_slice("-",3))+1) if str(entity.id).begins_with("start-blue-vehicle-") else label
 	if str(entity.id).begins_with("start-blue-squad-"):
 		var number := int(str(entity.id).get_slice("-",3))
