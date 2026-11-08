@@ -99,7 +99,8 @@ func _draw() -> void:
 		var colour: Color = Color("f4cd7c") if status[1] else Color("81d1e6")
 		var cue: Rect2 = Rect2(at-Vector2(6,4),Vector2(12,8))
 		draw_rect(cue,Color.BLACK,false,3.0)
-		draw_rect(cue,colour,not near_view,1.5)
+		if near_view: draw_rect(cue,colour,false,1.5)
+		else: draw_rect(cue,colour)
 		if id != selected_id: continue
 		draw_arc(at,9,0,TAU,24,Color.BLACK,4,true)
 		draw_arc(at,9,0,TAU,24,colour,2,true)

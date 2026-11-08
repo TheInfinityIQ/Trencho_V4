@@ -1,5 +1,5 @@
 {
-  "status": "First direct42519117108 FAILED at b2f4ce49 on literal-ID inspection assertion; required42519112096 PASS. Original failure evidence preserved. Focused verification/draw-warning amendment before source correction; one Lead recheck pending.",
+  "status": "First direct42519117108 remains FAILED at b2f4ce49; original failure evidence preserved. Verification amendment785c93d published before focused cue draw-warning correction. Corrected source/proposal syntax PASS; one Lead-owned focused recheck and visual acceptance pending.",
   "baseline": "42155540640a60f361eb2d9151cc66ec0d563e41",
   "branch": "codex/3d-field-t01",
   "contract": "docs/3d_field_t01.md",
@@ -20,7 +20,7 @@
   "cue_proposal": "12x8px cyan rectangle at actual ground anchor, hollow size<=40, amber actual immobilization; existing strict18px/order ties and current projection cache; camera10..6500/-65degrees/Y3400 unchanged.",
   "event_gap": "Facing path: Records default0, canonical move_entity derives travel heading then emits entity_moved, set_vehicle_facing normalizes finite surviving hull yaw but only logs today. Propose one affected-ID signal only on actual normalized setter change; preserve return/log semantics and avoid a second per-move redraw or polling.",
   "observation": "ONE existing actual military T01, ONE same-holder endpoint+Vector2(6,8), ONE set_vehicle_facing135 update through new keyed event, actual terrain and same-ID inspection, ONE normal size20 image. Preserve actual crew/cargo/stock/control; no commissioning/receipt setup or old Rear scenario.",
-  "verification": "Original six-script syntax/required PASS retained; first direct FAILED and is not relabelled. Amended same-scope Policy-ID/meaningful inspection assertion and filled-width warning fix pending focused source correction and one Lead-owned recheck.",
+  "verification": "Current focused correction: syntax PASS for FieldT01Cues and amended ignored proposal; no local engine. Other five production scripts unchanged from first source. Original required42519112096 PASS/direct42519117108 FAIL preserved; no automatic retry.",
   "new_assets_imports": [],
   "contact": "Designer-deferred solid contact remains deferred; no physics or gameplay authority change.",
   "pre_code_commit": "6d5a0bd756dd29cb999ed91f679d8773c106b99a",
@@ -38,5 +38,11 @@
     "artifact": 13632313631,
     "result": "FAIL",
     "evidence": "docs/evidence/field_t01_first_failure.json"
+  },
+  "focused_correction": {
+    "pre_code_commit": "785c93d08581068279e207b8ae7cc0138a5ad880",
+    "production": "Only FieldT01Cues._draw: explicit hollow-near width1.5 versus far fill without ignored width; same style.",
+    "proposal": "Current FieldPolicy inspection identity plus meaningful existing T01/Crew/Fuel/Health text, retaining actual selected/cue/body identity and projection agreement. Black outline only on ignored scope caption.",
+    "pending": "Lead exact-head/proposal review then ONE same-scope35s/45s focused recheck; first failure is not relabelled."
   }
 }
