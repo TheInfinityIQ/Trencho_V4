@@ -258,6 +258,13 @@
       "manifest": "docs/3d_field_t02.json",
       "contract": "docs/3d_field_t02.md",
       "status": "Approved pre-code8517b022 before bounded source candidate: exact T01/T02 in-place shared presenter/cue/getter, original T01 helper/assets unchanged, one provisional closed delivery exterior with actual Personnel transport (T02) cue/body/inspection. Root owns one new-T02 existing-hull/endpoint/normal image35s/45s process and declared import dependency/actual metadata. No local engine/workflow or old observation rerun; full troop transport/final art/native acceptance and objective transitions remain open."
+    },
+    "field_t02_presentation": {
+      "contract": "docs/3d_field_t02.md",
+      "manifest": "docs/3d_field_t02.json",
+      "asset": "docs/3d_field_t02_asset.json",
+      "evidence": "docs/evidence/field_t02.json",
+      "status": "Implemented bounded shared T01/T02 presentation with provisional closed T02 exterior and actual personnel-transport role. One existing T02 endpoint/normal image/current inspection observation passed; actual import/UID retained. Exact-head review/merge belongs to PR133. No earned transport, seats/crew/fuel, final military art, lifecycle/contact/native/FPS or objective-transition acceptance."
     }
   },
   "performance_and_verification": {

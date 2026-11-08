@@ -1,5 +1,5 @@
 {
-  "status": "Lead approved exact pre-code8517b022 and independently verified source/fit. Approved URI-only derivative integrated at recorded path/hash; actual remote import/current model image/role acceptance pending. No local engine or metadata fabrication.",
+  "status": "Exact declared derivative integrated and imported by pinned Godot; actual scene sidecar retained. One actual normal-camera T02 image/role observation passed; source remains explicitly provisional commercial-style art.",
   "archive": {
     "existing_path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\car-asset-inspection\\car-kit.zip",
     "bytes": 4814237,
@@ -260,5 +260,6 @@
     "bytes": 240264,
     "source_pre_code": "8517b022d616b9564e5f77a2263d2203851bc711",
     "import_metadata": "Pending actual Root-owned remote delivery.glb.import; no local import"
-  }
+  },
+  "runtime_evidence": "docs/evidence/field_t02.json"
 }
