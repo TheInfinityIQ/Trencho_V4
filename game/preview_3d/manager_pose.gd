@@ -1,15 +1,27 @@
 extends RefCounted
-## The rear manager is a player pose, never an available logistics worker.
-var ground_position := Vector2(16, 90)
-var heading := PI/2.0
+## One world-space foot pose; never a free logistics worker or a camera pose.
+const SPAWN_GROUND := Vector2(16,90)
+var _position := Vector3(16,0,90)
+var _heading := PI/2.0
+var heading: float:
+	get: return _heading
+	set(value):
+		if is_finite(value): _heading = value
 
-func reset() -> void:
-	ground_position = Vector2(16, 90)
-	heading = PI/2.0
+func reset(support_height: float) -> bool:
+	return publish_resolved(Vector3(SPAWN_GROUND.x,support_height,SPAWN_GROUND.y),PI/2.0)
 
-func scene_position(ground_height: float = 0.0) -> Vector3:
-	return Vector3(ground_position.x, ground_height, ground_position.y)
+func ground_position() -> Vector2:
+	return Vector2(_position.x,_position.z)
 
-func publish_resolved(at: Vector3, yaw: float) -> void:
-	ground_position = Vector2(at.x, at.z)
-	heading = yaw
+func scene_position() -> Vector3:
+	return _position
+
+func publish_ground(at: Vector2, support_height: float) -> bool:
+	return publish_resolved(Vector3(at.x,support_height,at.y),_heading)
+
+func publish_resolved(at: Vector3, yaw: float) -> bool:
+	if not at.is_finite() or not is_finite(yaw): return false
+	_position = at
+	_heading = yaw
+	return true

@@ -1,0 +1,55 @@
+{
+  "source_head": "ccec4f066be071add5822736ddb6583b8f1bb330",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/121",
+  "required_validation": 42435313395,
+  "direct_demonstration": 42435473221,
+  "artifact": 13599282890,
+  "result": "PASS",
+  "engine": "Godot4.7.2stable official, headless",
+  "scope": "One explicit manager-owner/physics boundary sample using actual GameSession/Farmlandfactory with authored2.5m support and one translatedparent. Not normal-opening/slopedterrain gameplay or fullmigration acceptance.",
+  "direct_script_sha256": "c50bf458258874c75bee74478b768d2baad7103c70f0f2b389535b51d21c3ab9",
+  "observed": [
+    "Replacement initializes actual new-model supportheight before simulation_changed notification.",
+    "Fullposition API retains Y and derives legacygroundX/Z.",
+    "Presentation enable does not reset pose/yaw.",
+    "Actual accepted legacy setter/movement uses current authoritative supportheight.",
+    "Body binds and publishes exact resolved worldposition with nonzeroY under one translatedparent.",
+    "Perspective/presentation change retains same pose; clean engine shutdown after temporary ownership correction."
+  ],
+  "values": {
+    "canonical_world": [
+      16.45265,
+      2.500844,
+      90.26974
+    ],
+    "body_world": [
+      16.45265,
+      2.500844,
+      90.26974
+    ],
+    "body_local": [
+      14.45265,
+      2.500844,
+      87.26974
+    ],
+    "legacy_ground": [
+      16.45265,
+      90.26974
+    ]
+  },
+  "history": {
+    "failed_direct": 42435317683,
+    "artifact": 13599600674,
+    "result": "FAIL despite ownerassertionsPASS",
+    "finding": "Partial demonstration constructed player only, leaving nodes normally attached by World.build unparented; RTS camera RID and ObjectDB leaked at shutdown. Same ignored proposal now attaches those owned nodes, preserving error gate, assertions,45s deadline and production source."
+  },
+  "unverified": [
+    "Finite rejection guards source-reviewed only; no failure injection.",
+    "Native keyboard/mouse/focus and60FPS",
+    "Normal full/repeated gameplay loop",
+    "Full spatial/terrain/holder/worker/vehicle migration",
+    "Committed3Dconstruction and complete model/animation coverage"
+  ],
+  "carry_forward": "Evidence/map/plan metadata only after demonstratedccec4f0; production scripts/assets/import/workflow/defaultentries unchanged. Existing3D01captures retain their original source/scope, no new visual claim.",
+  "static_checks": "751files3405functions0pending before evidence addition;14changed/newpurposes reviewed and current source-linkedUIflow. Existing regressionfixture preserved; no old suite/localengine/broadscenario/benchmark."
+}

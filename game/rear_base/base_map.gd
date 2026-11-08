@@ -52,13 +52,16 @@ var placement_preview: Dictionary = {}
 var _dragging := false
 var placement_active := false
 var input_blocked := false
-## The player is a scene-owned avatar, never a free member of the worker pool.
+## The player pose belongs to the session, never the free worker pool.
 var character_enabled := false
 const ManagerPose = preload("res://game/preview_3d/manager_pose.gd")
 var manager_pose: RefCounted = ManagerPose.new()
 var character_position: Vector2:
-	get: return manager_pose.ground_position
-	set(value): manager_pose.ground_position = value
+	get: return manager_pose.ground_position()
+	set(value):
+		if simulation == null or not value.is_finite(): return
+		var height: float = simulation.rear.combat.world.ground(value)
+		manager_pose.publish_ground(value,height)
 const CHARACTER_SPEED := 5.0
 
 func begin_placement() -> void:
@@ -86,7 +89,6 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func enable_character(enabled: bool) -> void:
 	end_placement()
 	character_enabled = enabled
-	character_position = Vector2(16, 90)
 	queue_redraw()
 
 func _process(delta: float) -> void:
@@ -105,6 +107,7 @@ func move_character(direction: Vector2, seconds: float) -> void:
 	var step := direction.limit_length()*CHARACTER_SPEED*minf(seconds, 0.2)
 	# Resolve axes separately to slide along built footprints without crossing them.
 	for offset in [Vector2(step.x, 0), Vector2(0, step.y)]:
+		if offset.is_zero_approx(): continue
 		var candidate: Vector2 = character_position+offset
 		if not Rect2(0.5, 0.5, 239, 179).has_point(candidate): continue
 		var blocked := false

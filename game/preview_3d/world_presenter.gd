@@ -74,11 +74,11 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
-	player.position = pose.scene_position()
 	player.collision_layer = 2
 	player.collision_mask = 1
 	player.floor_snap_length = 0.3
 	rear_root.add_child(player)
+	player.global_position = pose.scene_position()
 	var collider := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = 0.4
@@ -251,12 +251,12 @@ func clear_preview() -> void:
 	if door != null: door.hide()
 
 func move_manager(direction: Vector2, speed: int, pose: RefCounted) -> bool:
-	var previous := player.position
-	player.velocity = player.basis * Vector3(direction.x,0,direction.y).limit_length()*5.0*float(speed)
+	var previous := player.global_position
+	player.velocity = player.global_basis.orthonormalized() * Vector3(direction.x,0,direction.y).limit_length()*5.0*float(speed)
 	player.velocity.y = -2.0
 	player.move_and_slide()
-	pose.publish_resolved(player.position,player.rotation.y)
-	return not player.position.is_equal_approx(previous)
+	pose.publish_resolved(player.global_position,player.global_rotation.y)
+	return not player.global_position.is_equal_approx(previous)
 
 func refresh_marker_positions() -> void:
 	# Cached permitted membership only. Read each friendly holder chain once;
