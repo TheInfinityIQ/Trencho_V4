@@ -1,0 +1,156 @@
+{
+  "phase": "Implemented a completed Office exterior candidate. Engine import and current-build visual acceptance remain pending. This does not establish earned construction, native input or FPS acceptance.",
+  "baseline": "PR123 merge d44ecb10d28a252d911b0f1c262a84f68e1f8b67",
+  "creator_page": "https://kenney.nl/assets/city-kit-commercial",
+  "archive_version": "City Kit Commercial2.1",
+  "archive_bytes": 4096974,
+  "archive_sha256": "f8b09b081c2bb88bcc126e2dec1cb40fd0dad7e7e591b6c26aaefe96fb35276b",
+  "shortlist_limit": [
+    "Models/GLB format/building-a.glb",
+    "Models/GLB format/building-b.glb",
+    "Models/GLB format/building-d.glb"
+  ],
+  "inspection_scope": "Viewed supplied a/b/d thumbnails; performed actual GLB door/POSITION/NORMAL/UV/palette geometry inspection ONLY on a, then stopped once credible fit selected. No b/d geometry expansion, Industrial scan or new download.",
+  "selected": "Models/GLB format/building-a.glb",
+  "license": "Bundled original CC0; exact Commercial license must remain separate from Industrial license.",
+  "files": [
+    {
+      "path": "game/preview_3d/assets/commercial/building_a.glb",
+      "source_member": "Models/GLB format/building-a.glb",
+      "bytes": 108936,
+      "source_sha256": "5cf220f90ee3f21e7abe38055ca409a48aa8ef1d5ffab6e2deb99e5a5e1ed5e0",
+      "integrated_sha256": "8e8d8fd90157e2f06621f86768f38939a79fde4345dc3ca64ccace37973c7ad7",
+      "derivation": "Exactly one GLB JSON URI byte changed from T to t at offset 1366. Lengths and binary chunks are unchanged."
+    },
+    {
+      "path": "game/preview_3d/assets/commercial/textures/colormap.png",
+      "source_member": "Models/GLB format/Textures/colormap.png",
+      "bytes": 11002,
+      "source_sha256": "191bec3889aaaca5018380038fecc129ebb5c2182879a099b7b538b3fa050b5d",
+      "integrated_sha256": "191bec3889aaaca5018380038fecc129ebb5c2182879a099b7b538b3fa050b5d",
+      "derivation": "None. Exact original bytes."
+    },
+    {
+      "path": "game/preview_3d/assets/commercial/license.txt",
+      "source_member": "License.txt",
+      "bytes": 708,
+      "source_sha256": "c38cee408d022e57e44e49f1cd655c2fe0dc881a07b881276b795215cdc0de69",
+      "integrated_sha256": "c38cee408d022e57e44e49f1cd655c2fe0dc881a07b881276b795215cdc0de69",
+      "derivation": "None. Exact original bytes."
+    }
+  ],
+  "proposed_packaging": {
+    "model": "game/preview_3d/assets/commercial/building_a.glb",
+    "palette": "game/preview_3d/assets/commercial/textures/colormap.png",
+    "license": "game/preview_3d/assets/commercial/license.txt",
+    "new_isolated_import_inputs": 2,
+    "modification": "Applied the one-byte GLB JSON URI case change described below. Only the texture URI metadata differs from the original model.",
+    "absolute_edit_offset": 1366,
+    "expected_derived_sha256": "8e8d8fd90157e2f06621f86768f38939a79fde4345dc3ca64ccace37973c7ad7",
+    "binary_tail_sha256": "0da31f8cf153da7f2e58c3825441025b3dd9f8f6dc99f3ff94a9bae7ccdf86cb",
+    "same_chunk_and_file_lengths": true,
+    "same_binary_geometry": true,
+    "palette_is_not_industrial": "Commercial SHA191bec3889aaaca5018380038fecc129ebb5c2182879a099b7b538b3fa050b5d differs from Industrial950f4f891ebd05a2affac810e6eeb0fea1511bc39039b65a3cbf2e17d17bc6a2; same basename never implies interchangeability."
+  },
+  "geometry": {
+    "source_position_min": [
+      -0.44179391860961914,
+      0.0,
+      -0.4699999690055847
+    ],
+    "source_position_max": [
+      0.4417939782142639,
+      1.2929999828338623,
+      0.4700000286102295
+    ],
+    "source_dimensions": [
+      0.8835878968238831,
+      1.2929999828338623,
+      0.9399999976158142
+    ],
+    "nodes": [
+      {
+        "mesh": 0,
+        "name": "building-a"
+      }
+    ],
+    "meshes": 1,
+    "primitives": 1,
+    "animations": 0,
+    "images": [
+      {
+        "uri": "Textures/colormap.png",
+        "name": "colormap"
+      }
+    ],
+    "source_front": "-Z ground-level framed double glazed entrance/door-bank geometry; not roof-size inference",
+    "source_frame_x": [
+      0.10179394483566284,
+      0.341793954372406
+    ],
+    "source_frame_y": [
+      0,
+      0.27
+    ],
+    "source_front_frame_z": -0.37,
+    "source_leaf_plane_z": -0.35,
+    "source_glass_y": [
+      0.02,
+      0.25
+    ],
+    "top_frame_underside_source_y": 0.25,
+    "door_interpretation_limit": "Ground-level framed leaf/panel geometry with full frame height and inset glazing, source-fit credible. Does not prove an enterable aperture or claim individual glass pane equals door opening; actual model+manager visual decides readability."
+  },
+  "fit": {
+    "catalog_normal": [
+      10,
+      8
+    ],
+    "catalog_quarter_turn": [
+      8,
+      10
+    ],
+    "inset_m": 0.4,
+    "uniform_factor": 7.6595744875126055,
+    "formula": "7.2/max(source_horizontal_x,source_horizontal_z), same value for both reservations",
+    "yaw_degrees": 90,
+    "front_fraction": 0.2489848824333545,
+    "front_inset_source_units": 0.1,
+    "fitted_dimensions_xyz": [
+      7.2,
+      9.903829680868489,
+      6.767907311987135
+    ],
+    "fitted_frame_height_m": 2.068085111628404,
+    "top_frame_underside_height_m": 1.9148936218781514,
+    "fitted_frame_width_m": 1.83829795005042,
+    "manager_height_m": 1.8,
+    "manager_capsule_diameter_m": 0.8,
+    "entrance_offset_xyz": [
+      -2.8340425512487393,
+      0,
+      -1.6988470495986105
+    ],
+    "outside_service_point_local_x": {
+      "normal": -6,
+      "quarter_turn": -5
+    },
+    "service_point_local_z": 0,
+    "normal_edge_clearances_xz": [
+      1.4,
+      0.6160463440064325
+    ],
+    "quarter_edge_clearances_xz": [
+      0.3999999999999999,
+      1.6160463440064325
+    ],
+    "label_anchor_xyz": [
+      -4.6,
+      3.2,
+      -1.6988470495986105
+    ]
+  },
+  "acceptance": "After bounded assignment: actual Complete construction only, unchanged uniform fit/footprint/service point/body/custody; actual current-build Office+full actual manager reference shows believable west entrance/cue/label. Lead owns isolated import, actual sidecars, exact-head review and one current-change observation; no local engine/old flow/matrix/native/FPS claim.",
+  "next_owner": "Lead adds the two Commercial inputs to both isolated importer lists, retains actual sidecars, runs the required changed-script check and the single Office-only arranged observation, then requests exact-head reviews. No local engine run.",
+  "pre_code_commit": "667607e"
+}

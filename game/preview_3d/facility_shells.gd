@@ -2,6 +2,7 @@ extends RefCounted
 ## Scene-owned completed exterior adapter. Never writes ConstructionService rows.
 const ROOT: String = "res://game/preview_3d/assets/industrial/"
 const MODELS: Dictionary = {
+	"construction":{"file":"building_a.glb","path":"res://game/preview_3d/assets/commercial/building_a.glb","yaw_degrees":90.0,"front_fraction":0.248984882,"front_inset":0.10},
 	"workshop":{"file":"building_h.glb","yaw_degrees":90.0,"front_fraction":0.80057,"front_inset":0.45},
 	"receiving":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
 	"dispatch":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
@@ -17,8 +18,6 @@ var _shapes: Dictionary = {}
 
 func build(row: Dictionary) -> Dictionary:
 	if row.state != "Complete": return {"ok":false,"reason":"unfinished"}
-	# Rejected source door is only0.933m high at the permitted uniform fit.
-	if row.kind == "construction": return {"ok":false,"reason":"Office exterior pending"}
 	if not MODELS.has(row.kind): return {"ok":false,"reason":"unmapped exterior"}
 	var center: Vector2 = row.center
 	var size: Vector2 = row.size
@@ -28,11 +27,12 @@ func build(row: Dictionary) -> Dictionary:
 		return {"ok":false,"reason":"exterior requires west service approach"}
 	var spec: Dictionary = MODELS[row.kind]
 	var file: String = spec.file
-	if not _scenes.has(file):
-		var scene: PackedScene = load(ROOT+file) as PackedScene
+	var path: String = str(spec.get("path",ROOT+file))
+	if not _scenes.has(path):
+		var scene: PackedScene = load(path) as PackedScene
 		if scene == null: return {"ok":false,"reason":"exterior import unavailable"}
-		_scenes[file] = scene
-	var packed: PackedScene = _scenes[file]
+		_scenes[path] = scene
+	var packed: PackedScene = _scenes[path]
 	var shell: Node3D = Node3D.new()
 	shell.name = "CompletedExterior"
 	var normalizer: Node3D = Node3D.new()
@@ -63,6 +63,7 @@ func build(row: Dictionary) -> Dictionary:
 	_add_occluders(instance)
 	shell.set_meta("site_id",str(row.id))
 	shell.set_meta("model",file)
+	shell.set_meta("model_path",path)
 	shell.set_meta("fit_scale",factor)
 	shell.set_meta("bounds",fitted)
 	shell.set_meta("entrance",entrance)

@@ -201,5 +201,9 @@
       }
     }
   ],
-  "remote_evidence": "docs/evidence/facility_exteriors.json"
+  "remote_evidence": "docs/evidence/facility_exteriors.json",
+  "office_replacement_candidate": {
+    "manifest": "docs/3d_office_assets.json",
+    "status": "A separate Commercial model now presents completed Offices. Current-build visual acceptance is pending. The PR #123 Industrial rejection and evidence remain historical."
+  }
 }
