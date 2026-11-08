@@ -1,0 +1,21 @@
+flowchart TD
+    Opening[Normal empty rear / FarmlandSession] --> Initial[BattlefieldStart: existing start-blue-vehicle-02 / Military T01]
+    Initial --> Policy[Current permitted CARRIER rows / original order]
+    Policy --> Keyed[Supplied ID only: canonical spec / owner and controller / Military / PLACE / live / finite]
+    Keyed --> Field[Scene-owned field T01 cache / one detailed body per actual ID]
+    Keyed -->|ineligible| Abstract[Existing abstract CARRIER fallback]
+    Art[Cleared T01Presentation factory / unchanged art and query boxes] --> Field
+    Ground[Canonical XZ and heading / current terrain Y] --> Field
+    Move[entity_moved / keyed parent dependents] --> Ground
+    Facing[Proposed narrow vehicle_facing_changed / actual setter] --> Ground
+    State[Current session state / damage event] --> Keyed
+    Rear[Actual Rear presenter / Rear Strategic Delivery stays Rear] --> Handoff[Only actual Fleet Transfer HQ receipt changes domain and controller]
+    Handoff --> Release[Release rear detailed body before field admission / same ID]
+    Release --> Field
+    Field --> Anchors[Cached actual ground anchors and condition]
+    Anchors --> Cues[Fixed truck rectangle / hollow near40 / same18px pick]
+    Camera[Existing pan zoom viewport view invalidations] --> Cues
+    Reports[CONTACT report coordinates and confidence only] --> Abstract
+    Exit[Remove or replace world] --> Disconnect[Disconnect old bindings / release references before free]
+    Disconnect --> Field
+    Deferred[Solid vehicle contact deferred / no physics authority change] -.-> Field

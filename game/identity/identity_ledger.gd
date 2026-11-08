@@ -2,12 +2,14 @@ extends RefCounted
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 signal person_position_changed(person_id: String)
 signal vehicle_damaged(vehicle_id: String)
+signal vehicle_facing_changed(vehicle_id: String)
 signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
 var route_hazard: Callable
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
 const Records = preload("res://game/identity/identity_records.gd")
+const VehicleSpecs = preload("res://game/production/vehicle_specs.gd")
 const BLAST_TOP_ARMOUR := {"T01":0,"T02":0,"T03":0,"T04":10,"T05":25}
 
 var _entities: Dictionary[String, Records.Entity] = {}
@@ -252,6 +254,30 @@ func entities_at_any(holders: Array, kinds: Array, include_mass: bool = true) ->
 
 func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
+
+
+func field_t01_view(id: String, player: String) -> Dictionary:
+	# Supplied permitted ID only; neither controller nor registry alone admits art.
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.design_type != "T01" or hull.vehicle_spec != VehicleSpecs.TYPES.T01 or hull.owner != player or hull.controller not in [player,player+"-hq"] or hull.fleet_domain != "Military" or hull.health <= 0 or hull.wreck_cleared: return {}
+	var holder: Records.Entity = _entities.get(hull.holder_id)
+	if holder == null or holder.kind != Records.Kind.PLACE: return {}
+	var at: Vector2 = hull.position
+	var ancestors: Array[String] = []
+	var seen: Dictionary = {id:true}
+	var cursor: String = hull.holder_id
+	while not cursor.is_empty():
+		if seen.has(cursor): return {}
+		var parent: Records.Entity = _entities.get(cursor)
+		if parent == null: return {}
+		seen[cursor] = true
+		ancestors.append(cursor)
+		at += parent.position
+		cursor = parent.holder_id
+	if not at.is_finite() or not is_finite(hull.facing_degrees): return {}
+	return {"id":id,"owner":hull.owner,"controller":hull.controller,"fleet_domain":hull.fleet_domain,
+		"holder_id":hull.holder_id,"ancestors":ancestors,"position":at,"facing_degrees":hull.facing_degrees,
+		"health":hull.health,"damage_immobilized":hull.damage_immobilized,"state":hull.state}
 
 
 func rear_t01_pose(id: String, player: String) -> Dictionary:
@@ -1490,8 +1516,11 @@ func set_vehicle_facing(id: String, degrees: float) -> Dictionary:
 	var hull: Records.Entity = _entities.get(id)
 	if hull == null or hull.kind != Records.Kind.CARRIER or hull.vehicle_spec.is_empty() or hull.health <= 0 or not is_finite(degrees):
 		return _reject("INVALID_VEHICLE_FACING","An actual surviving hull and finite heading are required.")
-	hull.facing_degrees = fposmod(degrees,360.0)
+	var next_facing: float = fposmod(degrees,360.0)
+	var changed: bool = hull.facing_degrees != next_facing
+	hull.facing_degrees = next_facing
 	_event("Actual hull facing changed",id)
+	if changed: vehicle_facing_changed.emit(id)
 	return _ok("Hull facing recorded for directional strikes.",id)
 
 
