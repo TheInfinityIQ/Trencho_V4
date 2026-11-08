@@ -1,0 +1,34 @@
+{
+  "status": "Implemented; declared27-input import and one actual new-T02 scene/pose/role image observation passed at1364cbd5. Lead inspected current image; exact final-head reviews/merge belong to PR133. Provisional commercial exterior only.",
+  "baseline": "0f97c920dacaf2d5c7c47810cde0d57087134a38",
+  "branch": "codex/3d-field-t02",
+  "contract": "docs/3d_field_t02.md",
+  "diagram": "docs/diagrams/3d_field_t02.mmd",
+  "fixed_definition": "docs/current_change/field_t02.md",
+  "asset_receipt": "docs/3d_field_t02_asset.json",
+  "actual_population": "Current permitted CARRIER IDs intersect exact player-owned/controlled Military canonical T02, positive health/uncleared PLACE finite pose. Normal starting IDs00/01 at1970,608 and2030,608 with actual initial Driver/company attachment; no passenger/readiness assumption.",
+  "canonical_t02": "3200kg/health400/6.8x2.5m/16passenger seats/payload2000/tank40/Driver only; unchanged backend.",
+  "selected_candidate": "Existing verified CarKit delivery.glb closed rigid-box commercial exterior, strictly provisional and explicitly not a military troop-truck/seating claim.",
+  "shared_composition": "Extend existing keyed getter and field_t01_trucks.gd/field_t01_cues.gd in place to finite T01/T02; preserve paths/UIDs/current cache identities, no aliases/naming refactor or cloned whole presenter/cue. Two-case factory and PackedScene cache, one tiny T02 art/box factory; original T01 factory/constants/assets byte-unchanged.",
+  "proposed_production_boundary": [
+    "game/identity/identity_ledger.gd",
+    "game/battlefield/battlefield_view.gd::_unit_label T02-only readable role format",
+    "game/preview_3d/field_t01_trucks.gd",
+    "game/preview_3d/field_t01_cues.gd",
+    "game/preview_3d/t02_presentation.gd",
+    "game/preview_3d/assets/car_kit/delivery.glb"
+  ],
+  "new_data_dependency": "game/preview_3d/assets/car_kit/delivery.glb only; exact one-byte texture URI case fix, reuse existing palette/licence. Root owns CI dependency/import records.",
+  "observation": "ONE existing start-blue-vehicle-00, one same-holder endpoint+(6,8), current new-type model/derived pose/shared cue/Policy identity and readable Personnel transport (T02)/Crew/Fuel/Health inspection, ONE normal size20 image35s/45s; no setter replay, crew/route/orders or old feature observation.",
+  "preservation": "Source-reviewed T01/person/objective behavior/resource identities and evidence; no old observation reruns. Actual objective transition runtime acceptance remains OPEN.",
+  "verification": "Frozen source/proposal/asset hashes verified; required42526154097/direct42526157765 PASS, actual scene import/factory UID retained. Scoped normal Preview loaded the shared implementation; no old replay/local engine or full transport/FPS claim.",
+  "role_condition": "Actual design_typeT02 selected cue AND readable inspection identify Personnel transport (T02); preserve existing numeric suffix, other type labels and all inspector facts. T02 body role label matches; no role/capability inferred from source art.",
+  "pre_code_commit": "8517b022d616b9564e5f77a2263d2203851bc711",
+  "expected_actual_metadata": [
+    "game/preview_3d/assets/car_kit/delivery.glb.import",
+    "game/preview_3d/t02_presentation.gd.uid"
+  ],
+  "source_verification": "Five changed production scripts and single ignored new-type proposal syntax PASS; actual purpose/map/HTML/full base-to-final checks in frozen handoff. No C workflow edit or fabricated metadata/engine run; original feature observations not rerun.",
+  "factory_type_invariant": "Canonical CARRIER design_type is creation-only until removal/world replacement in current identity/creation/registration paths: free-ID carrier/initial/heavy creation, _fill_entity initialization; later direct type writes are PERSON training only. VehicleActivity registration reads/asserts type/spec and HeavyProduction creates fresh output IDs. No public in-place T01/T02 retype/configure API; no speculative conversion handling or new runtime case.",
+  "evidence": "docs/evidence/field_t02.json"
+}

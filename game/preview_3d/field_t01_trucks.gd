@@ -1,8 +1,9 @@
 extends Node3D
-## One detailed military T01 per supplied permitted ID; no transport authority.
+## Historical resource name; one shared military T01/T02 owner, no fleet authority.
 signal changed(id: String)
 signal removing(id: String, body: Node3D)
 const T01Presentation = preload("res://game/preview_3d/t01_presentation.gd")
+const T02Presentation = preload("res://game/preview_3d/t02_presentation.gd")
 var bodies: Dictionary[String,AnimatableBody3D] = {}
 var views: Dictionary[String,Dictionary] = {}
 var poses: Dictionary[String,Transform3D] = {}
@@ -10,7 +11,7 @@ var _ledger: RefCounted
 var _owner: String = ""
 var _ground: Callable
 var _release_rear: Callable
-var _scene: PackedScene
+var _scenes: Dictionary[String,PackedScene] = {}
 var _ancestors: Dictionary = {}
 var _dependents: Dictionary = {}
 
@@ -50,15 +51,27 @@ func _refresh(id: String) -> void:
 	if views.has(id) and views[id] == row and poses[id].is_equal_approx(pose): return
 	if not bodies.has(id):
 		if not bool(_release_rear.call(id)): return
-		if _scene == null: _scene = load(T01Presentation.MODEL_PATH) as PackedScene
-		bodies[id] = T01Presentation.create_body(self,id,_scene)
+		var body: AnimatableBody3D = _create_body(id,str(row.design_type))
+		if body == null: return
+		bodies[id] = body
 	_replace_dependencies(id,row.ancestors)
 	views[id] = row
 	poses[id] = pose # Derived committed presentation pose; body sync may lag a step.
 	bodies[id].transform = pose
 	var label: Label3D = bodies[id].get_node("TruckState") as Label3D
-	label.text = "%s\nMilitary T01\n%s" % [id,"Immobilized" if row.damage_immobilized else str(row.state)]
+	var role: String = "Personnel transport (T02)" if row.design_type == "T02" else "Military T01"
+	label.text = "%s\n%s\n%s" % [id,role,"Immobilized" if row.damage_immobilized else str(row.state)]
 	changed.emit(id)
+
+func _create_body(id: String, type: String) -> AnimatableBody3D:
+	match type:
+		"T01":
+			if not _scenes.has(type): _scenes[type] = load(T01Presentation.MODEL_PATH) as PackedScene
+			return T01Presentation.create_body(self,id,_scenes[type])
+		"T02":
+			if not _scenes.has(type): _scenes[type] = load(T02Presentation.MODEL_PATH) as PackedScene
+			return T02Presentation.create_body(self,id,_scenes[type])
+	return null
 
 func _replace_dependencies(id: String, parents: Array) -> void:
 	if _ancestors.get(id,[]) == parents: return
@@ -108,5 +121,6 @@ func _exit_tree() -> void:
 	poses.clear()
 	_ancestors.clear()
 	_dependents.clear()
+	_scenes.clear()
 	_ground = Callable()
 	_release_rear = Callable()

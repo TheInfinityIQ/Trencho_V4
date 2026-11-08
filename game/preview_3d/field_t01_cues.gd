@@ -1,9 +1,10 @@
 extends Control
-## Bounded truck cue: cached permitted anchors drive both drawing and picking.
+## Historical resource name; one cached T01/T02 cue and current picking boundary.
 const Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const NEAR_SIZE: float = 40.0
 var points: Dictionary[String,Vector2] = {}
 var selected_id: String = ""
+var labels: Dictionary = {}
 var near_view: bool = false
 var _presenter: Trucks
 var _camera: Camera3D
@@ -26,6 +27,7 @@ func bind(presenter: Trucks, camera: Camera3D) -> void:
 	points.clear()
 	_world_points.clear()
 	_status.clear()
+	labels.clear()
 	_presenter = presenter
 	_camera = camera
 	near_view = is_instance_valid(_camera) and _camera.size <= NEAR_SIZE
@@ -47,10 +49,14 @@ func _on_changed(id: String) -> void:
 	# AnimatableBody3D may expose its previous transform until physics sync.
 	var at: Vector3 = _presenter.to_global(_presenter.poses[id].origin)
 	var row: Dictionary = _presenter.views[id]
-	var status: Array = [str(row.state),bool(row.damage_immobilized)]
+	var status: Array = [str(row.state),bool(row.damage_immobilized),str(row.design_type)]
 	if _world_points.has(id) and _world_points[id].is_equal_approx(at) and _status[id] == status: return
 	_world_points[id] = at
 	_status[id] = status
+	var condition: String = "Immobilized" if status[1] else str(status[0])
+	var lines: Array[String] = ["Military T01 · "+id,condition]
+	if status[2] == "T02": lines = ["Personnel transport (T02)",id+" · "+condition]
+	labels[id] = lines
 	_project(id)
 	queue_redraw()
 
@@ -58,6 +64,7 @@ func _on_removing(id: String, _body: Node3D) -> void:
 	points.erase(id)
 	_world_points.erase(id)
 	_status.erase(id)
+	labels.erase(id)
 	queue_redraw()
 
 func request_projection() -> void:
@@ -104,7 +111,7 @@ func _draw() -> void:
 		if id != selected_id: continue
 		draw_arc(at,9,0,TAU,24,Color.BLACK,4,true)
 		draw_arc(at,9,0,TAU,24,colour,2,true)
-		var lines: Array[String] = ["Military T01 · "+id,"Immobilized" if status[1] else str(status[0])]
+		var lines: Array[String] = labels[id]
 		for index: int in lines.size():
 			var text_at: Vector2 = at+Vector2(13,-12+index*20)
 			draw_string(font,text_at+Vector2.ONE,lines[index],HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color.BLACK)

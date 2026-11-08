@@ -257,9 +257,9 @@ func entity_kind(id: String) -> String:
 
 
 func field_t01_view(id: String, player: String) -> Dictionary:
-	# Supplied permitted ID only; neither controller nor registry alone admits art.
+	# Historical name; exactly canonical T01/T02 supplied permitted IDs, not a fleet.
 	var hull: Records.Entity = _entities.get(id)
-	if hull == null or hull.kind != Records.Kind.CARRIER or hull.design_type != "T01" or hull.vehicle_spec != VehicleSpecs.TYPES.T01 or hull.owner != player or hull.controller not in [player,player+"-hq"] or hull.fleet_domain != "Military" or hull.health <= 0 or hull.wreck_cleared: return {}
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.design_type not in ["T01","T02"] or hull.vehicle_spec != VehicleSpecs.TYPES[hull.design_type] or hull.owner != player or hull.controller not in [player,player+"-hq"] or hull.fleet_domain != "Military" or hull.health <= 0 or hull.wreck_cleared: return {}
 	var holder: Records.Entity = _entities.get(hull.holder_id)
 	if holder == null or holder.kind != Records.Kind.PLACE: return {}
 	var at: Vector2 = hull.position
@@ -275,7 +275,7 @@ func field_t01_view(id: String, player: String) -> Dictionary:
 		at += parent.position
 		cursor = parent.holder_id
 	if not at.is_finite() or not is_finite(hull.facing_degrees): return {}
-	return {"id":id,"owner":hull.owner,"controller":hull.controller,"fleet_domain":hull.fleet_domain,
+	return {"id":id,"design_type":hull.design_type,"owner":hull.owner,"controller":hull.controller,"fleet_domain":hull.fleet_domain,
 		"holder_id":hull.holder_id,"ancestors":ancestors,"position":at,"facing_degrees":hull.facing_degrees,
 		"health":hull.health,"damage_immobilized":hull.damage_immobilized,"state":hull.state}
 
