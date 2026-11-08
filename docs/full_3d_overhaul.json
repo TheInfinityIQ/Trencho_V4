@@ -192,14 +192,15 @@
         "depot",
         "materials"
       ],
-      "office": "Provisional; selected source has incompatible doorway scale.",
+      "office": "Historical PR123 fallback; replaced by the separately recorded Commercial Office increment below. The original rejection and receipt remain unchanged.",
       "scope": "Complete mapped rows only; stagedasset evidence, not ordinaryprogression/fullroster/FPS."
     },
     "office_replacement_candidate": {
       "manifest": "docs/3d_office_assets.json",
       "contract": "docs/3d_office_exterior.md",
       "source": "Commercial 2.1, building-a",
-      "status": "Implemented a source-fit candidate for completed Offices. Actual import, manager reference, roof observation and visual approval remain pending. The earlier PR #123 receipt is unchanged."
+      "status": "Implemented, imported and source/bounded-visual accepted: one arranged quarter-turn Office, actual manager, palette, roof and SpringArm. Final-head decisions and merge state are in PR124. No earned completion, native or FPS claim.",
+      "evidence": "docs/evidence/office_exterior.json"
     }
   },
   "performance_and_verification": {

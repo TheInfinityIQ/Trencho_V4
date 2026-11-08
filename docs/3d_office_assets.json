@@ -1,5 +1,5 @@
 {
-  "phase": "Implemented a completed Office exterior candidate. Engine import and current-build visual acceptance remain pending. This does not establish earned construction, native input or FPS acceptance.",
+  "phase": "Actual isolated import and bounded arranged Office reference passed. Source and human-scale visual/readability accepted by Lead, Designer and UI/UX at afddbe84; final-head role records and integration state belong to PR124. No earned construction, native or FPS acceptance.",
   "baseline": "PR123 merge d44ecb10d28a252d911b0f1c262a84f68e1f8b67",
   "creator_page": "https://kenney.nl/assets/city-kit-commercial",
   "archive_version": "City Kit Commercial2.1",
@@ -152,5 +152,6 @@
   },
   "acceptance": "After bounded assignment: actual Complete construction only, unchanged uniform fit/footprint/service point/body/custody; actual current-build Office+full actual manager reference shows believable west entrance/cue/label. Lead owns isolated import, actual sidecars, exact-head review and one current-change observation; no local engine/old flow/matrix/native/FPS claim.",
   "next_owner": "Lead adds the two Commercial inputs to both isolated importer lists, retains actual sidecars, runs the required changed-script check and the single Office-only arranged observation, then requests exact-head reviews. No local engine run.",
-  "pre_code_commit": "667607e"
+  "pre_code_commit": "667607e",
+  "evidence": "docs/evidence/office_exterior.json"
 }

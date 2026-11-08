@@ -1,0 +1,70 @@
+{
+  "source_head": "afddbe84f36dc1c59733283244d80160ce1ea7f1",
+  "implementation_head": "185523fd5816e9ab64fb561a9110e74aa338e021",
+  "pre_code_commit": "667607e",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/124",
+  "required_validation": 42448230222,
+  "direct_demonstration": 42448201182,
+  "artifact": 13604028071,
+  "result": "PASS",
+  "scope": "One arranged tighter-quarter-turn Complete Office exterior and actual manager reference; actual mesh roof ray/SpringArm;35s software-rendered child inside45s process. No earned construction, old flow, native/FPS or full-loop acceptance.",
+  "child_script_sha256": "3b674a8e63f86b4210fb1b8453dc7d1138ae9cdd0c912938bbd41dabc3022c2e",
+  "observed": {
+    "kind": "construction",
+    "model": "res://game/preview_3d/assets/commercial/building_a.glb",
+    "palette": "res://game/preview_3d/assets/commercial/textures/colormap.png",
+    "reservation_xz_m": [
+      8,
+      10
+    ],
+    "fitted_bounds_xyz_m": [
+      7.2,
+      9.903829,
+      6.767907
+    ],
+    "uniform_factor": 7.65957400182517,
+    "outside_approach_xz": [
+      55,
+      90
+    ],
+    "entrance_local_xyz": [
+      -2.834043,
+      0,
+      -1.698847
+    ],
+    "manager_staged_xyz": [
+      54.5,
+      0,
+      91.5
+    ],
+    "manager_height_m": 1.8,
+    "actual_roof_hit_y": 9.903829,
+    "roof_layer": 4,
+    "real_spring_arm_hit_length_m": 1.998046875,
+    "warnings": "Software-driver VSync warning only; no script/import errors."
+  },
+  "capture": {
+    "path": "docs/evidence/office_exterior/office_entrance_reference.png",
+    "sha256": "d5e31625beddffb67e538f73af62fe827c23b54fe8c3bb9fe3cafa17ae9eac1c"
+  },
+  "actual_sidecars": [
+    {
+      "path": "game/preview_3d/assets/commercial/building_a.glb.import",
+      "sha256": "a39f4a3f44588fcc33c6ea45ceb4b4bc2abbf3bcde249d181c8767abfdd055f8",
+      "origin": "Actual isolated Godot importer artifact13604028071; no local engine or fabricated sidecar."
+    },
+    {
+      "path": "game/preview_3d/assets/commercial/textures/colormap.png.import",
+      "sha256": "2ef1c5d1c0d5a02af3250a5765ae6c010fb6bde8c0753cff4e248f9d6130bc78",
+      "origin": "Actual isolated Godot importer artifact13604028071; no local engine or fabricated sidecar."
+    }
+  ],
+  "review": "Lead, Designer and UI/UX personally viewed the actual image and accepted the bounded source, human scale, facade, cue and front label at afddbe84. Exact final-head role decisions and merge state are recorded in PR124; shared-account COMMENT records are not native GitHub APPROVED reviews.",
+  "limits": [
+    "One staged tighter-quarter-turn Complete Office, not earned construction or movement.",
+    "Normal 10x8 fit is supported by the same measured uniform scale, not a second rendered scenario.",
+    "The 9.9m exterior grants no extra capacity, floors, interiors or combat height.",
+    "No local engine, regression suite, old flow, native input, full roster, full loop or FPS acceptance.",
+    "Required and direct jobs report changed_scripts=[] for the CI-only parent delta; the direct process actually loads and instantiates the changed adapter."
+  ]
+}
