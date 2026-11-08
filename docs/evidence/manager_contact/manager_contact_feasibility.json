@@ -1,0 +1,40 @@
+{
+  "contact_layer": 8,
+  "final": "(4.346126, 0.000127, 0.0)",
+  "ground_y_range": [
+    0.0,
+    0.000127227860502899
+  ],
+  "initial": "(2.770603, 0.0, 0.0)",
+  "manager_mask": 9,
+  "query_layer_unchanged": 4,
+  "result": "PASS",
+  "samples": [
+    {
+      "manager": "(2.871524, 0.00012, 0.0)",
+      "platform_velocity": "(0.0, 0.0, 0.0)",
+      "proxy": "(0.0, 0.0, 0.0)",
+      "tick": 9
+    },
+    {
+      "manager": "(3.346126, 0.000127, 0.0)",
+      "platform_velocity": "(0.0, 0.0, 0.0)",
+      "proxy": "(0.475, 0.0, 0.0)",
+      "tick": 28
+    },
+    {
+      "manager": "(3.846126, 0.000127, 0.0)",
+      "platform_velocity": "(0.0, 0.0, 0.0)",
+      "proxy": "(0.975, 0.0, 0.0)",
+      "tick": 48
+    },
+    {
+      "manager": "(4.346126, 0.000127, 0.0)",
+      "platform_velocity": "(0.0, 0.0, 0.0)",
+      "proxy": "(1.475, 0.0, 0.0)",
+      "tick": 68
+    }
+  ],
+  "scope": "ONE isolated proposed controller episode: paused initial overlap, resume and zero-input horizontal moving-side response. Not production/UI/route/pinning/full-parity acceptance.",
+  "ticks": 68
+}
