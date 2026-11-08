@@ -1,6 +1,6 @@
 # Rear Workshop interaction — bounded pre-code contract
 
-Baseline `865957e82cebf6407249ca3fae5ef935eac89f87`, branch `codex/3d-workshop-interaction`. This contract is committed before implementation. [Diagram](diagrams/3d_workshop_interaction.mmd), [fixed observation](current_change/workshop_interaction.md), [status](3d_workshop_interaction.json). Lead owns publication/integration, final exact-source/visual review and the single remote process. T03 art stays deferred; its clean source-only branch and ignored findings remain intact.
+Baseline `865957e82cebf6407249ca3fae5ef935eac89f87`, branch `codex/3d-workshop-interaction`. Pre-code `5648f891fcc07e068b746653a5f1b632b816b953` was committed before source and has Lead technical approval. [Diagram](diagrams/3d_workshop_interaction.mmd), [fixed observation](current_change/workshop_interaction.md), [status](3d_workshop_interaction.json). Lead owns publication/integration, final exact-source/visual review and the single remote process. T03 art stays deferred; its clean source-only branch and ignored findings remain intact.
 
 ## Confirmed missing connection and reusable UI
 
@@ -29,3 +29,11 @@ The fixed proposal uses an existing declared prebuilt Workshop session, staged r
 Expected production files are only game/preview_3d/preview.gd and world_presenter.gd. No new assets/imports/workflow/UIDs. Maintain function purposes/map/HTML; preserve fixture, encoded evidence and all current sidecars. Check the COMPLETE baseline-to-final branch delta including added docs, not only the last patch.
 
 Godot primary references: [ray-casting](https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html) places direct-space queries in physics processing; [InputEvent flow](https://docs.godotengine.org/en/stable/tutorials/inputs/inputevent.html) allows GUI consumption before unhandled gameplay input. This increment reuses the project's existing pending-query style.
+
+## Source handoff and stop boundary
+
+The source candidate changes only Preview and World: current rear E queues identity-bound work, first-hit query resolves only current site geometry, and exact current owner/Work metadata is checked before opening. Existing reservation geometry gains site_id metadata; existing shells, services, UI and defaults are unchanged. The selected existing Work region is scrolled/focused only after deferred current-context revalidation. Two changed scripts and the ignored one-E/one-UI-target proposal parse successfully; final purposes/map/full branch checks are recorded in the handoff, with no engine or runtime claim.
+
+The proposal uses direct _unhandled_input event injection to exercise the actual pending-to-physics route, not native OS/viewport input acceptance. It preserves physical initial-workshop versus logical workshop in the receipt and deliberately leaves the constructed-ID runtime path, broad occlusion/stale cases, earned production and normal factory/supply/repeat acceptance open. Existing recipe choices may use their current item codes; this bounded route does not relabel or rewrite the Work panel.
+
+Dawson instructed this contributor to finish only this bounded task and then stop. Lead owns the remote demonstration, source/visual review, publication/integration and subsequent fixes/features. No successor or additional T03/asset/audit work follows this handoff.

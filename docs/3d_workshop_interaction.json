@@ -1,5 +1,5 @@
 {
-  "status": "PRE-CODE bounded two-file route; committed before implementation. Lead/Designer scope review routed through Lead, exact final source/image acceptance required.",
+  "status": "Two-file source candidate after Lead-reviewed pre-code5648f891; syntax PASS, runtime/current image pending Lead. Contributor stops after exact handoff; Lead owns publication/CI/review/integration/subsequent work.",
   "baseline": "865957e82cebf6407249ca3fae5ef935eac89f87",
   "branch": "codex/3d-workshop-interaction",
   "contract": "docs/3d_workshop_interaction.md",
@@ -17,5 +17,9 @@
   "observation": "One arranged EXISTING declared initial-workshop/workshop owner, current manager/view+real E path, one existing UI target command and one readable Work image35s/45s; no grants/debug completion/time/production/old replay. Constructed-ID path and broader stale/occlusion/default-staffing boundaries source-reviewed only.",
   "acceptance_limits": "Ordinary earned factory/rifle output/supply/repeat/native/FPS and objective transitions remain OPEN.",
   "new_assets_imports": [],
-  "planning_verification": "JSON/source-scope/map/full baseline-to-final checks recorded with pre-code handoff; no engine."
+  "planning_verification": "JSON/source-scope/map/full baseline-to-final checks recorded with pre-code handoff; no engine.",
+  "pre_code_commit": "5648f891fcc07e068b746653a5f1b632b816b953",
+  "source_verification": "Two production scripts and one arranged proposal syntax PASS; actual purpose/map/HTML/full baseline-to-final receipts in frozen handoff. No engine or publication by contributor.",
+  "input_evidence_limit": "Direct _unhandled_input event injection exercises queued physics/current-owner UI route; not native OS/viewport input acceptance.",
+  "stop_boundary": "Finish this bounded task only, then STOP. No successor, T03 asset work, extra audit, subsequent fixes or autonomous CI watch."
 }
