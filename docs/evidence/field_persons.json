@@ -1,0 +1,64 @@
+{
+  "status": "Original functional PASS, original appearance NOT ACCEPTED; focused close correction PASS. Final exact-head role reviews and merge state belong to PR129.",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/129",
+  "pre_code_commit": "7404792d27b9cfcd60ce9c3b250590a6f085bea7",
+  "original_evidence": "docs/evidence/field_persons_original.json",
+  "correction_pre_code_commit": "6d98808b52001f102000988c8ad73d581fde1e13",
+  "source_head": "b2e8da7e381a35e72aed1fe244108a7198ddfc1e",
+  "required_validation": 42516703683,
+  "direct_demonstration": 42516786803,
+  "artifact": 13632065973,
+  "child_script_sha256": "9af5abf51e43d55cc926e2b8cec4964e5dc1305b52789a3957197ef3e44aa7d1",
+  "scope": "One close-only correction: existing initial-hq-01, one staged endpoint solely to separate initial crowd, reachable pan and current wheel input from size11 to minimum10, cached hollow cue/current actual-ID inspection, no retained Animator, one actual image. No original overview/movement/bounds sequence rerun.",
+  "limits_seconds": {
+    "rendered_child": 35,
+    "wrapper": 45
+  },
+  "observed": {
+    "person_id": "initial-hq-01",
+    "staged_endpoint_xz": [
+      2240,
+      450
+    ],
+    "ground_y": 0,
+    "camera_size_after_wheel": 10,
+    "near_hollow_cue": true,
+    "camera_pitch_degrees": -65,
+    "camera_height": 3400,
+    "nominal_projected_human_height_pixels": 54.7734375,
+    "retained_animation_players": 0,
+    "selected_id": "initial-hq-01"
+  },
+  "capture": {
+    "path": "docs/evidence/field_persons/field_person_close.png",
+    "bytes": 118091,
+    "sha256": "e3bf4fd5dcbe7fe7a839fad085c7b715e404781253f63f5a614597c98629839d"
+  },
+  "actual_engine_uids": [
+    {
+      "path": "game/preview_3d/field_persons.gd.uid",
+      "uid": "uid://b4kcfqvqay7sj",
+      "sha256": "2c31f4c4dacaa3221a5676a3b7e41adf44b4644672b1d1407e8c4dba9daa1afe",
+      "origin": "Actual Godot ResourceUID.create_id after successful original process; artifact 13630149893. Reused unchanged in the correction."
+    },
+    {
+      "path": "game/preview_3d/field_person_cues.gd.uid",
+      "uid": "uid://chhw4p1dbfkft",
+      "sha256": "bf28ae212f52cd1c2924e1f3416b4fe0fe28bd74b025131f180b3a7bb460fb34",
+      "origin": "Actual Godot ResourceUID.create_id after successful original process; artifact 13630149893. Reused unchanged in the correction."
+    }
+  ],
+  "provenance": {
+    "direct_log_sha256": "a76b1cc5720258accf47b629d8db3df7afd03b4a339e13eecc917f97ba0de679",
+    "scope_sha256": "2b257202b68cefb8ccbb51029b5a9fb1cd0bb9b494fc969e141c1bbbed752895",
+    "artifact_archive_sha256": "84a65995c7248197581fa40233eda6a8967fcd80007fd66201963314485cc202"
+  },
+  "review": "Lead personally viewed the actual original and corrected images. Corrected close silhouette is visible at true scale and normal RTS camera; actual ID/duty/inspection readable. Designer final source/image role review is recorded on PR129, not presumed by this receipt.",
+  "unverified": [
+    "Aboard, DEAD, WOUNDED, ancestor dependency, absence and replacement behavior source-reviewed, not a runtime matrix.",
+    "Static provisional person art, no uniform/equipment/readiness, walking/shooting/casualty animation or enemy-model claims.",
+    "One arranged actual endpoint, not earned military movement or normal input acceptance on the human desktop.",
+    "No ordinary supply-loop, full population workload, native rendering/input or 60 FPS acceptance.",
+    "Vehicle contact remains query-only and deferred; no assets/imports/workflow/terrain/control/stock changes."
+  ]
+}

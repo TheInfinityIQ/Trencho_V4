@@ -224,7 +224,13 @@
       "manifest": "docs/3d_manager_contact_plan.json",
       "contract": "docs/3d_manager_contact_plan.md",
       "evidence": "docs/evidence/manager_contact.json",
-      "status": "Accepted grounded passive-contact and narrow owner-held obstruction behavior recorded. One isolated flatY0 basic-response episode passed. Production collision NOT enabled; joint future-geometry precommit and initial/restore-overlap architecture unresolved. Query-only remains until bounded contract/implementation approval; full3D02 open."
+      "status": "Designer deferred solid vehicle contact on 8 November 2026. Production retains query-only identity/commission/restore behavior. Accepted contact design remains recorded but unimplemented; no broad yield or creation refusal approved. Historical isolated flat Y=0 PASS is not production contact acceptance."
+    },
+    "field_person_presentation_plan": {
+      "manifest": "docs/3d_field_persons.json",
+      "contract": "docs/3d_field_persons.md",
+      "status": "Implemented permitted friendly-person visuals and event-owned strategic cues. Original functional PASS/visual NOT ACCEPTED retained. Focused minimum10/hollow-near close correction passed and actual silhouette is visible; exact-head role approval/merge state belongs to PR129. No population, injury/boarding/replacement matrix, native/FPS, enemy/vehicle/terrain or full battlefield acceptance.",
+      "evidence": "docs/evidence/field_persons.json"
     }
   },
   "performance_and_verification": {

@@ -358,6 +358,31 @@ func map_markers(excluded_owner: String = "army-red") -> Array[Dictionary]:
 	return markers
 
 
+func field_person_view(id: String, owner: String) -> Dictionary:
+	# Detached facts for a supplied permitted ID, never a new roster source.
+	var person: Records.Person = _entities.get(id) as Records.Person
+	if person == null or person.owner != owner or person.rear_place == "Occupied": return {}
+	var holder: Records.Entity = _entities.get(person.holder_id)
+	if holder == null or holder.kind == Records.Kind.CARRIER: return {}
+	var at: Vector2 = person.position
+	var ancestors: Array[String] = []
+	var seen: Dictionary = {id:true}
+	var cursor: String = person.holder_id
+	while not cursor.is_empty():
+		if seen.has(cursor): return {}
+		var parent: Records.Entity = _entities.get(cursor)
+		if parent == null: return {}
+		seen[cursor] = true
+		ancestors.append(cursor)
+		at += parent.position
+		cursor = parent.holder_id
+	if not at.is_finite(): return {}
+	return {"id":id,"position":at,"holder_id":person.holder_id,"ancestors":ancestors,
+		"health":person.health,"assignment":Records.ASSIGNMENT_NAMES[person.assignment],
+		"dead":person.assignment == Records.Assignment.DEAD,
+		"caution":person.assignment in [Records.Assignment.WOUNDED,Records.Assignment.RECOVERY]}
+
+
 func battlefield_markers(owner: String) -> Array[Dictionary]:
 	# Drawing and hit testing need fresh public marker facts, not goods,
 	# claims, events, inventories, weapon contents or recursive carried mass.
