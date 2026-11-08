@@ -1,5 +1,5 @@
 {
-  "status": "Original arranged Workshop observation FAILED; no visual/runtime acceptance",
+  "status": "Corrected arranged Workshop handler-to-physics/actual selected-owner UI episode PASS; original failed result preserved. Lead inspected image; final role approvals belong to PR134.",
   "source_head": "6d9ce4ec6b4d46842525207971205da7cf021280",
   "required_validation": {
     "run": 42532801423,
@@ -33,5 +33,58 @@
   },
   "finding": "Actual site selection reaches logical workshop, but hidden BaseDemo._refresh_contents exits before facility metadata refresh; _select falls back to Info and new route rejects opening. The observer then reaches a hidden existing button, producing further visible/status failures. None is accepted as a pass.",
   "correction_contract": "After current actual target validation, make existing management presentation visible before calling existing _select so its explicit Work refresh can populate current metadata. Verify selected owner/Work context in the same callback; close management on unavailable context, retain hint. No polling/backend/UI service rewrite or weakened observer.",
-  "limits": "One arranged declared initial owner and direct injected handler route only; constructed IDs source-reviewed, no ordinary factory/supply/repeat/native/FPS acceptance. Original failure retained; same observer and 35s/45s gates for the corrected new code."
+  "limits": "One arranged declared initial owner and direct injected handler route only; constructed IDs source-reviewed, no ordinary factory/supply/repeat/native/FPS acceptance. Original failure retained; same observer and 35s/45s gates for the corrected new code.",
+  "corrected": {
+    "source_head": "80f70836a77c1d0c3b26eafb9fceb05d51cb2a14",
+    "correction_contract_head": "91537ea0b9e8ceab06a0b372b24d6b3bf7b11765",
+    "required_run": 42533375185,
+    "direct_run": 42533375923,
+    "artifact": 13637869164,
+    "result": "PASS",
+    "files": {
+      "direct.log.base64": {
+        "bytes": 4497,
+        "sha256": "a6e3cbeab2665fcc3b2e6cd99db32be798452a2bb8c27207184e0a4e55ed2792",
+        "decoded_bytes": 3372,
+        "decoded_sha256": "eeaa38f90a2f90f5a860e1a2e6e8b1c20c1d2ae8ecca50b177aa3c615dfc8090"
+      },
+      "scope.txt": {
+        "bytes": 230,
+        "sha256": "71a650d082c2ac6e157a618f4ec8ac5faeca93f1ee875bd84bea9ef8e178425c",
+        "decoded_bytes": 230,
+        "decoded_sha256": "71a650d082c2ac6e157a618f4ec8ac5faeca93f1ee875bd84bea9ef8e178425c"
+      },
+      "workshop_interaction.png": {
+        "bytes": 128200,
+        "sha256": "0a4593992c29f5dc78ae85d23711c6388cc63f19adfcf8b33874f591cd8bf0c3",
+        "decoded_bytes": 128200,
+        "decoded_sha256": "0a4593992c29f5dc78ae85d23711c6388cc63f19adfcf8b33874f591cd8bf0c3"
+      }
+    },
+    "proposal_sha256": "746d9eca6eae0c85aaee2ae1740202795403f857182189e66b78f624f657becf",
+    "same_observer_and_gates": true,
+    "parse_scope": "Corrected Preview only at80f70836; original required42532801423 parsed both production files. No invented standalone World parser receipt in corrected run."
+  },
+  "observed": {
+    "arrangement": "Existing declared prebuilt diagnostic session, not ordinary empty opening or earned Workshop",
+    "physical_site": "initial-workshop",
+    "logical_duty": "workshop",
+    "selected_kind": "building",
+    "selected_id": "workshop",
+    "recipe": "R01",
+    "output_target": 3,
+    "requested_staff": 0,
+    "local_inputs": {
+      "M01": 0,
+      "M02": 0
+    },
+    "missing_inputs": {
+      "M01": 2,
+      "M02": 1
+    },
+    "status": "Missing Inputs",
+    "time": 0,
+    "input": "Direct _unhandled_input E injection plus real queued physics consumption, existing recapture and one visible/enabled UI button signal; not native OS/viewport input or physical button-click acceptance",
+    "image_review": "Lead inspected actual1280x720 image: selected Workshop, R01, target3, missing Metal2/Components1, present/assigned/requested0, requested workers and recipe controls legible. Lower target/mode widgets require existing scrolling; no new layout or fit-at-all-heights claim."
+  }
 }

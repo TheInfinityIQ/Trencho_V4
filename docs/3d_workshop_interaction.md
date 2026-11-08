@@ -16,7 +16,7 @@ Consume that request once inside the current _physics_process safe-query path, a
 
 World.refresh_rear tags each existing reservation with its actual site ID; the exterior shell already carries that metadata. A small World helper resolves metadata only through the hit collider's CURRENT collision-root ancestry. Preview then revalidates request identity, actual current Construction.instances row, Complete/workshop kind and exact current production owner before opening. Reject removed/replaced/stale or unsupported targets; do not select a cached ID, current ray from another session or a fallback unrelated owner. The initial-workshop mapping is explicit and valid only in the existing declared nonempty rear.
 
-Call the existing _select with the resolved kind/logical ID, then open management/release held movement and cursor capture. Bring the selected facility controls into view using the existing scroll container if needed. Recipes, target/staff commands and status remain the existing metadata-based UI. Selection must not call default staffing, change recipe/target or replace the actual activity. Preserve once-only completion staffing and player edits. No production, construction, staffing, recipe, rates, qualification, grants, hauling or policy source changes.
+After current actual target validation, show management/release held movement and cursor capture so the existing Work refresh can populate current metadata. Call the existing _select with the resolved kind/logical ID and synchronously verify its current owner/Work context, closing management on unavailable context. Bring the selected facility controls into view using the existing scroll container if needed. Recipes, target/staff commands and status remain the existing metadata-based UI. Selection must not call default staffing, change recipe/target or replace the actual activity. Preserve once-only completion staffing and player edits. No production, construction, staffing, recipe, rates, qualification, grants, hauling or policy source changes.
 
 The stale safety scope is the NEW queued interaction before opening and its selected-owner/metadata validation. Preserve existing Work-panel behavior after opening; do not expand into an audit or rewrite of all old stale-command/modal behavior. Report any concrete separate defect to Lead. Failure/unsupported-hit feedback can use the existing preview message/hint.
 
@@ -56,3 +56,15 @@ enabled. This ownership/visibility amendment precedes the source correction.
 The frozen observer and definition stay unchanged, with the same35s/45s gates.
 Original byte-exact output/scope/image are retained in
 [evidence](evidence/workshop_interaction.json); stdout is base64, not trimmed.
+
+## Current result
+
+Corrected source80f70836 passed required42533375185 and the SAME frozen observer
+in direct42533375923/artifact13637869164. The initial failure is preserved.
+Lead inspected the current image: selected Workshop/R01, target3, Missing Inputs,
+Metal2/Components1 and real present/assigned/requested0 are readable. Existing
+staff and recipe controls are shown; lower mode/target widgets remain scrollable.
+The observer used an existing visible/enabled button signal, not a native click.
+The declared-session request0 is not a newly completed site's default-staff test.
+Constructed-ID runtime, earned factory, actual output, supply/repeat, native input
+and60FPS acceptance remain open. No new asset/import/workflow or local engine run.
