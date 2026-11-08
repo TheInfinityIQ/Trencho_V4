@@ -324,6 +324,7 @@ func refresh_rear() -> bool:
 			continue
 		var exterior: Dictionary = _facility_shells.build(row)
 		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
+		reservation.set_meta("site_id",str(row.id))
 		var label_at: Vector3 = Vector3(row.center.x,4.5,row.center.y)
 		var description: String = "provisional volume"
 		if exterior.ok:
@@ -340,6 +341,14 @@ func refresh_rear() -> bool:
 		site_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 
 	return true
+
+func site_id_from_collider(collider: Node) -> String:
+	if not is_instance_valid(collider) or not _collision_root.is_ancestor_of(collider): return ""
+	var cursor: Node = collider
+	while cursor != _collision_root:
+		if cursor.has_meta("site_id"): return str(cursor.get_meta("site_id"))
+		cursor = cursor.get_parent()
+	return ""
 
 func _mark_facility_approach(row: Dictionary, entrance: Vector3) -> void:
 	var center: Vector2 = row.center

@@ -1,5 +1,18 @@
 # Team workflow
 
+## Current ownership — 8 November 2026
+
+Dawson returned implementation to the Lead as the only developer. Developer C
+finishes only the current bounded Workshop handoff, then stops; no successor or
+later fixes are assigned. Developers A and B remain inactive. The Lead owns all
+further implementation, technical review, checks, publication and integration.
+Do not reactivate another developer for the older supporting-review convention.
+The Game Designer retains game-meaning review at the current exact PR head;
+consultant roles do not authorize independent implementation assignments.
+Earlier roster, assignments and parallel-review descriptions below are historical
+where they conflict with this instruction. No new worker or background service
+is established.
+
 Updated 6 November 2026 under Dawson's direct instruction to align design and development. [Current participants and publication](team_integration_state.json) govern; historical assignments are context, not active authority.
 
 ## Responsibilities

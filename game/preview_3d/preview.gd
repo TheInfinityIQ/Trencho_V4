@@ -15,6 +15,7 @@ var _suppressed: Dictionary = {}
 var _middle_drag := false
 var _pick_pending := false
 var _select_pending := false
+var _workshop_request: Dictionary = {}
 var _pointer := Vector2.ZERO
 var _draft_generation := 0
 var _candidate_revision := 0
@@ -238,6 +239,7 @@ func _release_controls() -> void:
 	if world != null: world.clear_preview()
 	_pick_pending = false
 	_select_pending = false
+	_workshop_request.clear()
 	_needs_capture = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
@@ -278,6 +280,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if management_open: return
 		match event.physical_keycode:
 			KEY_V: _toggle_camera()
+			KEY_E: _queue_workshop()
 			KEY_R:
 				if not battlefield_open and _base._placing_building:
 					_base.construction_turn.button_pressed = not _base.construction_turn.button_pressed
@@ -359,10 +362,69 @@ func _physics_process(delta: float) -> void:
 
 	# Newly attached/removed colliders synchronize before the next physics query.
 	if geometry_refreshed: return
+	if not _workshop_request.is_empty():
+		_consume_workshop()
+		if management_open: return
 	if _pick_pending:
 		_pick_pending = false
 		_pick_ground()
 	if not _pending_commit.is_empty(): _consume_commit()
+
+func _queue_workshop() -> void:
+	if battlefield_open or management_open or _needs_capture or _base._placing_building or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
+	var camera: Camera3D = world.first if first_person else world.third
+	_workshop_request = {"world":world,"model":_session.simulation,"service":_session.simulation.rear.construction,"camera":camera}
+
+func _workshop_target(site_id: String) -> Dictionary:
+	var model: RefCounted = _session.simulation
+	var service: RefCounted = model.rear.construction
+	var row: Dictionary = service.instances.get(site_id,{})
+	if row.is_empty() or row.state != "Complete" or row.kind != "workshop": return {}
+	var kind: String = "site"
+	var duty: String = site_id
+	var activity: RefCounted = service.activities.get(site_id)
+	if activity == null and site_id == "initial-workshop" and not model.empty_field_opening:
+		kind = "building"
+		duty = "workshop"
+		activity = model.rear.production
+	if activity == null or activity._spec.duty != duty or not model.rear.requests.has(duty): return {}
+	return {"physical":site_id,"kind":kind,"id":duty,"activity":activity}
+
+func _consume_workshop() -> void:
+	var request: Dictionary = _workshop_request
+	_workshop_request = {}
+	if request.is_empty() or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.model != _base.simulation or request.service != _session.simulation.rear.construction: return
+	var camera: Camera3D = world.first if first_person else world.third
+	if request.camera != camera or battlefield_open or management_open or _modal_open() or _needs_capture or _base._placing_building or not get_window().has_focus() or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
+	var point: Vector2 = get_viewport_rect().size/2.0
+	var origin: Vector3 = camera.project_ray_origin(point)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(point)*camera.far,5)
+	var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
+	var site_id: String = world.site_id_from_collider(hit.get("collider") as Node)
+	var target: Dictionary = _workshop_target(site_id)
+	if target.is_empty():
+		_command_message = "Aim at a completed Workshop and press E. Intervening structures block selection."
+		_update_hint()
+		return
+	# Hidden panels intentionally skip refresh; show before resolving metadata.
+	_set_management(true)
+	_base._select(str(target.kind),str(target.id),true)
+	var panel: Control = _base.tabs.get_tab_control(_base.tabs.current_tab)
+	if _base._selected_kind != target.kind or _base._selected_id != target.id or _base._context_duty() != target.id or _base._activity() != target.activity or str(panel.get_meta("panel_title",panel.name)) != "Work":
+		_set_management(false)
+		_command_message = "This Workshop's controls are unavailable. Select a current completed Workshop."
+		_update_hint()
+		return
+	_focus_workshop.call_deferred(request,target)
+
+func _focus_workshop(request: Dictionary, target: Dictionary) -> void:
+	if not management_open or battlefield_open or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.service != _session.simulation.rear.construction: return
+	var current: Dictionary = _workshop_target(str(target.physical))
+	if current.is_empty() or current.activity != target.activity or _base._context_duty() != target.id or _base._activity() != target.activity: return
+	var panel: Control = _base.tabs.get_tab_control(_base.tabs.current_tab)
+	if panel is ScrollContainer and str(panel.get_meta("panel_title",panel.name)) == "Work" and _base.facility.is_visible_in_tree():
+		panel.scroll_vertical = int(_base.facility.global_position.y-panel.get_child(0).global_position.y)
+		_base.facility.grab_focus()
 
 func _pan_field(offset: Vector2) -> void:
 	world.rts.position.x = clampf(world.rts.position.x+offset.x,0,4000)
@@ -555,7 +617,7 @@ func _update_hint() -> void:
 	if _hint == null or _session == null: return
 	var model: RefCounted = _session.simulation
 	_hint.text = "3D PROTOTYPE · %d REQ · %s · %.1fs\n%s" % [model.receiving.requisition_balance(),"Paused" if model.speed == 0 else str(model.speed)+"x",model.rear.time,
-		"RTS · WASD / middle drag pan · wheel zoom · LMB inspect" if battlefield_open else (("Click world to enable placement · Tab management" if _base._placing_building else "Click world to resume camera · Tab management") if _needs_capture else "WASD move · V perspective · Tab management")]
+		"RTS · WASD / middle drag pan · wheel zoom · LMB inspect" if battlefield_open else (("Click world to enable placement · Tab management" if _base._placing_building else "Click world to resume camera · Tab management") if _needs_capture else "WASD move · V perspective · E Workshop · Tab management")]
 	if _base._placing_building and not battlefield_open:
 		_hint.text += "\nCONSTRUCTION · pointer aim · LMB place · R rotate · V perspective · RMB/Esc cancel draft"
 		if not _preview_message.is_empty(): _hint.text += "\n"+_preview_message

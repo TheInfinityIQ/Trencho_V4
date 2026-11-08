@@ -1,0 +1,29 @@
+{
+  "status": "Implemented; original arranged run42532818622 FAILED, corrected source80f70836 required42533375185 and same-observer direct42533375923 PASS. Lead inspected current image; final exact-head source/visual role decisions belong to PR134.",
+  "baseline": "865957e82cebf6407249ca3fae5ef935eac89f87",
+  "branch": "codex/3d-workshop-interaction",
+  "contract": "docs/3d_workshop_interaction.md",
+  "diagram": "docs/diagrams/3d_workshop_interaction.mmd",
+  "fixed_definition": "docs/current_change/workshop_interaction.md",
+  "missing_connection": "Rear Preview has recapture/placement but no facility selection; existing BaseDemo select/Work controls already expose actual production/staff/local/missing/status facts.",
+  "identity": "Constructed Workshop maps actual site ID to construction.activities owner and site selection. Specific declared initial-workshop maps physical site to actual workshop/rear.production owner and building selection. No arbitrary kind-to-global fallback.",
+  "route": "E through unhandled input -> one identity-bound request -> physics first hit/current actual Workshop owner validation -> make management visible for current metadata refresh -> existing select and actual Work-owner validation -> deferred current-context focus.",
+  "guards": "GUI/modal/focus/capture/placement guards, no tunnelling behind intervening geometry, no new reach rule/hover scan; stale queued owner/world/site rejected before opening. Existing post-opening Work behavior not broadly audited or rewritten.",
+  "production_files": [
+    "game/preview_3d/preview.gd",
+    "game/preview_3d/world_presenter.gd"
+  ],
+  "unchanged": "Production/construction/staffing/recipe/rates/grants/qualification/hauling authority; once-only default staff and edits, normal F5/optional F6, existing UI and assets/import/workflow/sidecars/evidence.",
+  "observation": "One arranged EXISTING declared initial-workshop/workshop owner, current manager/view+real E path, one existing UI target command and one readable Work image35s/45s; no grants/debug completion/time/production/old replay. Constructed-ID path and broader stale/occlusion/default-staffing boundaries source-reviewed only.",
+  "acceptance_limits": "Ordinary earned factory/rifle output/supply/repeat/native/FPS and objective transitions remain OPEN.",
+  "new_assets_imports": [],
+  "planning_verification": "JSON/source-scope/map/full baseline-to-final checks recorded with pre-code handoff; no engine.",
+  "pre_code_commit": "5648f891fcc07e068b746653a5f1b632b816b953",
+  "source_verification": "Two production scripts and one arranged proposal syntax PASS; actual purpose/map/HTML/full baseline-to-final receipts in frozen handoff. No engine or publication by contributor.",
+  "input_evidence_limit": "Direct _unhandled_input event injection exercises queued physics/current-owner UI route; not native OS/viewport input acceptance.",
+  "stop_boundary": "Finish this bounded task only, then STOP. No successor, T03 asset work, extra audit, subsequent fixes or autonomous CI watch.",
+  "evidence": "docs/evidence/workshop_interaction.json",
+  "correction_contract": "After current actual target validation, make existing management presentation visible before calling existing _select so its explicit Work refresh can populate current metadata. Verify selected owner/Work context in the same callback; close management on unavailable context, retain hint. No polling/backend/UI service rewrite or weakened observer.",
+  "corrected_source": "80f70836a77c1d0c3b26eafb9fceb05d51cb2a14",
+  "verification": "Original both-script parsing42532801423 PASS; corrected Preview parsing42533375185 PASS; same exact observer746d9eca...7becf/direct42533375923 PASS with35s/45s unchanged. One arranged declared owner, one target UI edit/image; no old replay or local engine. Source-reviewed constructed-ID and broader boundaries are not runtime-certified."
+}
