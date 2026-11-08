@@ -98,3 +98,9 @@ The [G17 order service](g17_hierarchical_orders.md) observes through real G15 me
 ## G18 objectives and income - 29 October 2026
 
 The [G18 objective service](g18_objectives_income.md) derives eligibility from G01 actual holders and ammunition plus G16 morale, integrates capture at event boundaries, and credits controlled uncontested resource income to G02's existing requisition account. Its staged T02 passenger review proves a parked occupied vehicle contributes no capture before the same people exit; no objective ownership implies an HQ result or free depot contents.
+
+## Immutable runtime evidence and complete PR checks — 8 November 2026
+
+PR130 main validation42520320614 stopped before engine execution because an exact failed-run stdout file ended with an extra blank line. Final metadata-only validation and a staged-only whitespace check had missed an earlier commit in the same PR. Preserve arbitrary runtime output byte-for-byte as base64 with both stored and decoded byte counts/SHA256 when it conflicts with authored-text whitespace rules. Do not trim the raw output, rewrite failed evidence or exempt paths from CI checks. Human-readable summaries remain separate from the encoded original.
+
+Before final approval, check the complete PR base-to-final delta, including evidence added in earlier commits; checking only the last commit or staged files is insufficient. A post-merge validation failure remains a distinct failed result until the actual cause is repaired and the new main validation passes. This repair changes evidence storage only; it does not replay gameplay or alter verification limits.

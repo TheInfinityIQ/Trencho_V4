@@ -65,5 +65,11 @@
     "Rear handoff/Strategic Delivery, damage/clearance, ancestor, control and replacement cases source-reviewed, not a runtime matrix.",
     "No crew/fuel/combat/readiness, enemy model, equipment, full animation, contact physics or ordinary supply-loop acceptance.",
     "No local engine, regression suite, native input, full fleet workload or 60 FPS acceptance."
-  ]
+  ],
+  "original_failure_storage": {
+    "path": "docs/evidence/field_t01/original/direct.log.base64",
+    "decoded_sha256": "83929e049660783c5dc1430d51263bb9b900e0dba5abbb8f006d2ba191abc324",
+    "decoded_bytes": 4657,
+    "reason": "Preserve exact arbitrary stdout bytes while satisfying authored-text whitespace checks. Original failed result/history/image/scope remain unchanged."
+  }
 }
