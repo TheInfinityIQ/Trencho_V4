@@ -201,6 +201,10 @@
       "source": "Commercial 2.1, building-a",
       "status": "Implemented, imported and source/bounded-visual accepted: one arranged quarter-turn Office, actual manager, palette, roof and SpringArm. Final-head decisions and merge state are in PR124. No earned completion, native or FPS claim.",
       "evidence": "docs/evidence/office_exterior.json"
+    },
+    "rear_worker_presentation_candidate": {
+      "contract": "docs/3d_rear_workers.md",
+      "status": "Implemented a read-only worker presentation candidate using the existing human assets. One arranged actor/carry/endpoint/image observation and exact-head review remain pending. Locomotion/work animation and wider roster acceptance remain open."
     }
   },
   "performance_and_verification": {

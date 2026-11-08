@@ -23,3 +23,7 @@ A small feature-local worker presenter composes the existing human factory with 
 The fixed current-change observation is one explicitly arranged real worker, an actual three-unit M11 carry through public APIs and one genuine ledger movement endpoint, then one actual worker/manager screenshot. It asserts stable identity, position, held count and no worker collision. Dead/away/boarding filters are source-reviewed with unexercised limits, not a runtime matrix. No ordinary hire/haul loop, extra scenario, native controls or FPS claim.
 
 C supplies exact frozen source, reviewed purposes/maps and the ignored proposal. Lead runs required engine parsing and the one 35-second rendered child within the existing 45-second process, retains the actual new script UID and requests exact-head technical/Designer/UI/UX decisions. Actual image readability and source review gate merge.
+
+## Source handoff limits
+
+The projection and scene adapter are implemented with the event ownership above. Direct syntax parsing passed the four changed production scripts and the ignored proposal. No new assets or import-list change is needed; the actual new helper UID remains Lead-owned. [Feature status](3d_rear_workers.json) records the exact source and limitations. Engine execution, the single actual image and exact-head visual decisions remain pending. No regression or local engine check was performed.
