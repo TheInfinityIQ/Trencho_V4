@@ -49,3 +49,16 @@ One proposed ignored demonstration will exercise this changed flow at actual 1x,
 
 
 Exact ignored proposal: `logs/3d-construction-commands/direct_demo.gd`. Within that same 1x process, rendered execution records construction_provisional.png, construction_placed.png and construction_cancelled.png after the corresponding physics/update and frame_post_draw; headless skips images only. No native OS, consumed-loss, full stale/camera/roof matrix or full facility-art approval is claimed by this one flow. Identical pointer events, like identical camera notifications, do not invalidate a represented candidate. No demonstration or engine run has occurred locally.
+
+
+## Accepted occupation-rule delta — before code
+
+Designer approved active-3D manager occupation protection after the first actual 1x construction flow. At the shared BaseDemo boundary, provisional/full previews and both world/numeric confirmations reject a proposed rotated footprint intersecting the live upright manager capsule, with `Move away before placing here.` This is physical occupation, not a build-reach or extra handling-clearance rule. No teleport, material spend or site creation occurs on rejection. Construction.place remains the site/economic authority and still performs its one full check when the scene gate is clear.
+
+Preview explicitly binds optional current CharacterBody3D and CollisionShape3D references from WorldPresenter. These follow the world/session lifetime and are cleared/rebound before an old world is freed. They remain bound while the rear is hidden for RTS observation: numeric management still sees the manager's actual rear occupation. Normal 2D never binds these references, so it gets no phantom scene blocker.
+
+Use the current collision shape's world X/Z centre and actual CapsuleShape3D radius against ConstructionCatalog.footprint(kind,quarter_turn), with the nearest point on that rectangle. The existing capsule is upright and unscaled, with dimensions on its shape resource. Positive circle/rectangle intersection blocks; mere nonpenetrating tangency gets no added margin. Do not use art/eye/camera dimensions, cached player aim, a padded square around the body or the construction handling border. Read the actual body/shape anew at confirmation, even after a previously clear ghost. Disabled/nonexistent optional shapes do not create a physical blocker.
+
+Relevant APIs: [CapsuleShape3D radius](https://docs.godotengine.org/en/stable/classes/class_capsuleshape3d.html) is the physical shape dimension; [CollisionShape3D](https://docs.godotengine.org/en/stable/classes/class_collisionshape3d.html) supplies that shape to its physics-body parent and a disabled shape has no effect. Keep this a small scene-occupation check, not a general collision/ledger framework.
+
+The SAME one1x proposal may replace the former bounds rejection with a genuine near-foot manager-overlap rejection, then perform the same clear placement, selection, unconsumed cancellation and three captures. No additional scenario or limit increase. Numeric/full-preview/rotation coverage remains source-reviewed rather than an expanded runtime matrix. The earlier UI corrections and actual functional result at2705b808 remain recorded; current final identity/images remain Lead-owned.
