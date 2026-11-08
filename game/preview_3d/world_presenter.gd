@@ -259,9 +259,9 @@ func refresh_rear() -> bool:
 			reservation.hide() # Existing layer1 ground reservation still blocks walking.
 			var shell: Node3D = exterior.node
 			_collision_root.add_child(shell)
-			var bounds: AABB = exterior.bounds
+			var label_offset: Vector3 = exterior.label_anchor
 			_mark_facility_approach(row,exterior.entrance)
-			label_at.y = bounds.end.y + 0.6
+			label_at = shell.position + label_offset
 			description = str(row.kind) + " · exterior"
 		elif row.state == "Complete":
 			description += " · " + str(exterior.reason)

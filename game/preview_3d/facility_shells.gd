@@ -2,16 +2,14 @@ extends RefCounted
 ## Scene-owned completed exterior adapter. Never writes ConstructionService rows.
 const ROOT: String = "res://game/preview_3d/assets/industrial/"
 const MODELS: Dictionary = {
-	"construction":{"file":"building_a.glb","front_fraction":0.5},
-	"workshop":{"file":"building_h.glb","front_fraction":0.8},
-	"receiving":{"file":"building_k.glb","front_fraction":0.5},
-	"dispatch":{"file":"building_k.glb","front_fraction":0.5},
-	"depot":{"file":"building_k.glb","front_fraction":0.5},
-	"materials":{"file":"building_l.glb","front_fraction":0.65},
+	"workshop":{"file":"building_h.glb","yaw_degrees":90.0,"front_fraction":0.80057,"front_inset":0.45},
+	"receiving":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
+	"dispatch":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
+	"depot":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
+	"materials":{"file":"building_l.glb","yaw_degrees":-90.0,"front_fraction":0.65},
 }
-# Authored source +Z facade faces west. Both quarter-turn reservations retain
-# that facade and a common uniform fit; backend approach never rotates north.
-const SOURCE_YAW: float = -PI / 2.0
+# Per-model source facade faces west in both quarter-turn reservations;
+# source -Z Workshop garage was located in the actual geometry after review.
 const EDGE_INSET: float = 0.4
 const OCCLUDER_LAYER: int = 4
 var _scenes: Dictionary = {}
@@ -19,6 +17,8 @@ var _shapes: Dictionary = {}
 
 func build(row: Dictionary) -> Dictionary:
 	if row.state != "Complete": return {"ok":false,"reason":"unfinished"}
+	# Rejected source door is only0.933m high at the permitted uniform fit.
+	if row.kind == "construction": return {"ok":false,"reason":"Office exterior pending"}
 	if not MODELS.has(row.kind): return {"ok":false,"reason":"unmapped exterior"}
 	var center: Vector2 = row.center
 	var size: Vector2 = row.size
@@ -39,7 +39,7 @@ func build(row: Dictionary) -> Dictionary:
 	normalizer.name = "UniformFit"
 	shell.add_child(normalizer)
 	var facing: Node3D = Node3D.new()
-	facing.rotation.y = SOURCE_YAW
+	facing.rotation.y = deg_to_rad(float(spec.yaw_degrees))
 	normalizer.add_child(facing)
 	var instance: Node3D = packed.instantiate() as Node3D
 	facing.add_child(instance)
@@ -58,7 +58,8 @@ func build(row: Dictionary) -> Dictionary:
 	normalizer.position = -Vector3(bounds.get_center().x,bounds.position.y,bounds.get_center().z) * factor
 	var extent: Vector3 = bounds.size * factor
 	var fitted: AABB = AABB(Vector3(-extent.x/2.0,0,-extent.z/2.0),extent)
-	var entrance: Vector3 = Vector3(fitted.position.x,0,lerpf(fitted.position.z,fitted.end.z,float(spec.front_fraction)))
+	var entrance: Vector3 = Vector3(fitted.position.x+float(spec.get("front_inset",0.0))*factor,0,lerpf(fitted.position.z,fitted.end.z,float(spec.front_fraction)))
+	var label_anchor: Vector3 = Vector3(fitted.position.x-1.0,clampf(fitted.size.y*0.45,2.4,3.2),entrance.z)
 	_add_occluders(instance)
 	shell.set_meta("site_id",str(row.id))
 	shell.set_meta("model",file)
@@ -66,7 +67,7 @@ func build(row: Dictionary) -> Dictionary:
 	shell.set_meta("bounds",fitted)
 	shell.set_meta("entrance",entrance)
 	shell.position = Vector3(center.x,0,center.y)
-	return {"ok":true,"node":shell,"bounds":fitted,"entrance":entrance}
+	return {"ok":true,"node":shell,"bounds":fitted,"entrance":entrance,"label_anchor":label_anchor}
 
 func _measure(instance: Node3D, normalizer: Node3D) -> Dictionary:
 	var bounds: AABB = AABB()

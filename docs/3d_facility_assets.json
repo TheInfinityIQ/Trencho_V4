@@ -1,27 +1,11 @@
 {
-  "status": "Bounded derived exterior integration; actual import/fit/front/occlusion/readability review pending. No complete roster or performance approval.",
+  "status": "Three-model completed exterior integration covering five mapped kinds; Office explicitly provisional after actual manager-scale incompatibility. Corrected Workshop/label viewport review pending. No complete roster/FPS approval.",
   "creator": "Kenney",
   "creator_page": "https://kenney.nl/assets/city-kit-industrial",
   "archive_version": "City Kit Industrial2.0",
   "archive_sha256": "5b381164e5760f3830a2dbee43b972deee38b2a695d091b56e238ab2910c96d2",
   "license": "Bundled CC0; license.txt exact original bytes.",
   "files": [
-    {
-      "path": "game/preview_3d/assets/industrial/building_a.glb",
-      "source_member": "Models/GLB format/building-a.glb",
-      "bytes": 177316,
-      "source_sha256": "0e6ef8eb1e1bdbb9d06b5496b5daf3066e00eaf74b3fcd61b74072116a1c86cf",
-      "integrated_sha256": "3df48fbbcada5566f61c20952004a36429263742f7a2cb1bf36488cd938aec15",
-      "derivation": {
-        "edit": "GLB JSON URI one-byte T→t: Textures/colormap.png → textures/colormap.png",
-        "absolute_byte_offset": 1541,
-        "old_byte": 84,
-        "new_byte": 116,
-        "chunk_and_file_lengths_unchanged": true,
-        "binary_chunks_identical": true,
-        "binary_tail_sha256": "1462e58362e553ff401eba7c48631a9410ea1425cb2adb1e720d48d7e7dd63db"
-      }
-    },
     {
       "path": "game/preview_3d/assets/industrial/building_h.glb",
       "source_member": "Models/GLB format/building-h.glb",
@@ -87,31 +71,38 @@
       "derivation": "None: exact original bytes."
     }
   ],
-  "scope": "Only actual Complete mapped sites. Other states/types remain explicitly provisional; rendering grants no gameplay/custody.",
+  "scope": "Only actual Complete mapped sites. Complete Construction Office retains labelled provisional volume (Office exterior pending); all original state/custody rules remain. Three original selected GLBs+palette+license shipped; rejected Office hashes retained as history only.",
   "import_docs": "https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/available_formats.html",
   "occlusion": "Static actual-mesh bit4 for picking/SpringArm mask5; manager movement mask1 and Catalog reservation unchanged.",
-  "fit": "Measure transformed imported MeshInstance3D bounds, centre X/Z and ground minimum Y. Uniform factor=(min(row.size.x,row.size.y)-0.8)/max(rotated_bounds.size.x,rotated_bounds.size.z); no independent stretching. Both quarter turns share scale. Front fractions run along fitted world Z from minimum to maximum; marker is a service cue, not an exact door-hole claim.",
+  "fit": "Measure transformed imported MeshInstance3D bounds, centre X/Z and ground minimum Y. Uniform factor=(min(row.size.x,row.size.y)-0.8)/max(rotated_bounds.size.x,rotated_bounds.size.z); no independent stretching. Both quarter turns share scale. Front fractions run along fitted world Z from minimum to maximum; marker is a service cue, not an exact door-hole claim. Workshop authored front inset0.45 source units is multiplied by the same uniform factor; only the decorative cue reaches the recessed garage, with no change to reserved movement collision or outside service point.",
   "mapping": [
-    {
-      "kind": "construction",
-      "model": "building_a.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
-      "yaw_degrees": -90,
-      "front_fraction": 0.5,
-      "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
-    },
     {
       "kind": "workshop",
       "model": "building_h.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
-      "yaw_degrees": -90,
-      "front_fraction": 0.8,
-      "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
+      "source_front": "-Z: original orange garage plane at source Z=0.074; original POSITION/NORMAL/UV/palette inspection after actual blank-gable finding",
+      "yaw_degrees": 90,
+      "front_fraction": 0.80057,
+      "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations",
+      "source_entrance_bounds": {
+        "min": [
+          -1.1082,
+          0,
+          0.074
+        ],
+        "max": [
+          -0.8482,
+          0.27,
+          0.074
+        ]
+      },
+      "validation": "Source geometry correction; actual corrected current-build entrance review pending.",
+      "front_inset_source_units": 0.45,
+      "approach_calibration": "Original garage plane Z=0.074 is0.45 source units behind minimum-Z bounding face(-0.376). With yaw+90, extend the decorative cue to that measured inset entrance instead of stopping at the nearer gable/window projection."
     },
     {
       "kind": "receiving",
       "model": "building_k.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
+      "source_front": "+Z; receiving facade visible at real manager scale in actual targeted run42445080653; reuse preserves distinct kinds",
       "yaw_degrees": -90,
       "front_fraction": 0.5,
       "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
@@ -119,7 +110,7 @@
     {
       "kind": "dispatch",
       "model": "building_k.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
+      "source_front": "+Z; receiving facade visible at real manager scale in actual targeted run42445080653; reuse preserves distinct kinds",
       "yaw_degrees": -90,
       "front_fraction": 0.5,
       "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
@@ -127,7 +118,7 @@
     {
       "kind": "depot",
       "model": "building_k.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
+      "source_front": "+Z; receiving facade visible at real manager scale in actual targeted run42445080653; reuse preserves distinct kinds",
       "yaw_degrees": -90,
       "front_fraction": 0.5,
       "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
@@ -135,12 +126,79 @@
     {
       "kind": "materials",
       "model": "building_l.glb",
-      "source_front": "+Z (authored candidate; actual viewport confirmation pending)",
+      "source_front": "+Z; retained from actual overview, no new close-reference acceptance claimed",
       "yaw_degrees": -90,
       "front_fraction": 0.65,
       "orientations": "normal and quarter_turn retain west facade; uniform common fit in both swapped reservations"
     }
   ],
-  "fallback": "Only Complete mapped kinds with an outside west service point within the reservation frontage and usable imported bounds. Others retain labelled provisional volumes; cancelled/dismantled goods retain existing recovery markers. Legacy non-west approaches stay provisional.",
-  "labels": "Actual site identity/state, bounds.end.y+0.6m, bottom aligned, ordinary depth testing. Actual viewport readability is pending, including tall Materials Plant chimney."
+  "fallback": "Complete construction: Office exterior pending because original door scales to0.933m versus1.8m manager within10x8 reservation; candidate removed. Other Complete unmapped kinds, non-west approaches or unusable imported bounds retain explicit proxies. Existing cancelled/dismantled recovery markers unchanged.",
+  "labels": "Mapped shell front-relative anchor: measured west bound minus1m, Y=clamp(shell_height*0.45,2.4,3.2), Z=authored approach fraction. Bottom alignment and normal depth testing retained. Corrects actual Workshop gable hiding centre-anchored text; corrected actual viewport review pending.",
+  "actual_evidence": {
+    "required_parse_import": "42444251919 PASS at f7d0c26; scope unchanged source9d5-equivalent",
+    "first_proposal": "42444289146 FAIL: exact repeated node-name enumeration; all four shells visibly loaded. Preserved as failed evidence.",
+    "corrected_proposal": "42444556186 PASS at f7d0c26; same4rows, actual warehouse roof Y6.6425 layer4 hit, real SpringArm length1.998m.",
+    "targeted_references": "42445080653 PASS at63368b31, artifact13603032502: arranged actual single-manager Office/Workshop/Receiving references; Office/Workshop wrong facades and Workshop label occlusion identified by review. Receiving door visible and plausible. No native/earned completion/FPS result."
+  },
+  "rejected_candidates": [
+    {
+      "source_member": "Models/GLB format/building-a.glb",
+      "bytes": 177316,
+      "source_sha256": "0e6ef8eb1e1bdbb9d06b5496b5daf3066e00eaf74b3fcd61b74072116a1c86cf",
+      "integrated_sha256": "3df48fbbcada5566f61c20952004a36429263742f7a2cb1bf36488cd938aec15",
+      "derivation": {
+        "edit": "GLB JSON URI one-byte T→t: Textures/colormap.png → textures/colormap.png",
+        "absolute_byte_offset": 1541,
+        "old_byte": 84,
+        "new_byte": 116,
+        "chunk_and_file_lengths_unchanged": true,
+        "binary_chunks_identical": true,
+        "binary_tail_sha256": "1462e58362e553ff401eba7c48631a9410ea1425cb2adb1e720d48d7e7dd63db"
+      },
+      "former_integrated_path": "game/preview_3d/assets/industrial/building_a.glb",
+      "status": "Rejected candidate, not shipped; exact original and former derived-byte provenance retained for research history.",
+      "incompatibility": {
+        "source_front": "-Z entrance geometry",
+        "source_door_bounds": {
+          "min": [
+            -0.8475,
+            0,
+            -0.599
+          ],
+          "max": [
+            -0.7075,
+            0.27,
+            -0.599
+          ]
+        },
+        "source_handle_detail_bounds": {
+          "min": [
+            -0.7375,
+            0.1143,
+            -0.61
+          ],
+          "max": [
+            -0.7182,
+            0.1557,
+            -0.61
+          ]
+        },
+        "uniform_factor_at_reserved_footprint": 3.455577187964234,
+        "resulting_door_height_m": 0.9330058407503432,
+        "resulting_door_width_m": 0.48378080631499276,
+        "source_x_span_for_1_8m_door_m": 13.890588283538817,
+        "catalog_reservations_m": [
+          [
+            10,
+            8
+          ],
+          [
+            8,
+            10
+          ]
+        ],
+        "decision": "Lead approved only Office provisional fallback; no body, door, footprint or mesh distortion. Remove unused model from shipped assets and both Lead-owned importer lists."
+      }
+    }
+  ]
 }
