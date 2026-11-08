@@ -1,5 +1,5 @@
 {
-  "status": "Original fixed functional observation PASS at c4d8cc0; static-art visual CHANGES REQUESTED. Approved min10/hollow-nearcue source correction implemented; one Lead close-only observation and visual acceptance pending.",
+  "status": "Implemented. Original functional PASS retained with original visual NOT ACCEPTED. Focused minimum10/hollow-near correction passed at b2e8da7; corrected actual close image inspected by Lead. Exact-head role reviews and merge state belong to PR129.",
   "baseline": "07ee29b407e31e464e08fb3f0a19091314ba1db2",
   "contract": "docs/3d_field_persons.md",
   "diagram": "docs/diagrams/3d_field_persons.mmd",
@@ -13,7 +13,7 @@
   "observation": "One actual existing initial-hq-01 and one genuine staged endpoint on terrain; overview/close actual cue selection with exactly two scoped images in the SAME brief process. No new grant/mock marker/earned army move or matrix.",
   "contact_disposition": "Designer8November explicitly deferred solid contact: current production query-only identity/commission/restore preserved, accepted contact requirements remain deferred; no broad yield/creation refusal.",
   "limits": [
-    "Original functional PASS retained; current correction runtime and actual static-person visual acceptance pending Lead close-only observation. Source parsing is not gameplay or visual acceptance.",
+    "Source parsing and the two explicitly bounded observations do not establish all gameplay, visual states, native input or FPS acceptance.",
     "No enemy/vehicle/terrain/animation overhaul, new knowledge/control, collision/contact implementation, native/FPS or full population performance claim.",
     "Aboard/nonliving/absent/replacement distinctions source-reviewed, not runtime cases."
   ],
@@ -26,12 +26,12 @@
     "pick_visibility": "game/preview_3d/preview.gd::_select_marker"
   },
   "visibility": "PERSON pick flushes the same current-camera projected visibility cache as the cue; offscreen/behind/invalid people cannot be edge-picked. Strict nearest<18 and current row ordering remain; nonPERSON behavior unchanged.",
-  "verification": "Syntax parser passed the two corrected production scripts and new close-only proposal. No local engine or old suite/matrix. Lead owns one new close-only rendered process; runtime and visual result pending.",
+  "verification": "Original required42515331718/direct42515337059 passed functional scope. Corrected required42516703683/direct42516786803 passed the separate close-only scope. No local engine, regression or matrix. Final metadata-only head receives normal required validation.",
   "new_engine_uid_paths": [
     "game/preview_3d/field_persons.gd.uid",
     "game/preview_3d/field_person_cues.gd.uid"
   ],
-  "camera_evidence": "Original two images retain production pitch/height and zoom6500to100 with visual NOT ACCEPTED. New close-only proposal reaches min10 through current wheel input, retaining normal pitch/height/reachable pan/world scale; image pending.",
+  "camera_evidence": "Original overview/close retain normal pitch/height with visual NOT ACCEPTED at minimum100. Corrected ONE close image reaches actual minimum10 through existing wheel path, preserves pitch/height/pan/world scale and visibly distinguishes human silhouette.",
   "first_observation": {
     "source": "c4d8cc077acfcfff03119f2d8133206556f5d2b3",
     "required": 42515331718,
@@ -47,11 +47,15 @@
     "hollow_near_size_at_most": 40,
     "scope": "Same pitch/height/reachable pan/world scale, same6px cue/18px selection/order/state colours; far strategic drawing unchanged. Existing camera projection events/cache only.",
     "definition": "docs/current_change/field_person_close.md",
-    "status": "Two-script correction implemented after published pre-code amendment; one close-only Lead process and visual review pending.",
+    "status": "Focused close-only process PASS; actual image retained and inspected by Lead. Final exact-head Designer decision belongs to PR129.",
     "pre_code_commit": "6d98808b52001f102000988c8ad73d581fde1e13",
     "changed_production_scripts": [
       "game/preview_3d/preview.gd",
       "game/preview_3d/field_person_cues.gd"
-    ]
-  }
+    ],
+    "required": 42516703683,
+    "direct": 42516786803,
+    "artifact": 13632065973
+  },
+  "evidence": "docs/evidence/field_persons.json"
 }
