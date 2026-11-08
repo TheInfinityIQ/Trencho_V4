@@ -1,0 +1,30 @@
+{
+  "source_head": "b2f4ce4982d00cb80fbc0d27ba6d27590f0f4065",
+  "required_run": 42519112096,
+  "required_result": "PASS",
+  "direct_run": 42519117108,
+  "direct_result": "FAIL",
+  "artifact": 13632313631,
+  "original_proposal_sha256": "def72b2d99b0ebf2d73bad8324ea3738dc76110834b5ffd2c264c4f1a6fec834",
+  "failure": "Combined current-ground-anchor inspection assertion wrongly required literal internal ID in existing human-readable inspection. Printed selected ID and actual cue ID were correct; existing label was T01 · 3. First run remains FAILED.",
+  "warning": "FieldT01Cues._draw supplied width while filled=true; focused draw-call correction assigned.",
+  "preserved": [
+    {
+      "path": "docs/evidence/field_t01/original/direct.log",
+      "bytes": 4657,
+      "sha256": "83929e049660783c5dc1430d51263bb9b900e0dba5abbb8f006d2ba191abc324"
+    },
+    {
+      "path": "docs/evidence/field_t01/original/field_t01_reference.png",
+      "bytes": 127648,
+      "sha256": "62a317c44b0ef56a4b2713a14adfd9846e2b63c31a55c1421daadb5577efb383"
+    },
+    {
+      "path": "docs/evidence/field_t01/original/scope.txt",
+      "bytes": 418,
+      "sha256": "ca37e714fc7f0f3cf381844b5e7f9beab21665b395d2b83bb0e0db11528456e8"
+    }
+  ],
+  "artifact_archive_sha256": "f4f4b702cd5b72a50ab1f57d0634263f833cce68c2db67cbd5d648718b83ef0f",
+  "recheck": "Lead owns one separately reviewed same-scope35s/45s focused recheck; no process by C, no visual acceptance yet."
+}

@@ -1,0 +1,5 @@
+revision=b2f4ce4982d00cb80fbc0d27ba6d27590f0f4065
+base=6d5a0bd756dd29cb999ed91f679d8773c106b99a
+changed_scripts=['game/identity/identity_ledger.gd', 'game/preview_3d/field_t01_cues.gd', 'game/preview_3d/field_t01_trucks.gd', 'game/preview_3d/preview.gd', 'game/preview_3d/rear_t01_trucks.gd', 'game/preview_3d/world_presenter.gd']
+direct_check=True
+Syntax checks are not gameplay acceptance. No regression suites run.
