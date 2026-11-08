@@ -234,7 +234,7 @@ func refresh_rear() -> bool:
 	# replace physics bodies or perpetually invalidate a stationary candidate.
 	var next: Dictionary = {}
 	for row in simulation.rear.construction.instances.values():
-		var goods := row.state in ["Cancelled","Dismantled"] and simulation.rear.ledger.loose_stock_mass_at(row.id) > 0.000001
+		var goods: bool = row.state in ["Cancelled","Dismantled"] and simulation.rear.ledger.loose_stock_mass_at(row.id) > 0.000001
 		next[row.id] = [row.center,row.size,row.state,goods]
 	if next == _site_snapshot: return false
 	_site_snapshot = next
