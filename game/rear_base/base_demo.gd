@@ -1,6 +1,10 @@
 extends Control
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 ## One live scene, persistent panels, physical map and player commands.
+signal placement_started
+## Opt-in 3D opening blocks every construction commit until placement parity.
+var placement_preview_only := false
+
 signal session_changed(next_simulation: RefCounted)
 signal panel_changed(title: String)
 signal observation_requested(entity_id: String)
@@ -209,6 +213,7 @@ func _ready() -> void:
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
 	base_map = Map.new()
+	base_map.manager_pose = session.manager_pose
 	base_map.simulation = simulation
 	base_map.placement_preview = {}
 	base_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1087,6 +1092,7 @@ func select_build_kind(kind: String) -> void:
 	_refresh_build_description()
 	_placing_building = true
 	base_map.begin_placement()
+	placement_started.emit()
 
 func preview_build_hint_at(point: Vector2) -> void:
 	preview_build_at(point,false)
@@ -1107,6 +1113,10 @@ func preview_build_at(point: Vector2, full_validation: bool = true) -> void:
 		feedback.visible = not feedback.text.is_empty()
 
 func confirm_build_at(point: Vector2) -> void:
+	if placement_preview_only:
+		preview_build_at(point)
+		feedback.text = "3D preview only: no materials spent and no site created."
+		return
 	var result: Dictionary = simulation.rear.construction.place(_construction_kind(),point,construction_turn.button_pressed)
 	if result.ok:
 		_cancel_placement()

@@ -1,5 +1,5 @@
 {
-  "status": "Engineering migration plan; full 3D direction accepted, implementation not started",
+  "status": "3D-01 opt-in preview implemented and source/visual reviewed; complete staged3D migration remains in progress.",
   "baseline": "5b3e3aac1a01e16e8f1b4295c00742515efae8fd",
   "design_owner": "Game Designer: docs/design_brief.md, Full 3D direction — 7 November 2026",
   "engineering_owner": "Lead Developer; one implementation owner per bounded feature/worktree",
@@ -21,14 +21,38 @@
     "Keep the current playable main until an integrated slice is reviewed and usable. Do not flip the default scene to an incomplete camera demonstration."
   ],
   "source_findings": [
-    {"path": "game/rear_base/base_map.gd", "finding": "Control/_draw owns presentation AND current manager position/movement; extract player state ownership before adding camera modes. Existing WASD checks global keys and must not leak into menu or RTS input."},
-    {"path": "game/battlefield/battlefield_view.gd", "finding": "Control presentation uses ground Vector2 positions, 4000x6000 world bounds and existing selection/information policy. Replace rendering/picking without replacing policy."},
-    {"path": "game/identity/identity_records.gd", "finding": "Authoritative entity-local position is Vector2. Holder hierarchy, world positions and movement APIs are migration boundaries; resource counts/qualifications/ownership are dimension-independent."},
-    {"path": "game/identity/identity_ledger.gd", "finding": "add_place, move_entity, world-position/marker/colocation APIs are shared by logistics, combat and UI. A global textual Vector2-to-Vector3 replacement would corrupt ground axes and UI coordinates."},
-    {"path": "game/terrain/terrain_world.gd", "finding": "Existing ground/gradient/support and height-aware visibility already matter. probe constructs Vector3(map_x,map_y,height), not Godot's scene convention Vector3(x,height,z). Explicit axis conversion is mandatory."},
-    {"path": "game/construction/construction_service.gd", "finding": "Footprint, door, usable access, site/material and cancellation authority must remain shared between 3D preview and final placement. UI coordinates stay Vector2."},
-    {"path": "game/main/main.gd", "finding": "Current Control shell constructs one GameSession and rear/battlefield views. Reuse session/controllers; introduce a scene-owned 3D world/input composition rather than another autoload or simulation."},
-    {"path": "project.godot", "finding": "Current rendering method is GL Compatibility. Full 3D does not itself mandate a renderer change; choose renderer from actual visual requirements, hardware and CI feasibility."}
+    {
+      "path": "game/rear_base/base_map.gd",
+      "finding": "Control/_draw owns presentation AND current manager position/movement; extract player state ownership before adding camera modes. Existing WASD checks global keys and must not leak into menu or RTS input."
+    },
+    {
+      "path": "game/battlefield/battlefield_view.gd",
+      "finding": "Control presentation uses ground Vector2 positions, 4000x6000 world bounds and existing selection/information policy. Replace rendering/picking without replacing policy."
+    },
+    {
+      "path": "game/identity/identity_records.gd",
+      "finding": "Authoritative entity-local position is Vector2. Holder hierarchy, world positions and movement APIs are migration boundaries; resource counts/qualifications/ownership are dimension-independent."
+    },
+    {
+      "path": "game/identity/identity_ledger.gd",
+      "finding": "add_place, move_entity, world-position/marker/colocation APIs are shared by logistics, combat and UI. A global textual Vector2-to-Vector3 replacement would corrupt ground axes and UI coordinates."
+    },
+    {
+      "path": "game/terrain/terrain_world.gd",
+      "finding": "Existing ground/gradient/support and height-aware visibility already matter. probe constructs Vector3(map_x,map_y,height), not Godot's scene convention Vector3(x,height,z). Explicit axis conversion is mandatory."
+    },
+    {
+      "path": "game/construction/construction_service.gd",
+      "finding": "Footprint, door, usable access, site/material and cancellation authority must remain shared between 3D preview and final placement. UI coordinates stay Vector2."
+    },
+    {
+      "path": "game/main/main.gd",
+      "finding": "Current Control shell constructs one GameSession and rear/battlefield views. Reuse session/controllers; introduce a scene-owned 3D world/input composition rather than another autoload or simulation."
+    },
+    {
+      "path": "project.godot",
+      "finding": "Current rendering method is GL Compatibility. Full 3D does not itself mandate a renderer change; choose renderer from actual visual requirements, hardware and CI feasibility."
+    }
   ],
   "architecture": {
     "state": "Existing service owners keep authoritative economy, activities, people and physical custody. Extract manager pose from BaseMap into session-owned player state; scene controller publishes collision-resolved movement to that one state.",
@@ -55,44 +79,81 @@
   },
   "phases": [
     {
-      "id": "3D-01", "feature": "Normal 3D opening, player perspectives and RTS observation", "owner": "Lead assigns one developer after plan review",
+      "id": "3D-01",
+      "feature": "Normal 3D opening, player perspectives and RTS observation",
+      "owner": "Developer C implementation; Lead integration and exact-head merge; Game Designer gameplay/visual review",
       "scope": "Actual normal opening with coherent visible 3D player/ground/Supply Table/materials, single player collision/movement, toggleable first/third camera, existing management, uncommitted 3D building preview, separate 3D battlefield observation/pan/zoom/inspection. Preserve old live simulation through explicit presentation adapters.",
-      "acceptance": "Actual current build shows normal 2500/500 opening, same player before/after camera toggle, management cursor/speed semantics, real footprint/door preview without spend, RTS view then return without state reset. Current-build screenshots from both perspectives and RTS; one brief direct changed-action observation. This phase is not the completed migration."
+      "acceptance": "Actual current build shows normal 2500/500 opening, same player before/after camera toggle, management cursor/speed semantics, real footprint/door preview without spend, RTS view then return without state reset. Current-build screenshots from both perspectives and RTS; one brief direct changed-action observation. This phase is not the completed migration.",
+      "delivery": {
+        "source": "78fcb2a3bc93da9aef7ea8a3d9ea17029fd73e2b",
+        "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/120",
+        "evidence": "docs/evidence/3d_opening.json",
+        "status": "Bounded source and actual three-view visual disposition approved; final integration metadata review pending. Default F5 remains unchanged; open preview.tscn with F6 for preview-only3D."
+      }
     },
     {
-      "id": "3D-02", "feature": "Authoritative 3D positions, terrain and physical movement", "depends_on": "3D-01",
+      "id": "3D-02",
+      "feature": "Authoritative 3D positions, terrain and physical movement",
+      "depends_on": "3D-01",
       "scope": "Migrate spatial owners and consumers in bounded increments: player state, holder/local/world poses, terrain axes/heights/support, character and vehicle route samples, clearance and visibility. Retain one authority with derived compatibility reads during transition; retire each adapter when consumers migrate.",
       "acceptance": "Each changed owner has a pre-code diagram and a brief direct real-action check at its boundary. Height/axes, attachments and colocation remain consistent; no independently moving presentation twin, teleport or loss of terrain/vehicle policy."
     },
     {
-      "id": "3D-03", "feature": "Rear construction, workforce and production in 3D", "depends_on": "3D-02",
+      "id": "3D-03",
+      "feature": "Rear construction, workforce and production in 3D",
+      "depends_on": "3D-02",
       "scope": "All buildable facilities, previews/rotation/commit/cancel, purchases/arrival, default staffing, physical workers/carrying, recipes/training and construction truck. Model footprint/entrance/cargo sockets agree with actual authority. Animation follows earned work/physical transfer, not the reverse.",
       "acceptance": "Bounded changed-feature deliveries preserve real workers/materials/work and meaningful waiting/cancellation. Catalogue/model coverage recorded explicitly; no claim that a working Workshop covers every facility or animation."
     },
     {
-      "id": "3D-04", "feature": "Full-scale 3D battlefield and autonomous combat presentation", "depends_on": "3D-02",
+      "id": "3D-04",
+      "feature": "Full-scale 3D battlefield and autonomous combat presentation",
+      "depends_on": "3D-02",
       "scope": "4x6km authored terrain, actual unit/vehicle/weapon/objective visuals, observation/selection, combat/suppression/casualty/support presentation and 3D terrain access/visibility consistent with existing rules. Reuse autonomous decision owners and delivered knowledge.",
       "acceptance": "Source-backed visibility and physical scale; camera zoom/selection never reveals hidden enemy state or steers soldiers. Visible models reflect actual identities, ammunition, health and vehicle occupancy. Existing backend-only wider systems stay separately labelled."
     },
     {
-      "id": "3D-05", "feature": "Integrated physical supply and view switching", "depends_on": ["3D-03", "3D-04"],
+      "id": "3D-05",
+      "feature": "Integrated physical supply and view switching",
+      "depends_on": [
+        "3D-03",
+        "3D-04"
+      ],
       "scope": "Rear staging/loading/qualified crews/fuel, real rear-to-HQ transport/return, HQ issue and onward ammunition delivery across the 3D world, including exact E01 WEAPON identities and per-type holds. Preserve intended progression behind either view.",
       "acceptance": "Each actual changed connection has scoped evidence; no credit for remote stock, reservation or camera switch. Ordinary useful supply and later genuine replenishment remain separate open outcomes until actually established."
     },
     {
-      "id": "3D-06", "feature": "Complete asset coverage and integrated delivery", "depends_on": "3D-05",
+      "id": "3D-06",
+      "feature": "Complete asset coverage and integrated delivery",
+      "depends_on": "3D-05",
       "scope": "Coherent models/materials, rig/animation coverage, first-person clipping/body treatment, construction states, cargo/crew attachments, readable UI/labels and declared hardware/visible-density budgets. Retire obsolete 2D entry/presentation only after reviewed replacement.",
       "acceptance": "Complete claimed gameplay coverage in integrated main, actual current-build visuals and honest outstanding gaps. Strict 60FPS/native/full-loop acceptance requires applicable permitted evidence; no headless or software-renderer pass is represented as native GPU performance."
     }
   ],
   "assets": {
-    "art_direction": "User preference question pending: cohesive stylized versus realistic military/industrial. Stylized is a recommendation, not an accepted choice. Camera/spatial contracts can proceed independently.",
-    "consultation": "Existing 2D Artist asked for original-source free 3D shortlist and exact licensing/rig gaps; response pending. Lead verified candidate creator pages below, not downloaded/imported assets.",
+    "art_direction": "Dawson accepted cohesive stylized 3D with readable detail and lower asset performance cost. This accepts the style direction; selected models remain provisional pending actual visual review.",
+    "consultation": "Artist consultation received: provisional flat-shaded Kenney family, Furniture/Nature/Building/Car kits and Animated Characters candidates. Exact Protagonists 1.1 and Furniture 2.0 bundled CC0 licenses inspected for 3D-01; selected files and gaps recorded in docs/3d_opening_assets.json. Quaternius redistribution/version terms unresolved; not cleared.",
     "candidates": [
-      {"role": "Animated character candidates", "url": "https://kenney.nl/assets/animated-characters-protagonists", "verified": "Creator page lists 3D Animated Characters and CC0; precise rig/action/first-person suitability still needs file inspection."},
-      {"role": "Alternate character candidates", "url": "https://kenney.nl/assets/animated-characters-survivors", "verified": "Creator page lists 3D Animated Characters and CC0; no claim that carry/load animations or uniforms are complete."},
-      {"role": "Industrial buildings", "url": "https://kenney.nl/assets/city-kit-industrial", "verified": "Creator lists 3D factory/warehouse kit,40files,CC0. Actual dimensions/doors/wholefacility coverage must be checked."},
-      {"role": "Transport candidates", "url": "https://kenney.nl/assets/car-kit", "verified": "Creator lists 3D transport kit,45files,CC0. Exact truck/cargo/rig suitability unverified."}
+      {
+        "role": "Animated character candidates",
+        "url": "https://kenney.nl/assets/animated-characters-protagonists",
+        "verified": "Creator page lists 3D Animated Characters and CC0; precise rig/action/first-person suitability still needs file inspection."
+      },
+      {
+        "role": "Alternate character candidates",
+        "url": "https://kenney.nl/assets/animated-characters-survivors",
+        "verified": "Creator page lists 3D Animated Characters and CC0; no claim that carry/load animations or uniforms are complete."
+      },
+      {
+        "role": "Industrial buildings",
+        "url": "https://kenney.nl/assets/city-kit-industrial",
+        "verified": "Creator lists 3D factory/warehouse kit,40files,CC0. Actual dimensions/doors/wholefacility coverage must be checked."
+      },
+      {
+        "role": "Transport candidates",
+        "url": "https://kenney.nl/assets/car-kit",
+        "verified": "Creator lists 3D transport kit,45files,CC0. Exact truck/cargo/rig suitability unverified."
+      }
     ],
     "requirements": "Inspect downloaded original licenses and model/animation inventory before committing selected files. Record provenance, changes, scale/pivots, animation retargeting and missing poses. Prefer GLB/glTF; add LFS before large binaries. No paid purchase or new tool/plugin justified yet. Existing2Dassets do not prove3Dcoverage.",
     "gaps": "First-person mesh visibility; cohesive military/worker clothing; carry/pickup/load/unload/build animations; articulated wheels/crew/cargo attachments; every facility's actual footprint/entrance; battlefield unit roster. Avoid a separate rigid body per resource unit or ammunition round merely to display a stack."
@@ -108,15 +169,43 @@
     "designer": "Accepted first/third same rear manager and separate RTS observer; wrote the transferred design-brief section. Initial rear-only access and existing terrain/gameplay semantics; first slice requires coherent actual3Dassets and current-build visual evidence.",
     "ui_ux": "Read-only interaction proposal incorporated as recommendations. Its2.5m proximity shortcut is deferred, not a new rule; its broader first-slice placement/worker activity proposal is staged after the Designer's narrower opening/preview slice.",
     "source_impact": "Developer C read-only handoff confirms holder-relative ledger coordinates, scene-owned player exception, height-probe axis mismatch, planar vehicle/range cost semantics and permitted marker/contact boundary. No production edits or engine runs by consultants.",
-    "artist": "Consultation sent to existing Trencho - 2D Artist chat; response not yet observed. Official creator candidate pages verified independently; no claim that rigs/animation/model coverage or visual direction are accepted."
+    "artist": "Artist consultation observed. Provisional candidates and archive inspection are recorded in the 3D-01 contract/assets manifest. Cohesive stylized 3D direction is accepted; individual models and wider animation/roster coverage remain provisional."
   },
   "sources": [
-    {"topic": "Character movement", "url": "https://docs.godotengine.org/en/stable/classes/class_characterbody3d.html", "use": "Scripted character collision, walls/slopes and move_and_slide; engineering choice, not gameplay feature authorization."},
-    {"topic": "Third-person camera", "url": "https://docs.godotengine.org/en/stable/tutorials/3d/spring_arm.html", "use": "Collision-aware camera arm; its continuous physics cast is purposeful camera work."},
-    {"topic": "World picking", "url": "https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html", "use": "3D direct-space queries and safe physics boundary; input-driven query scheduling is project design."},
-    {"topic": "Navigation", "url": "https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_using_navigationservers.html", "use": "NavigationServer3D exists, changes synchronize at physics boundaries; existing vehicle/gameplay constraints remain project-owned."},
-    {"topic": "Renderer", "url": "https://docs.godotengine.org/en/stable/tutorials/rendering/renderers.html", "use": "Forward+/Mobile/Compatibility trade-offs depend on hardware/features, not the3Dlabel alone."},
-    {"topic": "3Dperformance", "url": "https://docs.godotengine.org/en/stable/tutorials/performance/optimizing_3d_performance.html", "use": "Visibility, LOD and rendering-cost considerations; no guaranteed framerate."},
-    {"topic": "Asset import", "url": "https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/available_formats.html", "use": "Godot recommends glTF2.0; GLB supports scenes/materials/animation assets. Exact source pack suitability still requires inspection."}
+    {
+      "topic": "Character movement",
+      "url": "https://docs.godotengine.org/en/stable/classes/class_characterbody3d.html",
+      "use": "Scripted character collision, walls/slopes and move_and_slide; engineering choice, not gameplay feature authorization."
+    },
+    {
+      "topic": "Third-person camera",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/3d/spring_arm.html",
+      "use": "Collision-aware camera arm; its continuous physics cast is purposeful camera work."
+    },
+    {
+      "topic": "World picking",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html",
+      "use": "3D direct-space queries and safe physics boundary; input-driven query scheduling is project design."
+    },
+    {
+      "topic": "Navigation",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_using_navigationservers.html",
+      "use": "NavigationServer3D exists, changes synchronize at physics boundaries; existing vehicle/gameplay constraints remain project-owned."
+    },
+    {
+      "topic": "Renderer",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/rendering/renderers.html",
+      "use": "Forward+/Mobile/Compatibility trade-offs depend on hardware/features, not the3Dlabel alone."
+    },
+    {
+      "topic": "3Dperformance",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/performance/optimizing_3d_performance.html",
+      "use": "Visibility, LOD and rendering-cost considerations; no guaranteed framerate."
+    },
+    {
+      "topic": "Asset import",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/available_formats.html",
+      "use": "Godot recommends glTF2.0; GLB supports scenes/materials/animation assets. Exact source pack suitability still requires inspection."
+    }
   ]
 }

@@ -339,6 +339,38 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             ('game/battlefield/battlefield_presentation.gd', 'objective_feedback', 'Explain current control, income eligibility and credited requisition', ''),
         ]),
     ]
+    preview_3d = 'game/preview_3d/preview.gd'
+    world_3d = 'game/preview_3d/world_presenter.gd'
+    specs.append(('3d-player-cameras', '3D preview: one manager, two perspectives',
+                  'Opt-in entry uses the normal session. These command/event branches share one manager pose; default F5 and the full migration remain separate.',
+                  [(preview_3d, '_ready', 'Compose the actual normal session and preview guards', ''),
+                   (preview_3d, '_build_hud', 'Camera, management and area controls', ''),
+                   (world_3d, '_build_player', 'One physical manager and two camera rigs', ''),
+                   (preview_3d, '_toggle_camera', 'Toggle first/third without changing the manager', ''),
+                   (preview_3d, '_apply_view', 'Choose the active camera and release old input', ''),
+                   (preview_3d, '_set_management', 'Management owns pointer and preserves panels', ''),
+                   (preview_3d, '_physics_process', 'Resolve only the active input mode', ''),
+                   (world_3d, 'move_manager', 'Collision-resolved player movement', ''),
+                   ('game/preview_3d/manager_pose.gd', 'publish_resolved', 'Publish the same persistent ground pose', '')]))
+    specs.append(('3d-placement-preview', '3D preview: footprint feedback without construction',
+                  'Pointer/camera changes queue a physics-safe ground pick and cheap provisional hint. Preview-only world and numeric confirmation cannot spend or create a site.',
+                  [(preview_3d, '_begin_preview', 'Enter visible-pointer draft mode', ''),
+                   (preview_3d, '_unhandled_input', 'Aim, rotate or cancel the uncommitted draft', ''),
+                   (preview_3d, '_pick_ground', 'Physics-safe ray and planar adapter', ''),
+                   (BASE, 'preview_build_at', 'Read the requested cheap hint or explicit full preview', ''),
+                   (CONSTRUCTION, 'placement_hint', 'Check provisional footprint geometry only', ''),
+                   (world_3d, 'show_preview', 'Display actual footprint, door and provisional validity', ''),
+                   (BASE, 'confirm_build_at', 'Preview-only guard blocks every construction commit', 'if placement_preview_only:')]))
+    specs.append(('3d-rts-inspection', '3D preview: RTS observation and permitted inspection',
+                  'Independent pan/zoom observes permitted friendly and reported/stale-contact data. Camera changes neither issue army orders nor reset the rear character.',
+                  [(preview_3d, '_show_battlefield', 'Switch observation without replacing the session', ''),
+                   (preview_3d, '_pan_field', 'Pan the independent RTS camera', ''),
+                   (world_3d, 'refresh_markers', 'Build permitted marker membership at committed changes', ''),
+                   ('game/battlefield/battlefield_presentation.gd', 'markers', 'Enforce existing information policy', ''),
+                   (world_3d, 'refresh_marker_positions', 'Update cached friendly/report positions', ''),
+                   (preview_3d, '_select_marker', 'Pick a currently permitted projected marker', ''),
+                   ('game/battlefield/battlefield_view.gd', 'inspection_text', 'Reuse current supply/objective/contact details', ''),
+                   (preview_3d, '_show_base', 'Return to the same rear manager', '')]))
     specs.append(('automatic-hq-rifles', 'HQ reserve: actual automatic rifle supply',
                   'Current eligible reserve need respects existing finite ammunition coverage; named empty weapon identities stage, travel, unload and issue. E01 hold/resume is separate from ammunition.',
                   [('game/hq/hq_logistics.gd', '_assess_rifle_supply_need', 'Actual eligible reserve gap and finite minimum-ammo budget', ''),

@@ -1,0 +1,60 @@
+{
+  "source_head": "78fcb2a3bc93da9aef7ea8a3d9ea17029fd73e2b",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/120",
+  "required_validation": 42434202516,
+  "direct_demonstration": 42434204247,
+  "artifact": 13598479820,
+  "result": "PASS",
+  "engine": "Godot 4.7.2 stable official; Linux X11 llvmpipe software OpenGL",
+  "scope": "One actual normal opt-in 3D opening, programmatic current-control observation and three software-rendered camera views. Native input/full-game/FPS unverified.",
+  "child_script_sha256": "859d7b463abf5dd2d9441bbfe76ee0c537aa021cee68f7db995d2321526b9b2c",
+  "observed": [
+    "Actual separate normal paused opening: 2500 requisition, 500 physical M11, no hired rear people, existing Supply Table.",
+    "Real imported manager mesh, Root|Idle animation with40tracks, live left-arm pose matches Idle key. Lead viewed relaxed arms and ground contact.",
+    "Same manager pose across first/third toggle; actual CharacterBody3D movement in three physics steps.",
+    "Management releases pointer; one programmatic unhandled Escape closes management.",
+    "Numeric construction confirmation cannot create a site or spend M11/requisition; current-change preview only.",
+    "RTS pan/zoom/inspection and return preserve the same session and manager pose.",
+    "Lead viewed all three fresh captures: visible manager, first-person table/bundles, battlefield ground and permitted inspection."
+  ],
+  "captures": {
+    "third_person": {
+      "path": "docs/evidence/3d_opening/third_person.png",
+      "sha256": "5cfcfbb338f8fe36f1cfcbee2f1c085d630d039ccf058a0ad4433f8b4f6c4e9b"
+    },
+    "first_person": {
+      "path": "docs/evidence/3d_opening/first_person.png",
+      "sha256": "bbcd1f369460c3282955ec2436e9cdfde76a1032e62f07adfff29114b70a73e0"
+    },
+    "battlefield": {
+      "path": "docs/evidence/3d_opening/battlefield.png",
+      "sha256": "a0f1f49f4a52a36cdc34665d6622893fa0e713b9b5f72037590a0109c3494150"
+    }
+  },
+  "history": [
+    {
+      "source": "b73906786bf94b001d45f652f9682e54efac448e",
+      "required": 42431861192,
+      "direct": 42431874777,
+      "result": "FAIL",
+      "finding": "Animation-only FBX had no character mesh; terrain winding hid ground; demonstration also incorrectly compared active-play income with initial balance."
+    },
+    {
+      "source": "4e9931c7d066e8d48470a647f1afbd5aababff60",
+      "required": 42432650743,
+      "direct": 42432652286,
+      "result": "Programmatic PASS; visual readiness REJECTED",
+      "finding": "Actual mesh and ground visible, but first arbitrary animation was Targeting Pose. Corrected explicitly to Idle and immediately applied before paused render."
+    }
+  ],
+  "unverified": [
+    "Native OS keyboard/mouse/focus behavior",
+    "60 FPS on declared hardware/workload",
+    "Ordinary full/repeat gameplay loop",
+    "Committed 3D building placement and complete terrain/spatial parity",
+    "Walking/carry/first-person body animations and full worker/vehicle roster"
+  ],
+  "sidecars": "Actual3new script UIDs and5asset import sidecars retained from this exact remote artifact; no generated .godot cache committed.",
+  "carry_forward": "Final evidence/UID/import/map metadata leaves production GDScript, raw assets, project and workflow byte-identical to demonstrated78fcb2a. No repeated engine run for metadata.",
+  "designer_disposition": "Game Designer personally viewed allthree actual captures from42434204247 and approved the bounded opt-in opening/camera visual scope at78fcb2a. Final exact-head identity confirmation follows metadata; no fullmigration/native/FPS approval."
+}

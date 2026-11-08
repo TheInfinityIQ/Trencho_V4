@@ -1,0 +1,100 @@
+{
+  "status": "Accepted cohesive stylized direction; actual relaxed idle, manager/table/materials and RTS ground rendered at78fcb2a. Opt-in preview only; walking/carry/full roster unfinished.",
+  "creator": "Kenney",
+  "license": "CC0 1.0; original bundled License.txt bytes preserved.",
+  "archives": {
+    "characters": {
+      "page": "https://kenney.nl/assets/animated-characters-protagonists",
+      "version": "1.1",
+      "bytes": 581441,
+      "sha256": "ec3787de70fa2200256848d74201b10f6b6c3126594e9857bf989753312c2b84"
+    },
+    "furniture": {
+      "page": "https://kenney.nl/assets/furniture-kit",
+      "version": "2.0",
+      "bytes": 5130729,
+      "sha256": "e67652d0932cee41683f74711c03d3e192a2af9979ef8e6b237711f5482d46b0"
+    }
+  },
+  "download": "Creator page current download-link endpoint with page session; stale direct archive URLs returned HTML and were not used as asset bytes. Archives retained only in ignored logs.",
+  "files": [
+    {
+      "path": "game/preview_3d/assets/manager.fbx",
+      "archive": "characters",
+      "member": "Model/characterMedium.fbx",
+      "bytes": 167212,
+      "sha256": "18835fef534eede635b081ee7fe647d01a885550a591d2e6bf071010906167d8",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/manager_skin.png",
+      "archive": "characters",
+      "member": "Skins/skaterMaleA.png",
+      "bytes": 41705,
+      "sha256": "cabeed9d1be58037cc1cf3e29fdb42a0cb6af15bebeed877c41a758a932d14f8",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/characters_license.txt",
+      "archive": "characters",
+      "member": "License.txt",
+      "bytes": 699,
+      "sha256": "68280323c6dca1f532c71fb248a6f344abed39a574278a2edfa27801aea3d0cd",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/supply_table.glb",
+      "archive": "furniture",
+      "member": "Models/GLTF format/table.glb",
+      "bytes": 8196,
+      "sha256": "ff1a94498d023957f4bc3ff6f55a7a82977d336dbf01a573b3364f03afe5ff61",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/material_box.glb",
+      "archive": "furniture",
+      "member": "Models/GLTF format/cardboardBoxClosed.glb",
+      "bytes": 5400,
+      "sha256": "4af079dca52960912764574950f0549ff2ae1224b3db1528718629473a2d5d81",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/furniture_license.txt",
+      "archive": "furniture",
+      "member": "License.txt",
+      "bytes": 614,
+      "sha256": "bc0de1a0742cb490f9ed4bae0bd284286ebb27e23149b9917c7d8c0d590b8b29",
+      "modifications": "Renamed only; original bytes preserved."
+    },
+    {
+      "path": "game/preview_3d/assets/manager_idle.fbx",
+      "archive": "characters",
+      "member": "Animations/idle.fbx",
+      "bytes": 608188,
+      "sha256": "c8a24e0294376ee5a195c56752a13310e1c0b5f8588a4db50e094120e3e4cc74",
+      "modifications": "Renamed only; original bytes preserved."
+    }
+  ],
+  "inspection": [
+    "FBX 7400 binary: characterMedium model has mesh geometry (804 vertices), skeleton and skin deformers. The separate idle FBX has animation and skeleton only, ZERO Geometry/Vertices/Mesh nodes. Runtime instantiates the real model, binds matching idle bone tracks to its skeleton and keeps normalization on an external parent, outside imported animation targets. Raw root rotation -90 degrees and scale100 still require actual imported visual readback.",
+    "Furniture GLBs: embedded BIN geometry and PBR wood materials; no external images/buffers. Table source bounds [0,0,-0.447373331] to [0.841487944,0.326733977,0]; box [0,0,-0.212499991] to [0.212499991,0.281,0]. Runtime centers models and normalizes heights to table1m, box0.65m, manager1.8m.",
+    "Explicit manager_skin.png override on every real manager mesh; no reliance on renamed FBX texture resolution. Idle bone tracks bind by matching bone names, dropping unrelated imported-root tracks. First person hides the whole third-person visual; third camera uses SpringArm.",
+    "Five material bundles are a labeled representative visualization of physical receiving-holder M11, not five extra stocks. Committed state refresh reads actual holder contents; no frame/hover inventory scan.",
+    "No file reaches1MB; binary attributes used, no LFS pointers or large assets. Wider files require LFS before addition.",
+    "Original idle FBX contains Root|0.Targeting Pose (0.033333s) and Root|Idle (1.066667s). Bind explicitly selects Idle instead of first non-RESET and applies its first pose immediately with advance(0)."
+  ],
+  "gaps": [
+    "Walking/carry/build/load animation and retargeting are not ready; only original idle clip is included.",
+    "No first-person arms or cargo interaction. Manager is not free labour.",
+    "Field units remain permitted symbolic 3D markers, including reported contact uncertainty/age/confidence; full roster models and terrain/placement parity remain later phases.",
+    "Quaternius files excluded: exact archive/version redistribution terms unresolved."
+  ],
+  "remote_findings": {
+    "required_run": "42431861192 passed isolated import and changed-script engine parsing at b739067.",
+    "failed_direct_run": "42431874777: actual third-person image had no manager; RTS image had no ground. C inspected all three preserved PNGs and direct.log. The idle file was animation-only; terrain triangles used opposite front-face winding. The demonstration also incorrectly compared post-running funds to initial2500, ignoring normal objective income.",
+    "corrections_pending_remote_proof": "Applied at4e9931c: separate real model and idle FBX, external normalization, clockwise terrain faces and paused preview before/after funds comparison. Second run proved visible manager/ground and direct action; initial neutral pose still needed correction. No economy rule changed.",
+    "second_run": "Required42432650743 and direct42432652286 passed at4e9931c, with actual visible avatar/terrain. Third-person image still showed T-pose. First-non-RESET clip selection corrected to explicit Idle; a repeat actual imported pose record and rendered view remain required.",
+    "final_run": "Required42434202516 and direct42434204247 PASS at78fcb2a. Lead viewed three fresh captures: relaxed manager arms, first-person table/bundles and RTS ground. Actual imported Root|Idle40tracks and live/key arm match. Actual UIDs/import sidecars retained; native/FPS/full roster unverified."
+  },
+  "style_direction": "Accepted: cohesive stylized 3D with readable detail and lower asset performance cost. No measured performance or final model approval follows from this choice."
+}
