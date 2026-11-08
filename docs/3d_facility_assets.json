@@ -1,5 +1,5 @@
 {
-  "status": "Three-model completed exterior integration covering five mapped kinds; Office explicitly provisional after actual manager-scale incompatibility. Corrected Workshop/label viewport review pending. No complete roster/FPS approval.",
+  "status": "Three compatible exteriors implemented and actual arranged fit/roof/manager-reference observed; Office explicitlyprovisional. Complete roster/native/FPS remainopen.",
   "creator": "Kenney",
   "creator_page": "https://kenney.nl/assets/city-kit-industrial",
   "archive_version": "City Kit Industrial2.0",
@@ -200,5 +200,6 @@
         "decision": "Lead approved only Office provisional fallback; no body, door, footprint or mesh distortion. Remove unused model from shipped assets and both Lead-owned importer lists."
       }
     }
-  ]
+  ],
+  "remote_evidence": "docs/evidence/facility_exteriors.json"
 }
