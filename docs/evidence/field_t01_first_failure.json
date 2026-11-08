@@ -10,9 +10,13 @@
   "warning": "FieldT01Cues._draw supplied width while filled=true; focused draw-call correction assigned.",
   "preserved": [
     {
-      "path": "docs/evidence/field_t01/original/direct.log",
-      "bytes": 4657,
-      "sha256": "83929e049660783c5dc1430d51263bb9b900e0dba5abbb8f006d2ba191abc324"
+      "path": "docs/evidence/field_t01/original/direct.log.base64",
+      "encoding": "base64; 76-character lines",
+      "bytes": 6294,
+      "sha256": "a501e6b250c919adba8b89e98e48859f94747bcec7dbf7c39e8277d581250462",
+      "decoded_original_name": "direct.log",
+      "decoded_bytes": 4657,
+      "decoded_sha256": "83929e049660783c5dc1430d51263bb9b900e0dba5abbb8f006d2ba191abc324"
     },
     {
       "path": "docs/evidence/field_t01/original/field_t01_reference.png",
@@ -26,5 +30,6 @@
     }
   ],
   "artifact_archive_sha256": "f4f4b702cd5b72a50ab1f57d0634263f833cce68c2db67cbd5d648718b83ef0f",
-  "recheck": "Lead owns one separately reviewed same-scope35s/45s focused recheck; no process by C, no visual acceptance yet."
+  "recheck": "Lead owns one separately reviewed same-scope35s/45s focused recheck; no process by C, no visual acceptance yet.",
+  "preservation_note": "Original failed log bytes are preserved exactly as base64, including its final blank line. Decode before comparing the original artifact hash. Storage avoids treating arbitrary runtime output as whitespace-constrained authored text; no CI whitespace rule is disabled."
 }
