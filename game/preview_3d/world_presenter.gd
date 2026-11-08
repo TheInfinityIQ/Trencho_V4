@@ -23,6 +23,7 @@ const UtilityTrucks = preload("res://game/preview_3d/utility_trucks.gd")
 const RearT01Trucks = preload("res://game/preview_3d/rear_t01_trucks.gd")
 const FieldPersons = preload("res://game/preview_3d/field_persons.gd")
 const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
+const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
@@ -31,6 +32,7 @@ var utility_trucks: UtilityTrucks = UtilityTrucks.new()
 var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
 var field_persons: FieldPersons = FieldPersons.new()
 var field_t01_trucks: FieldT01Trucks = FieldT01Trucks.new()
+var field_objectives: FieldObjectives = FieldObjectives.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -100,6 +102,10 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_persons.changed.connect(_field_person_changed)
 	field_persons.removing.connect(_field_person_removing)
 	field_persons.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,_add_static_human)
+	_markers_root.add_child(field_objectives)
+	field_objectives.changed.connect(_field_objective_changed)
+	field_objectives.removing.connect(_field_objective_removing)
+	field_objectives.bind(model.rear.combat.world.ground)
 	rear_root.add_child(_collision_root)
 	footprint = _box(rear_root,Vector3.ZERO,Vector3.ONE,Color(0.3,0.9,0.65,0.45))
 	door = _box(rear_root,Vector3.ZERO,Vector3(1.5,0.15,1.5),Color("f4cd7c"))
@@ -358,17 +364,20 @@ func refresh_markers() -> void:
 	var present: Dictionary = {}
 	var people: Dictionary = {}
 	var carriers: Dictionary = {}
+	var objectives: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
 		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
 		else: people.erase(row.id)
 		if row.kind == "CARRIER": carriers[row.id] = row
+		if row.kind == "PLACE" and row.has("objective_kind"): objectives[row.id] = row
 	field_persons.reconcile(people.values())
 	field_t01_trucks.reconcile(carriers.values())
+	field_objectives.reconcile(objectives.values())
 	_proxy_rows.clear()
 	for row in marker_rows:
-		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id): continue
+		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id): continue
 		_proxy_rows.append(row)
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
@@ -406,6 +415,17 @@ func _field_t01_changed(id: String) -> void:
 
 func _field_t01_removing(id: String, body: Node3D) -> void:
 	if markers.get(id) == body: markers.erase(id)
+
+func _field_objective_changed(id: String) -> void:
+	var anchor: Node3D = field_objectives.anchors[id]
+	if markers.has(id) and markers[id] != anchor:
+		var old: Node3D = markers[id]
+		old.get_parent().remove_child(old)
+		old.queue_free()
+	markers[id] = anchor
+
+func _field_objective_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
 
 func show_preview(plan: Dictionary) -> void:
 	var rect: Rect2 = plan.footprint

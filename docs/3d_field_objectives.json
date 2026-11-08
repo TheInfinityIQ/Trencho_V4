@@ -1,0 +1,45 @@
+{
+  "status": "Implemented. One untouched initial-neutral representation/selection passed at6c572173; actual image inspected by Lead. Actual owner/state transition runtime acceptance remains OPEN. Exact-head role decisions/merge belong to PR132.",
+  "baseline": "f29b02403cb998de6e3bcf7c77b730a9b45e5f3c",
+  "branch": "codex/3d-field-objectives",
+  "contract": "docs/3d_field_objectives.md",
+  "diagram": "docs/diagrams/3d_field_objectives.mmd",
+  "fixed_definition": "docs/current_change/field_objectives.md",
+  "confirmed_source_defect": "Policy computes current objective ownership colour, but World.refresh_markers applies it only when creating a PLACE proxy; retained proxy and timed pose refresh never reapply colour. No runtime capture finding claimed.",
+  "population": "CURRENT permitted PLACE rows intersect actual ObjectiveService Resource/Route Hub/Observation registrations; normal Farmland nine listed below. HQ/order-only places retain existing behavior; ID suffix never determines ownership.",
+  "actual_normal_ids": [
+    "resource-west-blue",
+    "resource-centre-blue",
+    "resource-east-blue",
+    "resource-west-red",
+    "resource-centre-red",
+    "resource-east-red",
+    "route-hub-west",
+    "route-hub-east",
+    "observation-central"
+  ],
+  "authority": "ObjectiveService.register initial owner empty/state Neutral; settle owns actual owner/state/latest_change, advance_to owns control/income. Existing Rear settlement/state boundary -> GameSession -> Preview field dirty -> one current Policy reconciliation; no new service event or per-frame inspect.",
+  "pose": "Finite root PLACE from add_place; move_entity rejects PLACE, no public relocation in this narrow path. Current permitted position plus current terrain Y on coalesced refresh, no holder/roster polling.",
+  "proposed_policy_metadata": "Add only objective_kind/state scalars beside current ownership_label/colour; do not overwrite ledger PLACE.owner, expose participant/blocker arrays or change admission.",
+  "representation": "Scene-owned ground Node3D anchors and cached fixed6px ownership-coloured circle with existing readable title and actual owner/state text; update colour/state on retained anchors, same cached current visibility for ordered strict18px picking. No building/model/capture-radius invention.",
+  "proposed_sources": [
+    "game/battlefield/battlefield_presentation.gd",
+    "game/preview_3d/field_objectives.gd",
+    "game/preview_3d/field_objective_cues.gd",
+    "game/preview_3d/world_presenter.gd",
+    "game/preview_3d/preview.gd"
+  ],
+  "unchanged": "Objective/capture/income/orders rules, information Policy admission, HQ/order-only places, friendly PERSON/T01 and other carriers/contacts, existing inspection, camera10..6500/-65degrees/Y3400 and UI modes, assets/workflow/physics.",
+  "observation": "ONE untouched actual resource-centre-blue initial Neutral/owner empty at2000,2600; normal size500 reachable-pan image, actual ground/Policy colour-state-title/current-ID inspection. No time advance, actor/owner/state/signal setup or capture replay.",
+  "transition_runtime_acceptance": "OPEN and explicitly outside the single initial representation/selection observation; source-reviewed propagation does not prove real ownership/contested transition rendering.",
+  "new_assets_imports": [],
+  "planning_verification": "Historical pre-code trace/JSON/population/map/complete-delta checks passed before implementation; pre-code914d799 retained.",
+  "evidence_care": "Preserve repaired main and exact base64 failed T01 stdout/provenance; no old evidence changes. Final review must cover entire branch delta including added files.",
+  "pre_code_commit": "914d799f34047487de60b6c2445c2326795f35ab",
+  "source_verification": "Five changed production scripts parsed in Godot; required42522582223 and single initial-neutral observation42522587150 PASS. Source purpose/map/whole-branch checks pass. No local engine or additional scenario.",
+  "new_engine_uid_paths": [
+    "game/preview_3d/field_objectives.gd.uid",
+    "game/preview_3d/field_objective_cues.gd.uid"
+  ],
+  "evidence": "docs/evidence/field_objectives.json"
+}

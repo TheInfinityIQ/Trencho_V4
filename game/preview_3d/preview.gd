@@ -4,6 +4,7 @@ const World = preload("res://game/preview_3d/world_presenter.gd")
 const FieldPolicy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FieldCues = preload("res://game/preview_3d/field_person_cues.gd")
 const TruckCues = preload("res://game/preview_3d/field_t01_cues.gd")
+const ObjectiveCues = preload("res://game/preview_3d/field_objective_cues.gd")
 var world: Node3D
 var management_open := false
 var battlefield_open := false
@@ -37,6 +38,7 @@ var _inspection_panel: ScrollContainer
 var _crosshair: Label
 var _field_cues: FieldCues
 var _truck_cues: TruckCues
+var _objective_cues: ObjectiveCues
 
 func _ready() -> void:
 	super._ready()
@@ -68,6 +70,8 @@ func _build_hud() -> void:
 	add_child(_field_cues)
 	_truck_cues = TruckCues.new()
 	add_child(_truck_cues)
+	_objective_cues = ObjectiveCues.new()
+	add_child(_objective_cues)
 	_hud = VBoxContainer.new()
 	_hud.position = Vector2(20,16)
 	_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -122,6 +126,7 @@ func _build_hud() -> void:
 func _replace_world(model: RefCounted) -> void:
 	if _field_cues != null: _field_cues.bind(null,null)
 	if _truck_cues != null: _truck_cues.bind(null,null)
+	if _objective_cues != null: _objective_cues.bind(null,null,Callable())
 	_base.placement_manager_body = null
 	_base.placement_manager_shape = null
 	if world != null:
@@ -139,6 +144,8 @@ func _replace_world(model: RefCounted) -> void:
 	_field_cues.set_selected(_battlefield.selected_id)
 	_truck_cues.bind(world.field_t01_trucks,world.rts)
 	_truck_cues.set_selected(_battlefield.selected_id)
+	_objective_cues.bind(world.field_objectives,world.rts,_battlefield._site_label)
+	_objective_cues.set_selected(_battlefield.selected_id)
 	world.field_t01_trucks.removing.connect(_field_truck_removed)
 	world.player.global_rotation.y = _session.manager_pose.heading
 	world.player_visual.rotation.y = PI
@@ -187,6 +194,7 @@ func _set_management(open: bool) -> void:
 	if _crosshair != null: _crosshair.visible = not open and not battlefield_open
 	if _field_cues != null: _field_cues.visible = battlefield_open and not open
 	if _truck_cues != null: _truck_cues.visible = battlefield_open and not open
+	if _objective_cues != null: _objective_cues.visible = battlefield_open and not open and not _field_dirty
 	_release_controls()
 	if not open: _invalidate_preview(false)
 	_update_hint()
@@ -203,6 +211,8 @@ func _apply_view() -> void:
 	_field_cues.request_projection()
 	_truck_cues.visible = battlefield_open and not management_open
 	_truck_cues.request_projection()
+	_objective_cues.hide() # Show only after the existing fresh Policy reconciliation.
+	_objective_cues.request_projection()
 	if battlefield_open:
 		_field_dirty = true
 		world.clear_preview()
@@ -300,6 +310,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),10,6500)
 			_field_cues.request_projection()
 			_truck_cues.request_projection()
+			_objective_cues.request_projection()
 	if event is InputEventMouseMotion:
 		var moved_pointer: bool = _pointer != event.position
 		_pointer = event.position
@@ -323,6 +334,8 @@ func _physics_process(delta: float) -> void:
 	if battlefield_open and _field_dirty:
 		_field_dirty = false
 		world.refresh_markers()
+		_objective_cues.flush_projection()
+		_objective_cues.visible = not management_open
 		_inspection_dirty = true
 	if battlefield_open and _motion_dirty:
 		_motion_dirty = false
@@ -465,6 +478,7 @@ func _placement_result(result: Dictionary) -> void:
 func _select_marker() -> void:
 	_field_cues.flush_projection()
 	_truck_cues.flush_projection()
+	_objective_cues.flush_projection()
 	var nearest := ""
 	var distance := 18.0
 	for row in world.marker_rows:
@@ -472,10 +486,13 @@ func _select_marker() -> void:
 		if row.kind == "PERSON" and not _field_cues.points.has(row.id): continue
 		var truck: bool = world.field_t01_trucks.bodies.has(row.id)
 		if truck and not _truck_cues.points.has(row.id): continue
+		var objective: bool = world.field_objectives.anchors.has(row.id)
+		if objective and not _objective_cues.points.has(row.id): continue
 		var at: Vector3 = world.markers[row.id].global_position
-		if not truck and world.rts.is_position_behind(at): continue
+		if not truck and not objective and world.rts.is_position_behind(at): continue
 		var point: Vector2
-		if truck: point = _truck_cues.points[row.id]
+		if objective: point = _objective_cues.points[row.id]
+		elif truck: point = _truck_cues.points[row.id]
 		elif row.kind == "PERSON": point = _field_cues.points[row.id]
 		else: point = world.rts.unproject_position(at)
 		var measure: float = point.distance_to(_pointer)
@@ -488,15 +505,18 @@ func _inspect(id: String) -> void:
 	_battlefield.selected_id = id
 	_field_cues.set_selected(id)
 	_truck_cues.set_selected(id)
+	_objective_cues.set_selected(id)
 	_refresh_inspection()
 
 func _field_camera_changed(_camera: Camera3D) -> void:
 	if _field_cues != null: _field_cues.request_projection()
 	if _truck_cues != null: _truck_cues.request_projection()
+	if _objective_cues != null: _objective_cues.request_projection()
 
 func _field_viewport_changed() -> void:
 	if _field_cues != null: _field_cues.request_projection()
 	if _truck_cues != null: _truck_cues.request_projection()
+	if _objective_cues != null: _objective_cues.request_projection()
 
 func _field_truck_removed(_id: String, _body: Node3D) -> void:
 	# Coalesce a current Policy refresh so an ineligible detailed hull falls back.
