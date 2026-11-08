@@ -250,7 +250,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	if management_open: return
 	if event is InputEventMouseButton:
-		var changed_point := _pointer != event.position
+		var changed_point: bool = _pointer != event.position
 		_pointer = event.position
 		if changed_point and _base._placing_building and not battlefield_open: _invalidate_preview()
 		if event.button_index == MOUSE_BUTTON_MIDDLE: _middle_drag = event.pressed and battlefield_open
@@ -272,7 +272,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif battlefield_open and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),100,6500)
 	if event is InputEventMouseMotion:
-		var moved_pointer := _pointer != event.position
+		var moved_pointer: bool = _pointer != event.position
 		_pointer = event.position
 		if battlefield_open and _middle_drag:
 			_pan_field(Vector2(-event.relative.x,-event.relative.y)*world.rts.size/get_viewport_rect().size.y)
