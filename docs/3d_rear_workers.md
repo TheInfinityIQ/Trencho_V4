@@ -27,3 +27,7 @@ C supplies exact frozen source, reviewed purposes/maps and the ignored proposal.
 ## Source handoff limits
 
 The projection and scene adapter are implemented with the event ownership above. Direct syntax parsing passed the four changed production scripts and the ignored proposal. No new assets or import-list change is needed; the actual new helper UID remains Lead-owned. [Feature status](3d_rear_workers.json) records the exact source and limitations. Engine execution, the single actual image and exact-head visual decisions remain pending. No regression or local engine check was performed.
+
+## First actual observation and narrow correction
+
+Required validation `42449796720` and the fixed arranged observation `42449801128` passed at `81cbfb57` (artifact `13605261796`). C viewed the original image: the long manager label overlapped the worker duty line. Designer and UI/UX requested only a compact two-line manager identity, “You” then “Manager,” at the same position and colour. Worker roles/cargo, camera and exact proposal remain unchanged. Preserve the first functional PASS and original image; corrected visual acceptance is pending. No other source, scene, scenario or engine limit changed.

@@ -1,5 +1,5 @@
 {
-  "status": "Implemented a rear-worker presentation candidate. Actual engine execution and worker/manager image review are pending.",
+  "status": "The arranged functional observation passed. Designer and UI/UX requested a compact manager label to remove overlap; the corrected actual image remains pending.",
   "baseline": "2e03004c55a07515ef0c1af33989e17735bddd39",
   "pre_code_commit": "1a749d2",
   "contract": "docs/3d_rear_workers.md",
@@ -24,5 +24,14 @@
     "Opaque facility geometry may hide authoritative workers inside existing bays; visuals do not move them outside or create interiors.",
     "Worker visuals add no collision body or commands. Existing management remains the control surface.",
     "Hidden-area progression, native input, full gameplay and FPS are not accepted by the arranged reference."
-  ]
+  ],
+  "first_actual_observation": {
+    "source": "81cbfb57d1707bacfe2f8c1e66c38f33c9dbfe2d",
+    "required_validation": 42449796720,
+    "direct_demonstration": 42449801128,
+    "artifact": 13605261796,
+    "functional_result": "PASS: one actual worker, held M11 count, committed endpoint and identity checks.",
+    "visual_disposition": "Changes requested: the long manager label overlapped the worker duty line. Original image and functional result are preserved.",
+    "approved_correction": "Only manager identity text becomes two lines, You then Manager. Colour, placement, worker labels, camera and exact observation proposal remain unchanged."
+  }
 }

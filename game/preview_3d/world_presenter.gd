@@ -117,7 +117,7 @@ func _build_player(pose: RefCounted) -> void:
 	player.add_child(collider)
 	manager_collision = collider
 	player_visual = _add_human(player)
-	var identity: Label3D = _label(player_visual,"You · controlled manager",Vector3(0,2.15,0),0.012)
+	var identity: Label3D = _label(player_visual,"You\nManager",Vector3(0,2.15,0),0.012)
 	identity.name = "ManagerIdentity"
 	identity.modulate = Color("f4cd7c")
 	identity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
