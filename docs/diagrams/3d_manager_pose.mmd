@@ -1,0 +1,16 @@
+flowchart TD
+    Session[GameSession: new-session spawn once] --> Pose[One canonical manager Vector3 + yaw]
+    Terrain[Existing TerrainWorld ground support] --> Spawn[Explicit spawn / accepted 2D write height]
+    Spawn --> Pose
+    Pose --> Ground[Derived Vector2 x,z only]
+    Ground --> Map[Existing 2D map draw / collision candidate]
+    Map --> Accepted[Accepted legacy candidate + support height]
+    Accepted --> Pose
+    Pose --> Body[One active 3D body: exact retained x,y,z]
+    Body --> Resolve[Existing move_and_slide collision result]
+    Resolve --> Publish[Publish complete resolved x,y,z + yaw]
+    Publish --> Pose
+    Pose --> Views[First / third / RTS return: retain, never reset]
+    Camera[Eye / SpringArm / visual normalization] -. presentation offsets only .-> Views
+    Ledger[Ledger holders / workers / routes / fuel / contacts] -. unchanged and independent .-> Session
+    Probe[Legacy terrain probe u,v,h] -. no axis rewrite .-> Terrain
