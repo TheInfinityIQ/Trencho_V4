@@ -1,5 +1,5 @@
 {
-  "status": "3D-01 opt-in preview implemented and source/visual reviewed; complete staged3D migration remains in progress.",
+  "status": "3D01 opt-inpreview merged;3D02A managerposition implemented/scopedchecked. Fullstaged3Doverhaul remainsinprogress.",
   "baseline": "5b3e3aac1a01e16e8f1b4295c00742515efae8fd",
   "design_owner": "Game Designer: docs/design_brief.md, Full 3D direction — 7 November 2026",
   "engineering_owner": "Lead Developer; one implementation owner per bounded feature/worktree",
@@ -88,7 +88,7 @@
         "source": "78fcb2a3bc93da9aef7ea8a3d9ea17029fd73e2b",
         "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/120",
         "evidence": "docs/evidence/3d_opening.json",
-        "status": "Bounded source and actual three-view visual disposition approved; final integration metadata review pending. Default F5 remains unchanged; open preview.tscn with F6 for preview-only3D."
+        "status": "Merged PR120 at387e574; boundedsource/actualthree-viewvisual approval and current-changePASS. DefaultF5unchanged; openpreview.tscn withF6. Fullmigration/native/FPSopen."
       }
     },
     {
@@ -96,7 +96,17 @@
       "feature": "Authoritative 3D positions, terrain and physical movement",
       "depends_on": "3D-01",
       "scope": "Migrate spatial owners and consumers in bounded increments: player state, holder/local/world poses, terrain axes/heights/support, character and vehicle route samples, clearance and visibility. Retain one authority with derived compatibility reads during transition; retire each adapter when consumers migrate.",
-      "acceptance": "Each changed owner has a pre-code diagram and a brief direct real-action check at its boundary. Height/axes, attachments and colocation remain consistent; no independently moving presentation twin, teleport or loss of terrain/vehicle policy."
+      "acceptance": "Each changed owner has a pre-code diagram and a brief direct real-action check at its boundary. Height/axes, attachments and colocation remain consistent; no independently moving presentation twin, teleport or loss of terrain/vehicle policy.",
+      "increments": [
+        {
+          "id": "3D02A",
+          "feature": "Canonical world-space managerfootposition",
+          "source": "ccec4f066be071add5822736ddb6583b8f1bb330",
+          "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/121",
+          "evidence": "docs/evidence/3d_manager_pose.json",
+          "status": "Implemented and scopedheadlessowner/physicsPASS; complete3D02 terrain/holders/routes remainsopen."
+        }
+      ]
     },
     {
       "id": "3D-03",
