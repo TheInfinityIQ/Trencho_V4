@@ -35,3 +35,17 @@ Project generations, command sequencing and ground-role decisions are our small 
 ## Verification boundary
 
 No local engine or regression/broad/FPS run. After source freeze propose one ignored brief changed-feature demonstration of an actual world candidate/placement and its rejection/cancellation feedback boundary as needed; Lead selects one bounded remote execution/captures and obtains technical/Designer/UIUX disposition. Do not rerun prior opening/manager scenarios. Source parsing is not native input, visual facility-art or full-game acceptance. [Ownership diagram](diagrams/3d_construction_commands.mmd).
+
+
+## Source delivery and current launch
+
+Opening `game/preview_3d/preview.tscn` with F6 now enables **actual construction commands**, not the former 3D-01 no-spend preview. The temporary guard/property is retired; historical 3D-01 evidence keeps its original uncommitted scope. Default F5 still uses the existing main. Facility volumes and their height remain explicitly provisional.
+
+The implementation uses one local candidate and one consumed intent, explicit draft start/end/selection/rotation notifications, actual camera-ray transform/projection equality at transform notifications, and actual rear-ground collider identity. Unchanged SpringArm notifications do not invalidate. Unrelated session events revoke a fully checked green ghost but do not erase a pending click or replace static bodies. Only changed committed construction footprint/state/remaining-goods records rebuild site proxies and invalidate geometry; a newly changed collider is queried after the following physics synchronization boundary. This is a small scene-local record, not a global inventory hash/poll.
+
+For existing construction trucks, only clearance membership in the current candidate footprint matters: known service truck IDs use their actual holder-chain positions, without inventory inspection; entering/leaving wakes the cheap hint, irrelevant motion does not starve placement. Authority still checks current facts once at place. Command feedback is bridged from the existing BaseDemo result path so selected-site cancellation stays truthful after management closes. The 3D composition retains drafts across management panels with a narrow opt-in flag; 2D panel behavior is unchanged. Actual returned site selection is restored when hidden construction rows refresh.
+
+One proposed ignored demonstration will exercise this changed flow at actual 1x, not pause to mask freshness starvation. It will perform a current world rejection, one actual placement and its unconsumed selected-site cancellation/feedback. No old opening/manager scenario or consumed-loss fixture rerun, broader matrix or new rendered campaign. OS focus is required by real world input; Lead chooses the bounded execution/capture transport. No engine or demonstration has run locally.
+
+
+Exact ignored proposal: `logs/3d-construction-commands/direct_demo.gd`. Within that same 1x process, rendered execution records construction_provisional.png, construction_placed.png and construction_cancelled.png after the corresponding physics/update and frame_post_draw; headless skips images only. No native OS, consumed-loss, full stale/camera/roof matrix or full facility-art approval is claimed by this one flow. Identical pointer events, like identical camera notifications, do not invalidate a represented candidate. No demonstration or engine run has occurred locally.

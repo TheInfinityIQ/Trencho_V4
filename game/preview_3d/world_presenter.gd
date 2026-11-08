@@ -1,5 +1,23 @@
 extends Node3D
 ## Temporary ground adapter. Economy, motion and enemy knowledge stay in services.
+class PlacementCamera:
+	extends Camera3D
+	signal pose_changed(camera: Camera3D)
+	var _ray_initialized := false
+	var _ray_transform := Transform3D.IDENTITY
+	var _ray_projection := Projection()
+	func _ready() -> void:
+		set_notify_transform(true)
+	func _notification(what: int) -> void:
+		if what != NOTIFICATION_TRANSFORM_CHANGED or not is_inside_tree(): return
+		var at := get_camera_transform()
+		var ray_projection := get_camera_projection()
+		if _ray_initialized and _ray_transform.is_equal_approx(at) and _ray_projection == ray_projection: return
+		_ray_initialized = true
+		_ray_transform = at
+		_ray_projection = ray_projection
+		pose_changed.emit(self)
+
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_root := Node3D.new()
@@ -8,18 +26,20 @@ var player := CharacterBody3D.new()
 var player_visual: Node3D
 var eye := Node3D.new()
 var arm := SpringArm3D.new()
-var first := Camera3D.new()
-var third := Camera3D.new()
+var first := PlacementCamera.new()
+var third := PlacementCamera.new()
 var rts := Camera3D.new()
 var footprint: MeshInstance3D
 var door: MeshInstance3D
 var stock_label: Label3D
 var stock_visuals: Array[Node3D] = []
+var rear_ground: StaticBody3D
 var simulation: RefCounted
 var markers: Dictionary = {}
 var marker_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
+var _site_snapshot: Dictionary = {}
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -41,7 +61,8 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 	# Rear has flat TR01 ground in the accepted normal Farmland opening.
-	_box(rear_root, Vector3(120,-0.25,90), Vector3(240,0.5,180), Color("70815b"), true)
+	var ground := _box(rear_root, Vector3(120,-0.25,90), Vector3(240,0.5,180), Color("70815b"), true)
+	rear_ground = ground.get_child(0) as StaticBody3D
 	for edge in [Vector3(-0.5,1,90),Vector3(240.5,1,90)]:
 		_box(rear_root,edge,Vector3(1,2,182),Color("59664e"),true)
 	for edge in [Vector3(120,1,-0.5),Vector3(120,1,180.5)]:
@@ -204,17 +225,32 @@ func _build_terrain() -> void:
 		var rect: Rect2 = obstacle.rect
 		_box(field_root,Vector3(rect.get_center().x,(obstacle.bottom+obstacle.top)/2.0,rect.get_center().y),Vector3(rect.size.x,obstacle.top-obstacle.bottom,rect.size.y),Color("8a8b7b"))
 
-func refresh_rear() -> void:
+func refresh_rear() -> bool:
 	var contents: Dictionary = simulation.rear.ledger.loose_stock_summary("receiving",simulation.rear.PLAYER).contents
 	var count: int = int(contents.get("M11",{}).get("quantity",0))
 	stock_label.text = "%d M11 · representative bundles" % count
 	for index in stock_visuals.size(): stock_visuals[index].visible = index < mini(5,ceili(float(count)/100.0))
+	# Committed site geometry only; unrelated economy/combat events must not
+	# replace physics bodies or perpetually invalidate a stationary candidate.
+	var next: Dictionary = {}
+	for row in simulation.rear.construction.instances.values():
+		var goods := row.state in ["Cancelled","Dismantled"] and simulation.rear.ledger.loose_stock_mass_at(row.id) > 0.000001
+		next[row.id] = [row.center,row.size,row.state,goods]
+	if next == _site_snapshot: return false
+	_site_snapshot = next
 	for child in _collision_root.get_children():
 		_collision_root.remove_child(child)
 		child.queue_free()
 	for row in simulation.rear.construction.instances.values():
-		if row.state in ["Cancelled","Dismantled"]: continue
+		if row.state in ["Cancelled","Dismantled"]:
+			if bool(next[row.id][3]):
+				_box(_collision_root,Vector3(row.center.x,0.04,row.center.y),Vector3(row.size.x,0.08,row.size.y),Color(0.95,0.7,0.3,0.4))
+				_label(_collision_root,"%s · %s · goods await hauling" % [row.id,row.state],Vector3(row.center.x,1.5,row.center.y),0.02)
+			continue
 		_box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
+		_label(_collision_root,"%s · %s · provisional volume" % [row.id,row.state],Vector3(row.center.x,3.5,row.center.y),0.02)
+
+	return true
 
 func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
@@ -242,7 +278,9 @@ func show_preview(plan: Dictionary) -> void:
 	footprint.visible = true
 	footprint.position = Vector3(rect.get_center().x,0.08,rect.get_center().y)
 	footprint.scale = Vector3(rect.size.x,0.1,rect.size.y)
-	footprint.material_override.albedo_color = Color(0.3,0.9,0.65,0.45) if plan.ok else Color(1,0.3,0.2,0.45)
+	var colour := Color(1,0.3,0.2,0.45)
+	if plan.ok: colour = Color(0.95,0.7,0.3,0.45) if plan.get("provisional",false) else Color(0.3,0.9,0.65,0.45)
+	footprint.material_override.albedo_color = colour
 	door.visible = plan.has("door")
 	if door.visible: door.position = Vector3(plan.door.x,0.12,plan.door.y)
 
