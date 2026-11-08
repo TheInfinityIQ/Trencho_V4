@@ -248,7 +248,8 @@ func refresh_rear() -> bool:
 				_label(_collision_root,"%s · %s · goods await hauling" % [row.id,row.state],Vector3(row.center.x,1.5,row.center.y),0.02)
 			continue
 		_box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
-		_label(_collision_root,"%s · %s · provisional volume" % [row.id,row.state],Vector3(row.center.x,3.5,row.center.y),0.02)
+		var site_label: Label3D = _label(_collision_root,"%s · %s · provisional volume" % [row.id,row.state],Vector3(row.center.x,4.5,row.center.y),0.02)
+		site_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 
 	return true
 

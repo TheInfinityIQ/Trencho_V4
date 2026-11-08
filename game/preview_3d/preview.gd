@@ -428,7 +428,7 @@ func _check_candidate() -> void:
 	_update_hint()
 
 func _placement_result(result: Dictionary) -> void:
-	_command_message = "Site %s: %s" % [result.id,result.message] if result.ok else str(result.message)
+	_command_message = "Site %s: %s" % [result.id,result.message] if result.ok else "Last placement attempt: "+str(result.message)
 	if result.ok: _preview_message = ""
 	else: _invalidate_preview(false)
 	_update_hint()
