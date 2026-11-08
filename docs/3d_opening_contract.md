@@ -1,5 +1,7 @@
 # 3D-01 opening and cameras
 
+> Historical3D-01 scope: its original no-spend preview and evidence are retained below. Current F6 construction commands are documented in [3D construction](3d_construction_commands.md); that later increment enables actual placement/cancellation. Default F5 remains unchanged.
+
 Owner: Developer C; Lead owns publication, remote imports/checks and integration. This is a separate `game/preview_3d/preview.tscn` entry. Normal F5 and `project.godot` stay unchanged.
 
 ## Contract before implementation

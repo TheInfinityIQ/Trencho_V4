@@ -1,0 +1,39 @@
+flowchart TD
+    UI[Existing catalogue / numeric controls] --> Draft[One blueprint draft generation]
+    UI --> GUI[GUI / modal ownership: no world click-through]
+    Camera[Active camera / aim / projection / viewport] --> Revision[Candidate revision]
+    Draft --> Revision
+    Changes[Committed geometry / relevant actual blocker motion] --> Revision
+    Revision --> Pick[Queued physics-safe rear ray]
+    Pick --> Surface{Closest solid is actual rear-ground collider?}
+    Surface -->|No: roof / table / wall| Blocked[Invalidate old point / blocked feedback]
+    Surface -->|Yes: finite X/Z| PreviewGate[Shared live capsule / rotated footprint check]
+    Manager[Optional actual 3D body + shape: world lifetime, even hidden] --> PreviewGate
+    PreviewGate -->|Overlap| Move[Move away before placing here: no mutation]
+    PreviewGate -->|Clear| Ghost[Cheap provisional footprint / door hint]
+    Explicit[Explicit full Preview] --> PreviewGate
+    PreviewGate -->|Clear explicit full Preview| Full[Construction.preview: checked candidate stamp]
+    Full --> Ghost
+    Click[Fresh world press after focus/capture] --> Seal[Seal current identities + generation + candidate]
+    Ghost --> Seal
+    Seal --> Current{Still current / permitted input owner?}
+    Current -->|No| Drop[Discard obsolete intent: no retry]
+    Current -->|Yes, consume once| Confirm[BaseDemo.confirm_build_at]
+    Numeric[Existing explicit numeric Place] --> Confirm
+    Confirm --> CommitGate[Read live body / shape again]
+    Manager --> CommitGate
+    CommitGate -->|Overlap| Move
+    Move --> Keep
+    CommitGate -->|Clear| Place[Construction.place: one full authoritative check]
+    Place --> Result{Actual result}
+    Result -->|Failure| Keep[Exact reason / retain draft and rotation]
+    Result -->|Success| Site[Actual site ID + existing material/labour work]
+    Site --> Clear[Select site / clear only successful draft]
+    Escape[RMB / Esc in preview] --> DraftOnly[Clear draft only: never cancel site]
+    Site --> Select[Existing selected-site management]
+    Select --> Safeguard[Request cancel / loss disclosure / Keep construction]
+    Safeguard --> Decision{Same session / service / site / selection / loss?}
+    Decision -->|No| NoCancel[Nothing cancelled]
+    Decision -->|Confirmed once| Cancel[Construction.cancel]
+    Cancel --> Recovery[Real hauls / builders released / remaining stock recovery]
+    Recovery --> Display[Truthful site/material proxy state, not full facility-art claim]

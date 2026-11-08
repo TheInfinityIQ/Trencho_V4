@@ -1,9 +1,15 @@
 extends Control
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 ## One live scene, persistent panels, physical map and player commands.
+signal command_reported(result: Dictionary)
+signal placement_ended
+signal site_placement_result(result: Dictionary)
 signal placement_started
-## Opt-in 3D opening blocks every construction commit until placement parity.
-var placement_preview_only := false
+## The alternate 3D input owner retains its draft across management panels.
+var preserve_placement_draft := false
+## Optional actual 3D occupation; the normal 2D composition leaves these unset.
+var placement_manager_body: CharacterBody3D
+var placement_manager_shape: CollisionShape3D
 
 signal session_changed(next_simulation: RefCounted)
 signal panel_changed(title: String)
@@ -260,7 +266,7 @@ func _ready() -> void:
 		var panel: Control = tabs.get_tab_control(tabs.current_tab)
 		panel_changed.emit(str(panel.get_meta("panel_title",panel.name)))
 		if is_node_ready() and is_visible_in_tree():
-			if str(tabs.get_tab_control(tabs.current_tab).name) != "Build" and _placing_building: _cancel_placement()
+			if str(tabs.get_tab_control(tabs.current_tab).name) != "Build" and _placing_building and not preserve_placement_draft: _cancel_placement()
 			_request_refresh())
 	_request_refresh.call_deferred()
 
@@ -1097,27 +1103,31 @@ func select_build_kind(kind: String) -> void:
 func preview_build_hint_at(point: Vector2) -> void:
 	preview_build_at(point,false)
 
-func preview_build_at(point: Vector2, full_validation: bool = true) -> void:
+func preview_build_at(point: Vector2, full_validation: bool = true) -> Dictionary:
 	construction_x.set_value_no_signal(point.x)
 	construction_y.set_value_no_signal(point.y)
 	var service: RefCounted = simulation.rear.construction
-	var plan: Dictionary = service.preview(_construction_kind(),point,construction_turn.button_pressed) if full_validation else service.placement_hint(_construction_kind(),point,construction_turn.button_pressed)
+	var kind: String = _construction_kind()
+	var turned: bool = construction_turn.button_pressed
+	var plan: Dictionary = _manager_placement_rejection(kind,point,turned)
+	if plan.is_empty(): plan = service.preview(kind,point,turned) if full_validation else service.placement_hint(kind,point,turned)
+	plan["provisional"] = not full_validation
 	if not plan.has("footprint"):
-		var size: Vector2 = ConstructionCatalog.footprint(_construction_kind(),construction_turn.button_pressed)
+		var size: Vector2 = ConstructionCatalog.footprint(kind,turned)
 		plan.footprint = Rect2(point-size/2.0,size)
-	plan["visual_kind"] = _construction_kind()
+	plan["visual_kind"] = kind
 	base_map.placement_preview = plan
 	base_map.queue_redraw()
 	if feedback != null:
 		feedback.text = str(plan.message)
 		feedback.visible = not feedback.text.is_empty()
+	return plan
 
-func confirm_build_at(point: Vector2) -> void:
-	if placement_preview_only:
-		preview_build_at(point)
-		feedback.text = "3D preview only: no materials spent and no site created."
-		return
-	var result: Dictionary = simulation.rear.construction.place(_construction_kind(),point,construction_turn.button_pressed)
+func confirm_build_at(point: Vector2) -> Dictionary:
+	var kind: String = _construction_kind()
+	var turned: bool = construction_turn.button_pressed
+	var result: Dictionary = _manager_placement_rejection(kind,point,turned)
+	if result.is_empty(): result = simulation.rear.construction.place(kind,point,turned)
 	if result.ok:
 		_cancel_placement()
 		_selected_kind = "site"
@@ -1127,10 +1137,14 @@ func confirm_build_at(point: Vector2) -> void:
 		var index: int = construction_ids.find(str(result.id))
 		if index >= 0: construction_rows.select(index)
 		_request_refresh()
+	site_placement_result.emit(result)
+	return result
 
 func _cancel_placement() -> void:
+	var was_placing := _placing_building
 	_placing_building = false
 	base_map.end_placement()
+	if was_placing: placement_ended.emit()
 
 func _construction_point() -> Vector2:
 	return Vector2(construction_x.value,construction_y.value)
@@ -1610,6 +1624,7 @@ func _result(result: Dictionary) -> void:
 	if feedback != null:
 		feedback.text = str(result.get("message", str(result)))
 		feedback.visible = not feedback.text.is_empty()
+	command_reported.emit(result)
 	if is_node_ready(): _request_refresh()
 
 func _select(kind: String, id: String, open_panel: bool = true) -> void:
@@ -1866,6 +1881,7 @@ func _refresh_contents() -> void:
 	_refresh_ingredients(_activity().snapshot(),view.rear)
 	_fill(construction_rows,construction_ids,view.construction.rows,func(row: Dictionary) -> String:
 		return "%s · %s · %d Building Materials" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),row.m11])
+	_sync_construction_selection()
 	var selected_site: String = _construction_site()
 	construction_status.text = "Select a site or building to inspect its physical work."
 	for row in view.construction.rows:
@@ -2031,6 +2047,7 @@ func _refresh_construction() -> void:
 	(construction_office.get_parent() as Control).visible = construction_office.editable
 	_fill(construction_rows, construction_ids, view.construction.rows, func(row: Dictionary) -> String:
 		return "%s · %s · %d Building Materials" % [WorkforcePanel.job_name(row.id, simulation), str(row.state).replace("M11", "Building Materials"), row.m11])
+	_sync_construction_selection()
 	_refresh_construction_progress()
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, view.rear_population, simulation.receiving.incoming_people()]
 
@@ -2167,3 +2184,25 @@ func _focus_factory_recovery(requested: Dictionary) -> void:
 	var button: Button = _production_enable_button if action.focus == "enable" else _production_pause_button
 	button.grab_focus()
 	if panel is ScrollContainer: panel.ensure_control_visible(button)
+
+func _sync_construction_selection() -> void:
+	if _selected_kind != "site": return
+	var index: int = construction_ids.find(_selected_id)
+	if index >= 0: construction_rows.select(index)
+
+func _manager_placement_rejection(kind: String, point: Vector2, turned: bool) -> Dictionary:
+	if not is_instance_valid(placement_manager_body) or not is_instance_valid(placement_manager_shape): return {}
+	if placement_manager_shape.get_parent() != placement_manager_body or placement_manager_shape.disabled: return {}
+	if not point.is_finite() or not ConstructionCatalog.SPECS.has(kind) or ConstructionCatalog.SPECS[kind].get("fixed",false): return {}
+	var capsule: CapsuleShape3D = placement_manager_shape.shape as CapsuleShape3D
+	if capsule == null: return {}
+	# The actual controller capsule is upright/unscaled; visual offsets never apply.
+	var at: Vector3 = placement_manager_shape.global_position
+	var center: Vector2 = Vector2(at.x,at.z)
+	var size: Vector2 = ConstructionCatalog.footprint(kind,turned)
+	var footprint: Rect2 = Rect2(point-size/2.0,size)
+	var nearest: Vector2 = Vector2(clampf(center.x,footprint.position.x,footprint.end.x),clampf(center.y,footprint.position.y,footprint.end.y))
+	var radius: float = capsule.radius
+	if center.distance_squared_to(nearest) < radius*radius:
+		return {"ok":false,"message":"Move away before placing here.","requires_reconciliation":false}
+	return {}

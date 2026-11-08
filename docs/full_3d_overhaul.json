@@ -1,5 +1,5 @@
 {
-  "status": "3D01 opt-inpreview merged;3D02A managerposition implemented/scopedchecked. Fullstaged3Doverhaul remainsinprogress.",
+  "status": "3D01 and3D02A merged;3D03A construction commands/occupation protection implemented and scopedchecked. Full staged3D migration remains inprogress.",
   "baseline": "5b3e3aac1a01e16e8f1b4295c00742515efae8fd",
   "design_owner": "Game Designer: docs/design_brief.md, Full 3D direction — 7 November 2026",
   "engineering_owner": "Lead Developer; one implementation owner per bounded feature/worktree",
@@ -113,7 +113,21 @@
       "feature": "Rear construction, workforce and production in 3D",
       "depends_on": "3D-02",
       "scope": "All buildable facilities, previews/rotation/commit/cancel, purchases/arrival, default staffing, physical workers/carrying, recipes/training and construction truck. Model footprint/entrance/cargo sockets agree with actual authority. Animation follows earned work/physical transfer, not the reverse.",
-      "acceptance": "Bounded changed-feature deliveries preserve real workers/materials/work and meaningful waiting/cancellation. Catalogue/model coverage recorded explicitly; no claim that a working Workshop covers every facility or animation."
+      "acceptance": "Bounded changed-feature deliveries preserve real workers/materials/work and meaningful waiting/cancellation. Catalogue/model coverage recorded explicitly; no claim that a working Workshop covers every facility or animation.",
+      "first_increment_requires": [
+        "3D-01",
+        "3D02A"
+      ],
+      "increments": [
+        {
+          "id": "3D03A",
+          "feature": "Actual rear construction placement/cancellation and manager occupation",
+          "source": "e2c4bc105e3398ff4604447a66312ea91ed8ef84",
+          "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/122",
+          "evidence": "docs/evidence/3d_construction_commands.json",
+          "status": "Implemented/scoped1xPASS. Full rear gameplay/model/workforce migration remains open; defaultF5 unchanged."
+        }
+      ]
     },
     {
       "id": "3D-04",
