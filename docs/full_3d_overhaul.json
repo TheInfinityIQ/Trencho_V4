@@ -180,7 +180,21 @@
       }
     ],
     "requirements": "Inspect downloaded original licenses and model/animation inventory before committing selected files. Record provenance, changes, scale/pivots, animation retargeting and missing poses. Prefer GLB/glTF; add LFS before large binaries. No paid purchase or new tool/plugin justified yet. Existing2Dassets do not prove3Dcoverage.",
-    "gaps": "First-person mesh visibility; cohesive military/worker clothing; carry/pickup/load/unload/build animations; articulated wheels/crew/cargo attachments; every facility's actual footprint/entrance; battlefield unit roster. Avoid a separate rigid body per resource unit or ammunition round merely to display a stack."
+    "gaps": "First-person mesh visibility; cohesive military/worker clothing; carry/pickup/load/unload/build animations; articulated wheels/crew/cargo attachments; every facility's actual footprint/entrance; battlefield unit roster. Avoid a separate rigid body per resource unit or ammunition round merely to display a stack.",
+    "current_facility_delivery": {
+      "pr": 123,
+      "evidence": "docs/evidence/facility_exteriors.json",
+      "usable_models": 3,
+      "covered_kinds": [
+        "workshop",
+        "receiving",
+        "dispatch",
+        "depot",
+        "materials"
+      ],
+      "office": "Provisional; selected source has incompatible doorway scale.",
+      "scope": "Complete mapped rows only; stagedasset evidence, not ordinaryprogression/fullroster/FPS."
+    }
   },
   "performance_and_verification": {
     "budget": "16.67ms/frame is the60FPS target, not a measured promise. Separate simulation, physics, render/animation and input costs; preserve raw outliers when later applicable evidence is collected.",

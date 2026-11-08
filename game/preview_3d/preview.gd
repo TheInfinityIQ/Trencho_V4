@@ -372,7 +372,7 @@ func _pick_ground() -> void:
 		return
 	var camera: Camera3D = world.first if first_person else world.third
 	var origin := camera.project_ray_origin(_pointer)
-	var query := PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(_pointer)*500,1)
+	var query := PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(_pointer)*500,5)
 	var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty() or hit.collider != world.rear_ground or not hit.position.is_finite():
 		_candidate = {}

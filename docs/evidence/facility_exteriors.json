@@ -1,0 +1,79 @@
+{
+  "source_head": "679d0f3a236567681198b29ac83e80ed9c1949bb",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/123",
+  "required_validation": 42446028458,
+  "direct_demonstration": 42446132244,
+  "artifact": 13603622640,
+  "result": "PASS",
+  "scope": "Explicitly arranged4Complete rows:3usable exterior meshes across5mappedkinds plus truthful provisionalOffice. Fullactualmanager references are staged, not earned movement or ordinary construction. One current-asset roof/ray/realSpringArm observation, software-rendered35s child within45s process.",
+  "child_script_sha256": "db82528fea870d80c910b11c75de6cfb08f405a266aa88658433870c8a533b6e",
+  "observed": {
+    "mapped_models": [
+      "building_h.glb",
+      "building_k.glb",
+      "building_l.glb"
+    ],
+    "covered_kinds": [
+      "workshop",
+      "receiving",
+      "dispatch",
+      "depot",
+      "materials"
+    ],
+    "office": "Complete row remains explicitly provisional; rejected miniature asset removed.",
+    "warehouse_roof_y": 6.642498,
+    "spring_arm_retracted_m": 1.998046875,
+    "manager_height_m": 1.8,
+    "warnings": "Softwaredriver VSync warning only; palette UIDfallback eliminated by retaining actual isolated registry."
+  },
+  "captures": {
+    "arranged_facility_exteriors": {
+      "path": "docs/evidence/facility_exteriors/arranged_facility_exteriors.png",
+      "sha256": "a67099f0447cde14ab0fbc8b6e67e51caa62dd45d2a610c432a7191f5ae44abd"
+    },
+    "office_entrance_reference": {
+      "path": "docs/evidence/facility_exteriors/office_entrance_reference.png",
+      "sha256": "2993d54a4295f37852ccbf34138f4ad8bf832a6fb7ec31f7243a889fcc79ba45"
+    },
+    "workshop_entrance_reference": {
+      "path": "docs/evidence/facility_exteriors/workshop_entrance_reference.png",
+      "sha256": "c0a0f7ff8692a17b64364bf77c3d57450e47e60868432a1db890cd4f0d93b3f5"
+    },
+    "receiving_entrance_reference": {
+      "path": "docs/evidence/facility_exteriors/receiving_entrance_reference.png",
+      "sha256": "b64d03d3d8491ed2ce6f80a37b72b1f20c3a6189f0f3aa7c2e0264211ecc8064"
+    }
+  },
+  "history": [
+    {
+      "source": "f7d0c26b419844927ce27d23e37e3b1a590af308",
+      "direct": 42444289146,
+      "artifact": 13602733649,
+      "result": "FAIL",
+      "finding": "Proposal exact-name enumeration found onlyfirstauto-renamed sibling despite4visible models; stablemetadataIDs corrected."
+    },
+    {
+      "source": "f7d0c26b419844927ce27d23e37e3b1a590af308",
+      "direct": 42444556186,
+      "artifact": 13603176497,
+      "result": "Arranged probePASS; human facade evidence insufficient",
+      "finding": "Closer overview, actual roof/arm passed; manager distant/cutoff. Palette pathfallback present."
+    },
+    {
+      "source": "63368b31249911ab98a8b88ec3e9e1795462ff4f",
+      "direct": 42445080653,
+      "artifact": 13603032502,
+      "result": "ProbePASS; facade/label calibration required",
+      "finding": "UIDregistry fixed. Fullmanager refs revealed Office/Workshop wrongfronts, Workshoplabel occlusion. Office actual0.933m door cannotfit1.8m manager withinunchangedreservation; approvedexplicitfallback. Workshop source-Z/yaw+90/recess calibrated and frontlabelclearance corrected."
+    }
+  ],
+  "unverified": [
+    "Office exterior and unmapped completefacility roster",
+    "Other warehouse reuse/orientation/legacy/nonwest/transitional cases are source-reviewed, not runtime matrix",
+    "Native input/ordinary earned construction and complete/repeated gameplay loop",
+    "Full worker/vehicle/field roster, interiors/animation and strict60FPS"
+  ],
+  "sidecars": "Actual engine UID and3GLB+palette import sidecars retained from final artifact; no generated cache/binaryUIDregistry in Git.",
+  "carry_forward": "Final sidecar/evidence/map metadata leaves production GDScript/rawassets/workflow byte-identical to demonstrated679d0f3. No old gameplay/regression/benchmark/localengine run.",
+  "visual_disposition": "Lead, Game Designer and UI/UX personally viewed allfour final images. Designer boundedsource+visual APPROVED at679d0f3; Workshop wrong-front/occluded-label findings CLOSED, receivingcredible, Officeexplicitfallback. No fullOffice/roster/earnedconstruction/native/FPS approval."
+}

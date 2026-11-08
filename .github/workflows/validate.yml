@@ -53,7 +53,7 @@ jobs:
           changed = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=ACMR", "-z", base, head]).decode().split("\0")
           scripts = [p for p in changed if p.startswith("game/") and p.endswith(".gd") and "/tests/" not in p]
           textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
-          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb"]
+          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb", "game/preview_3d/assets/industrial/building_h.glb", "game/preview_3d/assets/industrial/building_k.glb", "game/preview_3d/assets/industrial/building_l.glb", "game/preview_3d/assets/industrial/textures/colormap.png"]
           dependencies = textures + models
           asset_update = any(p in dependencies or p in [t + ".import" for t in dependencies] for p in changed)
           (output / "scripts.json").write_text(json.dumps(scripts), encoding="utf-8")
@@ -92,7 +92,7 @@ jobs:
           import hashlib, json, os, pathlib, re, shutil, subprocess, tempfile
           output = pathlib.Path(".artifacts/current-change")
           textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
-          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb"]
+          models = ["game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb", "game/preview_3d/assets/industrial/building_h.glb", "game/preview_3d/assets/industrial/building_k.glb", "game/preview_3d/assets/industrial/building_l.glb", "game/preview_3d/assets/industrial/textures/colormap.png"]
           dependencies = textures + models
           # Only these data assets enter the isolated project; no game scripts or plugins.
           # FBX uses pinned Godot's built-in ufbx importer, not an external converter.
@@ -141,6 +141,12 @@ jobs:
           for imported in cache.iterdir():
               if imported.is_file():
                   shutil.copy2(imported, destination / imported.name)
+          # Keep the actual isolated import's UID map with its generated resources.
+          # Its res:// paths refer only to the exact declared data assets above.
+          resource_uids = project / ".godot/uid_cache.bin"
+          if not resource_uids.is_file():
+              raise SystemExit("Godot did not produce the isolated asset UID cache.")
+          shutil.copy2(resource_uids, destination.parent / "uid_cache.bin")
           (output / "texture-import.json").write_text(json.dumps({"assets": receipt, "scope": "Declared PNG/FBX/GLB dependencies only; no game project/editor/plugin scan, external converter or gameplay."}, indent=2) + "\n", encoding="utf-8")
       - name: Parse changed production scripts only
         if: steps.scope.outputs.engine == 'true'
