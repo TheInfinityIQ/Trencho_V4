@@ -254,6 +254,36 @@ func entity_kind(id: String) -> String:
 	return Records.Kind.keys()[_entities[id].kind] if _entities.has(id) else ""
 
 
+func construction_truck_pose(id: String, owner: String) -> Dictionary:
+	# Keyed canonical pose only; movement never requests inventory or occupants.
+	var hull: Records.Entity = _entities.get(id)
+	if hull == null or hull.kind != Records.Kind.CARRIER or hull.fleet_domain != "Construction" or hull.design_type != "T01" or hull.owner != owner or hull.wreck_cleared: return {}
+	var at: Vector2 = _world_position(id)
+	if not at.is_finite() or not is_finite(hull.facing_degrees): return {}
+	return {"id":id,"position":at,"facing_degrees":hull.facing_degrees}
+
+
+func construction_truck_views(registry_rows: Array, owner: String) -> Array[Dictionary]:
+	# Supplied service registry only. Retain disabled/retired/uncleared wrecks.
+	var rows: Array[Dictionary] = []
+	for registered: Dictionary in registry_rows:
+		if not bool(registered.get("created",false)): continue
+		var id: String = str(registered.get("id",""))
+		var row: Dictionary = construction_truck_pose(id,owner)
+		if row.is_empty(): continue
+		var hull: Records.Entity = _entities[id]
+		row.merge({"office":str(registered.get("office","")),"phase":str(registered.get("phase","")),
+			"blocker":str(registered.get("blocker","")),"recovering":bool(registered.get("recovering",false)),
+			"health":hull.health,"damage_immobilized":hull.damage_immobilized,
+			"state":hull.state,"retained_person_id":"","driver_id":""})
+		var person: Records.Person = _entities.get(str(registered.get("worker",""))) as Records.Person
+		if person != null and person.owner == owner and person.construction_truck_id == id:
+			row.retained_person_id = person.id
+			if person.holder_id == id and person.crew_station == "Driver": row.driver_id = person.id
+		rows.append(row)
+	return rows
+
+
 func rear_worker_views(actor_ids: Array, owner: String) -> Array[Dictionary]:
 	# Detached presentation facts for supplied rear IDs only. No inventory,
 	# claims, carried-mass or occupant scans; movement does not call this query.

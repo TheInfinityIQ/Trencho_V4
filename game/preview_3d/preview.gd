@@ -461,7 +461,9 @@ func _refresh_inspection() -> void:
 	if row.get("kind","") == "CONTACT": _inspection.text += "\nReport confidence: %.2f" % row.confidence
 
 func _state_changed() -> void:
-	if world != null: world.rear_workers.request_refresh()
+	if world != null:
+		world.rear_workers.request_refresh()
+		world.utility_trucks.request_refresh()
 	_rear_dirty = true
 	_field_dirty = true
 	if _fully_checked and not _candidate.is_empty():

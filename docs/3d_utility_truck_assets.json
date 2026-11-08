@@ -1,0 +1,381 @@
+{
+  "creator_page": "https://kenney.nl/assets/car-kit",
+  "archive_bytes": 4814237,
+  "archive_sha256": "fac7dacac5c7874348cf19729af3ef205f3d366493edaf0a827d93f4fdf3d0c4",
+  "acquisition": "Lead obtained the original through normal official browser Download / Continue without donating. C independently verified the supplied ZIP length/hash. Earlier HTML/403 receipts are preserved in archive_receipt.json.",
+  "files": [
+    {
+      "source_member": "Models/GLB format/truck-flat.glb",
+      "bytes": 207424,
+      "source_sha256": "4279862f2442e96c6603c514edf50bfb932707545695d8c4747611cd3796cf3b",
+      "path": "game/preview_3d/assets/car_kit/truck_flat.glb",
+      "integrated_sha256": "f3cdc5a23adc4ad8b0172dec65421e7dace6389fbdc199572b767fc6b17aedbc"
+    },
+    {
+      "source_member": "Models/GLB format/Textures/colormap.png",
+      "bytes": 12371,
+      "source_sha256": "f3622a03a20c6696065cae9cbe391351be873508af190c2ebd1d420c055787a5",
+      "path": "game/preview_3d/assets/car_kit/textures/colormap.png",
+      "integrated_sha256": "f3622a03a20c6696065cae9cbe391351be873508af190c2ebd1d420c055787a5"
+    },
+    {
+      "source_member": "License.txt",
+      "bytes": 696,
+      "source_sha256": "c33b7f6453d134deae7b1b8493717d9ccfa754c25ab97f6de89b88f8fda19b00",
+      "license": "Bundled CC0, Car Kit3.1; original bytes separate from other packs.",
+      "path": "game/preview_3d/assets/car_kit/license.txt",
+      "integrated_sha256": "c33b7f6453d134deae7b1b8493717d9ccfa754c25ab97f6de89b88f8fda19b00"
+    }
+  ],
+  "scene": {
+    "roots": [
+      {
+        "nodes": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "name": "truck-flat"
+      }
+    ],
+    "mesh_nodes": [
+      {
+        "name": "wheel-front-left",
+        "translation": [
+          0.3,
+          0.3,
+          0.7825572
+        ],
+        "min": [
+          0.2999999999999343,
+          -1.1920928966180355e-08,
+          0.482557188079071
+        ],
+        "max": [
+          0.6000001013278962,
+          0.600000011920929,
+          1.0825572119209288
+        ]
+      },
+      {
+        "name": "wheel-front-right",
+        "translation": [
+          -0.3,
+          0.3,
+          0.7825572
+        ],
+        "min": [
+          -0.6000001013278962,
+          -1.1920928966180355e-08,
+          0.482557188079071
+        ],
+        "max": [
+          -0.299999999999986,
+          0.600000011920929,
+          1.0825572119209288
+        ]
+      },
+      {
+        "name": "wheel-back-right",
+        "translation": [
+          -0.3,
+          0.3,
+          -0.6374428
+        ],
+        "min": [
+          -0.6000001013278962,
+          -1.1920928966180355e-08,
+          -0.9374428119209289
+        ],
+        "max": [
+          -0.299999999999986,
+          0.600000011920929,
+          -0.337442788079071
+        ]
+      },
+      {
+        "name": "wheel-back-left",
+        "translation": [
+          0.3,
+          0.3,
+          -0.6374428
+        ],
+        "min": [
+          0.2999999999999343,
+          -1.1920928966180355e-08,
+          -0.9374428119209289
+        ],
+        "max": [
+          0.6000001013278962,
+          0.600000011920929,
+          -0.337442788079071
+        ]
+      },
+      {
+        "name": "body",
+        "translation": [
+          0.0,
+          0.15,
+          -7.219114e-16
+        ],
+        "min": [
+          -0.75,
+          0.15,
+          -1.372557163238526
+        ],
+        "max": [
+          0.75,
+          1.299999976158142,
+          1.3725570440292352
+        ]
+      }
+    ],
+    "mesh_count": 5,
+    "materials": [
+      {
+        "pbrMetallicRoughness": {
+          "baseColorTexture": {
+            "index": 0,
+            "extensions": {
+              "KHR_texture_transform": {
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicFactor": 0.0
+        },
+        "doubleSided": true,
+        "name": "colormap"
+      }
+    ],
+    "images": [
+      {
+        "uri": "Textures/colormap.png",
+        "name": "colormap"
+      }
+    ],
+    "extensions": [
+      "KHR_texture_transform"
+    ],
+    "animations": 0,
+    "transform_method": "All5 root mesh nodes have translations only, applied to every POSITION vertex. No node rotation/scale/matrix/children. Full bounds include wheel offsets, body and mirrors; NORMAL accessor bounds were not used."
+  },
+  "fit": {
+    "source_bounds_min": [
+      -0.75,
+      -1.1920928966180355e-08,
+      -1.372557163238526
+    ],
+    "source_bounds_max": [
+      0.75,
+      1.299999976158142,
+      1.3725570440292352
+    ],
+    "source_dimensions_xyz": [
+      1.5,
+      1.299999988079071,
+      2.7451142072677612
+    ],
+    "source_front": "+Z, supported by front axle atZ+.7825572 plus tall/sloped cab-front geometry atpositiveZ and rear bed atnegativeZ.",
+    "canonical_reservation_length_width_m": [
+      7,
+      2.7
+    ],
+    "uniform_factor": 1.8,
+    "limiting_axis": "Width including body/mirror projections; no independent length stretch.",
+    "fitted_dimensions_width_height_length_m": [
+      2.7,
+      2.3399999785423278,
+      4.94120557308197
+    ],
+    "longitudinal_reservation_inset_each_end_m": 1.0293972134590148,
+    "ground": "Tyres reach sourceYâ‰ˆ0 after actual node translations; body alone starts atY.15. Ground using all transformed meshes.",
+    "normalization": "External visual wrapper centres full horizontal bounds and grounds minimumY. Original wheel/body translations/pivots remain untouched. Root physics/query body stays scale1.",
+    "heading": "For raw source+Z forward, visual yaw_degrees =90 - actual ledger facing_degrees. Read the actual canonical keyed heading; do not duplicate movement thresholds.",
+    "human_reference_m": 1.8
+  },
+  "proportions": {
+    "wheel_diameter_m": 1.0800000429153442,
+    "wheel_width_m": 0.5400001823902131,
+    "wheelbase_m": 2.556,
+    "wheel_centre_track_m": 1.62,
+    "cab_top_m": 2.3400000000000003,
+    "body_underside_m": 0.27,
+    "bed_deck_source_bounds": {
+      "min": [
+        -0.45,
+        0.61,
+        -1.2225572
+      ],
+      "max": [
+        0.45,
+        0.61,
+        0.0774428
+      ]
+    },
+    "bed_deck_height_m": 1.098,
+    "bed_deck_width_m": 1.62,
+    "bed_deck_length_m": 2.3400000000000003,
+    "rear_rim_top_m": 1.4400000000000002,
+    "cab_front_surface_source": {
+      "normal_approx": [
+        0,
+        0.62,
+        0.78
+      ],
+      "min": [
+        -0.55,
+        0.8,
+        0.5726
+      ],
+      "max": [
+        0.45,
+        1.3,
+        0.9726
+      ]
+    },
+    "cab_side_upper_zone_source": {
+      "x_side_approx": [
+        -0.55,
+        0.55
+      ],
+      "y": [
+        0.8,
+        1.3
+      ],
+      "z": [
+        0.0726,
+        0.8455
+      ]
+    },
+    "door_limit": "Combined body has no named door, seat or loading socket and no animations. Upper cab side and rear bed zones are measured; any door/seat/loading attachment remains authored visual metadata, not a backend port or proof of an enterable cab."
+  },
+  "queried_shapes": {
+    "method": "Applied all original root translations. Upper facade/roof triangles with actual vertexY>0.80001 establish cab-back boundary; clip actual body triangles toY>=0.61 deck andZ>=that cab-back. Bounds are union of resulting real/interpolated triangle points, not filename or whole-truck roof bounds.",
+    "facade_roof_min": [
+      -0.550000011920929,
+      0.7999999761581421,
+      0.07255715876817631
+    ],
+    "facade_roof_max": [
+      0.550000011920929,
+      1.299999976158142,
+      0.9725571870803825
+    ],
+    "cab_back_source_z": 0.07255715876817631,
+    "cab_upper_union_min": [
+      -0.75,
+      0.61,
+      0.07255715876817626
+    ],
+    "cab_upper_union_max": [
+      0.75,
+      1.299999976158142,
+      1.2575571349263353
+    ],
+    "uniform_factor": 1.8,
+    "normalizer_origin_source": [
+      0.0,
+      -1.1920928966180355e-08,
+      -5.960464544152444e-08
+    ],
+    "low_deck_box": {
+      "source_min": [
+        -0.75,
+        -1.1920928966180355e-08,
+        -1.372557163238526
+      ],
+      "source_max": [
+        0.75,
+        0.61,
+        1.3725570440292352
+      ],
+      "size_xyz_m": [
+        2.7,
+        1.0980000214576722,
+        4.94120557308197
+      ],
+      "position_xyz_m": [
+        0.0,
+        0.549000010728836,
+        0.0
+      ]
+    },
+    "upper_cab_box": {
+      "source_min": [
+        -0.75,
+        0.61,
+        0.07255715876817626
+      ],
+      "source_max": [
+        0.75,
+        1.299999976158142,
+        1.2575571349263353
+      ],
+      "size_xyz_m": [
+        2.7,
+        1.2419999570846556,
+        2.1329999570846865
+      ],
+      "position_xyz_m": [
+        0.0,
+        1.7189999999999999,
+        1.197102971613422
+      ]
+    },
+    "third_segment": "Not proposed; two conservative measured boxes follow the low body/deck and actual cab-above-deck union.",
+    "known_approximation": "Boxes are conservative AABBs, not triangle-perfect. The open rear bed has no full-height box; thin rear rims above the deck are not separate shapes in this bounded query approximation. Manager blocking is absent, not vehicle physical parity."
+  },
+  "status": "Implemented and imported; bounded current-build source/visual acceptance from Lead, Designer and UI/UX at26e9fb0. Exact final-head decisions and merge state belong to PR126. This is partial queried presentation, not manager blocking or full vehicle parity.",
+  "baseline": "20ccb777920417c93c71e5f30c01a6fecc0d81aa",
+  "pre_code_commit": "1771b17",
+  "contract": "docs/3d_utility_truck.md",
+  "demonstration_definition": "docs/current_change/utility_truck.md",
+  "archive_version": "Car Kit 3.1",
+  "license": "Bundled CC0; exact original license retained.",
+  "derivation": {
+    "edit": "Exactly one JSON URI byte T to t at absolute offset 5452. Original length, chunks, binary geometry and node pivots are unchanged.",
+    "absolute_byte_offset": 5452,
+    "expected_integrated_sha256": "f3cdc5a23adc4ad8b0172dec65421e7dace6389fbdc199572b767fc6b17aedbc",
+    "binary_tail_sha256": "847bd233adda1523e03c56cf13cb1e81f4ad51cade9c21c16ba59132ed29a0ad",
+    "lengths_and_geometry_unchanged": true
+  },
+  "authority": "Existing construction registry and ledger own identities, bodies, routes, fuel, cargo, people and time. Presenter reads detached supplied-registry facts; affected cached movement reads canonical pose.",
+  "source": {
+    "presenter": "game/preview_3d/utility_trucks.gd",
+    "membership": "game/identity/identity_ledger.gd::construction_truck_views",
+    "pose": "game/identity/identity_ledger.gd::construction_truck_pose",
+    "forwarding": "game/preview_3d/preview.gd::_state_changed"
+  },
+  "membership": "Only created=true service rows with actual player-owned Construction T01 CARRIER. Retain disabled, retired, recovering and uncleared wreck hulls; omit physically cleared wrecks. Keyed actual retained-person and holder/Driver facts only; no cargo or occupant scan.",
+  "events": "Existing session state changes coalesce membership/state refresh. entity_moved updates only cached affected body from canonical pose. Disconnect on exit; no per-frame fleet query or new simulation clock.",
+  "query_policy": {
+    "body": "AnimatableBody3D",
+    "root_scale": [
+      1,
+      1,
+      1
+    ],
+    "sync_to_physics": true,
+    "collision_layer": 4,
+    "collision_mask": 0,
+    "pick_and_arm_mask": 5,
+    "manager_mask": 1,
+    "manager_blocking": "Absent; later manager interaction across vehicle roles remains open."
+  },
+  "new_import_inputs": [
+    "game/preview_3d/assets/car_kit/truck_flat.glb",
+    "game/preview_3d/assets/car_kit/textures/colormap.png"
+  ],
+  "remote_owner": "Lead retained exact actual two import sidecars, new script UID and one current-build image; exact-head decisions and integration state are in PR126.",
+  "verification": "Original/derived bytes independently verified; actual isolated import and bounded arranged service-created truck/pose/query-shape/human-reference observation passed at26e9fb0. Exact review/merge state belongs to PR126; no full vehicle/native/FPS acceptance.",
+  "limits": [
+    "Two conservative boxes omit thin rear rims above deck; no full-height bed box.",
+    "Detailed payload/count/index, seating/interiors and wheel/work animation deferred. Open bed is not an empty-inventory claim.",
+    "Arranged service-created hull observation is not earned construction/haul, a lifecycle matrix, native input, FPS or full vehicle parity."
+  ],
+  "display_scope": "Identity, actual phase/condition and verified retained-person/Driver facts only. Fuel deliberately omitted from 3D label/projection: driving burns between state boundaries and movement stays pose-only. Existing management retains fuel information; backend consumption unchanged.",
+  "evidence": "docs/evidence/utility_truck.json"
+}

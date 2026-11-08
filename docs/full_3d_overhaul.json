@@ -207,6 +207,12 @@
       "contract": "docs/3d_rear_workers.md",
       "evidence": "docs/evidence/rear_workers.json",
       "status": "One real rear-worker visual per eligible identity, actual carry cue and affected-ID ledger endpoint updates implemented; bounded arranged observation passed. Exact-head review/merge state belongs to PR125. Idle-only, filters source-reviewed, full workforce/animation/native/FPS acceptance open."
+    },
+    "utility_truck_presentation_candidate": {
+      "manifest": "docs/3d_utility_truck_assets.json",
+      "contract": "docs/3d_utility_truck.md",
+      "status": "Actual Construction hull presentation implemented/imported; one bounded arranged service-created hull, canonical pose, own palette, two queried boxes and manager reference passed. Exact-head review/merge state belongs to PR126. Manager blocking, detailed payload/seating, ordinary hauling and full parity remain open.",
+      "evidence": "docs/evidence/utility_truck.json"
     }
   },
   "performance_and_verification": {

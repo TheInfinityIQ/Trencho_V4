@@ -1,0 +1,10 @@
+# Fixed utility-truck current-change observation
+
+Committed before production code. One explicitly supplied ignored executable, `logs/3d-utility-truck/current_asset_view.gd`, runs remotely under the existing 35-second rendered child / 45-second process limits. This is not a committed regression fixture or an ordinary construction/haul loop.
+
+1. Load the normal paused 3D scene. Explicitly arrange one Complete Construction Office row. Call the existing trucks.settle() boundary to create its actual utility hull; do not fake a created flag, hull, driver or cargo. Notify the existing session and allow coalesced membership/physics synchronization.
+2. Require that exact actual registry ID and one cached AnimatableBody3D. Apply one genuine ledger.move_entity endpoint in clear rear ground, then compare cached position and yaw with the narrow canonical pose getter after physics synchronization. Require unit body scale, layer 4/mask 0/sync, unchanged manager mask 1, the two approved BoxShape3D dimensions/offsets and the truck's own palette.
+3. A downward cab-region ray must hit that actual layer-4 body. A bounded ray segment above the open rear bed/deck must miss, proving there is no fictitious full-height bed box. Probe the actual SpringArm against the cab and require retraction. These are current-shape observations in the same scene, not a collision matrix or manager-blocking claim.
+4. Stage the existing full manager beside the actual truck at a readable clear point; keep canonical manager pose consistent. Capture only utility_truck_reference.png, with ARRANGED, service-created hull, staged pose, camera/picking-only and absent-manager-blocking scope explicit. Restore the temporary manager pose/rig. Exit nonzero on a failed assertion.
+
+No hire, earned construction, utility haul, payload/driver case matrix, seating/interior art, new movement authority, native input, FPS or full-vehicle parity claim. Registry/lifecycle/retained-person rules are source-reviewed where not exercised. Lead owns the actual engine check, helper UID, image and exact-head technical/Designer/UI/UX decisions.
