@@ -221,7 +221,6 @@ func refresh_markers() -> void:
 	var present: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
-		if row.position.x < 240: continue
 		present[row.id] = true
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
@@ -231,6 +230,8 @@ func refresh_markers() -> void:
 		var marker: MeshInstance3D = markers[row.id]
 		var height: float = simulation.rear.combat.world.ground(row.position)
 		marker.position = Vector3(row.position.x,height+15,row.position.y)
+		# Only legacy rear carriers use this boundary; keep their proxy cached.
+		marker.visible = row.kind != "CARRIER" or row.position.x >= 240
 	for id in markers.keys():
 		if present.has(id): continue
 		markers[id].queue_free()
@@ -275,7 +276,7 @@ func refresh_marker_positions() -> void:
 				continue
 			# Temporary direct planar-holder adapter, not a second motion owner.
 			row.position = rear.ledger._world_position(row.id)
-		markers[row.id].show()
+		markers[row.id].visible = row.kind != "CARRIER" or row.position.x >= 240
 		markers[row.id].position = Vector3(row.position.x,rear.combat.world.ground(row.position)+15,row.position.y)
 
 func _bind_idle(visual: Node3D) -> void:

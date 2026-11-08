@@ -50,3 +50,6 @@ Style direction is now accepted: cohesive stylized 3D, readable detail and lower
 
 
 The same focused delivery corrects unhandled Escape ownership: a visible decision modal keeps GUI priority; otherwise one Escape closes management, cancels an uncommitted draft, or opens the existing world management menu, then marks the event handled and returns. It cannot cascade through multiple layers. Tab/text consumption stays unchanged. Native OS input acceptance remains unverified.
+
+
+Permitted RTS rows are retained across the full 4x6km map, including the westmost 240m. The legacy rear-boundary visibility condition applies only to carriers, matching the existing carrier rendering distinction. Hidden rear-carrier proxies remain in cached permitted membership; actual motion updates show/hide them at the boundary without a full ledger or membership scan. Contacts continue to use reported positions, never true enemy poses. This is a presentation correction, not a new observation authority or scenario.
