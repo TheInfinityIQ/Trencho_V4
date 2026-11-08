@@ -19,3 +19,4 @@ game/test_art/roguelike_characters/license.txt -text -diff
 game/preview_3d/assets/characters_license.txt -text -diff
 game/preview_3d/assets/furniture_license.txt -text -diff
 game/preview_3d/assets/industrial/license.txt -text -diff
+game/preview_3d/assets/commercial/license.txt -text -diff
