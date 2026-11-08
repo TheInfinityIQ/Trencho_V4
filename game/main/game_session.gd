@@ -19,6 +19,7 @@ var _presentation_deferred_last := false
 
 
 func _ready() -> void:
+	manager_pose.reset(simulation.rear.combat.world.ground(ManagerPose.SPAWN_GROUND))
 	var call_logger := CallLog.new()
 	call_logger.name = "FunctionCallLog"
 	add_child(call_logger)
@@ -66,8 +67,8 @@ func replace_simulation(next_simulation: RefCounted) -> void:
 	if next_simulation == simulation: return
 	simulation.rear.state_changed.disconnect(_on_state_changed)
 	simulation.cancel_live_planning()
-	manager_pose.reset()
 	simulation = next_simulation
+	manager_pose.reset(simulation.rear.combat.world.ground(ManagerPose.SPAWN_GROUND))
 	_last_live_process_frame = -1
 	_presentation_pending = false
 	_presentation_deferred_last = false

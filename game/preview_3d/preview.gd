@@ -98,7 +98,7 @@ func _replace_world(model: RefCounted) -> void:
 	world = World.new()
 	add_child(world)
 	world.build(model,_session.manager_pose)
-	world.player.rotation.y = _session.manager_pose.heading
+	world.player.global_rotation.y = _session.manager_pose.heading
 	world.player_visual.rotation.y = PI
 	_rear_dirty = false
 	_field_dirty = true
@@ -246,9 +246,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif not battlefield_open and _base._placing_building:
 			_pick_pending = true
 		elif not battlefield_open and not _needs_capture:
-			world.player.rotation.y -= event.relative.x*0.003
+			world.player.global_rotation.y -= event.relative.x*0.003
 			world.eye.rotation.x = clampf(world.eye.rotation.x-event.relative.y*0.003,-1.25,0.8)
-			_session.manager_pose.heading = world.player.rotation.y
+			_session.manager_pose.heading = world.player.global_rotation.y
 			_pick_pending = true
 
 func _physics_process(delta: float) -> void:

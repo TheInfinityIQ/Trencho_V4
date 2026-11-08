@@ -350,8 +350,11 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
                    (preview_3d, '_apply_view', 'Choose the active camera and release old input', ''),
                    (preview_3d, '_set_management', 'Management owns pointer and preserves panels', ''),
                    (preview_3d, '_physics_process', 'Resolve only the active input mode', ''),
-                   (world_3d, 'move_manager', 'Collision-resolved player movement', ''),
-                   ('game/preview_3d/manager_pose.gd', 'publish_resolved', 'Publish the same persistent ground pose', '')]))
+                   (world_3d, 'move_manager', 'Collision-resolved world-space player movement', ''),
+                   ('game/preview_3d/manager_pose.gd', 'publish_resolved', 'Retain the full canonical foot position including Y', ''),
+                   ('game/preview_3d/manager_pose.gd', 'ground_position', 'Derive legacy ground reads from canonical X/Z', ''),
+                   ('game/rear_base/base_map.gd', 'move_character', 'Alternate 2D entry: resolve accepted ground movement', ''),
+                   ('game/preview_3d/manager_pose.gd', 'publish_ground', 'Alternate 2D entry: publish current support height', '')]))
     specs.append(('3d-placement-preview', '3D preview: footprint feedback without construction',
                   'Pointer/camera changes queue a physics-safe ground pick and cheap provisional hint. Preview-only world and numeric confirmation cannot spend or create a site.',
                   [(preview_3d, '_begin_preview', 'Enter visible-pointer draft mode', ''),

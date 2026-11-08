@@ -69,3 +69,12 @@ Consulted the actual relevant official documentation before code:
 These are project ownership decisions using those APIs, not claims that Godot defines the game's accounting or terrain rules. Initial session and replacement sample actual support height before notification. A legacy setter without a bound simulation cannot invent a support height and therefore does not publish; normal BaseDemo binds its actual session first. No current production caller requires enable_character to reset after session initialization.
 
 Diagram: [manager ownership](diagrams/3d_manager_pose.mmd).
+
+
+## Source delivery
+
+The implemented pose stores one private Vector3 and derives its legacy ground read through `ground_position()`. `scene_position()` returns the stored position and no longer accepts a replacement height. Full and ground publishing return success only for finite values; direct heading updates likewise retain the prior yaw when non-finite. Session initial/replacement binding samples actual support before notifying consumers. The sole production `enable_character` caller follows session replacement, so removing its duplicate spawn write requires no BaseDemo behavior fork.
+
+The legacy property setter uses the bound simulation's terrain height for an actual write, with no per-frame height polling and no write when a simulation/finite candidate is unavailable. Existing zero-axis movement steps are skipped. Body initialization and publication use global position after tree attachment; movement direction uses an orthonormal world basis and camera look retains world yaw. Foot/eye/normalizer offsets stay separate. No ledger, route, asset, import, gameplay, pause or default-entry change.
+
+Proposed remote demonstration: ignored `logs/3d-02-manager-pose/direct_demo.gd`, one brief changed-owner process. It uses one actual session/factory, a clearly authored nonzero support sample (not normal-opening acceptance), observes height initialization before notification, full-position and derived ground publication, legacy support-aware movement, no reset on presentation enable, then one actual body and three physics steps publishing world position. A single translated parent distinguishes canonical world coordinates from parent-local coordinates; this is the actual conversion boundary, not a parent-transform validation campaign. No new rendered capture is proposed. Finite rejection is source-reviewed, not exercised by failure injection. Native input, new terrain gameplay, normal full-loop and FPS acceptance remain unverified.
