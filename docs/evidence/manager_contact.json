@@ -1,0 +1,52 @@
+{
+  "status": "Actual isolated basic-response PASS only. Documentation plan; production contact is NOT enabled.",
+  "source_head": "96323fe7057ec39fa3ca9aa3f8e8b9773f700755",
+  "run": 42509778235,
+  "artifact": 13629250107,
+  "script_sha256": "ed0ad227a0c72b7cfe38905b18e2892275dadd65f3f8b51d258b36380e42f7fa",
+  "script_location": "Ignored logs/3d-manager-contact-proposal/feasibility.gd; not committed production/test source.",
+  "receipt": {
+    "path": "docs/evidence/manager_contact/manager_contact_feasibility.json",
+    "bytes": 1087,
+    "sha256": "93cc6c8840022f57a3322f2fab51d33809bdd69f5d945ae7ebf1af8ec82de377",
+    "origin": "Byte-identical to manager_contact_feasibility.json in saved GitHub artifact13629250107 evidence.zip."
+  },
+  "scope": "ONE isolated proposed flat-ground controller episode, paused shallow appearance overlap then zero-input moving-side contact. No production collision/mask/route change, UI integration, pinning/failure injection, matrix, assets/image/native/FPS or universal contact claim. Headless35s child within45s wrapper. Existing workflow may parse latest-head production dependencies; they are not re-demonstrated gameplay.",
+  "limits": {
+    "headless_child_seconds": 35,
+    "wrapper_seconds": 45,
+    "episode_count": 1,
+    "screenshots": 0,
+    "production_collision_enabled": false
+  },
+  "observed": {
+    "paused_ticks": 8,
+    "running_zero_input_ticks": 60,
+    "total_ticks": 68,
+    "manager_initial": "(2.770603, 0.0, 0.0)",
+    "manager_final": "(4.346126, 0.000127, 0.0)",
+    "ground_y_range": [
+      0.0,
+      0.000127227860502899
+    ],
+    "platform_velocity": "Zero in all retained samples; script assertion passed.",
+    "actual_canonical_pose": "Equality assertion passed.",
+    "contact_geometry": "One unconfined flat-Y0 layer8 ground-footprint prism, not actual vehicle height or generic elevated support.",
+    "pause_scope": "Isolated probe skips manager movement for eight ticks. This is not an observation of production Global Pause or UI transitions."
+  },
+  "provenance": {
+    "scope_file_sha256": "b3cb9391bd9a5290d0ff8d4137f27a176619ebc640a4cf66b59ab500971765db",
+    "direct_log_sha256": "1f7be3717784679076d04267fbc0c5e94bad88e47220355eed3ee6a22714874e",
+    "archive_sha256": "d30a76db2256bf3856ec6469f8d921a08a960f1943b3e51354cefd4dc9e9dede",
+    "dispatch_note": "First supported-client initialization returned HTTP503 before an action call/run. Lead used one bounded retry through the same supported connection; this receipt covers the one actual feasibility run, not a rerun."
+  },
+  "unverified": [
+    "Production Global Pause and UI mode boundaries were not exercised; paused phase was local to the isolated probe.",
+    "No production masks/physics/route change.",
+    "No future-hull/current-physics joint precommit certificate or existing-owner hold/wait/fuel/wake integration.",
+    "No irreducible committed initial/restore-overlap resolution.",
+    "No actual menu/modal/RTS/focus/placement/UI gate integration or occupation commit observation.",
+    "No other support heights, pinning/failure injection, scenario matrix, assets/image/native/FPS/full3D02 acceptance."
+  ],
+  "design_authority": "8November Designer passive grounded contact and narrow existing-owner precommit hold compromise, relayed by Lead; see canonical design brief. Architecture remains a candidate."
+}

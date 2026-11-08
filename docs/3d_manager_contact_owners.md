@@ -1,0 +1,42 @@
+# Minimal movement-owner hold integration proposal
+
+Pre-code documentation candidate, not approved architecture. Incorporates the 8 November Designer narrow physical-obstruction hold. No production/masks/routes changed. This is a proposed dependency boundary for Lead review, not a claim a precommit local resolver already exists.
+
+## Proposed small boundary
+
+Keep the existing activity as sole owner of its route, progress, fuel and schedule. Supply a current-world contact-preflight callable with explicit actual hull ID, owned committed start, proposed traversed prefix/end/heading and interval start/end times. Apply only to currently represented Construction utility and actual eligible player Rear T01; absent/unrepresented contact cannot silently become a global traffic controller.
+
+The contact side must inspect the same actual manager capsule and current layer 1/static + represented layer 8 geometry, excluding only the initiating proxy when evaluating its prospective geometry. It must certify a bounded local grounded resolution WITHOUT mutating the ledger, real vehicle, manager pose, cost or time during a failed preflight. A clear result must include a stable local-resolution plan that can be consumed in the same synchronous movement transaction; simply forecasting that the later engine step will probably recover is insufficient. Multiple movement owners in one pump must see the already committed manager/contact state of the preceding transaction. No reservation index or occupant/inventory/manifest scan is proposed.
+
+This joint protocol is the principal UNPROVEN engineering dependency: present physics queries see current bodies, while the candidate vehicle pose and passive manager response concern future geometry. A mask change or post-ledger-move depenetration cannot certify it. The one ordinary controller episode can establish basic engine response only. If a bounded preflight/commit plan cannot be made sound without adding an unassigned simulation framework, retain query-only/partial contact and report the precise limitation. Do not introduce rollback, move the ledger from presentation, or apply an arbitrary safe-point pose.
+
+## Exact owner insertion points
+
+| Current affected owner | Preflight must precede | Proposed held progress and restart baseline |
+| --- | --- | --- |
+| Construction trucks.advance_to | burn_vehicle_fuel; row.burned/row.distance; motion.distance; any changed deadline/phase | Keep motion.path/speed/driving/committed distance, actor/cargo/crew and existing phase. Mark a separate physical hold/blocker and suspend only movement deadline. On clearance rebase motion.started to resume_time minus retained active travel time; reschedule remaining travel, never recover/cancel cargo merely because manager blocked. |
+| VehicleActivity.advance_to (F10/F11) | row.elapsed, row.last_time, fuel and row.distance | Compute candidate elapsed/distance in locals. A hold retains existing active elapsed, slot/route/driver and state; deadline cannot complete while held. On clearance baseline last_time=resume_time and deadline=resume_time+remaining duration, preserving turning/handling portions rather than distance/speed approximation. |
+| Dispatch.advance_to (represented Rear hull approach/route/return) | even early Fuel Empty/state/blocker writes caused by candidate travel, travel_burn/distance/fuel, last_time and route completion | Retain active route-plan elapsed and actual travelled distance; do not overwrite state with a new logistics phase. A separate hold reason suspends route deadline/completion. Rebase route_started from retained active elapsed and restore remaining route deadline on clearance. Existing non-movement tasks/cancel/safety authority still retain their owner. |
+| Recovery.advance_to if either represented hull is towed | journey.last, journey.progress, tractor fuel or either ledger endpoint | Both tractor and target prospective poses must be one precommit decision. Preserve coupling, part/index/progress; rebase last on clearance. Guarding only the nominal utility/lane owner leaves this real same-ID movement path unprotected. Lead must explicitly include this dependency or declare that contact integration partial; do not silently leave a solid represented hull moving unguarded. |
+
+No new supplier, military or yard-fixture integration is assigned. The table identifies ownership dependencies of the already represented physical IDs, not approval to expand all fleet physics.
+
+## Time and events
+
+RearSimulation calls vehicles/dispatch/construction.advance_to BEFORE it sets rear.time=next; recovery.advance_to is AFTER that assignment. Therefore pass explicit owner interval timestamps, not a uniform assumption that rear.time is always the old or new time. Hold starts at the committed-progress boundary, excludes the rejected interval from active motion and leaves the global session/other services running. Do not claim waiting by merely skipping ledger.move_entity after consuming progress/fuel.
+
+Keep finite remaining active work and a separate hold record/reason; a held route's old deadline must not finish it or spin settlement at an expired deadline. No distance progression means no distance fuel debit; preserve existing owner idle costs if any, add none. On a real clearance event, owner restores its active clock relative to current time so the whole waiting interval cannot be traversed in one update. Pause queues relevant facts but must not advance contact/held work or resume travel until running.
+
+Proposed wake dependencies are actual canonical manager position changes, changed relevant obstructing hull pose/membership and changed relevant static reservation geometry. Existing ManagerPose has NO movement signal. publish_resolved returns true for any valid pose, including an unchanged pose: preserve that validity-return contract. A future explicit changed notification must compare the previous resolved position and emit ONLY for real position changes, never infer movement from a true return and never emit redundantly for zero-input physics ticks. The blocked local query should retain actual obstruction IDs/RIDs needed for narrow wake filtering. Geometry replacement/disappearance can invalidate those dependencies; disconnect on world/model replacement. Clearance events may request ONE coalesced reevaluation of the existing hold; no per-frame roster/stock/occupant polling or automatic destination selection. A wake is a request to recheck, not proof that travel is clear.
+
+## Already-committed appearance remains separate
+
+Commissioning, initial registration and restored membership already own a real hull before the new collision proxy exists. A travel hold cannot undo or delay that fact. On pause the actual manager remains fixed; resume may use only the selected local grounded reconciliation. If no valid local manager pose exists, the movement-hold compromise does not authorize a teleport, refused/relocated commissioning or rollback. Report the genuinely irreducible case to Lead/Designer before enabling solidity or claiming it repaired.
+
+No pinning/failure-injection/matrix run is proposed. The one Lead-owned isolated feasibility episode passed; its limits explicitly exclude all owner-hold/event/accounting guarantees. No additional engine process is authorized by this plan. Architecture and bounded precommit feasibility require Lead selection before implementation.
+
+## Model replacement and old-listener safety
+
+GameSession.replace_simulation swaps its model and resets ManagerPose BEFORE simulation_changed causes Preview to detach the old world. A future position-change signal from that reset must not wake an obsolete held activity through the still-attached old-world listener. Plan an explicit binding identity/generation gate against the CURRENT session model before any wake, invalidate the old generation before reset/swap, and disconnect old listeners on world exit. Reset or rebind must not masquerade as clearance for the old model. Exact ownership of that invalidation is a future Lead-reviewed interface, not implemented behavior.
+
+An actual clearance wake must include current model identity and relevant geometry revision as well as explicit owner timestamps. Queue one reevaluation in the same current movement owner; do not synchronously resume it from an arbitrary pose callback while model replacement, UI invalidation or another movement transaction is still in progress. No new polling/controller framework is selected.

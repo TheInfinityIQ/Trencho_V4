@@ -1,0 +1,39 @@
+{
+  "status": "Documentation-only pre-code plan and one isolated basic-response PASS. Production manager/vehicle contact NOT enabled.",
+  "baseline": "96323fe7057ec39fa3ca9aa3f8e8b9773f700755",
+  "design_authority": "Game Designer8November2026 passive grounded contact and narrow existing-owner physical-obstruction hold, relayed by Lead; canonical docs/design_brief.md.",
+  "contract": "docs/3d_manager_contact_plan.md",
+  "movement_owner_plan": "docs/3d_manager_contact_owners.md",
+  "diagram": "docs/diagrams/3d_manager_contact.mmd",
+  "fixed_scope": "docs/current_change/manager_contact_feasibility.md",
+  "evidence": "docs/evidence/manager_contact.json",
+  "initial_represented_roles": [
+    "Construction utility T01",
+    "Player Rear T01"
+  ],
+  "production_collision_enabled": false,
+  "production_gd_changes": false,
+  "raw_asset_import_workflow_changes": false,
+  "candidate_geometry": "Separate sibling layer8/mask0 prism2.7x8x4.941205573, centreY0, flat rearY0 only. Existing layer4 two query boxes and camera/picking mask5 unchanged. Candidate manager mask9; production stillmask1.",
+  "isolated_result": {
+    "run": 42509778235,
+    "artifact": 13629250107,
+    "result": "PASS",
+    "script_sha256": "ed0ad227a0c72b7cfe38905b18e2892275dadd65f3f8b51d258b36380e42f7fa",
+    "scope": "One unconfined flat-ground capsule/prism episode; local eight-tick pause then sixty zero-input running ticks. No production/UI/owner-hold/pinning or other-height acceptance."
+  },
+  "accepted_hold": "Only if proposed travel cannot leave a valid grounded manager position via local contact resolution, existing owner waits BEFORE progress/fuel/time mutation. Actual clearance rechecks same identity/work with time rebased, no distance fuel for zero distance and no invented idle cost. Pause freezes hold progression.",
+  "architecture_unresolved": [
+    "Joint prospective hull/current physics and manager local-resolution certificate before committing an activity. Predicting later move_and_slide is insufficient.",
+    "Owner-specific pre-mutation hooks and explicit timestamps: main rear owners before rear.time update; recovery after.",
+    "Actual clearance dependencies, explicit changed-position notification while preserving publish_resolved validity return semantics, and model-generation/lifetime gating before reset can reach old listeners.",
+    "Already committed initial/restore appearance overlap cannot be fixed by a movement hold; irreducible cases require Lead/Designer disposition."
+  ],
+  "fallback": "Keep query-only/partial contact and report the concrete limitation if bounded precommit feasibility is unsound. No arbitrary safe-location move, rollback, general traffic policy, new pathfinding, damage/crushing, riding or driving.",
+  "limits": [
+    "No production contact implementation assignment follows from the engine PASS.",
+    "Corrected table/pair gap examples are pointwise widths only, not whole-route legality, impossible lateral escape or observed solver failure.",
+    "Unrepresented supplier/T02-T05/Army roles remain open under the same accepted behavior with appropriate geometry.",
+    "No additional process, screenshot, test, matrix, source audit or performance claim."
+  ]
+}

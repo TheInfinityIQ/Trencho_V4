@@ -219,6 +219,12 @@
       "contract": "docs/3d_rear_t01.md",
       "status": "Implemented with shared selected art and current domain/controller/holder eligibility. One arranged actual commissioning/pose/image and same-hull HQ receipt/removal passed. Exact-head review/merge state belongs to PR127; ordinary factory/dispatch, manager blocking, Army rendering, native/FPS and full parity remain open.",
       "evidence": "docs/evidence/rear_t01.json"
+    },
+    "manager_vehicle_contact_plan": {
+      "manifest": "docs/3d_manager_contact_plan.json",
+      "contract": "docs/3d_manager_contact_plan.md",
+      "evidence": "docs/evidence/manager_contact.json",
+      "status": "Accepted grounded passive-contact and narrow owner-held obstruction behavior recorded. One isolated flatY0 basic-response episode passed. Production collision NOT enabled; joint future-geometry precommit and initial/restore-overlap architecture unresolved. Query-only remains until bounded contract/implementation approval; full3D02 open."
     }
   },
   "performance_and_verification": {
