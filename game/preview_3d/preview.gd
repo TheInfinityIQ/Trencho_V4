@@ -464,6 +464,7 @@ func _state_changed() -> void:
 	if world != null:
 		world.rear_workers.request_refresh()
 		world.utility_trucks.request_refresh()
+		world.rear_t01_trucks.request_refresh()
 	_rear_dirty = true
 	_field_dirty = true
 	if _fully_checked and not _candidate.is_empty():

@@ -213,6 +213,11 @@
       "contract": "docs/3d_utility_truck.md",
       "status": "Actual Construction hull presentation implemented/imported; one bounded arranged service-created hull, canonical pose, own palette, two queried boxes and manager reference passed. Exact-head review/merge state belongs to PR126. Manager blocking, detailed payload/seating, ordinary hauling and full parity remain open.",
       "evidence": "docs/evidence/utility_truck.json"
+    },
+    "rear_t01_presentation_candidate": {
+      "manifest": "docs/3d_rear_t01.json",
+      "contract": "docs/3d_rear_t01.md",
+      "status": "Actual Rear-owned T01 source implemented with domain/controller/holder eligibility and shared selected body. Construction remains disjoint; true HQ receipt ends Rear visual despite retained registry. Fixed observation and two actual script UIDs pending Lead; no earned factory/dispatch or full parity claim."
     }
   },
   "performance_and_verification": {
