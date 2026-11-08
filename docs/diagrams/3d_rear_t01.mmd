@@ -1,0 +1,17 @@
+flowchart TD
+    Factory[Earned HeavyProduction output boundary] --> Commission[Existing own admission and create_heavy_output]
+    Commission --> Registry[VehicleActivity register_output / actual hull ID]
+    Registry --> Gate[Keyed actual Rear T01 / owner and controller player / PLACE holder / uncleared]
+    Utility[Construction registry / created true / utility flag] --> UGate[Existing Construction-only presenter]
+    Gate --> Rear[One scene-owned Rear T01 cache]
+    UGate --> UBody[One existing utility cache]
+    Shared[Small selected T01 body helper / exact art and two query boxes] --> Rear
+    Shared --> UBody
+    Motion[Ledger entity_moved / canonical facing] --> Pose[Keyed affected-ID pose / atomic transform]
+    Pose --> Rear
+    State[Existing committed session state / coalesced refresh] --> Gate
+    HQ[Actual HQ receipt / same owner and ID / domain Military + HQ controller] --> Remove[Rear cache detaches despite retained registry]
+    Remove --> Rear
+    Area[Existing exclusive rear and field view roots] --> Rear
+    Army[Existing permitted RTS proxy and contact reports unchanged] -. separate area .-> Area
+    Excluded[Supplier External / T02-T05 / payload and seating / manager blocking unchanged] -. out of scope .-> Gate
