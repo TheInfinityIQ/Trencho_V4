@@ -31,3 +31,9 @@ The projection and scene adapter are implemented with the event ownership above.
 ## First actual observation and narrow correction
 
 Required validation `42449796720` and the fixed arranged observation `42449801128` passed at `81cbfb57` (artifact `13605261796`). C viewed the original image: the long manager label overlapped the worker duty line. Designer and UI/UX requested only a compact two-line manager identity, “You” then “Manager,” at the same position and colour. Worker roles/cargo, camera and exact proposal remain unchanged. Preserve the first functional PASS and original image; corrected visual acceptance is pending. No other source, scene, scenario or engine limit changed.
+
+## Actual current-change evidence
+
+Required 42450137343 and the single arranged worker observation 42450178511 passed at `1541f28c2aa6ce5247cd88256ac803989ff4ce63`. The worker visual follows the real `(10,90) → (22,90)` ledger endpoint event, retains the same person and carried stock identity, and shows three actual M11 units with no worker collision body. The actual manager remains separate. See [stored image and scoped receipt](evidence/rear_workers.json). Actual engine-generated helper UID retained; no imports or workflow changes.
+
+The earlier functional pass 42449801128 exposed overlap between the long manager label and worker duty text. The compact player identity corrects this current-feature readability issue; the original capture remains documented. Exact-source Designer/UI/UX image decisions and final-head technical records belong to [PR #125](https://github.com/TheInfinityIQ/Trencho_V4/pull/125). These staged entities/poses do not establish ordinary hiring/hauling, native controls, full animation or FPS.

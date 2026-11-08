@@ -203,8 +203,10 @@
       "evidence": "docs/evidence/office_exterior.json"
     },
     "rear_worker_presentation_candidate": {
+      "pr": 125,
       "contract": "docs/3d_rear_workers.md",
-      "status": "Implemented a read-only worker presentation candidate using the existing human assets. One arranged actor/carry/endpoint/image observation and exact-head review remain pending. Locomotion/work animation and wider roster acceptance remain open."
+      "evidence": "docs/evidence/rear_workers.json",
+      "status": "One real rear-worker visual per eligible identity, actual carry cue and affected-ID ledger endpoint updates implemented; bounded arranged observation passed. Exact-head review/merge state belongs to PR125. Idle-only, filters source-reviewed, full workforce/animation/native/FPS acceptance open."
     }
   },
   "performance_and_verification": {
