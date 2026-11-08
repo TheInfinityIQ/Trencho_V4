@@ -180,7 +180,7 @@
     ]},
     "docs/diagrams/factory_recovery_control_focus.mmd": {"role":"configuration","system":"docs","sha256":"424d2f987ea265adffa35071af78b3d184b3b165f97179078eef3ebd526b1ff2","lines":14,"purpose":"Supply factory recovery control focus project settings or repository metadata.","functions":[
     ]},
-    "docs/diagrams/full_3d_overhaul.mmd": {"role":"configuration","system":"docs","sha256":"52f83ca0414ff9b0c97c9fe3b1fbfa583ecadeed0451e5a54f2ce368bf8712cb","lines":30,"purpose":"Supply full 3d overhaul project settings or repository metadata.","functions":[
+    "docs/diagrams/full_3d_overhaul.mmd": {"role":"configuration","system":"docs","sha256":"e98cd00442ca45d2b059dac40c3c51b132b15b1908d53fc31b6e4f61162cb666","lines":29,"purpose":"Supply full 3d overhaul project settings or repository metadata.","functions":[
     ]},
     "docs/diagrams/github_projects_connection.json": {"role":"data","system":"docs","sha256":"fa9a0a4a6d20da1c776c161e668fbd0a45d98a58f1e65a32467073fc0e68322b","lines":26,"purpose":"Supply structured settings, dependency pins or catalogue data for github projects connection.","functions":[
     ]},
