@@ -1,0 +1,71 @@
+{
+  "status": "Initial untouched neutral representation/selection PASS only. Actual ownership/state transition runtime acceptance remains OPEN. Final exact-head role reviews and merge state belong to PR132.",
+  "source_head": "6c57217320b470bd5df7d7e2d7ea176966fe8892",
+  "pre_code_commit": "914d799f34047487de60b6c2445c2326795f35ab",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/132",
+  "required_validation": 42522582223,
+  "direct_demonstration": 42522587150,
+  "artifact": 13633713420,
+  "child_script_sha256": "0b70c18662003b2911f13d62060c65f165366edc0bcaf4bb1aafc68dd2bd20f1",
+  "scope": "One untouched existing resource-centre-blue; actual initial Neutral/empty owner, current terrain/Policy colour/title/state, same-ID selection and meaningful existing Owner/State inspection, one actual normal-camera image. No time, owner, state, control, signal or unit setup and no capture replay.",
+  "limits_seconds": {
+    "rendered_child": 35,
+    "wrapper": 45
+  },
+  "observed": {
+    "objective_id": "resource-centre-blue",
+    "kind": "Resource",
+    "owner": "",
+    "ownership_label": "Neutral",
+    "state": "Neutral",
+    "colour_rgba": [
+      0.9411764705882353,
+      0.7725490196078432,
+      0.396078431372549,
+      1
+    ],
+    "position_xz": [
+      2000,
+      2600
+    ],
+    "terrain_y": 0,
+    "readable_title": "Resource 2",
+    "selected_id": "resource-centre-blue",
+    "time_before_after": 0,
+    "camera_pitch_degrees": -65,
+    "camera_height": 3400,
+    "camera_size": 500,
+    "cue_anchor_projection_agreement": "<0.01 pixels, assertion passed"
+  },
+  "actual_engine_uids": [
+    {
+      "path": "game/preview_3d/field_objectives.gd.uid",
+      "uid": "uid://bscdnnkvw2uqn",
+      "sha256": "e99bbcb371b1508963409ae1968bc8b838d8e2134bdfb28bc233869146feb813",
+      "origin": "Actual Godot ResourceUID.create_id after successful observation; artifact13633713420."
+    },
+    {
+      "path": "game/preview_3d/field_objective_cues.gd.uid",
+      "uid": "uid://b5tf1qn4wm137",
+      "sha256": "7405bd13e3b6d146ef8b05ad6929773da69628f27beab93dadc07c5382e71ccf",
+      "origin": "Actual Godot ResourceUID.create_id after successful observation; artifact13633713420."
+    }
+  ],
+  "capture": {
+    "path": "docs/evidence/field_objectives/field_objective_reference.png",
+    "bytes": 126646,
+    "sha256": "76a6788342a45106b16b3c29aca73b71b21e1d8062d211995ef6591cedfe7af4"
+  },
+  "provenance": {
+    "direct_log_sha256": "02c3e803c5355da233b728cdec31670da1618a6f10e0d80fbc5bd9072c9d3753",
+    "scope_sha256": "b6c127e512a48c44c0b0150adb4bb22288fab3949b505b68ffe1a8e6a166275f",
+    "artifact_archive_sha256": "899ade4a6498bbaf02fe6caee7014ea45d9d491eb48d2576fe9f595aea427dea"
+  },
+  "review": "Lead personally viewed actual initial image and accepted readable title/ownership/state cue and current inspection. Exact-head Designer full-source/bounded-image approval belongs to PR132, not presumed here.",
+  "unverified": [
+    "Actual ownership/Controlled/Contested transitions remain runtime-UNOBSERVED; retained-view propagation is source-reviewed only.",
+    "Hidden-view return, replacement/removal, all-nine simultaneous label layout and other objective kinds source-reviewed, not a runtime matrix.",
+    "No capture/income, armed presence, new information/control, building/terrain/physics or whole battlefield acceptance.",
+    "No local engine, regression suite, native input, full workload or 60 FPS acceptance."
+  ]
+}

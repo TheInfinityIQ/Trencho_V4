@@ -1,5 +1,5 @@
 {
-  "status": "Source candidate implemented after Lead-approved pre-code914d799; one initial neutral representation/selection observation and visual acceptance pending. Actual ownership/state transition runtime acceptance remains OPEN.",
+  "status": "Implemented. One untouched initial-neutral representation/selection passed at6c572173; actual image inspected by Lead. Actual owner/state transition runtime acceptance remains OPEN. Exact-head role decisions/merge belong to PR132.",
   "baseline": "f29b02403cb998de6e3bcf7c77b730a9b45e5f3c",
   "branch": "codex/3d-field-objectives",
   "contract": "docs/3d_field_objectives.md",
@@ -33,12 +33,13 @@
   "observation": "ONE untouched actual resource-centre-blue initial Neutral/owner empty at2000,2600; normal size500 reachable-pan image, actual ground/Policy colour-state-title/current-ID inspection. No time advance, actor/owner/state/signal setup or capture replay.",
   "transition_runtime_acceptance": "OPEN and explicitly outside the single initial representation/selection observation; source-reviewed propagation does not prove real ownership/contested transition rendering.",
   "new_assets_imports": [],
-  "planning_verification": "Source trace and JSON/population/scope checks PASS; final publication requires map0pending and entire base-to-final whitespace PASS recorded in frozen handoff. No production, executable, evidence mutation, local engine or automatic process.",
+  "planning_verification": "Historical pre-code trace/JSON/population/map/complete-delta checks passed before implementation; pre-code914d799 retained.",
   "evidence_care": "Preserve repaired main and exact base64 failed T01 stdout/provenance; no old evidence changes. Final review must cover entire branch delta including added files.",
   "pre_code_commit": "914d799f34047487de60b6c2445c2326795f35ab",
-  "source_verification": "Five changed production scripts and the single ignored untouched-objective proposal syntax PASS. Final purpose/map/HTML and full base-to-final checks recorded in frozen handoff. No local engine or automatic process.",
+  "source_verification": "Five changed production scripts parsed in Godot; required42522582223 and single initial-neutral observation42522587150 PASS. Source purpose/map/whole-branch checks pass. No local engine or additional scenario.",
   "new_engine_uid_paths": [
     "game/preview_3d/field_objectives.gd.uid",
     "game/preview_3d/field_objective_cues.gd.uid"
-  ]
+  ],
+  "evidence": "docs/evidence/field_objectives.json"
 }

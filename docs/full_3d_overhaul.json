@@ -247,6 +247,12 @@
       "manifest": "docs/3d_field_objectives.json",
       "contract": "docs/3d_field_objectives.md",
       "status": "Pre-code914d799 approved before bounded source candidate. Current permitted registered objective ground anchors and cached readable ownership/state consume actual Policy scalars and existing coalesced state propagation; retained colour/state updates included, no timed objective ledger loop. One untouched neutral resource-centre-blue initial representation/selection image pending Lead observation; actual ownership/state transition runtime acceptance OPEN. HQ/order-only places, PERSON/T01/contacts, capture/income/inspection/camera rules unchanged. No local engine, new assets or workflow."
+    },
+    "field_objective_presentation": {
+      "contract": "docs/3d_field_objectives.md",
+      "manifest": "docs/3d_field_objectives.json",
+      "evidence": "docs/evidence/field_objectives.json",
+      "status": "Implemented current permitted objective ground anchors and ownership/state labels with retained-view updates and coalesced freshness. One untouched Neutral initial view/selection/image passed. Actual capture/ownership-state transitions, all-nine layout, native/FPS and full battlefield acceptance remain OPEN. Exact-head reviews/merge belong to PR132."
     }
   },
   "performance_and_verification": {
