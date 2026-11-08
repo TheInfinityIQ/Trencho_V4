@@ -1,0 +1,26 @@
+{
+  "status": "PRE-CODE source/asset proposal; Designer approved provisional exterior meaning with readable personnel-transport role condition. Exact Lead contract/provenance review pending. No production/integration/import/executable/engine.",
+  "baseline": "0f97c920dacaf2d5c7c47810cde0d57087134a38",
+  "branch": "codex/3d-field-t02",
+  "contract": "docs/3d_field_t02.md",
+  "diagram": "docs/diagrams/3d_field_t02.mmd",
+  "fixed_definition": "docs/current_change/field_t02.md",
+  "asset_receipt": "docs/3d_field_t02_asset.json",
+  "actual_population": "Current permitted CARRIER IDs intersect exact player-owned/controlled Military canonical T02, positive health/uncleared PLACE finite pose. Normal starting IDs00/01 at1970,608 and2030,608 with actual initial Driver/company attachment; no passenger/readiness assumption.",
+  "canonical_t02": "3200kg/health400/6.8x2.5m/16passenger seats/payload2000/tank40/Driver only; unchanged backend.",
+  "selected_candidate": "Existing verified CarKit delivery.glb closed rigid-box commercial exterior, strictly provisional and explicitly not a military troop-truck/seating claim.",
+  "shared_composition": "Extend existing keyed getter and field_t01_trucks.gd/field_t01_cues.gd in place to finite T01/T02; preserve paths/UIDs/current cache identities, no aliases/naming refactor or cloned whole presenter/cue. Two-case factory and PackedScene cache, one tiny T02 art/box factory; original T01 factory/constants/assets byte-unchanged.",
+  "proposed_production_boundary": [
+    "game/identity/identity_ledger.gd",
+    "game/battlefield/battlefield_view.gd::_unit_label T02-only readable role format",
+    "game/preview_3d/field_t01_trucks.gd",
+    "game/preview_3d/field_t01_cues.gd",
+    "game/preview_3d/t02_presentation.gd",
+    "game/preview_3d/assets/car_kit/delivery.glb"
+  ],
+  "new_data_dependency": "game/preview_3d/assets/car_kit/delivery.glb only; exact one-byte texture URI case fix, reuse existing palette/licence. Root owns CI dependency/import records.",
+  "observation": "ONE existing start-blue-vehicle-00, one same-holder endpoint+(6,8), current new-type model/derived pose/shared cue/Policy identity and readable Personnel transport (T02)/Crew/Fuel/Health inspection, ONE normal size20 image35s/45s; no setter replay, crew/route/orders or old feature observation.",
+  "preservation": "Source-reviewed T01/person/objective behavior/resource identities and evidence; no old observation reruns. Actual objective transition runtime acceptance remains OPEN.",
+  "verification": "Archive hash/licence/palette/source-buffer measurements and original thumbnails inspected only. JSON/map/full base-to-final checks required at publication. No engine, import, downloads or automatic process.",
+  "role_condition": "Actual design_typeT02 selected cue AND readable inspection identify Personnel transport (T02); preserve existing numeric suffix, other type labels and all inspector facts. T02 body role label matches; no role/capability inferred from source art."
+}

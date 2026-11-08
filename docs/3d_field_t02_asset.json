@@ -1,0 +1,257 @@
+{
+  "status": "PRE-CODE candidate; Designer approved explicitly PROVISIONAL closed commercial-style transport meaning after thumbnail view. Lead exact provenance/source/fit review and current in-game image acceptance pending; no integration/import or engine.",
+  "archive": {
+    "existing_path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\car-asset-inspection\\car-kit.zip",
+    "bytes": 4814237,
+    "sha256": "fac7dacac5c7874348cf19729af3ef205f3d366493edaf0a827d93f4fdf3d0c4",
+    "creator_page": "https://kenney.nl/assets/car-kit"
+  },
+  "selected_member": "Models/GLB format/delivery.glb",
+  "source_identity": "Kenney Car Kit3.1 commercial closed rigid-box delivery body, proposed honestly provisional T02 exterior only; not an authored troop truck or16-seat interior.",
+  "license": {
+    "member": "License.txt",
+    "sha256": "c33b7f6453d134deae7b1b8493717d9ccfa754c25ab97f6de89b88f8fda19b00",
+    "license": "CC0",
+    "reuse_existing": "game/preview_3d/assets/car_kit/license.txt",
+    "byte_equal": true
+  },
+  "palette": {
+    "source_member": "Models/GLB format/Textures/colormap.png",
+    "sha256": "f3622a03a20c6696065cae9cbe391351be873508af190c2ebd1d420c055787a5",
+    "reuse_existing": "game/preview_3d/assets/car_kit/textures/colormap.png",
+    "byte_equal": true
+  },
+  "original_thumbnail": {
+    "path": "docs/evidence/field_t02_candidate/delivery.png",
+    "archive_member": "Previews/delivery.png",
+    "sha256": "aabba147eb0234710fd0dbc956add43ed684a268f2932fe00dca09bfaa4e1309",
+    "bytes": 2641,
+    "native_pixels": [
+      64,
+      64
+    ],
+    "observed": "Personally viewed original thumbnail only; closed exterior/bonnet/cab and opaque body, not a runtime import/image."
+  },
+  "narrow_alternatives": [
+    {
+      "member": "Models/GLB format/truck.glb",
+      "finding": "Original thumbnail shows open bed; reject for covered exterior."
+    },
+    {
+      "member": "Models/GLB format/van.glb",
+      "finding": "Shorter panel-body option; not selected as the strongest provisional transport silhouette."
+    }
+  ],
+  "measurement_method": "Actual FLOAT POSITION buffer data with offsets/strides and all six root translations, no animation/skin/rotation/scale/matrix/morph. Query upper envelope clips actual triangles at sourceY0.9, including edge intersections. No engine or importer.",
+  "measurements": {
+    "sha256": "426a3e3a2c242c05c889b1445ba02ef95b2c8b7cd6f597e1275ef736a826014b",
+    "bytes": 240264,
+    "bounds_min": [
+      -0.75,
+      -1.1920928966180355e-08,
+      -1.6499998807907104
+    ],
+    "bounds_max": [
+      0.75,
+      1.6499998807907104,
+      1.5999998807907105
+    ],
+    "extent_xyz": [
+      1.5,
+      1.6499998927116393,
+      3.249999761581421
+    ],
+    "uniform_t02_scale": 1.6666666666666667,
+    "fitted_extent_xyz": [
+      2.5,
+      2.7499998211860657,
+      5.416666269302368
+    ],
+    "origin": [
+      0.0,
+      -1.1920928966180355e-08,
+      -0.02499999999999991
+    ],
+    "nodes": [
+      {
+        "name": "door",
+        "translation": [
+          0.0,
+          1.5,
+          -1.475
+        ],
+        "count": 62,
+        "min": [
+          -0.550000011920929,
+          0.5,
+          -1.5914252310991288
+        ],
+        "max": [
+          0.550000011920929,
+          1.5,
+          -1.5000000003725291
+        ]
+      },
+      {
+        "name": "wheel-front-right",
+        "translation": [
+          -0.3,
+          0.3,
+          1.01
+        ],
+        "count": 672,
+        "min": [
+          -0.6000001013278962,
+          -1.1920928966180355e-08,
+          0.709999988079071
+        ],
+        "max": [
+          -0.299999999999986,
+          0.600000011920929,
+          1.310000011920929
+        ]
+      },
+      {
+        "name": "wheel-front-left",
+        "translation": [
+          0.3,
+          0.3,
+          1.01
+        ],
+        "count": 672,
+        "min": [
+          0.2999999999999343,
+          -1.1920928966180355e-08,
+          0.709999988079071
+        ],
+        "max": [
+          0.6000001013278962,
+          0.600000011920929,
+          1.310000011920929
+        ]
+      },
+      {
+        "name": "wheel-back-right",
+        "translation": [
+          -0.3,
+          0.3,
+          -0.61
+        ],
+        "count": 672,
+        "min": [
+          -0.6000001013278962,
+          -1.1920928966180355e-08,
+          -0.9100000119209289
+        ],
+        "max": [
+          -0.299999999999986,
+          0.600000011920929,
+          -0.30999998807907103
+        ]
+      },
+      {
+        "name": "wheel-back-left",
+        "translation": [
+          0.3,
+          0.3,
+          -0.61
+        ],
+        "count": 672,
+        "min": [
+          0.2999999999999343,
+          -1.1920928966180355e-08,
+          -0.9100000119209289
+        ],
+        "max": [
+          0.6000001013278962,
+          0.600000011920929,
+          -0.30999998807907103
+        ]
+      },
+      {
+        "name": "body",
+        "translation": [
+          0.0,
+          0.15,
+          -0.025
+        ],
+        "count": 1780,
+        "min": [
+          -0.75,
+          0.15,
+          -1.6499998807907104
+        ],
+        "max": [
+          0.75,
+          1.6499998807907104,
+          1.5999998807907105
+        ]
+      }
+    ],
+    "images": [
+      {
+        "uri": "Textures/colormap.png",
+        "name": "colormap"
+      }
+    ],
+    "scene_nodes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "texture_uri_derivative": {
+      "operation": "One ASCII T->t at source JSON URI for existing lowercase textures directory; no geometry/transform/material-value edits",
+      "offset": 6531,
+      "sha256": "8953ed77f9b3114dfe13eaa2d958adb1bd9f2c4c7463ce7716f3bfdcfe19f2e0",
+      "unchanged_bin_tail_sha256": "21ac0f90b66c2212f2200cfe7704de233cd4fa83b647839edfbabe6816f6586e",
+      "bytes": 240264
+    },
+    "upper_profile_clipped_at_y": 0.9,
+    "upper_profile_source_min": [
+      -0.75,
+      0.8999999999999999,
+      -1.5999999284744262
+    ],
+    "upper_profile_source_max": [
+      0.75,
+      1.6499998807907104,
+      1.0599999928474433
+    ],
+    "query_boxes": [
+      {
+        "name": "LowerEnvelope",
+        "size": [
+          2.5,
+          1.500000019868215,
+          5.416666269302368
+        ],
+        "center": [
+          0,
+          0.7500000099341075,
+          0
+        ]
+      },
+      {
+        "name": "CoveredUpper",
+        "size": [
+          2.5,
+          1.2499998013178508,
+          4.433333202203116
+        ],
+        "center": [
+          0.0,
+          2.12499992052714,
+          -0.40833327968915256
+        ]
+      }
+    ]
+  },
+  "front": "Source+Z by positive-Z named frontwheel nodes and negative-Z rear door; same90-facing_degrees world Y convention.",
+  "canonical_t02": "Unchanged6.8x2.5 reservation; fittedlength5.4166662693 leaves0.69166686535m per end. No seating/capacity/mass/equipment inference from art.",
+  "proposed_data_dependency": "game/preview_3d/assets/car_kit/delivery.glb ONLY, URI-case derivative as recorded. Root owns declaration of CI import dependency and actual .import receipt; no new palette/licence/download/workflow.",
+  "appearance_gap_condition": "Troop-specific final art/interior remains deferred, not a blocker or new sourcing task for this approved provisional slice. No visible seating/equipment/capability inferred from the body volume.",
+  "designer_role_condition": "Actual selected T02 cue and current readable type/role inspection must say Personnel transport (T02), not only Military T02 or generic delivery; other types/inspector facts unchanged."
+}
