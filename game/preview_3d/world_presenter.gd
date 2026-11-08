@@ -92,12 +92,7 @@ func _build_player(pose: RefCounted) -> void:
 	skin.albedo_texture = load("res://game/preview_3d/assets/manager_skin.png")
 	skin.roughness = 1.0
 	for mesh in player_visual.find_children("*","MeshInstance3D",true,false): mesh.material_override = skin
-	for animator in player_visual.find_children("*","AnimationPlayer",true,false):
-		for clip in animator.get_animation_list():
-			if clip == "RESET": continue
-			animator.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
-			animator.play(clip)
-			break
+	_bind_idle(player_visual)
 	player.add_child(eye)
 	eye.position.y = 1.62
 	eye.rotation.x = -0.18
@@ -117,14 +112,17 @@ func _build_player(pose: RefCounted) -> void:
 func _asset(file: String, height: float) -> Node3D:
 	var model: PackedScene = load("res://game/preview_3d/assets/"+file)
 	var wrapper := Node3D.new()
+	# Keep normalization outside imported nodes and their animation tracks.
+	var normalizer := Node3D.new()
+	wrapper.add_child(normalizer)
 	var instance: Node3D = model.instantiate()
-	wrapper.add_child(instance)
+	normalizer.add_child(instance)
 	var bounds := AABB()
 	var found := false
 	for mesh in instance.find_children("*","MeshInstance3D",true,false):
 		var transform_to_root := Transform3D.IDENTITY
 		var cursor: Node3D = mesh
-		while cursor != wrapper:
+		while cursor != normalizer:
 			transform_to_root = cursor.transform * transform_to_root
 			cursor = cursor.get_parent()
 		var box: AABB = transform_to_root * mesh.get_aabb()
@@ -132,8 +130,8 @@ func _asset(file: String, height: float) -> Node3D:
 		found = true
 	if found and bounds.size.y > 0.00001:
 		var factor := height / bounds.size.y
-		instance.scale *= factor
-		instance.position -= Vector3(bounds.get_center().x,bounds.position.y,bounds.get_center().z)*factor
+		normalizer.scale = Vector3.ONE*factor
+		normalizer.position = -Vector3(bounds.get_center().x,bounds.position.y,bounds.get_center().z)*factor
 	return wrapper
 
 func _box(parent: Node3D, at: Vector3, dimensions: Vector3, colour: Color, solid: bool = false) -> MeshInstance3D:
@@ -190,7 +188,8 @@ func _build_terrain() -> void:
 			var c := Vector2(xs[xi+1],zs[zi+1])
 			var tile: Dictionary = world.cell(Vector2i((a+c)/2.0))
 			surface.set_color(Color(Farmland.COLOURS.get(tile.terrain,"71875a")))
-			for point in [a,c,Vector2(c.x,a.y),a,Vector2(a.x,c.y),c]:
+			# Godot front faces use clockwise winding when seen from above.
+			for point in [a,Vector2(c.x,a.y),c,a,c,Vector2(a.x,c.y)]:
 				var height: float = float(tile.get("height",0.0))+Vector2(tile.get("gradient",Vector2.ZERO)).dot(point)
 				surface.add_vertex(Vector3(point.x,height,point.y))
 	surface.generate_normals()
@@ -278,3 +277,38 @@ func refresh_marker_positions() -> void:
 			row.position = rear.ledger._world_position(row.id)
 		markers[row.id].show()
 		markers[row.id].position = Vector3(row.position.x,rear.combat.world.ground(row.position)+15,row.position.y)
+
+func _bind_idle(visual: Node3D) -> void:
+	# Kenney's animation-only FBX has no mesh. Bind its bone tracks to the
+	# separately imported character, leaving visual normalization untouched.
+	var skeletons := visual.find_children("*","Skeleton3D",true,false)
+	if skeletons.is_empty():
+		push_error("Provisional manager model has no imported skeleton.")
+		return
+	var target: Skeleton3D = skeletons[0]
+	var source_scene: PackedScene = load("res://game/preview_3d/assets/manager_idle.fbx")
+	var source: Node3D = source_scene.instantiate()
+	var animator := AnimationPlayer.new()
+	animator.root_node = NodePath("..")
+	visual.add_child(animator)
+	var library := AnimationLibrary.new()
+	animator.add_animation_library("idle",library)
+	for player_source in source.find_children("*","AnimationPlayer",true,false):
+		for clip_name in player_source.get_animation_list():
+			if clip_name == "RESET": continue
+			var clip: Animation = player_source.get_animation(clip_name).duplicate(true)
+			for index in range(clip.get_track_count()-1,-1,-1):
+				var path := clip.track_get_path(index)
+				var bone := str(path.get_subname(0)) if path.get_subname_count() > 0 else ""
+				if bone.is_empty() or target.find_bone(bone) < 0 or clip.track_get_type(index) not in [Animation.TYPE_POSITION_3D,Animation.TYPE_ROTATION_3D,Animation.TYPE_SCALE_3D]:
+					clip.remove_track(index)
+					continue
+				clip.track_set_path(index,NodePath(str(visual.get_path_to(target))+":"+bone))
+			if clip.get_track_count() == 0: continue
+			clip.loop_mode = Animation.LOOP_LINEAR
+			library.add_animation("standing",clip)
+			animator.play("idle/standing")
+			source.free()
+			return
+	source.free()
+	push_error("Provisional idle clip has no matching manager bone tracks.")
