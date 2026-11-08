@@ -21,12 +21,14 @@ class PlacementCamera:
 const RearWorkers = preload("res://game/preview_3d/rear_workers.gd")
 const UtilityTrucks = preload("res://game/preview_3d/utility_trucks.gd")
 const RearT01Trucks = preload("res://game/preview_3d/rear_t01_trucks.gd")
+const FieldPersons = preload("res://game/preview_3d/field_persons.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_workers: RearWorkers = RearWorkers.new()
 var utility_trucks: UtilityTrucks = UtilityTrucks.new()
 var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
+var field_persons: FieldPersons = FieldPersons.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -36,7 +38,7 @@ var eye := Node3D.new()
 var arm := SpringArm3D.new()
 var first := PlacementCamera.new()
 var third := PlacementCamera.new()
-var rts := Camera3D.new()
+var rts := PlacementCamera.new()
 var footprint: MeshInstance3D
 var door: MeshInstance3D
 var stock_label: Label3D
@@ -45,10 +47,12 @@ var rear_ground: StaticBody3D
 var simulation: RefCounted
 var markers: Dictionary = {}
 var marker_rows: Array[Dictionary] = []
+var _proxy_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
 var _site_snapshot: Dictionary = {}
 var _facility_shells: RefCounted = FacilityShells.new()
+var _static_person_pose: Dictionary = {}
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -90,6 +94,10 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	_build_player(pose)
 	_build_terrain()
 	field_root.add_child(_markers_root)
+	_markers_root.add_child(field_persons)
+	field_persons.changed.connect(_field_person_changed)
+	field_persons.removing.connect(_field_person_removing)
+	field_persons.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,_add_static_human)
 	rear_root.add_child(_collision_root)
 	footprint = _box(rear_root,Vector3.ZERO,Vector3.ONE,Color(0.3,0.9,0.65,0.45))
 	door = _box(rear_root,Vector3.ZERO,Vector3(1.5,0.15,1.5),Color("f4cd7c"))
@@ -147,7 +155,7 @@ func _build_player(pose: RefCounted) -> void:
 	third.far = 500
 	third.current = true
 
-func _add_human(parent: Node3D) -> Node3D:
+func _add_human(parent: Node3D, animated: bool = true) -> Node3D:
 	# Keep the existing manager's import, skin and post-attachment idle binding.
 	var visual: Node3D = _asset("manager.fbx",1.8)
 	parent.add_child(visual)
@@ -157,7 +165,32 @@ func _add_human(parent: Node3D) -> Node3D:
 	for child: Node in visual.find_children("*","MeshInstance3D",true,false):
 		var mesh: MeshInstance3D = child as MeshInstance3D
 		mesh.material_override = skin
-	_bind_idle(visual)
+	if animated: _bind_idle(visual)
+	return visual
+
+func _add_static_human(parent: Node3D) -> Node3D:
+	var visual: Node3D = _add_human(parent,_static_person_pose.is_empty())
+	var skeletons: Array[Node] = visual.find_children("*","Skeleton3D",true,false)
+	if skeletons.is_empty():
+		push_error("Provisional field person has no skeleton for the static pose.")
+		return visual
+	var target: Skeleton3D = skeletons[0] as Skeleton3D
+	if _static_person_pose.is_empty():
+		for index: int in target.get_bone_count():
+			_static_person_pose[str(target.get_bone_name(index))] = {"position":target.get_bone_pose_position(index),"rotation":target.get_bone_pose_rotation(index),"scale":target.get_bone_pose_scale(index)}
+	for child: Node in visual.find_children("*","AnimationPlayer",true,false):
+		var animator: AnimationPlayer = child as AnimationPlayer
+		animator.stop(true)
+		animator.get_parent().remove_child(animator)
+		animator.free()
+	# Reapply after disposal too; the cache contains no scene or animator references.
+	for bone: String in _static_person_pose:
+		var index: int = target.find_bone(bone)
+		if index < 0: continue
+		var pose: Dictionary = _static_person_pose[bone]
+		target.set_bone_pose_position(index,pose.position)
+		target.set_bone_pose_rotation(index,pose.rotation)
+		target.set_bone_pose_scale(index,pose.scale)
 	return visual
 
 func _asset(file: String, height: float) -> Node3D:
@@ -317,9 +350,17 @@ func _mark_facility_approach(row: Dictionary, entrance: Vector3) -> void:
 func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
 	var present: Dictionary = {}
+	var people: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
 		present[row.id] = true
+		if row.kind == "PERSON": people[row.id] = row
+		else: people.erase(row.id)
+	field_persons.reconcile(people.values())
+	_proxy_rows.clear()
+	for row in marker_rows:
+		if row.kind == "PERSON" or people.has(row.id): continue
+		_proxy_rows.append(row)
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
 			if row.kind == "PLACE": colour = row.get("ownership_colour",Color("f0c565"))
@@ -334,6 +375,17 @@ func refresh_markers() -> void:
 		if present.has(id): continue
 		markers[id].queue_free()
 		markers.erase(id)
+
+func _field_person_changed(id: String) -> void:
+	var anchor: Node3D = field_persons.anchors[id]
+	if markers.has(id) and markers[id] != anchor:
+		var old: Node3D = markers[id]
+		old.get_parent().remove_child(old)
+		old.queue_free()
+	markers[id] = anchor
+
+func _field_person_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
 
 func show_preview(plan: Dictionary) -> void:
 	var rect: Rect2 = plan.footprint
@@ -359,10 +411,10 @@ func move_manager(direction: Vector2, speed: int, pose: RefCounted) -> bool:
 	return not player.global_position.is_equal_approx(previous)
 
 func refresh_marker_positions() -> void:
-	# Cached permitted membership only. Read each friendly holder chain once;
-	# contacts retain reported coordinates, never the true enemy ledger pose.
+	# PERSON poses are affected-event owned. Other cached proxies keep the
+	# existing adapter; contacts use reports, never the true enemy ledger pose.
 	var rear: RefCounted = simulation.rear
-	for row in marker_rows:
+	for row in _proxy_rows:
 		if not markers.has(row.id): continue
 		if row.kind == "CONTACT":
 			var report: Dictionary = rear.orders.contact("army",row.id)

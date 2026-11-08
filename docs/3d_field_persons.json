@@ -1,5 +1,5 @@
 {
-  "status": "Frozen pre-code plan only; Lead review/implementation assignment pending. No production PERSON model/cue change yet.",
+  "status": "Production candidate implemented after approved pre-code7404792; source checks complete, exact remote observation/actual UIDs and acceptance pending Lead.",
   "baseline": "07ee29b407e31e464e08fb3f0a19091314ba1db2",
   "contract": "docs/3d_field_persons.md",
   "diagram": "docs/diagrams/3d_field_persons.mmd",
@@ -13,8 +13,23 @@
   "observation": "One actual existing initial-hq-01 and one genuine staged endpoint on terrain; overview/close actual cue selection with exactly two scoped images in the SAME brief process. No new grant/mock marker/earned army move or matrix.",
   "contact_disposition": "Designer8November explicitly deferred solid contact: current production query-only identity/commission/restore preserved, accepted contact requirements remain deferred; no broad yield/creation refusal.",
   "limits": [
-    "No implementation or actual image acceptance from this plan.",
+    "Actual static-pose/cue/terrain/inspection acceptance pending Lead remote observation; source completion is not acceptance.",
     "No enemy/vehicle/terrain/animation overhaul, new knowledge/control, collision/contact implementation, native/FPS or full population performance claim.",
     "Aboard/nonliving/absent/replacement distinctions source-reviewed, not runtime cases."
-  ]
+  ],
+  "pre_code_commit": "7404792d27b9cfcd60ce9c3b250590a6f085bea7",
+  "source": {
+    "facts": "game/identity/identity_ledger.gd::field_person_view",
+    "persons": "game/preview_3d/field_persons.gd",
+    "cues": "game/preview_3d/field_person_cues.gd",
+    "static_pose_and_world": "game/preview_3d/world_presenter.gd",
+    "pick_visibility": "game/preview_3d/preview.gd::_select_marker"
+  },
+  "visibility": "PERSON pick flushes the same current-camera projected visibility cache as the cue; offscreen/behind/invalid people cannot be edge-picked. Strict nearest<18 and current row ordering remain; nonPERSON behavior unchanged.",
+  "verification": "Pinned syntax parser passed five changed production scripts and the single ignored fixed proposal. No local engine or old suite/matrix. Actual static pose, terrain/selection/captures pending one Lead process.",
+  "new_engine_uid_paths": [
+    "game/preview_3d/field_persons.gd.uid",
+    "game/preview_3d/field_person_cues.gd.uid"
+  ],
+  "camera_evidence": "Both proposed captures preserve production RTS rotation and height, reachable X/Z pan only and zoom6500to100. True-scale human may remain small at actual minimum zoom; fixed cue/inspection provide strategic readability."
 }

@@ -2,6 +2,7 @@ extends "res://game/main/main.gd"
 ## Explicit opt-in entry. Default Main/F5 stays on the existing playable view.
 const World = preload("res://game/preview_3d/world_presenter.gd")
 const FieldPolicy = preload("res://game/battlefield/battlefield_presentation.gd")
+const FieldCues = preload("res://game/preview_3d/field_person_cues.gd")
 var world: Node3D
 var management_open := false
 var battlefield_open := false
@@ -33,6 +34,7 @@ var _hint: Label
 var _inspection: Label
 var _inspection_panel: ScrollContainer
 var _crosshair: Label
+var _field_cues: FieldCues
 
 func _ready() -> void:
 	super._ready()
@@ -48,6 +50,7 @@ func _ready() -> void:
 	_base.site_placement_result.connect(_placement_result)
 	_base.command_reported.connect(_command_reported)
 	get_viewport().size_changed.connect(_invalidate_preview)
+	get_viewport().size_changed.connect(_field_viewport_changed)
 	_base.construction_kind.item_selected.connect(func(_index: int) -> void: _draft_changed())
 	_base.construction_turn.toggled.connect(func(_value: bool) -> void: _draft_changed())
 	_shell.modal_visibility_changed.connect(func(_blocked: bool) -> void: _release_controls())
@@ -59,6 +62,8 @@ func _ready() -> void:
 	_set_management(false)
 
 func _build_hud() -> void:
+	_field_cues = FieldCues.new()
+	add_child(_field_cues)
 	_hud = VBoxContainer.new()
 	_hud.position = Vector2(20,16)
 	_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -111,6 +116,7 @@ func _build_hud() -> void:
 	add_child(_crosshair)
 
 func _replace_world(model: RefCounted) -> void:
+	if _field_cues != null: _field_cues.bind(null,null)
 	_base.placement_manager_body = null
 	_base.placement_manager_shape = null
 	if world != null:
@@ -123,6 +129,9 @@ func _replace_world(model: RefCounted) -> void:
 	_base.placement_manager_shape = world.manager_collision
 	world.first.pose_changed.connect(_camera_changed)
 	world.third.pose_changed.connect(_camera_changed)
+	world.rts.pose_changed.connect(_field_camera_changed)
+	_field_cues.bind(world.field_persons,world.rts)
+	_field_cues.set_selected(_battlefield.selected_id)
 	world.player.global_rotation.y = _session.manager_pose.heading
 	world.player_visual.rotation.y = PI
 	_rear_dirty = false
@@ -168,6 +177,7 @@ func _set_management(open: bool) -> void:
 	_base.visible = open
 	if _hud != null: _hud.visible = not open
 	if _crosshair != null: _crosshair.visible = not open and not battlefield_open
+	if _field_cues != null: _field_cues.visible = battlefield_open and not open
 	_release_controls()
 	if not open: _invalidate_preview(false)
 	_update_hint()
@@ -180,6 +190,8 @@ func _apply_view() -> void:
 	world.first.current = not battlefield_open and first_person
 	world.third.current = not battlefield_open and not first_person
 	world.rts.current = battlefield_open
+	_field_cues.visible = battlefield_open and not management_open
+	_field_cues.request_projection()
 	if battlefield_open:
 		_field_dirty = true
 		world.clear_preview()
@@ -275,6 +287,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cancel_preview()
 		elif battlefield_open and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),100,6500)
+			_field_cues.request_projection()
 	if event is InputEventMouseMotion:
 		var moved_pointer: bool = _pointer != event.position
 		_pointer = event.position
@@ -438,13 +451,16 @@ func _placement_result(result: Dictionary) -> void:
 	_update_hint()
 
 func _select_marker() -> void:
+	_field_cues.flush_projection()
 	var nearest := ""
 	var distance := 18.0
 	for row in world.marker_rows:
 		if not world.markers.has(row.id) or not world.markers[row.id].visible: continue
+		if row.kind == "PERSON" and not _field_cues.points.has(row.id): continue
 		var at: Vector3 = world.markers[row.id].global_position
 		if world.rts.is_position_behind(at): continue
-		var measure: float = world.rts.unproject_position(at).distance_to(_pointer)
+		var point: Vector2 = _field_cues.points[row.id] if row.kind == "PERSON" else world.rts.unproject_position(at)
+		var measure: float = point.distance_to(_pointer)
 		if measure < distance:
 			distance = measure
 			nearest = str(row.id)
@@ -452,7 +468,14 @@ func _select_marker() -> void:
 
 func _inspect(id: String) -> void:
 	_battlefield.selected_id = id
+	_field_cues.set_selected(id)
 	_refresh_inspection()
+
+func _field_camera_changed(_camera: Camera3D) -> void:
+	if _field_cues != null: _field_cues.request_projection()
+
+func _field_viewport_changed() -> void:
+	if _field_cues != null: _field_cues.request_projection()
 
 func _refresh_inspection() -> void:
 	if _inspection == null: return
