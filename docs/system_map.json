@@ -20,7 +20,7 @@
     ]},
     ".github/pull_request_template.md": {"role":"documentation","system":".github","sha256":"28ff275971338bfcffde53921e9557ad6b15a36e75c74e4511bdebc554e609e9","lines":15,"purpose":"Document pull request template.","functions":[
     ]},
-    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"d70f1370157eb0bc920e39c7092479453f01f167181a6617b859ac884e92e1ff","lines":175,"purpose":"Configure GitHub automation: validate.","functions":[
+    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"d177dda98b2adc473082321ec45de28afbe457610ad2d9728afdeb480f90129a","lines":175,"purpose":"Configure GitHub automation: validate.","functions":[
     ]},
     ".gitignore": {"role":"configuration","system":"project","sha256":"568c3e6e224bded04a4d8967b46a1e4b3777adec490c0f3812cc6b46012b072c","lines":28,"purpose":"Supply .gitignore project settings or repository metadata.","functions":[
     ]},
