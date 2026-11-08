@@ -8,9 +8,12 @@ flowchart TD
     Validate -->|invalid removed replaced unsupported| Reject
     Validate --> Built[Constructed site / activities actual ID / kind site]
     Validate --> Initial[Declared initial-workshop / owner duty workshop / kind building]
-    Built --> Select[Existing BaseDemo select / exact facility metadata]
-    Initial --> Select
-    Select --> UI[Existing Work panel / released controls / selected region visible]
+    Built --> Visible[Validated target / make existing management visible]
+    Initial --> Visible
+    Visible --> Select[Existing BaseDemo select / current Work refresh and exact facility metadata]
+    Select --> Verify[Verify same current owner and Work context]
+    Verify -->|unavailable| Close[Close management / existing hint]
+    Verify --> UI[Existing Work panel / released controls / selected region visible]
     UI --> Facts[Actual recipe target status local and missing inputs / present requested staff]
     UI --> Command[One existing UI target command / same actual production owner]
     Limits[No grants recipes rates staffing defaults haul orders or backend rewrite] -.-> Command

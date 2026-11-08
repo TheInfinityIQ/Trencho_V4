@@ -1,0 +1,37 @@
+{
+  "status": "Original arranged Workshop observation FAILED; no visual/runtime acceptance",
+  "source_head": "6d9ce4ec6b4d46842525207971205da7cf021280",
+  "required_validation": {
+    "run": 42532801423,
+    "result": "PASS; two changed scripts"
+  },
+  "original": {
+    "run": 42532818622,
+    "artifact": 13638431198,
+    "result": "FAIL",
+    "files": {
+      "direct.log.base64": {
+        "bytes": 6741,
+        "sha256": "42c859d9fc3b6baafaa9b8970ed805d65579eab6750176caf1dc498f346c6131",
+        "decoded_bytes": 5055,
+        "decoded_sha256": "a885caeec908ab23a7e796447cd28659aef378c565001daf3595088c5b107264"
+      },
+      "scope.txt": {
+        "bytes": 268,
+        "sha256": "d9118159203979638e0aa815415c7eefeb532b27b95bdab693be445c40b9b98f",
+        "decoded_bytes": 268,
+        "decoded_sha256": "d9118159203979638e0aa815415c7eefeb532b27b95bdab693be445c40b9b98f"
+      },
+      "workshop_interaction.png": {
+        "bytes": 72383,
+        "sha256": "16a8f2b7604050b7fc998cf91e0ccb292582b908b665d12bc42fd206f28155fa",
+        "decoded_bytes": 72383,
+        "decoded_sha256": "16a8f2b7604050b7fc998cf91e0ccb292582b908b665d12bc42fd206f28155fa"
+      }
+    },
+    "proposal_sha256": "746d9eca6eae0c85aaee2ae1740202795403f857182189e66b78f624f657becf"
+  },
+  "finding": "Actual site selection reaches logical workshop, but hidden BaseDemo._refresh_contents exits before facility metadata refresh; _select falls back to Info and new route rejects opening. The observer then reaches a hidden existing button, producing further visible/status failures. None is accepted as a pass.",
+  "correction_contract": "After current actual target validation, make existing management presentation visible before calling existing _select so its explicit Work refresh can populate current metadata. Verify selected owner/Work context in the same callback; close management on unavailable context, retain hint. No polling/backend/UI service rewrite or weakened observer.",
+  "limits": "One arranged declared initial owner and direct injected handler route only; constructed IDs source-reviewed, no ordinary factory/supply/repeat/native/FPS acceptance. Original failure retained; same observer and 35s/45s gates for the corrected new code."
+}

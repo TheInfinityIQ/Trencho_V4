@@ -37,3 +37,22 @@ The source candidate changes only Preview and World: current rear E queues ident
 The proposal uses direct _unhandled_input event injection to exercise the actual pending-to-physics route, not native OS/viewport input acceptance. It preserves physical initial-workshop versus logical workshop in the receipt and deliberately leaves the constructed-ID runtime path, broad occlusion/stale cases, earned production and normal factory/supply/repeat acceptance open. Existing recipe choices may use their current item codes; this bounded route does not relabel or rewrite the Work panel.
 
 Dawson instructed this contributor to finish only this bounded task and then stop. Lead owns the remote demonstration, source/visual review, publication/integration and subsequent fixes/features. No successor or additional T03/asset/audit work follows this handoff.
+
+## Correction contract after the first observation — 8 November 2026
+
+The first arranged observation42532818622 at6d9ce4e failed. The ray reached the
+correct declared Workshop, but BaseDemo._refresh_contents intentionally skips
+hidden UI. Calling _select while management is hidden therefore cannot populate
+the facility metadata; it falls back to Info and the new route refuses to open.
+The remaining hidden-command/status failures are retained, not accepted as passes.
+
+After validating the current physical Workshop and owner, make the existing
+management presentation visible BEFORE calling its existing _select. This permits
+the explicit Work refresh to populate current metadata. Verify the same selected
+owner and Work context synchronously before returning; close management and show
+the existing failure hint if unavailable. No intermediate frame is presented,
+no production/staff command runs on opening, and no hidden refresh or polling is
+enabled. This ownership/visibility amendment precedes the source correction.
+The frozen observer and definition stay unchanged, with the same35s/45s gates.
+Original byte-exact output/scope/image are retained in
+[evidence](evidence/workshop_interaction.json); stdout is base64, not trimmed.

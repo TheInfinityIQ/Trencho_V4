@@ -1,0 +1,5 @@
+revision=6d9ce4ec6b4d46842525207971205da7cf021280
+base=5648f891fcc07e068b746653a5f1b632b816b953
+changed_scripts=['game/preview_3d/preview.gd', 'game/preview_3d/world_presenter.gd']
+direct_check=True
+Syntax checks are not gameplay acceptance. No regression suites run.

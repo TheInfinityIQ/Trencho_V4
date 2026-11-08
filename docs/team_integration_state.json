@@ -1,5 +1,5 @@
 {
-  "updated_date": "2026-11-06",
+  "updated_date": "2026-11-08",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
     "title": "Trencho V4 Developer",
@@ -15,7 +15,7 @@
       "Combined integration verification and testable player handoff",
       "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer"
     ],
-    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_lead_integration"
+    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4"
   },
   "consultants": [
     {
@@ -76,7 +76,7 @@
     "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
   },
   "developer_team": {
-    "authority": "Dawson explicit request,2026-11-05",
+    "authority": "Dawson direct 8 November 2026 instruction: Lead returns to being the only developer; C finishes the current Workshop task and then stops.",
     "model": "gpt-6.1-sol",
     "reasoning_effort": "medium",
     "charter": "docs/developer_team.md",
@@ -89,7 +89,9 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_current_demand",
         "branch": "codex/reconcile-current-army-demand",
-        "current_assignment": "Three-document main-adoption handoff frozen for separate lead/Designer review/publication. A now implements the separately preassigned91/92 downward/zero automatic-demand reconciliation from mainab2a406, in its own checkout/branch and bounded source contract; preserve prior heads."
+        "current_assignment": "Inactive; historical assignments are not resumed. No new development or supporting-review task is assigned.",
+        "previous_assignment": "Three-document main-adoption handoff frozen for separate lead/Designer review/publication. A now implements the separately preassigned91/92 downward/zero automatic-demand reconciliation from mainab2a406, in its own checkout/branch and bounded source contract; preserve prior heads.",
+        "status": "stopped_no_successor"
       },
       {
         "title": "Trencho â€” Developer B â€” Operations & Transport",
@@ -99,7 +101,9 @@
         "reasoning_effort": "medium",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_supply_candidate",
         "branch": "codex/connected-supply-candidate",
-        "current_assignment": "Cumulative PR89 source review and exact main validation observation COMPLETE; no watcher remains. B is preassigned independent source peer review of A current-demand reconciliation when A supplies its frozen exact head."
+        "current_assignment": "Inactive; historical assignments are not resumed. No new development or supporting-review task is assigned.",
+        "previous_assignment": "Cumulative PR89 source review and exact main validation observation COMPLETE; no watcher remains. B is preassigned independent source peer review of A current-demand reconciliation when A supplies its frozen exact head.",
+        "status": "stopped_no_successor"
       },
       {
         "title": "Trencho â€” Developer C â€” Player Experience",
@@ -107,20 +111,22 @@
         "host_id": "local",
         "model": "gpt-6.1-sol",
         "reasoning_effort": "medium",
-        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_dev_batch_cancel",
-        "branch": "codex/confirm-consumed-batch-cancel",
-        "current_assignment": "C performs final read-only feedback/guard review of A current-demand exact implementation. Latest lead decision retains existing Complete request lifecycle and guards; the proposed Covered-state UI patch is withdrawn and is not composed."
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/3d-opening-cameras-worktree",
+        "branch": "codex/3d-workshop-interaction",
+        "current_assignment": "COMPLETED local Workshop source/proposal handoff at 6d9ce4ec6b4d46842525207971205da7cf021280. STOPPED; no successor, fixes, publication, checks or integration assigned. Lead owns all further engineering.",
+        "previous_assignment": "C performs final read-only feedback/guard review of A current-demand exact implementation. Latest lead decision retains existing Complete request lifecycle and guards; the proposed Covered-state UI patch is withdrawn and is not composed.",
+        "status": "stopped_no_successor"
       }
     ],
     "review_policy": {
-      "technical": "Lead explicit approval at current exact PR head; substantive lead code also gets supporting developer review",
+      "technical": "Lead owns engineering review, fixes, validation and integration as sole developer under Dawson 8 November instruction. Do not reactivate another developer to satisfy the earlier supporting-review convention.",
       "design": "Designer explicit game-identity approval at current exact PR head",
       "default": "Pending or changes requested holds this PR; author/reviewer owns the next action. Lead merges after both approve and required checks pass, without another routine Dawson permission.",
       "native_github_approval": "Report actual submission separately from a recorded role review note",
       "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
-    "lifecycle": "Lead dispatches and follows bounded active tasks; each completion routes to review, integration or an already assigned successor. No generic human continue dependency and no scheduled/always-on service.",
+    "lifecycle": "Lead completes and follows owned work. Other developer chats remain inactive; no new developer task or successor after C Workshop handoff. No background service or additional execution owner.",
     "reviewed_prs": [
       {
         "pr": 93,
@@ -212,7 +218,8 @@
     "supersedes": "Earlier temporary xhigh sub-agents; their source, branches, PRs and evidence are inherited, not new authorship.",
     "onboarding": "docs/developer_onboarding.md",
     "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later.",
-    "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work"
+    "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work",
+    "status": "Lead sole developer; other developer chats inactive. C completed current bounded source handoff, then stopped."
   },
   "repository_cleanup": {
     "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
@@ -284,7 +291,7 @@
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
       "record_kind": "completed successor history; never dispatch this already integrated work"
     },
-    "lead_next_action": "Publish/review the separate documentation handoff, and continue the already preassigned A implementation of Designer next accepted91/92 outcome: reconcile decreased or zero genuine Army demand before additional AUTOMATIC shipment commitments. Preserve accepted cargo/crew/site/return rules, fixed manual quantities and explicit holds; zero demand must not create a player cancellation hold. No rates/HQ6000/threshold changes. Source adoption89 and feature101 are complete; do not redispatch their reviews or deferred broad checks. A owns bounded implementation, B its final source peer review, C read-only feedback/guard review using existing Complete lifecycle guards; lead owns integration; no generic human continue or implied playtest gate.",
+    "lead_next_action": "Lead owns Workshop publication, brief current-change GitHub observation, exact-head technical and Designer game-meaning review, eligible merge and safe main adoption. C has stopped after local source handoff; no successor or fixes assigned. All later implementation remains with Lead. Ordinary factory/supply/repeat/native/FPS acceptance stays open; T03 exterior deferred after declined download, without retry or workaround.",
     "publication": "The partial prototype is merged into mainab2a406. This three-file documentation handoff is a separate local branch until normally published and reviewed; historical candidate receipts do not imply pending source-publication permission.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
