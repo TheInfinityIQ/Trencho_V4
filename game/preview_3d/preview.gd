@@ -406,13 +406,15 @@ func _consume_workshop() -> void:
 		_command_message = "Aim at a completed Workshop and press E. Intervening structures block selection."
 		_update_hint()
 		return
+	# Hidden panels intentionally skip refresh; show before resolving metadata.
+	_set_management(true)
 	_base._select(str(target.kind),str(target.id),true)
 	var panel: Control = _base.tabs.get_tab_control(_base.tabs.current_tab)
 	if _base._selected_kind != target.kind or _base._selected_id != target.id or _base._context_duty() != target.id or _base._activity() != target.activity or str(panel.get_meta("panel_title",panel.name)) != "Work":
+		_set_management(false)
 		_command_message = "This Workshop's controls are unavailable. Select a current completed Workshop."
 		_update_hint()
 		return
-	_set_management(true)
 	_focus_workshop.call_deferred(request,target)
 
 func _focus_workshop(request: Dictionary, target: Dictionary) -> void:
