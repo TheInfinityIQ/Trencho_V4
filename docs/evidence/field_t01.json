@@ -1,0 +1,69 @@
+{
+  "status": "Focused recheck PASS; original first run remains FAILED. Exact final-head technical/Designer decisions and merge state belong to PR130.",
+  "source_head": "6450bf889103ca57138ca2846332383423d029fa",
+  "pre_code_commit": "6d5a0bd756dd29cb999ed91f679d8773c106b99a",
+  "verification_amendment": "785c93d08581068279e207b8ae7cc0138a5ad880",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/130",
+  "first_failure": "docs/evidence/field_t01_first_failure.json",
+  "required_validation": 42519820365,
+  "direct_demonstration": 42519890581,
+  "artifact": 13633007336,
+  "child_script_sha256": "69d9712fb0a1567cbfe8b0c2eb18bef126d91d1baa2c16c667ee2b70901ac8f1",
+  "scope": "One existing normal-opening start-blue-vehicle-02, one same-holder endpoint+(6,8), one setter-only135 facing event, committed/cue/physics projected agreement<0.01px, one actual current RTS image and selected Policy record/meaningful readable inspection. No commissioning, receipt, grant, command or other actor.",
+  "limits_seconds": {
+    "rendered_child": 35,
+    "wrapper": 45
+  },
+  "observed": {
+    "hull_id": "start-blue-vehicle-02",
+    "owner": "army-blue",
+    "controller": "army-blue-hq",
+    "fleet_domain": "Military",
+    "holder_id": "start-blue-vehicle-02-pad",
+    "staged_endpoint_xz": [
+      1976,
+      648
+    ],
+    "terrain_y": 0,
+    "facing_degrees": 135,
+    "setter_facing_events": 1,
+    "detailed_model_count_for_id": 1,
+    "camera_pitch_degrees": -65,
+    "camera_height": 3400,
+    "camera_size": 20,
+    "selected_actual_id": "start-blue-vehicle-02",
+    "readable_inspection_label": "T01 · 3",
+    "crew_fuel_health_display": "Present in existing unchanged inspector; this does not establish readiness."
+  },
+  "capture": {
+    "path": "docs/evidence/field_t01/field_t01_reference.png",
+    "bytes": 145749,
+    "sha256": "b0d584834c08ad79f847122cfe31727b5b33b9ecef6550af73766a5405e3d45f"
+  },
+  "actual_engine_uids": [
+    {
+      "path": "game/preview_3d/field_t01_trucks.gd.uid",
+      "uid": "uid://dctp5lrwlgklu",
+      "sha256": "ff4d46034a07751a22ad12a466d40669efa268026653610776e81258c960868c",
+      "origin": "Actual Godot ResourceUID.create_id after successful current-change episode; artifact13633007336."
+    },
+    {
+      "path": "game/preview_3d/field_t01_cues.gd.uid",
+      "uid": "uid://dedod3hbxg21p",
+      "sha256": "929308777ab277becde053e30cccbef3501afffe4c734c3622fd3794f53b5dcc",
+      "origin": "Actual Godot ResourceUID.create_id after successful current-change episode; artifact13633007336."
+    }
+  ],
+  "provenance": {
+    "direct_log_sha256": "7d3f02bda14d8851c41cc706483933b7143fec06fe0ac7739103e4259cafd06d",
+    "scope_sha256": "60686232af70bc7f9b9e2f637c24043508073d1b82774ce51406a8a56dfa0e88",
+    "artifact_archive_sha256": "2b8c33f64bdc61158122ffd70cb553e72b63675c897d64ab0af775f28b981739"
+  },
+  "review": "Lead personally viewed the actual image and accepted visible exterior/yaw, actual identity/condition cue and current readable inspection. Final Game Designer source/image review is recorded on PR130, not presumed here.",
+  "unverified": [
+    "One staged endpoint and yaw, not earned autonomous military movement, production, commissioning or HQ transfer.",
+    "Rear handoff/Strategic Delivery, damage/clearance, ancestor, control and replacement cases source-reviewed, not a runtime matrix.",
+    "No crew/fuel/combat/readiness, enemy model, equipment, full animation, contact physics or ordinary supply-loop acceptance.",
+    "No local engine, regression suite, native input, full fleet workload or 60 FPS acceptance."
+  ]
+}

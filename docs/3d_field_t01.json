@@ -1,5 +1,5 @@
 {
-  "status": "First direct42519117108 remains FAILED at b2f4ce49; original failure evidence preserved. Verification amendment785c93d published before focused cue draw-warning correction. Corrected source/proposal syntax PASS; one Lead-owned focused recheck and visual acceptance pending.",
+  "status": "Implemented; focused required42519820365/direct42519890581 passed at6450bf88. Actual truck image inspected by Lead. Original direct42519117108 remains FAILED with unchanged evidence. Exact final-head role approvals/merge state belong to PR130.",
   "baseline": "42155540640a60f361eb2d9151cc66ec0d563e41",
   "branch": "codex/3d-field-t01",
   "contract": "docs/3d_field_t01.md",
@@ -18,9 +18,9 @@
   ],
   "art": "Reuse cleared T01Presentation truck_flat.glb and original geometry/normalizer/query-only layer4 mask0 unchanged; field caller adds actual terrain Y.",
   "cue_proposal": "12x8px cyan rectangle at actual ground anchor, hollow size<=40, amber actual immobilization; existing strict18px/order ties and current projection cache; camera10..6500/-65degrees/Y3400 unchanged.",
-  "event_gap": "Facing path: Records default0, canonical move_entity derives travel heading then emits entity_moved, set_vehicle_facing normalizes finite surviving hull yaw but only logs today. Propose one affected-ID signal only on actual normalized setter change; preserve return/log semantics and avoid a second per-move redraw or polling.",
+  "event_gap": "Implemented vehicle_facing_changed for actual normalized finite setter change only, after unchanged event-log semantics. move_entity remains unchanged and already emits entity_moved; no duplicate per-move facing event.",
   "observation": "ONE existing actual military T01, ONE same-holder endpoint+Vector2(6,8), ONE set_vehicle_facing135 update through new keyed event, actual terrain and same-ID inspection, ONE normal size20 image. Preserve actual crew/cargo/stock/control; no commissioning/receipt setup or old Rear scenario.",
-  "verification": "Current focused correction: syntax PASS for FieldT01Cues and amended ignored proposal; no local engine. Other five production scripts unchanged from first source. Original required42519112096 PASS/direct42519117108 FAIL preserved; no automatic retry.",
+  "verification": "Six-script source syntax and first required validation passed; first direct failed on literal-ID verifier assumption plus drawing warning. Focused one-script correction and same-scope recheck passed, no new warning. Original failure retained; no local engine or broad scenario.",
   "new_assets_imports": [],
   "contact": "Designer-deferred solid contact remains deferred; no physics or gameplay authority change.",
   "pre_code_commit": "6d5a0bd756dd29cb999ed91f679d8773c106b99a",
@@ -43,6 +43,7 @@
     "pre_code_commit": "785c93d08581068279e207b8ae7cc0138a5ad880",
     "production": "Only FieldT01Cues._draw: explicit hollow-near width1.5 versus far fill without ignored width; same style.",
     "proposal": "Current FieldPolicy inspection identity plus meaningful existing T01/Crew/Fuel/Health text, retaining actual selected/cue/body identity and projection agreement. Black outline only on ignored scope caption.",
-    "pending": "Lead exact-head/proposal review then ONE same-scope35s/45s focused recheck; first failure is not relabelled."
-  }
+    "result": "PASS: source6450bf88, required42519820365/direct42519890581/artifact13633007336. Final exact-head source/image reviews belong to PR130."
+  },
+  "evidence": "docs/evidence/field_t01.json"
 }

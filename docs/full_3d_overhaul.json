@@ -236,6 +236,12 @@
       "manifest": "docs/3d_field_t01.json",
       "contract": "docs/3d_field_t01.md",
       "status": "First direct42519117108 FAILED on literal-ID text assertion; selected ID correct and existing readable vehicle inspector intentionally preserved. Original log/image/provenance retained. Amendment785c93d preceded focused filled-width cue warning/source and Policy-ID assertion correction. Other5scripts, population, events, actual model/terrain and same bounded episode unchanged; corrected runtime/visual acceptance pending one Lead recheck. No local engine, assets, workflow or contact implementation."
+    },
+    "field_t01_presentation": {
+      "contract": "docs/3d_field_t01.md",
+      "manifest": "docs/3d_field_t01.json",
+      "evidence": "docs/evidence/field_t01.json",
+      "status": "Implemented actual permitted military T01 presentation with keyed poses/facing and exclusive rear-detail release. One existing-hull endpoint/setter/image/inspection recheck passed; original failed evidence retained. Exact-head role approval and merge belong to PR130. No ordinary movement, receipt/crew/fuel, fleet matrix, physics contact, native/FPS or full battlefield acceptance."
     }
   },
   "performance_and_verification": {
