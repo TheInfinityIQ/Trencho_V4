@@ -1,5 +1,5 @@
 {
-  "status": "Production candidate implemented after approved pre-code7404792; source checks complete, exact remote observation/actual UIDs and acceptance pending Lead.",
+  "status": "Original fixed functional observation PASS at c4d8cc0; static-art visual CHANGES REQUESTED. Focused min10/hollow-nearcue amendment approved; correction source and one close-only image pending.",
   "baseline": "07ee29b407e31e464e08fb3f0a19091314ba1db2",
   "contract": "docs/3d_field_persons.md",
   "diagram": "docs/diagrams/3d_field_persons.mmd",
@@ -31,5 +31,22 @@
     "game/preview_3d/field_persons.gd.uid",
     "game/preview_3d/field_person_cues.gd.uid"
   ],
-  "camera_evidence": "Both proposed captures preserve production RTS rotation and height, reachable X/Z pan only and zoom6500to100. True-scale human may remain small at actual minimum zoom; fixed cue/inspection provide strategic readability."
+  "camera_evidence": "Both proposed captures preserve production RTS rotation and height, reachable X/Z pan only and zoom6500to100. True-scale human may remain small at actual minimum zoom; fixed cue/inspection provide strategic readability.",
+  "first_observation": {
+    "source": "c4d8cc077acfcfff03119f2d8133206556f5d2b3",
+    "required": 42515331718,
+    "direct": 42515337059,
+    "artifact": 13630149893,
+    "functional": "PASS",
+    "visual": "NOT ACCEPTED",
+    "evidence": "docs/evidence/field_persons_original.json"
+  },
+  "readability_correction": {
+    "minimum": 10,
+    "maximum": 6500,
+    "hollow_near_size_at_most": 40,
+    "scope": "Same pitch/height/reachable pan/world scale, same6px cue/18px selection/order/state colours; far strategic drawing unchanged. Existing camera projection events/cache only.",
+    "definition": "docs/current_change/field_person_close.md",
+    "status": "Approved amendment committed before production correction."
+  }
 }

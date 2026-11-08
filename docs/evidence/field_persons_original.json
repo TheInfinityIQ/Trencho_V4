@@ -1,0 +1,31 @@
+{
+  "source_head": "c4d8cc077acfcfff03119f2d8133206556f5d2b3",
+  "required_run": 42515331718,
+  "direct_run": 42515337059,
+  "artifact": 13630149893,
+  "script_sha256": "306f3152659737cda59762d640fada0f5e4328a5e865c9c517a558f787525c5f",
+  "functional_result": "PASS within the original fixed scope; retained, not rerun by close correction.",
+  "visual_result": "NOT ACCEPTED / CHANGES REQUESTED. Human indistinguishable at original min100 (~5.477px) beneath filled6px cue/selection ring.",
+  "original_receipt": {
+    "path": "docs/evidence/field_persons/original/first_result.json",
+    "bytes": 1401,
+    "sha256": "67ca86216faf5ffb2d3de7cb7ccf8d1b132162e9c3fea300bfa99f538cb86089",
+    "origin": "Exact Lead first-result.json retained without edits."
+  },
+  "captures": [
+    {
+      "path": "docs/evidence/field_persons/original/field_person_overview.png",
+      "artifact_member": "field_person_overview.png",
+      "bytes": 123187,
+      "sha256": "d34f8ab36e86ca7174dd3abc140e8fca17ba7fc83d43448ed340fa7bdd85d83a"
+    },
+    {
+      "path": "docs/evidence/field_persons/original/field_person_reference.png",
+      "artifact_member": "field_person_reference.png",
+      "bytes": 116305,
+      "sha256": "1a3ef4e7b93caae15256c1059549ef017684c5afdbad070f9f31afcacd97a3e4"
+    }
+  ],
+  "correction": "Designer approved min10/max6500 and cached hollow nearcue at size<=40, same actual camera height/pitch/pan/world scale. One close-only correction process; no original overview/movement sequence rerun.",
+  "acceptance": "Original functional PASS does NOT establish static-art visual acceptance. Correction source/image remain pending."
+}

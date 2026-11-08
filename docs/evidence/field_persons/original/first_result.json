@@ -1,0 +1,27 @@
+{
+  "source_head": "c4d8cc077acfcfff03119f2d8133206556f5d2b3",
+  "required_run": 42515331718,
+  "direct_run": 42515337059,
+  "artifact": 13630149893,
+  "script_sha256": "306f3152659737cda59762d640fada0f5e4328a5e865c9c517a558f787525c5f",
+  "functional_result": "PASS within the committed single-current-feature scope",
+  "visual_result": "NOT ACCEPTED: actual human is indistinguishable at the existing minimum orthographic size 100; nominal projected height 5.477355957 pixels, overlapped by the 6-pixel filled strategic cue and selection ring.",
+  "observed": {
+    "person": "initial-hq-01",
+    "original": [2000, 450],
+    "endpoint": [2240, 450],
+    "ground_y": 0,
+    "immediate_affected_anchor": true,
+    "selected_actual_id_at_both_sizes": true,
+    "retained_animation_players": 0,
+    "nominal_model_height_metres": 1.8,
+    "camera_pitch_degrees": -65,
+    "camera_height_metres": 3400,
+    "sizes": [6500, 100]
+  },
+  "images": [
+    "logs/facility-asset-evidence-42515337059/field_person_overview.png",
+    "logs/facility-asset-evidence-42515337059/field_person_reference.png"
+  ],
+  "limits": "Source-reviewed injury, aboard, ancestor, absence and replacement branches were not a runtime matrix. No native input, earned army movement, full population performance, FPS, equipment, animation, enemy or complete battlefield acceptance. Preserve original artifact and images unchanged."
+}
