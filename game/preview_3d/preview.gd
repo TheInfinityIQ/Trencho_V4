@@ -111,12 +111,16 @@ func _build_hud() -> void:
 	add_child(_crosshair)
 
 func _replace_world(model: RefCounted) -> void:
+	_base.placement_manager_body = null
+	_base.placement_manager_shape = null
 	if world != null:
 		remove_child(world)
 		world.queue_free()
 	world = World.new()
 	add_child(world)
 	world.build(model,_session.manager_pose)
+	_base.placement_manager_body = world.player
+	_base.placement_manager_shape = world.manager_collision
 	world.first.pose_changed.connect(_camera_changed)
 	world.third.pose_changed.connect(_camera_changed)
 	world.player.global_rotation.y = _session.manager_pose.heading

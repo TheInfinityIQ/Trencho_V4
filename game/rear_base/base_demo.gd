@@ -7,6 +7,9 @@ signal site_placement_result(result: Dictionary)
 signal placement_started
 ## The alternate 3D input owner retains its draft across management panels.
 var preserve_placement_draft := false
+## Optional actual 3D occupation; the normal 2D composition leaves these unset.
+var placement_manager_body: CharacterBody3D
+var placement_manager_shape: CollisionShape3D
 
 signal session_changed(next_simulation: RefCounted)
 signal panel_changed(title: String)
@@ -1104,11 +1107,15 @@ func preview_build_at(point: Vector2, full_validation: bool = true) -> Dictionar
 	construction_x.set_value_no_signal(point.x)
 	construction_y.set_value_no_signal(point.y)
 	var service: RefCounted = simulation.rear.construction
-	var plan: Dictionary = service.preview(_construction_kind(),point,construction_turn.button_pressed) if full_validation else service.placement_hint(_construction_kind(),point,construction_turn.button_pressed)
+	var kind: String = _construction_kind()
+	var turned: bool = construction_turn.button_pressed
+	var plan: Dictionary = _manager_placement_rejection(kind,point,turned)
+	if plan.is_empty(): plan = service.preview(kind,point,turned) if full_validation else service.placement_hint(kind,point,turned)
+	plan["provisional"] = not full_validation
 	if not plan.has("footprint"):
-		var size: Vector2 = ConstructionCatalog.footprint(_construction_kind(),construction_turn.button_pressed)
+		var size: Vector2 = ConstructionCatalog.footprint(kind,turned)
 		plan.footprint = Rect2(point-size/2.0,size)
-	plan["visual_kind"] = _construction_kind()
+	plan["visual_kind"] = kind
 	base_map.placement_preview = plan
 	base_map.queue_redraw()
 	if feedback != null:
@@ -1117,7 +1124,10 @@ func preview_build_at(point: Vector2, full_validation: bool = true) -> Dictionar
 	return plan
 
 func confirm_build_at(point: Vector2) -> Dictionary:
-	var result: Dictionary = simulation.rear.construction.place(_construction_kind(),point,construction_turn.button_pressed)
+	var kind: String = _construction_kind()
+	var turned: bool = construction_turn.button_pressed
+	var result: Dictionary = _manager_placement_rejection(kind,point,turned)
+	if result.is_empty(): result = simulation.rear.construction.place(kind,point,turned)
 	if result.ok:
 		_cancel_placement()
 		_selected_kind = "site"
@@ -2179,3 +2189,20 @@ func _sync_construction_selection() -> void:
 	if _selected_kind != "site": return
 	var index: int = construction_ids.find(_selected_id)
 	if index >= 0: construction_rows.select(index)
+
+func _manager_placement_rejection(kind: String, point: Vector2, turned: bool) -> Dictionary:
+	if not is_instance_valid(placement_manager_body) or not is_instance_valid(placement_manager_shape): return {}
+	if placement_manager_shape.get_parent() != placement_manager_body or placement_manager_shape.disabled: return {}
+	if not point.is_finite() or not ConstructionCatalog.SPECS.has(kind) or ConstructionCatalog.SPECS[kind].get("fixed",false): return {}
+	var capsule: CapsuleShape3D = placement_manager_shape.shape as CapsuleShape3D
+	if capsule == null: return {}
+	# The actual controller capsule is upright/unscaled; visual offsets never apply.
+	var at: Vector3 = placement_manager_shape.global_position
+	var center: Vector2 = Vector2(at.x,at.z)
+	var size: Vector2 = ConstructionCatalog.footprint(kind,turned)
+	var footprint: Rect2 = Rect2(point-size/2.0,size)
+	var nearest: Vector2 = Vector2(clampf(center.x,footprint.position.x,footprint.end.x),clampf(center.y,footprint.position.y,footprint.end.y))
+	var radius: float = capsule.radius
+	if center.distance_squared_to(nearest) < radius*radius:
+		return {"ok":false,"message":"Move away before placing here.","requires_reconciliation":false}
+	return {}

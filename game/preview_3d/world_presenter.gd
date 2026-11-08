@@ -23,6 +23,7 @@ const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
+var manager_collision: CollisionShape3D
 var player_visual: Node3D
 var eye := Node3D.new()
 var arm := SpringArm3D.new()
@@ -107,6 +108,7 @@ func _build_player(pose: RefCounted) -> void:
 	collider.shape = capsule
 	collider.position.y = 0.9
 	player.add_child(collider)
+	manager_collision = collider
 	player_visual = _asset("manager.fbx",1.8)
 	player.add_child(player_visual)
 	var skin := StandardMaterial3D.new()

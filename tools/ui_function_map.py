@@ -363,6 +363,7 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
                    (preview_3d, '_pick_ground', 'Physics-safe closest actual rear-ground hit', ''),
                    (CONSTRUCTION, 'placement_hint', 'Cheap provisional footprint geometry', ''),
                    (preview_3d, '_check_candidate', 'Explicit full preview of the same candidate', ''),
+                   (BASE, '_manager_placement_rejection', 'Live 3D capsule versus rotated footprint; 2D unbound', ''),
                    (preview_3d, '_candidate_is_current', 'Guard actual identity, draft, ray and geometry', ''),
                    (preview_3d, '_queue_commit', 'Seal one fresh world intent', ''),
                    (preview_3d, '_consume_commit', 'Consume once without auto-retry', ''),

@@ -55,3 +55,7 @@ Two costly scope choices remain unrequested: physically entering the battlefield
 ### Accepted 3D art direction — 7 November 2026
 
 Dawson selected “Cohesive stylized3D, with readable detail and a lower asset/performance cost” in the lead chat. Stylized 3D is now the accepted direction, replacing the pending style choice in the initial migration plan. Keep people, facilities, vehicles and terrain visually consistent and readable in the first-person, third-person and RTS views. This choice does not guarantee performance or approve individual provisional models, poses, animations or licences; those still require actual asset inspection and current-build visual evidence. It does not expand gameplay scope.
+
+### Manager occupation and 3D construction — accepted 7 November 2026
+
+In the active 3D session, a proposed solid construction footprint must not overlap the manager's actual physical body. Use the current body and rotated footprint for preview, world placement and numeric placement, including commands made while the rear view is hidden. Camera position and visual model size do not define this occupied space. Reject with “Move away before placing here,” preserving the draft and orientation without spending materials, creating a site or moving the manager automatically. This is physical occupation protection, not a new reach or proximity restriction. The normal 2D entry has no hidden 3D body blocker. Existing construction validation and economic authority remain in force.
