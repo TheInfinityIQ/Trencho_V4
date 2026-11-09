@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "feature": "default-3d-entry",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/default_3d_entry_v1.json",
+  "source_revision": "83f5622ee246b6e559f6f92122078d1250a70cda",
+  "started_at": "2026-11-09T15:47:07.703428+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 95.243406,
+    "implementation": 226.467658,
+    "direct_check": 49.195975,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 109.184723,
+    "release": 0,
+    "waiting": 27.412159,
+    "paused": 0,
+    "workflow_overhead": 138.009427
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "release",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T15:52:09.179590+00:00",
+      "note": "Atomic patch rejected one unmatched team-doc context; no changes applied. Corrected context. One orchestration JS syntax typo rejected before tools ran. Setup errors, no game defect or repair claim."
+    },
+    {
+      "recorded_at": "2026-11-09T15:57:24.467728+00:00",
+      "note": "Inspected verified artifact13689327372 SHA256c662af9ffd4f3e7f966aedb1f3fc38f7287cf7944ddf80c053fa61a99341219b, actual PASS receipt and rendered image. One configured3D opening with ten assertions; no gameplay commands or input. Both required/current-change runs success; required changed_scripts empty, runtime loaded3D dependencies. Dense labels visible, no new game defect observed; FPS/native/stage acceptance not established."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-09T15:58:42.890489+00:00",
+      "id": "patch-context",
+      "kind": "workflow_error",
+      "summary": "An atomic multi-file patch was rejected because one documentation context line did not match",
+      "severity": "low; no game state or code defect",
+      "evidence": "apply_patch returned verification failure before applying any file; subsequent git diff confirmed no mutation",
+      "planning_assessment": "no",
+      "repair_time": "Not separately timed; correction occurred within the implementation interval, no retroactive repair-time estimate.",
+      "lesson": "Read the exact current line before patching and keep independent file edits separate."
+    },
+    {
+      "recorded_at": "2026-11-09T15:58:42.973470+00:00",
+      "id": "orchestration-syntax",
+      "kind": "workflow_error",
+      "summary": "One JavaScript orchestration call was rejected before tool execution",
+      "severity": "low; no game state or code defect",
+      "evidence": "functions.exec returned SyntaxError before any nested tool ran",
+      "planning_assessment": "no",
+      "repair_time": "Not separately timed; correction occurred within the implementation interval, no retroactive repair-time estimate.",
+      "lesson": "Keep orchestration blocks smaller and validate quoting before dispatch."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 0,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 2,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "patch-context": 0,
+    "orchestration-syntax": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 3124616,
+      "cached_input_tokens": 3066880,
+      "output_tokens": 21369,
+      "reasoning_output_tokens": 4212,
+      "total_tokens": 3145985,
+      "uncached_input_tokens": 57736
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 3124616,
+      "cached_input_tokens": 3066880,
+      "output_tokens": 21369,
+      "reasoning_output_tokens": 4212,
+      "total_tokens": 3145985,
+      "uncached_input_tokens": 57736
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-09T15:47:07.703428+00:00",
+        "ended_at": "2026-11-09T15:48:42.946834+00:00",
+        "receipt_start": "2026-11-09T15:46:53.430Z",
+        "receipt_end": "2026-11-09T15:47:55.540Z",
+        "usage_delta": {
+          "input_tokens": 270164,
+          "cached_input_tokens": 246784,
+          "output_tokens": 1828,
+          "reasoning_output_tokens": 63,
+          "total_tokens": 271992,
+          "uncached_input_tokens": 23380
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-09T15:48:42.946834+00:00",
+        "ended_at": "2026-11-09T15:52:29.414492+00:00",
+        "receipt_start": "2026-11-09T15:47:55.540Z",
+        "receipt_end": "2026-11-09T15:52:09.262Z",
+        "usage_delta": {
+          "input_tokens": 921996,
+          "cached_input_tokens": 903936,
+          "output_tokens": 10989,
+          "reasoning_output_tokens": 1892,
+          "total_tokens": 932985,
+          "uncached_input_tokens": 18060
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T15:52:29.414492+00:00",
+        "ended_at": "2026-11-09T15:54:47.423919+00:00",
+        "receipt_start": "2026-11-09T15:52:09.262Z",
+        "receipt_end": "2026-11-09T15:54:29.052Z",
+        "usage_delta": {
+          "input_tokens": 751458,
+          "cached_input_tokens": 744960,
+          "output_tokens": 3809,
+          "reasoning_output_tokens": 1308,
+          "total_tokens": 755267,
+          "uncached_input_tokens": 6498
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T15:54:47.423919+00:00",
+        "ended_at": "2026-11-09T15:55:36.619894+00:00",
+        "receipt_start": "2026-11-09T15:54:29.052Z",
+        "receipt_end": "2026-11-09T15:55:19.073Z",
+        "usage_delta": {
+          "input_tokens": 226628,
+          "cached_input_tokens": 225664,
+          "output_tokens": 523,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 227151,
+          "uncached_input_tokens": 964
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-09T15:55:36.619894+00:00",
+        "ended_at": "2026-11-09T15:56:04.032053+00:00",
+        "receipt_start": "2026-11-09T15:55:19.073Z",
+        "receipt_end": "2026-11-09T15:55:55.328Z",
+        "usage_delta": {
+          "input_tokens": 229278,
+          "cached_input_tokens": 228480,
+          "output_tokens": 1101,
+          "reasoning_output_tokens": 140,
+          "total_tokens": 230379,
+          "uncached_input_tokens": 798
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-09T15:56:04.032053+00:00",
+        "ended_at": "2026-11-09T15:57:53.216776+00:00",
+        "receipt_start": "2026-11-09T15:55:55.328Z",
+        "receipt_end": "2026-11-09T15:57:24.546Z",
+        "usage_delta": {
+          "input_tokens": 725092,
+          "cached_input_tokens": 717056,
+          "output_tokens": 3119,
+          "reasoning_output_tokens": 809,
+          "total_tokens": 728211,
+          "uncached_input_tokens": 8036
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

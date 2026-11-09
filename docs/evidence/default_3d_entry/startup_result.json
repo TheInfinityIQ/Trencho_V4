@@ -1,0 +1,30 @@
+{
+  "source_revision": "db61a78f45258920c22f0f24e18dbf53c406d737",
+  "required_run": 42649450688,
+  "configured_entry_run": 42649451270,
+  "job": 129271529545,
+  "artifact": 13689327372,
+  "artifact_sha256": "c662af9ffd4f3e7f966aedb1f3fc38f7287cf7944ddf80c053fa61a99341219b",
+  "opening_image_sha256": "ceaa8264ec8f403208d4d4954c8613784063fa1c80fbfb00d030d042ff6563e2",
+  "actual_observer_result": {
+    "checks": [
+      "Engine loaded the configured canonical main scene: PASS",
+      "Canonical root instances the existing 3D controller: PASS",
+      "One shared live session/model owns rear, battlefield and 3D presentation: PASS",
+      "Existing single manager body uses the session pose: PASS",
+      "Ordinary opening stays paused and untouched: PASS",
+      "Established account/materials and empty build field retained: PASS",
+      "Four real assigned unloaders already present: PASS",
+      "Actual rear 3D camera and Supply Table are ready: PASS",
+      "Existing 3D controls appear without capturing the pointer on launch: PASS",
+      "Rendered configured-entry opening image retained: PASS"
+    ],
+    "result": "PASS",
+    "scope": "Normal configured project launch observed after twelve frames with a CI-only observer autoload. No alternate scene argument, manual instantiation, game commands, injected input, time advance, model replacement, stock grant or performance measurement. Native F5/input, stages1/2 acceptance, full loop and60FPS remain unverified."
+  },
+  "visual_review": "Inspected the actual 1280x720 image: 3D manager, Supply Table/apron/stock, road/field, world controls and paused 2500REQ opening are rendered. Dense overlapping world labels are visible; this is not readability/polish or gameplay acceptance.",
+  "parsing_scope": "This head changes docs and a diagram label after production source1b70d68; changed_scripts is empty in both jobs. The optional configured-entry run loaded/compiled the actual main/3D dependency graph. Do not describe the required no-script job as a separate changed-GDScript parse.",
+  "instrumentation": "45s CI wrapper writes a temporary override.cfg adding a CI-only read-only Node observer. 35s rendered child receives only project path/render/audio/window options, no scene or --script override. Child starts configured main scene normally. After12process frames observer inspects opening, captures image and exits. Wrapper removes temporary config. No production autoload/config change is committed.",
+  "unchanged_behavior_evidence": "Prior convoy/grid scoped episode42638052133 remains scoped evidence for unchanged commands; it was not replayed for this entry-only change.",
+  "acceptance": "Stages1/2 pending Dawson manual 3D F5 playtest. Native editor launch/input, full loop, timing/performance and60FPS unverified."
+}

@@ -341,8 +341,8 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
     ]
     preview_3d = 'game/preview_3d/preview.gd'
     world_3d = 'game/preview_3d/world_presenter.gd'
-    specs.append(('3d-player-cameras', '3D preview: one manager, two perspectives',
-                  'Opt-in entry uses the normal session. These command/event branches share one manager pose; default F5 and the full migration remain separate.',
+    specs.append(('3d-player-cameras', 'Default 3D game: one manager, two perspectives',
+                  'Main/F5 instances the existing 3D scene around the shared session. These command/event branches share one manager pose; full-loop, player and FPS acceptance remain open.',
                   [(preview_3d, '_ready', 'Compose the actual normal session and preview guards', ''),
                    (preview_3d, '_build_hud', 'Camera, management and area controls', ''),
                    (world_3d, '_build_player', 'One physical manager and two camera rigs', ''),

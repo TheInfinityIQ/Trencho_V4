@@ -1,5 +1,28 @@
 # Connected playable delivery
 
+## Current 3D launch and player acceptance — 9 November 2026
+
+The configured main scene now instances the existing 3D scene. Open the root
+`project.godot` and use **F5 / Run Project**; F6 on `game/main/main.tscn` reaches
+the same 3D opening. It uses the common session/controller, not a separate game.
+The opening remains paused; Tab opens management to choose 1x. See the short
+[controls and stage checkpoints](default_3d_playtest.md).
+
+Stages **1 — buy people/raw materials** and **2 — place/manage buildings** are
+implemented with prior scoped convoy/grid evidence, but remain **pending Dawson's
+playtest acceptance**. Source/CI success is not completion of those game-loop
+stages. Deliver a playable checkpoint after each numbered stage and record his
+feedback before its dependent expansion. Independent authorized work can continue.
+Normal configured-entry observation is a separate narrow receipt; it does not
+prove native input, the full loop or 60 FPS. Earlier opt-in/old launch notes and
+source receipts below are historical. Current ownership is Lead-only.
+
+Configured-entry run42649451270 and required run42649450688 passed at `db61a78`.
+The [verified receipt and image](evidence/default_3d_entry/startup_result.json)
+establish one shared 3D session and the unchanged paused opening through the
+normal project entry. The required job had no changed production scripts; actual
+startup loaded the game dependencies. Neither job establishes player acceptance.
+
 ## Scoped convoy and planning-workflow increment — 9 November 2026
 
 [PR138](https://github.com/TheInfinityIQ/Trencho_V4/pull/138) contains the development

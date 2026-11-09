@@ -1,0 +1,18 @@
+flowchart TD
+    Run[Run Project F5 or F6 on main scene] --> Config[project.godot main_scene unchanged]
+    Config --> Main[main.tscn root instance of existing 3D scene]
+    Main --> Preview[preview.gd ready]
+    Preview --> Base[super ready: common main.gd controller]
+    Base --> Session[One scene-owned GameSession and ordinary paused opening]
+    Session --> Rear[Existing rear UI and gameplay owners]
+    Session --> Field[Existing battlefield UI and gameplay owners]
+    Preview --> World[Bind same simulation and manager to WorldPresenter]
+    World --> HUD[3D character camera and existing world HUD]
+    HUD --> Input[Player actions: E / Tab / build selection]
+    Input --> Commands[Existing purchase and grid-placement commands]
+    Commands --> Rear
+    Rear --> Events[Existing state and keyed movement events]
+    Events --> World
+    HUD --> Stage1[Player checkpoint: people and materials arrive]
+    Stage1 --> Stage2[Player checkpoint: place and manage a building]
+    Stage2 --> Feedback[Dawson feedback before dependent factory stage]

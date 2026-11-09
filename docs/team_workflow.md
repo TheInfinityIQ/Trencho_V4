@@ -9,6 +9,13 @@ The [comparison protocols](workflow_experiments.json) are prepared for later use
 their existence does not authorize extra benchmarks or regression suites. The
 Lead records scope/unknowns and keeps setup overhead separate from feature work.
 
+Planning/accounting applies to actual development, not general inquiries.
+Dawson wants manual playtests after numbered game-loop stages, not every commit.
+Stages 1 (people/materials) and 2 (place/manage buildings) stay pending his
+acceptance until the normal F5 3D entry is delivered and he has tried them.
+Record that feedback before dependent factory expansion; independent authorized
+work may continue. Source implementation and CI evidence are separate statuses.
+
 The Lead is the only programmer. The Lead performs technical review and owns
 implementation, validation, publication and merges. The Game Designer approves
 the current PR's game meaning; after that approval and required checks pass,

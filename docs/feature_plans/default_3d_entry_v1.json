@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "feature": "Normal Run Project opens the playable 3D game",
+  "workflow": "graph-first-v1",
+  "status": "Frozen before production edits, 9 November 2026",
+  "source_revision": "83f5622ee246b6e559f6f92122078d1250a70cda",
+  "user_outcome": "Dawson opens the existing project and presses F5 to play the 3D rear opening. Game-loop stages 1 and 2 remain pending his playtest acceptance.",
+  "graph": {
+    "atlas": "docs/system_atlas.html",
+    "inventory": "docs/system_map.json",
+    "diagram": "docs/diagrams/default_3d_entry.mmd",
+    "systems": ["session", "preview", "ui"],
+    "source_checked": [
+      "project.godot: application/run/main_scene remains game/main/main.tscn",
+      "game/main/main.tscn currently attaches the common 2D controller",
+      "game/preview_3d/preview.tscn attaches preview.gd with the existing full-rect/input setup",
+      "game/preview_3d/preview.gd::_ready calls the common Main initialization once then binds 3D presentation",
+      "game/main/main.gd::_ready creates one scene-owned GameSession and shares it with both existing views",
+      "game/main/main.gd::_start_playtest starts the ordinary empty-field opening",
+      "game/preview_3d/preview.gd::_replace_world binds the same session and manager pose",
+      "game/preview_3d/preview.gd::_set_management controls the existing HUD, menus and pointer ownership"
+    ],
+    "freshness": "Read actual entry scenes and relevant source. Existing atlas marks preview opt-in; update that description and static reachability after implementation. Dynamic edges and native gameplay are not proved by the graph. No hard-coded /root/Main or /root/Preview3D reference found in the relevant controllers."
+  },
+  "implementation": [
+    "Make canonical main.tscn a root instance of the existing 3D scene, retaining root name Main.",
+    "Keep main.gd as the shared base controller; do not introduce a circular script dependency, a second session or an extra wrapper controller.",
+    "Update the stale opt-in comment and current launch/acceptance instructions. Preserve old receipts as historical evidence.",
+    "Track development workflow only for actual development; provide manual checkpoints per numbered game-loop stage."
+  ],
+  "acceptance": [
+    "The unchanged configured main-scene path resolves to the existing 3D controller/world through normal project startup, without an explicit alternate-scene argument.",
+    "There is one live scene-owned session and manager. The same model owns the 3D presentation and rear UI.",
+    "Opening remains paused with the accepted starting account, materials and four real unloaders; 3D HUD/character camera and Supply Table exist.",
+    "Required changed-script parsing and a single brief rendered GitHub startup observation pass. No local engine run or old scenario suite.",
+    "After exact-head technical and Designer approval, merge and safely fast-forward Dawson's existing main checkout without changing unrelated dirty/untracked files.",
+    "Hand off F5 controls and two short stage-specific playtest steps. Stages 1/2 are ready for user testing, not completed or accepted by source/CI evidence."
+  ],
+  "boundaries": [
+    {"case": "F5 versus F6 on main.tscn", "response": "Both use the same canonical root instance; preview.tscn remains a compatible direct entry."},
+    {"case": "Menu and camera state", "response": "Inherit the existing 3D scene rather than duplicate root settings. Preserve paused opening and current Tab/1x/WASD/V/E and overhead placement controls."},
+    {"case": "New session and event subscriptions", "response": "Do not alter existing replacement/listener lifecycle or instantiate an additional controller."},
+    {"case": "Root checkout contains unrelated edits", "response": "Snapshot dirty/untracked hashes, verify changed paths are disjoint, fast-forward only and verify all retained hashes. Never reset/stash/discard."},
+    {"case": "Startup check instrumentation", "response": "CI-only temporary override.cfg adds a bounded read-only observer. It must not override main_scene or create the game itself. Restore the temporary config and retain scope/receipt/image."}
+  ],
+  "evidence_limits": "Prior convoy/grid episode covers its unchanged scoped behavior. New observer covers configured launch and opening only. Native F5/input, ordering/building comfort, full loop, performance and 60 FPS remain unverified until appropriate player observation; no regression or benchmark campaign is authorized.",
+  "sources": [
+    "https://docs.godotengine.org/en/latest/engine_details/file_formats/tscn.html",
+    "https://docs.godotengine.org/en/stable/classes/class_projectsettings.html",
+    "https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html"
+  ],
+  "measurement": "Ignored default_3d_entry journal records actual phase time and reported Lead token deltas. Initial dialogue/source reads before capture and other-thread usage stay unknown. Record evidenced defects and repair intervals without inventing regressions."
+}

@@ -245,5 +245,11 @@
     ],
     "main_validation": "validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406: changed-production parsing passed; optional demonstration SKIPPED. B independently observed actual head/jobs/steps; no ongoing watcher. No runtime acceptance added."
   },
-  "player_launch": "Update a clean local main, open project.godot in Godot and press F5 for the paused empty-field main scene. Preserve existing local changes; the human root checkout was not pulled/reset/overwritten. This launch note is not a newly requested playtest or runtime pass."
+  "player_launch": "Open the existing root project.godot in Godot 4.7.2 and press F5 for the 3D paused empty-field opening. Canonical main.tscn instances the existing 3D scene; no separate game project. Tab opens management for 1x. See docs/default_3d_playtest.md. Source delivery and scoped checks do not establish Dawson acceptance, native controls or 60 FPS.",
+  "player_acceptance": {
+    "stages_1_2": "pending Dawson playtest of normal-run 3D purchase/delivery and grid placement/site management",
+    "next_dependent_stage": "stage 3 factory expansion follows recorded feedback",
+    "checkpoint_unit": "numbered game-loop stage, not each commit",
+    "independent_work": "may continue within authorization"
+  }
 }
