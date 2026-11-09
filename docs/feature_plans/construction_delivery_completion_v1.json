@@ -1,0 +1,26 @@
+{
+  "feature": "construction-delivery-completion",
+  "baseline": "d5100e9433254ef586f38ecff4618cbb1eb1bdf6",
+  "scope": "Fix reported real site-delivery failure/completion hitch and requested1.5s smoke entrance+2s snip. No broad refactor/suite/FPS certification.",
+  "before_code": true,
+  "investigation": [
+    "Read real game logs and observe actual automatic supply with all4builders, not injected site stock. Preserve safe task/cargo reassignment/cancellation.",
+    "Brief GitHub-only baseline completion timings: existing logger profile stages, actual completion call wall time, original material switch, geometry refresh and truck presentation; renderer frame timing separated from CPU stage time. No local engine."
+  ],
+  "design": [
+    "If confirmed, an idle builder may fetch actual M11 only for its own unfinished site through existing haul claims/walking/handling/deposit. Remains one duty and task; busy carrying/reporting is not present building work. No free goods or extra common job categories. Designer clarification pending.",
+    "Completion presentation must not synchronously introduce avoidable new material variants/mesh/collider rebuilds; optimize only measured relevant path. Keep actual activation once, pause/speed, cancel/session cleanup.",
+    "Artist supplies tiny faceted smoke mesh/palette/provenance. Scene-local finite smoke appearance lasts1.5game seconds then actual authored snip retimed2.0s; total3.5s. Record contact time separately; tape/pylon fall/cleanup follows existing physical contact. No gameplay completion gate."
+  ],
+  "acceptance": [
+    "Opening500M11 physically reaches a real site with4actual builders and progresses construction without manual injected delivery or hidden reassignment. Retain common Hauling behavior and safe custody.",
+    "Reported completion path has a measured before/after receipt identifying cost removed; no assertion of human GPU60FPS from remote software renderer.",
+    "Four low-poly smoke entrances1.5s, scissors cut2s; proper pause/speed/contact/cancel/cleanup and no completion-time resource-loading spike.",
+    "One integrated block PR after code/art/docs/maps; only necessary brief current-change checks on GitHub, existing45/35/28s deadlines, exact-head Lead+Designer approvals then merge/protectedadoption."
+  ],
+  "sources": [
+    "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_tween.html"
+  ],
+  "diagram": "docs/diagrams/construction_delivery_completion.mmd"
+}
