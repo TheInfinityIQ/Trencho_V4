@@ -1,6 +1,7 @@
 extends Node3D
 ## Finite cosmetic bodies/tweens. Nothing here changes stock, routes or capability.
 signal cleared
+const Appearance = preload("res://game/construction/visuals/construction_appearance.gd")
 const COSMETIC_GROUND := 1 << 20
 const ART := "res://game/construction/assets/"
 const EMERGENCE_SECONDS := 1.5
@@ -92,20 +93,7 @@ func _meshes(node: Node3D) -> Array[Node]:
 	return meshes
 
 func _fade_materials(node: Node3D) -> Array:
-	var materials: Array = []
-	for child: Node in _meshes(node):
-		var mesh := child as MeshInstance3D
-		if mesh.mesh == null: continue
-		for surface in mesh.mesh.get_surface_count():
-			var original := mesh.get_active_material(surface) as BaseMaterial3D
-			if original == null: continue
-			var material := original.duplicate() as BaseMaterial3D
-			material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-			material.vertex_color_use_as_albedo = true
-			mesh.set_surface_override_material(surface,material)
-			materials.append(material)
-	_opacity(0.0,materials)
-	return materials
+	return Appearance.fade_materials(node)
 
 func _opacity(value: float, materials: Array) -> void:
 	for material: BaseMaterial3D in materials:

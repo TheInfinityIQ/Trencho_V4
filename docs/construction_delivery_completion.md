@@ -69,3 +69,15 @@ tween callback or completion celebration.
 
 Current-source/runtime receipts and actual captures follow in the feature PR.
 No local engine, regression suite, full-loop/native acceptance or60FPS claim.
+
+## Loading boundary refinement
+
+First candidate915d9d5 passed the current-change real-source delivery and finite
+sequence check. Completion rendered in90.035ms, matching its88–96ms llvmpipe
+steady frames; cold first-site draw still took2160.278ms. That first-use cost
+belongs behind loading. A small scene-owned startup cover now draws the actual
+construction shader/skin/fade variants once in the real camera before controls
+are enabled, using the shared appearance recipe. Read-only geometry is never a
+gameplay site, no stock/people or physics are created, temporary nodes clear with
+the draw/scene lifetime, and normal model speed remains1x. Headless entry skips
+GPU preparation rather than waiting for an unavailable rendered frame.
