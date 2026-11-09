@@ -7,6 +7,7 @@ const TruckCues = preload("res://game/preview_3d/field_t01_cues.gd")
 const ObjectiveCues = preload("res://game/preview_3d/field_objective_cues.gd")
 var _construction_visuals_ready := false
 var _construction_preparation_usec := 0
+var _construction_render_resources: Array[Resource] = []
 var world: Node3D
 var management_open := false
 var battlefield_open := false
@@ -76,6 +77,7 @@ func _ready() -> void:
 		add_child(preparation)
 		await preparation.prepare(world.third)
 		_construction_preparation_usec = preparation.elapsed_usec
+		_construction_render_resources = preparation.resources
 		_session.set_speed(opening_speed)
 	_construction_visuals_ready = true
 

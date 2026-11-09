@@ -2,6 +2,7 @@ extends RefCounted
 ## One finite office bundle, actual hauler and physical freight on the existing clock.
 const Layout = preload("res://game/staffing/rear_layout.gd")
 const EPS := 0.000001
+const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 var _rear_ref: WeakRef
 var trucks: Dictionary = {} # office ID -> actual truck/trip, retained even after retirement
 
@@ -266,7 +267,10 @@ func settle() -> bool:
 	var changed := false
 	for office in rear.construction.instances.values():
 		if office.kind == "construction" and office.state == "Complete" and (not trucks.has(office.id) or not trucks[office.id].get("created",false)):
+			var profile: bool = CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+			var started: int = Time.get_ticks_usec() if profile else 0
 			changed = _register(office) or changed
+			if profile: CallLog.record_duration(&"construction/complete/register_truck",Time.get_ticks_usec()-started)
 	for row in trucks.values():
 		var office_active: bool = rear.construction.instances[row.office].state == "Complete"
 		if str(row.worker).is_empty():

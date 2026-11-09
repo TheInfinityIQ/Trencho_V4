@@ -272,7 +272,7 @@ func order_materials(id: String, source: String, priority: int = 1, automatic: b
 	for job in rear.jobs:
 		if job.destination == id and job.type == "M11" and not job.cancelled: in_flight += maxi(0,int(job.requested)-int(job.delivered))
 	var needed: int = maxi(0,int(row.m11)-int(row.get("consumed_m11",0))-local-in_flight)
-	if needed == 0: return _fail("The complete M11 delivery is already here or committed.")
+	if needed == 0: return _fail("Materials are already used, on site, or requested. Outstanding requests still need actual stock and a carrier.")
 	var alternatives: Array = _manufactured_material_sources() if automatic else []
 	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority,alternatives)
 	if result.ok:
@@ -462,6 +462,7 @@ func delivery_status(id: String) -> Dictionary:
 	var received := 0
 	var remaining := 0
 	var active: Dictionary = {}
+	var sources: Dictionary = {}
 	var blocker := "Haul queued; awaiting carrier"
 	for job: Dictionary in rear.jobs:
 		if job.destination != id or job.type != "M11": continue
@@ -469,6 +470,7 @@ func delivery_status(id: String) -> Dictionary:
 		if job.cancelled: continue
 		remaining += maxi(0,int(job.requested)-int(job.delivered))
 		active[job.id] = true
+		for source: String in [job.source]+job.get("alternative_sources",[])+job.recovery_sources: sources[source] = true
 		if not str(job.blocker).is_empty(): blocker = str(job.blocker)
 	var carried := 0
 	var assigned := 0
@@ -492,6 +494,22 @@ func delivery_status(id: String) -> Dictionary:
 	elif assigned > 0: blocker = "Source inaccessible" if blocked else "Collecting Building Materials"
 	elif remaining <= 0: blocker = "Material delivery complete"
 	if not transport_status.is_empty(): blocker = transport_status
+	if remaining > 0 and assigned == 0:
+		var accessible := false
+		var available := 0
+		for source: String in sources:
+			if rear.stores.has(source) and rear.stores[source].accessible:
+				accessible = true
+				available += rear.ledger.available_stock_at(source,"M11")
+		if not accessible: blocker = "Source inaccessible"
+		elif available == 0: blocker = "No unreserved Building Materials at accessible sources"
+		else:
+			var idle := false
+			for actor: Dictionary in rear.actors.values():
+				if actor.phase != "Idle": continue
+				var status: Dictionary = rear.ledger.duty_status(actor.id)
+				if status.pending_assignment == "None" and status.duty_id in ["hauling","builders-"+id]: idle = true
+			if not idle: blocker = "Haul queued; no idle carrier"
 	return {"received":received,"carried":carried,"assigned":assigned,"remaining":remaining,"status":blocker}
 
 func _ready(row: Dictionary) -> bool:
@@ -615,12 +633,19 @@ func debug_complete_pending() -> Dictionary:
 
 
 func _complete_site(row: Dictionary, rear: RefCounted) -> void:
+	var profile: bool = CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+	var started: int = Time.get_ticks_usec() if profile else 0
 	row.state = "Complete"
 	row.working = false
 	row.blocker = ""
 	_release_site_builders(row.id)
+	if profile: CallLog.record_duration(&"construction/complete/release_builders",Time.get_ticks_usec()-started)
+	if profile: started = Time.get_ticks_usec()
 	_activate(row,rear)
+	if profile: CallLog.record_duration(&"construction/complete/activate",Time.get_ticks_usec()-started)
+	if profile: started = Time.get_ticks_usec()
 	site_changed.emit(row.id)
+	if profile: CallLog.record_duration(&"construction/complete/visual_event",Time.get_ticks_usec()-started)
 
 
 func _activate(row: Dictionary, rear: RefCounted) -> void:
