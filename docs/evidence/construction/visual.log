@@ -1,0 +1,98 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 5 [5, 6):
+    1007  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       3  rear_base/base_demo.gd::_request_refresh
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  main/main.gd::_refresh_clock
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::map_markers
+[Scope wall time/us] engine second 5 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":114,"total":114},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":4951,"total":5271}}
+Actual site for affected prop integration: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Actual Artist prop uses linear vertex palette: PASS
+Four pylons/four scissors/sixteen ribbon panels retain actual palette surfaces: PASS
+[Calls/s] engine second 6 [6, 7):
+       8  main/game_session.gd::_physics_process
+       7  identity/identity_ledger.gd::inspect_entity
+       1  battlefield/battlefield_view.gd::_refresh
+       1  battlefield/battlefield_view.gd::_request_refresh
+       1  main/main.gd::_refresh_clock
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 6 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":96,"total":96},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":2,"total":2},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":8,"maximum":671,"total":3972},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":4078,"total":4078}}
+[Calls/s] engine second 8 [8, 9):
+     140  identity/identity_ledger.gd::inspect_entity
+      60  identity/identity_ledger.gd::person_has_living_duty
+      52  identity/identity_ledger.gd::military_hull_ready_at
+      30  identity/identity_ledger.gd::person_ready_for_hq_issue
+       8  main/game_session.gd::_physics_process
+       6  identity/identity_ledger.gd::person_is_alive
+       4  staffing/rear_simulation.gd::_settle
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       1  identity/identity_ledger.gd::ammunition_quantities_at
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 8 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":93,"total":93},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":2723,"total":2723},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":1559,"total":2493},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":2694,"total":2694}}
+Explicit debug completion drives cosmetic-only visual check: PASS
+[Calls/s] engine second 9 [9, 10):
+       0  no instrumented calls
+[Scope wall time/us] engine second 9 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":213,"total":213}}
+[Calls/s] engine second 10 [10, 11):
+      57  identity/identity_ledger.gd::inspect_entity
+      10  identity/identity_ledger.gd::person_has_living_duty
+       8  identity/identity_ledger.gd::military_hull_ready_at
+       4  identity/identity_ledger.gd::person_ready_for_hq_issue
+       1  identity/identity_ledger.gd::person_is_alive
+       1  staffing/rear_simulation.gd::_settle
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":3,"maximum":62,"total":90}}
+[Calls/s] engine second 11 [11, 12):
+       0  no instrumented calls
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":101,"total":101}}
+[Calls/s] engine second 12 [12, 13):
+       0  no instrumented calls
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":81,"total":81}}
+Palette correction retains finite sequence cleanup: PASS

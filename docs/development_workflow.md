@@ -27,6 +27,32 @@ The completed three-pair MCP experiment is separate from the feature-workflow
 comparison proposed here; neither its tiny task nor this resumed pilot establishes
 a generally faster or cheaper development method.
 
+## PR size and publication — 9 November 2026
+
+Dawson requests one complete, playable block of the game loop per PR. Plan its
+connected player outcome with the Designer, then implement its systems, UI and
+integration together before the first feature push. For example, a supply block
+can cover ordering, arrival, unloading and actual stock receipt; do not create a
+PR for each button, callback or intermediate repair. Keep unrelated loop blocks
+separate so the result remains understandable and reviewable.
+
+Use frequent small local commits as recoverable checkpoints. Finish the block's
+code, diagrams, documentation and static review before publishing its review
+candidate. Necessary runtime checking still runs on GitHub under the existing
+no-local-engine restriction; local completion is not a runtime-pass claim. Prepare
+the brief block check from actual owner APIs and preconditions before dispatch,
+and follow actual allocated identities. Fixes stay in the same PR; repeat only
+checks affected by a change, a failure or an unresolved concern. Do not replay
+already-passing independent portions or add routine suites to fill a larger PR.
+
+GDUnit4 suites remain preserved and paused under the current verification policy.
+There is no automatic local-unit-suite followed by a full GitHub suite. Required
+CI checks the changed production syntax/dependencies; runtime demonstrations are
+explicitly supplied, bounded checks of the current change. Review and player
+acceptance still follow the existing ownership/stage rules. This policy update
+is prepared locally for inclusion with the next game-loop block, without a
+standalone workflow PR or an otherwise unnecessary remote run.
+
 ## Plan before programming
 
 1. State the player outcome, acceptance evidence, exclusions and current source
@@ -48,8 +74,10 @@ a generally faster or cheaper development method.
    When a late discovery appears to need another special condition, revisit its
    shared owner/invariant first. Fix the underlying boundary once when appropriate;
    neither more guard clauses nor fewer branches is itself a quality measure.
-5. Implement one small connected increment. Perform only the permitted brief
-   direct check of the change on GitHub, preserve failures, update affected graph
+5. Implement the planned playable game-loop block, using small local commits
+   within it. Publish after its code, UI and graph documentation are ready, then
+   perform only the permitted brief current-change checks on GitHub. Preserve
+   failures and update affected graph
    entries/purposes and obtain Lead technical plus Designer gameplay approval of
    the final PR revision before merge. Neither parsing nor a graph proves gameplay.
 

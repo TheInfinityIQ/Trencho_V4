@@ -1,4 +1,5 @@
 extends RefCounted
+signal site_changed(id: String)
 ## G05 physical rear sites. This owns facility instances, not people, stock or time.
 const Layout = preload("res://game/staffing/rear_layout.gd")
 const Catalog = preload("res://game/construction/construction_catalogue.gd")
@@ -152,7 +153,7 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 	rear.stores[id] = {"id":id,"capacity":float(plan.m11),"accessible":true,"filter":["M11"],"pile":false}
 	_register_builders(id,plan.door,rear)
 	instances[id] = {"id":id,"kind":kind,"center":center,"size":plan.size,"door":plan.door,
-		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,
+		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,"consumed_m11":0,"working":false,
 		"m11":plan.m11,"work":plan.work,"progress":0.0,"site_store":id,
 		"blocker":"Deliver %d real M11 from an accessible rear store." % plan.m11,"builders":{},"haul_job":""}
 	if rear.empty_field_opening: order_materials(id,"receiving",1,true)
@@ -248,6 +249,8 @@ func audit() -> Array[String]:
 	var errors: Array[String] = []
 	for row in instances.values():
 		if row.progress < -EPS or row.progress > row.work+EPS: errors.append("Construction work out of bounds "+row.id)
+		if row.has("consumed_m11") and (int(row.consumed_m11) < 0 or int(row.consumed_m11) > int(row.m11)):
+			errors.append("Construction material consumption out of bounds "+row.id)
 	return errors
 
 func _fail(message: String) -> Dictionary:
@@ -261,14 +264,14 @@ func _register_builders(id: String, door: Vector2, rear: RefCounted) -> void:
 func order_materials(id: String, source: String, priority: int = 1, automatic: bool = false) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual construction site.")
 	var row: Dictionary = instances[id]
-	if row.state != "Awaiting M11": return _fail("Only an awaiting site can request its build materials.")
+	if row.state not in ["Awaiting M11","Building"]: return _fail("Only unfinished construction can request build materials.")
 	var rear: RefCounted = _rear_ref.get_ref()
 	if not rear.stores.has(source) or source == id: return _fail("Choose an actual separate M11 store.")
 	var local: int = rear.ledger.available_stock_at(id,"M11")
 	var in_flight := 0
 	for job in rear.jobs:
 		if job.destination == id and job.type == "M11" and not job.cancelled: in_flight += maxi(0,int(job.requested)-int(job.delivered))
-	var needed: int = maxi(0,int(row.m11)-local-in_flight)
+	var needed: int = maxi(0,int(row.m11)-int(row.get("consumed_m11",0))-local-in_flight)
 	if needed == 0: return _fail("The complete M11 delivery is already here or committed.")
 	var alternatives: Array = _manufactured_material_sources() if automatic else []
 	var result: Dictionary = rear.request_haul(source,id,"M11",needed,priority,alternatives)
@@ -287,7 +290,7 @@ func _publish_material_source(source: String, rear: RefCounted) -> void:
 	# A plant completion is a real membership event, not a recurring source scan.
 	for job in rear.jobs:
 		var site: Dictionary = instances.get(str(job.get("automatic_site","")),{})
-		if job.type == "M11" and not site.is_empty() and site.state == "Awaiting M11": rear.add_haul_source(str(job.id),source)
+		if job.type == "M11" and not site.is_empty() and site.state in ["Awaiting M11","Building"]: rear.add_haul_source(str(job.id),source)
 
 func is_office(id: String) -> bool:
 	return (id == "construction" and not _rear_ref.get_ref().empty_field_opening) or (instances.has(id) and instances[id].kind == "construction" and instances[id].state == "Complete")
@@ -402,8 +405,7 @@ func on_builder_reassigned(person_id: String, former_duty: String) -> void:
 func cancellation_loss(id: String) -> Dictionary:
 	var row: Dictionary = instances.get(id,{})
 	if row.get("state","") != "Building": return {}
-	# Building is entered only after this stored site's first half was consumed.
-	return {"consumed_m11":int(row.m11)/2}
+	return {"consumed_m11":int(row.get("consumed_m11",0))}
 
 func cancel(id: String) -> Dictionary:
 	if not instances.has(id): return _fail("Choose an actual site.")
@@ -418,11 +420,13 @@ func cancel(id: String) -> Dictionary:
 	_release_site_builders(id)
 	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/builder_release",Time.get_ticks_usec()-started)
 	row.state = "Cancelled"
+	row.working = false
+	site_changed.emit(id)
 	row.blocker = "Cancelled; delivered M11 is recoverable at this site."
 	if profile: started = Time.get_ticks_usec()
 	_return_site_stock(row,rear)
 	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/stock_return",Time.get_ticks_usec()-started)
-	return {"ok":true,"message":"Cancelled; half the build M11 was consumed only if work began. Remaining real M11 returns by hauling."}
+	return {"ok":true,"consumed_m11":int(row.get("consumed_m11",0)),"message":"Cancelled; %d Building Materials already used by builders are lost. Remaining real materials return by hauling." % int(row.get("consumed_m11",0))}
 
 func _stop_haul(row: Dictionary, rear: RefCounted) -> void:
 	for job in rear.jobs:
@@ -439,15 +443,20 @@ func _workers(row: Dictionary) -> int:
 	return mini(4,rear._present("builders-"+row.id))
 
 func _ready(row: Dictionary) -> bool:
+	return _workers(row) > 0 and _material_ceiling(row) > float(row.progress)+EPS
+
+func _material_ceiling(row: Dictionary) -> float:
+	if int(row.m11) <= 0: return float(row.work)
 	var rear: RefCounted = _rear_ref.get_ref()
-	return rear.ledger.available_stock_at(row.id,"M11") >= int(row.m11) and _workers(row) > 0
+	var supplied: int = int(row.get("consumed_m11",0))+rear.ledger.available_stock_at(row.id,"M11")
+	return minf(float(row.work),float(row.work)*supplied/float(row.m11))
 
 func next_boundary() -> float:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var next: float = trucks.next_boundary()
 	for row in instances.values():
-		if row.state in ["Building","Dismantling"] and _workers(row) > 0 or (row.state == "Awaiting M11" and _ready(row)):
-			var required: float = 20.0 if row.state == "Dismantling" else float(row.work)
+		if (row.state == "Dismantling" and _workers(row) > 0) or (row.state in ["Awaiting M11","Building"] and _ready(row)):
+			var required: float = 20.0 if row.state == "Dismantling" else _material_ceiling(row)
 			next = minf(next,rear.time+(required-float(row.progress))/_workers(row))
 	return next
 
@@ -455,13 +464,22 @@ func advance_work(delta: float) -> void:
 	if delta <= 0.0: return
 	var rear: RefCounted = _rear_ref.get_ref()
 	for row in instances.values():
-		if row.state == "Awaiting M11" and _ready(row):
-			# The first earned work consumes floor(M11/2); the other half stays local.
-			var result: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":int(row.m11)/2},"Started "+row.id)
-			if result.ok:
-				row.state = "Building"
-				row.blocker = ""
-		if row.state in ["Building","Dismantling"] and _workers(row) > 0:
+		if row.state in ["Awaiting M11","Building"] and _ready(row):
+			var ceiling: float = _material_ceiling(row)
+			var earned: float = minf(ceiling,float(row.progress)+delta*_workers(row))
+			var consumed: int = int(row.get("consumed_m11",0))
+			var required: int = mini(int(row.m11),int(ceil(earned/float(row.work)*int(row.m11)-EPS)))
+			if required > consumed:
+				var result: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":required-consumed},"Construction work "+row.id)
+				if not result.ok: continue
+			row.consumed_m11 = required
+			row.progress = earned
+			row.state = "Building"
+			row.working = earned < ceiling-EPS
+			row.blocker = "Waiting for more Building Materials." if earned < float(row.work)-EPS and earned >= ceiling-EPS else "Building…"
+			site_changed.emit(row.id)
+			continue
+		if row.state == "Dismantling" and _workers(row) > 0:
 			var required: float = 20.0 if row.state == "Dismantling" else float(row.work)
 			row.progress = minf(required,float(row.progress)+delta*_workers(row))
 			if (required-float(row.progress))/_workers(row) <= EPS: row.progress = required
@@ -473,6 +491,19 @@ func settle() -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var changed: bool = trucks.settle()
 	for row in instances.values():
+		if row.state in ["Awaiting M11","Building"]:
+			var duty: String = "builders-"+str(row.id)
+			var supported: bool = _material_ceiling(row) > float(row.progress)+EPS
+			var present: int = _workers(row)
+			var working: bool = supported and present > 0
+			var blocker := "Building…"
+			if not supported: blocker = "Waiting for more Building Materials."
+			elif present == 0:
+				blocker = "Waiting for builders to arrive." if int(rear.requests[duty].target) > 0 else "Assign builders."
+			if row.blocker != blocker or bool(row.get("working",false)) != working:
+				row.blocker = blocker
+				row.working = working
+				site_changed.emit(row.id)
 		if row.state == "Clearing":
 			_queue_clearance(row,rear)
 			if _cleared(row,rear):
@@ -480,9 +511,7 @@ func settle() -> bool:
 				row.blocker = "Assign up to four builders for twenty work seconds."
 				changed = true
 		if row.state == "Building" and float(row.progress) >= float(row.work)-EPS:
-			var remaining: int = int(row.m11)-int(row.m11)/2
-			var result: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":remaining},"Completed "+row.id)
-			if not result.ok: continue
+			if int(row.get("consumed_m11",0)) != int(row.m11): continue
 			_complete_site(row,rear)
 			changed = true
 		elif row.state == "Dismantling" and float(row.progress) >= 20.0-EPS:
@@ -516,14 +545,16 @@ func debug_complete_pending() -> Dictionary:
 		_stop_haul(row,rear)
 		# Cancelling an active haul can settle a site already at its last boundary.
 		if row.state == "Complete": continue
-		var remaining: int = int(row.m11) if row.state == "Awaiting M11" else int(row.m11)-int(row.m11)/2
+		var remaining: int = int(row.m11)-int(row.get("consumed_m11",0))
 		var missing := maxi(0,remaining-rear.ledger.available_stock_at(row.id,"M11"))
 		if missing > 0:
 			var added: Dictionary = rear.ledger.add_stock(row.id+"-debug-materials","M11",missing,1.0,row.id,rear.PLAYER)
 			if not added.ok: return added
 			granted += missing
-		var consumed: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":remaining},"DEBUG instant build "+row.id)
-		if not consumed.ok: return consumed
+		if remaining > 0:
+			var consumed: Dictionary = rear.ledger.consume_local_batch(row.id,rear.PLAYER,{"M11":remaining},"DEBUG instant build "+row.id)
+			if not consumed.ok: return consumed
+		row.consumed_m11 = int(row.m11)
 		row.progress = float(row.work)
 		_complete_site(row,rear)
 		completed += 1
@@ -533,9 +564,11 @@ func debug_complete_pending() -> Dictionary:
 
 func _complete_site(row: Dictionary, rear: RefCounted) -> void:
 	row.state = "Complete"
+	row.working = false
 	row.blocker = ""
 	_release_site_builders(row.id)
 	_activate(row,rear)
+	site_changed.emit(row.id)
 
 
 func _activate(row: Dictionary, rear: RefCounted) -> void:

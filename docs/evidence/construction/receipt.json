@@ -1,0 +1,60 @@
+{
+  "scope": "Current place/manage code and appearance only; no broad regression suite, local engine, native input/full loop/FPS acceptance.",
+  "production_heads": {
+    "first_integrated": "cc43833f54c89da47f8a107d44fa9dffc30e4fbf",
+    "earned_work_and_sequence": "37772e3ba683ba5e0d273f90f672afe808e4e0d0",
+    "palette_corrected": "8867f180b49764390d05234667fe4f3469783b6a"
+  },
+  "checks": [
+    {
+      "run": 42703205698,
+      "result": "PASS",
+      "head": "cc43833",
+      "scope": "First PR merge-base changed7 production scripts and isolated declared imports; no gameplay."
+    },
+    {
+      "run": 42703750884,
+      "result": "PASS",
+      "head": "37772e3",
+      "scope": "Changed construction/worker source parses."
+    },
+    {
+      "run": 42703753293,
+      "result": "FAIL",
+      "head": "37772e3",
+      "artifact_sha256": "34353656f1963603e6bcf7ab8680961e3da78b7e1a097a030b44e287282ad6a3",
+      "scope": "First observer left normal automatic material supply enabled while expecting only its30M11 labelled deposit. Actual supply breakdown not captured; no shortage diagnosis established. Too-wide initial camera. Retained failure, no production rule/deadline change."
+    },
+    {
+      "run": 42704156878,
+      "result": "PASS",
+      "head": "37772e3",
+      "artifact_sha256": "dad133d80d847bfe4317390fee7f85af5b1b846005c29bf20dc07e1265dc7686",
+      "wall_ms": 11371,
+      "scope": "Normal main startup1x; observer then disables wall pump, cancels only its automatic site demands via actual command and uses labelled local deposits/explicit rear intervals. Actual two-builder30/60M11\u219240/80work shortage, resume/full real60M11 charge, usable cancellation while consumed count changes,17M11 committed cancellation, persistent reveal, actual capability before sequence, pause swoop, four authored snips, tape release/contact/2x cleanup. Captures exposed white static prop palette; logical PASS is not final colour acceptance."
+    },
+    {
+      "run": 42704651984,
+      "result": "PASS",
+      "head": "8867f18",
+      "scope": "Changed palette code parses."
+    },
+    {
+      "run": 42704652768,
+      "result": "PASS",
+      "head": "8867f18",
+      "artifact_sha256": "8be2527d563afda73ab7c77d2cfeffa8d6b57a21b17b7f2c977b8c2fff30947a",
+      "wall_ms": 7530,
+      "scope": "Affected visual-only normal-main episode; explicitly debug-completed actual site,24actual mesh surfaces bound linear vertex palette, orange hologram/snipping/tape/final captures inspected, finite cleanup retained. Prior earned-work component not repeated."
+    }
+  ],
+  "review_scope": "Lead personally inspected both sets. Final metadata must retain byte-identical game/project/workflow to8867f18. Actual Designer exact-head/image approval remains required before merge.",
+  "limits": [
+    "No normal wall-clock full earned construction or supplier acquisition cycle demonstrated here; prior convoy evidence is separate.",
+    "Only Construction Office received these runtime construction/reveal captures; other buildable types/rotations reuse source mapping/normalization but were not individually run.",
+    "Pause demonstrated during swoop and2x during fall/cleanup; not every effect timing/view lifecycle combination.",
+    "pre_palette_partial.png is actual earned50% at37772e3 with the known old white static props; final orange appearance is in orange_*.png at8867f18.",
+    "No native OS input, full factory/Army loop, all button/role/crowd combinations or60FPS certification. Human stage1/2 acceptance stays pending."
+  ],
+  "retained_log_format": "Published UTF-8 logs trim terminal empty lines for repository whitespace; original unmodified runtime files remain in the SHA256-identified artifacts."
+}

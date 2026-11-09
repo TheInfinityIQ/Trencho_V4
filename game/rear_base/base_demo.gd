@@ -539,7 +539,7 @@ func _bind_started_session(refresh_rear_ui: bool) -> void:
 		declaration.text = "Empty field · WASD to move · Hire workers, build workshops and assign real jobs."
 	var message := "New paused Farmland opening. Buildings block sight and movement; entry and damage are pending." if scenario.selected == 2 else "New paused session. Recipe access was declared at creation; actual cards remain separate."
 	if simulation.get("empty_field_opening"):
-		message = "Paused empty field. Hire eight workers in Supplies, use 1x for their arrival, then Build and assign real jobs."
+		message = "Running at 1x. Build and assign builders; workers can start as Building Materials arrive. Supplies orders bring more resources and workers."
 	if refresh_rear_ui: _result({"ok":true,"message":message})
 	elif feedback != null:
 		feedback.text = message
@@ -1568,10 +1568,9 @@ func _request_construction_cancel() -> void:
 		_result(service.cancel(id))
 		return
 	_construction_cancel_request = {"session":session,"simulation":simulation,"service":service,
-		"id":id,"site":service.instances[id],"kind":_selected_kind,"selection":_selected_id,
-		"consumed_m11":int(loss.consumed_m11)}
+		"id":id,"site":service.instances[id],"kind":_selected_kind,"selection":_selected_id}
 	_construction_cancel_dialog.title = "Cancel construction of %s (%s)?" % [WorkforcePanel.job_name(id,simulation),id]
-	_construction_cancel_dialog.dialog_text = "This site's construction progress will be lost. The %d Building Materials already used will not be refunded. Recovery of remaining materials requires workers and hauling." % int(loss.consumed_m11)
+	_update_construction_cancel_warning(int(loss.consumed_m11))
 	_construction_cancel_dialog.popup_centered_clamped(Vector2i(680,280))
 	_construction_cancel_dialog.get_cancel_button().grab_focus()
 
@@ -1583,7 +1582,10 @@ func _construction_cancel_is_current(request: Dictionary) -> bool:
 	var service: RefCounted = request.service
 	if not is_same(service.instances.get(request.id,{}),request.site): return false
 	var loss: Dictionary = service.cancellation_loss(request.id)
-	return not loss.is_empty() and int(loss.consumed_m11) == request.consumed_m11
+	return not loss.is_empty()
+
+func _update_construction_cancel_warning(consumed: int) -> void:
+	_construction_cancel_dialog.dialog_text = "Building Materials used now: %d. Builders continue while this dialog is open, so this amount can increase. Cancellation loses all work and only the materials actually used when you confirm. Remaining real materials return through workers and hauling." % consumed
 
 func _confirm_construction_cancel() -> void:
 	if _construction_cancel_request.is_empty(): return
@@ -1605,7 +1607,12 @@ func _invalidate_construction_cancel() -> void:
 	_result({"ok":false,"requires_reconciliation":false,"message":"The construction site changed. Nothing was cancelled. Review the current site and try again."})
 
 func _validate_construction_cancel() -> void:
-	if not _construction_cancel_request.is_empty() and not _construction_cancel_is_current(_construction_cancel_request): _invalidate_construction_cancel()
+	if _construction_cancel_request.is_empty(): return
+	if not _construction_cancel_is_current(_construction_cancel_request):
+		_invalidate_construction_cancel()
+		return
+	var loss: Dictionary = _construction_cancel_request.service.cancellation_loss(_construction_cancel_request.id)
+	_update_construction_cancel_warning(int(loss.consumed_m11))
 
 func _build_batch_cancel_dialog() -> void:
 	_batch_cancel_dialog = ConfirmationDialog.new()
@@ -1974,10 +1981,7 @@ func _refresh_contents() -> void:
 	construction_status.text = "Select a site or building to inspect its physical work."
 	for row in view.construction.rows:
 		if row.id == selected_site:
-			var builders: String = "builders-"+row.id
-			construction_status.text = "%s · %s\nBuilding Materials at site %d / %d\nConstruction %.1f / %.0f work seconds\n%s" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0,row.m11,row.progress,row.work,str(row.blocker).replace("M11","Building Materials")]
-			for staff in view.rear.staffing:
-				if staff.id == builders: construction_status.text += "\nBuilders: %d present · %d assigned · %d requested" % [staff.present,staff.assigned,staff.target]
+			construction_status.text = _construction_progress_text(row)
 	if active_panel == "Dispatch": _refresh_dispatch(view)
 	if active_panel == "Supply": forward_delivery_panel.refresh()
 	_refresh_hq(view)
@@ -2149,10 +2153,20 @@ func _refresh_construction_progress() -> void:
 	construction_status.text = "Select a site or building to inspect its physical work."
 	var row: Dictionary = simulation.rear.construction.instances.get(_construction_site(),{})
 	if row.is_empty(): return
-	construction_status.text = "%s · %s\nBuilding Materials at site %d / %d\nConstruction %.1f / %.0f work seconds\n%s" % [WorkforcePanel.job_name(row.id, simulation), str(row.state).replace("M11", "Building Materials"), simulation.rear.ledger.available_stock_at(row.id, "M11") if simulation.rear.stores.has(row.id) else 0, row.m11, row.progress, row.work, str(row.blocker).replace("M11", "Building Materials")]
+	construction_status.text = _construction_progress_text(row)
+
+func _construction_progress_text(row: Dictionary) -> String:
 	var duty: String = "builders-" + str(row.id)
+	var present: int = simulation.rear._present(duty) if simulation.rear.requests.has(duty) else 0
+	var stored: int = simulation.rear.ledger.available_stock_at(row.id,"M11") if simulation.rear.stores.has(row.id) else 0
+	var progress: float = float(row.progress)/float(row.work) if float(row.work) > 0.0 else 1.0
+	var used: int = int(row.get("consumed_m11",row.m11 if row.state == "Complete" else 0))
+	var heading := "Construction complete" if row.state == "Complete" else "Construction %d%% · Builders present: %d" % [roundi(progress*100),present]
+	if row.state in ["Clearing","Dismantling","Dismantled","Cancelled"]: heading = str(row.state)
+	var text := "%s · %s\n%s\nBuilding Materials: used %d / %d · Stored on site: %d\n%s" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),heading,used,row.m11,stored,str(row.blocker).replace("M11","Building Materials")]
 	if simulation.rear.requests.has(duty):
-		construction_status.text += "\nBuilders: %d present · %d assigned · %d requested" % [simulation.rear._present(duty), simulation.rear._assigned(duty), simulation.rear.requests[duty].target]
+		text += "\nBuilders: %d assigned · %d requested" % [simulation.rear._assigned(duty),simulation.rear.requests[duty].target]
+	return text
 
 func _refresh_training() -> void:
 	CallLog.record(&"rear_base/base_demo.gd::_refresh_training")

@@ -2,6 +2,14 @@
 
 ## Current working agreement — 9 November 2026
 
+Dawson's latest publication convention: one complete playable game-loop block
+per PR, with small local checkpoint commits and a consolidated first feature
+push after code/UI/integration documentation are ready. Fixes remain in that PR.
+Check the current block, rerun only affected/failing portions, and do not assume
+GDUnit4 suites or a second full suite run automatically. Existing no-local-engine,
+paused-suite, exact-head review and player-stage acceptance rules still apply.
+See [PR size and publication](development_workflow.md).
+
 Dawson resumed development after the MCP experiment and requested planning from
 the existing system graph before programming, plus feature-level time/token and
 observed-defect/repair accounting. Follow [development workflow](development_workflow.md).

@@ -10,7 +10,9 @@ static func create() -> RefCounted:
 	return _create(false)
 
 static func create_empty_field(live: bool = false) -> RefCounted:
-	return _create(true,live)
+	var model: RefCounted = _create(true,live)
+	if live: _must(model.set_speed(1))
+	return model
 
 static func _create(empty_field: bool, live: bool = false) -> RefCounted:
 	var base := Base.new(false,true,true,Vector2(2000,450),false,{"heavy":["R30"],"munitions":["R33"]},empty_field)

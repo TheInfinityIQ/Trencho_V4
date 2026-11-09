@@ -1,5 +1,5 @@
 extends RefCounted
-## Scene-owned completed exterior adapter. Never writes ConstructionService rows.
+## Scene-owned exterior adapter. Never writes ConstructionService rows.
 const ROOT: String = "res://game/preview_3d/assets/industrial/"
 const MODELS: Dictionary = {
 	"construction":{"file":"building_a.glb","path":"res://game/preview_3d/assets/commercial/building_a.glb","yaw_degrees":90.0,"front_fraction":0.248984882,"front_inset":0.10},
@@ -8,6 +8,10 @@ const MODELS: Dictionary = {
 	"dispatch":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
 	"depot":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
 	"materials":{"file":"building_l.glb","yaw_degrees":-90.0,"front_fraction":0.65},
+	"munitions":{"file":"building_l.glb","yaw_degrees":-90.0,"front_fraction":0.65},
+	"support":{"file":"building_l.glb","yaw_degrees":-90.0,"front_fraction":0.65},
+	"vehicle_works":{"file":"building_h.glb","yaw_degrees":90.0,"front_fraction":0.80057,"front_inset":0.45},
+	"training":{"file":"building_k.glb","yaw_degrees":-90.0,"front_fraction":0.5},
 }
 # Per-model source facade faces west in both quarter-turn reservations;
 # source -Z Workshop garage was located in the actual geometry after review.
@@ -16,8 +20,9 @@ const OCCLUDER_LAYER: int = 4
 var _scenes: Dictionary = {}
 var _shapes: Dictionary = {}
 
-func build(row: Dictionary) -> Dictionary:
-	if row.state != "Complete": return {"ok":false,"reason":"unfinished"}
+func build(row: Dictionary, include_unfinished: bool = false) -> Dictionary:
+	if row.state != "Complete" and not include_unfinished: return {"ok":false,"reason":"unfinished"}
+	if row.kind == "park": return _parking_ground(row)
 	if not MODELS.has(row.kind): return {"ok":false,"reason":"unmapped exterior"}
 	var center: Vector2 = row.center
 	var size: Vector2 = row.size
@@ -69,6 +74,24 @@ func build(row: Dictionary) -> Dictionary:
 	shell.set_meta("entrance",entrance)
 	shell.position = Vector3(center.x,0,center.y)
 	return {"ok":true,"node":shell,"bounds":fitted,"entrance":entrance,"label_anchor":label_anchor}
+
+func _parking_ground(row: Dictionary) -> Dictionary:
+	# F11 is open parking, never a building-shaped obstruction to routes.
+	var shell := Node3D.new()
+	shell.position = Vector3(row.center.x,0,row.center.y)
+	shell.set_meta("site_id",str(row.id))
+	var mesh := MeshInstance3D.new()
+	var slab := BoxMesh.new()
+	slab.size = Vector3(row.size.x-0.8,0.12,row.size.y-0.8)
+	mesh.mesh = slab
+	mesh.position.y = 0.06
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color("727875")
+	material.roughness = 1.0
+	mesh.material_override = material
+	shell.add_child(mesh)
+	var bounds := AABB(Vector3(-slab.size.x/2.0,0,-slab.size.z/2.0),slab.size)
+	return {"ok":true,"node":shell,"bounds":bounds,"entrance":Vector3(-slab.size.x/2.0,0,0),"label_anchor":Vector3(-slab.size.x/2.0-1,2.4,0)}
 
 func _measure(instance: Node3D, normalizer: Node3D) -> Dictionary:
 	var bounds: AABB = AABB()

@@ -1,0 +1,673 @@
+{
+  "status": "Artist static/animated asset handoff; game integration/appearance/sequence acceptance pending",
+  "blender": "5.2.3 LTS, isolated bounded background jobs launched through Steam",
+  "units": "1unit=1metre; glTF Y-up; Blender Z-up converted by exporter",
+  "palette_linear_rgba": {
+    "orange": [
+      0.92,
+      0.17,
+      0.025,
+      1
+    ],
+    "cream": [
+      0.48,
+      0.52,
+      0.5,
+      1
+    ],
+    "dark": [
+      0.025,
+      0.028,
+      0.026,
+      1
+    ],
+    "blade": [
+      0.26,
+      0.29,
+      0.29,
+      1
+    ]
+  },
+  "material": {
+    "name": "M_Construction_Palette",
+    "base_color_factor": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "source_of_colour": "COLOR_0 linear vertex colour",
+    "roughness": 0.68,
+    "metallic": 0,
+    "alpha_mode": "OPAQUE",
+    "double_sided": false,
+    "godot_vertex_color_use_as_albedo": true,
+    "godot_vertex_color_is_srgb": false,
+    "textures": 0,
+    "note": "Coated blade gray is a stylized dielectric finish; no special runtime shader is required."
+  },
+  "assets": {
+    "pylon": {
+      "glb": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\pylon\\construction_pylon_v01.glb",
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\pylon\\construction_pylon_v01.blend",
+      "files": {
+        ".glb": {
+          "bytes": 21004,
+          "sha256": "340688380824dd46e3707a7b2f7ce86b918cbb17c19244c77d0cbbefed521f4d"
+        },
+        ".blend": {
+          "bytes": 72501,
+          "sha256": "a6ffb358e9edec125f50810458a84914f15d51a934339ce52544065762197c0b"
+        }
+      },
+      "export": {
+        "bytes": 21004,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 252,
+        "vertices_per_mesh_resource": 500,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "metrics": {
+        "bounds_blender_xyz_m": [
+          [
+            -0.1599999964237213,
+            -0.1599999964237213,
+            0.0
+          ],
+          [
+            0.1599999964237213,
+            0.1599999964237213,
+            0.8999999761581421
+          ]
+        ],
+        "dimensions_blender_xyz_m": [
+          0.3199999928474426,
+          0.3199999928474426,
+          0.8999999761581421
+        ],
+        "modeling_vertices": 128,
+        "triangles": 252,
+        "materials": 1,
+        "qa_warnings": []
+      },
+      "nodes": {
+        "Tape_Anchor": {
+          "gltf_node_path": "SM_Construction_Pylon/Tape_Anchor",
+          "translation_gltf_m": [
+            0,
+            0.7200000286102295,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Construction_Pylon": {
+          "gltf_node_path": "SM_Construction_Pylon",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "validation": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 1
+      },
+      "placement": {
+        "origin": "Base centre, local +Y up in glTF; scale1.",
+        "anchor_path": "SM_Construction_Pylon/Tape_Anchor",
+        "anchor_gltf_m": [
+          0,
+          0.72,
+          0
+        ],
+        "growth": "Scale around base origin; no authored scale clip. Lead owns0.5s grow/0.25s shrink sequencing."
+      }
+    },
+    "scissors": {
+      "glb": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\scissors\\completion_scissors_v01.glb",
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\scissors\\completion_scissors_v01.blend",
+      "files": {
+        ".glb": {
+          "bytes": 40220,
+          "sha256": "76bf53d977922d06e713aa0f5845f9949729ea43248693441665659ebb548061"
+        },
+        ".blend": {
+          "bytes": 87843,
+          "sha256": "4436c92180e7adf1caa94530fa81e78524a7e7daf6dcb00cc9052afdd20ec18e"
+        }
+      },
+      "export": {
+        "bytes": 40220,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 436,
+        "vertices_per_mesh_resource": 588,
+        "joints": [
+          4
+        ],
+        "clips": [
+          {
+            "name": "open_idle",
+            "seconds": 0.5999999903142452
+          },
+          {
+            "name": "snip",
+            "seconds": 0.4000000022351742
+          }
+        ],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "metrics": {
+        "bounds_blender_xyz_m": [
+          [
+            -0.12415702641010284,
+            -0.014000000432133675,
+            -0.12457878142595291
+          ],
+          [
+            0.12415702641010284,
+            0.014000000432133675,
+            0.14954079687595367
+          ]
+        ],
+        "dimensions_blender_xyz_m": [
+          0.2483140528202057,
+          0.02800000086426735,
+          0.2741195783019066
+        ],
+        "modeling_vertices": 220,
+        "triangles": 436,
+        "materials": 1,
+        "qa_warnings": [
+          "asset lowest point z=-0.1246 (not resting on ground plane z=0)"
+        ],
+        "closed_bounds_blender_xyz_m": [
+          [
+            -0.0820000022649765,
+            -0.014000000432133675,
+            -0.1550000011920929
+          ],
+          [
+            0.0820000022649765,
+            0.014000000432133675,
+            0.16500000655651093
+          ]
+        ]
+      },
+      "nodes": {
+        "Cut_Target": {
+          "gltf_node_path": "RIG_Completion_Scissors/Cut_Target",
+          "translation_gltf_m": [
+            0,
+            0.07500000298023224,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Blade_A": {
+          "gltf_node_path": "RIG_Completion_Scissors/Root/Blade_A",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Blade_B": {
+          "gltf_node_path": "RIG_Completion_Scissors/Root/Blade_B",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Hinge": {
+          "gltf_node_path": "RIG_Completion_Scissors/Root/Hinge",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            -0.7071067690849304,
+            0,
+            0,
+            0.7071067690849304
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Root": {
+          "gltf_node_path": "RIG_Completion_Scissors/Root",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "RIG_Completion_Scissors": {
+          "gltf_node_path": "RIG_Completion_Scissors",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SK_Completion_Scissors": {
+          "gltf_node_path": "SK_Completion_Scissors",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "validation": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 1
+      },
+      "clips": {
+        "open_idle": {
+          "seconds": 0.6,
+          "loop": true,
+          "purpose": "Hold blades open during fade/swoop; GLB bind pose is closed."
+        },
+        "snip": {
+          "seconds": 0.4,
+          "loop": false,
+          "contact_s": 0.2,
+          "end": "closed; hold while fading out"
+        }
+      },
+      "rig": {
+        "object": "RIG_Completion_Scissors",
+        "bone_paths": [
+          "Root",
+          "Root/Blade_A",
+          "Root/Blade_B",
+          "Root/Hinge"
+        ],
+        "static_hub_bone": "Hinge",
+        "weights": "One rigid bone influence per vertex; Root has no weights.",
+        "root_object_motion": false,
+        "scale_tracks": false,
+        "position_tracks": false
+      },
+      "cut_target": {
+        "node_path": "RIG_Completion_Scissors/Cut_Target",
+        "position_gltf_m": [
+          0,
+          0.075,
+          0
+        ],
+        "position_blender_m": [
+          0,
+          0,
+          0.075
+        ],
+        "native_hinge_origin_m": [
+          0,
+          0,
+          0
+        ],
+        "recommended_ceremonial_scale": 3,
+        "hinge_world_height_for_0_72m_tape_m": 0.495,
+        "closed_handle_ground_clearance_at_scale3_m": 0.03,
+        "placement": "Place actor so transformed Cut_Target equals tape-span midpoint; face +Z toward viewer if camera-facing presentation is desired.",
+        "engine_paths": "Exact glTF node paths supplied; resolve unique named markers once after import because Godot may add a scene/Skeleton3D wrapper."
+      }
+    },
+    "tape_half": {
+      "glb": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\tape_half\\construction_tape_half_v01.glb",
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\tape_half\\construction_tape_half_v01.blend",
+      "files": {
+        ".glb": {
+          "bytes": 9416,
+          "sha256": "c8413858ee6a87460d93f4617b8ba9ee38ebaa0af9341eabd2936bbac315b780"
+        },
+        ".blend": {
+          "bytes": 70002,
+          "sha256": "f1452573024df3795d0f3a9d7216b8810605629586c6f676cf0403da16a6a293"
+        }
+      },
+      "export": {
+        "bytes": 9416,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 84,
+        "vertices_per_mesh_resource": 168,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "metrics": {
+        "bounds_blender_xyz_m": [
+          [
+            0.0,
+            -0.0010000000474974513,
+            -0.03999999910593033
+          ],
+          [
+            0.5,
+            0.0010000000474974513,
+            0.03999999910593033
+          ]
+        ],
+        "dimensions_blender_xyz_m": [
+          0.5,
+          0.0020000000949949026,
+          0.07999999821186066
+        ],
+        "modeling_vertices": 44,
+        "triangles": 84,
+        "materials": 1,
+        "qa_warnings": [
+          "asset lowest point z=-0.04 (not resting on ground plane z=0)"
+        ]
+      },
+      "nodes": {
+        "SM_Construction_Tape_Half": {
+          "gltf_node_path": "SM_Construction_Tape_Half",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "validation": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 1
+      },
+      "placement": {
+        "origin": "Outer anchor at0; native length0.5m along +X toward cut.",
+        "anchor_gltf_m": [
+          0,
+          0,
+          0
+        ],
+        "cut_gltf_m": [
+          0.5,
+          0,
+          0
+        ],
+        "width_m": 0.08,
+        "thickness_m": 0.002,
+        "segment_scaling": "For segment length d metres, scale local X by d/0.5; leave local Y/Z at1.",
+        "simulation": "Static visual only; Lead owns finite linked segments, gravity, ground contacts and cleanup."
+      }
+    },
+    "tape_span": {
+      "glb": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\tape_span\\construction_tape_span_v01.glb",
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_completion_props\\tape_span\\construction_tape_span_v01.blend",
+      "files": {
+        ".glb": {
+          "bytes": 9504,
+          "sha256": "08b2e8c0172e800c5df05b1bcc5f2f4016d50bad4be55a1ac6a451bdad5fb83c"
+        },
+        ".blend": {
+          "bytes": 70059,
+          "sha256": "de1cafd44607ec2701d3e52fcbeafcbfc2f7f8b75049bda7bd02265a5af239d0"
+        }
+      },
+      "export": {
+        "bytes": 9504,
+        "mesh_resources": 1,
+        "mesh_instances": 2,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 84,
+        "vertices_per_mesh_resource": 168,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "metrics": {
+        "bounds_blender_xyz_m": [
+          [
+            -0.5,
+            -0.0010000437032431364,
+            -0.03999999910593033
+          ],
+          [
+            0.5,
+            0.0010000000474974513,
+            0.03999999910593033
+          ]
+        ],
+        "dimensions_blender_xyz_m": [
+          1.0,
+          0.0020000437507405877,
+          0.07999999821186066
+        ],
+        "modeling_vertices": 88,
+        "triangles": 168,
+        "materials": 1,
+        "qa_warnings": [
+          "hidden back-to-back faces: Tape_Half_Left<->Tape_Half_Right (8 pairs) - delete to save tris",
+          "asset lowest point z=-0.04 (not resting on ground plane z=0)"
+        ]
+      },
+      "nodes": {
+        "Tape_Half_Left": {
+          "gltf_node_path": "Construction_Tape_Span/Tape_Half_Left",
+          "translation_gltf_m": [
+            -0.5,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Tape_Half_Right": {
+          "gltf_node_path": "Construction_Tape_Span/Tape_Half_Right",
+          "translation_gltf_m": [
+            0.5,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Construction_Tape_Span": {
+          "gltf_node_path": "Construction_Tape_Span",
+          "translation_gltf_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "validation": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 1
+      },
+      "placement": {
+        "origin": "Midpoint of1m native span.",
+        "anchors_gltf_m": [
+          [
+            -0.5,
+            0,
+            0
+          ],
+          [
+            0.5,
+            0,
+            0
+          ]
+        ],
+        "cut_gltf_m": [
+          0,
+          0,
+          0
+        ],
+        "child_paths": {
+          "Tape_Half_Left": "Construction_Tape_Span/Tape_Half_Left",
+          "Tape_Half_Right": "Construction_Tape_Span/Tape_Half_Right"
+        },
+        "scaling": "Scale local X by desired full span length in metres; local Y/Z remain1; rotate about world Y to align anchors.",
+        "geometry": "Two instances of one shared closed half mesh. Mirrored stripe pattern meets at cut seam."
+      }
+    }
+  },
+  "provenance": {
+    "source": "Original geometry, palette arrangement and rigid animation authored for Trencho; no external model, image, texture or motion asset.",
+    "licence_dependency": "None introduced; distribution licensing remains with the project owner."
+  },
+  "accepted_findings": [
+    "Scissors hinge pivot and tape anchor pivot intentionally place geometry below local zero; these are not ground-resting props.",
+    "Full span retains touching closed cut-end caps so each half remains capped after severing; back-to-back seam faces are intentional.",
+    "Validator NODE_EMPTY infos are intentional named placement markers; unused TEXCOORD_0 infos are provided tape UVs, with colour currently supplied by vertices."
+  ],
+  "scope_limits": [
+    "No local Godot run or source code changes.",
+    "No completed-game sequence, tape physics, collision, shader reveal or performance claim.",
+    "Source/export reviews do not replace Lead current-build visual/behaviour acceptance."
+  ]
+}

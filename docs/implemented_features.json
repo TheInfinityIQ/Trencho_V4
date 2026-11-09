@@ -2,6 +2,16 @@
   "scope": "Source-observed current implementation, not a claim that all features/states are tested, polished or accepted at 60 FPS. Advanced standalone review scenes are distinguished below.",
   "main_game": [
     {
+      "feature": "Place/manage buildings with partial real-material-supported builder work and incremental consumption; persistent cyan remainder/bottom-up solid/orange built outline; Artist pylons/tape/four snipping scissors and finite ground-contact cleanup; live usable cancellation with actual consumed loss; normal live F5 startup1x.",
+      "sources": [
+        "game/construction/construction_service.gd",
+        "game/construction/visuals/construction_site_visual.gd",
+        "game/construction/visuals/construction_celebration.gd",
+        "game/scenario/farmland_session.gd"
+      ],
+      "evidence": "docs/evidence/construction/receipt.json; separate earned-work/sequence and palette-only PASS receipts with exact heads/limits. Manual stage2/FPS acceptance remains open."
+    },
+    {
       "feature": "Default common Hauling for physically joined ordinary workers; expandable six-dot drag task order with Confirm/Revert; next feasible incoming/outbound/construction/production/other work via existing owners, finite claims/slots/transport and safe exclusive staffing. Existing automatic workplace starter demand can use idle fallback labour.",
       "sources": [
         "game/staffing/hauling_policy.gd",
