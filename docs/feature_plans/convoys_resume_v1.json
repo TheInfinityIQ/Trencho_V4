@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "feature": "Development supply convoys and overhead grid construction",
+  "workflow": "graph-first-v1",
+  "status": "Resume plan frozen before further production edits; the feature's original implementation predates this measurement protocol",
+  "source_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+  "pr": "https://github.com/TheInfinityIQ/Trencho_V4/pull/138",
+  "original_precode_contract": "docs/development_convoys_grid.md",
+  "original_diagram": "docs/diagrams/development_convoys_grid.mmd",
+  "graph": {
+    "atlas": "docs/system_atlas.html",
+    "inventory": "docs/system_map.json",
+    "affected_system_ids": ["procurement", "staffing", "identity", "ui", "preview", "session"],
+    "freshness": "The retained atlas/map describe an earlier baseline. The new supplier presenter and changed convoy/grid functions require reviewed regeneration before final delivery. They are navigation evidence, not a runtime trace or complete impact proof.",
+    "source_checked_path": [
+      {"function":"game/preview_3d/preview.gd::_consume_workshop","purpose":"Resolve the actual current physics-hit interaction and open the existing management context"},
+      {"function":"game/rear_base/base_demo.gd::_confirm_purchase","purpose":"Submit the current combined draft once to the actual receiving owner"},
+      {"function":"game/procurement/receiving_simulation.gd::buy_delivery","purpose":"Validate affordability/admission and commit paid goods/passenger orders atomically"},
+      {"function":"game/procurement/receiving_simulation.gd::_begin_convoy","purpose":"Register all member IDs before dispatching their real carriers"},
+      {"function":"game/procurement/receiving_simulation.gd::_set_state","purpose":"Release each committed member on physical handover/departure and notify ready only when the set empties"},
+      {"function":"game/preview_3d/supplier_convoys.gd::bind","purpose":"Connect supplier-state and keyed ledger movement events to presentation"},
+      {"function":"game/preview_3d/preview.gd::_consume_commit","purpose":"Validate and apply the current grid draft through the existing construction command"},
+      {"function":"game/staffing/rear_simulation.gd::_eligible","purpose":"Keep actual unloaders in the service strip eligible without expanding buildable bounds"}
+    ]
+  },
+  "resume_outcome": "Finish the already implemented ordinary opening, paid combined order, visible physical convoy, event-owned cooldown and explicit grid-placement/cancel feature; retain all original prices, custody and current scope.",
+  "owner_contracts": [
+    {"boundary":"Purchase UI to Receiving","owner":"Receiving simulation","rule":"A draft is free; one accepted complete quote debits once. Busy or invalid confirmation cannot partially create an order."},
+    {"boundary":"South service apron to staffing/build bounds","owner":"Rear staffing plus construction","rule":"Four actual initial unloaders are present and eligible in the service strip; construction remains inside the original build area."},
+    {"boundary":"Shipment handover to convoy gate","owner":"Receiving simulation","rule":"The final convoy member's actual completed handover/departure-start unlocks ordering once. Empty-truck egress can continue; capacity admission still applies."},
+    {"boundary":"Domain state to 3D presentation","owner":"Scene-owned supplier presenter","rule":"Events update membership and keyed poses. Views never grant goods, move simulation vehicles or introduce new polling."},
+    {"boundary":"Grid preview to construction command","owner":"Existing preview/command path","rule":"Current rotated footprint, manager occupancy and command token are revalidated; cancellation/rejection spends nothing and camera changes preserve manager pose."},
+    {"boundary":"Model events to unconfirmed menu draft","owner":"Existing management UI","rule":"Refreshes preserve a player's unconfirmed draft while its model/context remains current; context replacement invalidates it explicitly."}
+  ],
+  "known_prior_findings": [
+    {"id":"CONVOY-STAFF-BOUNDARY","kind":"feature_defect","finding":"New apron at y186 exceeded the previous y180 staffing boundary, so the first direct feature demonstration failed the four-present-unloaders assertion.","correction":"35ad12b expands service eligibility to y210 while leaving placement bounds intact.","planning_assessment":"confirmed","preavailable_requirement":"Original pre-code contract explicitly placed the staffed apron outside the build area and required service-strip walking/hauling access.","omitted_assumption":"Not every eligibility consumer of the old rear rectangle had been included in the integration review.","evidence":"docs/evidence/development_convoys/failed_initial_scope.txt and failed_initial.log.base64; source diff at35ad12b","prior_repair_time_seconds":null,"prior_tokens":null},
+    {"id":"CONVOY-MENU-DRAFT","kind":"candidate_regression","finding":"UI source review found instructor/Construction Office refresh could overwrite an unconfirmed selection.","correction":"35ad12b adds context-aware dirty guards.","planning_assessment":"possible","evidence":"Current BaseDemo::_refresh_office_draft and _refresh_training_controls; prior UI/UX source handoff","qualification":"No prior-good/current-bad runtime pair established; do not count as a confirmed regression.","prior_repair_time_seconds":null,"prior_tokens":null},
+    {"id":"CONVOY-CI-DOWNLOAD","kind":"infrastructure","finding":"Corrected remote attempts failed while downloading/verifying the pinned engine; parse and demonstration steps were skipped.","evidence":"GitHub Actions42583186696 latest job129047837982 step4 failed; steps5–7 skipped","planning_assessment":"no","prior_wait_seconds":null,"prior_tokens":null}
+  ],
+  "remaining_work": ["Start prospective feature journal after separate workflow setup overhead", "Inspect the remote download failure and run only the existing permitted current-change demonstration when its infrastructure is available", "Address a concrete new failure only if observed; log investigation/repair with the incident ID", "Retain new supplier UID from allowed remote import", "Review changed function purposes and atlas ownership; regenerate affected graphs", "Publish exact evidence/limitations and request final technical/gameplay review", "Merge only after current-revision approvals and required checks pass"],
+  "verification": {"allowed":"Existing brief explicitly supplied remote demonstration of this increment and changed-production parsing; no local engine, new regression suites or broad scenarios","unchanged_acceptance":"docs/development_convoys_grid.md","unverified":"Corrected runtime/visual behavior, native controls, ordinary full factory/army loop and60FPS remain unestablished; the workflow helper's synthetic check proves none of these"},
+  "measurement": {"earlier_work":"Unknown time/tokens, retained historical findings only; no backdated estimates","prospective_scope":"Recorded resume planning through feature delivery or explicit pause, with separate review/CI waiting and incident-linked repair","baseline_caveat":"Partial-history pilot, not a from-zero comparison with later workflows"}
+}

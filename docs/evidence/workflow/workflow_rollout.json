@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "feature": "workflow-rollout",
+  "workflow": "graph-first-v1",
+  "plan": "docs/development_workflow.md",
+  "source_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+  "started_at": "2026-11-09T14:06:45.963488+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-09T14:24:21.403632+00:00",
+  "seconds_by_phase": {
+    "planning": 0,
+    "implementation": 0,
+    "direct_check": 100.411405,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 0,
+    "release": 420.891886,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 534.136853
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T14:12:05.488307+00:00",
+      "note": "The helper passed one synthetic current-code start/phase/incident/repair/stop/report demonstration with non-overlapping intervals, counter arithmetic, null unknowns and no transcript export. No game engine or regression suite ran. Raw evidence: logs/development-metrics/synthetic_direct_demo/receipt.json. The actual current chat metadata is readable; this run began after initial research/authoring, so earlier totals remain unknown."
+    },
+    {
+      "recorded_at": "2026-11-09T14:24:20.893486+00:00",
+      "note": "Prospective workflow setup also refreshed the pre-existing convoy graph debt: 102 changed game function/callback purposes reviewed against source, seven new bookkeeping function purposes reviewed, shifted callback descriptions corrected, new supplier view assigned in atlas and 48 system diagrams regenerated. This setup phase includes this adoption cost; it is not comparable to a clean future feature from zero. No game behavior check is claimed."
+    }
+  ],
+  "incidents": [],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 0,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {},
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 4166373,
+      "cached_input_tokens": 4113792,
+      "output_tokens": 33636,
+      "reasoning_output_tokens": 16367,
+      "total_tokens": 4200009,
+      "uncached_input_tokens": 52581
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 4166373,
+      "cached_input_tokens": 4113792,
+      "output_tokens": 33636,
+      "reasoning_output_tokens": 16367,
+      "total_tokens": 4200009,
+      "uncached_input_tokens": 52581
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T14:06:45.963488+00:00",
+        "ended_at": "2026-11-09T14:08:57.117704+00:00",
+        "receipt_start": "2026-11-09T14:06:07.607Z",
+        "receipt_end": "2026-11-09T14:07:27.972Z",
+        "usage_delta": {
+          "input_tokens": 534945,
+          "cached_input_tokens": 523264,
+          "output_tokens": 2764,
+          "reasoning_output_tokens": 1285,
+          "total_tokens": 537709,
+          "uncached_input_tokens": 11681
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T14:08:57.117704+00:00",
+        "ended_at": "2026-11-09T14:10:37.529109+00:00",
+        "receipt_start": "2026-11-09T14:07:27.972Z",
+        "receipt_end": "2026-11-09T14:09:31.149Z",
+        "usage_delta": {
+          "input_tokens": 374567,
+          "cached_input_tokens": 368512,
+          "output_tokens": 4485,
+          "reasoning_output_tokens": 1232,
+          "total_tokens": 379052,
+          "uncached_input_tokens": 6055
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T14:10:37.529109+00:00",
+        "ended_at": "2026-11-09T14:17:20.511746+00:00",
+        "receipt_start": "2026-11-09T14:09:31.149Z",
+        "receipt_end": "2026-11-09T14:16:47.811Z",
+        "usage_delta": {
+          "input_tokens": 1200952,
+          "cached_input_tokens": 1194496,
+          "output_tokens": 12944,
+          "reasoning_output_tokens": 7434,
+          "total_tokens": 1213896,
+          "uncached_input_tokens": 6456
+        }
+      },
+      {
+        "phase": "release",
+        "started_at": "2026-11-09T14:17:20.511746+00:00",
+        "ended_at": "2026-11-09T14:24:21.403632+00:00",
+        "receipt_start": "2026-11-09T14:16:47.811Z",
+        "receipt_end": "2026-11-09T14:23:50.253Z",
+        "usage_delta": {
+          "input_tokens": 2055909,
+          "cached_input_tokens": 2027520,
+          "output_tokens": 13443,
+          "reasoning_output_tokens": 6416,
+          "total_tokens": 2069352,
+          "uncached_input_tokens": 28389
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ],
+  "adoption_findings": [
+    {
+      "kind": "workflow_error",
+      "summary": "Some initial context queries returned overly broad map/API data. Future queries project only needed fields before entering model context.",
+      "timing": "Not separately tracked; no retrospective estimate",
+      "game_regression": false
+    },
+    {
+      "kind": "workflow_error",
+      "summary": "A documentation-generation command lacked the parser environment in its new PowerShell process; rerun with the existing pinned local parser succeeded.",
+      "timing": "Within recorded adoption time; repair not separately timed",
+      "game_regression": false
+    },
+    {
+      "kind": "infrastructure",
+      "summary": "GitHub app PR update returned403 Resource not accessible by integration. Existing explicitly authorized supported Windows-backed GitHub connection updated the same PR successfully.",
+      "timing": "Within adoption time; no game execution failure",
+      "game_regression": false
+    }
+  ],
+  "bootstrap_scope": "This is an adoption pilot including pre-existing convoy graph maintenance. Initial research/authoring and final publication/reply are outside the captured interval; do not compare these phase times/tokens with from-zero feature trials.",
+  "tracker_direct_demonstration": "docs/evidence/workflow/tracker_direct_demonstration.json"
+}

@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "status": "Protocols prepared for later prospective comparison; no workflow winner established",
+  "common_contract": "docs/development_workflow.md",
+  "common_steps": ["Player outcome and fixed observation scope", "Current implementation graph and source review", "Freeze versioned plan before production edits", "Single-owner implementation", "Permitted direct checks only", "Maintain graph, technical review, Designer gameplay approval and merge"],
+  "protocols": [
+    {
+      "id": "graph-first-v1",
+      "status": "Initial baseline; resumed convoy work is a partial-history pilot",
+      "steps": ["Query affected atlas systems and function owners/callers/events", "Draw input-command-owner-event-view integration", "Record acceptance, invariants, cancellation/lifetime risks and unknowns", "Implement one bounded connected increment"],
+      "artifacts": ["Source revision and graph anchors", "Versioned integration diagram", "Small risk/example list", "Timing/token/defect journal"],
+      "hypothesis": "Tracing existing ownership before editing reduces integration mistakes and late special handling.",
+      "tradeoff": "Static graphs can be stale or miss dynamic calls; reading huge inventories adds cost. Query narrowly and verify important edges in source.",
+      "basis": "Our engineering adaptation of Godot scene ownership and the repository's existing atlas, not a standardized named method.",
+      "sources": ["https://docs.godotengine.org/en/stable/tutorials/best_practices/scene_organization.html"]
+    },
+    {
+      "id": "example-mapping-v1",
+      "status": "Candidate; compatible with current no-suite restriction",
+      "steps": ["Perform the common graph review", "Write the player story and its rules", "For each important rule write concrete input/state/outcome examples", "Separate unanswered questions and out-of-scope stories", "Resolve material gameplay questions with Designer; freeze examples and implement the bounded feature"],
+      "artifacts": ["Rule/example/question table", "Integration diagram", "Unresolved-question owner", "Common journal"],
+      "hypothesis": "Concrete examples reduce ambiguity and prevent missed repeat/cancel/stale-state cases before coding.",
+      "tradeoff": "Examples can miss lifecycle or resource-ownership hazards; the common graph review remains required. Large stories should be split rather than collect unlimited examples.",
+      "adaptation": "Use written examples as planning artifacts now; do not install Cucumber, write regression suites or claim executable BDD adoption.",
+      "sources": ["https://cucumber.io/docs/bdd/example-mapping/", "https://cucumber.io/blog/bdd/example-mapping-introduction/"]
+    },
+    {
+      "id": "integrated-slice-v1",
+      "status": "Candidate; compatible with current direct-check policy",
+      "steps": ["Perform the common graph review and draw the full intended connection", "Choose the smallest genuine input-to-visible-result slice", "Plan its ownership and failure boundaries before coding", "Integrate that slice through real services and perform one permitted direct check", "Plan the next slice from observed evidence; retain the original acceptance and all repair costs"],
+      "artifacts": ["End-to-end graph with first slice highlighted", "Slice acceptance", "Early direct receipt", "Versioned follow-on plan and common journal"],
+      "hypothesis": "Finding real integration failures early reduces the cost of connecting separately completed layers late.",
+      "tradeoff": "Small-slice integration adds overhead, and an oversimplified slice can hide custody, cancellation or real UI problems. Do not replace real services with grants or fake successful outcomes.",
+      "basis": "Adapted from Shape Up integrated slices and Pragmatic Programmer tracer-bullet guidance; not adoption of their full organizational process.",
+      "sources": ["https://basecamp.com/shapeup/3.2-chapter-11", "https://basecamp.com/shapeup/3.3-chapter-12", "https://pip.pragprog.com/tips/"]
+    },
+    {
+      "id": "risk-first-v1",
+      "status": "Candidate for costly cross-system changes",
+      "steps": ["Perform the common graph review", "Rank the few largest technical/behavioral unknowns by consequence and uncertainty", "Sketch the interaction flow and explicit exclusions", "Read engine documentation and investigate the highest-risk existing seam before implementation", "Record significant choice as context-decision-consequences-status; freeze plan and build a bounded slice"],
+      "artifacts": ["Short ranked risk list with evidence", "Interaction sketch", "One decision record only when architecturally significant", "Common journal"],
+      "hypothesis": "Resolving the largest known uncertainty before coding reduces abandoned implementations and costly architectural rework.",
+      "tradeoff": "Risk analysis can consume the feature budget or rationalize speculation. Use an explicit planning appetite, keep normal reversible decisions local, and record unresolved unknowns honestly.",
+      "adaptation": "A risky feasibility spike requires its own plan and permitted scoped evidence. No local engine or broad test campaign is implied, and a time appetite does not waive required behavior.",
+      "sources": ["https://basecamp.com/shapeup/1.3-chapter-04", "https://basecamp.com/shapeup/1.4-chapter-05", "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions"]
+    }
+  ],
+  "comparison_plan": {
+    "status": "Prepared only; no extra benchmark implementations authorized by this file",
+    "unit": "One bounded player-facing feature slice with versioned acceptance and comparable observation scope",
+    "start_conditions": ["Record feature size, affected owners and risk", "Record model/reasoning and tool versions", "Freeze protocol, acceptance, verification policy and source revision", "Capture time/token baseline before planning", "State observation window for later reports"],
+    "assignment": "Rotate protocols across comparable accepted feature slices. If replaying the same task later, use isolated identical baselines and record learning/order bias; do not replay in the shared game just to make a benchmark.",
+    "outcomes": ["Delivery and exclusive phase durations", "Confirmed regressions and feature defects by severity with evidence", "Planning-gap work and tracked repair time", "Actual input/cached/uncached/output/reasoning/total tokens including failed attempts", "Observed scope and open defect-reporting window", "Measurement overhead and external waiting"],
+    "analysis": "Show individual runs, sample sizes, ranges and totals before aggregate comparisons. Do not rank unlike features as causal evidence, treat zero observations as proof, or optimize token count at the cost of correct gameplay.",
+    "future_methods": "TDD/automated BDD can be considered after the existing verification restriction changes; they are not silently approximated by running a renamed regression suite now.",
+    "measurement_sources": ["https://dora.dev/guides/dora-metrics/", "https://learn.chatgpt.com/docs/non-interactive-mode", "https://developers.openai.com/blog/run-long-horizon-tasks-with-codex"]
+  }
+}

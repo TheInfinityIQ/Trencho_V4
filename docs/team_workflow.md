@@ -2,6 +2,13 @@
 
 ## Current working agreement — 9 November 2026
 
+Dawson resumed development after the MCP experiment and requested planning from
+the existing system graph before programming, plus feature-level time/token and
+observed-defect/repair accounting. Follow [development workflow](development_workflow.md).
+The [comparison protocols](workflow_experiments.json) are prepared for later use;
+their existence does not authorize extra benchmarks or regression suites. The
+Lead records scope/unknowns and keeps setup overhead separate from feature work.
+
 The Lead is the only programmer. The Lead performs technical review and owns
 implementation, validation, publication and merges. The Game Designer approves
 the current PR's game meaning; after that approval and required checks pass,
