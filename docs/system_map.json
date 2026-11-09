@@ -148,7 +148,7 @@
     ]},
     "docs/d03_people_capacity.md": {"role":"documentation","system":"docs","sha256":"d54f47d4ca68439e38d6d623c79cbebcc9626a26abcd42b756332b810c0f1a12","lines":324,"purpose":"Document D03 people and capacity decision v0.1.","functions":[
     ]},
-    "docs/design_brief.md": {"role":"documentation","system":"docs","sha256":"92125b985b0437f5f115098a6dbec1abdcae4ccca83988a1e1e00536b36cdc26","lines":75,"purpose":"Document Design brief.","functions":[
+    "docs/design_brief.md": {"role":"documentation","system":"docs","sha256":"82a9f0ad8260ffe3178b748105d9af80b0a88dcd06e7243e9ea59781f3e5ab13","lines":81,"purpose":"Document Design brief.","functions":[
     ]},
     "docs/design_decisions.md": {"role":"documentation","system":"docs","sha256":"cd65ac96e31cc15276e0279e02b1158fe808955dea53f3fd239ed83c969b175e","lines":68,"purpose":"Document Design decisions and readiness gates.","functions":[
     ]},
@@ -634,7 +634,7 @@
     ]},
     "docs/g24_vehicle_recovery.md": {"role":"documentation","system":"docs","sha256":"447736c289b3246883dbf226886dc678a84cba01a9360e1eb5f2d950a9c5b4f7","lines":35,"purpose":"Document G24 vehicle destruction and recovery.","functions":[
     ]},
-    "docs/game_design_document.md": {"role":"documentation","system":"docs","sha256":"66a079aed6a5012a6b9fd9b2b113908a3434e2e2158f1bc36d0683face9c2f9c","lines":134,"purpose":"Document Trencho V4 — Game Design Document.","functions":[
+    "docs/game_design_document.md": {"role":"documentation","system":"docs","sha256":"028eeff0d2d2ce703134d6490c6a3a43bc491554596c14df5ab92bd44cc50f74","lines":171,"purpose":"Document Trencho V4 — Game Design Document.","functions":[
     ]},
     "docs/github_project_management.md": {"role":"documentation","system":"docs","sha256":"59d52fb4a372079593a3a7902933bdeb5aa71a23bac4e8fc63251299fb4c324d","lines":45,"purpose":"Document GitHub Projects connection and repository cleanup.","functions":[
     ]},
