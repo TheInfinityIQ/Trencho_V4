@@ -33,6 +33,7 @@ var _active_suppliers: Dictionary = {}
 const ROAD_Y := 200.0
 const DROP_OFF := Vector2(120,200)
 var route: Callable
+var work_point: Callable # Optional rear owner reserves distinct physical service points.
 # Optional shared-store contract: returns currently legal free kilograms.
 var receiving_room: Callable
 var external_rear_reservations: Callable # G12 safety-return places held before lawful re-entry.
@@ -638,7 +639,11 @@ func _exit_passenger(order: Dictionary) -> void:
 	# Walking and population admission happen afterward, independently per person.
 	var id: String = order.passenger_ids[order.people_exited]
 	var origin: Vector2 = ledger.inspect_entity(order.id).position
-	var path: Array = _worker_path(origin, personnel_position) if route.is_valid() else [origin, Vector2(20, 96), PERSONNEL]
+	var destination: Vector2 = work_point.call(id,"personnel") if work_point.is_valid() else personnel_position
+	if not destination.is_finite():
+		order.next_at = _time+PASSENGER_EXIT_SECONDS
+		return # No free standing point: remain physically aboard.
+	var path: Array = _worker_path(origin, destination) if route.is_valid() else [origin, Vector2(20, 96), PERSONNEL]
 	_must(ledger.move_entity(id, "rear-lane", origin))
 	_walks.append({"order_id": order.id, "person_id": id, "path": path,
 		"started_at": _time, "ends_at": _time + _path_length(path) / 1.5})
@@ -660,14 +665,18 @@ func _start_worker_job(id: String) -> bool:
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
 			if quantity <= 0:
 				continue
+			var origin: Vector2 = ledger.inspect_entity(id).position
+			var pickup_at: Vector2 = work_point.call(id,order.id) if work_point.is_valid() else berth.berth
+			if not pickup_at.is_finite(): continue
+			var approach: Array = _worker_path(origin,pickup_at)
+			if approach.is_empty(): continue
 			_job_sequence += 1
 			var claim_id := "receiving-job-%04d" % _job_sequence
 			_must(ledger.request_stock(claim_id, source_id, quantity, id, "Physical Receiving unload", PLAYER))
 			var job := {"order_id": order.id, "source_id": source_id, "quantity": quantity,
 				"code": ledger.inspect_entity(source_id).design_type, "claim_id": claim_id,
 				"phase": "Approach", "started_at": _time, "slot":slot,"destination":berth.store}
-			var origin: Vector2 = ledger.inspect_entity(id).position
-			job.path = _worker_path(origin, berth.berth)
+			job.path = approach
 			job.ends_at = _time + _path_length(job.path) / 1.5
 			_workers[id].job = job
 			_event("Reserved source and destination before walking to pickup", claim_id)
@@ -684,9 +693,15 @@ func _finish_worker_phase(id: String) -> void:
 			job.ends_at = _time + 2.0
 			job.path = []
 		"Pickup":
+			var origin: Vector2 = ledger.inspect_entity(id,{},false).position
+			var destination: Vector2 = work_point.call(id,job.destination) if work_point.is_valid() else freight_berths[job.slot].receiving_position
+			var path: Array = _worker_path(origin,destination) if destination.is_finite() else []
+			if path.is_empty():
+				job.ends_at = _time+PASSENGER_EXIT_SECONDS
+				return # Keep claim at the truck until a real safe path/point exists.
 			_must(ledger.begin_carry(id, job.source_id, job.quantity, job.claim_id))
 			job.phase = "Carry"
-			job.path = _worker_path(freight_berths[job.slot].berth, freight_berths[job.slot].receiving_position) if route.is_valid() else [freight_berths[job.slot].berth, freight_berths[job.slot].receiving_position]
+			job.path = path
 			job.started_at = _time
 			job.ends_at = _time + _path_length(job.path) / 1.2
 		"Carry":

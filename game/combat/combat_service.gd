@@ -127,7 +127,7 @@ func request_reload(shooter_id: String, weapon_id: String, source_id: String, qu
 	if not claim.ok or ledger.inspect_claim(claim_id).reserved != quantity:
 		if claim.ok: ledger.release_claim(claim_id)
 		return _block("Matching local rounds could not be fully reserved for reload.")
-	reloads[weapon_id] = {"operator":shooter_id,"source":source_id,"quantity":quantity,"due":_rear().time+seconds,"claim":claim_id}
+	reloads[weapon_id] = {"operator":shooter_id,"source":source_id,"quantity":quantity,"due":_rear().time+seconds,"claim":claim_id,"started":_rear().time,"seconds":seconds}
 	return {"ok":true,"message":"Local reload committed for %.1f seconds." % seconds}
 
 func interrupt_reload(weapon_id: String) -> Dictionary:

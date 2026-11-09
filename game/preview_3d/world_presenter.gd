@@ -60,7 +60,7 @@ var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
 var _site_snapshot: Dictionary = {}
 var _facility_shells: RefCounted = FacilityShells.new()
-var _static_person_pose: Dictionary = {}
+var _character_speed := -1
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -113,7 +113,7 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	_markers_root.add_child(field_persons)
 	field_persons.changed.connect(_field_person_changed)
 	field_persons.removing.connect(_field_person_removing)
-	field_persons.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,_add_static_human)
+	field_persons.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,_add_soldier,model)
 	_markers_root.add_child(field_objectives)
 	field_objectives.changed.connect(_field_objective_changed)
 	field_objectives.removing.connect(_field_objective_removing)
@@ -140,7 +140,7 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	refresh_rear()
 	rear_workers.name = "RearWorkers"
 	rear_root.add_child(rear_workers)
-	rear_workers.bind(model,_add_human)
+	rear_workers.bind(model,_add_worker)
 	utility_trucks.name = "UtilityTrucks"
 	rear_root.add_child(utility_trucks)
 	utility_trucks.bind(model)
@@ -221,30 +221,24 @@ func _add_human(parent: Node3D, animated: bool = true) -> Node3D:
 	if animated: _bind_idle(visual)
 	return visual
 
-func _add_static_human(parent: Node3D) -> Node3D:
-	var visual: Node3D = _add_human(parent,_static_person_pose.is_empty())
-	var skeletons: Array[Node] = visual.find_children("*","Skeleton3D",true,false)
-	if skeletons.is_empty():
-		push_error("Provisional field person has no skeleton for the static pose.")
-		return visual
-	var target: Skeleton3D = skeletons[0] as Skeleton3D
-	if _static_person_pose.is_empty():
-		for index: int in target.get_bone_count():
-			_static_person_pose[str(target.get_bone_name(index))] = {"position":target.get_bone_pose_position(index),"rotation":target.get_bone_pose_rotation(index),"scale":target.get_bone_pose_scale(index)}
-	for child: Node in visual.find_children("*","AnimationPlayer",true,false):
-		var animator: AnimationPlayer = child as AnimationPlayer
-		animator.stop(true)
-		animator.get_parent().remove_child(animator)
-		animator.free()
-	# Reapply after disposal too; the cache contains no scene or animator references.
-	for bone: String in _static_person_pose:
-		var index: int = target.find_bone(bone)
-		if index < 0: continue
-		var pose: Dictionary = _static_person_pose[bone]
-		target.set_bone_pose_position(index,pose.position)
-		target.set_bone_pose_rotation(index,pose.rotation)
-		target.set_bone_pose_scale(index,pose.scale)
+func _add_worker(parent: Node3D) -> Node3D:
+	return _add_character(parent,"worker")
+
+func _add_soldier(parent: Node3D) -> Node3D:
+	return _add_character(parent,"soldier")
+
+func _add_character(parent: Node3D, kind: String) -> Node3D:
+	var visual: Node3D = (load("res://game/characters/"+kind+".tscn") as PackedScene).instantiate()
+	visual.simulation = simulation
+	visual.animation_enabled = kind != "soldier"
+	parent.add_child(visual)
 	return visual
+
+func sync_character_playback() -> void:
+	if _character_speed == simulation.speed: return
+	_character_speed = simulation.speed
+	rear_workers.sync_playback()
+	field_persons.sync_playback()
 
 func _asset(file: String, height: float) -> Node3D:
 	var model: PackedScene = load("res://game/preview_3d/assets/"+file)

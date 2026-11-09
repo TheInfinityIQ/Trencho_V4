@@ -1,0 +1,297 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+WARNING: Setting autoplay after the node has been added to the scene has no effect.
+     at: set_autoplay (scene/animation/animation_player.cpp:786)
+     GDScript backtrace (most recent call first):
+         [0] _ready (res://game/characters/character_visual.gd:29)
+         [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+         [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+         [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+         [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[StringName]".
+          at: _ready (res://game/characters/character_visual.gd:40)
+          GDScript backtrace (most recent call first):
+              [0] _ready (res://game/characters/character_visual.gd:40)
+              [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+              [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+              [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+              [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+WARNING: Setting autoplay after the node has been added to the scene has no effect.
+     at: set_autoplay (scene/animation/animation_player.cpp:786)
+     GDScript backtrace (most recent call first):
+         [0] _ready (res://game/characters/character_visual.gd:29)
+         [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+         [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+         [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+         [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[StringName]".
+          at: _ready (res://game/characters/character_visual.gd:40)
+          GDScript backtrace (most recent call first):
+              [0] _ready (res://game/characters/character_visual.gd:40)
+              [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+              [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+              [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+              [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+WARNING: Setting autoplay after the node has been added to the scene has no effect.
+     at: set_autoplay (scene/animation/animation_player.cpp:786)
+     GDScript backtrace (most recent call first):
+         [0] _ready (res://game/characters/character_visual.gd:29)
+         [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+         [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+         [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+         [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[StringName]".
+          at: _ready (res://game/characters/character_visual.gd:40)
+          GDScript backtrace (most recent call first):
+              [0] _ready (res://game/characters/character_visual.gd:40)
+              [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+              [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+              [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+              [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+WARNING: Setting autoplay after the node has been added to the scene has no effect.
+     at: set_autoplay (scene/animation/animation_player.cpp:786)
+     GDScript backtrace (most recent call first):
+         [0] _ready (res://game/characters/character_visual.gd:29)
+         [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+         [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+         [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+         [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[StringName]".
+          at: _ready (res://game/characters/character_visual.gd:40)
+          GDScript backtrace (most recent call first):
+              [0] _ready (res://game/characters/character_visual.gd:40)
+              [1] _add_character (res://game/preview_3d/world_presenter.gd:233)
+              [2] _add_worker (res://game/preview_3d/world_presenter.gd:224)
+              [3] _create_visual (res://game/preview_3d/rear_workers.gd:50)
+              [4] _refresh_membership (res://game/preview_3d/rear_workers.gd:33)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+[Calls/s] engine second 6 [6, 7):
+    1023  identity/identity_ledger.gd::inspect_entity
+      33  identity/identity_ledger.gd::person_is_alive
+      30  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       3  rear_base/base_demo.gd::_request_refresh
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  main/main.gd::_refresh_clock
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::map_markers
+       1  staffing/rear_simulation.gd::set_target
+[Scope wall time/us] engine second 6 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":124,"total":124},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":7313,"total":7884}}
+Normal configured main scene loaded: PASS
+Four actual new worker visuals at untouched paused opening: PASS
+Manager body starts outside Table: PASS
+Worker imported seven clips,33bones and paused playback: PASS
+Worker imported seven clips,33bones and paused playback: PASS
+Worker imported seven clips,33bones and paused playback: PASS
+Worker imported seven clips,33bones and paused playback: PASS
+Existing Purchase control creates one actual paid100kg order: PASS
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+[Calls/s] engine second 7 [7, 8):
+       8  main/game_session.gd::_physics_process
+       4  identity/identity_ledger.gd::inspect_entity
+       1  battlefield/battlefield_view.gd::_refresh
+       1  battlefield/battlefield_view.gd::_request_refresh
+       1  main/main.gd::_refresh_clock
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 7 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":112,"total":112},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3,"total":3},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":652,"total":652},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":726,"total":726}}
+[Calls/s] engine second 10 [10, 11):
+    4037  identity/identity_ledger.gd::inspect_entity
+    1000  identity/identity_ledger.gd::person_has_living_duty
+     888  identity/identity_ledger.gd::military_hull_ready_at
+     532  identity/identity_ledger.gd::person_ready_for_hq_issue
+     132  identity/identity_ledger.gd::active_formation_member_ids
+     100  identity/identity_ledger.gd::person_is_alive
+      89  staffing/rear_simulation.gd::_settle
+      68  battlefield/battlefield_view.gd::_request_refresh
+      68  main/main.gd::_refresh_clock
+      66  identity/identity_ledger.gd::ammunition_quantities_at
+      45  staffing/rear_simulation.gd::advance_time
+      26  rear_base/base_demo.gd::_request_refresh
+      11  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       1  main/game_session.gd::notify_command
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::after_command
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":100,"total":100},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":933,"total":933},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":1016,"total":1016},"staffing/rear_simulation.gd::_settle":{"calls":89,"maximum":16695,"total":235571}}
+Real Approach maps start-unloader-01 to authored walk: PASS
+Real Approach maps start-unloader-02 to authored walk: PASS
+Real Approach maps start-unloader-03 to authored walk: PASS
+Real Approach maps start-unloader-04 to authored walk: PASS
+Real Pickup maps start-unloader-01 to authored pickup: PASS
+Real Pickup maps start-unloader-02 to authored pickup: PASS
+Real Pickup maps start-unloader-03 to authored pickup: PASS
+Real Pickup maps start-unloader-04 to authored pickup: PASS
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+SCRIPT ERROR: Invalid assignment of property or key 'visible' with value of type 'bool' on a base object of type 'Nil'.
+          at: set_cargo (res://game/characters/character_visual.gd:89)
+          GDScript backtrace (most recent call first):
+              [0] set_cargo (res://game/characters/character_visual.gd:89)
+              [1] _apply_row (res://game/preview_3d/rear_workers.gd:80)
+              [2] _refresh_membership (res://game/preview_3d/rear_workers.gd:35)
+Real Carry maps start-unloader-01 to authored carry_walk: PASS
+Real Carry maps start-unloader-02 to authored carry_walk: PASS
+Real Carry maps start-unloader-03 to authored carry_walk: PASS
+Real Carry maps start-unloader-04 to authored carry_walk: PASS
+SCRIPT ERROR: Invalid access to property or key 'visible' on a base object of type 'Nil'.
+          at: run (res://.artifacts/current-change/entry_observer.gd:61)
+          GDScript backtrace (most recent call first):
+              [0] run (res://.artifacts/current-change/entry_observer.gd:61)
+              [1] frames (res://.artifacts/current-change/entry_observer.gd:12)
+[Calls/s] engine second 11 [11, 12):
+    4895  identity/identity_ledger.gd::inspect_entity
+    1090  identity/identity_ledger.gd::person_has_living_duty
+     992  identity/identity_ledger.gd::military_hull_ready_at
+     616  identity/identity_ledger.gd::person_ready_for_hq_issue
+     132  identity/identity_ledger.gd::active_formation_member_ids
+     109  identity/identity_ledger.gd::person_is_alive
+      98  staffing/rear_simulation.gd::_settle
+      77  battlefield/battlefield_view.gd::_request_refresh
+      77  main/main.gd::_refresh_clock
+      73  identity/identity_ledger.gd::ammunition_quantities_at
+      47  staffing/rear_simulation.gd::advance_time
+      30  rear_base/base_demo.gd::_request_refresh
+      11  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":5,"maximum":212,"total":249},"staffing/rear_simulation.gd::_settle":{"calls":98,"maximum":10600,"total":256494}}
+[Calls/s] engine second 12 [12, 13):
+       0  no instrumented calls
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":182,"total":182}}
+[Calls/s] engine second 13 [13, 14):
+       0  no instrumented calls
+[Scope wall time/us] engine second 13 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":102,"total":102}}
+[Calls/s] engine second 14 [14, 15):
+       0  no instrumented calls
+[Scope wall time/us] engine second 14 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":101,"total":101}}
+[Calls/s] engine second 15 [15, 16):
+       0  no instrumented calls
+[Scope wall time/us] engine second 15 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":105,"total":105}}
+[Calls/s] engine second 16 [16, 17):
+       0  no instrumented calls
+[Scope wall time/us] engine second 16 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":86,"total":86}}
+[Calls/s] engine second 17 [17, 18):
+       0  no instrumented calls
+[Scope wall time/us] engine second 17 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":215,"total":215}}
+[Calls/s] engine second 18 [18, 19):
+       0  no instrumented calls
+[Scope wall time/us] engine second 18 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":123,"total":123}}
+[Calls/s] engine second 19 [19, 20):
+       0  no instrumented calls
+[Scope wall time/us] engine second 19 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":89,"total":89}}
+[Calls/s] engine second 20 [20, 21):
+       0  no instrumented calls
+[Scope wall time/us] engine second 20 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":90,"total":90}}
+[Calls/s] engine second 21 [21, 22):
+       0  no instrumented calls
+[Scope wall time/us] engine second 21 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":118,"total":118}}
+[Calls/s] engine second 22 [22, 23):
+       0  no instrumented calls
+[Scope wall time/us] engine second 22 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":90,"total":90}}
+[Calls/s] engine second 23 [23, 24):
+       0  no instrumented calls
+[Scope wall time/us] engine second 23 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":89,"total":89}}
+[Calls/s] engine second 24 [24, 25):
+       0  no instrumented calls
+[Scope wall time/us] engine second 24 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":90,"total":90}}
+[Calls/s] engine second 25 [25, 26):
+       0  no instrumented calls
+[Scope wall time/us] engine second 25 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":82,"total":82}}
+[Calls/s] engine second 26 [26, 27):
+       0  no instrumented calls
+[Scope wall time/us] engine second 26 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":91,"total":91}}
+[Calls/s] engine second 27 [27, 28):
+       0  no instrumented calls
+[Scope wall time/us] engine second 27 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":89,"total":89}}
+[Calls/s] engine second 28 [28, 29):
+       0  no instrumented calls
+[Scope wall time/us] engine second 28 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":92,"total":92}}
+[Calls/s] engine second 29 [29, 30):
+       0  no instrumented calls
+[Scope wall time/us] engine second 29 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":89,"total":89}}
+[Calls/s] engine second 30 [30, 31):
+       0  no instrumented calls
+[Scope wall time/us] engine second 30 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":88,"total":88}}
+[Calls/s] engine second 31 [31, 32):
+       0  no instrumented calls
+[Scope wall time/us] engine second 31 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":123,"total":123}}
+[Calls/s] engine second 32 [32, 33):
+       0  no instrumented calls
+[Scope wall time/us] engine second 32 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":93,"total":93}}

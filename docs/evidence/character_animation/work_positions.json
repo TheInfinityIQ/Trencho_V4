@@ -1,0 +1,20 @@
+{
+	"actual_simulation_seconds": 36.75,
+	"carried_worker_ids": [
+		"start-unloader-01",
+		"start-unloader-04",
+		"start-unloader-02",
+		"start-unloader-03"
+	],
+	"checks": [
+		"Four actual present assigned starting unloaders: PASS",
+		"One paid100kg delivery accepted by normal Receiving command: PASS",
+		"All sampled real worker positions outside Table footprint: PASS",
+		"Four-worker approach/carry/drop sample keeps physical body separation: PASS",
+		"Each real unloader carries its own actual cargo through handling phases: PASS",
+		"Actual100kg deposited once and convoy gate reopens: PASS"
+	],
+	"minimum_sampled_separation_m": 1.01032793521881,
+	"result": "PASS",
+	"scope": "Focused empty-field rear model at1x with explicit0.25s elapsed intervals and one100kg order. No game commands beyond purchase, stock grants, model resets, animation claim, native input, full army scenario or FPS measurement."
+}

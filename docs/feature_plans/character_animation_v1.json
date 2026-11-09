@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "feature": "Animated soldier/worker integration and distinct rear work positions",
+  "workflow": "graph-first-v1",
+  "status": "Frozen before production edits, 9 November 2026",
+  "source_revision": "533473ffa1533cd61592b284f08b5cbd5bbc3d41",
+  "outcome": "Use the Artist's actual faceted animated character exports in the normal 3D game; actual movement, pickup/unloading, construction and military state drive presentation. Remove the four workers' exact Table-centre spawn and shared service endpoints.",
+  "ownership": {"artist": "Existing 3D Artist authors meshes, rigs, clips and export/visual/deformation evidence", "lead": "Godot integration, state mapping, service/work-position fixes, narrow CI observation, reviews and merge", "designer": "Game-meaning approval; existing requested playtest stages stay pending Dawson"},
+  "diagram": "docs/diagrams/character_animation.mmd",
+  "existing_sources": [
+    "main.tscn instances preview.tscn; common main.gd creates the shared scene-owned GameSession",
+    "rear_workers.gd binds ledger.entity_moved; membership/cargo rows refresh on existing coalesced session state events",
+    "field_persons.gd admits only FieldPolicy-permitted IDs and follows keyed movement/person events",
+    "world_presenter.gd currently gives workers the manager idle and strips animators from battlefield people",
+    "base_simulation.gd creates four starting unloaders at duty-receiving, whose physical point is exactly SUPPLY_TABLE",
+    "receiving_simulation.gd owns Approach1.5m/s, Pickup2s, Carry1.2m/s and Drop2s phases and real cargo transfer",
+    "rear_simulation.gd owns other reporting/haul phases and actual construction labour; legacy handling assumes exact centre colocation",
+    "identity_ledger.gd owns physical positions, stock/person identity and local transfer validation",
+    "combat_service.gd::fire commits actual rounds; squad_execution.gd owns actual infantry motions"
+  ],
+  "implementation": [
+    "Add one composed character visual/animation adapter using imported Artist clips, fixed cross-fades and cached state. Use AnimationPlayer for this finite exclusive clip set, not a speculative movement/animation framework.",
+    "Keep in-place skeleton clips; preserve Hips bob and bone-local motion. Game services retain world movement, deadlines, cargo, damage and construction authority. Animations cannot grant goods or complete work.",
+    "Use existing keyed movement/state events for rear/field transitions; add only a keyed actual-shot signal if needed. Cache imported clip/bone references. Pause freezes clips; speed changes scale them. Hidden visuals stop animation work without stopping gameplay services.",
+    "Bind real cargo cue to Artist's documented hand attachment; remove manager texture override from new characters. Keep manager identity and controls separate.",
+    "Give rear workers actual reserved service positions and distinct pickup/drop routes through the existing route owner. Define explicit handling access points for their physical holders; keep exact handling behavior for holders without registered points and preserve stock/claim/assignment validation.",
+    "Keep people outside Table geometry at spawn/report/arrival. Check moving and stationary separation in the changed four-worker unloading slice; revisit the shared position/route owner if routes still overlap rather than add visual-only offsets.",
+    "Preserve the existing main entry, paused opening, money/material quantities and four actual assigned unloaders. Existing root human/Artist edits remain untouched during branch work."
+  ],
+  "important_boundaries": [
+    {"case": "Animations unavailable or malformed", "response": "Do not call static files animated or ship fake clip fallbacks as completion. Inspect actual exports/names/durations/tracks, retain prior source and arrange only a brief changed-code import/runtime check."},
+    {"case": "Pause, speed, hidden view and session replacement", "response": "Use session events, disconnect removed presenters and stop presentation processing when hidden. Old callbacks cannot update a replaced world. No stock or simulation ownership in visual nodes."},
+    {"case": "Pickup/drop phase duration differs from clip", "response": "Phase owner wins. Scale/hold visual pose as needed; only actual cargo facts show the carried prop. Never use animation completion to transfer stock."},
+    {"case": "Dead/wounded/aboard/moving soldier", "response": "Actual health/assignment and permitted holder state win over movement/fire. Keep living casualties distinct from death, hide aboard people and never reveal unpermitted enemy identities."},
+    {"case": "Soldier model has no rifle", "response": "Preserve Artist's rifle-free character. A fire pose alone is not a visible complete weapon effect; do not fuse or invent an asset. Record attachment/readiness limits explicitly."},
+    {"case": "Reserved work point unavailable or blocked", "response": "Choose a clear alternative at command/phase boundaries using current physical routes and current reservations. Do not put multiple workers into a shared centre or widen all gameplay interaction ranges."},
+    {"case": "Small shipment leaves unloaders idle", "response": "25kg per-worker maximum is unchanged; idle unused labour is correct. Demonstrate at least100kg to make four independent real carries observable."},
+    {"case": "Actor reassignment/cancellation/arrival", "response": "Keep old handling reservation until safe deposit; release service-position reservations with ownership changes. Preserve incoming person positions instead of collapsing every arrival onto one centre."}
+  ],
+  "acceptance": [
+    "Actual animated worker and soldier exports imported, required named clips present and artist evidence recorded; new characters are used in normal main3D view.",
+    "In the changed normal opening, the manager and four worker bodies are outside Table geometry; four workers occupy distinguishable actual positions.",
+    "One focused100kg delivery exercise shows four actual workers approach/pick/carry/unload, real paid stock arrives once, work positions/routes remain separated where alternatives exist, pause freezes visual/timed work and normal work resumes.",
+    "Artist-supplied construction/idle and actual military movement/fire/wounded/death presentation are connected to supported current states, with unexercised cases explicitly recorded.",
+    "One bounded rendered GitHub current-change demonstration and changed-production parsing; no local Godot, regression suite, broad scenario or FPS campaign.",
+    "Maintain reviewed function map/UI diagram/atlas; exact-head Lead and actual Designer approval before merge; safely adopt disjoint root changes. Dawson's stages1/2 remain awaiting his playtest."
+  ],
+  "sources": [
+    "https://docs.godotengine.org/en/stable/classes/class_animationplayer.html",
+    "https://docs.godotengine.org/en/stable/tutorials/animation/animation_tree.html",
+    "https://docs.godotengine.org/en/stable/classes/class_navigationagent3d.html"
+  ],
+  "rationale": "AnimationPlayer supports the required exclusive clips and fixed cross-fades; AnimationTree remains available if actual layered/directional blending is required later. NavigationAgent requires navigation data and per-physics path updates; adding a second scene-owned movement authority would conflict with services that continue while views are hidden. Repair current physical service positions and routes first, measure actual changed behavior, and do not claim universal crowd avoidance or60FPS from source.",
+  "measurement": "Ignored character_animation journal tracks phases and actual reported Lead token deltas. Artist time/tokens are separate/unknown unless actual metadata is supplied. Current defects are pre-existing reported issues, not new regressions. Freeze amendments with evidence if the new physical handling boundary requires revision."
+}

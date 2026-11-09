@@ -1,6 +1,10 @@
 extends Node3D
 ## Read-only worker visuals. Ledger/service events own all physical state.
 var visuals: Dictionary[String,Node3D] = {}
+var bodies: Dictionary[String,Node3D] = {}
+var _roles: Dictionary[String,Label3D] = {}
+var _numbers: Dictionary[String,int] = {}
+var _next_number := 0
 var _rows: Dictionary = {}
 var _model: RefCounted
 var _ledger: RefCounted
@@ -38,6 +42,8 @@ func _refresh_membership() -> void:
 		remove_child(visual)
 		visual.queue_free()
 		visuals.erase(id)
+		bodies.erase(id)
+		_roles.erase(id)
 		_rows.erase(id)
 
 func _create_visual(id: String) -> void:
@@ -47,25 +53,20 @@ func _create_visual(id: String) -> void:
 	visuals[id] = visual
 	var body: Node3D = _human_factory.call(visual)
 	body.rotation.y = PI
+	bodies[id] = body
+	if not _numbers.has(id):
+		_next_number += 1
+		_numbers[id] = _next_number
 	_make_label(visual,"WorkerRole",2.15,Color("82e3b0"))
+	_roles[id] = visual.get_node("WorkerRole") as Label3D
 	_make_label(visual,"WorkerCargo",3.15,Color("f4cd7c"))
-	var cue: MeshInstance3D = MeshInstance3D.new()
-	cue.name = "CarryCue"
-	var box: BoxMesh = BoxMesh.new()
-	box.size = Vector3.ONE*0.35
-	cue.mesh = box
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = Color("b79b69")
-	material.roughness = 1.0
-	cue.material_override = material
-	cue.position = Vector3(0.5,1.0,0)
-	visual.add_child(cue)
 
 func _make_label(parent: Node3D, label_name: String, height: float, colour: Color) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = label_name
 	label.position.y = height
-	label.pixel_size = 0.012
+	label.pixel_size = 0.008
+	label.font_size = 22
 	label.modulate = colour
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
@@ -75,17 +76,38 @@ func _apply_row(row: Dictionary) -> void:
 	var visual: Node3D = visuals[row.id]
 	var at: Vector2 = row.position
 	visual.position = Vector3(at.x,0,at.y)
-	var role: Label3D = visual.get_node("WorkerRole") as Label3D
-	var duty: String = str(row.duty_id)
-	role.text = "Worker %s\n%s%s" % [row.id,row.assignment," · "+duty if not duty.is_empty() else ""]
 	var count: int = int(row.carried_count)
-	var cue: MeshInstance3D = visual.get_node("CarryCue") as MeshInstance3D
 	var cargo: Label3D = visual.get_node("WorkerCargo") as Label3D
-	cue.visible = count > 0
-	cargo.visible = cue.visible
-	cargo.text = "Carrying %s × %d" % [row.carried_type,count] if count > 0 else ""
+	cargo.visible = count > 0
+	cargo.text = "%s × %d" % [row.carried_type,count] if count > 0 else ""
 	visual.set_meta("carried_id",str(row.carried_id))
 	visual.set_meta("carried_count",count)
+	_sync_activity(row.id)
+	bodies[row.id].set_cargo(count)
+
+func _sync_activity(id: String) -> void:
+	var actor: Dictionary = _model.rear.actors[id]
+	var job: Dictionary = _model.receiving._workers.get(id,{}).get("job",{})
+	var phase: String = str(job.get("phase",actor.phase))
+	var label := "Worker %d\n%s" % [_numbers[id],phase]
+	if _roles[id].text != label: _roles[id].text = label
+	var moving: bool = not job.get("path",[]).is_empty() if not job.is_empty() else not actor.motion.is_empty()
+	var next: StringName = &"idle"
+	var speed := 0.0
+	if moving:
+		next = &"carry_walk" if phase.ends_with("Carry") or int(_rows[id].carried_count) > 0 else &"walk"
+		speed = 1.2 if next == &"carry_walk" else 1.5
+	elif phase == "Pickup": next = &"pickup"
+	elif phase == "Drop": next = &"unload"
+	elif int(_rows[id].carried_count) > 0: next = &"carry_idle"
+	elif str(_rows[id].duty_id).begins_with("builders-"):
+		var site: String = str(_rows[id].duty_id).trim_prefix("builders-")
+		if _model.rear.construction.instances.get(site,{}).get("state","") in ["Building","Dismantling"]: next = &"construct"
+	var started: float = float(job.get("started_at",actor.motion.get("started",-1.0)))
+	bodies[id].set_activity(next,speed,started,2.0 if next in [&"pickup",&"unload"] else 0.0)
+
+func sync_playback() -> void:
+	for body: Node3D in bodies.values(): body.sync_playback()
 
 func _on_entity_moved(id: String, start: Vector2, finish: Vector2) -> void:
 	if not visuals.has(id) or not finish.is_finite(): return
@@ -94,6 +116,7 @@ func _on_entity_moved(id: String, start: Vector2, finish: Vector2) -> void:
 	_rows[id].position = finish
 	var direction: Vector2 = finish-start
 	if not direction.is_zero_approx(): visual.rotation.y = atan2(-direction.x,-direction.y)
+	_sync_activity(id)
 
 func _disconnect_ledger() -> void:
 	if _ledger != null and _ledger.entity_moved.is_connected(_on_entity_moved):
@@ -105,3 +128,6 @@ func _exit_tree() -> void:
 	_disconnect_ledger()
 	_model = null
 	_human_factory = Callable()
+	bodies.clear()
+	_roles.clear()
+	_numbers.clear()

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "1b70d68cf64f04c3748d999db674b38d367ef743",
+  "reviewed_baseline": "db9edb5eec670836aa4ac3cccb782d77b911b486",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -237,7 +237,7 @@
         "combat",
         "production"
       ],
-      "notes": "inspect_entity is a query, not the game-loop controller. Many callers share the ledger because goods/people must retain identity across systems. Broad snapshots, narrow queries and mutation APIs coexist; this atlas does not measure their frequency.",
+      "notes": "inspect_entity is a query, not the game-loop controller. Many callers share the ledger because goods/people must retain identity across systems. Broad snapshots, narrow queries and mutation APIs coexist; this atlas does not measure their frequency. Explicit activity-owned per-person handling points permit real port arrival without widening global interaction distances. Actual person-held round release emits person_fired for read-only presentation.",
       "primary_files": [
         "game/identity/identity_ledger.gd",
         "game/identity/identity_records.gd"
@@ -329,7 +329,7 @@
       "title": "Staffing, reporting and priorities",
       "group": "People",
       "owner": "RearSimulation requests + actors",
-      "summary": "Requested staff, assignment and physical presence are separate. Shared people are rebalanced by duties/priorities and walk/report before contributing work. Development service eligibility includes the apron outside the unchanged construction rectangle.",
+      "summary": "Requested staff, assignment and physical presence are separate. Shared people are rebalanced by duties/priorities and walk/report before contributing work. Development service eligibility includes the apron outside the unchanged construction rectangle. Empty-field people reserve distinct physical service positions through RearWorkPositions; read-only route admission and actual commitment use the same point owner.",
       "nodes": [
         {
           "id": "n0",
@@ -366,6 +366,12 @@
           "label": "Validate actual person and service-strip eligibility",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_eligible"
+        },
+        {
+          "id": "work_points",
+          "label": "Choose reachable distinct physical work point",
+          "file": "game/staffing/rear_work_positions.gd",
+          "function": "point"
         }
       ],
       "edges": [
@@ -402,7 +408,7 @@
         "construction",
         "training"
       ],
-      "notes": "One person cannot fill two jobs at once. Newly completed facilities apply their starting request through Construction once; selecting or changing a recipe must not reset deliberate edits.",
+      "notes": "One person cannot fill two jobs at once. Newly completed facilities apply their starting request through Construction once; selecting or changing a recipe must not reset deliberate edits. Work points avoid Table/building geometry, preserve person identity and register explicit per-person handling access. Legacy unregistered handling keeps exact colocation. Reservations are not visual offsets or a universal crowd solver.",
       "primary_files": [
         "game/staffing/rear_simulation.gd",
         "game/staffing/rear_layout.gd",
@@ -605,7 +611,7 @@
         "hauling",
         "objectives"
       ],
-      "notes": "Resources and people are parallel order types, not mandatory sequential steps. Empty-field Supply Table has its own configured receiving arrangement; a Receiving Bay is not required for the first worker purchase. Credit from controlled resource objectives goes to this account.",
+      "notes": "Resources and people are parallel order types, not mandatory sequential steps. Empty-field Supply Table has its own configured receiving arrangement; a Receiving Bay is not required for the first worker purchase. Credit from controlled resource objectives goes to this account. Empty-field workers use reserved actual pickup/drop/arrival points and retain original handling durations/cargo claims. Actual arriving foot positions survive admission instead of collapsing onto the Table centre.",
       "primary_files": [
         "game/procurement/receiving_simulation.gd",
         "game/procurement/resource_catalog.gd"
@@ -3194,7 +3200,7 @@
       "title": "Default 3D rear view, placement and Workshop interaction",
       "group": "Presentation",
       "owner": "Preview + WorldPresenter + rear presenters",
-      "summary": "Main/F5 reuses this 3D scene around the same manager/session, actual site/Table E interactions, first/third-person views and overhead grid construction. Supplier visuals subscribe to Receiving state and keyed ledger movement; they do not own purchases or vehicle motion.",
+      "summary": "Main/F5 reuses this 3D scene around the same manager/session, actual site/Table E interactions, first/third-person views and overhead grid construction. Supplier visuals subscribe to Receiving state and keyed ledger movement; they do not own purchases or vehicle motion. Artist-supplied worker/soldier models replace provisional manager duplicates; CharacterVisual binds actual state to imported in-place clips and attachments.",
       "nodes": [
         {
           "id": "n0",
@@ -3311,7 +3317,8 @@
         "truck",
         "vehicles",
         "field3d",
-        "procurement"
+        "procurement",
+        "character_animation"
       ],
       "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS.",
       "primary_files": [
@@ -3401,7 +3408,7 @@
         "objectives",
         "preview"
       ],
-      "notes": "People, hulls and objectives are parallel presenters. Existing field_t01 paths support exactly T01/T02; their name is historical. T02 exterior is provisional commercial art, T03 detailed exterior deferred, objective transition runtime open.",
+      "notes": "People, hulls and objectives are parallel presenters. Existing field_t01 paths support exactly T01/T02; their name is historical. T02 exterior is provisional commercial art, T03 detailed exterior deferred, objective transition runtime open. People now retain Artist-supplied skeletons and clips, with detailed animation gated by visibility and zoom. The previous static-manager pose adapter is removed; permitted-ID admission remains unchanged.",
       "primary_files": [
         "game/preview_3d/field_persons.gd",
         "game/preview_3d/field_person_cues.gd",
@@ -3753,6 +3760,107 @@
       ],
       "notes": "base_demo is deliberately NOT classified here: it is mounted main UI. Optional scenes may instantiate independent simulations. Test files are listed under their subsystem in the source inventory, with retained-test classification; no test suite was executed.",
       "primary_files": []
+    },
+    {
+      "id": "character_animation",
+      "title": "Worker and soldier model animation",
+      "group": "Presentation",
+      "owner": "CharacterVisual with RearWorkers and FieldPersons",
+      "summary": "Actual activity/position facts select imported Artist clips. Game services retain world motion, stock custody, labour and shots. Bone-local cargo and a separate equipped rifle use the exported attachment matrices. Existing personal-weapon reload facts drive the seventh soldier clip at the actual reload duration; imported vertex palettes are explicitly enabled.",
+      "nodes": [
+        {
+          "id": "compose",
+          "label": "Compose imported character and cached animator",
+          "file": "game/characters/character_visual.gd",
+          "function": "_ready"
+        },
+        {
+          "id": "rear",
+          "label": "Map actual worker phase to clip",
+          "file": "game/preview_3d/rear_workers.gd",
+          "function": "_sync_activity"
+        },
+        {
+          "id": "field",
+          "label": "Update only permitted current soldier facts",
+          "file": "game/preview_3d/field_persons.gd",
+          "function": "_refresh"
+        },
+        {
+          "id": "state",
+          "label": "Select authored in-place action",
+          "file": "game/characters/character_visual.gd",
+          "function": "set_activity"
+        },
+        {
+          "id": "cargo",
+          "label": "Bind pickup-contact cargo presentation only",
+          "file": "game/characters/character_visual.gd",
+          "function": "_bind_cargo_tracks"
+        },
+        {
+          "id": "shot",
+          "label": "Real person-held loaded-round release",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "fire_loaded_round"
+        },
+        {
+          "id": "recoil",
+          "label": "Play keyed actual-shot recoil",
+          "file": "game/characters/character_visual.gd",
+          "function": "fire"
+        },
+        {
+          "id": "playback",
+          "label": "Pause speed and visibility/detail gating",
+          "file": "game/characters/character_visual.gd",
+          "function": "sync_playback"
+        }
+      ],
+      "edges": [
+        {
+          "from": "compose",
+          "to": "state",
+          "label": "cached clips and skeleton"
+        },
+        {
+          "from": "rear",
+          "to": "state",
+          "label": "rear phase facts"
+        },
+        {
+          "from": "field",
+          "to": "state",
+          "label": "health and motion facts"
+        },
+        {
+          "from": "state",
+          "to": "cargo",
+          "label": "presentation tracks only"
+        },
+        {
+          "from": "shot",
+          "to": "recoil",
+          "label": "keyed person_fired event"
+        },
+        {
+          "from": "state",
+          "to": "playback",
+          "label": "presentation lifetime"
+        }
+      ],
+      "related": [
+        "preview",
+        "field3d",
+        "staffing",
+        "procurement",
+        "identity",
+        "combat"
+      ],
+      "notes": "AnimationPlayer performs fixed cross-fades for this finite exclusive clip set; no extra animation-state polling, root-motion authority or animation-owned game mutation. Hips bone motion is preserved. Engine screen notifications disable hidden/offscreen evaluation; existing RTS projection events gate detailed animation at close zoom. Soldier wounded_idle is mapped explicitly. Source/Artist QA and narrow integration evidence do not establish every action, universal avoidance, native input or FPS.",
+      "primary_files": [
+        "game/characters/character_visual.gd"
+      ]
     }
   ],
   "overview": [
@@ -3875,6 +3983,11 @@
       "from": "identity",
       "to": "field3d",
       "label": "permitted physical facts"
+    },
+    {
+      "from": "preview",
+      "to": "character_animation",
+      "label": "actual state and imported visual clips"
     }
   ],
   "file_owners": {
@@ -3999,20 +4112,22 @@
     "game/vehicle_recovery/recovery_demo.gd": "reviews",
     "game/vehicle_recovery/recovery_fixture.gd": "reviews",
     "game/world_probe/full_size_probe.gd": "reviews",
-    "game/preview_3d/supplier_convoys.gd": "preview"
+    "game/preview_3d/supplier_convoys.gd": "preview",
+    "game/staffing/rear_work_positions.gd": "staffing",
+    "game/characters/character_visual.gd": "character_animation"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
     "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
-    "game/rear_base/base_simulation.gd": "85cc1b837253550e3fea7c0e74dabf355d22a496ac25a6b03435469c7c4c46a9",
-    "game/identity/identity_ledger.gd": "df9fb95cb861da36c6add7ddd72b9d46e778e269c93f8762d9a1e407a5f0a622",
+    "game/rear_base/base_simulation.gd": "123e1ce48e110a98a89ffe787a0625bcc412a2a85542262bf783a17c71904c7a",
+    "game/identity/identity_ledger.gd": "7fce26d3dd685fc1e8c97b70d439bb25b1256242f4af1ef94c94d6506b81dcb8",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "50b1d266c6e2ae8eb43ebf2d193044c5a9ae3b8531874be2f956afaf4beb4948",
+    "game/staffing/rear_simulation.gd": "9bf07fd9aad21b9bd7284c474d2d76fb5d1090a56887612ecaf05e81e22ae387",
     "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "b46c710f2b0043ce1074d55f37081812601577b422201497d7dde7094122929c",
+    "game/procurement/receiving_simulation.gd": "b16931c007e49f3a05108747c57793035dc8f43026e301ffe754b8bd17d87ac9",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "fe1b3023f184f3614f59016dc46af69e8e8e1e4c536e952b7149f7efaafb5109",
+    "game/construction/construction_service.gd": "13d0ce6bf86a56b71f0dfb4bd4a405c00ca09cab67b63f5f81bc3c7def2f9c16",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
     "game/construction/construction_truck_service.gd": "63494a47faaa162a10c3b7c0cd75ace2485a5fe4d732e05971460a43983323e9",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
@@ -4044,7 +4159,7 @@
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/forward_supply/forward_transport.gd": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
     "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
-    "game/combat/combat_service.gd": "c82a1f68195f8aa5cae2ae0f71cea122742117526485c09218be1ed40bc4255b",
+    "game/combat/combat_service.gd": "3b3b71cf7799b5628fc147e4413b589b52431c96b97b7dff0ff6df3d22dcf317",
     "game/vehicle_combat/vehicle_combat_service.gd": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
     "game/vehicle_recovery/recovery_service.gd": "f7d9eadec3ebc34fcda8c52da6b4e3daad7ae49f7975b889810b021331a486b8",
     "game/objectives/objective_service.gd": "3813bb06210d95e7a154953d19e50f4e4b4e377d559f15074a493ef3df3a94c1",
@@ -4072,15 +4187,15 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "63a1d356633cfa7c2d36231a11d8af2edd39f6237a4e5fed28b939dbca62ad48",
-    "game/preview_3d/world_presenter.gd": "64cb7bfd80d3fa5fa546c4ff51a0b211d904697e52408c79f8b7c3dd700d3494",
+    "game/preview_3d/preview.gd": "569f69747685701ba3235620c7ad23dc4fd911a31f7757cdec08e015b3cac958",
+    "game/preview_3d/world_presenter.gd": "8e39671374084e94cd5c96c233f78984ea3ba623b0b5d8847491d142c60d1b2f",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
-    "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",
+    "game/preview_3d/rear_workers.gd": "f40d4318d15ae7d56831aed4e3356357a68b85b24841484c293e9c82e214ab34",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
     "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
     "game/preview_3d/t01_presentation.gd": "f03c89b76313136d0c4770039576e7b521158b1324624dbb747bef16bce7d1a0",
     "game/preview_3d/t02_presentation.gd": "345bc2f10909b6be66fee144c85c14f265d74c912837b3f4f3df7c4225f322f4",
-    "game/preview_3d/field_persons.gd": "dde50b1da6ab016e4256465a2e9a8f8021f7f73f1cf06838c33ffa0b0f57c256",
+    "game/preview_3d/field_persons.gd": "edf170f596e798cb9b3b16137f7f4462e1adbd8800ba43bdfd6592b091338249",
     "game/preview_3d/field_person_cues.gd": "f9033097ee9b8d6162db2cf0e2b8da737adc6dde93778cfd64d51a6d6713d3f5",
     "game/preview_3d/field_t01_trucks.gd": "62c5552105132b1243316acd15c2a40376cecdb61c7f2571cdf7bd640d4e02bb",
     "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
@@ -4123,6 +4238,8 @@
     "game/vehicle_recovery/recovery_demo.gd": "8292d13e3a10eb020a5e9765bcac1b443ea11bdee18f7f2eaac6a3a1aa071843",
     "game/vehicle_recovery/recovery_fixture.gd": "d00db52dd4226a33509c35711d571772e5858ea6372c56ce17159ca5ede6d0e7",
     "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721",
-    "game/preview_3d/supplier_convoys.gd": "55b72ca1e3394c33f809110b8c67269cf7630dbdde077e46bd1523e00c310b3b"
+    "game/preview_3d/supplier_convoys.gd": "55b72ca1e3394c33f809110b8c67269cf7630dbdde077e46bd1523e00c310b3b",
+    "game/characters/character_visual.gd": "44635f9f3918115d0474c574acc10942e22f3f64f3d2f0f35ceebd7c5467310c",
+    "game/staffing/rear_work_positions.gd": "d3d90028ddfccdc22a220bae6768193826acdeb2647b0a23b09cb1f10aa1a08c"
   }
 }

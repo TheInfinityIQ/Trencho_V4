@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "amends": "character_animation_v2.json",
+  "recorded": "9 November 2026, actual integration/source/image review",
+  "preserved_prior_plans": true,
+  "findings": [
+    {"id": "ready-typed-array", "outcome": "First actual rendered startup exposed runtime ternary Array-to-Array[StringName] assignment failure. It aborted cargo attachment initialization; later nil errors share that root. Fixed initializer typing and ineffective late autoplay assignment. Same-deadline rerun passed. Parsing alone was insufficient."},
+    {"id": "vertex-palette", "outcome": "The passing phase/clip receipt's actual soldier image was white. Source GLBs contain varied COLOR_0 palettes; bind Vertex Color UseAsAlbedo on new-model materials, including a mesh-root prop. Actual corrected images are required before appearance approval."},
+    {"id": "soldier-reload-coverage", "outcome": "Designer found existing Combat reload absent from the original six-action scope. Artist supplied a seventh3s clip with identical preceding six exported clip bytes. Expose existing reload start/duration facts, scale to its actual3/4/6/12s deadline and preserve actual local ammunition custody. No rules/timers changed."},
+    {"id": "worker-capture", "outcome": "Diagnostic spring-arm camera was reset by its owner and missed workers. Use an observer-only camera framing existing actors, not actor relocation or a production camera change. The old worker photo does not establish appearance."}
+  ],
+  "readability": "Give current workers short stable display numbers and phase labels, retaining complete ledger person IDs in metadata/management. Avoid long overlapping technical identity labels obscuring whether four actual bodies exist; no menu redesign or consultant gate.",
+  "remaining_work": "Inspect corrected rendered worker/soldier/reload captures and actual receipt; maintain living purposes/diagrams, final exact-head technical and Designer approval, merge and safe main adoption preserving Artist/human work.",
+  "limits": "Artist/source/imported action completeness for this increment is distinct from every implemented military/support action being animated. Existing specialised treatment/engineering variants, native input, broad crowd scenarios, full loop and60FPS remain unverified or future work. No new regression suite or raised test deadline."
+}

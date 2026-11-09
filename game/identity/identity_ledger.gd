@@ -4,7 +4,9 @@ signal person_position_changed(person_id: String)
 signal vehicle_damaged(vehicle_id: String)
 signal vehicle_facing_changed(vehicle_id: String)
 signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
+signal person_fired(person_id: String)
 var route_hazard: Callable
+var _handling_points: Dictionary = {} # Holder -> person -> explicit local service point.
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
 ## physical handling boundary; they do not simulate routes, loading time or courses.
 
@@ -405,8 +407,20 @@ func field_person_view(id: String, owner: String) -> Dictionary:
 	if not at.is_finite(): return {}
 	return {"id":id,"position":at,"holder_id":person.holder_id,"ancestors":ancestors,
 		"health":person.health,"assignment":Records.ASSIGNMENT_NAMES[person.assignment],
+		"state_entered_at":person.state_entered_at,
 		"dead":person.assignment == Records.Assignment.DEAD,
 		"caution":person.assignment in [Records.Assignment.WOUNDED,Records.Assignment.RECOVERY]}
+
+func field_person_armament(ids: Array, owner: String) -> Dictionary:
+	# One bounded batch per existing presentation reconciliation, never a
+	# full inventory scan for every moved person or animation frame.
+	var selected: Dictionary = {}
+	for id: String in ids: selected[id] = false
+	if selected.is_empty(): return selected
+	for entity: Records.Entity in _entities.values():
+		if entity.kind == Records.Kind.WEAPON and entity.owner == owner and selected.has(entity.holder_id) and entity.design_type in ["E01","E05","E19"]:
+			selected[entity.holder_id] = true
+	return selected
 
 
 func battlefield_markers(owner: String) -> Array[Dictionary]:
@@ -709,12 +723,14 @@ func complete_person_arrival(id: String, place_id: String, owner: String) -> Dic
 		return _reject("NOT_ARRIVING_PASSENGER", "Only an arriving passenger can complete this receiving boundary.")
 	if not _is_place(person.holder_id) or not _is_place(place_id) or not _colocated(id, place_id):
 		return _reject("NOT_DISEMBARKED", "The person must finish their own movement to the personnel arrival point.")
+	var arrived_at := _world_position(id)
 	person.holder_id = place_id
-	person.position = Vector2.ZERO
+	person.position = arrived_at-_world_position(place_id)
 	person.owner = owner
 	person.controller = owner
 	person.rear_place = "Occupied"
 	_set_assignment(person, Records.Assignment.AVAILABLE, "")
+	person_position_changed.emit(id)
 	return _ok("The same disembarked person is now available in the receiving owner's rear.", id)
 
 
@@ -1339,6 +1355,7 @@ func fire_loaded_round(weapon_id: String) -> Dictionary:
 				entity.state_entered_at = _time
 			_consumed[entity.design_type] = _consumed.get(entity.design_type,0) + 1
 			_event("One loaded round fired from " + weapon_id, entity.id)
+			if _person(weapon.holder_id) != null: person_fired.emit(weapon.holder_id)
 			return _ok("One actual loaded round consumed at release.", entity.id)
 	return _reject("EMPTY_WEAPON", "No matching round is loaded in this weapon; stock elsewhere cannot fire it.")
 
@@ -2056,10 +2073,32 @@ func _world_position(id: String) -> Vector2:
 	return entity.position + _world_position(entity.holder_id)
 
 
+func register_handling_point(holder_id: String, person_id: String, at: Vector2) -> void:
+	# The activity reserves a real reachable work point; this is not a global
+	# distance tolerance or permission to transfer before physical arrival.
+	assert(_entities.has(holder_id) and _person(person_id) != null and at.is_finite())
+	assert(_entities[holder_id].kind in [Records.Kind.PLACE,Records.Kind.CARRIER])
+	if not _handling_points.has(holder_id): _handling_points[holder_id] = {}
+	_handling_points[holder_id][person_id] = at-_world_position(holder_id)
+
+func release_handling_points(person_id: String) -> void:
+	for holder: String in _handling_points.keys():
+		_handling_points[holder].erase(person_id)
+		if _handling_points[holder].is_empty(): _handling_points.erase(holder)
+
+func _at_handling_point(person_id: String, entity_id: String) -> bool:
+	var person: Records.Person = _person(person_id)
+	if person == null and _entities.has(person_id):
+		person = _person(_entities[person_id].holder_id) # Carried stock follows its real person.
+	if person == null: return false
+	var target: Records.Entity = _entities.get(entity_id)
+	if target != null and target.kind == Records.Kind.STOCK: target = _entities.get(target.holder_id)
+	if target == null or not _handling_points.get(target.id,{}).has(person.id): return false
+	return _world_position(person.id).is_equal_approx(_world_position(target.id)+_handling_points[target.id][person.id])
+
 func _colocated(first_id: String, second_id: String) -> bool:
-	# Accounting fixture commits at the same physical point. Actual route and
-	# timed handoff eligibility is supplied by later hauling/combat activities.
-	return _world_position(first_id).is_equal_approx(_world_position(second_id))
+	if _world_position(first_id).is_equal_approx(_world_position(second_id)): return true
+	return _at_handling_point(first_id,second_id) or _at_handling_point(second_id,first_id)
 
 
 func _free_id(id: String) -> bool:

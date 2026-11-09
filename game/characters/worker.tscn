@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/characters/character_visual.gd" id="1"]
+[ext_resource type="PackedScene" path="res://game/characters/assets/construction_worker.glb" id="2"]
+
+[node name="WorkerVisual" type="Node3D"]
+script = ExtResource("1")
+carry_transform = Transform3D(0.06471848487854004, 0.06485669314861298, 0.9957941174507141, 0.9978947043418884, 2.7008847609977238e-05, -0.06485675275325775, -0.004233347252011299, 0.9978950619697571, -0.06471826136112213, 0.037897299975156784, 0.08813835680484772, 0.1976626217365265)
+
+[node name="Model" parent="." instance=ExtResource("2")]

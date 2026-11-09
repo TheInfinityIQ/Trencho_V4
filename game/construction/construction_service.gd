@@ -176,6 +176,9 @@ func walking_path(start: Vector2, goal: Vector2, candidate: Rect2 = Rect2()) -> 
 
 func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: Rect2, clearance: float) -> Array:
 	var boxes: Array[Rect2] = []
+	var rear: RefCounted = _rear_ref.get_ref()
+	if rear.empty_field_opening and clearance < 1.0:
+		boxes.append(Rect2(rear.SUPPLY_TABLE-Vector2(1.29,0.69),Vector2(2.58,1.38)).grow(clearance))
 	for row in instances.values():
 		if row.id in ignored or row.kind == "park" or row.state in ["Cancelled","Dismantled"]: continue
 		boxes.append(Rect2(row.center-row.size/2.0,row.size).grow(clearance))
