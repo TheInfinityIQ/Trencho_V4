@@ -26,6 +26,7 @@ const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
+const ConstructionSiteVisual = preload("res://game/construction/visuals/construction_site_visual.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_workers: RearWorkers = RearWorkers.new()
 var utility_trucks: UtilityTrucks = UtilityTrucks.new()
@@ -59,6 +60,7 @@ var _proxy_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
 var _site_snapshot: Dictionary = {}
+var _site_visuals: Dictionary = {}
 var _facility_shells: RefCounted = FacilityShells.new()
 var _character_speed := -1
 
@@ -239,6 +241,8 @@ func sync_character_playback() -> void:
 	_character_speed = simulation.speed
 	rear_workers.sync_playback()
 	field_persons.sync_playback()
+	for visual: Node3D in _site_visuals.values():
+		if is_instance_valid(visual): visual.sync_speed()
 
 func _asset(file: String, height: float) -> Node3D:
 	var model: PackedScene = load("res://game/preview_3d/assets/"+file)
@@ -348,7 +352,15 @@ func refresh_rear() -> bool:
 		next[row.id] = [row.center,row.size,row.state,goods,row.kind,row.door,row.quarter_turn]
 	if next == _site_snapshot: return false
 	_site_snapshot = next
+	for id: String in _site_visuals.keys():
+		var visual: Node3D = _site_visuals[id]
+		if next.has(id) and next[id][2] not in ["Cancelled","Dismantled"] and is_instance_valid(visual) and not visual.is_queued_for_deletion(): continue
+		if is_instance_valid(visual):
+			_collision_root.remove_child(visual)
+			visual.queue_free()
+		_site_visuals.erase(id)
 	for child in _collision_root.get_children():
+		if child.has_meta("persistent_site"): continue
 		_collision_root.remove_child(child)
 		child.queue_free()
 	for row in simulation.rear.construction.instances.values():
@@ -357,19 +369,26 @@ func refresh_rear() -> bool:
 				_box(_collision_root,Vector3(row.center.x,0.04,row.center.y),Vector3(row.size.x,0.08,row.size.y),Color(0.95,0.7,0.3,0.4))
 				_label(_collision_root,"%s · %s · goods await hauling" % [row.id,row.state],Vector3(row.center.x,1.5,row.center.y),0.02)
 			continue
-		var exterior: Dictionary = _facility_shells.build(row)
-		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),true)
+		var exterior: Dictionary = _site_visuals[row.id].exterior if _site_visuals.has(row.id) else _facility_shells.build(row,true)
+		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),row.kind != "park")
 		reservation.set_meta("site_id",str(row.id))
 		var label_at: Vector3 = Vector3(row.center.x,4.5,row.center.y)
 		var description: String = "provisional volume"
 		if exterior.ok:
 			reservation.hide() # Existing layer1 ground reservation still blocks walking.
-			var shell: Node3D = exterior.node
-			_collision_root.add_child(shell)
-			var label_offset: Vector3 = exterior.label_anchor
+			if not _site_visuals.has(row.id):
+				var visual := ConstructionSiteVisual.new()
+				visual.simulation = simulation
+				visual.site_id = str(row.id)
+				visual.exterior = exterior
+				visual.footprint = row.size
+				visual.position = Vector3(row.center.x,0,row.center.y)
+				visual.set_meta("persistent_site",true)
+				_site_visuals[row.id] = visual
+				_collision_root.add_child(visual)
+			else: _site_visuals[row.id].reconcile()
 			_mark_facility_approach(row,exterior.entrance)
-			label_at = shell.position + label_offset
-			description = str(row.kind) + " · exterior"
+			continue # The persistent visual owns its progress label and ceremony.
 		elif row.state == "Complete":
 			description += " · " + str(exterior.reason)
 		var site_label: Label3D = _label(_collision_root,"%s · %s · %s" % [row.id,row.state,description],label_at,0.02)

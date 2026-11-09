@@ -10,7 +10,7 @@
   "fixed_acceptance": [
     {
       "id": "PC01",
-      "criterion": "Ordinary main-scene launch preserves the approved paused empty field, player position, 2500 requisition, 500 M11, real worker purchase/arrival and current UI."
+      "criterion": "Ordinary main-scene launch preserves the approved empty field at1x, player position, 2500 requisition, 500 M11, real worker purchase/arrival and current UI."
     },
     {
       "id": "PC02",

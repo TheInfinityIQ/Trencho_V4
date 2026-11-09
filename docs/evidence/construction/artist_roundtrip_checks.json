@@ -1,0 +1,124 @@
+{
+  "pylon": {
+    "mesh_instances": 1,
+    "skins": 0,
+    "source_export_open_bounds_max_error_m": 0.0,
+    "vertex_color_layers": {
+      "SM_Construction_Pylon.001": [
+        "Color"
+      ]
+    },
+    "actions": []
+  },
+  "scissors": {
+    "mesh_instances": 1,
+    "skins": 1,
+    "source_export_open_bounds_max_error_m": 0.0,
+    "vertex_color_layers": {
+      "SK_Completion_Scissors.001": [
+        "Color"
+      ]
+    },
+    "actions": [
+      {
+        "name": "open_idle",
+        "duration_s": 0.5999999364217122
+      },
+      {
+        "name": "snip",
+        "duration_s": 0.4
+      }
+    ],
+    "rig_scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "bones": [
+      "Root",
+      "Blade_A",
+      "Blade_B",
+      "Hinge"
+    ],
+    "snip_observed": [
+      {
+        "seconds": 0.0,
+        "bounds": [
+          [
+            -0.12415702641010284,
+            -0.014000000432133675,
+            -0.12457878142595291
+          ],
+          [
+            0.12415702641010284,
+            0.014000000432133675,
+            0.14954079687595367
+          ]
+        ],
+        "actual_inner_blade_tip_x_gap_m": 0.13946399092674255
+      },
+      {
+        "seconds": 0.2,
+        "bounds": [
+          [
+            -0.0820000022649765,
+            -0.014000000432133675,
+            -0.1550000011920929
+          ],
+          [
+            0.0820000022649765,
+            0.014000000432133675,
+            0.16500000655651093
+          ]
+        ],
+        "actual_inner_blade_tip_x_gap_m": 0.0
+      },
+      {
+        "seconds": 0.4,
+        "bounds": [
+          [
+            -0.0820000022649765,
+            -0.014000000432133675,
+            -0.1550000011920929
+          ],
+          [
+            0.0820000022649765,
+            0.014000000432133675,
+            0.16500000655651093
+          ]
+        ],
+        "actual_inner_blade_tip_x_gap_m": 0.0
+      }
+    ],
+    "cut_target_blender_m": [
+      0.0,
+      0.0,
+      0.07500000298023224
+    ]
+  },
+  "tape_half": {
+    "mesh_instances": 1,
+    "skins": 0,
+    "source_export_open_bounds_max_error_m": 0.0,
+    "vertex_color_layers": {
+      "SM_Construction_Tape_Half.001": [
+        "Color"
+      ]
+    },
+    "actions": []
+  },
+  "tape_span": {
+    "mesh_instances": 2,
+    "skins": 0,
+    "source_export_open_bounds_max_error_m": 0.0,
+    "vertex_color_layers": {
+      "Tape_Half_Left.001": [
+        "Color"
+      ],
+      "Tape_Half_Right.001": [
+        "Color"
+      ]
+    },
+    "actions": []
+  }
+}

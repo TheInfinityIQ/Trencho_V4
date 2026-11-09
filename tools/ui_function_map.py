@@ -237,12 +237,17 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
             (CONSTRUCTION, 'preview', 'Recheck the clicked pose and all access rules', ''),
             (CONSTRUCTION, 'order_materials', 'Request materials in the empty-field opening', ''),
         ]),
-        ('construction-work', 'Build: materials and workers → progress', 'Later simulation work. Placement does not immediately complete a facility.', [
+        ('construction-work', 'Build: real materials and workers → earned reveal', 'Partial local material permits proportionate earned builder work. Keyed site events update persistent visuals; cosmetic completion never gates capability. Source-derived ownership, not a runtime trace.', [
             (CONSTRUCTION, 'set_builders', 'Request construction workers', ''),
             (REAR, 'advance_time', 'Advance shared time and service work', ''),
             (CONSTRUCTION, '_ready', 'Require local materials and present builders', ''),
-            (CONSTRUCTION, 'advance_work', 'Consume starting materials and earn work', ''),
+            (CONSTRUCTION, '_material_ceiling', 'Cap work by cumulative real material', ''),
+            (CONSTRUCTION, 'advance_work', 'Consume incrementally and emit earned progress', ''),
+            ('game/construction/visuals/construction_site_visual.gd', '_site_changed', 'Reveal actual built height and unfinished hologram', ''),
             (CONSTRUCTION, 'settle', 'Finish and register the completed facility', ''),
+            ('game/construction/visuals/construction_celebration.gd', 'start', 'Fade and swoop four authored scissors', ''),
+            ('game/construction/visuals/construction_celebration.gd', '_release_tape', 'Release finite cosmetic ribbon physics at snip', ''),
+            ('game/construction/visuals/construction_celebration.gd', '_ground_contact', 'Ground contact triggers timed pylon cleanup', ''),
         ]),
         ('production-inputs', 'Work: automatically haul the next batch inputs', 'The selected staffed facility declares its actual missing inputs. Committed changes wake a finite pass; the existing hauling owner still reserves, walks, carries and deposits goods. Source-derived branches, not a runtime trace.', [
             ('game/production/fixed_production.gd', 'set_stock_target', 'Request a production stock target', ''),
@@ -391,7 +396,7 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
                    (BASE, '_request_construction_cancel', 'Selected-site loss disclosure and Keep choice', ''),
                    (BASE, '_confirm_construction_cancel', 'Consume and validate the current site decision', ''),
                    (CONSTRUCTION, 'cancel', 'Actual site cancellation and physical stock recovery', ''),
-                   (world_3d, 'refresh_rear', 'Committed site/material proxies, not final facility art', '')]))
+                   (world_3d, 'refresh_rear', 'Preserve site reveal/ceremony while reconciling geometry', '')]))
     specs.append(('3d-rts-inspection', '3D preview: RTS observation and permitted inspection',
                   'Independent pan/zoom observes permitted friendly and reported/stale-contact data. Camera changes neither issue army orders nor reset the rear character.',
                   [(preview_3d, '_show_battlefield', 'Switch observation without replacing the session', ''),

@@ -1,0 +1,77 @@
+{
+  "pylon": {
+    "scenes": [
+      "Construction_Pylon"
+    ],
+    "actions": [],
+    "objects": [
+      "Tape_Anchor",
+      "SM_Construction_Pylon",
+      "Construction_Rim",
+      "Construction_Review_Floor",
+      "Construction_Review_Camera",
+      "Construction_Key",
+      "Construction_Fill"
+    ],
+    "images": [],
+    "bytes": 72501
+  },
+  "scissors": {
+    "scenes": [
+      "Construction_Scissors"
+    ],
+    "actions": [
+      "snip",
+      "open_idle"
+    ],
+    "objects": [
+      "SK_Completion_Scissors",
+      "Scissors_Leaf_B",
+      "Scissors_Leaf_A",
+      "Scissors_Hinge_Pin",
+      "RIG_Completion_Scissors",
+      "Cut_Target",
+      "Construction_Rim",
+      "Construction_Review_Floor",
+      "Construction_Review_Camera",
+      "Construction_Key",
+      "Construction_Fill"
+    ],
+    "images": [],
+    "bytes": 87843
+  },
+  "tape_half": {
+    "scenes": [
+      "Construction_Tape_Half"
+    ],
+    "actions": [],
+    "objects": [
+      "SM_Construction_Tape_Half",
+      "Construction_Rim",
+      "Construction_Review_Floor",
+      "Construction_Review_Camera",
+      "Construction_Key",
+      "Construction_Fill"
+    ],
+    "images": [],
+    "bytes": 70002
+  },
+  "tape_span": {
+    "scenes": [
+      "Construction_Tape_Span"
+    ],
+    "actions": [],
+    "objects": [
+      "Tape_Half_Right",
+      "Tape_Half_Left",
+      "Construction_Tape_Span",
+      "Construction_Rim",
+      "Construction_Review_Floor",
+      "Construction_Review_Camera",
+      "Construction_Key",
+      "Construction_Fill"
+    ],
+    "images": [],
+    "bytes": 70059
+  }
+}

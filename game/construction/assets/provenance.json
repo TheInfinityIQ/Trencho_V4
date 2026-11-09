@@ -1,0 +1,136 @@
+{
+  "artist": "Trencho \u2014 3D Artist",
+  "provenance": {
+    "source": "Original geometry, palette arrangement and rigid animation authored for Trencho; no external model, image, texture or motion asset.",
+    "licence_dependency": "None introduced; distribution licensing remains with the project owner."
+  },
+  "material": {
+    "name": "M_Construction_Palette",
+    "base_color_factor": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "source_of_colour": "COLOR_0 linear vertex colour",
+    "roughness": 0.68,
+    "metallic": 0,
+    "alpha_mode": "OPAQUE",
+    "double_sided": false,
+    "godot_vertex_color_use_as_albedo": true,
+    "godot_vertex_color_is_srgb": false,
+    "textures": 0,
+    "note": "Coated blade gray is a stylized dielectric finish; no special runtime shader is required."
+  },
+  "assets": {
+    "pylon": {
+      "game_path": "game/construction/assets/pylon.glb",
+      "source_path": "game/construction/assets/source/pylon.blend",
+      "export": {
+        "bytes": 21004,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 252,
+        "vertices_per_mesh_resource": 500,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "sha256": "340688380824dd46e3707a7b2f7ce86b918cbb17c19244c77d0cbbefed521f4d",
+      "source_sha256": "a6ffb358e9edec125f50810458a84914f15d51a934339ce52544065762197c0b",
+      "placement": {
+        "origin": "Base centre, local +Y up in glTF; scale1.",
+        "anchor_path": "SM_Construction_Pylon/Tape_Anchor",
+        "anchor_gltf_m": [
+          0,
+          0.72,
+          0
+        ],
+        "growth": "Scale around base origin; no authored scale clip. Lead owns0.5s grow/0.25s shrink sequencing."
+      }
+    },
+    "scissors": {
+      "game_path": "game/construction/assets/scissors.glb",
+      "source_path": "game/construction/assets/source/scissors.blend",
+      "export": {
+        "bytes": 40220,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 436,
+        "vertices_per_mesh_resource": 588,
+        "joints": [
+          4
+        ],
+        "clips": [
+          {
+            "name": "open_idle",
+            "seconds": 0.5999999903142452
+          },
+          {
+            "name": "snip",
+            "seconds": 0.4000000022351742
+          }
+        ],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "sha256": "76bf53d977922d06e713aa0f5845f9949729ea43248693441665659ebb548061",
+      "source_sha256": "4436c92180e7adf1caa94530fa81e78524a7e7daf6dcb00cc9052afdd20ec18e",
+      "placement": {
+        "open_idle": {
+          "seconds": 0.6,
+          "loop": true,
+          "purpose": "Hold blades open during fade/swoop; GLB bind pose is closed."
+        },
+        "snip": {
+          "seconds": 0.4,
+          "loop": false,
+          "contact_s": 0.2,
+          "end": "closed; hold while fading out"
+        }
+      }
+    },
+    "tape_half": {
+      "game_path": "game/construction/assets/tape_half.glb",
+      "source_path": "game/construction/assets/source/tape_half.blend",
+      "export": {
+        "bytes": 9416,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 84,
+        "vertices_per_mesh_resource": 168,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "sha256": "c8413858ee6a87460d93f4617b8ba9ee38ebaa0af9341eabd2936bbac315b780",
+      "source_sha256": "f1452573024df3795d0f3a9d7216b8810605629586c6f676cf0403da16a6a293",
+      "placement": {
+        "origin": "Outer anchor at0; native length0.5m along +X toward cut.",
+        "anchor_gltf_m": [
+          0,
+          0,
+          0
+        ],
+        "cut_gltf_m": [
+          0.5,
+          0,
+          0
+        ],
+        "width_m": 0.08,
+        "thickness_m": 0.002,
+        "segment_scaling": "For segment length d metres, scale local X by d/0.5; leave local Y/Z at1.",
+        "simulation": "Static visual only; Lead owns finite linked segments, gravity, ground contacts and cleanup."
+      }
+    }
+  },
+  "scope": "Artist static/animated delivery; Godot integration and sequence checked separately."
+}

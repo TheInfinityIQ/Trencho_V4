@@ -1,10 +1,18 @@
 # Connected playable delivery
 
-## Default Hauling and task order — 9 November 2026
+## Place/manage construction presentation —9November2026
+
+[Construction](place_manage_buildings.md) connects actual partial-material builder
+work, bottom-up hologram reveal, Artist completion props and live cancellation.
+Normal live F5 now starts1x. Source implementation/current-change receipts and
+Dawson’s stage2 acceptance are separate; the latter remains pending.
+
+
+## Default Hauling and task order â€” 9 November 2026
 
 [Hauling priorities](hauling_priorities.md) connects new workers to a shared default pool, expandable grip-drag task ordering with explicit confirmation, real incoming/outbound handling and existing construction/production/other hauls. Existing workplace/crew commitments and safe cargo handoffs remain. The prior solid-Table placement-origin regression is corrected using its actual standing access. Scoped separate clock/menu/component receipts retain exact source heads and honest failures; stages1/2, full-loop and FPS acceptance remain open.
 
-## Worker and soldier integration — 9 November 2026
+## Worker and soldier integration â€” 9 November 2026
 
 [Character integration](character_animation.md) connects the3D Artist's actual
 worker/soldier models, clips and separate rifle to existing game state. Rear
@@ -13,15 +21,15 @@ the Table centre. Existing cargo, timing, labour and army authority remain.
 Scoped evidence and full limits are in that handoff; stages1/2 still await
 Dawson's manual acceptance, and full-loop/60FPS acceptance remains open.
 
-## Current 3D launch and player acceptance — 9 November 2026
+## Current 3D launch and player acceptance â€” 9 November 2026
 
 The configured main scene now instances the existing 3D scene. Open the root
 `project.godot` and use **F5 / Run Project**; F6 on `game/main/main.tscn` reaches
 the same 3D opening. It uses the common session/controller, not a separate game.
-The opening remains paused; Tab opens management to choose 1x. See the short
+The normal live opening now starts at1x; Tab opens management for Pause / 1x / 2x. See the short
 [controls and stage checkpoints](default_3d_playtest.md).
 
-Stages **1 — buy people/raw materials** and **2 — place/manage buildings** are
+Stages **1 â€” buy people/raw materials** and **2 â€” place/manage buildings** are
 implemented with prior scoped convoy/grid evidence, but remain **pending Dawson's
 playtest acceptance**. Source/CI success is not completion of those game-loop
 stages. Deliver a playable checkpoint after each numbered stage and record his
@@ -36,7 +44,7 @@ establish one shared 3D session and the unchanged paused opening through the
 normal project entry. The required job had no changed production scripts; actual
 startup loaded the game dependencies. Neither job establishes player acceptance.
 
-## Scoped convoy and planning-workflow increment — 9 November 2026
+## Scoped convoy and planning-workflow increment â€” 9 November 2026
 
 [PR138](https://github.com/TheInfinityIQ/Trencho_V4/pull/138) contains the development
 opening with four real unloaders, paid immediate supplier convoys, last-handover
@@ -79,7 +87,7 @@ Rear and battlefield keep their applicable work progressing while hidden. Waitin
 
 ## Next three gameplay outcomes
 
-### 1. Self-sustaining factory — [#90](https://github.com/TheInfinityIQ/Trencho_V4/issues/90)
+### 1. Self-sustaining factory â€” [#90](https://github.com/TheInfinityIQ/Trencho_V4/issues/90)
 
 - From an ordinary new game, hire and receive workers, place facilities and allocate actual labour.
 - Purchase ingredients and have eligible haulers supply staffed production automatically.
@@ -87,7 +95,7 @@ Rear and battlefield keep their applicable work progressing while hidden. Waitin
 - Show what changes when workers are reassigned and why input, labour or storage shortages stop work.
 - Complete the sequence without diagnostic setup, grants, resets or a manual carry order for every routine load.
 
-### 2. First useful automatic army supply — [#91](https://github.com/TheInfinityIQ/Trencho_V4/issues/91)
+### 2. First useful automatic army supply â€” [#91](https://github.com/TheInfinityIQ/Trencho_V4/issues/91)
 
 - A genuine army need identifies item, quantity, destination, priority and the capability waiting for it.
 - The player can choose production and labour to address it; normal freight does not require a manual manifest or Depart command.
@@ -95,7 +103,7 @@ Rear and battlefield keep their applicable work progressing while hidden. Waitin
 - Withheld supply leaves a clear shortage. Received supply permits the recipient to regain the relevant actual capability when its other requirements are met.
 - Distinguish newly manufactured supply from starting stock and HQ receipt from actual frontline use.
 
-### 3. Continued operations and repeat replenishment — [#92](https://github.com/TheInfinityIQ/Trencho_V4/issues/92)
+### 3. Continued operations and repeat replenishment â€” [#92](https://github.com/TheInfinityIQ/Trencho_V4/issues/92)
 
 - The real transport returns and later genuine need can trigger another newly prepared physical shipment in the same session.
 - Troops collect supply and resume their latest feasible acknowledged task; obsolete orders are not restored.
