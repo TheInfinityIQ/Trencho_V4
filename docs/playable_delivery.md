@@ -1,5 +1,26 @@
 # Connected playable delivery
 
+## Scoped convoy and planning-workflow increment — 9 November 2026
+
+[PR138](https://github.com/TheInfinityIQ/Trencho_V4/pull/138) contains the development
+opening with four real unloaders, paid immediate supplier convoys, last-handover
+ordering readiness, contextual site E and explicit overhead grid placement. Game
+source `60925c72c3cbd6d33f48a5286a0b93d8be999cf7` passed required run42638041856
+and the existing bounded current-change episode42638052133. The episode observed
+25Metal/eight-worker arrival, order unlock, one real site, its E/Set-builders
+controls and harmless subsequent draft cancellation. It used injected input and
+explicit same-model elapsed intervals, with current Purchase/grid captures;
+native controls, wall-time/FPS and the full factory/army loop remain unverified.
+See [retained scoped result](evidence/development_convoys/scoped_result.json).
+
+The first planning/accounting protocol is in [development workflow](development_workflow.md),
+with three [candidate alternatives](workflow_experiments.json) prepared for later
+comparison and a [partial resume-pilot snapshot](evidence/workflow/convoys_resume_snapshot.json).
+Historical repair costs remain unknown; source/visual findings and failed receipts
+are retained. This increment does not close #90/#91/#92 or adopt the MCP plugin.
+Use the PR's actual merge state/current main for adoption; the dated snapshots
+below retain their historical scope and do not reactivate archived developers.
+
 Updated 6 November 2026. Parent: [#83](https://github.com/TheInfinityIQ/Trencho_V4/issues/83). The partial prototype is merged into `main` at `ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc` through [PR #89](https://github.com/TheInfinityIQ/Trencho_V4/pull/89). Design: [current GDD](game_design_document.md). Developer publication/status: [team integration state](team_integration_state.json), [implemented features](implemented_features.json) and [prototype completion](prototype_completion.json).
 
 The four current delivery goals #83/#90/#91/#92 are grouped in [demo milestone #9](https://github.com/TheInfinityIQ/Trencho_V4/milestone/9) and the Project #3 **Current demo** view. Wider requirements remain in the eight later milestones and **Later backlog**; retaining them does not make each one a present demo blocker.

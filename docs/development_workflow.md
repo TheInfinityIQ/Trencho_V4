@@ -4,6 +4,14 @@ Effective 9 November 2026, following Dawson's instruction to resume development.
 Lead remains the sole programmer. This supplements current team ownership and
 verification policy; it does not activate the historical multi-worker controller.
 
+Keep files/CLI as the default authoring/check workflow. Godot MCP is a selective
+live-scene inspection option; the pinned experimental plugin remains outside
+Trencho because its rapid new-script/save errors are unresolved. Resuming game
+development does not enable that plugin or lift the no-local-engine restriction.
+The completed three-pair MCP experiment is separate from the feature-workflow
+comparison proposed here; neither its tiny task nor this resumed pilot establishes
+a generally faster or cheaper development method.
+
 ## Plan before programming
 
 1. State the player outcome, acceptance evidence, exclusions and current source
