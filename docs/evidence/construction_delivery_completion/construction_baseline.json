@@ -1,0 +1,150 @@
+{
+  "actors": {
+    "start-unloader-01": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-01",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-02": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-02",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-03": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-03",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-04": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-04",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    }
+  },
+  "assignment": {
+    "message": "Target recorded; actual people must report before being present.",
+    "ok": true
+  },
+  "completed": {
+    "blocker": "",
+    "builders": {},
+    "center": "(100.0, 165.0)",
+    "consumed_m11": 60,
+    "door": "(94.0, 165.0)",
+    "haul_job": "job-0018",
+    "id": "site-0001",
+    "kind": "construction",
+    "m11": 60,
+    "progress": 80.0,
+    "protected_starter": false,
+    "quarter_turn": false,
+    "site_store": "site-0001",
+    "size": "(10.0, 8.0)",
+    "starter_staffing_recorded": true,
+    "state": "Complete",
+    "work": 80.0,
+    "working": false
+  },
+  "completion_call_us": 16316,
+  "completion_render_frames": [
+    {
+      "elapsed_us": 1225686,
+      "physics_seconds": 0.000823,
+      "process_seconds": 0.091828
+    },
+    {
+      "elapsed_us": 90686,
+      "physics_seconds": 0.000823,
+      "process_seconds": 0.091828
+    },
+    {
+      "elapsed_us": 91522,
+      "physics_seconds": 0.000826,
+      "process_seconds": 1.224632
+    },
+    {
+      "elapsed_us": 81684,
+      "physics_seconds": 0.000826,
+      "process_seconds": 1.224632
+    },
+    {
+      "elapsed_us": 88602,
+      "physics_seconds": 0.000826,
+      "process_seconds": 1.224632
+    },
+    {
+      "elapsed_us": 89258,
+      "physics_seconds": 0.000826,
+      "process_seconds": 1.224632
+    }
+  ],
+  "debug_result": {
+    "changed": true,
+    "completed": 1,
+    "debug_materials": 60,
+    "message": "DEBUG: instantly completed 1 building(s); supplied 60 missing Building Materials.",
+    "ok": true
+  },
+  "geometry_refresh_us": 1002,
+  "jobs": [
+    {
+      "automatic_site": "site-0001",
+      "blocker": "Foot haul: no completed Construction Office utility truck. Approach/pickup/carry/deposit required; reservation is not local stock",
+      "cancelled": false,
+      "constraint_active": false,
+      "created": 0.1,
+      "delivered": 0,
+      "destination": "site-0001",
+      "emergency_contention_since": -1.0,
+      "id": "job-0018",
+      "order": 18,
+      "priority": 1,
+      "recovery_sources": [],
+      "relocation": false,
+      "requested": 60,
+      "selected": 3,
+      "source": "receiving",
+      "type": "M11"
+    }
+  ],
+  "pre_render_frame_us": [
+    1555027,
+    92846,
+    95502,
+    93974
+  ],
+  "scope": "Current reported construction-only baseline on mergedmain; real automatic site supply and opening workers/stock. Explicit rear intervals after normal startup; separately labelled debug-completion CPU/render profile. Not native input/FPS certification.",
+  "site": {
+    "blocker": "Waiting for more Building Materials.",
+    "builders": {},
+    "center": "(100.0, 165.0)",
+    "consumed_m11": 0,
+    "door": "(94.0, 165.0)",
+    "haul_job": "job-0018",
+    "id": "site-0001",
+    "kind": "construction",
+    "m11": 60,
+    "progress": 0.0,
+    "protected_starter": false,
+    "quarter_turn": false,
+    "site_store": "site-0001",
+    "size": "(10.0, 8.0)",
+    "state": "Awaiting M11",
+    "work": 80.0,
+    "working": false
+  },
+  "stock_at_site": 0,
+  "truck_membership_us": 12
+}

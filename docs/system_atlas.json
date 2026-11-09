@@ -4,14 +4,14 @@
   "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "e6610bb760e484b1a7bfd9dae80bd299cd539680383943b5e8686cf9eab70cda",
+  "source_fingerprint": "0ba7d6c706c513ceff50553ef3f6bd653564f34be6308614147319b5952c49d3",
   "totals": {
     "systems": 49,
     "game_scripts": 223,
     "non_test_scripts": 129,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3447,
-    "diagram_function_links": 267
+    "functions_in_inventory": 3448,
+    "diagram_function_links": 269
   },
   "systems": [
     {
@@ -3294,7 +3294,7 @@
           "label": "Finish timed actor phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 769
+          "line": 771
         },
         {
           "id": "n4",
@@ -3440,7 +3440,7 @@
         },
         {
           "path": "game/staffing/rear_simulation.gd",
-          "sha256": "c715c7e860652247a4d465ecdabf66d60808dafe8abc9ca67ddb27bc66c5dd5e",
+          "sha256": "17a5b28a3802f9b6961bea26cebf55c959a9884c97b37a86e05cba1ae3b95821",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -3717,16 +3717,16 @@
               "id": "game/staffing/rear_simulation.gd::_settle",
               "name": "_settle",
               "line": 658,
-              "end_line": 740,
+              "end_line": 742,
               "kind": "method",
-              "purpose": "Resolve existing immediate service, staffing, storage and activity boundaries in bounded passes; route an idle common hauler through the committed task policy without a new clock or watcher.",
+              "purpose": "Reconcile the existing finite physical boundaries/services and common hauling; allow an idle empty-field builder to fetch only its own missing site material without contributing simultaneous work.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_people",
               "name": "_sync_receiving_people",
-              "line": 743,
-              "end_line": 756,
+              "line": 745,
+              "end_line": 758,
               "kind": "method",
               "purpose": "Add newly received available people to rear actors and reconcile people released from receiving work.",
               "purpose_origin": "reviewed"
@@ -3734,8 +3734,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_staff",
               "name": "_sync_receiving_staff",
-              "line": 759,
-              "end_line": 766,
+              "line": 761,
+              "end_line": 768,
               "kind": "method",
               "purpose": "Synchronize actual rear staffing with receiving workers and pump newly eligible receiving work.",
               "purpose_origin": "reviewed"
@@ -3743,8 +3743,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_finish_phase",
               "name": "_finish_phase",
-              "line": 769,
-              "end_line": 827,
+              "line": 771,
+              "end_line": 829,
               "kind": "method",
               "purpose": "Complete actual reporting/handling/vehicle phases, preserving custody and safe handoffs; a default worker becoming idle at reporting completion retries existing starter staffing intent.",
               "purpose_origin": "reviewed"
@@ -3752,8 +3752,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_factory_hauls",
               "name": "_reconcile_factory_hauls",
-              "line": 830,
-              "end_line": 881,
+              "line": 832,
+              "end_line": 883,
               "kind": "method",
               "purpose": "Group live explicitly tagged factory jobs and current captured actor loads once at the admission boundary. Query enduring input intent once per affected actual owner, deduct other/manual promises and own captured portions once, allocate only needed old unselected portions and shrink requested targets no lower than delivered plus captured floor. Preserve all claims/carry/deposit fields and untagged/cancelled/manual/relocation work; retain no demand/history cache.",
               "purpose_origin": "reviewed"
@@ -3761,8 +3761,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::set_hauling_priorities",
               "name": "set_hauling_priorities",
-              "line": 884,
-              "end_line": 889,
+              "line": 886,
+              "end_line": 891,
               "kind": "method",
               "purpose": "Validate a category-order command through the scene-owned policy and settle/notify actual owners only after a real preference change.",
               "purpose_origin": "reviewed"
@@ -3770,26 +3770,26 @@
             {
               "id": "game/staffing/rear_simulation.gd::_start_job",
               "name": "_start_job",
-              "line": 892,
-              "end_line": 924,
+              "line": 894,
+              "end_line": 927,
               "kind": "method",
-              "purpose": "Choose and reserve the best eligible existing local haul within an optional requested category, then start its real walk or construction-truck leg.",
+              "purpose": "Select and reserve one eligible real haul, optionally restricted to one exact destination, then use existing physical approach/handling or eligible common-hauler truck authority.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_job_option",
               "name": "_job_option",
-              "line": 927,
-              "end_line": 970,
+              "line": 930,
+              "end_line": 973,
               "kind": "method",
-              "purpose": "Compare legal actual haul sources, personal allowance and accepting storage using read-only service-point route previews before choosing or reserving a job.",
+              "purpose": "Find an accessible unreserved source, accepting destination and real carry route/capacity; utility-truck options remain exclusive to ordinary Hauling, while builders use their own-site foot allowance.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_job_before",
               "name": "_job_before",
-              "line": 973,
-              "end_line": 978,
+              "line": 976,
+              "end_line": 981,
               "kind": "method",
               "purpose": "Compare viable haul choices by effective priority, stable job order and approach distance.",
               "purpose_origin": "reviewed"
@@ -3797,8 +3797,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_in_flight",
               "name": "_in_flight",
-              "line": 981,
-              "end_line": 985,
+              "line": 984,
+              "end_line": 988,
               "kind": "method",
               "purpose": "Count the quantity currently committed/carried for a hauling job.",
               "purpose_origin": "reviewed"
@@ -3806,8 +3806,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reserved_space",
               "name": "_reserved_space",
-              "line": 988,
-              "end_line": 996,
+              "line": 991,
+              "end_line": 999,
               "kind": "method",
               "purpose": "Sum inbound carry/output/receiving capacity promises for a destination, optionally excluding one person.",
               "purpose_origin": "reviewed"
@@ -3815,8 +3815,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::reserve_output_space",
               "name": "reserve_output_space",
-              "line": 999,
-              "end_line": 1003,
+              "line": 1002,
+              "end_line": 1006,
               "kind": "method",
               "purpose": "Validate and apply reserve output space in rear simulation. Successful outcomes: Full output capacity promised to ",
               "purpose_origin": "implementation_derived"
@@ -3824,8 +3824,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::release_output_space",
               "name": "release_output_space",
-              "line": 1006,
-              "end_line": 1007,
+              "line": 1009,
+              "end_line": 1010,
               "kind": "method",
               "purpose": "Release output space for rear simulation. Implementation: calls _output_promises.erase.",
               "purpose_origin": "implementation_derived"
@@ -3833,8 +3833,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::output_space_valid",
               "name": "output_space_valid",
-              "line": 1010,
-              "end_line": 1014,
+              "line": 1013,
+              "end_line": 1017,
               "kind": "method",
               "purpose": "Output space valid for rear simulation. Implementation: calls _output_promises.has, store.filter.is_empty, ledger.loose_stock_mass_at, _reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -3842,8 +3842,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_free_space",
               "name": "_free_space",
-              "line": 1017,
-              "end_line": 1018,
+              "line": 1020,
+              "end_line": 1021,
               "kind": "method",
               "purpose": "Subtract physical loose-stock mass and inbound promises from a store's capacity.",
               "purpose_origin": "reviewed"
@@ -3851,8 +3851,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_valid_destination",
               "name": "_valid_destination",
-              "line": 1021,
-              "end_line": 1022,
+              "line": 1024,
+              "end_line": 1025,
               "kind": "method",
               "purpose": "Require an existing accessible store whose filter accepts the goods and whose unpromised capacity fits the load.",
               "purpose_origin": "reviewed"
@@ -3860,8 +3860,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_nearest_storage",
               "name": "_nearest_storage",
-              "line": 1025,
-              "end_line": 1039,
+              "line": 1028,
+              "end_line": 1042,
               "kind": "method",
               "purpose": "Select nearest accepting reachable storage using the same person's unreserved work-point preview and stable tie-break, excluding piles and the former destination.",
               "purpose_origin": "reviewed"
@@ -3869,8 +3869,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reroute",
               "name": "_reroute",
-              "line": 1042,
-              "end_line": 1052,
+              "line": 1045,
+              "end_line": 1055,
               "kind": "method",
               "purpose": "Retain actual carried goods and demand while selecting safe alternative storage or a recoverable pile, then physically carry to its reserved work point.",
               "purpose_origin": "reviewed"
@@ -3878,8 +3878,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_deposit",
               "name": "_deposit",
-              "line": 1055,
-              "end_line": 1079,
+              "line": 1058,
+              "end_line": 1082,
               "kind": "method",
               "purpose": "Commit a carry into physical storage, update its job and release/report the actor or reroute an invalid destination.",
               "purpose_origin": "reviewed"
@@ -3887,8 +3887,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_release_load",
               "name": "_release_load",
-              "line": 1082,
-              "end_line": 1089,
+              "line": 1085,
+              "end_line": 1092,
               "kind": "method",
               "purpose": "Release the claim associated with an actor's load when one exists.",
               "purpose_origin": "reviewed"
@@ -3896,8 +3896,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at",
               "name": "_stock_at",
-              "line": 1092,
-              "end_line": 1093,
+              "line": 1095,
+              "end_line": 1096,
               "kind": "method",
               "purpose": "Return the player's positive stock inspections at one holder, optionally omitting mass.",
               "purpose_origin": "reviewed"
@@ -3905,8 +3905,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at/<lambda#1>",
               "name": "_stock_at/<lambda#1>",
-              "line": 1093,
-              "end_line": 1093,
+              "line": 1096,
+              "end_line": 1096,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns e.owner == PLAYER and e.quantity > 0.",
               "purpose_origin": "implementation_derived"
@@ -3914,8 +3914,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_relocation",
               "name": "_reconcile_relocation",
-              "line": 1096,
-              "end_line": 1127,
+              "line": 1099,
+              "end_line": 1130,
               "kind": "method",
               "purpose": "Reconcile one relocation job with current quantity and any active actor commitment.",
               "purpose_origin": "reviewed"
@@ -3923,8 +3923,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::workforce_snapshot",
               "name": "workforce_snapshot",
-              "line": 1130,
-              "end_line": 1156,
+              "line": 1133,
+              "end_line": 1159,
               "kind": "method",
               "purpose": "Inspect rear people and requested duties to report actual, pending, present and unfilled workforce positions.",
               "purpose_origin": "reviewed"
@@ -3932,8 +3932,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::hauling_snapshot",
               "name": "hauling_snapshot",
-              "line": 1158,
-              "end_line": 1167,
+              "line": 1161,
+              "end_line": 1170,
               "kind": "method",
               "purpose": "Clone actual haul jobs and annotate current age, effective priority, in-flight quantity and Emergency contention/starvation without exporting the full rear or mutating jobs.",
               "purpose_origin": "reviewed"
@@ -3941,8 +3941,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::snapshot",
               "name": "snapshot",
-              "line": 1170,
-              "end_line": 1202,
+              "line": 1173,
+              "end_line": 1205,
               "kind": "method",
               "purpose": "Build the broad rear staffing, people, store, service/event and optional audit/ledger inspection, reusing the current detached hauling-job view.",
               "purpose_origin": "reviewed"
@@ -3950,8 +3950,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_refresh_contention",
               "name": "_refresh_contention",
-              "line": 1205,
-              "end_line": 1211,
+              "line": 1208,
+              "end_line": 1214,
               "kind": "method",
               "purpose": "Update whether waiting haul demands are blocked by competing viable work.",
               "purpose_origin": "reviewed"
@@ -3959,8 +3959,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_waiting_job_viable",
               "name": "_waiting_job_viable",
-              "line": 1214,
-              "end_line": 1231,
+              "line": 1217,
+              "end_line": 1234,
               "kind": "method",
               "purpose": "Check whether a waiting job can be served by an eligible actor under current reservations and routes.",
               "purpose_origin": "reviewed"
@@ -3968,8 +3968,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::audit",
               "name": "audit",
-              "line": 1234,
-              "end_line": 1254,
+              "line": 1237,
+              "end_line": 1257,
               "kind": "method",
               "purpose": "Preserve ordinary25kg actor/load invariants; distinguish truck-owned bulk destination promises from actual personal carried mass, whose25kg check remains intact.",
               "purpose_origin": "reviewed"
@@ -3977,8 +3977,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_assigned",
               "name": "_assigned",
-              "line": 1257,
-              "end_line": 1261,
+              "line": 1260,
+              "end_line": 1264,
               "kind": "method",
               "purpose": "Count rear actors whose authoritative current duty equals the requested duty.",
               "purpose_origin": "reviewed"
@@ -3986,8 +3986,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_committed",
               "name": "_committed",
-              "line": 1264,
-              "end_line": 1268,
+              "line": 1267,
+              "end_line": 1271,
               "kind": "method",
               "purpose": "Count current and pending assignments committed to a duty using narrow duty reads.",
               "purpose_origin": "reviewed"
@@ -3995,8 +3995,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_pending_in",
               "name": "_pending_in",
-              "line": 1271,
-              "end_line": 1276,
+              "line": 1274,
+              "end_line": 1279,
               "kind": "method",
               "purpose": "Count actors with a pending assignment into the requested duty.",
               "purpose_origin": "reviewed"
@@ -4004,8 +4004,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_retaining",
               "name": "_retaining",
-              "line": 1279,
-              "end_line": 1284,
+              "line": 1282,
+              "end_line": 1287,
               "kind": "method",
               "purpose": "Count actors currently assigned to the duty who are not pending a transfer away.",
               "purpose_origin": "reviewed"
@@ -4013,8 +4013,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_present",
               "name": "_present",
-              "line": 1287,
-              "end_line": 1291,
+              "line": 1290,
+              "end_line": 1294,
               "kind": "method",
               "purpose": "Count currently assigned actors physically idle/unloading at the duty.",
               "purpose_origin": "reviewed"
@@ -4022,8 +4022,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job",
               "name": "_job",
-              "line": 1294,
-              "end_line": 1297,
+              "line": 1297,
+              "end_line": 1300,
               "kind": "method",
               "purpose": "Find a hauling job dictionary by ID, returning an empty dictionary when absent.",
               "purpose_origin": "reviewed"
@@ -4031,8 +4031,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_next",
               "name": "_next",
-              "line": 1300,
-              "end_line": 1302,
+              "line": 1303,
+              "end_line": 1305,
               "kind": "method",
               "purpose": "Increment and return the shared rear identifier/order sequence.",
               "purpose_origin": "reviewed"
@@ -4040,8 +4040,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_result",
               "name": "_result",
-              "line": 1305,
-              "end_line": 1306,
+              "line": 1308,
+              "end_line": 1309,
               "kind": "method",
               "purpose": "Return a rear command result containing success and message.",
               "purpose_origin": "reviewed"
@@ -4770,7 +4770,7 @@
           "label": "Select eligible idle hauler/job",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_start_job",
-          "line": 892
+          "line": 894
         },
         {
           "id": "n2",
@@ -4784,7 +4784,7 @@
           "label": "Finish timed carry phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 769
+          "line": 771
         },
         {
           "id": "n4",
@@ -6378,42 +6378,56 @@
           "label": "Earn builder work",
           "file": "game/construction/construction_service.gd",
           "function": "advance_work",
-          "line": 463
+          "line": 515
         },
         {
           "id": "n4",
           "label": "Complete and activate site",
           "file": "game/construction/construction_service.gd",
           "function": "_activate",
-          "line": 574
+          "line": 626
         },
         {
           "id": "n5",
           "label": "Apply once-only starting staff request",
           "file": "game/construction/construction_service.gd",
           "function": "_apply_starter_staffing",
-          "line": 624
+          "line": 676
         },
         {
           "id": "n6",
           "label": "Keyed earned-work reveal",
           "file": "game/construction/visuals/construction_site_visual.gd",
           "function": "_site_changed",
-          "line": 82
+          "line": 84
         },
         {
           "id": "n7",
           "label": "Scissors then finite tape physics",
           "file": "game/construction/visuals/construction_celebration.gd",
           "function": "start",
-          "line": 151
+          "line": 163
         },
         {
           "id": "n8",
           "label": "Ground contact then pylon cleanup",
           "file": "game/construction/visuals/construction_celebration.gd",
           "function": "_ground_contact",
-          "line": 200
+          "line": 220
+        },
+        {
+          "id": "builder_supply",
+          "label": "Own-site real builder fetching",
+          "file": "game/construction/construction_service.gd",
+          "function": "start_builder_supply",
+          "line": 445
+        },
+        {
+          "id": "delivery_status",
+          "label": "Actual delivered versus carried",
+          "file": "game/construction/construction_service.gd",
+          "function": "delivery_status",
+          "line": 459
         }
       ],
       "edges": [
@@ -6456,6 +6470,16 @@
           "from": "n7",
           "to": "n8",
           "label": "released tape contacts ground"
+        },
+        {
+          "from": "n2",
+          "to": "builder_supply",
+          "label": "own-site shortage / idle builder"
+        },
+        {
+          "from": "builder_supply",
+          "to": "n3",
+          "label": "physical deposit then report/build"
         }
       ],
       "related": [
@@ -6465,7 +6489,7 @@
         "production",
         "preview"
       ],
-      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime.",
+      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime. Follow-up: assigned starved builders may fetch only their own site M11 on foot through existing real claims/carries; one duty/task, no simultaneous construction. Selected menu distinguishes actual haul receipt/carry. Completed exterior retains full-height prepared material, work state does not rebuild unchanged reservations, zero-alpha effect preparation targets measured first-use OpenGL hitch. Smoke1.5s then snip2s, tape release3.5s; actual capability remains immediate.",
       "primary_files": [
         "game/construction/construction_service.gd",
         "game/construction/construction_catalogue.gd"
@@ -6489,7 +6513,7 @@
         },
         {
           "path": "game/construction/construction_service.gd",
-          "sha256": "8e5688cd428ed172829f9a601c7ddcf754b9ad68853621da9a067399410a4b76",
+          "sha256": "418baed9f8c5c51556dfac2e55897e012b51d9b9dd075d161013c5c39881d9ed",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -6552,7 +6576,7 @@
               "line": 144,
               "end_line": 161,
               "kind": "method",
-              "purpose": "Validate and reserve a real physical site, initialize actual consumed materials at zero and request empty-field supply without granting work or capability.",
+              "purpose": "Commit the real validated site/material demand and explain that its assigned builders can fetch missing materials while common Hauling can help.",
               "purpose_origin": "reviewed"
             },
             {
@@ -6799,10 +6823,28 @@
               "purpose_origin": "implementation_derived"
             },
             {
+              "id": "game/construction/construction_service.gd::start_builder_supply",
+              "name": "start_builder_supply",
+              "line": 445,
+              "end_line": 457,
+              "kind": "method",
+              "purpose": "For one idle unladen builder without pending reassignment, start only an actual own-site material haul when local paid material cannot support work; retain physical claims/custody and one duty.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/construction/construction_service.gd::delivery_status",
+              "name": "delivery_status",
+              "line": 459,
+              "end_line": 495,
+              "kind": "method",
+              "purpose": "Project actual site haul receipt, active destination-bound carrying and live handling/blocker facts for the existing selected menu; never count claims as delivered goods.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/construction/construction_service.gd::_ready",
               "name": "_ready",
-              "line": 445,
-              "end_line": 446,
+              "line": 497,
+              "end_line": 498,
               "kind": "method",
               "purpose": "Permit earned work only with present builders and remaining work supported by real local/cumulative materials.",
               "purpose_origin": "reviewed"
@@ -6810,8 +6852,8 @@
             {
               "id": "game/construction/construction_service.gd::_material_ceiling",
               "name": "_material_ceiling",
-              "line": 448,
-              "end_line": 452,
+              "line": 500,
+              "end_line": 504,
               "kind": "method",
               "purpose": "Compute the maximum work supported by used plus currently available local material, capped at total work.",
               "purpose_origin": "reviewed"
@@ -6819,8 +6861,8 @@
             {
               "id": "game/construction/construction_service.gd::next_boundary",
               "name": "next_boundary",
-              "line": 454,
-              "end_line": 461,
+              "line": 506,
+              "end_line": 513,
               "kind": "method",
               "purpose": "Select the next material-supported construction or existing dismantling/truck boundary on the rear clock.",
               "purpose_origin": "reviewed"
@@ -6828,8 +6870,8 @@
             {
               "id": "game/construction/construction_service.gd::advance_work",
               "name": "advance_work",
-              "line": 463,
-              "end_line": 485,
+              "line": 515,
+              "end_line": 537,
               "kind": "method",
               "purpose": "Earn only real present-builder work supported by supplied material, consume its integer incremental cost once and emit keyed progress; retain existing dismantling work.",
               "purpose_origin": "reviewed"
@@ -6837,8 +6879,8 @@
             {
               "id": "game/construction/construction_service.gd::advance_to",
               "name": "advance_to",
-              "line": 487,
-              "end_line": 488,
+              "line": 539,
+              "end_line": 540,
               "kind": "method",
               "purpose": "Forward the shared clock endpoint to owned physical construction-truck movement without a separate timer.",
               "purpose_origin": "reviewed"
@@ -6846,8 +6888,8 @@
             {
               "id": "game/construction/construction_service.gd::settle",
               "name": "settle",
-              "line": 490,
-              "end_line": 537,
+              "line": 542,
+              "end_line": 589,
               "kind": "method",
               "purpose": "Refresh actual construction blockers, activate only fully earned and paid sites, and retain clearing/dismantling/salvage handling.",
               "purpose_origin": "reviewed"
@@ -6855,8 +6897,8 @@
             {
               "id": "game/construction/construction_service.gd::debug_complete_pending",
               "name": "debug_complete_pending",
-              "line": 539,
-              "end_line": 562,
+              "line": 591,
+              "end_line": 614,
               "kind": "method",
               "purpose": "Complete actual unfinished sites through explicit debug remaining-material grants/consumption, preserving already paid cost and activating once.",
               "purpose_origin": "reviewed"
@@ -6864,8 +6906,8 @@
             {
               "id": "game/construction/construction_service.gd::_complete_site",
               "name": "_complete_site",
-              "line": 565,
-              "end_line": 571,
+              "line": 617,
+              "end_line": 623,
               "kind": "method",
               "purpose": "Set actual completion, release builders, activate existing facility capability and announce the same site identity.",
               "purpose_origin": "reviewed"
@@ -6873,8 +6915,8 @@
             {
               "id": "game/construction/construction_service.gd::_activate",
               "name": "_activate",
-              "line": 574,
-              "end_line": 622,
+              "line": 626,
+              "end_line": 674,
               "kind": "method",
               "purpose": "Register actual completed facility services and duty, preserve any existing/pre-completion explicit count/priority including zero, initialize actual office pool intent and apply starter staffing only after service/eligibility registration.",
               "purpose_origin": "reviewed"
@@ -6882,8 +6924,8 @@
             {
               "id": "game/construction/construction_service.gd::_apply_starter_staffing",
               "name": "_apply_starter_staffing",
-              "line": 624,
-              "end_line": 634,
+              "line": 676,
+              "end_line": 686,
               "kind": "method",
               "purpose": "Record accepted count once for newly created nonlegacy workplace duties, including office_desired for F12; preserve pre-existing intent and no-duty Depot/Park, then request only existing eligible people through protected allocation.",
               "purpose_origin": "reviewed"
@@ -6891,8 +6933,8 @@
             {
               "id": "game/construction/construction_service.gd::request_dismantle",
               "name": "request_dismantle",
-              "line": 636,
-              "end_line": 686,
+              "line": 688,
+              "end_line": 738,
               "kind": "method",
               "purpose": "Request dismantle for construction service. Implementation: calls instances.has, _fail, _rear_ref.get_ref, rear.receiving.berth_committed; updates activities[id].enabled, rear.requests[\"builders-\"+id].positions, row.blocker, row.progress.",
               "purpose_origin": "implementation_derived"
@@ -6900,8 +6942,8 @@
             {
               "id": "game/construction/construction_service.gd::_queue_clearance",
               "name": "_queue_clearance",
-              "line": 688,
-              "end_line": 702,
+              "line": 740,
+              "end_line": 754,
               "kind": "method",
               "purpose": "Queue clearance for construction service. Implementation: calls row.get, store_id.is_empty, rear._stock_at, int; updates already, available_by_type[stock.design_type].",
               "purpose_origin": "implementation_derived"
@@ -6909,8 +6951,8 @@
             {
               "id": "game/construction/construction_service.gd::_cleared",
               "name": "_cleared",
-              "line": 704,
-              "end_line": 709,
+              "line": 756,
+              "end_line": 761,
               "kind": "method",
               "purpose": "Cleared for construction service. Implementation: calls row.get, store_id.is_empty, rear.ledger.loose_stock_mass_at, rear._reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -7030,23 +7072,23 @@
         },
         {
           "path": "game/construction/visuals/construction_celebration.gd",
-          "sha256": "064b04ca99379093a5ef9ec567eba350a8a88b65be0a46cac90b608a177611b1",
+          "sha256": "8913f4552f715d3b56e26dac05b1c35de0f302feb4906c02901c307b414a57a2",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ready",
               "name": "_ready",
-              "line": 22,
-              "end_line": 56,
+              "line": 27,
+              "end_line": 67,
               "kind": "method",
-              "purpose": "Compose four Artist pylons/scissors and sixteen finite tape panels with isolated cosmetic ground; presentation owns no inventory or routes.",
+              "purpose": "Prepare actual Artist pylons/ribbon/scissors and small smoke siblings, linear palette/fade variants and isolated finite tape physics before completion; zero-alpha meshes can render in view before use.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_celebration.gd::_prop",
               "name": "_prop",
-              "line": 58,
-              "end_line": 76,
+              "line": 69,
+              "end_line": 87,
               "kind": "method",
               "purpose": "Instantiate the Artist prop, bind cached duplicated linear vertex-color palette materials to actual meshes including the root, and retain finite scene ownership.",
               "purpose_origin": "reviewed"
@@ -7054,8 +7096,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_meshes",
               "name": "_meshes",
-              "line": 78,
-              "end_line": 81,
+              "line": 89,
+              "end_line": 92,
               "kind": "method",
               "purpose": "Collect actual descendant meshes plus a mesh root once during prop setup; no recurring lookup.",
               "purpose_origin": "reviewed"
@@ -7063,8 +7105,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_fade_materials",
               "name": "_fade_materials",
-              "line": 83,
-              "end_line": 97,
+              "line": 94,
+              "end_line": 108,
               "kind": "method",
               "purpose": "Duplicate actual scissor mesh materials, including a mesh root, for per-instance fading without modifying shared imports.",
               "purpose_origin": "reviewed"
@@ -7072,8 +7114,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_opacity",
               "name": "_opacity",
-              "line": 99,
-              "end_line": 103,
+              "line": 110,
+              "end_line": 114,
               "kind": "method",
               "purpose": "Apply a supplied alpha to the cached per-instance scissor materials.",
               "purpose_origin": "reviewed"
@@ -7081,8 +7123,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_span",
               "name": "_span",
-              "line": 105,
-              "end_line": 142,
+              "line": 116,
+              "end_line": 153,
               "kind": "method",
               "purpose": "Compose two jointed halves of a side ribbon, initially held until its midpoint snip, colliding only with cosmetic ground.",
               "purpose_origin": "reviewed"
@@ -7090,35 +7132,26 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_track",
               "name": "_track",
-              "line": 144,
-              "end_line": 149,
+              "line": 155,
+              "end_line": 161,
               "kind": "method",
-              "purpose": "Bind and retain a finite tween at the current pause/speed and retire its cache entry on completion.",
-              "purpose_origin": "reviewed"
-            },
-            {
-              "id": "game/construction/visuals/construction_celebration.gd::_track/<lambda#1>",
-              "name": "_track/<lambda#1>",
-              "line": 148,
-              "end_line": 148,
-              "kind": "lambda",
-              "purpose": "Remove a finished finite tween from this effect cache.",
+              "purpose": "Keep a bounded set of scene-bound finite tweens with current pause/speed; release with effect lifetime instead of a self-capturing finished-tween closure.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_celebration.gd::start",
               "name": "start",
-              "line": 151,
-              "end_line": 172,
+              "line": 163,
+              "end_line": 190,
               "kind": "method",
-              "purpose": "Begin the once-only four-scissor fade/swoop/snipping sequence after authoritative building completion.",
+              "purpose": "Run four1.5s faceted-smoke/scissor entrances, then2s retimed authored snips; release tape and fade scissors at3.5s before existing ground-driven cleanup.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_celebration.gd::_snip",
               "name": "_snip",
-              "line": 174,
-              "end_line": 176,
+              "line": 192,
+              "end_line": 194,
               "kind": "method",
               "purpose": "Play the actual Artist snip clip on all four cached animation players at the current game speed.",
               "purpose_origin": "reviewed"
@@ -7126,17 +7159,17 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_play_clip",
               "name": "_play_clip",
-              "line": 178,
-              "end_line": 184,
+              "line": 196,
+              "end_line": 204,
               "kind": "method",
-              "purpose": "Resolve the supplied Artist clip name, play it at current speed and reject a missing authored clip.",
+              "purpose": "Resolve the actual Artist clip and apply its authored-to-requested duration ratio times current game speed, retaining that base rate for pause/speed changes.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_celebration.gd::_release_tape",
               "name": "_release_tape",
-              "line": 186,
-              "end_line": 194,
+              "line": 206,
+              "end_line": 214,
               "kind": "method",
               "purpose": "Release the finite cosmetic ribbon panels at the authored snip contact, applying current pause/gravity scaling.",
               "purpose_origin": "reviewed"
@@ -7144,8 +7177,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_fade_scissors",
               "name": "_fade_scissors",
-              "line": 196,
-              "end_line": 198,
+              "line": 216,
+              "end_line": 218,
               "kind": "method",
               "purpose": "Fade the cached scissor materials after the authored snip finishes.",
               "purpose_origin": "reviewed"
@@ -7153,8 +7186,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ground_contact",
               "name": "_ground_contact",
-              "line": 200,
-              "end_line": 211,
+              "line": 220,
+              "end_line": 231,
               "kind": "method",
               "purpose": "Track actual isolated-ground contact for all eight tape halves, then grow pylons0.5s and shrink0.25s before finite cleanup.",
               "purpose_origin": "reviewed"
@@ -7162,8 +7195,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ground_contact/<lambda#1>",
               "name": "_ground_contact/<lambda#1>",
-              "line": 211,
-              "end_line": 211,
+              "line": 231,
+              "end_line": 231,
               "kind": "lambda",
               "purpose": "Announce completed cosmetic cleanup and release its whole scene lifetime.",
               "purpose_origin": "reviewed"
@@ -7171,17 +7204,17 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::sync_speed",
               "name": "sync_speed",
-              "line": 213,
-              "end_line": 234,
+              "line": 233,
+              "end_line": 254,
               "kind": "method",
-              "purpose": "Apply existing Pause/1x/2x changes to cached tweens, authored clips and finite tape velocities/gravity without a gameplay scan.",
+              "purpose": "Apply existing Pause/1x/2x to finite effect tweens, cached clip duration ratios and native tape velocity/gravity without changing gameplay time or custody.",
               "purpose_origin": "reviewed"
             }
           ]
         },
         {
           "path": "game/construction/visuals/construction_site_visual.gd",
-          "sha256": "424043d0ceecf521ef59b3984f118fb830bca4ef7865abf523f0a6d0577c55cc",
+          "sha256": "6bc6edc7c78315f077ec3925e1eba2bb8ddf111949ab11cb537d1cf60d4e72ee",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -7206,16 +7239,16 @@
               "id": "game/construction/visuals/construction_site_visual.gd::_prepare_reveal",
               "name": "_prepare_reveal",
               "line": 42,
-              "end_line": 72,
+              "end_line": 74,
               "kind": "method",
-              "purpose": "Cache original imported mesh materials and compose complementary solid/ghost shader geometry without cloning collision nodes.",
+              "purpose": "Prepare complementary solid/ghost geometry with original albedo/texture/vertex/roughness/metallic factors, retaining the rendered full-height material for completion.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_site_visual.gd::_shader",
               "name": "_shader",
-              "line": 74,
-              "end_line": 80,
+              "line": 76,
+              "end_line": 82,
               "kind": "method",
               "purpose": "Create one per-site shader material with actual fitted world-height parameters and cache it for keyed progress changes.",
               "purpose_origin": "reviewed"
@@ -7223,35 +7256,35 @@
             {
               "id": "game/construction/visuals/construction_site_visual.gd::_site_changed",
               "name": "_site_changed",
-              "line": 82,
-              "end_line": 99,
+              "line": 84,
+              "end_line": 101,
               "kind": "method",
-              "purpose": "Reconcile only the announced site, reveal its actual earned progress, remove cancelled/dismantled presentation and celebrate new actual completion once.",
+              "purpose": "Reconcile the keyed actual site, update earned reveal, tear down inactive sites and finish the prepared material/start finite cosmetic effects only on new authoritative completion.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_site_visual.gd::reconcile",
               "name": "reconcile",
-              "line": 101,
-              "end_line": 102,
+              "line": 103,
+              "end_line": 104,
               "kind": "method",
               "purpose": "Refresh this same persistent site from committed state changes without replacing its reveal or ceremony.",
               "purpose_origin": "reviewed"
             },
             {
-              "id": "game/construction/visuals/construction_site_visual.gd::_restore_exterior",
-              "name": "_restore_exterior",
-              "line": 104,
-              "end_line": 112,
+              "id": "game/construction/visuals/construction_site_visual.gd::_finish_reveal",
+              "name": "_finish_reveal",
+              "line": 106,
+              "end_line": 117,
               "kind": "method",
-              "purpose": "Restore original whole-mesh and surface materials, then release unfinished ghost geometry and reveal caches.",
+              "purpose": "Keep the already rendered full-height material instead of switching to an unseen OpenGL variant; retire the unused orange pass, ghost and construction-only references.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_site_visual.gd::sync_speed",
               "name": "sync_speed",
-              "line": 114,
-              "end_line": 115,
+              "line": 119,
+              "end_line": 120,
               "kind": "method",
               "purpose": "Forward a committed game-speed change only to this site’s still-live cosmetic effect.",
               "purpose_origin": "reviewed"
@@ -7259,8 +7292,8 @@
             {
               "id": "game/construction/visuals/construction_site_visual.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 117,
-              "end_line": 119,
+              "line": 122,
+              "end_line": 124,
               "kind": "method",
               "purpose": "Disconnect the construction signal when this site/session scene lifetime ends.",
               "purpose_origin": "reviewed"
@@ -9876,7 +9909,7 @@
           "label": "Built Workshop gets instance owner",
           "file": "game/construction/construction_service.gd",
           "function": "_activate",
-          "line": 574
+          "line": 626
         },
         {
           "id": "n2",
@@ -25592,7 +25625,7 @@
       "files": [
         {
           "path": "game/rear_base/base_demo.gd",
-          "sha256": "b4f8116f6ac299138bc050491f329db0d27c5aa92099402f7438e9bd7dbe86e9",
+          "sha256": "0dfbd403c73550b524cc334b36a4f5f06b69d98924cedd71d6d014282ac534cb",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -27498,16 +27531,16 @@
               "id": "game/rear_base/base_demo.gd::_construction_progress_text",
               "name": "_construction_progress_text",
               "line": 2158,
-              "end_line": 2169,
+              "end_line": 2172,
               "kind": "method",
-              "purpose": "Present actual earned work, physically present builders, used versus unconsumed local materials and the owner’s current blocker.",
+              "purpose": "Present actual earned work, builder presence, used/local material and selected-site physical haul deliveries/carries/current blocker through the existing menu refresh.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training",
               "name": "_refresh_training",
-              "line": 2171,
-              "end_line": 2179,
+              "line": 2174,
+              "end_line": 2182,
               "kind": "method",
               "purpose": "Read one scoped current Training view, update the ordinary first-instructor offer/price availability and shared resource/population HUD, then render school/course facts without a world snapshot or new polling.",
               "purpose_origin": "reviewed"
@@ -27515,8 +27548,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls",
               "name": "_refresh_training_controls",
-              "line": 2181,
-              "end_line": 2198,
+              "line": 2184,
+              "end_line": 2201,
               "kind": "method",
               "purpose": "Refresh actual current school/course and staffing facts while preserving an unconfirmed instructor target for the same model/duty.",
               "purpose_origin": "reviewed"
@@ -27524,8 +27557,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls/<lambda#1>",
               "name": "_refresh_training_controls/<lambda#1>",
-              "line": 2183,
-              "end_line": 2183,
+              "line": 2186,
+              "end_line": 2186,
               "kind": "lambda",
               "purpose": "Format each training row's course/person identity, state and elapsed/required work for the Train list.",
               "purpose_origin": "reviewed"
@@ -27533,8 +27566,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_purchasing",
               "name": "_refresh_purchasing",
-              "line": 2201,
-              "end_line": 2212,
+              "line": 2204,
+              "end_line": 2215,
               "kind": "method",
               "purpose": "Render scoped procurement balance, quote, real orders/unloading/recovery status and current army delivery requests.",
               "purpose_origin": "reviewed"
@@ -27542,8 +27575,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce",
               "name": "_refresh_workforce",
-              "line": 2214,
-              "end_line": 2221,
+              "line": 2217,
+              "end_line": 2224,
               "kind": "method",
               "purpose": "Refresh workforce for base demo. Implementation: calls simulation.workforce_view, _refresh_resource_hud, workforce_panel.refresh, _sync_option.",
               "purpose_origin": "implementation_derived"
@@ -27551,8 +27584,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce/<lambda#1>",
               "name": "_refresh_workforce/<lambda#1>",
-              "line": 2220,
-              "end_line": 2221,
+              "line": 2223,
+              "end_line": 2224,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns person.id+\" | \"+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+\" | \"+person.phase.",
               "purpose_origin": "implementation_derived"
@@ -27560,8 +27593,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_factory_plan_action",
               "name": "_factory_plan_action",
-              "line": 2223,
-              "end_line": 2245,
+              "line": 2226,
+              "end_line": 2248,
               "kind": "method",
               "purpose": "Route only enable/pause guidance through current recovery validation/focus; retain existing Build/Work/other navigation and non-recovery same-facility draft behavior.",
               "purpose_origin": "reviewed"
@@ -27569,8 +27602,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_needs_panel",
               "name": "_army_needs_panel",
-              "line": 2247,
-              "end_line": 2251,
+              "line": 2250,
+              "end_line": 2254,
               "kind": "method",
               "purpose": "Create the scene-owned Army needs panel, bind the current session to the pure authoritative reader and route emitted action intent to the rear controller.",
               "purpose_origin": "reviewed"
@@ -27578,8 +27611,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_supply_action",
               "name": "_army_supply_action",
-              "line": 2253,
-              "end_line": 2278,
+              "line": 2256,
+              "end_line": 2281,
               "kind": "method",
               "purpose": "Resolve fresh current action identity before command; explicit HQ rifle resume targets E01 separately from unchanged E02 ammunition resume, preserving other navigation/observation flows.",
               "purpose_origin": "reviewed"
@@ -27587,8 +27620,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_focus_factory_recovery",
               "name": "_focus_factory_recovery",
-              "line": 2280,
-              "end_line": 2297,
+              "line": 2283,
+              "end_line": 2300,
               "kind": "method",
               "purpose": "Resolve current recovery once per click; preserve same-factory drafts or select/load exact other factory, then recheck model/site/owner/scalar state and focus/reveal existing control without pressing or mutating gameplay.",
               "purpose_origin": "reviewed"
@@ -27596,8 +27629,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_construction_selection",
               "name": "_sync_construction_selection",
-              "line": 2299,
-              "end_line": 2302,
+              "line": 2302,
+              "end_line": 2305,
               "kind": "method",
               "purpose": "Select the existing row matching the actual returned or chosen site identity after construction rows refresh.",
               "purpose_origin": "reviewed"
@@ -27605,8 +27638,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_manager_placement_rejection",
               "name": "_manager_placement_rejection",
-              "line": 2304,
-              "end_line": 2319,
+              "line": 2307,
+              "end_line": 2322,
               "kind": "method",
               "purpose": "Check exact positive overlap between the live upright unscaled capsule ground circle and current Catalog footprint, with no added clearance, cached permission or phantom blocker for unbound 2D.",
               "purpose_origin": "reviewed"
@@ -30212,7 +30245,7 @@
         },
         {
           "path": "game/preview_3d/world_presenter.gd",
-          "sha256": "7942c1bff00f55bdd394d8e26587973ac65a88855123fe68872865ce56fe60a4",
+          "sha256": "54790c5fbccbbfc3790479cbaffc0a137bcf167a3e5350f1bd908f53ff42a394",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -30345,16 +30378,16 @@
               "id": "game/preview_3d/world_presenter.gd::refresh_rear",
               "name": "refresh_rear",
               "line": 342,
-              "end_line": 397,
+              "end_line": 400,
               "kind": "method",
-              "purpose": "Reconcile committed site/reservation changes while retaining each live site visual across progress/completion and retiring cancelled/dismantled scenes.",
+              "purpose": "Reconcile actual shape/removal changes while retaining each site visual; Awaiting/Building/Complete share the same reserved geometry and keyed visual state rather than rebuilding colliders.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/world_presenter.gd::is_supply_table_collider",
               "name": "is_supply_table_collider",
-              "line": 399,
-              "end_line": 400,
+              "line": 402,
+              "end_line": 403,
               "kind": "method",
               "purpose": "Match only the retained valid Supply Table collider that still belongs to the current rear presentation root.",
               "purpose_origin": "reviewed"
@@ -30362,8 +30395,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::site_id_from_collider",
               "name": "site_id_from_collider",
-              "line": 402,
-              "end_line": 408,
+              "line": 405,
+              "end_line": 411,
               "kind": "method",
               "purpose": "Resolve a hit's site metadata only through current collision-root ancestry, rejecting missing, detached or unrelated geometry without scanning facilities or reading production state.",
               "purpose_origin": "reviewed"
@@ -30371,8 +30404,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_mark_facility_approach",
               "name": "_mark_facility_approach",
-              "line": 410,
-              "end_line": 426,
+              "line": 413,
+              "end_line": 429,
               "kind": "method",
               "purpose": "Mark the unchanged reserved footprint and draw a non-colliding service cue from the actual outside approach to the authored facade, without implying enterable interiors or moving gameplay doors.",
               "purpose_origin": "reviewed"
@@ -30380,8 +30413,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::refresh_markers",
               "name": "refresh_markers",
-              "line": 428,
-              "end_line": 461,
+              "line": 431,
+              "end_line": 464,
               "kind": "method",
               "purpose": "Consume one current ordered Policy result, reconcile permitted objective anchors with current ownership/state alongside existing PERSON/T01 representations, exclude represented IDs from timed proxies and preserve unsupported PLACE/carrier/contact paths.",
               "purpose_origin": "reviewed"
@@ -30389,8 +30422,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_person_changed",
               "name": "_field_person_changed",
-              "line": 463,
-              "end_line": 469,
+              "line": 466,
+              "end_line": 472,
               "kind": "method",
               "purpose": "Register the current actual person ground anchor for existing selection, retiring any replaced generic proxy before storing the new reference.",
               "purpose_origin": "reviewed"
@@ -30398,8 +30431,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_person_removing",
               "name": "_field_person_removing",
-              "line": 471,
-              "end_line": 472,
+              "line": 474,
+              "end_line": 475,
               "kind": "method",
               "purpose": "Erase the actual person selection reference before its presenter frees the removed or swapped anchor.",
               "purpose_origin": "reviewed"
@@ -30407,8 +30440,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_t01_changed",
               "name": "_field_t01_changed",
-              "line": 474,
-              "end_line": 480,
+              "line": 477,
+              "end_line": 483,
               "kind": "method",
               "purpose": "Replace the observed permitted hull's old abstract proxy reference with its one current detailed ground-anchor body, leaving authoritative identity and row ordering unchanged.",
               "purpose_origin": "reviewed"
@@ -30416,8 +30449,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_t01_removing",
               "name": "_field_t01_removing",
-              "line": 482,
-              "end_line": 483,
+              "line": 485,
+              "end_line": 486,
               "kind": "method",
               "purpose": "Erase only the World marker reference matching the removed detailed hull body before it is freed or replaced by a current abstract fallback.",
               "purpose_origin": "reviewed"
@@ -30425,8 +30458,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_objective_changed",
               "name": "_field_objective_changed",
-              "line": 485,
-              "end_line": 491,
+              "line": 488,
+              "end_line": 494,
               "kind": "method",
               "purpose": "Replace only the actual registered objective's old abstract proxy reference with its current ground anchor, preserving identity and current marker-row ordering.",
               "purpose_origin": "reviewed"
@@ -30434,8 +30467,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_objective_removing",
               "name": "_field_objective_removing",
-              "line": 493,
-              "end_line": 494,
+              "line": 496,
+              "end_line": 497,
               "kind": "method",
               "purpose": "Erase only the World marker reference matching the removed objective anchor before it is freed or replaced.",
               "purpose_origin": "reviewed"
@@ -30443,8 +30476,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::show_preview",
               "name": "show_preview",
-              "line": 496,
-              "end_line": 505,
+              "line": 499,
+              "end_line": 508,
               "kind": "method",
               "purpose": "Draw actual footprint/door with red known-invalid, amber cheap-provisional or explicitly fully checked green feedback, never authority.",
               "purpose_origin": "reviewed"
@@ -30452,8 +30485,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::clear_preview",
               "name": "clear_preview",
-              "line": 507,
-              "end_line": 509,
+              "line": 510,
+              "end_line": 512,
               "kind": "method",
               "purpose": "Hide uncommitted footprint and entrance visuals.",
               "purpose_origin": "reviewed"
@@ -30461,8 +30494,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::move_manager",
               "name": "move_manager",
-              "line": 511,
-              "end_line": 517,
+              "line": 514,
+              "end_line": 520,
               "kind": "method",
               "purpose": "Resolve active manager movement using an orthonormal world basis and publish the complete collision-resolved global position and world yaw without flattening height.",
               "purpose_origin": "reviewed"
@@ -30470,8 +30503,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::refresh_marker_positions",
               "name": "refresh_marker_positions",
-              "line": 519,
-              "end_line": 538,
+              "line": 522,
+              "end_line": 541,
               "kind": "method",
               "purpose": "Update only the cached nonPERSON contact/place/carrier subset with existing permitted data; PERSON roster and holder reads are entirely absent from this timed path.",
               "purpose_origin": "reviewed"
@@ -30479,8 +30512,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_bind_idle",
               "name": "_bind_idle",
-              "line": 540,
-              "end_line": 578,
+              "line": 543,
+              "end_line": 581,
               "kind": "method",
               "purpose": "Select the known pack neutral Idle clip explicitly rather than its short targeting pose, bind matching skeletal transform tracks and apply the first frame immediately before rendering the paused manager; preserve external normalization.",
               "purpose_origin": "reviewed"
@@ -30501,7 +30534,7 @@
           "label": "Reconcile current permitted world markers",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "refresh_markers",
-          "line": 428
+          "line": 431
         },
         {
           "id": "n1",
@@ -31208,7 +31241,7 @@
           "label": "Resolve manager movement",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "move_manager",
-          "line": 511
+          "line": 514
         },
         {
           "id": "n3",
@@ -31586,7 +31619,7 @@
           "label": "Instantly complete pending construction",
           "file": "game/construction/construction_service.gd",
           "function": "debug_complete_pending",
-          "line": 539
+          "line": 591
         },
         {
           "id": "n3",

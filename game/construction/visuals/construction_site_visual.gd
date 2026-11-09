@@ -54,6 +54,8 @@ func _prepare_reveal(shell: Node3D) -> void:
 				var standard := original as BaseMaterial3D
 				reveal.set_shader_parameter("tint",standard.albedo_color)
 				reveal.set_shader_parameter("vertex_colored",standard.vertex_color_use_as_albedo)
+				reveal.set_shader_parameter("material_roughness",standard.roughness)
+				reveal.set_shader_parameter("material_metallic",standard.metallic)
 				if standard.albedo_texture != null:
 					reveal.set_shader_parameter("albedo_map",standard.albedo_texture)
 					reveal.set_shader_parameter("textured",true)
@@ -92,7 +94,7 @@ func _site_changed(id: String) -> void:
 		_label.text += " · Construction complete"
 		if _was_unfinished and not _completed:
 			_completed = true
-			_restore_exterior()
+			_finish_reveal()
 			if is_instance_valid(_ceremony): _ceremony.start()
 	else:
 		_label.text += " · %s" % str(row.state).replace("M11","materials")
@@ -101,11 +103,14 @@ func _site_changed(id: String) -> void:
 func reconcile() -> void:
 	_site_changed(site_id)
 
-func _restore_exterior() -> void:
+func _finish_reveal() -> void:
 	for saved: Dictionary in _originals:
+		if saved.has("whole"): continue
 		var mesh: MeshInstance3D = saved.mesh
-		if saved.has("whole"): mesh.material_override = saved.whole
-		else: mesh.set_surface_override_material(saved.surface,saved.override)
+		# Keep the already rendered full-height material. Swapping back to an
+		# unseen StandardMaterial at completion compiles new OpenGL variants.
+		var material := mesh.get_surface_override_material(saved.surface) as ShaderMaterial
+		if material != null: material.next_pass = null
 	for ghost: MeshInstance3D in _ghosts: ghost.queue_free()
 	_ghosts.clear()
 	_materials.clear()

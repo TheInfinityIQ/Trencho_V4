@@ -22,5 +22,11 @@
     "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
     "https://docs.godotengine.org/en/4.7/classes/class_tween.html"
   ],
-  "diagram": "docs/diagrams/construction_delivery_completion.mmd"
+  "diagram": "docs/diagrams/construction_delivery_completion.mmd",
+  "post_freeze_refinement": [
+    "Designer approved own-site builder fetching with real exclusive physical tasks.",
+    "User clarified some workers remained Hauling: no-haulers case is NOT the full user-session diagnosis. Two-hauler baseline actually delivered35/60 with25still carried at70seconds; exact reported case remains under investigation.",
+    "Measured first completion draw1225.686ms vs81\u201395ms llvmpipe, CPUcommand16.316ms andgeometry1.002ms. Target first-use material swap/effects and unchanged shape rebuilding; validate after, no nativeFPS claim.",
+    "Smoke1.5s, retimed snip2.0s; contact2.5s but tape release3.5s by Designer interpretation."
+  ]
 }

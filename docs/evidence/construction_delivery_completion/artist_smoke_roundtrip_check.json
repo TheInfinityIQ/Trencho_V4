@@ -1,0 +1,14 @@
+{
+  "mesh_instances": 1,
+  "rigs": 0,
+  "max_bounds_difference_m": 0.0,
+  "object_scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "vertex_color_layers": [
+    "Color"
+  ],
+  "godot_run": false
+}

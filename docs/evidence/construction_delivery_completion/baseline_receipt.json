@@ -1,0 +1,19 @@
+{
+  "baseline_head": "d5100e9433254ef586f38ecff4618cbb1eb1bdf6",
+  "checks": [
+    {
+      "run": 42709239630,
+      "artifact_sha256": "a64b0e4a3380bc948bd4acd38fd11c1f599e2054d98660d35d2e41b521374d8d",
+      "scope": "4builders, actual automatic demand/start500M11;0delivery/work at70explicit seconds; separately labelled debug completion profile.",
+      "completion_call_us": 16316,
+      "geometry_refresh_us": 1002,
+      "next_render_frame_us": 1225686
+    },
+    {
+      "run": 42709920555,
+      "artifact_sha256": "d65720947380cc90a1e6e5b8cd32ced7f6495d4db38f142071594475d726f404",
+      "scope": "Clarified common-hauler case:2builders+2haulers,35actual delivery/consumption by70seconds,25actual Carry with97.596s deadline. No actual blocked route in that case; does not diagnose reported user session."
+    }
+  ],
+  "limits": "GitHub-only llvmpipe current-bug observation; explicit model intervals and separately labelled debug completion. No native input,60FPS or complete-loop acceptance. Follow-up runtime evidence pending."
+}

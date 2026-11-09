@@ -1,0 +1,28 @@
+{
+  "bytes": 115693,
+  "scenes": [
+    "Completion_Smoke_Puff"
+  ],
+  "actions": [],
+  "armatures": [],
+  "objects": [
+    "Smoke_Editable_Lobe_6",
+    "Smoke_Editable_Lobe_5",
+    "Smoke_Editable_Lobe_4",
+    "Smoke_Editable_Lobe_3",
+    "Smoke_Editable_Lobe_2",
+    "Smoke_Editable_Lobe_1",
+    "Smoke_Editable_Lobe_0",
+    "SM_Completion_Smoke_Puff",
+    "Construction_Rim",
+    "Construction_Review_Floor",
+    "Construction_Review_Camera",
+    "Construction_Key",
+    "Construction_Fill"
+  ],
+  "images": [
+    "Viewer Node",
+    "Render Result"
+  ],
+  "read_saved_bytes": true
+}

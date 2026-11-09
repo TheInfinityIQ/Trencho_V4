@@ -158,7 +158,7 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 		"blocker":"Deliver %d real M11 from an accessible rear store." % plan.m11,"builders":{},"haul_job":""}
 	if rear.empty_field_opening: order_materials(id,"receiving",1,true)
 	rear._settle()
-	return {"ok":true,"id":id,"message":"Site placed; Building Materials are requested from the Supply Table and completed Materials Plants. Assign haulers and up to four builders." if rear.empty_field_opening else "Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
+	return {"ok":true,"id":id,"message":"Site placed; Building Materials are requested from the Supply Table and completed Materials Plants. Assign up to four builders; they fetch missing site materials, and Hauling can help." if rear.empty_field_opening else "Site placed; footprint and access reserved. Deliver real M11 and assign up to four builders."}
 
 func _path_hits(path: Array, box: Rect2) -> bool:
 	for index in range(1,path.size()):
@@ -441,6 +441,58 @@ func _return_site_stock(row: Dictionary, rear: RefCounted) -> void:
 func _workers(row: Dictionary) -> int:
 	var rear: RefCounted = _rear_ref.get_ref()
 	return mini(4,rear._present("builders-"+row.id))
+
+func start_builder_supply(actor: Dictionary) -> bool:
+	# Same assigned person, one physical task; never borrow unrelated work.
+	if actor.phase != "Idle" or not actor.load.is_empty(): return false
+	var rear: RefCounted = _rear_ref.get_ref()
+	var status: Dictionary = rear.ledger.duty_status(actor.id)
+	var duty: String = str(status.get("duty_id",""))
+	if not duty.begins_with("builders-"): return false
+	if status.pending_assignment != "None": return false
+	var id: String = duty.trim_prefix("builders-")
+	var row: Dictionary = instances.get(id,{})
+	if row.is_empty() or row.state not in ["Awaiting M11","Building"]: return false
+	if _material_ceiling(row) > float(row.progress)+EPS: return false
+	return rear._start_job(actor,"construction",id)
+
+func delivery_status(id: String) -> Dictionary:
+	# Selected-menu projection only. Claims are not counted as delivered/carried.
+	var rear: RefCounted = _rear_ref.get_ref()
+	var received := 0
+	var remaining := 0
+	var active: Dictionary = {}
+	var blocker := "Haul queued; awaiting carrier"
+	for job: Dictionary in rear.jobs:
+		if job.destination != id or job.type != "M11": continue
+		received += int(job.delivered)
+		if job.cancelled: continue
+		remaining += maxi(0,int(job.requested)-int(job.delivered))
+		active[job.id] = true
+		if not str(job.blocker).is_empty(): blocker = str(job.blocker)
+	var carried := 0
+	var assigned := 0
+	var blocked := false
+	var transport_status := ""
+	for actor: Dictionary in rear.actors.values():
+		var load: Dictionary = actor.load
+		if load.get("destination","") != id or not active.has(load.get("job","")): continue
+		assigned += int(load.count)
+		if load.has("truck"):
+			carried += rear.ledger.available_stock_at(str(load.truck),"M11")
+			if not str(load.get("carried","")).is_empty():
+				carried += int(rear.ledger.inspect_entity(str(load.carried),{},false).get("quantity",0))
+			for truck: Dictionary in trucks.trucks.values():
+				if truck.id == load.truck:
+					transport_status = "Construction truck: "+str(truck.phase)
+					if not str(truck.blocker).is_empty(): transport_status += " · "+str(truck.blocker)
+		elif not str(load.get("carried","")).is_empty(): carried += int(load.count)
+		blocked = blocked or actor.phase in ["Route blocked","Source blocked"]
+	if carried > 0: blocker = "Carry route blocked" if blocked else "Delivery underway"
+	elif assigned > 0: blocker = "Source inaccessible" if blocked else "Collecting Building Materials"
+	elif remaining <= 0: blocker = "Material delivery complete"
+	if not transport_status.is_empty(): blocker = transport_status
+	return {"received":received,"carried":carried,"assigned":assigned,"remaining":remaining,"status":blocker}
 
 func _ready(row: Dictionary) -> bool:
 	return _workers(row) > 0 and _material_ceiling(row) > float(row.progress)+EPS

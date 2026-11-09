@@ -349,7 +349,10 @@ func refresh_rear() -> bool:
 	var next: Dictionary = {}
 	for row in simulation.rear.construction.instances.values():
 		var goods: bool = row.state in ["Cancelled","Dismantled"] and simulation.rear.ledger.loose_stock_mass_at(row.id) > 0.000001
-		next[row.id] = [row.center,row.size,row.state,goods,row.kind,row.door,row.quarter_turn]
+		# Earned work/completion do not change the reserved shape. The keyed
+		# site visual already receives those states without rebuilding colliders.
+		var geometry_state: String = str(row.state) if row.state in ["Cancelled","Dismantled","Clearing","Dismantling"] else "Reserved"
+		next[row.id] = [row.center,row.size,geometry_state,goods,row.kind,row.door,row.quarter_turn]
 	if next == _site_snapshot: return false
 	_site_snapshot = next
 	for id: String in _site_visuals.keys():

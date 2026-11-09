@@ -264,7 +264,7 @@ One person cannot fill two jobs at once. Newly completed facilities apply their 
 - [set_target](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L121) — Player changes requested target
 - [_rebalance](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L477) — Rebalance actual eligible people
 - [_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L608) — Physical reporting phase
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L769) — Finish timed actor phase
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L771) — Finish timed actor phase
 - [operators](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L86) — Production counts present operators
 - [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L562) — Validate actual person and service-strip eligibility
 - [point](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_work_positions.gd#L12) — Choose reachable distinct physical work point
@@ -299,9 +299,9 @@ This diagram is the local rear haul path. Strategic manifests, forward trucks an
 **Source anchors:**
 
 - [request_haul](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L148) — Request a physical haul
-- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L892) — Select eligible idle hauler/job
+- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L894) — Select eligible idle hauler/job
 - [begin_carry](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1024) — Reserve and begin actual carry
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L769) — Finish timed carry phase
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L771) — Finish timed carry phase
 - [_reconcile_store](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L288) — Reconcile storage constraints
 - [set_order](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L11) — Validate complete category preference
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L33) — Start highest-priority feasible idle work
@@ -368,6 +368,8 @@ flowchart TD
     n6["Keyed earned-work reveal"]
     n7["Scissors then finite tape physics"]
     n8["Ground contact then pylon cleanup"]
+    builder_supply["Own-site real builder fetching"]
+    delivery_status["Actual delivered versus carried"]
     n0 -->|"legal commit"| n1
     n1 -->|"materials needed"| n2
     n2 -->|"actual goods + builders"| n3
@@ -376,21 +378,25 @@ flowchart TD
     n3 -->|"site_changed(id)"| n6
     n4 -->|"actual completion event"| n7
     n7 -->|"released tape contacts ground"| n8
+    n2 -->|"own-site shortage / idle builder"| builder_supply
+    builder_supply -->|"physical deposit then report/build"| n3
 ```
 
-Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime.
+Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime. Follow-up: assigned starved builders may fetch only their own site M11 on foot through existing real claims/carries; one duty/task, no simultaneous construction. Selected menu distinguishes actual haul receipt/carry. Completed exterior retains full-height prepared material, work state does not rebuild unchanged reservations, zero-alpha effect preparation targets measured first-use OpenGL hitch. Smoke1.5s then snip2s, tape release3.5s; actual capability remains immediate.
 
 **Source anchors:**
 
 - [preview](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L66) — Check actual placement and access
 - [place](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L144) — Commit one real site
 - [order_materials](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L264) — Order real M11 to site
-- [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L463) — Earn builder work
-- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L574) — Complete and activate site
-- [_apply_starter_staffing](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L624) — Apply once-only starting staff request
-- [_site_changed](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_site_visual.gd#L82) — Keyed earned-work reveal
-- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L151) — Scissors then finite tape physics
-- [_ground_contact](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L200) — Ground contact then pylon cleanup
+- [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L515) — Earn builder work
+- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L626) — Complete and activate site
+- [_apply_starter_staffing](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L676) — Apply once-only starting staff request
+- [_site_changed](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_site_visual.gd#L84) — Keyed earned-work reveal
+- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L163) — Scissors then finite tape physics
+- [_ground_contact](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L220) — Ground contact then pylon cleanup
+- [start_builder_supply](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L445) — Own-site real builder fetching
+- [delivery_status](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L459) — Actual delivered versus carried
 
 <a id="truck"></a>
 ## Construction Office utility truck
@@ -475,7 +481,7 @@ Declared initial-workshop maps explicitly to logical workshop/rear.production. P
 **Source anchors:**
 
 - [_init](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/r01_production.gd#L8) — Default Workshop recipe/access owner
-- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L574) — Built Workshop gets instance owner
+- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L626) — Built Workshop gets instance owner
 - [request_recipe](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/selectable_production.gd#L37) — Choose allowed recipe
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L255) — Use the common batch lifecycle
 - [_consume_workshop](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L414) — Open selected actual Workshop in 3D
@@ -1417,7 +1423,7 @@ People, hulls and objectives are parallel presenters. Existing field_t01 paths s
 
 **Source anchors:**
 
-- [refresh_markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L428) — Reconcile current permitted world markers
+- [refresh_markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L431) — Reconcile current permitted world markers
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_persons.gd#L31) — Admit actual friendly people
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_t01_trucks.gd#L29) — Admit exact canonical T01/T02
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_objectives.gd#L14) — Reconcile registered objectives
@@ -1447,7 +1453,7 @@ Switching perspective does not create free workers. Full grounded vehicle contac
 
 - [_build_player](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L177) — Build manager body from shared pose
 - [scene_position](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/manager_pose.gd#L17) — Read actual foot pose
-- [move_manager](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L511) — Resolve manager movement
+- [move_manager](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L514) — Resolve manager movement
 - [publish_resolved](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/manager_pose.gd#L23) — Publish resolved physical pose
 - [_consume_commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L589) — Supply current occupation to placement
 
@@ -1503,7 +1509,7 @@ The last three nodes are alternate debug branches. They must not be used to clai
 
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/debug/rear_debug_menu.gd#L9) — Build debug action menu
 - [execute](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/debug/rear_debug_actions.gd#L5) — Execute supplied current model action
-- [debug_complete_pending](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L539) — Instantly complete pending construction
+- [debug_complete_pending](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L591) — Instantly complete pending construction
 - [debug_deliver_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L228) — Force physical worker delivery exception
 - [debug_order_raw_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L170) — Free raw-resource order exception
 

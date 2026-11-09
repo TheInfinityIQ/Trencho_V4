@@ -1,5 +1,11 @@
 # Place and manage buildings
 
+The [delivery/completion follow-up](construction_delivery_completion.md) records
+the latest builder-fetch behavior, delivery visibility, measured hitch correction
+and1.5s smoke +2s cutting sequence. Earlier scoped receipts below retain their
+actual heads and do not prove the later changes.
+
+
 The normal live3D opening starts at1x. Pause /1x /2x remain in management.
 Diagnostic/standalone model factories retain their existing default speed.
 
@@ -34,8 +40,8 @@ count alone must not make the confirmation unusable at1x.
 ConstructionService owns consumption/work/completion. The persistent scene-local
 site adapter listens to its keyed signal; progress updates shader parameters
 without recreating building meshes or collision bodies. Existing footprint,
-access, placement and site picking stay with their current owners. Whole-mesh
-and per-surface imported materials are restored on completion. Returning to an
+access, placement and site picking stay with their current owners. The full-height prepared material is retained on completion to avoid a new
+first-use OpenGL material variant; ghost/outline passes are removed. Returning to an
 already completed site does not replay its celebration. Cancellation, dismantling
 and session replacement release the corresponding scene lifetime.
 
