@@ -1,0 +1,38 @@
+{
+  "id": "movement_execution_and_coordination",
+  "recorded": "2026-11-09",
+  "status": "DEFERRED by Dawson; note for later, continue gameplay features",
+  "owner": "Lead, sole programmer",
+  "source_baseline": "8909fbf1630149361c61ead47fecd20fe643bf6c",
+  "keep": [
+    "Canonical shared person/vehicle/cargo identities and custody in the ledger",
+    "Separate mission lifecycles for freight, passengers, construction, production and combat",
+    "Existing reusable production and route/profile data; scene-owned lightweight objects"
+  ],
+  "concerns": [
+    "Movement progress, fuel, hazard, interruption and stopping mechanics repeated across activity owners",
+    "Broad shared RearSimulation.advance_time/_settle visits many services and collections",
+    "Whole-rear dependencies expose unrelated service internals; maintenance and runtime scaling are not established"
+  ],
+  "later_candidate": "Keep mission/activity owners; consolidate shared movement execution with one current movement owner per unit, profiles for numeric differences and strategies where movement rules differ. Commit actual position/resource costs through one validated physical path, publish targeted arrival/blocked/interrupted events, and narrow cross-system wakeups. Do not create deep unit inheritance or a speculative ECS/framework.",
+  "preserve_if_revisited": [
+    "One real identity and exclusive activity ownership",
+    "Fuel only for actually travelled prefix and established destruction/hazard ordering",
+    "Current intent/session revalidation, safe cancellation and no obsolete-order revival",
+    "Real cargo/crew/material conservation; no gameplay rebalance hidden in refactoring"
+  ],
+  "source_anchors": [
+    "game/dispatch/dispatch_service.gd::_route_progress",
+    "game/forward_supply/forward_transport.gd::_advance_route",
+    "game/military/troop_transport.gd::_advance_route",
+    "game/staffing/rear_simulation.gd::_settle",
+    "game/rear_base/base_simulation.gd::after_command"
+  ],
+  "evidence_and_limits": "Source inspection, not a new benchmark. Strategy classes alone do not prove60FPS or remove broad scans. Godot scene-organization and node-alternatives documentation support focused composition/lightweight objects, not a mandated pattern.",
+  "sources": [
+    "https://docs.godotengine.org/en/stable/tutorials/best_practices/scene_organization.html",
+    "https://docs.godotengine.org/en/stable/tutorials/best_practices/node_alternatives.html",
+    "https://docs.godotengine.org/en/stable/tutorials/performance/general_optimization.html"
+  ],
+  "resume_rule": "Revisit through an explicitly prioritized bounded engineering task later; it is not an approval, playtest, performance-polish or prerequisite gate for the current Supply Table feature. No refactor is implemented by this record."
+}
