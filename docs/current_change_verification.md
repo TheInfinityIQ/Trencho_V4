@@ -10,7 +10,9 @@ Effective 31 October 2026. Dawson directed the team to stop writing regression t
 
 ## GitHub
 
-The required `validate` job now checks only the update's changed production GDScript files for syntax. For a synchronize/push event it uses the event's previous commit when supplied; otherwise it uses the head commit's parent. Dependencies may be parsed, but no regression runner is invoked. Documentation/workflow-only updates do not download or launch Godot.
+The required `validate` job checks the update's changed production GDScript for syntax. A first PR publication uses its base/head merge-base so all local commits in the proposed game-loop block are included. A later synchronize/push uses the previous head when supplied, so a metadata-only update after an already checked source does not unnecessarily reparse the whole PR. A non-PR event without a previous head falls back to the head's parent. Dependencies and declared assets may be imported/parsed, but no regression runner is invoked. Updates whose selected range contains only documentation/workflow changes do not download or launch Godot.
+
+The retained GDUnit4 suites are paused; neither local unit tests nor a full remote suite run automatically. One playable game-loop block is the normal PR boundary, with local checkpoint commits before its first push. Only the current block's necessary brief demonstrations are dispatched; repeated checking requires an affected change, a failure or an unresolved concern.
 
 The optional `direct_check` manual input supplies one brief Godot script for the actual change. It is written only into ignored CI output and has a 45-second process deadline; it is not a committed regression fixture. Use it only for a concrete changed behavior, not an old suite or broad scenario. The direct check must exit nonzero when the changed action fails and must describe what it exercised. No direct demonstration runs automatically.
 

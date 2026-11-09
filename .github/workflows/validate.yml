@@ -48,6 +48,11 @@ jobs:
           available = re.fullmatch(r"[0-9a-fA-F]{40}", before or "") and set(before) != {"0"} and subprocess.run(["git", "cat-file", "-e", before + "^{commit}"], stderr=subprocess.DEVNULL).returncode == 0
           if available:
               base = before
+          elif event.get("pull_request"):
+              # A first PR may contain many local checkpoint commits. Checking
+              # only head^ would silently omit the earlier parts of its block.
+              target = event["pull_request"]["base"]["sha"]
+              base = subprocess.check_output(["git", "merge-base", target, head], text=True).strip()
           else:
               base = subprocess.check_output(["git", "rev-parse", head + "^"], text=True).strip()
           subprocess.run(["git", "diff", "--check", base, head], check=True)

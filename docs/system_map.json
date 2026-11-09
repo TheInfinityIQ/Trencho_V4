@@ -20,7 +20,7 @@
     ]},
     ".github/pull_request_template.md": {"role":"documentation","system":".github","sha256":"28ff275971338bfcffde53921e9557ad6b15a36e75c74e4511bdebc554e609e9","lines":15,"purpose":"Document pull request template.","functions":[
     ]},
-    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"39b2585cd9a2534f9fa222602a7bad50a7aa0d467aa9c21cfb447ef8196bb71d","lines":182,"purpose":"Configure GitHub automation: validate.","functions":[
+    ".github/workflows/validate.yml": {"role":"workflow","system":".github","sha256":"02ba379033ab9f85840f50784b44316714f315a300e093920d3def2e75977db3","lines":187,"purpose":"Configure GitHub automation: validate.","functions":[
     ]},
     ".gitignore": {"role":"configuration","system":"project","sha256":"568c3e6e224bded04a4d8967b46a1e4b3777adec490c0f3812cc6b46012b072c","lines":28,"purpose":"Supply .gitignore project settings or repository metadata.","functions":[
     ]},
@@ -142,7 +142,7 @@
     ]},
     "docs/current_change/workshop_interaction.md": {"role":"documentation","system":"docs","sha256":"42e0ce8f420dbf0f2c5d01c0a48a7f22139f0e3d079753dae1c3c52daf99b5a0","lines":10,"purpose":"Document Fixed arranged Workshop UI observation proposal.","functions":[
     ]},
-    "docs/current_change_verification.md": {"role":"documentation","system":"docs","sha256":"8dfc6e064cf952c5bf4fd4681917ddb73f92b9e2dda4ec3cad0492728f75d45b","lines":19,"purpose":"Document Current-change verification.","functions":[
+    "docs/current_change_verification.md": {"role":"documentation","system":"docs","sha256":"c146fa238783f22415137ce63db1784c7f9f53d2c42c856cd5dced6e86f4186b","lines":21,"purpose":"Document Current-change verification.","functions":[
     ]},
     "docs/d01_measured_options.md": {"role":"documentation","system":"docs","sha256":"52734046c77dcc17e90b82a5780a4dc4df1237fb78926dab76ae64d240ea8444","lines":88,"purpose":"Document D01 measured presentation options.","functions":[
     ]},
@@ -166,7 +166,7 @@
     ]},
     "docs/development_convoys_grid.md": {"role":"documentation","system":"docs","sha256":"a6e8d9471b3140c3679ead19790555889b974219179a9c767f26cbfc4546d44b","lines":92,"purpose":"Document Development delivery convoys and RTS construction — pre-code contract.","functions":[
     ]},
-    "docs/development_workflow.md": {"role":"documentation","system":"docs","sha256":"005798b6283f615fef36793c9d9f8ee8070302d217aada23d07db57329b756a7","lines":171,"purpose":"Document Feature planning and delivery measurement.","functions":[
+    "docs/development_workflow.md": {"role":"documentation","system":"docs","sha256":"83837229ae4ebfc826e325ebfa3e0fd85d99114b11d0e436c6cb34b761c6d9c7","lines":199,"purpose":"Document Feature planning and delivery measurement.","functions":[
     ]},
     "docs/diagrams/3d_construction_commands.mmd": {"role":"configuration","system":"docs","sha256":"649a51749ee9393c8663f5384be09538eb8d41701d6d5ba9c15fa9b2116851b4","lines":39,"purpose":"Supply 3d construction commands project settings or repository metadata.","functions":[
     ]},
@@ -838,7 +838,7 @@
     ]},
     "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"3c8396618b27e1ea5966e4126e6fa23f6aa87b06f4976997c1308d4916c87f2d","lines":366,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
-    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"66b48b9e5424d50bc7fef0e613c0389aa3100548e9d46795d8fa5c0ce721e175","lines":266,"purpose":"Document Team workflow.","functions":[
+    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"a2a251fc0c7b2fe616738f56148b97b446c45d11a41451b4f4fd09422de13784","lines":274,"purpose":"Document Team workflow.","functions":[
     ]},
     "docs/testing.md": {"role":"documentation","system":"docs","sha256":"3cabfdb23750b6904782eedcd7039b69c6e81d45dbb0ae61cd8288d4647367f2","lines":122,"purpose":"Document Automated checks and GdUnit4 pilot.","functions":[
     ]},
