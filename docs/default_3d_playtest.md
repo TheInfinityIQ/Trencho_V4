@@ -37,6 +37,11 @@ factory stage; independent development need not stop.
 
 The [precode plan](feature_plans/default_3d_entry_v1.json) and
 [integration diagram](diagrams/default_3d_entry.mmd) record ownership and limits.
+The [configured-entry receipt](evidence/default_3d_entry/startup_result.json)
+passed at source `db61a78`; its [actual opening image](evidence/default_3d_entry/opening.png)
+was inspected. Both required run42649450688 and focused run42649451270 passed.
+The required job had no changed production scripts; the focused run loaded the
+real main/3D dependency graph. No old scenario was replayed.
 The root scene reuses Godot's [scene instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html)
 and [TSCN resource format](https://docs.godotengine.org/en/latest/engine_details/file_formats/tscn.html)
 rather than creating another gameplay controller or clock.

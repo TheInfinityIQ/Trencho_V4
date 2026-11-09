@@ -17,6 +17,12 @@ Normal configured-entry observation is a separate narrow receipt; it does not
 prove native input, the full loop or 60 FPS. Earlier opt-in/old launch notes and
 source receipts below are historical. Current ownership is Lead-only.
 
+Configured-entry run42649451270 and required run42649450688 passed at `db61a78`.
+The [verified receipt and image](evidence/default_3d_entry/startup_result.json)
+establish one shared 3D session and the unchanged paused opening through the
+normal project entry. The required job had no changed production scripts; actual
+startup loaded the game dependencies. Neither job establishes player acceptance.
+
 ## Scoped convoy and planning-workflow increment — 9 November 2026
 
 [PR138](https://github.com/TheInfinityIQ/Trencho_V4/pull/138) contains the development
