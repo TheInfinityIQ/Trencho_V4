@@ -312,7 +312,7 @@ func _advance_request(row: Dictionary) -> bool:
 		return false
 	var site_id: String = rear.dispatch.ready_dispatch_site()
 	if site_id.is_empty():
-		_set_status(row,"Waiting","Waiting for an accessible Logistics Centre with requested staff and an eligible idle handler. Staff who are reporting, carrying or changing duties are not ready for a new load.")
+		_set_status(row,"Waiting","Waiting for an accessible Logistics Centre and an eligible idle dedicated or hauling worker. Reporting, carrying or changing duties must finish before a new load.")
 		return false
 	var site: Dictionary = rear.dispatch.dispatch_sites[site_id]
 	var inventory: Dictionary = rear.ledger.owned_inventory_at(site.store,rear.PLAYER)

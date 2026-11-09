@@ -135,8 +135,8 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 		for index in 4:
 			var person: Dictionary = rear.add_person("start-unloader-%02d" % (index+1),false,"None","duty-receiving")
 			assert(person.ok,str(person))
-		var assigned: Dictionary = rear.set_target("receiving",4)
-		assert(assigned.ok,str(assigned))
+		# Uncommitted people already join the default Hauling pool. Receiving is
+		# eligible work there, rather than a second permanent assignment.
 	elif initial_rear:
 		RearStart.apply(self)
 	rear.advance_time(0)
@@ -468,5 +468,6 @@ func audit() -> Array[String]:
 		failures.append("Shared event clocks disagree")
 	for id in receiving._workers:
 		var p: Dictionary = rear.ledger.inspect_entity(id)
-		if p.duty_id not in receiving.freight_berths.map(func(row: Dictionary) -> String: return row.duty) or rear.actors[id].phase != "Unloading": failures.append("Receiving duty is not exclusive")
+		var shared: bool = receiving._workers[id].get("shared",false) and p.duty_id == "hauling"
+		if (not shared and p.duty_id not in receiving.freight_berths.map(func(row: Dictionary) -> String: return row.duty)) or rear.actors[id].phase != "Unloading": failures.append("Receiving duty is not exclusive")
 	return failures

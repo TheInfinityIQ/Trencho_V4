@@ -570,6 +570,7 @@ func _draft_worker_purchase() -> void:
 	_refresh_purchase_quote()
 
 func discard_menu_drafts() -> void:
+	if workforce_panel != null and workforce_panel.hauling_priorities != null: workforce_panel.hauling_priorities.discard_draft()
 	_staff_draft_dirty = false
 	_staff_control_basis = ""
 	_instructor_draft_dirty = false

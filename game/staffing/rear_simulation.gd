@@ -8,6 +8,7 @@ const Records = preload("res://game/identity/identity_records.gd")
 const Layout = preload("res://game/staffing/rear_layout.gd")
 const Yard = preload("res://game/staffing/yard_activity.gd")
 const WorkPositions = preload("res://game/staffing/rear_work_positions.gd")
+const HaulingPolicy = preload("res://game/staffing/hauling_policy.gd")
 const PRIORITIES: Array[String] = ["Low", "Normal", "High", "Emergency"]
 const PLAYER := "army-blue"
 const EPS := 0.000001
@@ -16,6 +17,7 @@ var ledger := Ledger.new()
 const SUPPLY_TABLE := Vector2(120,186)
 var empty_field_opening := false
 var work_positions: RefCounted
+var hauling_policy: RefCounted
 var yard: RefCounted
 var time: float = 0.0
 var vehicle_departures_allowed := true # Explicit-time callers own their clock; live Base gates Pause.
@@ -54,6 +56,7 @@ var receiving: RefCounted # Optional integrated G02 activity; same ledger and jo
 
 func _init(fixture: String = "A05", include_yard_fixture: bool = true, empty_field: bool = false) -> void:
 	empty_field_opening = empty_field
+	hauling_policy = HaulingPolicy.new(self)
 	if empty_field: work_positions = WorkPositions.new(self)
 	ledger.add_place("rear", "Accessible rear working area", Vector2.ZERO)
 	ledger.add_place("away", "Committed strategic trip outside the rear", Vector2(-1000, 0))
@@ -65,6 +68,7 @@ func _init(fixture: String = "A05", include_yard_fixture: bool = true, empty_fie
 		ledger.add_place("duty-" + id, f[0] + " staff entrance", at)
 		requests[id] = {"id": id, "target": 0, "positions": (4 if id == "receiving" else 0) if empty_field else f[3], "priority": 1, "created": 0.0, "order": _next(), "place": "duty-" + id}
 	requests.hauling = {"id": "hauling", "target": 0, "positions": 120, "priority": 1, "created": 0.0, "order": _next(), "place": "duty-depot"}
+	if empty_field: requests.hauling.fallback = true
 	requests.yard = {"id": "yard", "target": 0, "positions": 1, "priority": 1, "created": 0.0, "order": _next(), "place": "yard-start"}
 	if empty_field: requests.yard.positions = 0
 	for id in Layout.STORES:
@@ -207,6 +211,8 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	if destination != "Available" and _committed(destination) >= int(requests[destination].positions):
 		return _result(false, "Every actual/pending position in that duty is occupied.")
 	var a: Dictionary = actors[id]
+	if str(a.phase).begins_with("Dispatch "):
+		return _result(false,"Finish the current outbound handling task before changing this person's job. Staffing targets apply at its safe completion.")
 	var assignment := Records.Assignment.AVAILABLE if destination == "Available" else (Records.Assignment.TRAINING if destination == "students" else Records.Assignment.REAR_LABOUR)
 	var duty := "" if destination == "Available" else destination
 	if not a.load.is_empty() and not a.load.has("truck") and a.phase not in ["Carry", "Drop"]:
@@ -471,10 +477,12 @@ func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
 	# incumbents within those counts before requesting any safe transfers.
 	var facts := {}
+	if requests.hauling.get("fallback",false): requests.hauling.target = mini(120,actors.size())
 	for id in actors: facts[id] = ledger.inspect_person_status(id)
 	var pool: Array = []
 	for id in actors:
 		var p: Dictionary = facts[id]
+		if str(actors[id].phase).begins_with("Dispatch "): continue
 		if _eligible(p, "Available") and p.assignment != "Training" and p.pending_assignment == "None" and not p.duty_id.begins_with("crew:") and not p.duty_id.begins_with("fuel:") and (empty_field_opening or not p.duty_id.begins_with("builders-")):
 			pool.append(id)
 	var pending: Dictionary = {}
@@ -482,6 +490,8 @@ func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 	# the person still physically serves the old duty until safe completion.
 	for id in actors:
 		var person: Dictionary = facts[id]
+		if str(actors[id].phase).begins_with("Dispatch ") and requests.has(person.duty_id):
+			pending[person.duty_id] = int(pending.get(person.duty_id,0))+1
 		if person.pending_assignment != "None" and requests.has(person.pending_duty):
 			pending[person.pending_duty] = int(pending.get(person.pending_duty, 0)) + 1
 	var quotas: Dictionary = pending.duplicate()
@@ -513,6 +523,7 @@ func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 			free.append(id)
 	var ordered: Array = requests.values()
 	ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if bool(a.get("fallback",false)) != bool(b.get("fallback",false)): return not bool(a.get("fallback",false))
 		if a.priority != b.priority: return a.priority > b.priority
 		# Qualified roles are filled from compatible free people first.
 		if (a.id in ["yard", "training"]) != (b.id in ["yard", "training"]): return a.id in ["yard", "training"]
@@ -537,6 +548,7 @@ func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 
 
 func _staff_before(a: Dictionary, b: Dictionary, counts: Dictionary) -> bool:
+	if bool(a.get("fallback",false)) != bool(b.get("fallback",false)): return not bool(a.get("fallback",false))
 	if a.priority != b.priority:
 		return a.priority > b.priority
 	var a_share: float = float(a.target - int(counts.get(a.id, 0))) / a.target
@@ -707,7 +719,7 @@ func _settle() -> void:
 		if profile_stages: stage_started = Time.get_ticks_usec()
 		for a in actors.values():
 			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
-				changed = _start_job(a) or changed
+				changed = (hauling_policy.start(a) if empty_field_opening else _start_job(a)) or changed
 		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
 		if training != null: changed = training.settle() or changed
@@ -860,12 +872,21 @@ func _reconcile_factory_hauls() -> bool:
 	return changed
 
 
-func _start_job(a: Dictionary) -> bool:
+func set_hauling_priorities(values: Array) -> Dictionary:
+	var result: Dictionary = hauling_policy.set_order(values)
+	if result.ok and result.get("changed",false):
+		_settle()
+		state_changed.emit()
+	return result
+
+
+func _start_job(a: Dictionary, category: String = "") -> bool:
 	var person: Dictionary = ledger.inspect_person_status(a.id)
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
 	for job in jobs:
+		if not category.is_empty() and hauling_policy.category(job) != category: continue
 		if job.cancelled or job.delivered + _in_flight(job.id) >= job.requested:
 			continue
 		var option := _job_option(job, person)
