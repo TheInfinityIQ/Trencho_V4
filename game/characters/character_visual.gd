@@ -26,7 +26,7 @@ func _ready() -> void:
 	assert(players.size() == 1 and bones.size() == 1,"Character export requires one animator and skeleton")
 	animator = players[0] as AnimationPlayer
 	skeleton = bones[0] as Skeleton3D
-	animator.autoplay = &""
+	animator.stop(true)
 	animator.playback_default_blend_time = 0.12
 	for name: StringName in animator.get_animation_list():
 		var key: StringName = StringName(str(name).get_file())
@@ -37,7 +37,7 @@ func _ready() -> void:
 		# same declared loop semantics once; do not duplicate keys per person.
 		var clip: Animation = animator.get_animation(name)
 		clip.loop_mode = Animation.LOOP_LINEAR if key in LOOPS else Animation.LOOP_NONE
-	var required: Array[StringName] = [&"idle",&"walk",&"run",&"fire",&"death",&"wounded"] if soldier else [&"idle",&"walk",&"carry_idle",&"carry_walk",&"pickup",&"unload",&"construct"]
+	var required: Array = [&"idle",&"walk",&"run",&"fire",&"death",&"wounded"] if soldier else [&"idle",&"walk",&"carry_idle",&"carry_walk",&"pickup",&"unload",&"construct"]
 	for key: StringName in required: assert(clips.has(key),"Required authored clip missing: "+str(key))
 	assert(skeleton.find_bone(carry_bone) >= 0,"Required hand attachment bone missing")
 	animator.animation_finished.connect(_animation_finished)
