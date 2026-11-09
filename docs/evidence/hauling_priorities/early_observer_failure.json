@@ -1,0 +1,51 @@
+{
+  "checks": [
+    "Actual normal configured main loaded: PASS",
+    "Four actual opening workers default to exclusive Hauling: PASS",
+    "Actual paid200kg and eight-worker convoy committed: PASS",
+    "Normal live1x session assigns all four real workers concurrently on200kg: FAIL"
+  ],
+  "failed": true,
+  "observations": {
+    "normal_1x": {
+      "actors": {
+        "start-unloader-01": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-01",
+          "load": {},
+          "motion": {},
+          "phase": "Idle"
+        },
+        "start-unloader-02": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-02",
+          "load": {},
+          "motion": {},
+          "phase": "Idle"
+        },
+        "start-unloader-03": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-03",
+          "load": {},
+          "motion": {},
+          "phase": "Idle"
+        },
+        "start-unloader-04": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-04",
+          "load": {},
+          "motion": {},
+          "phase": "Idle"
+        }
+      },
+      "simulation_time": 7.49999999999999,
+      "wall_ms": 12043,
+      "workers": {}
+    }
+  },
+  "scope": "Normal main/live1x four-worker assignment; injected Godot GUI drag, explicit-model continuation for current priority/arrival episode; separate finite declared Dispatch component. No OS-native input, wall-time throughput, full factory/army loop, universal crowd or FPS acceptance."
+}

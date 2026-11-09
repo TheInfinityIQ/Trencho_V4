@@ -1,5 +1,9 @@
 # Connected playable delivery
 
+## Default Hauling and task order — 9 November 2026
+
+[Hauling priorities](hauling_priorities.md) connects new workers to a shared default pool, expandable grip-drag task ordering with explicit confirmation, real incoming/outbound handling and existing construction/production/other hauls. Existing workplace/crew commitments and safe cargo handoffs remain. The prior solid-Table placement-origin regression is corrected using its actual standing access. Scoped separate clock/menu/component receipts retain exact source heads and honest failures; stages1/2, full-loop and FPS acceptance remain open.
+
 ## Worker and soldier integration — 9 November 2026
 
 [Character integration](character_animation.md) connects the3D Artist's actual

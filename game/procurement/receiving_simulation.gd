@@ -598,7 +598,7 @@ func _pump() -> void:
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
 		for id in _workers:
-			if _workers[id].job.is_empty() and _start_worker_job(id):
+			if not _workers[id].get("shared",false) and _workers[id].job.is_empty() and _start_worker_job(id):
 				again = true
 
 
@@ -652,13 +652,28 @@ func _exit_passenger(order: Dictionary) -> void:
 	_event("One passenger completed exit and starts their own walk; incoming place remains reserved", id)
 
 
+func start_shared_unload(id: String) -> bool:
+	if _orders.is_empty() or (development_convoys and convoy_ready()): return false
+	if _workers.has(id): return false
+	var person: Dictionary = ledger.inspect_person_status(id)
+	if person.duty_id != "hauling" or person.pending_assignment != "None" or person.health <= 0: return false
+	_workers[id] = {"person_id":id,"job":{},"shared":true}
+	if _start_worker_job(id): return true
+	_workers.erase(id)
+	return false
+
+
 func _start_worker_job(id: String) -> bool:
 	for order in _orders:
 		if order.kind != "Freight" or order.state != "Berthed": continue
 		var slot: int = order.slot
 		var berth: Dictionary = freight_berths[slot]
+		var active := 0
+		for worker: Dictionary in _workers.values():
+			if not worker.job.is_empty() and worker.job.slot == slot: active += 1
+		if active >= STAFF_LIMIT: continue
 		var duty: String = ledger.inspect_entity(id).duty_id
-		if duty != berth.duty and not (slot == 0 and duty == "Receiving"): continue
+		if not _workers[id].get("shared",false) and duty != berth.duty and not (slot == 0 and duty == "Receiving"): continue
 		var room := free_receiving_kg(slot)
 		if room <= 0: continue
 		for source_id in order.stock_ids:
@@ -723,6 +738,7 @@ func _sync_workers() -> void:
 		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
+		if _workers[id].get("shared",false): still_assigned = person.assignment == "Rear Labour" and person.duty_id == "hauling" and not job.is_empty()
 		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
 			continue # G01 retains the old duty until the carried freight is deposited.
 		if not still_assigned or person.pending_assignment != "None":
@@ -786,7 +802,7 @@ func _order_blocker(order: Dictionary) -> String:
 			return "All passengers exited; remaining walks to Personnel still reserve incoming places"
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
 		"Berthed":
-			if _workers.is_empty(): return "Missing actual Receiving unloaders"
+			if _workers.is_empty(): return "Waiting for free hauling/unloading workers, a safe route, or higher-priority work to finish"
 			if free_receiving_kg(order.slot) <= 0: return "Receiving storage full or reserved; remainder stays aboard"
 			return "Unloaders must approach, pick up, carry and deposit real freight"
 		"Cancelled": return "Cancelled and refunded once"

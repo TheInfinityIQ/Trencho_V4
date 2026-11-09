@@ -3,6 +3,7 @@ extends VBoxContainer
 signal result_reported(result: Dictionary)
 signal purchase_requested
 const UIKit = preload("res://game/ui/ui_kit.gd")
+const HaulingPriorities = preload("res://game/rear_base/hauling_priority_list.gd")
 const JOB_NAMES := {
 	"receiving":"Supply unloading", "hauling":"Hauling", "workshop":"Workshop",
 	"munitions":"Munitions workshop", "materials":"Building Materials workshop",
@@ -20,6 +21,7 @@ var _row_view: Dictionary = {}
 var _pending_rows: Array[String] = []
 var _row_generation := 0
 var _row_queued := false
+var hauling_priorities: VBoxContainer
 
 
 func _init(session: RefCounted) -> void:
@@ -61,7 +63,9 @@ func refresh(view: Dictionary) -> void:
 	var current_ids: Array[String] = []
 	for row in view.rear.staffing:
 		if int(row.positions) <= 0: continue
+		if simulation.rear.empty_field_opening and row.id == "receiving": continue
 		current_ids.append(str(row.id))
+		if simulation.rear.requests[row.id].get("fallback",false): continue
 		requested += int(row.target)
 		vacancies += int(row.shortage)
 	var incoming: int = simulation.receiving.incoming_people()
@@ -90,11 +94,16 @@ func refresh(view: Dictionary) -> void:
 		_row_view[row.id] = row
 		_refresh_row(row)
 	_queue_row()
+	if hauling_priorities != null: hauling_priorities.refresh(view)
 
 
 func _refresh_row(row: Dictionary) -> void:
 	if not controls.has(row.id): return
 	var widgets: Dictionary = controls[row.id]
+	if widgets.has("hauling"):
+		widgets.hauling.assigned_count = int(row.assigned)
+		widgets.hauling._update_header()
+		return
 	widgets.count.set_block_signals(true)
 	widgets.count.max_value = int(row.positions)
 	if not widgets.count.get_line_edit().has_focus(): widgets.count.set_value_no_signal(int(row.target))
@@ -129,6 +138,13 @@ func _prepare_row(generation: int) -> void:
 func _add_row(id: String) -> void:
 	var block := VBoxContainer.new()
 	rows.add_child(block)
+	if id == "hauling" and simulation.rear.empty_field_opening:
+		hauling_priorities = HaulingPriorities.new()
+		block.add_child(hauling_priorities)
+		hauling_priorities.bind(simulation)
+		hauling_priorities.result_reported.connect(func(result: Dictionary) -> void: result_reported.emit(result))
+		controls[id] = {"block":block,"hauling":hauling_priorities}
+		return
 	var title: String = job_name(id,simulation)
 	_label(block,title)
 	var row := HBoxContainer.new()
@@ -158,6 +174,7 @@ func _clear_rows() -> void:
 	_pending_rows.clear()
 	_row_view.clear()
 	controls.clear()
+	hauling_priorities = null
 	if rows == null: return
 	for child in rows.get_children():
 		rows.remove_child(child)

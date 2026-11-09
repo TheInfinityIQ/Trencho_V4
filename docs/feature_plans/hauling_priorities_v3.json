@@ -1,0 +1,9 @@
+{
+  "feature": "hauling-priorities",
+  "version": 3,
+  "amends": "hauling_priorities_v2.json",
+  "finding": "Rendered run42681540684 at a6c49d6 passed four25kg claims, actual injected Godot grip drag, live-refresh draft preservation, fallback, Revert, Confirm and safe existing claims. A real workshop placement then failed before construction-priority evidence. Source establishes prior character integration4da57b added a solid Table walking obstacle, while Construction._empty_field_preview still starts routes at the Table centre. That start has no outgoing clear graph edge, blocking otherwise valid construction.",
+  "attribution": "Pre-existing relative to Hauling; introduced by character-animation PR140. Prior development-convoy scoped placement42638052133/source60925c7 predates Table obstacle. Original character delivery's bounded four-worker/animation checks did not exercise placement; keep that limit and record this regression against its introducing feature.",
+  "repair": "Keep the Table obstacle and real stock centre. Define the existing3m north standing-access offset once in RearWorkPositions, expose Table access via Rear and use it for proposed/existing-site access validation. Do not exempt arbitrary inside-obstacle starts or waive placement checks. Actual worker candidate coordinates remain numerically unchanged.",
+  "evidence": "Preserve failed artifact13703271189 SHA25674e357fdaacff59809aca0b05a872e67719bd8e4bd6f76b9dbe105d2aa1b745d. Observer will retain actual placement result. Repeat only the current rendered hauling episode after repair; normal headless clock evidence42681222461 retains its a6c49d6 scope. Existing45/35/28s limits, no local engine or regression suite."
+}

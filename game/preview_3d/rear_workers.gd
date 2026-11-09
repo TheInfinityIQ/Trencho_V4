@@ -91,19 +91,20 @@ func _sync_activity(id: String) -> void:
 	var phase: String = str(job.get("phase",actor.phase))
 	var label := "Worker %d\n%s" % [_numbers[id],phase]
 	if _roles[id].text != label: _roles[id].text = label
-	var moving: bool = not job.get("path",[]).is_empty() if not job.is_empty() else not actor.motion.is_empty()
+	var external: Dictionary = actor.get("external_work",{})
+	var moving: bool = not job.get("path",[]).is_empty() if not job.is_empty() else bool(external.get("moving",not actor.motion.is_empty()))
 	var next: StringName = &"idle"
 	var speed := 0.0
 	if moving:
 		next = &"carry_walk" if phase.ends_with("Carry") or int(_rows[id].carried_count) > 0 else &"walk"
 		speed = 1.2 if next == &"carry_walk" else 1.5
-	elif phase == "Pickup": next = &"pickup"
-	elif phase == "Drop": next = &"unload"
+	elif phase.ends_with("Pickup"): next = &"pickup"
+	elif phase.ends_with("Drop"): next = &"unload"
 	elif int(_rows[id].carried_count) > 0: next = &"carry_idle"
 	elif str(_rows[id].duty_id).begins_with("builders-"):
 		var site: String = str(_rows[id].duty_id).trim_prefix("builders-")
 		if _model.rear.construction.instances.get(site,{}).get("state","") in ["Building","Dismantling"]: next = &"construct"
-	var started: float = float(job.get("started_at",actor.motion.get("started",-1.0)))
+	var started: float = float(job.get("started_at",external.get("started",actor.motion.get("started",-1.0))))
 	bodies[id].set_activity(next,speed,started,2.0 if next in [&"pickup",&"unload"] else 0.0)
 
 func sync_playback() -> void:

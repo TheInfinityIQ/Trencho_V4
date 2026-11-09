@@ -108,15 +108,16 @@ func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dicti
 func _empty_field_preview(kind: String, center: Vector2, size: Vector2, door: Vector2, footprint: Rect2) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var table: Vector2 = rear.SUPPLY_TABLE
+	var access: Vector2 = rear.SUPPLY_TABLE_ACCESS
 	if footprint.grow(0.25).has_point(table): return _fail("Keep the Supply Table and its storage accessible.")
 	# Protect the actual starter service approaches, rather than phantom legacy roads.
 	for lane in [[Vector2(0,200),Vector2(240,200)],[table,Vector2(table.x,200)]]:
 		if _path_hits(lane,footprint.grow(4.0)): return _fail("Keep the Supply Table's arrival and freight access clear.")
-	if walking_path(table,door,footprint).is_empty(): return _fail("No walking access from the Supply Table to this entrance.")
+	if walking_path(access,door,footprint).is_empty(): return _fail("No walking access from the Supply Table to this entrance.")
 	for row in instances.values():
 		if row.state in ["Cancelled","Dismantled"]: continue
 		if footprint.grow(0.25).has_point(row.door): return _fail("Placement covers an existing site's entrance.")
-		if walking_path(table,row.door,footprint).is_empty(): return _fail("Placement blocks walking access to an existing site.")
+		if walking_path(access,row.door,footprint).is_empty(): return _fail("Placement blocks walking access to an existing site.")
 	return {"ok":true,"kind":kind,"center":center,"size":size,"door":door,"footprint":footprint,
 		"m11":int(Catalog.SPECS[kind].m11),"work":float(Catalog.SPECS[kind].work),
 		"message":"Legal footprint and walking access from the Supply Table."}

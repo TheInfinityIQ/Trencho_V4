@@ -1,0 +1,21 @@
+flowchart TD
+  Arrival[Actual worker arrival / four opening workers] --> Staffing[Rear exclusive staffing allocation]
+  Explicit[Explicit facility / crew / qualified commitments] --> Staffing
+  Starter[Existing once-only workplace starter requests] -->|eligible default labour at safe boundary| Staffing
+  Staffing -->|remaining eligible workers| Hauling[Default Hauling pool]
+  UI[Workers / Jobs: expand Hauling] --> Draft[Native grip drag or Move up/down: local draft]
+  Draft --> Confirm[Confirm complete category order]
+  Confirm --> Policy[Scene-owned HaulingPolicy]
+  Policy -->|existing settle at idle boundary| Next[Highest-priority feasible task]
+  Hauling --> Next
+  Next --> Receiving[Receiving: finite slots / claims / walk / pickup / carry / deposit]
+  Next --> Dispatch[Dispatch: ordinary manifest staging/loading / actual truck]
+  Next --> Haul[Existing construction / production / other haul jobs]
+  Receiving --> Safe[Finish active safe work / apply pending handoff]
+  Dispatch --> Safe
+  Haul --> Safe
+  Safe --> Staffing
+  Receiving --> Facts[Actual owner events / supplied status]
+  Dispatch --> Facts
+  Haul --> Facts
+  Facts -->|no draft overwrite or per-frame eligibility scan| UI

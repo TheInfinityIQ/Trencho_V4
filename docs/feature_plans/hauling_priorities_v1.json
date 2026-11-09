@@ -1,0 +1,41 @@
+{
+  "feature": "hauling-priorities",
+  "version": 1,
+  "source_revision": "d5c0c38263639bbb91215c640be689aa67ea760a",
+  "frozen_before_production_edits": true,
+  "requested": "All newly joined workers default to Hauling; expandable Hauling task list with six-dot grips, top-first drag ordering; investigate normal100kg+ delivery showing only two unloaders.",
+  "consultation": {
+    "designer": "Approved common fallback pool, including ordinary outbound staging/loading via existing Dispatch owner. Explicit facility/crew commitments first; current safe work retained; skip blocked higher categories. Initial order unloading, dispatch, construction, production, other.",
+    "ui_ux": "Expandable Hauling section; native drag/drop with six-dot grip, rank and insertion line; move-up/down fallback; draft plus Confirm/Revert; live refresh must preserve draft. Lead implements."
+  },
+  "existing_graph": ["docs/system_atlas.html#staffing", "docs/system_atlas.html#procurement", "docs/system_atlas.html#hauling", "docs/system_atlas.html#dispatch"],
+  "owners": {
+    "staffing": "Rear retains exclusive actor phases, assignments, safe handoff and existing bounded settle transaction. In empty-field sessions a fallback Hauling request consumes only workers remaining after explicit compatible staffing quotas.",
+    "preference": "Small scene-owned HaulingPolicy validates a complete permutation of five stable category IDs. It classifies existing haul destinations and invokes existing owners at an idle selection boundary. No polling, new clock or generic job framework.",
+    "unloading": "Receiving retains four finite handling opportunities per berth,25kg source/destination claims and actual walk/pickup/carry/drop. Shared worker entries retire after completion before selecting next category; dedicated legacy staff retain existing behavior.",
+    "dispatch": "Dispatch retains manifest, transport, existing finite task, goods/weapon custody, handling and cancellation. A supplied idle common hauler may perform only ordinary preparation; specialist guns, passengers, qualified driver and HQ work remain their existing owners.",
+    "ui": "A feature-local priority list edits only a local draft using Godot Control drag/drop; one explicit command applies validated priorities and then settles. Existing menu-discard/session-bind clears draft."
+  },
+  "boundaries": [
+    "Arrival is physical before actor discovery/allocation. Four opening workers use fallback Hauling. Existing explicit staff requests preempt fallback without duplicating people; carrying/pending handoffs preserve safe completion.",
+    "Top-first means next feasible category, then existing within-category urgency/distance/order. In-progress work is unchanged by reorder. Blocked top category does not prevent lower work.",
+    "Receiving shared entries never autostart a second task and bypass priority; cleanup synchronizes actual Rear actor. Four active slots per berth are counted from actual jobs, not visual presence.",
+    "Dispatch shared preparation must approach source/staged store before handling. New work points use the same physical access owner as unloading; no stock/carrier teleport. General dispatch readiness can use actual common haulers with a complete usable Logistics Centre.",
+    "Cancelled/changed manifests retain existing safe task policy. A pending staffing reassignment cannot take a second task. Pause stops existing timing; preference edits may occur paused or with no current workers. Hidden menus do no recurring scheduling.",
+    "Drag carries owner/category IDs; wrong-owner or stale IDs are rejected. Outside/Escape drag does not change draft. Confirm validates full permutation; stale model replacement discards old draft. Live state changes do not reorder controls mid-edit."
+  ],
+  "reported_issue": "User confirms100kg+. Source has no two-person cap. Prior explicit-interval four-worker evidence does not reproduce normal live pacing. Do not assert a cause without actual observation; retain per-worker explanation and check actual four eligible workers in normal main.",
+  "acceptance": [
+    "Normal opening4 people are actual Hauling workers; physically admitted new workers enter fallback without a manual target edit.",
+    "Actual100kg+ shipment can reserve four independent25kg opportunities concurrently with four free haulers, and actual cargo is conserved through handling.",
+    "Dragging/fallback changes draft only; Confirm selects top-first feasible actual categories once, live refresh preserves unsent edits and reopening shows committed order.",
+    "Ordinary Dispatch uses same exclusive pool and actual source/staging/loading, preserving built centre/transport/driver/claims and finite task limits.",
+    "Brief current-change GitHub observation and changed-script parse only; preserve failures, do not raise deadlines or run local engines/regression suites. Actual native comfort/full game/FPS and all crowd cases remain unverified."
+  ],
+  "sources": [
+    "https://docs.godotengine.org/en/4.7/classes/class_control.html#class-control-private-method-get-drag-data",
+    "https://github.com/godotengine/godot-demo-projects/blob/master/gui/drag_and_drop/drag_drop_script.gd",
+    "https://docs.godotengine.org/en/stable/tutorials/best_practices/scene_organization.html"
+  ],
+  "diagram": "docs/diagrams/hauling_priorities.mmd"
+}

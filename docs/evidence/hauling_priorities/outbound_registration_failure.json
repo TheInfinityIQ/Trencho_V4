@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "Declared ordinary outbound component hauler: PASS",
+    "Same actual component worker assigned Hauling: PASS",
+    "Declared qualified component driver: PASS",
+    "Declared finite component T01 carrier: PASS",
+    "Time-zero public registration supplies actual parked transport and qualified driver: FAIL"
+  ],
+  "failed": true,
+  "observations": {
+    "dispatch_registration": {
+      "message": "Initial hull requires a real available P08 and canonical vehicle at time zero.",
+      "ok": false
+    }
+  },
+  "scope": "Only changed common-hauler ordinary Dispatch preparation with declared finite time-zero registered T01, actual P08 driver,25kg cargo and2kg physical fuel. Existing source/route/staging/loading are exercised. No normal factory acquisition, autonomous army supply, OS input or FPS acceptance."
+}

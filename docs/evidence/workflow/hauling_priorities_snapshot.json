@@ -1,0 +1,361 @@
+{
+  "schema": 1,
+  "feature": "hauling-priorities",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/hauling_priorities_v1.json",
+  "source_revision": "d5c0c38263639bbb91215c640be689aa67ea760a",
+  "started_at": "2026-11-09T18:46:22.245747+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 195.755998,
+    "implementation": 1076.265361,
+    "direct_check": 1565.89999,
+    "repair": 203.709878,
+    "late_handling": 51.701326,
+    "review": 0,
+    "release": 0,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 489.90287
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "review",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T19:46:05.411835+00:00",
+      "note": "Required5fdd42684220947PASS; normal-main clock HEADLESS42681222461/a6PASS4x25kg t11. Rendered37 episode42682255715 overallFAIL at laterinvalidfixture; priorindividual GUI/claims/actualsite priority200kg/8arrivalsPASS and inspectedimage UXapproved. Corrected remaining outbound+starter filter42685010971/5fddPASS. Earlierfailures retained, no productionguard/deadline weakened, no localengine/regression suite. OriginalTable regression attributed to PR140; current repair cost counted here once."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-09T19:12:27.197905+00:00",
+      "id": "arrival-observer-cutoff",
+      "kind": "workflow_error",
+      "summary": "First observer asserted four unloaders before the carrier had arrived; arbitrary12wall-second wait ended at7.5sim seconds, with four valid idle Hauling workers.",
+      "severity": "False focused-check verdict; no four-worker eligibility or later menu/Dispatch behavior was observed",
+      "evidence": "Run42680323914/sourcea6c49d6 artifact13700944949 SHA25668be5fdaddbfc532baa1a73b0b180e414181940785a4887863b80ee9628c15b2. Receipt passes4Hauling/paid200kg; actual_sim_time7.5, workerjobmap empty. Source gate96 versus origin-12 at12m/s plus berth travel.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Workers can unload only actual stopped freight, and the preexisting normal convoy approach is108m plus berthing.",
+      "omitted_assumption": "The first observer used a12wall-second cutoff instead of establishing that actual arrival/berthing had occurred; software rendering and initial work affect observation pace.",
+      "assessment_rationale": "Eligibility prerequisite was source-available before writing the observer. Native clock assignment and rendered menu effects need separate bounded evidence; controlled time must not be claimed as normal pacing.",
+      "repair_time": "Correction starts at the explicitly recorded repair boundary; earlier diagnosis remains in direct_check time."
+    },
+    {
+      "recorded_at": "2026-11-09T19:46:05.261054+00:00",
+      "id": "table-access-regression",
+      "kind": "pre_existing",
+      "summary": "Character integration's new solid Table invalidated construction access checks still rooted at its centre, discovered by current actual hauling/menu episode.",
+      "severity": "High: otherwise legal construction cannot be placed from the solid Table centre",
+      "evidence": "Run42681540684/sourcea6c49d6 actual site.ok false after passing GUI and four claim checks. Construction._clearance_path includes the Table box, while _empty_field_preview routes from its interior. Artifact13703271189 SHA25674e357fdaacff59809aca0b05a872e67719bd8e4bd6f76b9dbe105d2aa1b745d.",
+      "planning_assessment": "no",
+      "attributed_feature": "character-animation",
+      "introducing_revision": "4da57b71ea6653c3d645eb71a8081c7f45565f96",
+      "prior_good_evidence": "Development-convoy placement episode42638052133/source60925c7 before the Table obstacle; retained docs/evidence/development_convoys/scoped_result.json.",
+      "current_bad_evidence": "Actual real placement command failed; source graph has no clear edge from a point contained by the new Table obstacle.",
+      "change_attribution": "PR140 added Table to all pedestrian routes without migrating Construction's static access origin. Current Hauling source has not changed either behavior.",
+      "repair_time": "Tracked once in current Hauling repair interval; original feature follow-up points here instead of double-counting.",
+      "attributed_kind": "regression",
+      "introduced_pull_request": 140,
+      "fixed_revision": "37a5c9c349da2cbddc689e6e3990fa26b8e19ea8",
+      "history": [
+        {
+          "recorded_at": "2026-11-09T19:18:46.089544+00:00",
+          "id": "table-access-regression",
+          "kind": "pre_existing",
+          "summary": "Character integration's new solid Table invalidated construction access checks still rooted at its centre, discovered by current actual hauling/menu episode.",
+          "severity": "High: otherwise legal construction cannot be placed from the solid Table centre",
+          "evidence": "Run42681540684/sourcea6c49d6 actual site.ok false after passing GUI and four claim checks. Construction._clearance_path includes the Table box, while _empty_field_preview routes from its interior. Artifact13703271189 SHA25674e357fdaacff59809aca0b05a872e67719bd8e4bd6f76b9dbe105d2aa1b745d.",
+          "planning_assessment": "no",
+          "attributed_feature": "character-animation",
+          "introducing_revision": "4da57b71ea6653c3d645eb71a8081c7f45565f96",
+          "prior_good_evidence": "Development-convoy placement episode42638052133/source60925c7 before the Table obstacle; retained docs/evidence/development_convoys/scoped_result.json.",
+          "current_bad_evidence": "Actual real placement command failed; source graph has no clear edge from a point contained by the new Table obstacle.",
+          "change_attribution": "PR140 added Table to all pedestrian routes without migrating Construction's static access origin. Current Hauling source has not changed either behavior.",
+          "repair_time": "Tracked once in current Hauling repair interval; original feature follow-up points here instead of double-counting."
+        }
+      ]
+    },
+    {
+      "recorded_at": "2026-11-09T19:46:05.190268+00:00",
+      "id": "observer-unregistered-truck",
+      "kind": "workflow_error",
+      "summary": "The outbound component observer supplied G03's Yard-only fixture carrier to G07/G12; production correctly rejected it because it was not registered with the transport owner.",
+      "severity": "False component setup failure; normal menu/priority/actual200kg/new8workers already passed",
+      "evidence": "Run42682255715/source37a5c9c artifact13703770299 SHA2565f12fb5d6d72c2a2c0fd0f50eb041ded3101d0b85114eab6b34a63fdde197166. Actual rejection: Select the same stopped F10-produced hull at F11. VehicleActivity's vehicles registry excludes Yard's separate reference carrier.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Existing Dispatch accept and assign_station require actual registered transport, appropriate driver and fuel, not any owned CARRIER.",
+      "omitted_assumption": "Observer treated the Yard reference truck as a registered G07 vehicle without checking the service registry precondition.",
+      "assessment_rationale": "The public time-zero register_initial_parked API and finite stock/refuelling API supply valid declared component preconditions. Fix the observer; do not weaken production admission or run an old manufacture regression.",
+      "repair_time": "Recorded repair interval covers remaining setup correction; initial inspection is already in direct_check time.",
+      "additional_attempt": "Run42683006981 rejected generic add_carrier without canonical vehicle specification, before any outbound handling. Corrected observer uses public add_initial_vehicle plus register_initial_parked, canonicalT01/P08/finite2L startingfuel, with production admission unchanged.",
+      "history": [
+        {
+          "recorded_at": "2026-11-09T19:22:26.016243+00:00",
+          "id": "observer-unregistered-truck",
+          "kind": "workflow_error",
+          "summary": "The outbound component observer supplied G03's Yard-only fixture carrier to G07/G12; production correctly rejected it because it was not registered with the transport owner.",
+          "severity": "False component setup failure; normal menu/priority/actual200kg/new8workers already passed",
+          "evidence": "Run42682255715/source37a5c9c artifact13703770299 SHA2565f12fb5d6d72c2a2c0fd0f50eb041ded3101d0b85114eab6b34a63fdde197166. Actual rejection: Select the same stopped F10-produced hull at F11. VehicleActivity's vehicles registry excludes Yard's separate reference carrier.",
+          "planning_assessment": "confirmed",
+          "preavailable_requirement": "Existing Dispatch accept and assign_station require actual registered transport, appropriate driver and fuel, not any owned CARRIER.",
+          "omitted_assumption": "Observer treated the Yard reference truck as a registered G07 vehicle without checking the service registry precondition.",
+          "assessment_rationale": "The public time-zero register_initial_parked API and finite stock/refuelling API supply valid declared component preconditions. Fix the observer; do not weaken production admission or run an old manufacture regression.",
+          "repair_time": "Recorded repair interval covers remaining setup correction; initial inspection is already in direct_check time."
+        }
+      ]
+    },
+    {
+      "recorded_at": "2026-11-09T19:31:04.302140+00:00",
+      "id": "starter-fallback-compatibility",
+      "kind": "planning_discovery",
+      "summary": "Default Hauling removes the Available pool expected by existing automatic workplace starter eligibility.",
+      "severity": "Potential unfilled automatic starter request; caught in source review before a runtime failure",
+      "evidence": "Rear._any_eligible/_choose_person starter_only rejects non-Available people except same-duty incumbents; all ordinary arrivals now defaultHauling. Designer confirmed fallback is uncommitted for existing starter demand.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Existing once-only construction completion starter requests and shared staffing eligibility were available before implementation; preserve explicit staffing choices and automatic requests.",
+      "omitted_assumption": "Original fallback plan covered explicit facility quotas but did not migrate the Available-only starter filter or its safe-completion retry boundary.",
+      "assessment_rationale": "One eligibility owner must distinguish default fallback from deliberate Hauling assignments; both planning and actual selection need identical rules, with an existing safe completion event retry.",
+      "repair_time": "Late handling is recorded from this boundary; earlier source investigation is not separately timed."
+    },
+    {
+      "recorded_at": "2026-11-09T19:46:05.335702+00:00",
+      "id": "observer-assumed-worker",
+      "kind": "workflow_error",
+      "summary": "Outbound observer assumed its newly named person was the worker chosen by an existing shared staffing target; the legacy Base fixture already contains12people and correctly selected another actual worker.",
+      "severity": "False component setup failure after valid canonical truck/driver/manifest admission; no ordinary handling observed with the wrong Available identity.",
+      "evidence": "Run42684223387/source5fdd artifact13703707530 SHA25676d1de25af5a27dd7289f55877263dee6c1cbfb072288d5553bd9b17c3b768c4. Current-hauler remainedAvailable while a different existing worker filled target1. Corrected observer follows actual ledger duty identity; run42685010971 thenPASS same25kg aboard canonicaltruck.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Staffing targets allocate actual compatible people, not a chosen observer person; Base._init declares12ordinary people.",
+      "omitted_assumption": "Observer treated target1 as a direct assignment of a newly named worker instead of reading the allocated identity.",
+      "assessment_rationale": "Actual actor/duty mapping was available before writing the fixture; direct observation must follow the real allocator and preserve unrelated people.",
+      "repair_time": "Identity investigation/correction was not separately timed; included in direct_check. No retrospective repair estimate."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 1,
+    "pre_existing": 1,
+    "infrastructure": 0,
+    "workflow_error": 3,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 4,
+  "tracked_repair_seconds_by_incident": {
+    "arrival-observer-cutoff": 37.889078,
+    "table-access-regression": 51.725785,
+    "observer-unregistered-truck": 114.095015,
+    "starter-fallback-compatibility": 51.701326,
+    "observer-assumed-worker": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 18337948,
+      "cached_input_tokens": 17947904,
+      "output_tokens": 116616,
+      "reasoning_output_tokens": 65991,
+      "total_tokens": 18454564,
+      "uncached_input_tokens": 390044
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 18337948,
+      "cached_input_tokens": 17947904,
+      "output_tokens": 116616,
+      "reasoning_output_tokens": 65991,
+      "total_tokens": 18454564,
+      "uncached_input_tokens": 390044
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-09T18:46:22.245747+00:00",
+        "ended_at": "2026-11-09T18:49:38.001745+00:00",
+        "receipt_start": "2026-11-09T18:46:03.034Z",
+        "receipt_end": "2026-11-09T18:49:18.517Z",
+        "usage_delta": {
+          "input_tokens": 734379,
+          "cached_input_tokens": 720512,
+          "output_tokens": 6491,
+          "reasoning_output_tokens": 3946,
+          "total_tokens": 740870,
+          "uncached_input_tokens": 13867
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-09T18:49:38.001745+00:00",
+        "ended_at": "2026-11-09T19:07:34.267106+00:00",
+        "receipt_start": "2026-11-09T18:49:18.517Z",
+        "receipt_end": "2026-11-09T19:06:41.589Z",
+        "usage_delta": {
+          "input_tokens": 3905437,
+          "cached_input_tokens": 3885184,
+          "output_tokens": 37750,
+          "reasoning_output_tokens": 20664,
+          "total_tokens": 3943187,
+          "uncached_input_tokens": 20253
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T19:07:34.267106+00:00",
+        "ended_at": "2026-11-09T19:12:27.302147+00:00",
+        "receipt_start": "2026-11-09T19:06:41.589Z",
+        "receipt_end": "2026-11-09T19:10:05.497Z",
+        "usage_delta": {
+          "input_tokens": 2033325,
+          "cached_input_tokens": 2026368,
+          "output_tokens": 6167,
+          "reasoning_output_tokens": 3418,
+          "total_tokens": 2039492,
+          "uncached_input_tokens": 6957
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T19:12:27.302147+00:00",
+        "ended_at": "2026-11-09T19:13:05.191225+00:00",
+        "receipt_start": "2026-11-09T19:10:05.497Z",
+        "receipt_end": "2026-11-09T19:12:27.399Z",
+        "usage_delta": {
+          "input_tokens": 260263,
+          "cached_input_tokens": 259200,
+          "output_tokens": 5323,
+          "reasoning_output_tokens": 2913,
+          "total_tokens": 265586,
+          "uncached_input_tokens": 1063
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T19:13:05.191225+00:00",
+        "ended_at": "2026-11-09T19:18:46.234297+00:00",
+        "receipt_start": "2026-11-09T19:12:27.399Z",
+        "receipt_end": "2026-11-09T19:16:37.813Z",
+        "usage_delta": {
+          "input_tokens": 1901492,
+          "cached_input_tokens": 1895040,
+          "output_tokens": 6642,
+          "reasoning_output_tokens": 4160,
+          "total_tokens": 1908134,
+          "uncached_input_tokens": 6452
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T19:18:46.234297+00:00",
+        "ended_at": "2026-11-09T19:19:37.960082+00:00",
+        "receipt_start": "2026-11-09T19:16:37.813Z",
+        "receipt_end": "2026-11-09T19:18:46.349Z",
+        "usage_delta": {
+          "input_tokens": 278832,
+          "cached_input_tokens": 277248,
+          "output_tokens": 4819,
+          "reasoning_output_tokens": 3051,
+          "total_tokens": 283651,
+          "uncached_input_tokens": 1584
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T19:19:37.960082+00:00",
+        "ended_at": "2026-11-09T19:22:26.148159+00:00",
+        "receipt_start": "2026-11-09T19:18:46.349Z",
+        "receipt_end": "2026-11-09T19:21:38.433Z",
+        "usage_delta": {
+          "input_tokens": 1730411,
+          "cached_input_tokens": 1723520,
+          "output_tokens": 4625,
+          "reasoning_output_tokens": 2499,
+          "total_tokens": 1735036,
+          "uncached_input_tokens": 6891
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T19:22:26.148159+00:00",
+        "ended_at": "2026-11-09T19:24:20.243174+00:00",
+        "receipt_start": "2026-11-09T19:21:38.433Z",
+        "receipt_end": "2026-11-09T19:22:26.288Z",
+        "usage_delta": {
+          "input_tokens": 295210,
+          "cached_input_tokens": 293888,
+          "output_tokens": 2116,
+          "reasoning_output_tokens": 843,
+          "total_tokens": 297326,
+          "uncached_input_tokens": 1322
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T19:24:20.243174+00:00",
+        "ended_at": "2026-11-09T19:31:04.420730+00:00",
+        "receipt_start": "2026-11-09T19:22:26.288Z",
+        "receipt_end": "2026-11-09T19:28:05.487Z",
+        "usage_delta": {
+          "input_tokens": 1840674,
+          "cached_input_tokens": 1835264,
+          "output_tokens": 10600,
+          "reasoning_output_tokens": 6429,
+          "total_tokens": 1851274,
+          "uncached_input_tokens": 5410
+        }
+      },
+      {
+        "phase": "late_handling",
+        "started_at": "2026-11-09T19:31:04.420730+00:00",
+        "ended_at": "2026-11-09T19:31:56.122056+00:00",
+        "receipt_start": "2026-11-09T19:28:05.487Z",
+        "receipt_end": "2026-11-09T19:31:05.277Z",
+        "usage_delta": {
+          "input_tokens": 313515,
+          "cached_input_tokens": 312320,
+          "output_tokens": 6527,
+          "reasoning_output_tokens": 4204,
+          "total_tokens": 320042,
+          "uncached_input_tokens": 1195
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T19:31:56.122056+00:00",
+        "ended_at": "2026-11-09T19:37:55.578300+00:00",
+        "receipt_start": "2026-11-09T19:31:05.277Z",
+        "receipt_end": "2026-11-09T19:37:29.540Z",
+        "usage_delta": {
+          "input_tokens": 2956861,
+          "cached_input_tokens": 2635904,
+          "output_tokens": 10482,
+          "reasoning_output_tokens": 7591,
+          "total_tokens": 2967343,
+          "uncached_input_tokens": 320957
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T19:37:55.578300+00:00",
+        "ended_at": "2026-11-09T19:46:05.481170+00:00",
+        "receipt_start": "2026-11-09T19:37:29.540Z",
+        "receipt_end": "2026-11-09T19:44:39.902Z",
+        "usage_delta": {
+          "input_tokens": 2087549,
+          "cached_input_tokens": 2083456,
+          "output_tokens": 15074,
+          "reasoning_output_tokens": 6273,
+          "total_tokens": 2102623,
+          "uncached_input_tokens": 4093
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

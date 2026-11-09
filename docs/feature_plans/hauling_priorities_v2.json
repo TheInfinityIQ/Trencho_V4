@@ -1,0 +1,9 @@
+{
+  "feature": "hauling-priorities",
+  "version": 2,
+  "amends": "hauling_priorities_v1.json",
+  "source_revision": "a6c49d6b81ec4c9b4dbacff2458e3e25838c0389",
+  "finding": "First focused run42680323914 at a6c49d6 passed normal main, four exclusive Hauling assignments and paid200kg/eight-worker commitment, then stopped at an arbitrary12wall-second cutoff. Model time was7.5s, four people Idle and no unloading work; first carrier needs108m approach plus berthing before eligibility. This did not observe a stopped truck or establish a two-person cap.",
+  "verification_change": "Keep45s outer,35s child and28s watchdog unchanged. Use one focused headless normal-main/GameSession clock observation for actual100kg carrier arrival and four concurrent claims; it does not certify rendering/OS input/FPS. Separately use the already scoped rendered current-change menu/next-task/arrival/finite Dispatch observation with explicitly supplied model intervals, without mixing its controlled clock with native-clock claims.",
+  "limits": "No production change from this observer correction. No raised performance limit, old suite, broad scenario, local engine or full factory/army acceptance. Preserve failed artifact13700944949 SHA25668be5fdaddbfc532baa1a73b0b180e414181940785a4887863b80ee9628c15b2 and its actual limited extent."
+}

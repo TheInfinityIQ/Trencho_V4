@@ -1,0 +1,9 @@
+{
+  "feature": "hauling-priorities",
+  "version": 4,
+  "amends": "hauling_priorities_v3.json",
+  "finding": "Final source review found existing once-only workplace starter requests select only Available people/current incumbents. Default Hauling removes the Available state, so automatic starter requests would be stranded without explicit edits.",
+  "designer_decision": "Default fallback Hauling is uncommitted labour for these existing requests. Draw idle/default haulers or wait for safe carry completion. Protect all other deliberate facility/crew assignments and qualifications, preserve explicit zero/edits, never recreate/reset starter intent.",
+  "implementation": "One shared starter-candidate predicate used by both quota eligibility and actual person selection. Actual default haulers are candidates only when idle/returning/reporting without committed handling; existing reporting completion triggers a staffing rebalance so waiting starter intent can fill before another haul. Legacy explicit Hauling is still committed. No new timer or ongoing polling.",
+  "verification": "Changed-source parse plus one focused actual default-hauler eligibility check alongside the remaining finite outbound component. Earlier normal-clock/GUI/task-order/arrival observations retain their original source scopes; no old suite, broad factory scenario or additional native performance gate. Existing deadlines unchanged."
+}

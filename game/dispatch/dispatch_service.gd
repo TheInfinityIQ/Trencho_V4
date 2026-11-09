@@ -440,14 +440,21 @@ func settle() -> bool:
 
 func ready_dispatch_site() -> String:
 	var rear: RefCounted = _rear_ref.get_ref()
+	var shared := false
+	if rear.empty_field_opening:
+		for id: String in rear.actors:
+			if _worker_ready_for_duty(rear.ledger.inspect_person_status(id),"hauling",rear.actors[id]):
+				shared = true
+				break
 	var candidates: Dictionary = {}
 	var candidate_duties: Dictionary = {}
 	for id in dispatch_sites:
 		var site: Dictionary = dispatch_sites[id]
-		if rear.stores[site.store].accessible and int(rear.requests[site.duty].target) > 0:
+		if rear.stores[site.store].accessible and (shared or int(rear.requests[site.duty].target) > 0):
 			candidates[id] = site.duty
 			candidate_duties[site.duty] = true
 	if candidates.is_empty(): return ""
+	if shared: return str(candidates.keys()[0])
 	# One current person-status pass for all candidates, never one scan per site.
 	var ready_duties: Dictionary = {}
 	for id in rear.actors:
@@ -479,14 +486,35 @@ func _start_task(row: Dictionary, phase: String, actors: Array, seconds: float, 
 			rear.actors[person_id].phase = "Dispatch " + phase
 			rear.actors[person_id].deadline = INF
 			rear.actors[person_id].motion = {}
+			rear.actors[person_id].external_work = {"phase":phase,"started":started,"duration":seconds,"moving":not route.is_empty()}
 
 func _clear_task(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	for person_id in row.task.get("actors",[]):
-		if rear.actors.has(person_id): rear.actors[person_id].phase = "Idle"
+		if rear.actors.has(person_id):
+			rear.actors[person_id].phase = "Idle"
+			rear.actors[person_id].erase("external_work")
 	row.task = {}
+	rear._rebalance()
 
-func _schedule_preparation(row: Dictionary) -> bool:
+func start_shared_preparation(worker: String) -> bool:
+	if manifests.is_empty(): return false
+	var rear: RefCounted = _rear_ref.get_ref()
+	if not _worker_ready_for_duty(rear.ledger.inspect_person_status(worker),"hauling",rear.actors[worker]): return false
+	for row: Dictionary in manifests.values():
+		if row.state not in ["Staging","Ready","Loading"] or not row.task.is_empty(): continue
+		var ready := true
+		for gun: String in row.guns:
+			if rear.ledger.inspect_entity(gun).holder_id != row.hull: ready = false
+		if ready and _schedule_preparation(row,worker): return true
+	return false
+
+func _preparation_path(worker: String, holder: String) -> Array:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var destination: Vector2 = rear.work_point(worker,holder)
+	return rear.walk_path(rear.ledger.inspect_entity(worker).position,destination) if destination.is_finite() else []
+
+func _schedule_preparation(row: Dictionary, supplied_worker: String = "") -> bool:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if row.state == "Requested":
 		_begin_hull_approach(row)
@@ -512,7 +540,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		row.state = "Loading"
 		row.blocker = ""
 		return true
-	var worker := _ready_worker(row)
+	var worker := supplied_worker if not supplied_worker.is_empty() else _ready_worker(row)
 	for index in row.stock_items.size():
 		var item: Dictionary = row.stock_items[index]
 		if item.stage != "Source": continue
@@ -523,7 +551,7 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if source.is_empty() or not rear.stores[source.holder_id].accessible:
 			row.blocker = "Reserved cargo source is inaccessible; claim retained."
 			return false
-		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = _preparation_path(worker,source.holder_id)
 		if path.is_empty(): row.blocker = "No clear walking route to reserved cargo source."; return false
 		_start_task(row,"Stock Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
@@ -534,13 +562,13 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		if item.stage != "Source": continue
 		if worker.is_empty(): row.blocker = "Real Dispatch worker needed to collect the reserved rifle."; return false
 		var source: Dictionary = rear.ledger.inspect_entity(item.id)
-		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,source.position)
+		var path: Array = _preparation_path(worker,source.holder_id)
 		if path.is_empty(): row.blocker = "No clear walking route to actual rifle."; return false
 		_start_task(row,"Weapon Approach",[worker],Layout.length(path)/1.5,path)
 		row.task.item_index = index
 		row.state = "Staging"
 		return true
-	for person_id in row.passengers:
+	for person_id in ([] if not supplied_worker.is_empty() else row.passengers):
 		var p: Dictionary = rear.ledger.inspect_entity(person_id)
 		if p.holder_id == row.hull: continue
 		if p.duty_id == "passenger:"+row.id and rear.actors[person_id].phase == "Idle" and p.position.is_equal_approx(row.dispatch_door):
@@ -551,6 +579,8 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		var item: Dictionary = row.stock_items[index]
 		if item.stage != "Staged": continue
 		if worker.is_empty(): row.blocker = "One real Dispatch worker is needed for two-second pickup/drop loading."; return false
+		var approach_state := _approach_staged(row,worker,index,false)
+		if approach_state != 0: return approach_state > 0
 		_start_task(row,"Stock Load Pickup",[worker],2.0)
 		row.task.item_index = index
 		row.state = "Loading"
@@ -559,6 +589,8 @@ func _schedule_preparation(row: Dictionary) -> bool:
 		var item: Dictionary = row.weapon_items[index]
 		if item.stage != "Staged": continue
 		if worker.is_empty(): row.blocker = "One real Dispatch worker is needed to load the intact rifle."; return false
+		var approach_state := _approach_staged(row,worker,index,true)
+		if approach_state != 0: return approach_state > 0
 		_start_task(row,"Weapon Load Pickup",[worker],2.0)
 		row.task.item_index = index
 		row.state = "Loading"
@@ -581,12 +613,36 @@ func _schedule_preparation(row: Dictionary) -> bool:
 	row.blocker = ""
 	return true
 
+func _approach_staged(row: Dictionary, worker: String, index: int, weapon: bool) -> int:
+	var rear: RefCounted = _rear_ref.get_ref()
+	var path: Array = _preparation_path(worker,row.dispatch_store)
+	if path.is_empty():
+		row.blocker = "No safe path to the staged outbound supplies."
+		return -1 # Blocked, not a state change; allow lower-priority feasible work.
+	rear.ledger.register_handling_point(row.hull,worker,path.back())
+	if path.size() < 2 or Layout.length(path) <= 0.000001: return 0
+	_start_task(row,"Loading Approach",[worker],Layout.length(path)/1.5,path)
+	row.task.item_index = index
+	row.task.weapon = weapon
+	return 1
+
 func _finish_task(row: Dictionary) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	var task: Dictionary = row.task
 	var phase: String = task.phase
 	var worker: String = task.actors[0] if not task.actors.is_empty() else ""
 	var result: Dictionary = {"ok":true}
+	var carry_path: Array = []
+	if phase in ["Stock Pickup","Weapon Pickup"]:
+		carry_path = _preparation_path(worker,row.dispatch_store)
+		if carry_path.is_empty():
+			row.blocker = "No safe route to outbound staging; source claim retained before pickup."
+			row.task.deadline = rear.time+1.0
+			return
+	if phase == "Loading Approach":
+		_start_task(row,"Weapon Load Pickup" if task.weapon else "Stock Load Pickup",[worker],2.0)
+		row.task.item_index = task.item_index
+		return
 	if phase == "Gun Handling":
 		var owner: RefCounted = rear.heavy_owner(row.gun_bays[task.gun])
 		var path: Array = rear.walk_path(owner.site_door,row.dispatch_door)
@@ -614,8 +670,7 @@ func _finish_task(row: Dictionary) -> void:
 	elif phase == "Weapon Pickup":
 		result = rear.ledger.begin_weapon_carry(worker,row.weapon_items[task.item_index].id)
 	if phase in ["Stock Pickup","Weapon Pickup"] and result.ok:
-		var path: Array = rear.walk_path(rear.ledger.inspect_entity(worker).position,row.dispatch_door)
-		_start_task(row,"Stock Carry" if phase == "Stock Pickup" else "Weapon Carry",[worker],Layout.length(path)/1.2,path)
+		_start_task(row,"Stock Carry" if phase == "Stock Pickup" else "Weapon Carry",[worker],Layout.length(carry_path)/1.2,carry_path)
 		row.task.item_index = task.item_index
 		return
 	if phase in ["Stock Carry","Weapon Carry"]:
