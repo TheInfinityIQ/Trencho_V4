@@ -1,8 +1,8 @@
 # Design brief
 
-Updated 8 November 2026. Read the [current GDD](game_design_document.md) for vision and player-facing rules, [playable delivery](playable_delivery.md) for the next outcomes and [team workflow](team_workflow.md) for ownership.
+Updated 9 November 2026. Read the [current GDD](game_design_document.md) for the consolidated vision and player-facing rules, [playable delivery](playable_delivery.md) for the next outcomes and [team workflow](team_workflow.md) for ownership. This brief retains decision provenance and supporting detail; it is no longer necessary to combine it with the older 5 November GDD to discover the accepted 3D and staffing rules.
 
-Trencho is a base-building and worker-management game supplying an autonomous battlefield. Start as a WASD-controlled rear character, place buildings, buy resources and workers, allocate labour and choose production. Workers perform physical work; the Logistics Centre automatically fulfils army supply requests through real transport to HQ. The army arranges onward supply and its own operations.
+Trencho is a factory-building and logistics-management game supporting a war between two autonomous RTS commanders. Start as a WASD-controlled rear character, build the factory/logistics area, buy resources and workers, allocate labour and choose production. Workers perform physical work; the Logistics Centre automatically fulfils army supply requests through real transport to the friendly military base (HQ). The friendly commander arranges onward supply and operates its army against the opposing autonomous commander.
 
 The challenge is building an effective base and allocating scarce people and resources. Ordinary UI actions should be easy to find and perform. The player does not manually command soldiers or compose every routine supply trip.
 
@@ -22,7 +22,7 @@ Source-observed implementation and verification belong in [implemented features]
 
 ## Design and engineering responsibility
 
-The Game Designer owns vision, gameplay scope, meaningful choices and observable requisites. The Developer owns systems, technical decisions, testing, integration and publication. UI/UX owns interaction/menu design in coordination with those roles. Current participants are recorded in [team integration state](team_integration_state.json).
+The Game Designer owns vision, gameplay scope, meaningful choices and observable requisites. The Lead Developer is currently the sole developer and owns systems, technical decisions, UI implementation, checks, integration and publication. Earlier consultant or parallel-development assignments do not reactivate through this brief. Current ownership is recorded in [team workflow](team_workflow.md) and [team integration state](team_integration_state.json).
 
 The old detailed [v0.2 specification](reference/gameplay_specification_v0_2.md) preserves catalogue values and historical rationale. It is not the current GDD or an instruction to retain old clocks, manual routine dispatch, prebuilt starting assets or archived assignments. No numerical rebalance is made by this documentation revision.
 
@@ -30,7 +30,7 @@ Gameplay features take priority over polishing and benchmarks under Dawson's 5 N
 
 ## Automatic starter staffing — accepted 7 November 2026
 
-Dawson requested that every newly completed workplace have a default staffing request so the player need not configure its first worker count manually. This is an accepted requirement, not a claim of implementation. The lead owns its increment after the current Construction Office truck work.
+Dawson requested that every newly completed workplace have a default staffing request so the player need not configure its first worker count manually. This section records the accepted requirement; current implementation and verification belong in the delivery records, not an old task-sequencing note.
 
 Designer starting defaults are one worker for each Receiving Bay, Workshop, Munitions Workshop, Materials Plant, Support Workshop and Logistics Centre; one eligible instructor for each School; two workers for each Vehicle Works and Construction Office. Storage Depots and Vehicle Parks request zero resident workers because their current functions have no resident staffing duty. These are starting requests, not maximum capacities or grants of people or qualifications.
 
@@ -60,7 +60,7 @@ Dawson selected “Cohesive stylized3D, with readable detail and a lower asset/p
 
 In the active 3D session, a proposed solid construction footprint must not overlap the manager's actual physical body. Use the current body and rotated footprint for preview, world placement and numeric placement, including commands made while the rear view is hidden. Camera position and visual model size do not define this occupied space. Reject with “Move away before placing here,” preserving the draft and orientation without spending materials, creating a site or moving the manager automatically. This is physical occupation protection, not a new reach or proximity restriction. The normal 2D entry has no hidden 3D body blocker. Existing construction validation and economic authority remain in force.
 
-## Manager contact with vehicles — accepted expectation, 8 November 2026
+## Manager contact with vehicles — accepted expectation, 8 November 2026; implementation deferred
 
 Source: Game Designer decision relayed by Lead Developer in Trencho V4 Developer chat (01a199a0-f08e-7f23-947f-62655a9ed233), 8 November 2026. This section records observable behavior; architecture, engine feasibility, full 3D02 and FPS acceptance remain engineering work.
 
@@ -73,3 +73,9 @@ Apply the same policy to vehicle roles as physical integration arrives, with app
 Additional Designer compromise, 8 November 2026, relayed by the same Lead chat: only when proposed actual vehicle travel cannot leave a valid grounded manager position through local contact resolution, its EXISTING movement activity holds BEFORE committing that obstructing travel. Show a usable physical-obstruction reason. Keep the same ID, cargo, crew, destination and remaining work; user controls remain suppressed as applicable, with no UI/view/capture/global-pause change. Resume that same activity on an actual clearance event. Account for the waiting interval instead of jumping to its old schedule. Zero distance incurs no distance-fuel charge; preserve already-defined idle costs and invent none. Global Pause freezes movement, contact and hold progression. This narrow hold supersedes the earlier no-yield/no-route-mutation exclusion only to this extent; it is not a new traffic policy or rollback.
 
 An already-committed initial/restore appearance overlap is separate: a movement hold cannot undo it. A genuinely irreducible appearance case still requires a concrete Lead/Designer decision. If a precommit guard is not boundedly feasible, retain query-only/partial integration and report that limitation instead of claiming resolution.
+
+Subsequent Designer priority decision, 8 November: retain the current partial, camera/picking-only vehicle representation and defer physical manager contact rather than delay the playable factory loop with a joint traffic/restore solution. The proposed broader yield-before-any-contact and delayed commissioning policies were not adopted. Initial/commissioned/restored identity, goods, completed work and pose rules remain unchanged. Revisit a coherent feasible contact policy, including initial/restore overlap, before enabling solidity; the earlier isolated response does not establish that outcome.
+
+## Original vision reaffirmed and GDD consolidated — 9 November 2026
+
+Dawson requested review against the original vision: the player builds a factory/logistics area and sends materials to a military base for an autonomous RTS commander to battle another autonomous commander. The [GDD](game_design_document.md) now states that loop and division of responsibility explicitly, incorporating the accepted opening, automatic starter staffing, request-driven physical shipping, stylized first/third-person rear and RTS observation view. The player's meaningful work is industry and logistics; military organization, operations, tactics, onward supply and combat remain autonomous. No direct military-command controls, second simulated enemy factory, balance revision or claim of completed gameplay follows from this consolidation. The first demo still needs the connected ordinary factory, useful delivery and repeat-supply outcomes.
