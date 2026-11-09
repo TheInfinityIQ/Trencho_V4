@@ -4353,6 +4353,6 @@
     "game/rear_base/hauling_priority_row.gd": "be6c26f305670bba807eda1136dfc5a85324b6fda4e7bad286dbf81737c9482a",
     "game/staffing/hauling_policy.gd": "e6932fb523c0efda86681a07f4e2f94c5ad8c36b9f6c4cf772b5ebc9101e5bbc",
     "game/construction/visuals/construction_site_visual.gd": "424043d0ceecf521ef59b3984f118fb830bca4ef7865abf523f0a6d0577c55cc",
-    "game/construction/visuals/construction_celebration.gd": "25521273161e35072990aef8b4ba69e57d4f673b2afe810e200562e9eeb683e6"
+    "game/construction/visuals/construction_celebration.gd": "064b04ca99379093a5ef9ec567eba350a8a88b65be0a46cac90b608a177611b1"
   }
 }

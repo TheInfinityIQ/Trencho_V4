@@ -1,0 +1,75 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+Normal configured3D entry: PASS
+Normal live opening starts1x without speed command: PASS
+Place real Construction Office with current footprint/access rules: PASS
+Persistent building hologram and four taped corners: PASS
+[Calls/s] engine second 3 [3, 4):
+    1014  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       4  rear_base/base_demo.gd::_request_refresh
+       3  battlefield/battlefield_view.gd::_request_refresh
+       3  main/main.gd::_refresh_clock
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       1  identity/identity_ledger.gd::map_markers
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 3 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":132,"total":132},"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":6,"total":6},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3,"total":3},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":6,"maximum":1087,"total":3986},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":4098,"total":4098},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":6908,"total":7436}}
+[Calls/s] engine second 6 [6, 7):
+     140  identity/identity_ledger.gd::inspect_entity
+      60  identity/identity_ledger.gd::person_has_living_duty
+      52  identity/identity_ledger.gd::military_hull_ready_at
+      30  identity/identity_ledger.gd::person_ready_for_hq_issue
+       8  main/game_session.gd::_physics_process
+       6  identity/identity_ledger.gd::person_is_alive
+       4  staffing/rear_simulation.gd::_settle
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       1  identity/identity_ledger.gd::ammunition_quantities_at
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 6 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":137,"total":137},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":3316,"total":3316},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":1780,"total":3066},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":3287,"total":3287}}
+Assign two actual workers as builders: PASS
+Labelled direct partial30M11 deposit at actual site: PASS
+Partial real material supports exactly half earned work/cost: FAIL
+Shortage stops earned work: FAIL
+Same site visual survives progress without premature celebration: PASS
+Menu separates actual used material and site stock: FAIL
+[Calls/s] engine second 8 [8, 9):
+    8781  identity/identity_ledger.gd::inspect_entity
+    1864  identity/identity_ledger.gd::military_hull_ready_at
+    1690  identity/identity_ledger.gd::person_has_living_duty
+    1444  identity/identity_ledger.gd::person_ready_for_hq_issue
+     468  identity/identity_ledger.gd::active_formation_member_ids
+     169  identity/identity_ledger.gd::person_is_alive
+     160  identity/identity_ledger.gd::ammunition_quantities_at
+     128  battlefield/battlefield_view.gd::_request_refresh
+     128  main/main.gd::_refresh_clock
+     128  rear_base/base_demo.gd::_request_refresh
+     122  staffing/rear_simulation.gd::_settle
+      39  identity/identity_ledger.gd::sight_candidates
+      39  staffing/rear_simulation.gd::advance_time
+       1  staffing/rear_simulation.gd::set_target
+[Scope wall time/us] engine second 8 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":2,"maximum":130,"total":142},"staffing/rear_simulation.gd::_settle":{"calls":121,"maximum":10742,"total":511590}}
+Live cancellation confirmation binds current site: PASS
+Labelled second material deposit: PASS
+Live warning remains usable as actual used count changes: PASS

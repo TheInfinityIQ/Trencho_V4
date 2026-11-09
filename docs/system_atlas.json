@@ -4,13 +4,13 @@
   "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "24acf1e0f2e66662856869becd7701f95dfd160e5ee52753bd30c6e608f15372",
+  "source_fingerprint": "e6610bb760e484b1a7bfd9dae80bd299cd539680383943b5e8686cf9eab70cda",
   "totals": {
     "systems": 49,
     "game_scripts": 223,
     "non_test_scripts": 129,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3446,
+    "functions_in_inventory": 3447,
     "diagram_function_links": 267
   },
   "systems": [
@@ -6406,14 +6406,14 @@
           "label": "Scissors then finite tape physics",
           "file": "game/construction/visuals/construction_celebration.gd",
           "function": "start",
-          "line": 134
+          "line": 151
         },
         {
           "id": "n8",
           "label": "Ground contact then pylon cleanup",
           "file": "game/construction/visuals/construction_celebration.gd",
           "function": "_ground_contact",
-          "line": 183
+          "line": 200
         }
       ],
       "edges": [
@@ -7030,14 +7030,14 @@
         },
         {
           "path": "game/construction/visuals/construction_celebration.gd",
-          "sha256": "25521273161e35072990aef8b4ba69e57d4f673b2afe810e200562e9eeb683e6",
+          "sha256": "064b04ca99379093a5ef9ec567eba350a8a88b65be0a46cac90b608a177611b1",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ready",
               "name": "_ready",
-              "line": 21,
-              "end_line": 55,
+              "line": 22,
+              "end_line": 56,
               "kind": "method",
               "purpose": "Compose four Artist pylons/scissors and sixteen finite tape panels with isolated cosmetic ground; presentation owns no inventory or routes.",
               "purpose_origin": "reviewed"
@@ -7045,17 +7045,26 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_prop",
               "name": "_prop",
-              "line": 57,
-              "end_line": 62,
+              "line": 58,
+              "end_line": 76,
               "kind": "method",
-              "purpose": "Instantiate the explicitly supplied Artist prop beneath this finite effect owner.",
+              "purpose": "Instantiate the Artist prop, bind cached duplicated linear vertex-color palette materials to actual meshes including the root, and retain finite scene ownership.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/construction/visuals/construction_celebration.gd::_meshes",
+              "name": "_meshes",
+              "line": 78,
+              "end_line": 81,
+              "kind": "method",
+              "purpose": "Collect actual descendant meshes plus a mesh root once during prop setup; no recurring lookup.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/visuals/construction_celebration.gd::_fade_materials",
               "name": "_fade_materials",
-              "line": 64,
-              "end_line": 80,
+              "line": 83,
+              "end_line": 97,
               "kind": "method",
               "purpose": "Duplicate actual scissor mesh materials, including a mesh root, for per-instance fading without modifying shared imports.",
               "purpose_origin": "reviewed"
@@ -7063,8 +7072,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_opacity",
               "name": "_opacity",
-              "line": 82,
-              "end_line": 86,
+              "line": 99,
+              "end_line": 103,
               "kind": "method",
               "purpose": "Apply a supplied alpha to the cached per-instance scissor materials.",
               "purpose_origin": "reviewed"
@@ -7072,8 +7081,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_span",
               "name": "_span",
-              "line": 88,
-              "end_line": 125,
+              "line": 105,
+              "end_line": 142,
               "kind": "method",
               "purpose": "Compose two jointed halves of a side ribbon, initially held until its midpoint snip, colliding only with cosmetic ground.",
               "purpose_origin": "reviewed"
@@ -7081,8 +7090,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_track",
               "name": "_track",
-              "line": 127,
-              "end_line": 132,
+              "line": 144,
+              "end_line": 149,
               "kind": "method",
               "purpose": "Bind and retain a finite tween at the current pause/speed and retire its cache entry on completion.",
               "purpose_origin": "reviewed"
@@ -7090,8 +7099,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_track/<lambda#1>",
               "name": "_track/<lambda#1>",
-              "line": 131,
-              "end_line": 131,
+              "line": 148,
+              "end_line": 148,
               "kind": "lambda",
               "purpose": "Remove a finished finite tween from this effect cache.",
               "purpose_origin": "reviewed"
@@ -7099,8 +7108,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::start",
               "name": "start",
-              "line": 134,
-              "end_line": 155,
+              "line": 151,
+              "end_line": 172,
               "kind": "method",
               "purpose": "Begin the once-only four-scissor fade/swoop/snipping sequence after authoritative building completion.",
               "purpose_origin": "reviewed"
@@ -7108,8 +7117,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_snip",
               "name": "_snip",
-              "line": 157,
-              "end_line": 159,
+              "line": 174,
+              "end_line": 176,
               "kind": "method",
               "purpose": "Play the actual Artist snip clip on all four cached animation players at the current game speed.",
               "purpose_origin": "reviewed"
@@ -7117,8 +7126,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_play_clip",
               "name": "_play_clip",
-              "line": 161,
-              "end_line": 167,
+              "line": 178,
+              "end_line": 184,
               "kind": "method",
               "purpose": "Resolve the supplied Artist clip name, play it at current speed and reject a missing authored clip.",
               "purpose_origin": "reviewed"
@@ -7126,8 +7135,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_release_tape",
               "name": "_release_tape",
-              "line": 169,
-              "end_line": 177,
+              "line": 186,
+              "end_line": 194,
               "kind": "method",
               "purpose": "Release the finite cosmetic ribbon panels at the authored snip contact, applying current pause/gravity scaling.",
               "purpose_origin": "reviewed"
@@ -7135,8 +7144,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_fade_scissors",
               "name": "_fade_scissors",
-              "line": 179,
-              "end_line": 181,
+              "line": 196,
+              "end_line": 198,
               "kind": "method",
               "purpose": "Fade the cached scissor materials after the authored snip finishes.",
               "purpose_origin": "reviewed"
@@ -7144,8 +7153,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ground_contact",
               "name": "_ground_contact",
-              "line": 183,
-              "end_line": 194,
+              "line": 200,
+              "end_line": 211,
               "kind": "method",
               "purpose": "Track actual isolated-ground contact for all eight tape halves, then grow pylons0.5s and shrink0.25s before finite cleanup.",
               "purpose_origin": "reviewed"
@@ -7153,8 +7162,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::_ground_contact/<lambda#1>",
               "name": "_ground_contact/<lambda#1>",
-              "line": 194,
-              "end_line": 194,
+              "line": 211,
+              "end_line": 211,
               "kind": "lambda",
               "purpose": "Announce completed cosmetic cleanup and release its whole scene lifetime.",
               "purpose_origin": "reviewed"
@@ -7162,8 +7171,8 @@
             {
               "id": "game/construction/visuals/construction_celebration.gd::sync_speed",
               "name": "sync_speed",
-              "line": 196,
-              "end_line": 217,
+              "line": 213,
+              "end_line": 234,
               "kind": "method",
               "purpose": "Apply existing Pause/1x/2x changes to cached tweens, authored clips and finite tape velocities/gravity without a gameplay scan.",
               "purpose_origin": "reviewed"

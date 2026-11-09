@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "Normal configured3D entry: PASS",
+    "Normal live opening starts1x without speed command: PASS",
+    "Place real Construction Office with current footprint/access rules: PASS",
+    "Persistent building hologram and four taped corners: PASS",
+    "Assign two actual workers as builders: PASS",
+    "Labelled direct partial30M11 deposit at actual site: PASS",
+    "Partial real material supports exactly half earned work/cost: FAIL",
+    "Shortage stops earned work: FAIL",
+    "Same site visual survives progress without premature celebration: PASS",
+    "Menu separates actual used material and site stock: FAIL",
+    "Live cancellation confirmation binds current site: PASS",
+    "Labelled second material deposit: PASS",
+    "Live warning remains usable as actual used count changes: PASS"
+  ],
+  "failed": true,
+  "scope": "Rendered current-change component episode through normal main. Physics clock disabled after startup; explicit rear elapsed intervals and labelled local material deposits demonstrate construction, not supplier delivery/native input/FPS.",
+  "wall_ms": 6223
+}

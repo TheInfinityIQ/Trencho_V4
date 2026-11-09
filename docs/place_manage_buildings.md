@@ -61,3 +61,43 @@ provides gravity/contacts for temporary ribbon pieces. Those engine capabilities
 support this design; the finite body count, isolated collision layer and
 material/work authority are project choices. No standing world scan or new
 gameplay clock is introduced for this feature.
+
+## Current evidence
+
+[Scoped receipt](evidence/construction/receipt.json) retains the failed observer,
+corrected11.371s earned-work/sequence PASS at37772e3 and separate7.530s
+palette-only PASS at8867f18. The latter uses explicit debug completion to check
+only the affected appearance; it does not repeat or replace earned construction.
+The first collector incorrectly allowed automatic supply while assuming a
+shortage. Its repaired setup cancels only observer demand through the actual
+command. No gameplay rule or original45/35/28s deadline changed.
+
+The [current hologram](evidence/construction/orange_hologram.png),
+[snip](evidence/construction/orange_snip.png),
+[falling tape](evidence/construction/orange_tape.png) and
+[cleared exterior](evidence/construction/orange_complete.png) are actual game
+captures, personally inspected by Lead. Static props initially rendered white;
+the narrow palette fix binds all real meshes, including a mesh root, using cached
+duplicated linear vertex-colour materials. Fading scissors keep their own copies.
+The earlier earned50% image is explicitly pre-palette; source/runtime receipts
+do not establish every building/rotation, native input, a full normal-clock
+construction/supply cycle, every lifecycle timing or60FPS. Stage2 awaits Dawson.
+
+## Recorded workflow findings
+
+The [measured snapshot](evidence/workflow/place_manage_buildings_snapshot.json)
+uses actual Lead usage-counter deltas and recorded wall boundaries. It is partial:
+initial core edits overlapped the planning interval, later source/map/review work
+overlapped direct-check intervals, and several repairs lack separate boundaries.
+Zero tracked seconds for an incident means unmeasured, not free repair. Artist/
+Designer tokens, earlier context gathering, final release and reply are excluded.
+No confirmed regression was established in this bounded observation; that does
+not establish regression-free code. One visual defect, one observer error and
+two source-discovered gaps are retained with four confirmed missed assumptions.
+
+For the next feature plan, trace every consumer of a changed state: live dialogs
+and worker clip mapping were both affected by partial-material work. A controlled
+observer must account for normal automatic supply as well as its injected setup.
+Asset integration must apply the actual import contract to every mesh/root,
+including static palette props, before calling appearance ready. These lessons
+change the planning review, without adding a framework or regression campaign.

@@ -389,8 +389,8 @@ Cancellation and request_dismantle are separate branches with consumed-material/
 - [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L574) — Complete and activate site
 - [_apply_starter_staffing](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L624) — Apply once-only starting staff request
 - [_site_changed](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_site_visual.gd#L82) — Keyed earned-work reveal
-- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L134) — Scissors then finite tape physics
-- [_ground_contact](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L183) — Ground contact then pylon cleanup
+- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L151) — Scissors then finite tape physics
+- [_ground_contact](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L200) — Ground contact then pylon cleanup
 
 <a id="truck"></a>
 ## Construction Office utility truck
