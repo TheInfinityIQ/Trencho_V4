@@ -373,7 +373,8 @@ func _physics_process(delta: float) -> void:
 func _queue_workshop() -> void:
 	if battlefield_open or management_open or _needs_capture or _base._placing_building or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
 	var camera: Camera3D = world.first if first_person else world.third
-	_workshop_request = {"world":world,"model":_session.simulation,"service":_session.simulation.rear.construction,"camera":camera}
+	# Finite contextual E route: completed Workshop or the normal Supply Table.
+	_workshop_request = {"world":world,"model":_session.simulation,"service":_session.simulation.rear.construction,"receiving":_session.simulation.receiving,"camera":camera}
 
 func _workshop_target(site_id: String) -> Dictionary:
 	var model: RefCounted = _session.simulation
@@ -393,17 +394,21 @@ func _workshop_target(site_id: String) -> Dictionary:
 func _consume_workshop() -> void:
 	var request: Dictionary = _workshop_request
 	_workshop_request = {}
-	if request.is_empty() or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.model != _base.simulation or request.service != _session.simulation.rear.construction: return
+	if request.is_empty() or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.model != _base.simulation or request.service != _session.simulation.rear.construction or request.get("receiving") != _session.simulation.receiving: return
 	var camera: Camera3D = world.first if first_person else world.third
 	if request.camera != camera or battlefield_open or management_open or _modal_open() or _needs_capture or _base._placing_building or not get_window().has_focus() or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
 	var point: Vector2 = get_viewport_rect().size/2.0
 	var origin: Vector3 = camera.project_ray_origin(point)
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(point)*camera.far,5)
 	var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
-	var site_id: String = world.site_id_from_collider(hit.get("collider") as Node)
+	var collider: Node = hit.get("collider") as Node
+	if world.is_supply_table_collider(collider):
+		_open_supply_table(request)
+		return
+	var site_id: String = world.site_id_from_collider(collider)
 	var target: Dictionary = _workshop_target(site_id)
 	if target.is_empty():
-		_command_message = "Aim at a completed Workshop and press E. Intervening structures block selection."
+		_command_message = "Aim at the Supply Table or a completed Workshop and press E. Intervening structures block selection."
 		_update_hint()
 		return
 	# Hidden panels intentionally skip refresh; show before resolving metadata.
@@ -416,6 +421,30 @@ func _consume_workshop() -> void:
 		_update_hint()
 		return
 	_focus_workshop.call_deferred(request,target)
+
+func _open_supply_table(request: Dictionary) -> void:
+	var model: RefCounted = _session.simulation
+	if not model.empty_field_opening or request.receiving != model.receiving or not model.receiving.supply_table_access:
+		_command_message = "The Supply Table is unavailable in this session."
+		_update_hint()
+		return
+	# 'terminal' is the existing logical UI context; 'receiving' is the real place.
+	var place: Dictionary = model.rear.ledger.inspect_entity("receiving",{},false)
+	var table_at: Vector2 = Vector2(world.supply_table_body.global_position.x,world.supply_table_body.global_position.z)
+	if place.get("kind","") != "PLACE" or not place.position.is_equal_approx(table_at) or not model.receiving.receiving_position.is_equal_approx(place.position):
+		_command_message = "The Supply Table's receiving place is unavailable."
+		_update_hint()
+		return
+	_set_management(true)
+	_base._supply_views.current_tab = 0 # Existing Purchase tab; preserve cart/order state.
+	_base._select("building","terminal",true)
+	var panel: Control = _base.tabs.get_tab_control(_base.tabs.current_tab)
+	if _base.simulation != model or _base._selected_kind != "building" or _base._selected_id != "terminal" or str(panel.get_meta("panel_title",panel.name)) != "Supplies":
+		_set_management(false)
+		_command_message = "The Supply Table's purchase controls are unavailable."
+		_update_hint()
+		return
+	_command_message = ""
 
 func _focus_workshop(request: Dictionary, target: Dictionary) -> void:
 	if not management_open or battlefield_open or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.service != _session.simulation.rear.construction: return
@@ -617,7 +646,7 @@ func _update_hint() -> void:
 	if _hint == null or _session == null: return
 	var model: RefCounted = _session.simulation
 	_hint.text = "3D PROTOTYPE · %d REQ · %s · %.1fs\n%s" % [model.receiving.requisition_balance(),"Paused" if model.speed == 0 else str(model.speed)+"x",model.rear.time,
-		"RTS · WASD / middle drag pan · wheel zoom · LMB inspect" if battlefield_open else (("Click world to enable placement · Tab management" if _base._placing_building else "Click world to resume camera · Tab management") if _needs_capture else "WASD move · V perspective · E Workshop · Tab management")]
+		"RTS · WASD / middle drag pan · wheel zoom · LMB inspect" if battlefield_open else (("Click world to enable placement · Tab management" if _base._placing_building else "Click world to resume camera · Tab management") if _needs_capture else "WASD move · V perspective · E interact · Tab management")]
 	if _base._placing_building and not battlefield_open:
 		_hint.text += "\nCONSTRUCTION · pointer aim · LMB place · R rotate · V perspective · RMB/Esc cancel draft"
 		if not _preview_message.is_empty(): _hint.text += "\n"+_preview_message

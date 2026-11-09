@@ -48,6 +48,7 @@ var door: MeshInstance3D
 var stock_label: Label3D
 var stock_visuals: Array[Node3D] = []
 var rear_ground: StaticBody3D
+var supply_table_body: StaticBody3D
 var simulation: RefCounted
 var markers: Dictionary = {}
 var marker_rows: Array[Dictionary] = []
@@ -87,7 +88,8 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	var table := _asset("supply_table.glb",1.0)
 	rear_root.add_child(table)
 	table.position = Vector3(10,0,90)
-	_box(rear_root,Vector3(10,0.5,90),Vector3(2.58,1,1.38),Color.TRANSPARENT,true)
+	var table_volume: MeshInstance3D = _box(rear_root,Vector3(10,0.5,90),Vector3(2.58,1,1.38),Color.TRANSPARENT,true)
+	supply_table_body = table_volume.get_child(0) as StaticBody3D
 	_label(rear_root,"SUPPLY TABLE / ARRIVAL",Vector3(10,2.1,90),0.012)
 	for index in 5:
 		var stock := _asset("material_box.glb",0.65)
@@ -341,6 +343,9 @@ func refresh_rear() -> bool:
 		site_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 
 	return true
+
+func is_supply_table_collider(collider: Node) -> bool:
+	return is_instance_valid(collider) and collider == supply_table_body and rear_root.is_ancestor_of(collider)
 
 func site_id_from_collider(collider: Node) -> String:
 	if not is_instance_valid(collider) or not _collision_root.is_ancestor_of(collider): return ""
