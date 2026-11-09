@@ -1,4 +1,6 @@
 extends RefCounted
+signal convoy_changed
+signal supplier_state_changed
 ## G02's one predefined Receiving bay and independent Personnel pull-off.
 ## Timed service activities use G01's physical identities, never a staff-count grant.
 
@@ -24,6 +26,12 @@ var receiving_position := RECEIVING
 var freight_berths: Array[Dictionary] = [{"store":"receiving","berth":FREIGHT_BERTH,"receiving_position":RECEIVING,"duty":"receiving","site":"initial-receiving"}]
 var personnel_position := PERSONNEL
 var supply_table_access := false
+var development_convoys := false
+var _convoy_sequence := 0
+var _convoy_pending: Dictionary = {}
+var _active_suppliers: Dictionary = {}
+const ROAD_Y := 200.0
+const DROP_OFF := Vector2(120,200)
 var route: Callable
 # Optional shared-store contract: returns currently legal free kilograms.
 var receiving_room: Callable
@@ -59,8 +67,64 @@ func configure_supply_table() -> void:
 	# Same purchase/admission/handling service, with no F02/F08 prerequisite.
 	assert(_time == 0.0 and _orders.is_empty())
 	supply_table_access = true
-	freight_berths[0].berth = receiving_position + Vector2(0,-10)
+	development_convoys = true
+	freight_berths[0].berth = DROP_OFF
 	freight_berths[0].site = "supply-table"
+
+func convoy_ready() -> bool:
+	return _convoy_pending.is_empty()
+
+func quote_delivery(cart: Dictionary, workers: bool = false) -> Dictionary:
+	var quote: Dictionary = {"ok":true,"vehicles":[],"vehicle_count":0,"mass_kg":0,"transport_fees":0,"cost":0,"message":"Choose resources or eight workers."}
+	if not cart.is_empty(): quote = Catalog.quote(cart,freight_limit())
+	if not quote.ok: return quote
+	quote.workers = 8 if workers else 0
+	quote.cost += 140 if workers else 0
+	quote.transport_fees += 20 if workers else 0
+	quote.total_vehicles = int(quote.vehicle_count)+(1 if workers else 0)
+	var reason := ""
+	if quote.total_vehicles == 0: reason = "Choose resources or eight workers."
+	elif not convoy_ready(): reason = "Previous convoy is unloading or approaching. Ordering reopens when its last truck starts leaving."
+	elif quote.vehicle_count > freight_limit()-freight_admitted(): reason = "Supplier freight places remain occupied by clearing vehicles."
+	elif workers and personnel_admitted() >= PERSONNEL_LIMIT: reason = "Personnel vehicles are still clearing."
+	elif workers and rear_population()+incoming_people()+_outside_rear_places()+8 > REAR_LIMIT: reason = "Eight workers need free rear population places."
+	elif _money < quote.cost: reason = "Not enough requisition for the complete order."
+	quote.can_commit = reason.is_empty()
+	quote.message = reason if not reason.is_empty() else "Ready to confirm. Trucks appear at the south road and unload physically."
+	return quote
+
+func buy_delivery(cart: Dictionary, workers: bool = false) -> Dictionary:
+	if not development_convoys: return _reject("UNAVAILABLE","Combined convoy orders belong to the development opening.")
+	# Entire quote is validated before creating any order or debiting its account.
+	var quote: Dictionary = quote_delivery(cart,workers)
+	if not quote.ok: return quote
+	if not quote.can_commit: return _reject("ORDER_UNAVAILABLE",str(quote.message))
+	var created: Array[Dictionary] = []
+	for vehicle: Dictionary in quote.vehicles: created.append(_new_order("Freight",vehicle.cost,vehicle.cargo))
+	if workers:
+		var people: Dictionary = _new_order("Personnel",140,{})
+		people.people_reserved = 8
+		created.append(people)
+	_money -= quote.cost
+	_spent += quote.cost
+	_begin_convoy(created)
+	return _ok("Order confirmed. The paid convoy is at the south road; unloaders and passengers still act physically.",created.map(func(row: Dictionary) -> String: return row.id))
+
+func _begin_convoy(created: Array[Dictionary]) -> void:
+	_convoy_sequence += 1
+	for index in created.size():
+		var order: Dictionary = created[index]
+		order.convoy = _convoy_sequence
+		order.convoy_index = index
+		_convoy_pending[order.id] = true
+	for order: Dictionary in created: _dispatch(order)
+	convoy_changed.emit()
+
+func supplier_vehicle_views() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for order: Dictionary in _active_suppliers.values():
+		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"position":ledger._world_position(order.id),"facing_degrees":0.0})
+	return rows
 
 func requisition_balance() -> float:
 	return _money
@@ -75,6 +139,7 @@ func quote_resources(cart: Dictionary) -> Dictionary:
 
 
 func buy_resources(cart: Dictionary) -> Dictionary:
+	if development_convoys: return buy_delivery(cart)
 	var quote := quote_resources(cart)
 	if not quote.ok:
 		return quote
@@ -199,6 +264,7 @@ func debug_deliver_people() -> Dictionary:
 
 
 func buy_people() -> Dictionary:
+	if development_convoys: return buy_delivery({},true)
 	if personnel_admitted() >= PERSONNEL_LIMIT:
 		return _reject("PERSONNEL_QUEUE_FULL", "Both personnel vehicle commitments are occupied, including en-route/disembarking/clearing services.")
 	if rear_population() + incoming_people() + _outside_rear_places() + 8 > REAR_LIMIT:
@@ -223,6 +289,7 @@ func recovery_instructor_offer() -> Dictionary:
 
 
 func buy_recovery_instructor() -> Dictionary:
+	if development_convoys and not convoy_ready(): return _reject("CONVOY_BUSY","Wait for the current convoy to leave its unloading berth.")
 	var offer := recovery_instructor_offer()
 	if not offer.available: return _reject("RECOVERY_UNAVAILABLE",offer.message)
 	if personnel_admitted() >= PERSONNEL_LIMIT: return _reject("PERSONNEL_QUEUE_FULL","Both shared personnel vehicle admissions are occupied/reserved.")
@@ -234,6 +301,7 @@ func buy_recovery_instructor() -> Dictionary:
 	order.people_reserved = 1
 	_money -= 120.0
 	_spent += 120
+	if development_convoys: _begin_convoy([order])
 	_event("Recovery P01 purchased; one pending/personnel vehicle/rear population place reserved",order.id)
 	return _ok("Recovery instructor purchased. Same person must disembark and reach Personnel; no unloading worker required.",[order.id])
 
@@ -427,7 +495,7 @@ func snapshot(include_diagnostics: bool = true) -> Dictionary:
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
 		"order_sequence": _order_sequence, "job_sequence": _job_sequence,
 		"events": _events.duplicate(true), "ledger": ledger.snapshot() if include_diagnostics else null, "recovery_offer":recovery_instructor_offer(),
-		"freight_berths":freight_berths.duplicate(true),"freight_limit":freight_limit()}
+		"freight_berths":freight_berths.duplicate(true),"freight_limit":freight_limit(),"convoy_ready":convoy_ready(),"development_convoys":development_convoys}
 
 
 func audit() -> Array[String]:
@@ -548,7 +616,10 @@ func _dispatch(order: Dictionary) -> void:
 			_must(ledger.add_person(person_id, order.id, SUPPLIER, Records.Assignment.PASSENGER, order.recovery_instructor))
 			order.passenger_ids.append(person_id)
 	var gate := _gate(order)
-	var origin := gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
+	var origin := Vector2(-12-float(order.get("convoy_index",0))*8,ROAD_Y) if development_convoys else gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
+	if development_convoys:
+		order.arrival_at = _time+origin.distance_to(gate)/_speed(order)
+		_active_suppliers[order.id] = order
 	_must(ledger.move_entity(order.id, "supplier-transit", origin))
 	order.motion = {"path": [origin, gate], "started_at": _time, "ends_at": order.arrival_at}
 	order.next_at = order.arrival_at
@@ -665,6 +736,10 @@ func _start_vehicle_motion(order: Dictionary, state: String, destination: Vector
 
 
 func _slot_for(kind: String) -> int:
+	if development_convoys:
+		for order: Dictionary in _active_suppliers.values():
+			if order.state in ["Incoming","Berthing","Berthed","Disembarking"]: return -1
+		return 0 # One shared apron; empty departing trucks no longer occupy it.
 	var count := freight_berths.size() if kind == "Freight" else 2
 	for slot in range(count):
 		var occupied := false
@@ -721,24 +796,34 @@ func _find_order(id: String) -> Dictionary:
 func _set_state(order: Dictionary, state: String) -> void:
 	order.state = state
 	order.state_entered_at = _time
+	if development_convoys:
+		if state in ["Departing","Complete","Cancelled"] and _convoy_pending.has(order.id):
+			_convoy_pending.erase(order.id)
+			if _convoy_pending.is_empty(): convoy_changed.emit()
+		if state in ["Complete","Cancelled"]: _active_suppliers.erase(order.id)
+		supplier_state_changed.emit()
 
 
 func _gate(order: Dictionary) -> Vector2:
+	if development_convoys: return Vector2(96-float(order.get("convoy_index",0))*8,ROAD_Y)
 	if supply_table_access: return Vector2(0,receiving_position.y-10 if order.kind == "Freight" else personnel_position.y+10)
 	return FREIGHT_GATE if order.kind == "Freight" else Vector2(0, 100)
 
 
 func _berth(order: Dictionary) -> Vector2:
+	if development_convoys: return DROP_OFF
 	if supply_table_access and order.kind != "Freight": return personnel_position+Vector2(6+order.slot*8,10)
 	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 
 
 func _exit(order: Dictionary) -> Vector2:
+	if development_convoys: return Vector2(252,ROAD_Y)
 	if supply_table_access: return _gate(order)-Vector2(12,0)
 	return FREIGHT_EXIT if order.kind == "Freight" else Vector2(-12, 100)
 
 
 func _speed(order: Dictionary) -> float:
+	if development_convoys: return 12.0 # Keep the same-lane convoy spaced at its freight speed.
 	return 12.0 if order.kind == "Freight" else 15.0 # GDD T01/T02 road values.
 
 

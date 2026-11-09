@@ -12,7 +12,7 @@ const PLAYER := "army-blue"
 const EPS := 0.000001
 
 var ledger := Ledger.new()
-const SUPPLY_TABLE := Vector2(10,90)
+const SUPPLY_TABLE := Vector2(120,186)
 var empty_field_opening := false
 var yard: RefCounted
 var time: float = 0.0

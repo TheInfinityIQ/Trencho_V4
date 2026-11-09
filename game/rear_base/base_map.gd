@@ -109,7 +109,7 @@ func move_character(direction: Vector2, seconds: float) -> void:
 	for offset in [Vector2(step.x, 0), Vector2(0, step.y)]:
 		if offset.is_zero_approx(): continue
 		var candidate: Vector2 = character_position+offset
-		if not Rect2(0.5, 0.5, 239, 179).has_point(candidate): continue
+		if not Rect2(0.5, 0.5, 239, 209 if simulation.empty_field_opening else 179).has_point(candidate): continue
 		var blocked := false
 		for row in simulation.rear.construction.instances.values():
 			if row.state in ["Cancelled", "Dismantled"]: continue
@@ -128,13 +128,13 @@ func _ready() -> void:
 	resized.connect(queue_redraw)
 
 func _scale() -> float:
-	return minf(size.x / 260.0, size.y / 200.0) * zoom
+	return minf(size.x / 260.0, size.y / (230.0 if simulation != null and simulation.empty_field_opening else 200.0)) * zoom
 
 func map_point(world: Vector2) -> Vector2:
-	return size / 2.0 + (world - Vector2(120, 90)) * _scale() + pan
+	return size / 2.0 + (world - Vector2(120, 105 if simulation != null and simulation.empty_field_opening else 90)) * _scale() + pan
 
 func _world(point: Vector2) -> Vector2:
-	return (point - size / 2.0 - pan) / _scale() + Vector2(120, 90)
+	return (point - size / 2.0 - pan) / _scale() + Vector2(120, 105 if simulation != null and simulation.empty_field_opening else 90)
 
 func reset_camera() -> void:
 	zoom = 1.0
@@ -187,7 +187,7 @@ func _gui_input(event: InputEvent) -> void:
 						selected.emit("site",row.id)
 						hit_site = true
 						break
-				if character_enabled and point.distance_to(Vector2(10,90)) <= 5.0:
+				if character_enabled and point.distance_to(simulation.rear.SUPPLY_TABLE) <= 5.0:
 					selection = "terminal"
 					selected.emit("building", "terminal")
 				elif not hit_site and not character_enabled:
@@ -211,7 +211,8 @@ func _draw_contents() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color("16242b"))
 	if simulation == null: return
 	var scale := _scale()
-	draw_rect(Rect2(map_point(Vector2.ZERO), Vector2(240, 180) * scale), Color("243d3c"))
+	draw_rect(Rect2(map_point(Vector2.ZERO), Vector2(240, 210 if simulation.empty_field_opening else 180) * scale), Color("243d3c"))
+	if simulation.empty_field_opening: draw_line(map_point(Vector2(0,200)),map_point(Vector2(240,200)),Color("687478"),8*scale)
 	_draw_ground(scale)
 	for x in range(0, 241, 20): draw_line(map_point(Vector2(x, 0)), map_point(Vector2(x, 180)), Color("2d4846"))
 	for y in range(0, 181, 20): draw_line(map_point(Vector2(0, y)), map_point(Vector2(240, y)), Color("2d4846"))
@@ -284,7 +285,7 @@ func _draw_contents() -> void:
 		_draw_carry_art(entity,point,font)
 		if entity.id == selection: draw_arc(point, 8, 0, TAU, 20, Color.WHITE, 2)
 	if character_enabled:
-		var table := map_point(Vector2(10,90))
+		var table := map_point(simulation.rear.SUPPLY_TABLE)
 		draw_rect(Rect2(table-Vector2(6,4),Vector2(12,8)),Color("ddbd72"))
 		draw_texture_rect_region(INDOOR_ART,Rect2(table-Vector2(12,12),Vector2(24,24)),SUPPLY_TABLE_REGION)
 		_draw_icon(ARRIVAL_ART,Rect2(table-Vector2(24,26),Vector2(16,16)))

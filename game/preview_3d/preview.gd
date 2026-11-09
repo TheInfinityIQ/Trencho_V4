@@ -26,6 +26,8 @@ var _left_down := false
 var _command_message := ""
 var _preview_message := ""
 var _check_button: Button
+var _place_button: Button
+var _build_target_locked := false
 var _fully_checked := false
 var _rear_dirty := false
 var _field_dirty := true
@@ -97,6 +99,10 @@ func _build_hud() -> void:
 	_check_button.text = "Check placement"
 	_check_button.pressed.connect(_check_candidate)
 	row.add_child(_check_button)
+	_place_button = Button.new()
+	_place_button.text = "Confirm placement"
+	_place_button.pressed.connect(_queue_commit)
+	row.add_child(_place_button)
 	_hint = Label.new()
 	_hint.custom_minimum_size.x = 850
 	_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -140,6 +146,7 @@ func _replace_world(model: RefCounted) -> void:
 	_base.placement_manager_shape = world.manager_collision
 	world.first.pose_changed.connect(_camera_changed)
 	world.third.pose_changed.connect(_camera_changed)
+	world.build_camera.pose_changed.connect(_camera_changed)
 	world.rts.pose_changed.connect(_field_camera_changed)
 	_field_cues.bind(world.field_persons,world.rts)
 	_field_cues.set_selected(_battlefield.selected_id)
@@ -188,11 +195,13 @@ func _apply_navigation() -> void:
 	if action not in ["rear","Battlefield"]: _set_management(true)
 
 func _set_management(open: bool) -> void:
+	if management_open and not open: _base.discard_menu_drafts()
 	management_open = open
 	_shell.visible = open
 	_base.visible = open
 	if _hud != null: _hud.visible = not open
 	if _crosshair != null: _crosshair.visible = not open and not battlefield_open
+	if world != null: world.build_grid.visible = _base._placing_building and not battlefield_open and not open
 	if _field_cues != null: _field_cues.visible = battlefield_open and not open
 	if _truck_cues != null: _truck_cues.visible = battlefield_open and not open
 	if _objective_cues != null: _objective_cues.visible = battlefield_open and not open and not _field_dirty
@@ -205,8 +214,11 @@ func _apply_view() -> void:
 	world.rear_root.visible = not battlefield_open
 	world.field_root.visible = battlefield_open
 	world.player_visual.visible = not first_person
-	world.first.current = not battlefield_open and first_person
-	world.third.current = not battlefield_open and not first_person
+	var building: bool = _base._placing_building and not battlefield_open
+	world.build_camera.current = building
+	world.build_grid.visible = building and not management_open
+	world.first.current = not battlefield_open and not building and first_person
+	world.third.current = not battlefield_open and not building and not first_person
 	world.rts.current = battlefield_open
 	_field_cues.visible = battlefield_open and not management_open
 	_field_cues.request_projection()
@@ -221,7 +233,7 @@ func _apply_view() -> void:
 	_update_hint()
 
 func _toggle_camera() -> void:
-	if battlefield_open or management_open or _modal_open(): return
+	if battlefield_open or management_open or _modal_open() or _base._placing_building: return
 	first_person = not first_person
 	_apply_view()
 
@@ -285,7 +297,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				if not battlefield_open and _base._placing_building:
 					_base.construction_turn.button_pressed = not _base.construction_turn.button_pressed
 			KEY_W,KEY_A,KEY_S,KEY_D:
-				if not _suppressed.has(event.physical_keycode) and (battlefield_open or not _needs_capture): _held[event.physical_keycode] = true
+				if not _suppressed.has(event.physical_keycode) and (battlefield_open or _base._placing_building or not _needs_capture): _held[event.physical_keycode] = true
 			_: return
 		get_viewport().set_input_as_handled()
 	if management_open: return
@@ -293,7 +305,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var changed_point: bool = _pointer != event.position
 		_pointer = event.position
 		if changed_point and _base._placing_building and not battlefield_open: _invalidate_preview()
-		if event.button_index == MOUSE_BUTTON_MIDDLE: _middle_drag = event.pressed and battlefield_open
+		if event.button_index == MOUSE_BUTTON_MIDDLE: _middle_drag = event.pressed and (battlefield_open or _base._placing_building)
 		if not event.pressed: return
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if _left_down or event.double_click: return
@@ -305,22 +317,29 @@ func _unhandled_input(event: InputEvent) -> void:
 				if not _base._placing_building: Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 				_invalidate_preview(false)
 			elif _base._placing_building:
-				_queue_commit()
+				_build_target_locked = true
+				_command_message = "Preview selected. Confirm placement to build; R rotates, Escape cancels."
+				_update_hint()
 			get_viewport().set_input_as_handled()
 		elif event.button_index == MOUSE_BUTTON_RIGHT and _base._placing_building:
 			_cancel_preview()
+		elif _base._placing_building and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
+			world.build_camera.size = clampf(world.build_camera.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),30,240)
+			_invalidate_preview()
 		elif battlefield_open and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			world.rts.size = clampf(world.rts.size*(0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/0.85),10,6500)
 			_field_cues.request_projection()
 			_truck_cues.request_projection()
 			_objective_cues.request_projection()
 	if event is InputEventMouseMotion:
+		if _base._placing_building and _build_target_locked and not _middle_drag: return
 		var moved_pointer: bool = _pointer != event.position
 		_pointer = event.position
 		if battlefield_open and _middle_drag:
 			_pan_field(Vector2(-event.relative.x,-event.relative.y)*world.rts.size/get_viewport_rect().size.y)
 		elif not battlefield_open and _base._placing_building:
-			if moved_pointer: _invalidate_preview()
+			if _middle_drag: _pan_build(Vector2(-event.relative.x,-event.relative.y)*world.build_camera.size/get_viewport_rect().size.y)
+			elif moved_pointer: _invalidate_preview()
 		elif not battlefield_open and not _needs_capture:
 			world.player.global_rotation.y -= event.relative.x*0.003
 			world.eye.rotation.x = clampf(world.eye.rotation.x-event.relative.y*0.003,-1.25,0.8)
@@ -357,6 +376,7 @@ func _physics_process(delta: float) -> void:
 			_select_pending = false
 			_select_marker()
 		return
+	if _base._placing_building and not _needs_capture and not direction.is_zero_approx(): _pan_build(direction*world.build_camera.size*delta*0.55)
 	if not _needs_capture and not _base._placing_building and _session.simulation.speed > 0:
 		if world.move_manager(direction,_session.simulation.speed,_session.manager_pose): _pick_pending = true
 
@@ -373,14 +393,14 @@ func _physics_process(delta: float) -> void:
 func _queue_workshop() -> void:
 	if battlefield_open or management_open or _needs_capture or _base._placing_building or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
 	var camera: Camera3D = world.first if first_person else world.third
-	# Finite contextual E route: completed Workshop or the normal Supply Table.
+	# One contextual E request; same current-world and first-hit guards for every site.
 	_workshop_request = {"world":world,"model":_session.simulation,"service":_session.simulation.rear.construction,"receiving":_session.simulation.receiving,"camera":camera}
 
 func _workshop_target(site_id: String) -> Dictionary:
 	var model: RefCounted = _session.simulation
 	var service: RefCounted = model.rear.construction
 	var row: Dictionary = service.instances.get(site_id,{})
-	if row.is_empty() or row.state != "Complete" or row.kind != "workshop": return {}
+	if row.is_empty() or row.state != "Complete": return {}
 	var kind: String = "site"
 	var duty: String = site_id
 	var activity: RefCounted = service.activities.get(site_id)
@@ -408,7 +428,24 @@ func _consume_workshop() -> void:
 	var site_id: String = world.site_id_from_collider(collider)
 	var target: Dictionary = _workshop_target(site_id)
 	if target.is_empty():
-		_command_message = "Aim at the Supply Table or a completed Workshop and press E. Intervening structures block selection."
+		var row: Dictionary = request.service.instances.get(site_id,{})
+		if not row.is_empty() and row.state not in ["Cancelled","Dismantled"]:
+			_set_management(true)
+			_base._select("site",site_id,true)
+			if row.state == "Complete":
+				var panel_name: String = {"training":"Train","dispatch":"Dispatch","park":"Vehicles","receiving":"Info","depot":"Info","construction":"Build"}.get(str(row.kind),"Build")
+				_base.show_panel(panel_name)
+				if panel_name == "Info":
+					for index in _base.store.item_count:
+						if _base.store.get_item_text(index) == site_id:
+							_base.store.select(index)
+							_base._load_store()
+				if row.kind == "training":
+					for index in _base.training_site.item_count:
+						if str(_base.training_site.get_item_metadata(index)) == site_id: _base.training_site.select(index)
+			_command_message = ""
+			return
+		_command_message = "Aim at the Supply Table or a current building/site and press E. Structures block selection."
 		_update_hint()
 		return
 	# Hidden panels intentionally skip refresh; show before resolving metadata.
@@ -459,10 +496,19 @@ func _pan_field(offset: Vector2) -> void:
 	world.rts.position.x = clampf(world.rts.position.x+offset.x,0,4000)
 	world.rts.position.z = clampf(world.rts.position.z+offset.y,0,7500)
 
+func _pan_build(offset: Vector2) -> void:
+	_build_target_locked = false
+	world.build_camera.position.x = clampf(world.build_camera.position.x+offset.x,0,240)
+	world.build_camera.position.z = clampf(world.build_camera.position.z+offset.y,0,210)
+	_invalidate_preview()
+
 func _begin_preview() -> void:
+	_build_target_locked = false
 	_draft_generation += 1
 	_pointer = get_viewport().get_mouse_position()
 	_set_management(false)
+	_apply_view()
+	_needs_capture = false
 	_invalidate_preview()
 
 func _draft_changed() -> void:
@@ -470,9 +516,10 @@ func _draft_changed() -> void:
 	_invalidate_preview()
 
 func _draft_ended() -> void:
+	_build_target_locked = false
 	_draft_generation += 1
 	_preview_message = ""
-	_release_controls()
+	_apply_view()
 	_update_hint()
 
 func _camera_changed(camera: Camera3D) -> void:
@@ -499,7 +546,7 @@ func _pick_ground() -> void:
 	if not _base._placing_building:
 		world.clear_preview()
 		return
-	var camera: Camera3D = world.first if first_person else world.third
+	var camera: Camera3D = world.build_camera
 	var origin := camera.project_ray_origin(_pointer)
 	var query := PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(_pointer)*500,5)
 	var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
@@ -509,13 +556,13 @@ func _pick_ground() -> void:
 		_preview_message = "Aim at rear ground. A table, wall or structure blocks placement here." if not hit.is_empty() else "No rear-ground target."
 		_update_hint()
 		return
-	var ground := Vector2(hit.position.x,hit.position.z)
+	var ground: Vector2 = _base._snap_build_point(Vector2(hit.position.x,hit.position.z))
 	var plan: Dictionary = _base.preview_build_at(ground,false)
 	_candidate = {"session":_session,"model":_session.simulation,"service":_session.simulation.rear.construction,
 		"draft":_draft_generation,"revision":_candidate_revision,"kind":_base._construction_kind(),"turn":_base.construction_turn.button_pressed,
 		"camera":camera,"transform":camera.get_camera_transform(),"projection":camera.get_camera_projection(),"screen":_pointer,"point":ground,"hint":plan,"blockers":_blocker_membership(plan.footprint)}
 	world.show_preview(plan)
-	_preview_message = "Preview — click to validate and place." if plan.ok else str(plan.message)
+	_preview_message = "Grid preview — Confirm placement to validate and build." if plan.ok else str(plan.message)
 	_update_hint()
 
 func _candidate_is_current(candidate: Dictionary) -> bool:
@@ -528,19 +575,21 @@ func _candidate_is_current(candidate: Dictionary) -> bool:
 	return is_instance_valid(camera) and camera.current and candidate.transform.is_equal_approx(camera.get_camera_transform()) and candidate.projection == camera.get_camera_projection()
 
 func _queue_commit() -> void:
+	if not _build_target_locked: return
 	if _submitting or not _pending_commit.is_empty(): return
 	if not _candidate_is_current(_candidate):
 		_command_message = "Preview changed or has no ground target. Nothing placed; wait for the current preview and click again."
 		_pick_pending = true
 	else:
 		_pending_commit = _candidate.duplicate()
+		_pending_commit.from_confirm_button = true
 		_command_message = "Checking placement…"
 	_update_hint()
 
 func _consume_commit() -> void:
 	var request := _pending_commit
 	_pending_commit = {} # Consume once before any owner callback can invalidate it.
-	if not _candidate_is_current(request) or _needs_capture or _modal_open() or not get_window().has_focus() or get_viewport().gui_get_hovered_control() != null:
+	if not _candidate_is_current(request) or _needs_capture or _modal_open() or not get_window().has_focus() or (get_viewport().gui_get_hovered_control() != null and not request.get("from_confirm_button",false)):
 		_command_message = "Placement input changed. Nothing placed; review the current preview."
 		_update_hint()
 		return
@@ -557,7 +606,7 @@ func _check_candidate() -> void:
 		if _candidate_is_current(candidate):
 			world.show_preview(plan)
 			_fully_checked = bool(plan.ok)
-			_command_message = "Placement checked — click to place. This is not a reservation." if plan.ok else str(plan.message)
+			_command_message = "Placement checked — Confirm placement to build. This is not a reservation." if plan.ok else str(plan.message)
 	_update_hint()
 
 func _placement_result(result: Dictionary) -> void:
@@ -648,9 +697,12 @@ func _update_hint() -> void:
 	_hint.text = "3D PROTOTYPE · %d REQ · %s · %.1fs\n%s" % [model.receiving.requisition_balance(),"Paused" if model.speed == 0 else str(model.speed)+"x",model.rear.time,
 		"RTS · WASD / middle drag pan · wheel zoom · LMB inspect" if battlefield_open else (("Click world to enable placement · Tab management" if _base._placing_building else "Click world to resume camera · Tab management") if _needs_capture else "WASD move · V perspective · E interact · Tab management")]
 	if _base._placing_building and not battlefield_open:
-		_hint.text += "\nCONSTRUCTION · pointer aim · LMB place · R rotate · V perspective · RMB/Esc cancel draft"
+		_hint.text += "\nBUILD · 1 m grid · WASD / middle drag pan · wheel zoom · LMB select · Confirm placement to build · R rotate · RMB/Esc cancel"
 		if not _preview_message.is_empty(): _hint.text += "\n"+_preview_message
 	if not _command_message.is_empty(): _hint.text += "\n"+_command_message
+	if _place_button != null:
+		_place_button.visible = _base._placing_building and not battlefield_open
+		_place_button.disabled = not _build_target_locked or _candidate.is_empty()
 	if _check_button != null: _check_button.visible = _base._placing_building and not battlefield_open
 	if _crosshair != null: _crosshair.visible = not management_open and not battlefield_open and not _base._placing_building
 	if _inspection_panel != null: _inspection_panel.visible = battlefield_open and not management_open

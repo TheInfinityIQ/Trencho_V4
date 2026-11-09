@@ -55,6 +55,7 @@ var _fit_base_button: Button
 var _advanced_panels: CheckButton
 var _uses_shared_navigation := false
 var _staff_control_basis := ""
+var _staff_draft_dirty := false
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -72,6 +73,8 @@ var workforce_panel: VBoxContainer
 var resource_hud: Label
 var purchase_quote: Label
 var purchase_button: Button
+var include_workers: CheckBox
+var _purchase_receiving: RefCounted
 var delivery_status: Label
 var delivery_progress: ProgressBar
 var delivery_cancel_button: Button
@@ -179,6 +182,7 @@ func _ready() -> void:
 		session.name = "GameSession"
 		add_child(session)
 	simulation = session.simulation
+	_bind_purchase_receiving(simulation.receiving)
 	session.state_changed.connect(_on_session_state_changed)
 	session.simulation_changed.connect(_batch_cancel_model_changed)
 	session.time_advanced.connect(_on_time_advanced)
@@ -429,8 +433,10 @@ func _orders_panel(box: VBoxContainer) -> void:
 	army_request_cancel = _button(army_box,"Cancel remaining delivery",_cancel_army_delivery)
 	var hiring: VBoxContainer = UIKit.card(purchase)
 	UIKit.label(hiring,"WORKERS",11,UIKit.ACCENT)
-	var hire: Button = _button(hiring,"Hire 8 workers · 140 requisition · 90 s travel",func() -> void: _result(simulation.receiving.buy_people()),true)
-	hire.tooltip_text = "120 requisition + 20 transport. Reserves eight rear places; the supplier carrier and driver leave."
+	include_workers = CheckBox.new()
+	include_workers.text = "Include 8 workers · 140 requisition (120 + 20 transport)"
+	include_workers.toggled.connect(func(_enabled: bool) -> void: _refresh_purchase_quote())
+	hiring.add_child(include_workers)
 	UIKit.label(hiring,"Workers join after disembarking.",14,UIKit.MUTED,true)
 	var deliveries: VBoxContainer = _section(deliveries_view,"Deliveries","Select an order to inspect its actual arrival or unloading state.")
 	orders = _list(deliveries,112)
@@ -460,11 +466,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 		cart[code].value_changed.connect(func(_value: float) -> void: _refresh_purchase_quote())
 	purchase_quote = _label(catalogue,"")
 	purchase_quote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	purchase_button = _button(catalogue, "Buy resources", func() -> void:
-		var request := {}
-		for code in cart:
-			if cart[code].value > 0: request[code] = int(cart[code].value)
-		_result(simulation.receiving.buy_resources(request)),true)
+	purchase_button = _button(catalogue,"Confirm order",_confirm_purchase,true)
 	var recovery_toggle := CheckButton.new()
 	recovery_toggle.text = "Specialist recovery details"
 	purchase.add_child(recovery_toggle)
@@ -472,7 +474,7 @@ func _orders_panel(box: VBoxContainer) -> void:
 	var recovery_card := recovery.get_parent() as Control
 	recovery_card.hide()
 	recovery_toggle.toggled.connect(recovery_card.set_visible)
-	recovery_button = _button(recovery,"Buy recovery instructor · 120 requisition",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
+	recovery_button = _button(recovery,"Confirm recovery instructor · 120 requisition",func() -> void: _result(simulation.receiving.buy_recovery_instructor()))
 	recovery_status = _label(recovery,"")
 	recovery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_standalone_session_actions = VBoxContainer.new()
@@ -543,6 +545,7 @@ func _staff_panel(box: VBoxContainer) -> void:
 	workforce_panel = WorkforcePanel.new(simulation)
 	box.add_child(workforce_panel)
 	workforce_panel.result_reported.connect(_result)
+	workforce_panel.purchase_requested.connect(_draft_worker_purchase)
 	_label(box,"Individual worker inspection")
 	people = _list(box, 150)
 	people.item_selected.connect(func(index: int) -> void: _select("entity", _person_ids[index], false))
@@ -550,11 +553,54 @@ func _staff_panel(box: VBoxContainer) -> void:
 	_button(box, "Reassign selected person", func() -> void:
 		if not people.get_selected_items().is_empty(): _result(simulation.rear.reassign_person(_person_ids[people.get_selected_items()[0]], person_duty.get_item_text(person_duty.selected))))
 
+func _bind_purchase_receiving(receiving: RefCounted) -> void:
+	if _purchase_receiving != null and _purchase_receiving.convoy_changed.is_connected(_request_refresh): _purchase_receiving.convoy_changed.disconnect(_request_refresh)
+	_purchase_receiving = receiving
+	if receiving != null: receiving.convoy_changed.connect(_request_refresh)
+
+func _draft_worker_purchase() -> void:
+	include_workers.button_pressed = true
+	_supply_views.current_tab = 0
+	show_panel("Supplies")
+	_refresh_purchase_quote()
+
+func discard_menu_drafts() -> void:
+	_staff_draft_dirty = false
+	for spin: SpinBox in cart.values(): spin.set_value_no_signal(0)
+	include_workers.set_pressed_no_signal(false)
+
+func _confirm_purchase() -> void:
+	var request := {}
+	for code in cart:
+		if cart[code].value > 0: request[code] = int(cart[code].value)
+	var result: Dictionary
+	if simulation.receiving.development_convoys:
+		result = simulation.receiving.buy_delivery(request,include_workers.button_pressed)
+	elif include_workers.button_pressed and not request.is_empty():
+		result = {"ok":false,"message":"This legacy session supports separate resource and worker orders."}
+	else:
+		result = simulation.receiving.buy_people() if include_workers.button_pressed else simulation.receiving.buy_resources(request)
+	if result.ok:
+		for spin: SpinBox in cart.values(): spin.set_value_no_signal(0)
+		include_workers.set_pressed_no_signal(false)
+	_result(result)
+
 func _refresh_purchase_quote() -> void:
 	if purchase_quote == null: return
 	var request := {}
 	for code in cart:
 		if cart[code].value > 0: request[code] = int(cart[code].value)
+	if simulation.receiving.development_convoys:
+		var combined: Dictionary = simulation.receiving.quote_delivery(request,include_workers.button_pressed)
+		purchase_quote.text = str(combined.message)
+		if combined.ok:
+			purchase_quote.text = "%d kg + %d workers · %d vehicles · %d requisition total\nIncludes %d transport · Balance %.0f\nDestination: south unloading apron. Trucks spawn on confirmation; physical travel/unloading follows.\n%s" % [combined.mass_kg,combined.workers,combined.total_vehicles,combined.cost,combined.transport_fees,simulation.receiving.requisition_balance(),combined.message]
+		purchase_button.disabled = not combined.ok or not combined.get("can_commit",false)
+		return
+	if include_workers.button_pressed and request.is_empty():
+		purchase_quote.text = "8 workers · 140 requisition · 90 s travel, then disembarking."
+		purchase_button.disabled = simulation.receiving.requisition_balance() < 140
+		return
 	var quote: Dictionary = simulation.receiving.quote_resources(request)
 	purchase_quote.text = str(quote.message)
 	if quote.ok:
@@ -658,10 +704,12 @@ func _refresh_production_context(view: Dictionary) -> void:
 	context_priority.disabled = staff.is_empty()
 	context_staff.set_block_signals(true)
 	context_staff.max_value = int(staff.get("positions",0))
-	if basis != _staff_control_basis or not context_staff.get_line_edit().has_focus(): context_staff.value = int(staff.get("target",0))
+	if basis != _staff_control_basis: _staff_draft_dirty = false
+	if not _staff_draft_dirty:
+		context_staff.value = int(staff.get("target",0))
+		context_priority.select(int(staff.get("priority",1)))
 	_staff_control_basis = basis
 	context_staff.set_block_signals(false)
-	context_priority.select(int(staff.get("priority",1)))
 	var activity: Dictionary = _activity().snapshot(false)
 	context_status.text = "%s\nRecipe %s · %s\nOutput target %d · Local inputs: %s\nNeeds: %s" % [WorkforcePanel.job_name(duty,simulation),activity.recipe,activity.status,int(_activity().stock_target),_named_quantities(activity.local_inputs),_named_quantities(activity.missing_local)]
 	production_controls.visible = int(staff.get("positions",0)) > 0 or simulation.rear.construction.activities.has(duty)
@@ -973,10 +1021,12 @@ func _production_panel(box: VBoxContainer) -> void:
 	context_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	context_staff = _spin(box,"Requested workers",8)
 	context_priority = _option(box,"Staff priority",simulation.rear.PRIORITIES)
-	context_staff.value_changed.connect(func(value: float) -> void:
-		_result(simulation.rear.set_target(_context_duty(),int(value),context_priority.selected)))
-	context_priority.item_selected.connect(func(value: int) -> void:
-		_result(simulation.rear.set_target(_context_duty(),int(context_staff.value),value)))
+	context_staff.value_changed.connect(func(_value: float) -> void: _staff_draft_dirty = true)
+	context_priority.item_selected.connect(func(_value: int) -> void: _staff_draft_dirty = true)
+	_button(box,"Confirm staffing",func() -> void:
+		var result: Dictionary = simulation.rear.set_target(_context_duty(),int(context_staff.value),context_priority.selected)
+		if result.ok: _staff_draft_dirty = false
+		_result(result))
 	production_controls = VBoxContainer.new()
 	box.add_child(production_controls)
 	box = production_controls
@@ -1081,7 +1131,7 @@ func _construction_panel(box: VBoxContainer) -> void:
 		var priority := int(simulation.rear.requests[id].priority)
 		_result(simulation.rear.set_target(id,int(construction_staff.value),priority)))
 	construction_office = _spin(box,"Construction Office staff requested",4)
-	construction_office.value_changed.connect(func(value: float) -> void: _result(simulation.rear.construction.set_office_staff("construction",int(value))))
+	_button(box,"Confirm office staffing",func() -> void: _result(simulation.rear.construction.set_office_staff("construction",int(construction_office.value))))
 	box = _section(parent,"Remove a site","Unfinished sites can be cancelled. Completed facilities require physical clearing and dismantling.")
 	_button(box,"Cancel unfinished site",func() -> void:
 		_request_construction_cancel())
@@ -1104,6 +1154,7 @@ func preview_build_hint_at(point: Vector2) -> void:
 	preview_build_at(point,false)
 
 func preview_build_at(point: Vector2, full_validation: bool = true) -> Dictionary:
+	point = _snap_build_point(point)
 	construction_x.set_value_no_signal(point.x)
 	construction_y.set_value_no_signal(point.y)
 	var service: RefCounted = simulation.rear.construction
@@ -1124,6 +1175,7 @@ func preview_build_at(point: Vector2, full_validation: bool = true) -> Dictionar
 	return plan
 
 func confirm_build_at(point: Vector2) -> Dictionary:
+	point = _snap_build_point(point)
 	var kind: String = _construction_kind()
 	var turned: bool = construction_turn.button_pressed
 	var result: Dictionary = _manager_placement_rejection(kind,point,turned)
@@ -1145,6 +1197,12 @@ func _cancel_placement() -> void:
 	_placing_building = false
 	base_map.end_placement()
 	if was_placing: placement_ended.emit()
+
+func _snap_build_point(point: Vector2) -> Vector2:
+	if placement_manager_body == null: return point
+	var size: Vector2 = ConstructionCatalog.footprint(_construction_kind(),construction_turn.button_pressed)
+	var corner: Vector2 = (point-size/2.0).snapped(Vector2.ONE)
+	return corner+size/2.0
 
 func _construction_point() -> Vector2:
 	return Vector2(construction_x.value,construction_y.value)
@@ -1174,11 +1232,11 @@ func _training_panel(box: VBoxContainer) -> void:
 	instructor_hire_status = _label(box,"")
 	instructor_hire_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	instructor_count = _spin(box,"Instructor target",2)
-	instructor_count.value_changed.connect(func(value: float) -> void:
+	_button(box,"Confirm instructor target",func() -> void:
 		var duty := _training_duty()
 		if not duty.is_empty():
 			var priority := int(simulation.rear.requests.get(duty,{}).get("priority",1))
-			_result(simulation.rear.set_target(duty,int(value),priority)))
+			_result(simulation.rear.set_target(duty,int(instructor_count.value),priority)))
 	training_course = _option(box,"Course / declared recipe access",[])
 	training_count = _spin(box,"Requested students",12,1)
 	_button(box,"Request course",func() -> void: _result(simulation.rear.training.request_course(training_course.get_item_metadata(training_course.selected),int(training_count.value))))
@@ -1441,6 +1499,7 @@ func _activity() -> RefCounted:
 	return simulation.rear.production
 
 func _load_production() -> void:
+	_staff_draft_dirty = false
 	_validate_batch_cancel()
 	var activity := _activity()
 	heavy_controls.visible = activity.has_method("accept_order")
@@ -1590,6 +1649,8 @@ func _validate_batch_cancel() -> void:
 	if not _batch_cancel_request.is_empty() and not _batch_cancel_is_current(_batch_cancel_request): _invalidate_batch_cancel()
 
 func _batch_cancel_model_changed(_next: RefCounted) -> void:
+	_bind_purchase_receiving(_next.receiving)
+	if include_workers != null: include_workers.set_pressed_no_signal(false)
 	_invalidate_batch_cancel()
 	_invalidate_construction_cancel()
 
@@ -1597,6 +1658,7 @@ func _batch_cancel_selection_changed(_index: int) -> void:
 	_invalidate_batch_cancel()
 
 func _exit_tree() -> void:
+	_bind_purchase_receiving(null)
 	_batch_cancel_request = {}
 	_construction_cancel_request = {}
 	if is_instance_valid(session):

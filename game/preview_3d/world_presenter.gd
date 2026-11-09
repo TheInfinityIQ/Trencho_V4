@@ -43,6 +43,9 @@ var arm := SpringArm3D.new()
 var first := PlacementCamera.new()
 var third := PlacementCamera.new()
 var rts := PlacementCamera.new()
+var build_camera := PlacementCamera.new()
+var build_grid := MeshInstance3D.new()
+var supplier_convoys := preload("res://game/preview_3d/supplier_convoys.gd").new()
 var footprint: MeshInstance3D
 var door: MeshInstance3D
 var stock_label: Label3D
@@ -81,22 +84,29 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	# Rear has flat TR01 ground in the accepted normal Farmland opening.
 	var ground := _box(rear_root, Vector3(120,-0.25,90), Vector3(240,0.5,180), Color("70815b"), true)
 	rear_ground = ground.get_child(0) as StaticBody3D
-	for edge in [Vector3(-0.5,1,90),Vector3(240.5,1,90)]:
-		_box(rear_root,edge,Vector3(1,2,182),Color("59664e"),true)
-	for edge in [Vector3(120,1,-0.5),Vector3(120,1,180.5)]:
+	for edge in [Vector3(-0.5,1,105),Vector3(240.5,1,105)]:
+		_box(rear_root,edge,Vector3(1,2,212),Color("59664e"),true)
+	for edge in [Vector3(120,1,-0.5),Vector3(120,1,210.5)]:
 		_box(rear_root,edge,Vector3(240,2,1),Color("59664e"),true)
+	# Prebuilt service strip is outside construction bounds, with an open rear edge.
+	_box(rear_root,Vector3(120,-0.25,195),Vector3(240,0.5,30),Color("8a8d7c"),true)
+	_box(rear_root,Vector3(120,0.01,200),Vector3(288,0.02,8),Color("42494a"))
+	for x in range(-12,253,12): _box(rear_root,Vector3(x,0.025,200),Vector3(5,0.02,0.15),Color("dfd4a7"))
+	_box(rear_root,Vector3(120,0.02,190),Vector3(18,0.03,12),Color("b8b19a"))
+	_label(rear_root,"PREBUILT UNLOADING APRON",Vector3(120,3.5,193),0.018)
+	var table_at: Vector2 = model.receiving.receiving_position
 	var table := _asset("supply_table.glb",1.0)
 	rear_root.add_child(table)
-	table.position = Vector3(10,0,90)
-	var table_volume: MeshInstance3D = _box(rear_root,Vector3(10,0.5,90),Vector3(2.58,1,1.38),Color.TRANSPARENT,true)
+	table.position = Vector3(table_at.x,0,table_at.y)
+	var table_volume: MeshInstance3D = _box(rear_root,Vector3(table_at.x,0.5,table_at.y),Vector3(2.58,1,1.38),Color.TRANSPARENT,true)
 	supply_table_body = table_volume.get_child(0) as StaticBody3D
-	_label(rear_root,"SUPPLY TABLE / ARRIVAL",Vector3(10,2.1,90),0.012)
+	_label(rear_root,"SUPPLY TABLE / ARRIVAL",Vector3(table_at.x,2.1,table_at.y),0.012)
 	for index in 5:
 		var stock := _asset("material_box.glb",0.65)
 		rear_root.add_child(stock)
 		stock_visuals.append(stock)
-		stock.position = Vector3(8.6+float(index%3)*0.7,0,92+float(index/3)*0.7)
-	stock_label = _label(rear_root,"",Vector3(9,1.4,93),0.009)
+		stock.position = Vector3(table_at.x-1.4+float(index%3)*0.7,0,table_at.y+2+float(index/3)*0.7)
+	stock_label = _label(rear_root,"",Vector3(table_at.x-1,1.4,table_at.y+3),0.009)
 	_build_player(pose)
 	_build_terrain()
 	field_root.add_child(_markers_root)
@@ -112,6 +122,15 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	footprint = _box(rear_root,Vector3.ZERO,Vector3.ONE,Color(0.3,0.9,0.65,0.45))
 	door = _box(rear_root,Vector3.ZERO,Vector3(1.5,0.15,1.5),Color("f4cd7c"))
 	clear_preview()
+	_build_grid()
+	build_camera.position = Vector3(120,240,105)
+	build_camera.rotation_degrees = Vector3(-90,0,0)
+	build_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	build_camera.size = 210
+	build_camera.far = 500
+	rear_root.add_child(build_camera)
+	rear_root.add_child(supplier_convoys)
+	supplier_convoys.bind(model.receiving)
 	rts.position = Vector3(2000,3400,4800)
 	rts.rotation_degrees = Vector3(-65,0,0)
 	rts.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -132,6 +151,26 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_t01_trucks.changed.connect(_field_t01_changed)
 	field_t01_trucks.removing.connect(_field_t01_removing)
 	field_t01_trucks.bind(model.rear.ledger,model.rear.PLAYER,model.rear.combat.world.ground,rear_t01_trucks.release_if_ineligible)
+
+func _build_grid() -> void:
+	var mesh := ImmediateMesh.new()
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.vertex_color_use_as_albedo = true
+	mesh.surface_begin(Mesh.PRIMITIVE_LINES,material)
+	for x in 241:
+		mesh.surface_set_color(Color("b6caa3") if x%5 == 0 else Color("7e9469"))
+		mesh.surface_add_vertex(Vector3(x,0.04,0))
+		mesh.surface_add_vertex(Vector3(x,0.04,180))
+	for z in 181:
+		mesh.surface_set_color(Color("b6caa3") if z%5 == 0 else Color("7e9469"))
+		mesh.surface_add_vertex(Vector3(0,0.04,z))
+		mesh.surface_add_vertex(Vector3(240,0.04,z))
+	mesh.surface_end()
+	build_grid.mesh = mesh
+	build_grid.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	rear_root.add_child(build_grid)
+	build_grid.hide()
 
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
