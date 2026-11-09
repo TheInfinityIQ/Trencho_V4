@@ -2,6 +2,7 @@ extends RefCounted
 ## Reserve distinct physical work points at command boundaries, never per frame.
 const GAP := 1.2
 const RADIUS := 0.45
+const ACCESS_OFFSET := Vector2(0,-3)
 var _rear_ref: WeakRef
 var _points: Dictionary = {}
 
@@ -35,7 +36,7 @@ func point(person: String, holder: String, reserve: bool = true, spawn: bool = f
 	# Four workers fit abreast. Further arrivals use additional clear rows.
 	for row in 30:
 		for column in [-3.0,-1.0,1.0,3.0,-5.0,5.0,-7.0,7.0]:
-			var candidate := center+Vector2(column,-3.0-float(row)*GAP)
+			var candidate := center+Vector2(column,ACCESS_OFFSET.y-float(row)*GAP)
 			if not _clear(candidate): continue
 			var free := true
 			for at: Vector2 in occupied:

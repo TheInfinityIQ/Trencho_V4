@@ -15,6 +15,7 @@ const EPS := 0.000001
 
 var ledger := Ledger.new()
 const SUPPLY_TABLE := Vector2(120,186)
+const SUPPLY_TABLE_ACCESS := SUPPLY_TABLE+WorkPositions.ACCESS_OFFSET
 var empty_field_opening := false
 var work_positions: RefCounted
 var hauling_policy: RefCounted
