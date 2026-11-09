@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "60925c72c3cbd6d33f48a5286a0b93d8be999cf7",
+  "reviewed_baseline": "1b70d68cf64f04c3748d999db674b38d367ef743",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -10,8 +10,14 @@
       "title": "Session and service composition",
       "group": "Foundation",
       "owner": "GameSession + BaseSimulation",
-      "summary": "Main creates a scene-owned session, rear UI and battlefield UI. BaseSimulation injects the same rear/ledger into domain services; this is not an autoload-per-system architecture. The development opening creates four real present unloaders at the south Table service apron.",
+      "summary": "Main/F5 instances the existing 3D scene; its shared base controller creates one scene-owned session for rear and battlefield views. BaseSimulation injects the same rear/ledger into domain services. The development opening has four real present unloaders at the south Table service apron.",
       "nodes": [
+        {
+          "id": "entry",
+          "label": "Default 3D scene initializes common controller",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_ready"
+        },
         {
           "id": "n0",
           "label": "F5 main creates session",
@@ -39,6 +45,11 @@
       ],
       "edges": [
         {
+          "from": "entry",
+          "to": "n0",
+          "label": "super ready once"
+        },
+        {
           "from": "n0",
           "to": "n1",
           "label": "creates"
@@ -61,7 +72,7 @@
         "scenario",
         "preview"
       ],
-      "notes": "Default F5 remains main.tscn. Preview inherits Main and is an opt-in F6 entry. Review scenes can create separate diagnostic sessions.",
+      "notes": "Configured main.tscn is a root instance of preview.tscn, whose script extends common main.gd. No extra wrapper/controller, autoload or game session is introduced. F6 on either entry also uses 3D. Review scenes may create separate diagnostic sessions. Native input, the complete loop and FPS remain unverified; stages 1/2 await player acceptance.",
       "primary_files": [
         "game/main/main.gd",
         "game/main/game_session.gd"
@@ -3180,10 +3191,10 @@
     },
     {
       "id": "preview",
-      "title": "3D rear view, placement and Workshop interaction",
+      "title": "Default 3D rear view, placement and Workshop interaction",
       "group": "Presentation",
       "owner": "Preview + WorldPresenter + rear presenters",
-      "summary": "3D presents the same manager/session, actual site/Table E interactions, first/third-person views and overhead grid construction. Supplier visuals subscribe to Receiving state and keyed ledger movement; they never own purchases or vehicle motion.",
+      "summary": "Main/F5 reuses this 3D scene around the same manager/session, actual site/Table E interactions, first/third-person views and overhead grid construction. Supplier visuals subscribe to Receiving state and keyed ledger movement; they do not own purchases or vehicle motion.",
       "nodes": [
         {
           "id": "n0",
@@ -3302,7 +3313,7 @@
         "field3d",
         "procurement"
       ],
-      "notes": "E admits exactly the actual normal-opening Supply Table or an actual completed Workshop through the existing input/physics guards; private Workshop names are retained for compatibility. Table physical receiving place maps to logical terminal/Supplies without creating a terminal entity. One normal-opening hire commitment passed; timed arrival/raw purchase/build/oldWorkshop runtime/full-loop/native/FPS remain unverified. F5 remains main, opt-in F6; contact and T03 detailed art deferred. Movement/Strategy review is explicitly deferred in deferred_architecture.json.",
+      "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS.",
       "primary_files": [
         "game/preview_3d/preview.gd",
         "game/preview_3d/world_presenter.gd",
@@ -4061,7 +4072,7 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "739b54da5074371f0430deb43c666a99fe000df17ea8e905269216336e5107da",
+    "game/preview_3d/preview.gd": "63a1d356633cfa7c2d36231a11d8af2edd39f6237a4e5fed28b939dbca62ad48",
     "game/preview_3d/world_presenter.gd": "64cb7bfd80d3fa5fa546c4ff51a0b211d904697e52408c79f8b7c3dd700d3494",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
     "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",

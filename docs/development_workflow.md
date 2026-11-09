@@ -4,6 +4,21 @@ Effective 9 November 2026, following Dawson's instruction to resume development.
 Lead remains the sole programmer. This supplements current team ownership and
 verification policy; it does not activate the historical multi-worker controller.
 
+Apply this workflow to actual development: feature implementation, code changes,
+bug fixes and integration. General inquiries, explanations and read-only
+discussion receive direct answers without opening a feature plan, timer or
+development briefing. Record a genuine development decision from a discussion
+when that development starts.
+
+Use Dawson's numbered game-loop stages as manual playtest checkpoints, rather
+than requesting a new playtest after every commit. Deliver a normal-run playable
+state, short controls and the relevant actions for that stage; record feedback
+before expanding the dependent next stage. Independent authorized work can
+continue. Implementation, a scoped check, ready-for-player testing and player
+acceptance are separate statuses. Stages 1 (people/materials) and 2 (place/manage
+buildings) currently await Dawson's 3D F5 playtest; prior scoped receipts do not
+make those stages completed.
+
 Keep files/CLI as the default authoring/check workflow. Godot MCP is a selective
 live-scene inspection option; the pinned experimental plugin remains outside
 Trencho because its rapid new-script/save errors are unresolved. Resuming game

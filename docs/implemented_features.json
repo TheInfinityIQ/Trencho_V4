@@ -171,5 +171,13 @@
     "Entire ordinary manufacturing-to-frontline consequence and second supply cycle acceptance",
     "Independent logistics/battlefield clock and event migration; shared settlement still exists",
     "Full native UI regression coverage and integration of advanced review systems"
-  ]
+  ],
+  "current_3d_entry": {
+    "configured_scene": "res://game/main/main.tscn",
+    "instance": "res://game/preview_3d/preview.tscn",
+    "launch": "F5 / Run Project",
+    "source_status": "existing 3D presentation reused around the common session controller",
+    "stages_1_2": "implemented/scoped checked; pending Dawson playtest acceptance",
+    "limits": "Earlier opt-in/F5 unchanged receipts below are historical. Native input, full loop and 60 FPS remain unverified."
+  }
 }
