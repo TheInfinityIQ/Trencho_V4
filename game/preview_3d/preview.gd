@@ -70,10 +70,13 @@ func _ready() -> void:
 	_replace_world(_session.simulation)
 	_set_management(false)
 	if DisplayServer.get_name() != "headless":
+		var opening_speed: int = _session.simulation.speed
+		_session.set_speed(0) # Loading must not accrue unseen simulation debt.
 		var preparation := preload("res://game/construction/visuals/construction_render_preparation.gd").new()
 		add_child(preparation)
 		await preparation.prepare(world.third)
 		_construction_preparation_usec = preparation.elapsed_usec
+		_session.set_speed(opening_speed)
 	_construction_visuals_ready = true
 
 func _build_hud() -> void:
