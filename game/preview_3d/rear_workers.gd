@@ -103,7 +103,8 @@ func _sync_activity(id: String) -> void:
 	elif int(_rows[id].carried_count) > 0: next = &"carry_idle"
 	elif str(_rows[id].duty_id).begins_with("builders-"):
 		var site: String = str(_rows[id].duty_id).trim_prefix("builders-")
-		if _model.rear.construction.instances.get(site,{}).get("state","") in ["Building","Dismantling"]: next = &"construct"
+		var construction: Dictionary = _model.rear.construction.instances.get(site,{})
+		if construction.get("state","") == "Dismantling" or bool(construction.get("working",false)): next = &"construct"
 	var started: float = float(job.get("started_at",external.get("started",actor.motion.get("started",-1.0))))
 	bodies[id].set_activity(next,speed,started,2.0 if next in [&"pickup",&"unload"] else 0.0)
 

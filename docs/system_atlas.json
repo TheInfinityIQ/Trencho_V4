@@ -4,7 +4,7 @@
   "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "c978792fbd4a525f04fc9bd0c98e431c2c7c0511cb3570cdba5ea66fd1ab69e7",
+  "source_fingerprint": "24acf1e0f2e66662856869becd7701f95dfd160e5ee52753bd30c6e608f15372",
   "totals": {
     "systems": 49,
     "game_scripts": 223,
@@ -6378,21 +6378,21 @@
           "label": "Earn builder work",
           "file": "game/construction/construction_service.gd",
           "function": "advance_work",
-          "line": 462
+          "line": 463
         },
         {
           "id": "n4",
           "label": "Complete and activate site",
           "file": "game/construction/construction_service.gd",
           "function": "_activate",
-          "line": 566
+          "line": 574
         },
         {
           "id": "n5",
           "label": "Apply once-only starting staff request",
           "file": "game/construction/construction_service.gd",
           "function": "_apply_starter_staffing",
-          "line": 616
+          "line": 624
         },
         {
           "id": "n6",
@@ -6489,7 +6489,7 @@
         },
         {
           "path": "game/construction/construction_service.gd",
-          "sha256": "9b53f2e84b3ffc769609151c25aad1d7461f85ab77308779d5361b2cba3bf73c",
+          "sha256": "8e5688cd428ed172829f9a601c7ddcf754b9ad68853621da9a067399410a4b76",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -6766,7 +6766,7 @@
               "id": "game/construction/construction_service.gd::cancel",
               "name": "cancel",
               "line": 410,
-              "end_line": 428,
+              "end_line": 429,
               "kind": "method",
               "purpose": "Stop unfinished-site hauling and builders, mark cancelled, remove its visual by keyed event and recover unused physical stock; report actual consumed loss.",
               "purpose_origin": "reviewed"
@@ -6774,8 +6774,8 @@
             {
               "id": "game/construction/construction_service.gd::_stop_haul",
               "name": "_stop_haul",
-              "line": 430,
-              "end_line": 433,
+              "line": 431,
+              "end_line": 434,
               "kind": "method",
               "purpose": "Stop haul for construction service. Implementation: calls rear.cancel_job.",
               "purpose_origin": "implementation_derived"
@@ -6783,8 +6783,8 @@
             {
               "id": "game/construction/construction_service.gd::_return_site_stock",
               "name": "_return_site_stock",
-              "line": 435,
-              "end_line": 438,
+              "line": 436,
+              "end_line": 439,
               "kind": "method",
               "purpose": "Return site stock for construction service. Implementation: calls rear._stock_at, rear.request_haul.",
               "purpose_origin": "implementation_derived"
@@ -6792,8 +6792,8 @@
             {
               "id": "game/construction/construction_service.gd::_workers",
               "name": "_workers",
-              "line": 440,
-              "end_line": 442,
+              "line": 441,
+              "end_line": 443,
               "kind": "method",
               "purpose": "Return mini(4,rear._present(\"builders-\"+row.id)) for construction service. Implementation: calls _rear_ref.get_ref, mini, rear._present.",
               "purpose_origin": "implementation_derived"
@@ -6801,8 +6801,8 @@
             {
               "id": "game/construction/construction_service.gd::_ready",
               "name": "_ready",
-              "line": 444,
-              "end_line": 445,
+              "line": 445,
+              "end_line": 446,
               "kind": "method",
               "purpose": "Permit earned work only with present builders and remaining work supported by real local/cumulative materials.",
               "purpose_origin": "reviewed"
@@ -6810,8 +6810,8 @@
             {
               "id": "game/construction/construction_service.gd::_material_ceiling",
               "name": "_material_ceiling",
-              "line": 447,
-              "end_line": 451,
+              "line": 448,
+              "end_line": 452,
               "kind": "method",
               "purpose": "Compute the maximum work supported by used plus currently available local material, capped at total work.",
               "purpose_origin": "reviewed"
@@ -6819,8 +6819,8 @@
             {
               "id": "game/construction/construction_service.gd::next_boundary",
               "name": "next_boundary",
-              "line": 453,
-              "end_line": 460,
+              "line": 454,
+              "end_line": 461,
               "kind": "method",
               "purpose": "Select the next material-supported construction or existing dismantling/truck boundary on the rear clock.",
               "purpose_origin": "reviewed"
@@ -6828,8 +6828,8 @@
             {
               "id": "game/construction/construction_service.gd::advance_work",
               "name": "advance_work",
-              "line": 462,
-              "end_line": 482,
+              "line": 463,
+              "end_line": 485,
               "kind": "method",
               "purpose": "Earn only real present-builder work supported by supplied material, consume its integer incremental cost once and emit keyed progress; retain existing dismantling work.",
               "purpose_origin": "reviewed"
@@ -6837,8 +6837,8 @@
             {
               "id": "game/construction/construction_service.gd::advance_to",
               "name": "advance_to",
-              "line": 484,
-              "end_line": 485,
+              "line": 487,
+              "end_line": 488,
               "kind": "method",
               "purpose": "Forward the shared clock endpoint to owned physical construction-truck movement without a separate timer.",
               "purpose_origin": "reviewed"
@@ -6846,8 +6846,8 @@
             {
               "id": "game/construction/construction_service.gd::settle",
               "name": "settle",
-              "line": 487,
-              "end_line": 530,
+              "line": 490,
+              "end_line": 537,
               "kind": "method",
               "purpose": "Refresh actual construction blockers, activate only fully earned and paid sites, and retain clearing/dismantling/salvage handling.",
               "purpose_origin": "reviewed"
@@ -6855,8 +6855,8 @@
             {
               "id": "game/construction/construction_service.gd::debug_complete_pending",
               "name": "debug_complete_pending",
-              "line": 532,
-              "end_line": 555,
+              "line": 539,
+              "end_line": 562,
               "kind": "method",
               "purpose": "Complete actual unfinished sites through explicit debug remaining-material grants/consumption, preserving already paid cost and activating once.",
               "purpose_origin": "reviewed"
@@ -6864,8 +6864,8 @@
             {
               "id": "game/construction/construction_service.gd::_complete_site",
               "name": "_complete_site",
-              "line": 558,
-              "end_line": 563,
+              "line": 565,
+              "end_line": 571,
               "kind": "method",
               "purpose": "Set actual completion, release builders, activate existing facility capability and announce the same site identity.",
               "purpose_origin": "reviewed"
@@ -6873,8 +6873,8 @@
             {
               "id": "game/construction/construction_service.gd::_activate",
               "name": "_activate",
-              "line": 566,
-              "end_line": 614,
+              "line": 574,
+              "end_line": 622,
               "kind": "method",
               "purpose": "Register actual completed facility services and duty, preserve any existing/pre-completion explicit count/priority including zero, initialize actual office pool intent and apply starter staffing only after service/eligibility registration.",
               "purpose_origin": "reviewed"
@@ -6882,8 +6882,8 @@
             {
               "id": "game/construction/construction_service.gd::_apply_starter_staffing",
               "name": "_apply_starter_staffing",
-              "line": 616,
-              "end_line": 626,
+              "line": 624,
+              "end_line": 634,
               "kind": "method",
               "purpose": "Record accepted count once for newly created nonlegacy workplace duties, including office_desired for F12; preserve pre-existing intent and no-duty Depot/Park, then request only existing eligible people through protected allocation.",
               "purpose_origin": "reviewed"
@@ -6891,8 +6891,8 @@
             {
               "id": "game/construction/construction_service.gd::request_dismantle",
               "name": "request_dismantle",
-              "line": 628,
-              "end_line": 678,
+              "line": 636,
+              "end_line": 686,
               "kind": "method",
               "purpose": "Request dismantle for construction service. Implementation: calls instances.has, _fail, _rear_ref.get_ref, rear.receiving.berth_committed; updates activities[id].enabled, rear.requests[\"builders-\"+id].positions, row.blocker, row.progress.",
               "purpose_origin": "implementation_derived"
@@ -6900,8 +6900,8 @@
             {
               "id": "game/construction/construction_service.gd::_queue_clearance",
               "name": "_queue_clearance",
-              "line": 680,
-              "end_line": 694,
+              "line": 688,
+              "end_line": 702,
               "kind": "method",
               "purpose": "Queue clearance for construction service. Implementation: calls row.get, store_id.is_empty, rear._stock_at, int; updates already, available_by_type[stock.design_type].",
               "purpose_origin": "implementation_derived"
@@ -6909,8 +6909,8 @@
             {
               "id": "game/construction/construction_service.gd::_cleared",
               "name": "_cleared",
-              "line": 696,
-              "end_line": 701,
+              "line": 704,
+              "end_line": 709,
               "kind": "method",
               "purpose": "Cleared for construction service. Implementation: calls row.get, store_id.is_empty, rear.ledger.loose_stock_mass_at, rear._reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -9867,7 +9867,7 @@
           "label": "Built Workshop gets instance owner",
           "file": "game/construction/construction_service.gd",
           "function": "_activate",
-          "line": 566
+          "line": 574
         },
         {
           "id": "n2",
@@ -29898,7 +29898,7 @@
         },
         {
           "path": "game/preview_3d/rear_workers.gd",
-          "sha256": "22232598fef4942ae0959f30ef3aaaf7678e5755ed12741142ae91cd69b71057",
+          "sha256": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -29959,16 +29959,16 @@
               "id": "game/preview_3d/rear_workers.gd::_sync_activity",
               "name": "_sync_activity",
               "line": 88,
-              "end_line": 108,
+              "end_line": 109,
               "kind": "method",
-              "purpose": "Map actual Receiving, local hauling, construction and supplied Dispatch phase/motion facts to authored clips without owning position, cargo or task completion.",
+              "purpose": "Map actual worker motion/handling to authored clips; construction uses the owner’s supplied working flag so a material-starved builder idles without inspecting stock.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/rear_workers.gd::sync_playback",
               "name": "sync_playback",
-              "line": 110,
-              "end_line": 111,
+              "line": 111,
+              "end_line": 112,
               "kind": "method",
               "purpose": "Update cached rear character playback from a changed session speed without additional ledger queries.",
               "purpose_origin": "reviewed"
@@ -29976,8 +29976,8 @@
             {
               "id": "game/preview_3d/rear_workers.gd::_on_entity_moved",
               "name": "_on_entity_moved",
-              "line": 113,
-              "end_line": 120,
+              "line": 114,
+              "end_line": 121,
               "kind": "method",
               "purpose": "Move and face only the affected cached worker anchor from an actual keyed ledger event and reconcile its current visual activity.",
               "purpose_origin": "reviewed"
@@ -29985,8 +29985,8 @@
             {
               "id": "game/preview_3d/rear_workers.gd::_disconnect_ledger",
               "name": "_disconnect_ledger",
-              "line": 122,
-              "end_line": 126,
+              "line": 123,
+              "end_line": 127,
               "kind": "method",
               "purpose": "Disconnect the adapter from its old ledger movement event and clear pending refresh ownership before replacement or scene exit.",
               "purpose_origin": "reviewed"
@@ -29994,8 +29994,8 @@
             {
               "id": "game/preview_3d/rear_workers.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 128,
-              "end_line": 134,
+              "line": 129,
+              "end_line": 135,
               "kind": "method",
               "purpose": "Disconnect rear movement and release model/factory/body references when the old presenter leaves the scene.",
               "purpose_origin": "reviewed"
@@ -31577,7 +31577,7 @@
           "label": "Instantly complete pending construction",
           "file": "game/construction/construction_service.gd",
           "function": "debug_complete_pending",
-          "line": 532
+          "line": 539
         },
         {
           "id": "n3",

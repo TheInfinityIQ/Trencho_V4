@@ -153,7 +153,7 @@ func place(kind: String, center: Vector2, quarter_turn: bool = false) -> Diction
 	rear.stores[id] = {"id":id,"capacity":float(plan.m11),"accessible":true,"filter":["M11"],"pile":false}
 	_register_builders(id,plan.door,rear)
 	instances[id] = {"id":id,"kind":kind,"center":center,"size":plan.size,"door":plan.door,
-		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,"consumed_m11":0,
+		"quarter_turn":quarter_turn,"state":"Awaiting M11","protected_starter":false,"consumed_m11":0,"working":false,
 		"m11":plan.m11,"work":plan.work,"progress":0.0,"site_store":id,
 		"blocker":"Deliver %d real M11 from an accessible rear store." % plan.m11,"builders":{},"haul_job":""}
 	if rear.empty_field_opening: order_materials(id,"receiving",1,true)
@@ -420,6 +420,7 @@ func cancel(id: String) -> Dictionary:
 	_release_site_builders(id)
 	if profile: CallLog.record_duration(&"construction/construction_service.gd::cancel/builder_release",Time.get_ticks_usec()-started)
 	row.state = "Cancelled"
+	row.working = false
 	site_changed.emit(id)
 	row.blocker = "Cancelled; delivered M11 is recoverable at this site."
 	if profile: started = Time.get_ticks_usec()
@@ -464,7 +465,8 @@ func advance_work(delta: float) -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
 	for row in instances.values():
 		if row.state in ["Awaiting M11","Building"] and _ready(row):
-			var earned: float = minf(_material_ceiling(row),float(row.progress)+delta*_workers(row))
+			var ceiling: float = _material_ceiling(row)
+			var earned: float = minf(ceiling,float(row.progress)+delta*_workers(row))
 			var consumed: int = int(row.get("consumed_m11",0))
 			var required: int = mini(int(row.m11),int(ceil(earned/float(row.work)*int(row.m11)-EPS)))
 			if required > consumed:
@@ -473,7 +475,8 @@ func advance_work(delta: float) -> void:
 			row.consumed_m11 = required
 			row.progress = earned
 			row.state = "Building"
-			row.blocker = "Waiting for more Building Materials." if earned < float(row.work)-EPS and earned >= _material_ceiling(row)-EPS else "Building…"
+			row.working = earned < ceiling-EPS
+			row.blocker = "Waiting for more Building Materials." if earned < float(row.work)-EPS and earned >= ceiling-EPS else "Building…"
 			site_changed.emit(row.id)
 			continue
 		if row.state == "Dismantling" and _workers(row) > 0:
@@ -490,12 +493,16 @@ func settle() -> bool:
 	for row in instances.values():
 		if row.state in ["Awaiting M11","Building"]:
 			var duty: String = "builders-"+str(row.id)
+			var supported: bool = _material_ceiling(row) > float(row.progress)+EPS
+			var present: int = _workers(row)
+			var working: bool = supported and present > 0
 			var blocker := "Building…"
-			if _material_ceiling(row) <= float(row.progress)+EPS: blocker = "Waiting for more Building Materials."
-			elif _workers(row) == 0:
+			if not supported: blocker = "Waiting for more Building Materials."
+			elif present == 0:
 				blocker = "Waiting for builders to arrive." if int(rear.requests[duty].target) > 0 else "Assign builders."
-			if row.blocker != blocker:
+			if row.blocker != blocker or bool(row.get("working",false)) != working:
 				row.blocker = blocker
+				row.working = working
 				site_changed.emit(row.id)
 		if row.state == "Clearing":
 			_queue_clearance(row,rear)
@@ -557,6 +564,7 @@ func debug_complete_pending() -> Dictionary:
 
 func _complete_site(row: Dictionary, rear: RefCounted) -> void:
 	row.state = "Complete"
+	row.working = false
 	row.blocker = ""
 	_release_site_builders(row.id)
 	_activate(row,rear)
