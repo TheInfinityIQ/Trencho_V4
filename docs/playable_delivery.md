@@ -1,5 +1,12 @@
 # Connected playable delivery
 
+[Construction follow-up](construction_delivery_completion.md): builders can fetch
+actual materials for their own starved site. The site menu shows actual delivery,
+carry and pickup blockers. Startup prepares construction/truck rendering behind
+a loading cover, then begins normal1x play. Completion smoke emerges1.5s,
+scissors cut2s, then tape falls and pylons clear. Exact reported no-pickup cause,
+manual stage acceptance and60FPS remain open.
+
 ## Place/manage construction presentation —9November2026
 
 [Construction](place_manage_buildings.md) connects actual partial-material builder

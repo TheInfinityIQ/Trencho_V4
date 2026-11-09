@@ -1,5 +1,12 @@
 # Play the 3D opening
 
+[Construction follow-up](construction_delivery_completion.md): builders can fetch
+actual materials for their own starved site. The site menu shows actual delivery,
+carry and pickup blockers. Startup prepares construction/truck rendering behind
+a loading cover, then begins normal1x play. Completion smoke emerges1.5s,
+scissors cut2s, then tape falls and pylons clear. Exact reported no-pickup cause,
+manual stage acceptance and60FPS remain open.
+
 Workers now default to [Hauling](hauling_priorities.md). Open **Workers / Jobs â†’ Hauling**, drag the six-dot handles (or use Move up/down), then **Confirm hauling priorities**. Top is highest for the next feasible task; existing carries finish safely. Four free workers can each claim25kg from a100kg+ truck.
 
 The [character integration](character_animation.md) replaces provisional worker

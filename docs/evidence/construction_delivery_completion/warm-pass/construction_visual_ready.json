@@ -1,0 +1,180 @@
+{
+  "checks": [
+    "Normal live opening remains1x after covered preparation: PASS",
+    "Actual site after startup readiness: PASS",
+    "Actual completion does not replace reserved geometry: PASS",
+    "Effect alive at actual cutting boundary: PASS",
+    "Actual1.5s boundary starts four2s clips before tape release: PASS",
+    "Pause retains actual cut position: PASS",
+    "Resume retains2s clip rate: PASS",
+    "Tape release follows finite cutting phase: PASS",
+    "Finite effect clears after contact/pylon cleanup: PASS"
+  ],
+  "completion_call_us": 5970,
+  "completion_frames_us": [
+    57436,
+    57039,
+    58193,
+    57196
+  ],
+  "debug_completion": {
+    "changed": true,
+    "completed": 1,
+    "debug_materials": 60,
+    "message": "DEBUG: instantly completed 1 building(s); supplied 60 missing Building Materials.",
+    "ok": true
+  },
+  "failed": false,
+  "first_site_frames_us": [
+    152415,
+    60719,
+    61019,
+    60308
+  ],
+  "geometry_refresh_us": 374,
+  "scope": "Affected rendered startup readiness/first-site/completion/phase observation only at this exact source. Existing real-stock builder/common-hauler result915d9d5 is not rerun; logistics bytes unchanged. Explicit debug completion triggers this visual-only check. No nativeFPS/full-loop claim;45/35/28s unchanged.",
+  "startup_preparation_us": 4144476,
+  "steps": [
+    {
+      "clips": [
+        {
+          "name": "",
+          "position": 0.599999964237213,
+          "rate": 1.0
+        },
+        {
+          "name": "",
+          "position": 0.599999964237213,
+          "rate": 1.0
+        },
+        {
+          "name": "",
+          "position": 0.599999964237213,
+          "rate": 1.0
+        },
+        {
+          "name": "",
+          "position": 0.599999964237213,
+          "rate": 1.0
+        }
+      ],
+      "index": 0,
+      "released": false,
+      "tween_seconds": 1.53907732996633,
+      "wall_us": 1469057
+    },
+    {
+      "clips": [
+        {
+          "name": "snip",
+          "position": 0.0,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.0,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.0,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.0,
+          "rate": 0.200000002980232
+        }
+      ],
+      "index": 1,
+      "released": false,
+      "tween_seconds": 1.53907732996633,
+      "wall_us": 1469100
+    },
+    {
+      "clips": [
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        }
+      ],
+      "index": 2,
+      "released": false,
+      "tween_seconds": 3.53813573737374,
+      "wall_us": 3620123
+    },
+    {
+      "clips": [
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        }
+      ],
+      "index": 3,
+      "released": true,
+      "tween_seconds": 3.53813573737374,
+      "wall_us": 3620186
+    },
+    {
+      "clips": [
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        },
+        {
+          "name": "snip",
+          "position": 0.375189605590761,
+          "rate": 0.200000002980232
+        }
+      ],
+      "index": 4,
+      "released": true,
+      "tween_seconds": 3.53813573737374,
+      "wall_us": 3620222
+    }
+  ],
+  "wall_ms": 10231
+}

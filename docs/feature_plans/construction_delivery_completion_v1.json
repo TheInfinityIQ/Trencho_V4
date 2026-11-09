@@ -28,6 +28,8 @@
     "User clarified some workers remained Hauling: no-haulers case is NOT the full user-session diagnosis. Two-hauler baseline actually delivered35/60 with25still carried at70seconds; exact reported case remains under investigation.",
     "Measured first completion draw1225.686ms vs81\u201395ms llvmpipe, CPUcommand16.316ms andgeometry1.002ms. Target first-use material swap/effects and unchanged shape rebuilding; validate after, no nativeFPS claim.",
     "Smoke1.5s, retimed snip2.0s; contact2.5s but tape release3.5s by Designer interpretation.",
-    "First candidate915d9d5 passed real-source delivery and removed completion spike (90ms vs1226ms), but first-site view remained cold2160ms. Shared renderer-only one-draw startup loading preparation added before interactive controls, skipped for headless entry. No fake gameplay rows/physics/stock."
+    "First candidate915d9d5 passed real-source delivery and removed completion spike (90ms vs1226ms), but first-site view remained cold2160ms. Shared renderer-only one-draw startup loading preparation added before interactive controls, skipped for headless entry. No fake gameplay rows/physics/stock.",
+    "User clarified never picked up; exact session remains unproven. Selected-menu pickup blockers distinguish accessible real stock and idle carriers; preserve existing handoff release.",
+    "Natural main completion revealed truck-first-use581.934ms missed by debug activation. Actual truck warming/resource lifetime added; final affected natural check42717474748 has46.860ms first frame vs43\u201349ms steady. Explicit scope retained; no60FPS claim."
   ]
 }

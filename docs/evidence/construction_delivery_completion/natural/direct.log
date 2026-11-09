@@ -1,0 +1,70 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 2 [2, 3):
+    1011  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       5  rear_base/base_demo.gd::_request_refresh
+       4  battlefield/battlefield_view.gd::_request_refresh
+       4  main/main.gd::_refresh_clock
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       1  identity/identity_ledger.gd::map_markers
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 2 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":110,"total":110},"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":7,"total":7},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3,"total":3},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":487,"total":487},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":550,"total":550},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":4730,"total":5062}}
+Real placed office,2builders and remaining common haulers: PASS
+Office physically supplied/earned80work/completed without debug: PASS
+Actual utility truck registered through natural settle: PASS
+Natural construction custody/capacity audit: PASS
+[Calls/s] engine second 7 [7, 8):
+    9286  identity/identity_ledger.gd::inspect_entity
+    1968  identity/identity_ledger.gd::military_hull_ready_at
+    1800  identity/identity_ledger.gd::person_has_living_duty
+    1512  identity/identity_ledger.gd::person_ready_for_hq_issue
+     478  identity/identity_ledger.gd::active_formation_member_ids
+     180  identity/identity_ledger.gd::person_is_alive
+     164  identity/identity_ledger.gd::ammunition_quantities_at
+     134  battlefield/battlefield_view.gd::_request_refresh
+     134  main/main.gd::_refresh_clock
+     133  rear_base/base_demo.gd::_request_refresh
+     130  staffing/rear_simulation.gd::_settle
+      41  staffing/rear_simulation.gd::advance_time
+      40  identity/identity_ledger.gd::sight_candidates
+      14  main/game_session.gd::_physics_process
+       2  rear_base/base_simulation.gd::_pump_live
+       2  rear_base/base_simulation.gd::tick_live
+       1  staffing/rear_simulation.gd::set_target
+[Scope wall time/us] engine second 7 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":5,"maximum":384,"total":433},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":7,"maximum":907,"total":3974},"rear_base/base_simulation.gd::tick_live":{"calls":2,"maximum":4084,"total":6685},"staffing/rear_simulation.gd::_settle":{"calls":126,"maximum":8110,"total":394290},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":2574,"total":2574}}
+[Calls/s] engine second 8 [8, 9):
+   15973  identity/identity_ledger.gd::inspect_entity
+    2716  identity/identity_ledger.gd::military_hull_ready_at
+    2460  identity/identity_ledger.gd::person_has_living_duty
+    2106  identity/identity_ledger.gd::person_ready_for_hq_issue
+     698  identity/identity_ledger.gd::active_formation_member_ids
+     246  identity/identity_ledger.gd::person_is_alive
+     240  identity/identity_ledger.gd::ammunition_quantities_at
+     187  battlefield/battlefield_view.gd::_request_refresh
+     187  main/main.gd::_refresh_clock
+     187  rear_base/base_demo.gd::_request_refresh
+     180  staffing/rear_simulation.gd::_settle
+      58  identity/identity_ledger.gd::sight_candidates
+      58  staffing/rear_simulation.gd::advance_time
+       1  identity/identity_ledger.gd::map_markers
+[Scope wall time/us] engine second 8 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":129,"total":129},"staffing/rear_simulation.gd::_settle":{"calls":181,"maximum":12899,"total":628267}}
+Actual truck presentation joined normal3Dworld: PASS

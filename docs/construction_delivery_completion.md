@@ -79,5 +79,47 @@ belongs behind loading. A small scene-owned startup cover now draws the actual
 construction shader/skin/fade variants once in the real camera before controls
 are enabled, using the shared appearance recipe. Read-only geometry is never a
 gameplay site, no stock/people or physics are created, temporary nodes clear with
-the draw/scene lifetime, and normal model speed remains1x. Headless entry skips
+the draw/scene lifetime, and the model pauses only behind this cover, restoring normal1x before input. Headless entry skips
 GPU preparation rather than waiting for an unavailable rendered frame.
+
+
+## Final direct evidence
+
+The [receipt index](evidence/construction_delivery_completion/receipt.json) retains
+each exact source/run/digest, including the failed fixed-delay visual probe.
+Real-source model cases with four builders and with two builders/common haulers
+both physically delivered/consumed60M11, retained440of the original500, completed
+80work and passed custody audit. These used explicit model intervals, not normal
+wall-clock waiting. No grant or cancelled automatic demand supplied these cases.
+
+The final normal-main observation42717474748 at `afec36f` repeated only the
+affected natural office completion: two builders/common haulers, original500M11,
+actual60delivered/consumed, complete at98.1explicit model seconds, real utility
+truck registered and presented, no debug completion, audit clean. First completion
+frame46.860ms matched43–49ms software-rendered steady frames. At the prior head,
+this actual truck path had581.934ms first-use latency despite the debug-only
+visual check passing. Startup preparation now draws the actual truck too and
+retains actual resource references for the scene lifetime. Completion stage CPU
+times were2.737ms builder release,2.327ms activation,0.192ms visual event and
+0.649ms truck registration. The22.135ms explicit one-second model step includes
+other services and is not a normal-frame completion-only cost.
+
+Actual final visual images at `6c79b05` show the loading cover, visible faceted
+smoke, cut, fallen tape and cleanup. Native Tween boundaries were approximately
+1.517s and3.551s (frame granularity); four authored snips ran at0.2x. Pause/resume
+and cleanup passed. Startup model pause prevents unseen loading-time progression;
+normal interactive opening remains1x. No local engine was run.
+
+Dawson clarified that haulers never picked up materials. The reproduced baseline
+with remaining haulers did deliver, so this exact report is not diagnosed by the
+all-builders fix. The menu now distinguishes no accessible source, no unreserved
+stock, no idle carrier, actual collection/carry and transport blockers; requesting
+already outstanding demand no longer misleadingly implies that goods arrived.
+That projection uses the existing selected-menu refresh only. Source inspection
+confirms reassignment already releases uncollected pickup claims before reporting.
+The next player check is the original site at1x, using its displayed blocker if
+pickup still fails. Stages1/2, full-loop, native input and60FPS acceptance stay open.
+
+Godot's [server guidance](https://docs.godotengine.org/en/4.7/tutorials/performance/using_servers.html)
+also supports retaining resource lifetime explicitly. This implementation uses
+scene-owned high-level resources, not a global cache or manual RID framework.

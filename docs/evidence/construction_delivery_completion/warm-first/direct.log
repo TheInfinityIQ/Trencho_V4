@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 2 [2, 3):
+    1007  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       3  rear_base/base_demo.gd::_request_refresh
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  main/main.gd::_refresh_clock
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::map_markers
+[Scope wall time/us] engine second 2 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":116,"total":116},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":4769,"total":5082}}
+[Calls/s] engine second 3 [3, 4):
+       8  main/game_session.gd::_physics_process
+       7  identity/identity_ledger.gd::inspect_entity
+       1  battlefield/battlefield_view.gd::_refresh
+       1  battlefield/battlefield_view.gd::_request_refresh
+       1  main/main.gd::_refresh_clock
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 3 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":99,"total":99},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3,"total":3},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":8,"maximum":663,"total":3970},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":4069,"total":4069}}
+Normal game remains1x: PASS
+Actual completion profile site: PASS
+Completion preserves unchanged reserved geometry: PASS
+Four actual low-poly puff instances prepared: PASS
+Requested1.5+2.0second phase durations: PASS
+[Calls/s] engine second 7 [7, 8):
+     197  identity/identity_ledger.gd::inspect_entity
+      70  identity/identity_ledger.gd::person_has_living_duty
+      60  identity/identity_ledger.gd::military_hull_ready_at
+      34  identity/identity_ledger.gd::person_ready_for_hq_issue
+      13  main/game_session.gd::_physics_process
+       7  identity/identity_ledger.gd::person_is_alive
+       5  staffing/rear_simulation.gd::_settle
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       2  rear_base/base_simulation.gd::_pump_live
+       2  rear_base/base_simulation.gd::tick_live
+       1  identity/identity_ledger.gd::ammunition_quantities_at
+       1  rear_base/base_demo.gd::_request_refresh
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 7 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":5,"maximum":231,"total":297},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":10,"maximum":789,"total":3962},"rear_base/base_simulation.gd::tick_live":{"calls":2,"maximum":4070,"total":6876},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":1581,"total":2572},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":2775,"total":2775}}
+[Calls/s] engine second 8 [8, 9):
+       0  no instrumented calls
+[Scope wall time/us] engine second 8 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":148,"total":148}}
+Four scissors cut before tape release: FAIL
+Pause retains retimed clip position: PASS
+Resume retains cutting base rate: PASS
+[Calls/s] engine second 9 [9, 10):
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       2  rear_base/base_demo.gd::_request_refresh
+[Scope wall time/us] engine second 9 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":82,"total":82}}
+[Calls/s] engine second 10 [10, 11):
+       0  no instrumented calls
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":94,"total":94}}
+[Calls/s] engine second 11 [11, 12):
+       0  no instrumented calls
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":85,"total":85}}
+Finite smoke/scissors/tape/pylon owner cleared: PASS
+Actual material-source/worker setup for4 builders: PASS
+[Calls/s] engine second 12 [12, 13):
+     477  identity/identity_ledger.gd::inspect_entity
+      14  identity/identity_ledger.gd::person_is_alive
+      10  staffing/rear_simulation.gd::_settle
+       7  identity/identity_ledger.gd::formation_cohesion_counts
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":76,"total":76},"staffing/rear_simulation.gd::_settle":{"calls":1,"maximum":167,"total":167}}

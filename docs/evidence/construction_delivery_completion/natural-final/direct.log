@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 5 [5, 6):
+    1011  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       5  rear_base/base_demo.gd::_request_refresh
+       4  battlefield/battlefield_view.gd::_request_refresh
+       4  main/main.gd::_refresh_clock
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       1  identity/identity_ledger.gd::map_markers
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 5 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":134,"total":134},"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":6,"total":6},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3,"total":3},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":472,"total":472},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":540,"total":540},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":4459,"total":4749}}
+Real placed office,2builders and remaining common haulers: PASS
+Office physically supplied/earned80work/completed without debug: PASS
+Actual utility truck registered through natural settle: PASS
+Natural construction custody/capacity audit: PASS
+[Calls/s] engine second 9 [9, 10):
+     885  identity/identity_ledger.gd::inspect_entity
+     240  identity/identity_ledger.gd::military_hull_ready_at
+     240  identity/identity_ledger.gd::person_has_living_duty
+     168  identity/identity_ledger.gd::person_ready_for_hq_issue
+      46  identity/identity_ledger.gd::active_formation_member_ids
+      24  identity/identity_ledger.gd::person_is_alive
+      16  staffing/rear_simulation.gd::_settle
+      14  battlefield/battlefield_view.gd::_request_refresh
+      14  identity/identity_ledger.gd::ammunition_quantities_at
+      14  main/main.gd::_refresh_clock
+      13  rear_base/base_demo.gd::_request_refresh
+      12  main/game_session.gd::_physics_process
+       5  staffing/rear_simulation.gd::advance_time
+       4  identity/identity_ledger.gd::sight_candidates
+       2  rear_base/base_simulation.gd::_pump_live
+       2  rear_base/base_simulation.gd::tick_live
+       1  staffing/rear_simulation.gd::set_target
+[Scope wall time/us] engine second 9 (inclusive, completed scopes): {"battlefield/opening_policy.gd::tick/commands":{"calls":4,"maximum":325,"total":603},"battlefield/opening_policy.gd::tick/deployments":{"calls":3,"maximum":4,"total":8},"battlefield/opening_policy.gd::tick/reposition":{"calls":4,"maximum":3,"total":8},"battlefield/opening_policy.gd::tick/resources":{"calls":4,"maximum":59,"total":174},"battlefield/opening_policy.gd::tick/resupply":{"calls":3,"maximum":1248,"total":3607},"battlefield/opening_policy.gd::tick/trips":{"calls":4,"maximum":33,"total":99},"battlefield/squad_execution.gd::settle/policy":{"calls":3,"maximum":1432,"total":4181},"diagnostics/function_call_log.gd::_collect_reports":{"calls":4,"maximum":149,"total":183},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":8,"maximum":825,"total":3955},"rear_base/base_simulation.gd::tick_live":{"calls":2,"maximum":4076,"total":6645},"staffing/rear_simulation.gd::_settle":{"calls":12,"maximum":6308,"total":30338},"staffing/rear_simulation.gd::_settle/actors_stores":{"calls":23,"maximum":2038,"total":7820},"staffing/rear_simulation.gd::_settle/battlefield_operations":{"calls":23,"maximum":2223,"total":6574},"staffing/rear_simulation.gd::_settle/combat":{"calls":24,"maximum":9,"total":65},"staffing/rear_simulation.gd::_settle/construction":{"calls":24,"maximum":122,"total":1691},"staffing/rear_simulation.gd::_settle/dispatch_hq":{"calls":24,"maximum":323,"total":3731},"staffing/rear_simulation.gd::_settle/engineering":{"calls":23,"maximum":19,"total":183},"staffing/rear_simulation.gd::_settle/military":{"calls":24,"maximum":170,"total":2087},"staffing/rear_simulation.gd::_settle/objectives_supply":{"calls":24,"maximum":287,"total":5317},"staffing/rear_simulation.gd::_settle/orders":{"calls":24,"maximum":1696,"total":6665},"staffing/rear_simulation.gd::_settle/production_staff":{"calls":23,"maximum":5119,"total":7545},"staffing/rear_simulation.gd::_settle/receiving":{"calls":16,"maximum":298,"total":1515},"staffing/rear_simulation.gd::_settle/vehicles":{"calls":24,"maximum":7,"total":42},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":2545,"total":2545},"staffing/rear_simulation.gd::advance_time/boundaries":{"calls":8,"maximum":111,"total":545},"staffing/rear_simulation.gd::advance_time/military_motion":{"calls":8,"maximum":13,"total":56},"staffing/rear_simulation.gd::advance_time/rear_motion":{"calls":8,"maximum":221,"total":977},"staffing/rear_simulation.gd::advance_time/receiving_combat":{"calls":8,"maximum":15,"total":69},"staffing/rear_simulation.gd::advance_time/world":{"calls":8,"maximum":61,"total":271}}
+[Calls/s] engine second 10 [10, 11):
+   24039  identity/identity_ledger.gd::inspect_entity
+    4384  identity/identity_ledger.gd::military_hull_ready_at
+    3970  identity/identity_ledger.gd::person_has_living_duty
+    3400  identity/identity_ledger.gd::person_ready_for_hq_issue
+    1128  identity/identity_ledger.gd::active_formation_member_ids
+     397  identity/identity_ledger.gd::person_is_alive
+     386  identity/identity_ledger.gd::ammunition_quantities_at
+     302  battlefield/battlefield_view.gd::_request_refresh
+     302  main/main.gd::_refresh_clock
+     302  rear_base/base_demo.gd::_request_refresh
+     292  staffing/rear_simulation.gd::_settle
+      94  identity/identity_ledger.gd::sight_candidates
+      94  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"battlefield/opening_policy.gd::tick/commands":{"calls":93,"maximum":201,"total":16119},"battlefield/opening_policy.gd::tick/deployments":{"calls":94,"maximum":3,"total":134},"battlefield/opening_policy.gd::tick/reposition":{"calls":93,"maximum":2,"total":88},"battlefield/opening_policy.gd::tick/resources":{"calls":93,"maximum":52,"total":3059},"battlefield/opening_policy.gd::tick/resupply":{"calls":94,"maximum":1259,"total":109461},"battlefield/opening_policy.gd::tick/trips":{"calls":93,"maximum":34,"total":1490},"battlefield/squad_execution.gd::settle/policy":{"calls":94,"maximum":1637,"total":132487},"staffing/rear_simulation.gd::_settle":{"calls":292,"maximum":7438,"total":833227},"staffing/rear_simulation.gd::_settle/actors_stores":{"calls":397,"maximum":1346,"total":102240},"staffing/rear_simulation.gd::_settle/battlefield_operations":{"calls":397,"maximum":2376,"total":202744},"staffing/rear_simulation.gd::_settle/combat":{"calls":397,"maximum":12,"total":717},"staffing/rear_simulation.gd::_settle/construction":{"calls":397,"maximum":255,"total":30021},"staffing/rear_simulation.gd::_settle/dispatch_hq":{"calls":397,"maximum":375,"total":54955},"staffing/rear_simulation.gd::_settle/engineering":{"calls":397,"maximum":14,"total":2096},"staffing/rear_simulation.gd::_settle/military":{"calls":397,"maximum":290,"total":28205},"staffing/rear_simulation.gd::_settle/objectives_supply":{"calls":396,"maximum":257,"total":81753},"staffing/rear_simulation.gd::_settle/orders":{"calls":397,"maximum":1854,"total":183064},"staffing/rear_simulation.gd::_settle/production_staff":{"calls":397,"maximum":1719,"total":66515},"staffing/rear_simulation.gd::_settle/receiving":{"calls":292,"maximum":186,"total":21274},"staffing/rear_simulation.gd::_settle/vehicles":{"calls":397,"maximum":3,"total":384},"staffing/rear_simulation.gd::advance_time/boundaries":{"calls":198,"maximum":211,"total":29251},"staffing/rear_simulation.gd::advance_time/military_motion":{"calls":198,"maximum":18,"total":974},"staffing/rear_simulation.gd::advance_time/rear_motion":{"calls":198,"maximum":406,"total":41998},"staffing/rear_simulation.gd::advance_time/receiving_combat":{"calls":198,"maximum":9,"total":1138},"staffing/rear_simulation.gd::advance_time/world":{"calls":198,"maximum":41,"total":4608}}
+Actual truck presentation joined normal3Dworld: PASS

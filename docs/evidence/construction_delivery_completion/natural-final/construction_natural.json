@@ -1,0 +1,253 @@
+{
+  "checks": [
+    "Real placed office,2builders and remaining common haulers: PASS",
+    "Office physically supplied/earned80work/completed without debug: PASS",
+    "Actual utility truck registered through natural settle: PASS",
+    "Natural construction custody/capacity audit: PASS",
+    "Actual truck presentation joined normal3Dworld: PASS"
+  ],
+  "completion_step_us": 22135,
+  "delivery": {
+    "assigned": 0,
+    "carried": 0,
+    "received": 60,
+    "remaining": 0,
+    "status": "Material delivery complete"
+  },
+  "failed": false,
+  "frame_scopes": {
+    "current_process_frame": 5,
+    "enabled": true,
+    "scope": "Inclusive completed scopes; the probe interval can span previous-frame drawing and current-frame physics. Uninstrumented engine, rendering and scheduling time remain outside these scopes.",
+    "scopes_by_process_frame": {
+      "4": {
+        "diagnostics/function_call_log.gd::_collect_reports": {
+          "calls": 1,
+          "maximum": 15,
+          "total": 15
+        }
+      },
+      "5": {
+        "battlefield/opening_policy.gd::tick/commands": {
+          "calls": 98,
+          "maximum": 325,
+          "total": 16889
+        },
+        "battlefield/opening_policy.gd::tick/deployments": {
+          "calls": 98,
+          "maximum": 4,
+          "total": 143
+        },
+        "battlefield/opening_policy.gd::tick/reposition": {
+          "calls": 98,
+          "maximum": 3,
+          "total": 97
+        },
+        "battlefield/opening_policy.gd::tick/resources": {
+          "calls": 98,
+          "maximum": 59,
+          "total": 3263
+        },
+        "battlefield/opening_policy.gd::tick/resupply": {
+          "calls": 98,
+          "maximum": 1259,
+          "total": 114202
+        },
+        "battlefield/opening_policy.gd::tick/trips": {
+          "calls": 98,
+          "maximum": 34,
+          "total": 1604
+        },
+        "battlefield/squad_execution.gd::settle/policy": {
+          "calls": 98,
+          "maximum": 1637,
+          "total": 138035
+        },
+        "construction/complete/activate": {
+          "calls": 1,
+          "maximum": 2327,
+          "total": 2327
+        },
+        "construction/complete/register_truck": {
+          "calls": 1,
+          "maximum": 649,
+          "total": 649
+        },
+        "construction/complete/release_builders": {
+          "calls": 1,
+          "maximum": 2737,
+          "total": 2737
+        },
+        "construction/complete/visual_event": {
+          "calls": 1,
+          "maximum": 192,
+          "total": 192
+        },
+        "staffing/rear_simulation.gd::_settle": {
+          "calls": 305,
+          "maximum": 11157,
+          "total": 879900
+        },
+        "staffing/rear_simulation.gd::_settle/actors_stores": {
+          "calls": 417,
+          "maximum": 2038,
+          "total": 110734
+        },
+        "staffing/rear_simulation.gd::_settle/battlefield_operations": {
+          "calls": 417,
+          "maximum": 2376,
+          "total": 211365
+        },
+        "staffing/rear_simulation.gd::_settle/combat": {
+          "calls": 417,
+          "maximum": 12,
+          "total": 762
+        },
+        "staffing/rear_simulation.gd::_settle/construction": {
+          "calls": 417,
+          "maximum": 5353,
+          "total": 37264
+        },
+        "staffing/rear_simulation.gd::_settle/dispatch_hq": {
+          "calls": 417,
+          "maximum": 375,
+          "total": 57931
+        },
+        "staffing/rear_simulation.gd::_settle/engineering": {
+          "calls": 417,
+          "maximum": 19,
+          "total": 2221
+        },
+        "staffing/rear_simulation.gd::_settle/military": {
+          "calls": 417,
+          "maximum": 290,
+          "total": 29752
+        },
+        "staffing/rear_simulation.gd::_settle/objectives_supply": {
+          "calls": 417,
+          "maximum": 274,
+          "total": 86293
+        },
+        "staffing/rear_simulation.gd::_settle/orders": {
+          "calls": 417,
+          "maximum": 1854,
+          "total": 190104
+        },
+        "staffing/rear_simulation.gd::_settle/production_staff": {
+          "calls": 417,
+          "maximum": 1719,
+          "total": 67875
+        },
+        "staffing/rear_simulation.gd::_settle/receiving": {
+          "calls": 305,
+          "maximum": 298,
+          "total": 22489
+        },
+        "staffing/rear_simulation.gd::_settle/vehicles": {
+          "calls": 417,
+          "maximum": 70,
+          "total": 545
+        },
+        "staffing/rear_simulation.gd::advance_time/boundaries": {
+          "calls": 207,
+          "maximum": 211,
+          "total": 29931
+        },
+        "staffing/rear_simulation.gd::advance_time/military_motion": {
+          "calls": 207,
+          "maximum": 18,
+          "total": 1029
+        },
+        "staffing/rear_simulation.gd::advance_time/rear_motion": {
+          "calls": 207,
+          "maximum": 406,
+          "total": 43119
+        },
+        "staffing/rear_simulation.gd::advance_time/receiving_combat": {
+          "calls": 207,
+          "maximum": 13,
+          "total": 1204
+        },
+        "staffing/rear_simulation.gd::advance_time/world": {
+          "calls": 207,
+          "maximum": 50,
+          "total": 4862
+        }
+      }
+    }
+  },
+  "post_frames_us": [
+    46860,
+    43325,
+    43466,
+    44140,
+    44330,
+    46926
+  ],
+  "pre_frames_us": [
+    48698,
+    46999,
+    45613,
+    46496
+  ],
+  "scope": "Single current reported construction path through normal main, actual starting500M11 and2builders/commonhaulers, no grants/debug/cancelled demand. Explicit rear intervals after startup, not natural wall-clock/full-loop/FPS acceptance. Includes actual completion activation/truck registration/presentation cost omitted by debug-only timing. Original45/35/28s bounds.",
+  "simulation_time": 98.1,
+  "site": {
+    "blocker": "",
+    "builders": {},
+    "center": "(100.0, 165.0)",
+    "consumed_m11": 60,
+    "door": "(94.0, 165.0)",
+    "haul_job": "job-0018",
+    "id": "site-0001",
+    "kind": "construction",
+    "m11": 60,
+    "progress": 80.0,
+    "protected_starter": false,
+    "quarter_turn": false,
+    "site_store": "site-0001",
+    "size": "(10.0, 8.0)",
+    "starter_staffing_recorded": true,
+    "state": "Complete",
+    "work": 80.0,
+    "working": false
+  },
+  "slow_steps": [
+    {
+      "state": "Awaiting M11",
+      "time": 24.1,
+      "us": 19026
+    },
+    {
+      "state": "Building",
+      "time": 80.1,
+      "us": 17744
+    },
+    {
+      "state": "Complete",
+      "time": 98.1,
+      "us": 22135
+    }
+  ],
+  "source_remaining": 440,
+  "trucks": {
+    "site-0001": {
+      "blocker": "",
+      "burned": 0.0,
+      "created": true,
+      "deadline": 1e99999,
+      "delivered": 0,
+      "distance": 0.0,
+      "home": "(90.0, 165.0)",
+      "id": "site-0001-utility-truck",
+      "loaded": 0,
+      "motion": {},
+      "office": "site-0001",
+      "phase": "Parked",
+      "recovering": false,
+      "trips": 0,
+      "worker": ""
+    }
+  },
+  "wall_ms": 5698
+}
