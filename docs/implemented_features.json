@@ -2,6 +2,16 @@
   "scope": "Source-observed current implementation, not a claim that all features/states are tested, polished or accepted at 60 FPS. Advanced standalone review scenes are distinguished below.",
   "main_game": [
     {
+      "feature": "Default common Hauling for physically joined ordinary workers; expandable six-dot drag task order with Confirm/Revert; next feasible incoming/outbound/construction/production/other work via existing owners, finite claims/slots/transport and safe exclusive staffing. Existing automatic workplace starter demand can use idle fallback labour.",
+      "sources": [
+        "game/staffing/hauling_policy.gd",
+        "game/rear_base/hauling_priority_list.gd",
+        "game/rear_base/hauling_priority_row.gd",
+        "game/staffing/rear_simulation.gd"
+      ],
+      "evidence": "docs/evidence/hauling_priorities/receipt.json"
+    },
+    {
       "feature": "Empty-field rear opening and connected battlefield observation, persistent session, Pause/1x/2x, navigation and new session confirmation.",
       "sources": [
         "game/main/main.gd",

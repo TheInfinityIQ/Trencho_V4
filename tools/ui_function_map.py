@@ -341,6 +341,15 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
     ]
     preview_3d = 'game/preview_3d/preview.gd'
     world_3d = 'game/preview_3d/world_presenter.gd'
+    specs.append(('hauling-priorities', 'Hauling: draft task order and next real work',
+                  'Native grip dragging edits a local draft. Confirm validates the complete category order; existing exclusive owners start only the next feasible idle task and preserve active custody.',
+                  [('game/rear_base/hauling_priority_row.gd', '_get_drag_data', 'Begin same-list six-dot grip drag', ''),
+                   ('game/rear_base/hauling_priority_list.gd', 'reorder', 'Reorder local draft only', ''),
+                   ('game/rear_base/hauling_priority_list.gd', '_apply', 'Confirm category preference explicitly', ''),
+                   ('game/staffing/rear_simulation.gd', 'set_hauling_priorities', 'Validate preference and settle actual owners', ''),
+                   ('game/staffing/hauling_policy.gd', 'start', 'Choose highest-priority feasible next task', ''),
+                   ('game/procurement/receiving_simulation.gd', 'start_shared_unload', 'Reserve real incoming freight within four actual slots', ''),
+                   ('game/dispatch/dispatch_service.gd', 'start_shared_preparation', 'Use actual common hauler for ordinary accepted manifest', '')]))
     specs.append(('worker-animation', 'Actual worker handling and animation',
                   'The purchase commits real freight. Existing activity and keyed position facts drive imported character clips; animation never transfers goods or finishes work.',
                   [(BASE, '_confirm_purchase', 'Confirm the actual current purchase draft', ''),

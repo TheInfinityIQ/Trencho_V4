@@ -1,0 +1,249 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 7 [7, 8):
+     997  identity/identity_ledger.gd::inspect_entity
+      35  identity/identity_ledger.gd::person_is_alive
+      29  staffing/rear_simulation.gd::_settle
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       3  rear_base/base_demo.gd::_request_refresh
+       3  staffing/rear_simulation.gd::advance_time
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  main/main.gd::_refresh_clock
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::map_markers
+[Scope wall time/us] engine second 7 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":119,"total":119},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":6562,"total":7042}}
+Actual normal configured main loaded: PASS
+Four actual opening workers default to exclusive Hauling: PASS
+Actual paid200kg and eight-worker convoy committed: PASS
+[Calls/s] engine second 8 [8, 9):
+       8  main/game_session.gd::_physics_process
+       4  identity/identity_ledger.gd::inspect_entity
+       1  battlefield/battlefield_view.gd::_refresh
+       1  battlefield/battlefield_view.gd::_request_refresh
+       1  main/main.gd::_refresh_clock
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_demo.gd::_request_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 8 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":128,"total":128},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":2,"total":2},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":591,"total":591},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":661,"total":661}}
+[Calls/s] engine second 11 [11, 12):
+      49  identity/identity_ledger.gd::inspect_entity
+      30  identity/identity_ledger.gd::person_has_living_duty
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      14  main/game_session.gd::_physics_process
+      12  identity/identity_ledger.gd::person_ready_for_hq_issue
+       4  rear_base/base_demo.gd::_request_refresh
+       3  battlefield/battlefield_view.gd::_request_refresh
+       3  identity/identity_ledger.gd::person_is_alive
+       3  main/main.gd::_refresh_clock
+       3  staffing/rear_simulation.gd::_settle
+       2  rear_base/base_simulation.gd::_pump_live
+       2  rear_base/base_simulation.gd::tick_live
+       2  staffing/rear_simulation.gd::advance_time
+       1  identity/identity_ledger.gd::ammunition_quantities_at
+       1  main/game_session.gd::notify_command
+       1  rear_base/base_simulation.gd::after_command
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":2,"maximum":107,"total":114},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":907,"total":907},"rear_base/base_simulation.gd::tick_live":{"calls":2,"maximum":3347,"total":4328},"staffing/rear_simulation.gd::_settle":{"calls":3,"maximum":1667,"total":4649},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":3318,"total":3318}}
+[Calls/s] engine second 12 [12, 13):
+     157  identity/identity_ledger.gd::inspect_entity
+     100  identity/identity_ledger.gd::person_has_living_duty
+      80  identity/identity_ledger.gd::military_hull_ready_at
+      48  main/game_session.gd::_physics_process
+      40  identity/identity_ledger.gd::person_ready_for_hq_issue
+      11  rear_base/base_simulation.gd::_pump_live
+      11  rear_base/base_simulation.gd::tick_live
+      10  identity/identity_ledger.gd::person_is_alive
+      10  staffing/rear_simulation.gd::_settle
+       5  battlefield/battlefield_view.gd::_request_refresh
+       5  identity/identity_ledger.gd::ammunition_quantities_at
+       5  main/main.gd::_refresh_clock
+       5  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":4,"maximum":133,"total":152},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":42,"maximum":1379,"total":23798},"rear_base/base_simulation.gd::tick_live":{"calls":11,"maximum":4115,"total":43000},"staffing/rear_simulation.gd::_settle":{"calls":10,"maximum":1974,"total":16755},"staffing/rear_simulation.gd::advance_time":{"calls":5,"maximum":3741,"total":18335}}
+[Calls/s] engine second 13 [13, 14):
+     398  identity/identity_ledger.gd::inspect_entity
+     170  identity/identity_ledger.gd::person_has_living_duty
+     144  identity/identity_ledger.gd::military_hull_ready_at
+      80  identity/identity_ledger.gd::person_ready_for_hq_issue
+      60  main/game_session.gd::_physics_process
+      17  identity/identity_ledger.gd::person_is_alive
+      16  staffing/rear_simulation.gd::_settle
+      15  rear_base/base_simulation.gd::_pump_live
+      15  rear_base/base_simulation.gd::tick_live
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  battlefield/battlefield_view.gd::_request_refresh
+      10  identity/identity_ledger.gd::ammunition_quantities_at
+      10  main/main.gd::_refresh_clock
+       8  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 13 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":119,"total":119},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":43,"maximum":2882,"total":27806},"rear_base/base_simulation.gd::tick_live":{"calls":15,"maximum":12315,"total":66852},"staffing/rear_simulation.gd::_settle":{"calls":16,"maximum":9337,"total":34784},"staffing/rear_simulation.gd::advance_time":{"calls":8,"maximum":12286,"total":38047}}
+[Calls/s] engine second 14 [14, 15):
+     180  identity/identity_ledger.gd::inspect_entity
+     120  identity/identity_ledger.gd::person_has_living_duty
+      96  identity/identity_ledger.gd::military_hull_ready_at
+      61  main/game_session.gd::_physics_process
+      48  identity/identity_ledger.gd::person_ready_for_hq_issue
+      13  rear_base/base_simulation.gd::_pump_live
+      13  rear_base/base_simulation.gd::tick_live
+      12  identity/identity_ledger.gd::person_is_alive
+      12  staffing/rear_simulation.gd::_settle
+       6  battlefield/battlefield_view.gd::_request_refresh
+       6  identity/identity_ledger.gd::ammunition_quantities_at
+       6  main/main.gd::_refresh_clock
+       6  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 14 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":152,"total":152},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":27,"maximum":2422,"total":28020},"rear_base/base_simulation.gd::tick_live":{"calls":13,"maximum":4443,"total":51910},"staffing/rear_simulation.gd::_settle":{"calls":12,"maximum":2131,"total":21045},"staffing/rear_simulation.gd::advance_time":{"calls":6,"maximum":4413,"total":23013}}
+[Calls/s] engine second 15 [15, 16):
+     398  identity/identity_ledger.gd::inspect_entity
+     170  identity/identity_ledger.gd::person_has_living_duty
+     144  identity/identity_ledger.gd::military_hull_ready_at
+      80  identity/identity_ledger.gd::person_ready_for_hq_issue
+      60  main/game_session.gd::_physics_process
+      17  identity/identity_ledger.gd::person_is_alive
+      16  staffing/rear_simulation.gd::_settle
+      15  rear_base/base_simulation.gd::_pump_live
+      15  rear_base/base_simulation.gd::tick_live
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  battlefield/battlefield_view.gd::_request_refresh
+      10  identity/identity_ledger.gd::ammunition_quantities_at
+      10  main/main.gd::_refresh_clock
+       8  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 15 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":109,"total":109},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":63,"maximum":1360,"total":27709},"rear_base/base_simulation.gd::tick_live":{"calls":15,"maximum":14191,"total":68859},"staffing/rear_simulation.gd::_settle":{"calls":16,"maximum":9330,"total":36759},"staffing/rear_simulation.gd::advance_time":{"calls":8,"maximum":14155,"total":40046}}
+[Calls/s] engine second 16 [16, 17):
+     371  identity/identity_ledger.gd::inspect_entity
+     150  identity/identity_ledger.gd::person_has_living_duty
+     128  identity/identity_ledger.gd::military_hull_ready_at
+      72  identity/identity_ledger.gd::person_ready_for_hq_issue
+      60  main/game_session.gd::_physics_process
+      15  identity/identity_ledger.gd::person_is_alive
+      15  rear_base/base_simulation.gd::_pump_live
+      15  rear_base/base_simulation.gd::tick_live
+      14  staffing/rear_simulation.gd::_settle
+      12  identity/identity_ledger.gd::active_formation_member_ids
+       9  battlefield/battlefield_view.gd::_request_refresh
+       9  identity/identity_ledger.gd::ammunition_quantities_at
+       9  main/main.gd::_refresh_clock
+       7  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 16 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":119,"total":119},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":51,"maximum":2854,"total":31777},"rear_base/base_simulation.gd::tick_live":{"calls":15,"maximum":12939,"total":68333},"staffing/rear_simulation.gd::_settle":{"calls":14,"maximum":9850,"total":32458},"staffing/rear_simulation.gd::advance_time":{"calls":7,"maximum":12906,"total":35484}}
+[Calls/s] engine second 17 [17, 18):
+     449  identity/identity_ledger.gd::inspect_entity
+     170  identity/identity_ledger.gd::person_has_living_duty
+     144  identity/identity_ledger.gd::military_hull_ready_at
+      80  identity/identity_ledger.gd::person_ready_for_hq_issue
+      61  main/game_session.gd::_physics_process
+      17  identity/identity_ledger.gd::person_is_alive
+      16  staffing/rear_simulation.gd::_settle
+      15  rear_base/base_simulation.gd::_pump_live
+      15  rear_base/base_simulation.gd::tick_live
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  battlefield/battlefield_view.gd::_request_refresh
+      10  identity/identity_ledger.gd::ammunition_quantities_at
+      10  main/main.gd::_refresh_clock
+       8  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 17 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":118,"total":118},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":43,"maximum":2976,"total":27790},"rear_base/base_simulation.gd::tick_live":{"calls":15,"maximum":13571,"total":68754},"staffing/rear_simulation.gd::_settle":{"calls":16,"maximum":10482,"total":36592},"staffing/rear_simulation.gd::advance_time":{"calls":8,"maximum":13542,"total":39953}}
+[Calls/s] engine second 18 [18, 19):
+     300  identity/identity_ledger.gd::inspect_entity
+     120  identity/identity_ledger.gd::person_has_living_duty
+      96  identity/identity_ledger.gd::military_hull_ready_at
+      59  main/game_session.gd::_physics_process
+      48  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::person_is_alive
+      12  rear_base/base_simulation.gd::_pump_live
+      12  rear_base/base_simulation.gd::tick_live
+      12  staffing/rear_simulation.gd::_settle
+       6  battlefield/battlefield_view.gd::_request_refresh
+       6  identity/identity_ledger.gd::ammunition_quantities_at
+       6  main/main.gd::_refresh_clock
+       6  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 18 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":117,"total":117},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":16,"maximum":2317,"total":23964},"rear_base/base_simulation.gd::tick_live":{"calls":12,"maximum":5831,"total":52478},"staffing/rear_simulation.gd::_settle":{"calls":12,"maximum":2962,"total":25583},"staffing/rear_simulation.gd::advance_time":{"calls":6,"maximum":5795,"total":27716}}
+[Calls/s] engine second 19 [19, 20):
+     469  identity/identity_ledger.gd::inspect_entity
+     130  identity/identity_ledger.gd::person_has_living_duty
+     112  identity/identity_ledger.gd::military_hull_ready_at
+      64  identity/identity_ledger.gd::person_ready_for_hq_issue
+      61  main/game_session.gd::_physics_process
+      13  identity/identity_ledger.gd::person_is_alive
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      12  rear_base/base_simulation.gd::_pump_live
+      12  rear_base/base_simulation.gd::tick_live
+      12  staffing/rear_simulation.gd::_settle
+       8  battlefield/battlefield_view.gd::_request_refresh
+       8  identity/identity_ledger.gd::ammunition_quantities_at
+       8  main/main.gd::_refresh_clock
+       6  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 19 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":132,"total":132},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":49,"maximum":1792,"total":23771},"rear_base/base_simulation.gd::tick_live":{"calls":12,"maximum":18389,"total":67636},"staffing/rear_simulation.gd::_settle":{"calls":12,"maximum":14308,"total":39974},"staffing/rear_simulation.gd::advance_time":{"calls":6,"maximum":18357,"total":42977}}
+[Calls/s] engine second 20 [20, 21):
+     469  identity/identity_ledger.gd::inspect_entity
+     130  identity/identity_ledger.gd::person_has_living_duty
+     112  identity/identity_ledger.gd::military_hull_ready_at
+      64  identity/identity_ledger.gd::person_ready_for_hq_issue
+      59  main/game_session.gd::_physics_process
+      13  identity/identity_ledger.gd::person_is_alive
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      12  rear_base/base_simulation.gd::_pump_live
+      12  rear_base/base_simulation.gd::tick_live
+      12  staffing/rear_simulation.gd::_settle
+       8  battlefield/battlefield_view.gd::_request_refresh
+       8  identity/identity_ledger.gd::ammunition_quantities_at
+       8  main/main.gd::_refresh_clock
+       6  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 20 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":113,"total":113},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":37,"maximum":2877,"total":23770},"rear_base/base_simulation.gd::tick_live":{"calls":12,"maximum":19091,"total":63624},"staffing/rear_simulation.gd::_settle":{"calls":12,"maximum":14758,"total":35810},"staffing/rear_simulation.gd::advance_time":{"calls":6,"maximum":19035,"total":38903}}
+[Calls/s] engine second 21 [21, 22):
+     469  identity/identity_ledger.gd::inspect_entity
+     180  identity/identity_ledger.gd::person_has_living_duty
+     144  identity/identity_ledger.gd::military_hull_ready_at
+      72  identity/identity_ledger.gd::person_ready_for_hq_issue
+      60  main/game_session.gd::_physics_process
+      18  identity/identity_ledger.gd::person_is_alive
+      18  staffing/rear_simulation.gd::_settle
+      12  battlefield/battlefield_view.gd::_request_refresh
+      12  main/main.gd::_refresh_clock
+      12  rear_base/base_simulation.gd::_pump_live
+      12  rear_base/base_simulation.gd::tick_live
+      12  staffing/rear_simulation.gd::advance_time
+       7  identity/identity_ledger.gd::active_formation_member_ids
+       7  identity/identity_ledger.gd::ammunition_quantities_at
+       1  identity/identity_ledger.gd::formation_cohesion_counts
+[Scope wall time/us] engine second 21 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":115,"total":115},"rear_base/base_simulation.gd::_pump_live/squad_decision":{"calls":6,"maximum":5575,"total":6244},"rear_base/base_simulation.gd::tick_live":{"calls":12,"maximum":7296,"total":47379},"staffing/rear_simulation.gd::_settle":{"calls":18,"maximum":2998,"total":38469},"staffing/rear_simulation.gd::advance_time":{"calls":6,"maximum":5828,"total":27995}}
+[Calls/s] engine second 22 [22, 23):
+     933  identity/identity_ledger.gd::inspect_entity
+     170  identity/identity_ledger.gd::person_has_living_duty
+     144  identity/identity_ledger.gd::military_hull_ready_at
+      80  identity/identity_ledger.gd::person_ready_for_hq_issue
+      57  main/game_session.gd::_physics_process
+      22  identity/identity_ledger.gd::active_formation_member_ids
+      17  identity/identity_ledger.gd::person_is_alive
+      16  staffing/rear_simulation.gd::_settle
+      13  battlefield/battlefield_view.gd::_request_refresh
+      13  main/main.gd::_refresh_clock
+      11  identity/identity_ledger.gd::ammunition_quantities_at
+      11  rear_base/base_simulation.gd::_pump_live
+      11  rear_base/base_simulation.gd::tick_live
+      11  staffing/rear_simulation.gd::advance_time
+       4  identity/identity_ledger.gd::formation_cohesion_counts
+       2  identity/identity_ledger.gd::wounded_people_near
+       2  rear_base/base_demo.gd::_request_refresh
+       1  identity/identity_ledger.gd::sight_candidates
+[Scope wall time/us] engine second 22 (inclusive, completed scopes): {"rear_base/base_simulation.gd::_pump_live/squad_decision":{"calls":6,"maximum":14894,"total":37921},"rear_base/base_simulation.gd::tick_live":{"calls":11,"maximum":18124,"total":89821},"staffing/rear_simulation.gd::_settle":{"calls":16,"maximum":11258,"total":47632},"staffing/rear_simulation.gd::advance_time":{"calls":5,"maximum":15332,"total":34835}}
+Normal live1x session assigns all four real workers concurrently on200kg: FAIL

@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Actual new default-hauler eligibility fixture: PASS
+Actual idle default Hauling remains eligible for existing starter staffing filter: PASS
+Declared ordinary outbound component hauler: PASS
+Declared qualified component driver: PASS
+Declared canonical component T01 with finite2L starting fuel: PASS
+Time-zero public registration supplies actual parked transport and qualified driver: PASS
+Same actual component worker assigned Hauling after protecting registered crew: PASS
+Declared finite25kg component stock: PASS
+Declared common worker physically reported before outbound preparation: FAIL
+Real Dispatch manifest accepts actual owned truck and finite stock: PASS
+Ordinary Dispatch owner takes the supplied exclusive common hauler: FAIL
+Same finite25kg physically staged and loaded aboard actual truck through existing Dispatch owner: FAIL

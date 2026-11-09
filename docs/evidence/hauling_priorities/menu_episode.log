@@ -1,0 +1,162 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 5 [5, 6):
+     186  identity/identity_ledger.gd::inspect_entity
+      19  identity/identity_ledger.gd::person_is_alive
+      18  staffing/rear_simulation.gd::_settle
+       1  identity/identity_ledger.gd::map_markers
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 5 (inclusive, completed scopes): {"staffing/rear_simulation.gd::_settle":{"calls":1,"maximum":221,"total":221}}
+Actual normal configured main loaded: PASS
+Four actual opening workers default to exclusive Hauling: PASS
+Actual paid200kg and eight-worker convoy committed: PASS
+Four real workers own eligible stopped200kg freight under explicit model intervals: PASS
+Each common worker owns a distinct real25kg claim: PASS
+Each common worker owns a distinct real25kg claim: PASS
+Each common worker owns a distinct real25kg claim: PASS
+Each common worker owns a distinct real25kg claim: PASS
+[Calls/s] engine second 6 [6, 7):
+     815  identity/identity_ledger.gd::inspect_entity
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      16  identity/identity_ledger.gd::person_is_alive
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      11  staffing/rear_simulation.gd::_settle
+      10  identity/identity_ledger.gd::formation_cohesion_counts
+      10  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       4  rear_base/base_demo.gd::_request_refresh
+       3  battlefield/battlefield_view.gd::_request_refresh
+       3  main/main.gd::_refresh_clock
+       2  battlefield/battlefield_view.gd::_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  staffing/rear_simulation.gd::advance_time
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+[Scope wall time/us] engine second 6 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":134,"total":134},"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":71,"total":71},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":4,"total":4},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":755,"total":755},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":827,"total":827},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":6432,"total":6669}}
+[Calls/s] engine second 9 [9, 10):
+    2823  identity/identity_ledger.gd::inspect_entity
+     560  identity/identity_ledger.gd::person_has_living_duty
+     536  identity/identity_ledger.gd::military_hull_ready_at
+     356  identity/identity_ledger.gd::person_ready_for_hq_issue
+     132  identity/identity_ledger.gd::active_formation_member_ids
+      56  identity/identity_ledger.gd::person_is_alive
+      45  staffing/rear_simulation.gd::_settle
+      44  identity/identity_ledger.gd::ammunition_quantities_at
+      29  rear_base/base_demo.gd::_request_refresh
+      25  battlefield/battlefield_view.gd::_request_refresh
+      25  main/main.gd::_refresh_clock
+      23  staffing/rear_simulation.gd::advance_time
+      11  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       1  main/game_session.gd::notify_command
+       1  rear_base/base_demo.gd::_fill
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_demo.gd::_refresh_workforce
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::after_command
+       1  rear_base/base_simulation.gd::purchasing_view
+       1  rear_base/base_simulation.gd::tick_live
+       1  rear_base/base_simulation.gd::workforce_view
+[Scope wall time/us] engine second 9 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":2,"maximum":177,"total":187},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":3462,"total":3462},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":1,"maximum":880,"total":880},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":976,"total":976},"staffing/rear_simulation.gd::_settle":{"calls":45,"maximum":17028,"total":163991}}
+Actual Workforce menu contains expandable Hauling: PASS
+[Calls/s] engine second 10 [10, 11):
+       0  no instrumented calls
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":4,"maximum":190,"total":223}}
+Injected Godot grip drag changes draft only: PASS
+Actual live menu refresh preserves unconfirmed draft: PASS
+Move-up fallback edits the same local draft: PASS
+Revert restores committed order: PASS
+Confirm commits category preference once: PASS
+Actual site requests construction materials while existing unload carries remain committed: PASS
+Reorder/site command retains current safe unload claim start-unloader-01: PASS
+Reorder/site command retains current safe unload claim start-unloader-02: PASS
+Reorder/site command retains current safe unload claim start-unloader-03: PASS
+Reorder/site command retains current safe unload claim start-unloader-04: PASS
+Retained actual Hauling menu image: PASS
+[Calls/s] engine second 11 [11, 12):
+       5  identity/identity_ledger.gd::inspect_entity
+       1  rear_base/base_simulation.gd::purchasing_view
+       1  rear_base/base_simulation.gd::workforce_view
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":69,"total":69}}
+[Calls/s] engine second 12 [12, 13):
+    7640  identity/identity_ledger.gd::inspect_entity
+    1120  identity/identity_ledger.gd::military_hull_ready_at
+    1010  identity/identity_ledger.gd::person_has_living_duty
+     872  identity/identity_ledger.gd::person_ready_for_hq_issue
+     408  identity/identity_ledger.gd::active_formation_member_ids
+     109  identity/identity_ledger.gd::ammunition_quantities_at
+     101  identity/identity_ledger.gd::person_is_alive
+      80  rear_base/base_demo.gd::_request_refresh
+      79  battlefield/battlefield_view.gd::_request_refresh
+      79  main/main.gd::_refresh_clock
+      63  staffing/rear_simulation.gd::_settle
+      34  identity/identity_ledger.gd::sight_candidates
+      19  staffing/rear_simulation.gd::advance_time
+       3  rear_base/base_simulation.gd::purchasing_view
+       3  rear_base/base_simulation.gd::workforce_view
+       2  rear_base/base_demo.gd::_fill
+       2  rear_base/base_demo.gd::_refresh
+       2  rear_base/base_demo.gd::_refresh_workforce
+       1  main/game_session.gd::notify_command
+       1  rear_base/base_simulation.gd::after_command
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"rear_base/base_demo.gd::_refresh":{"calls":2,"maximum":3492,"total":6930},"staffing/rear_simulation.gd::_settle":{"calls":60,"maximum":22219,"total":423888}}
+[Calls/s] engine second 13 [13, 14):
+   10747  identity/identity_ledger.gd::inspect_entity
+    1800  identity/identity_ledger.gd::military_hull_ready_at
+    1590  identity/identity_ledger.gd::person_has_living_duty
+    1428  identity/identity_ledger.gd::person_ready_for_hq_issue
+     600  identity/identity_ledger.gd::active_formation_member_ids
+     169  identity/identity_ledger.gd::ammunition_quantities_at
+     159  identity/identity_ledger.gd::person_is_alive
+     132  battlefield/battlefield_view.gd::_request_refresh
+     132  main/main.gd::_refresh_clock
+     132  rear_base/base_demo.gd::_request_refresh
+      94  staffing/rear_simulation.gd::_settle
+      50  identity/identity_ledger.gd::sight_candidates
+      25  staffing/rear_simulation.gd::advance_time
+       3  rear_base/base_demo.gd::_fill
+       3  rear_base/base_demo.gd::_refresh
+       3  rear_base/base_demo.gd::_refresh_workforce
+       3  rear_base/base_simulation.gd::purchasing_view
+       3  rear_base/base_simulation.gd::workforce_view
+[Scope wall time/us] engine second 13 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":151,"total":151},"rear_base/base_demo.gd::_refresh":{"calls":3,"maximum":3901,"total":10633},"staffing/rear_simulation.gd::_settle":{"calls":93,"maximum":10693,"total":628322}}
+[Calls/s] engine second 14 [14, 15):
+    9976  identity/identity_ledger.gd::inspect_entity
+    1280  identity/identity_ledger.gd::military_hull_ready_at
+    1130  identity/identity_ledger.gd::person_has_living_duty
+    1016  identity/identity_ledger.gd::person_ready_for_hq_issue
+     480  identity/identity_ledger.gd::active_formation_member_ids
+     131  identity/identity_ledger.gd::ammunition_quantities_at
+     113  identity/identity_ledger.gd::person_is_alive
+      94  battlefield/battlefield_view.gd::_request_refresh
+      94  main/main.gd::_refresh_clock
+      94  rear_base/base_demo.gd::_request_refresh
+      70  staffing/rear_simulation.gd::_settle
+      40  identity/identity_ledger.gd::sight_candidates
+      19  staffing/rear_simulation.gd::advance_time
+       2  rear_base/base_demo.gd::_fill
+       2  rear_base/base_demo.gd::_refresh
+       2  rear_base/base_demo.gd::_refresh_workforce
+       2  rear_base/base_simulation.gd::purchasing_view
+       2  rear_base/base_simulation.gd::workforce_view
+[Scope wall time/us] engine second 14 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":129,"total":129},"rear_base/base_demo.gd::_refresh":{"calls":2,"maximum":4214,"total":8388},"staffing/rear_simulation.gd::_settle":{"calls":70,"maximum":16299,"total":722719}}
+Committed top construction category selects real site haul before remaining truck cargo: PASS
+Paid200kg actually deposited without loss or duplicate transfer: PASS
+All eight physically joined new workers default to Hauling: PASS
+Closing management keeps committed order: PASS
+Declared ordinary outbound component hauler: PASS
+Same actual component worker assigned Hauling: PASS
+Declared qualified component driver: PASS
+Actual fixture owned truck gets actual qualified driver: FAIL
+Declared finite25kg component stock: PASS
+Real Dispatch manifest accepts actual owned truck and finite stock: FAIL
+{ "ok": false, "message": "Select the same stopped F10-produced hull at F11." }

@@ -107,3 +107,5 @@ Godot documents [AnimationPlayer](https://docs.godotengine.org/en/stable/classes
 and [vertex-color material use](https://docs.godotengine.org/en/stable/tutorials/3d/standard_material_3d.html).
 The chosen finite clip adapter and event boundaries apply those capabilities
 to this game's existing ownership; they are not a new general movement framework.
+
+The later [Hauling increment](hauling_priorities.md) caught a placement regression from this feature: the solid Table blocked construction routes still rooted at its centre. Repair37a5c9c uses its existing standing access for validation and retained actual worker coordinates/collision. This is a later discovered regression, not evidence that the original scoped character check exercised placement.

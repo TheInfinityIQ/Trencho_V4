@@ -1,0 +1,61 @@
+{
+  "production_revision": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
+  "required_run": 42684220947,
+  "scope": "Separate bounded observations; no single end-to-end/full-game/FPS acceptance. No local engine or regression suite; deadlines unchanged.",
+  "observations": [
+    {
+      "run": 42681222461,
+      "revision": "a6c49d6b81ec4c9b4dbacff2458e3e25838c0389",
+      "result": "PASS normal configured-main/GameSession clock headlessly at1x; actual stopped100kg carrier and four independent25kg claims atsim11s, wall11511ms. Not complete unloading throughput/rendering/OS input/FPS.",
+      "artifact": 13703560507,
+      "sha256": "db2a4fc1f950223350016c40b222ca541f1b015fd0290d6586e2d78c4c52dc48"
+    },
+    {
+      "run": 42682255715,
+      "revision": "37a5c9c349da2cbddc689e6e3990fa26b8e19ea8",
+      "result": "Overall FAIL at later invalid outbound fixture. Earlier PASS observations: actual injected Godot grip drag/draft/refresh/fallback/Revert/Confirm, retained claims, valid actual construction placement and preferred haul before remaining freight,200kg deposited, eight actual arrivals assignedHauling. Explicit model intervals after startup; raw failed receipt retained.",
+      "artifact": 13703770299,
+      "sha256": "5f12fb5d6d72c2a2c0fd0f50eb041ded3101d0b85114eab6b34a63fdde197166"
+    },
+    {
+      "run": 42685010971,
+      "revision": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
+      "result": "PASS new default-hauler starter eligibility and actual common-hauler Dispatch source/staging/loading,25kg aboard same canonical registeredT01 with realP08/2L bounded initialfuel. Declared component preconditions/public initial APIs; not normal factory acquisition/full army supply.",
+      "artifact": 13703599335,
+      "sha256": "a51a73c7520bc0b2e8b796f01d4a59c7ee1db00dc27a88c199c6fb14d5da0f5f"
+    }
+  ],
+  "earlier_failures": [
+    {
+      "run": 42680323914,
+      "revision": "a6c49d6",
+      "artifact": 13700944949,
+      "sha256": "68be5fdaddbfc532baa1a73b0b180e414181940785a4887863b80ee9628c15b2",
+      "disposition": "Observer stopped before real carrier arrival; four defaultHaulers/purchase observed only. Corrected prerequisite/split evidence, no production change or raised deadline."
+    },
+    {
+      "run": 42681540684,
+      "revision": "a6c49d6",
+      "artifact": 13703271189,
+      "sha256": "74e357fdaacff59809aca0b05a872e67719bd8e4bd6f76b9dbe105d2aa1b745d",
+      "disposition": "GUI/claims observations passed, actual site placement failed. Prior PR140 Table-obstacle/static-origin regression corrected in37a5c9c; repeated current episode then placed real site and selected real haul."
+    },
+    {
+      "run": 42683006981,
+      "revision": "37a5c9c",
+      "artifact": 13702288641,
+      "sha256": "839e6ee6a122966671b98d2fc1a5b3d7d3b139dc54b1502a101352c4e36611a4",
+      "disposition": "Observer supplied noncanonical/unregistered carrier; actual initial transport registration correctly rejected. No outbound handling observed in this attempt."
+    },
+    {
+      "run": 42684223387,
+      "revision": "5fdd556",
+      "artifact": 13703707530,
+      "sha256": "76d1de25af5a27dd7289f55877263dee6c1cbfb072288d5553bd9b17c3b768c4",
+      "disposition": "Correct transport accepted; observer assumed a new person would be chosen instead of actual existing12-person fixture pool. Normal allocator chose another worker. Observer corrected to follow the real assigned identity; no production guard weakened."
+    }
+  ],
+  "carry_forward": "Since37, production5fdd adds the shared starter-candidate filter and rebalance at safe Reporting completion. The earlier menu episode has no completed-workplace starter request, and UI code is byte-identical; four-worker candidate arithmetic remains unchanged. Earlier observations retain their exact heads and are not relabelled reruns at final head.",
+  "visual_review": "Lead and UI/UX personally inspected actual37 menu capture: expandedHauling,4assigned,ranks,six-dot grips,top-first text and buttons readable. Source and individual GUI assertions reviewed; no recapture/polish gate. Native OS key/drag comfort/FPS not certified.",
+  "image_sha256": "a2cfdfcea050212ed65ae8e23ae28dd7c04272d823b1b4de6073ad5c21aa2785"
+}

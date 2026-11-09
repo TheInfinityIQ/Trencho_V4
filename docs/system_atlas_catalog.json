@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "reviewed_baseline": "db9edb5eec670836aa4ac3cccb782d77b911b486",
+  "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
-  "title": "Trencho â€” current implementation atlas",
+  "title": "Trencho \u00e2\u20ac\u201d current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
     {
@@ -408,7 +408,7 @@
         "construction",
         "training"
       ],
-      "notes": "One person cannot fill two jobs at once. Newly completed facilities apply their starting request through Construction once; selecting or changing a recipe must not reset deliberate edits. Work points avoid Table/building geometry, preserve person identity and register explicit per-person handling access. Legacy unregistered handling keeps exact colocation. Reservations are not visual offsets or a universal crowd solver.",
+      "notes": "One person cannot fill two jobs at once. Newly completed facilities apply their starting request through Construction once; selecting or changing a recipe must not reset deliberate edits. Work points avoid Table/building geometry, preserve person identity and register explicit per-person handling access. Legacy unregistered handling keeps exact colocation. Reservations are not visual offsets or a universal crowd solver. In the empty-field game uncommitted people default to fallback Hauling after workplace/crew quotas. Shared starter-candidate rules preserve once-only automatic workplace demand; safe Reporting completion retries. Actual outbound tasks retain exclusive worker ownership until completion.",
       "primary_files": [
         "game/staffing/rear_simulation.gd",
         "game/staffing/rear_layout.gd",
@@ -420,7 +420,7 @@
       "title": "Storage, hauling and space promises",
       "group": "Rear economy",
       "owner": "RearSimulation jobs / actors / stores + ledger claims",
-      "summary": "Haul requests reserve real source portions and destination capacity. Actor phases represent walking, pickup, carrying and deposit; output space and relocation promises belong to the rear.",
+      "summary": "Haul requests reserve real source portions and destination capacity. Actor phases represent walking, pickup, carrying and deposit; output space and relocation promises belong to the rear. The default common pool selects its next feasible category in an explicitly confirmed top-first order through existing service owners.",
       "nodes": [
         {
           "id": "n0",
@@ -451,6 +451,30 @@
           "label": "Reconcile storage constraints",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_reconcile_store"
+        },
+        {
+          "id": "hauling_order",
+          "label": "Validate complete category preference",
+          "file": "game/staffing/hauling_policy.gd",
+          "function": "set_order"
+        },
+        {
+          "id": "hauling_next",
+          "label": "Start highest-priority feasible idle work",
+          "file": "game/staffing/hauling_policy.gd",
+          "function": "start"
+        },
+        {
+          "id": "shared_incoming",
+          "label": "Actual common worker / incoming claim",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "start_shared_unload"
+        },
+        {
+          "id": "shared_outgoing",
+          "label": "Ordinary manifest preparation / common worker",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "start_shared_preparation"
         }
       ],
       "edges": [
@@ -473,6 +497,21 @@
           "from": "n3",
           "to": "n4",
           "label": "workflow / dependency"
+        },
+        {
+          "from": "hauling_order",
+          "to": "hauling_next",
+          "label": "next idle boundary only"
+        },
+        {
+          "from": "hauling_next",
+          "to": "shared_incoming",
+          "label": "preference and actual available work"
+        },
+        {
+          "from": "hauling_next",
+          "to": "shared_outgoing",
+          "label": "existing manifest and real transport"
         }
       ],
       "related": [
@@ -480,9 +519,12 @@
         "staffing",
         "logistics",
         "construction",
-        "production"
+        "production",
+        "ui",
+        "procurement",
+        "dispatch"
       ],
-      "notes": "This diagram is the local rear haul path. Strategic manifests, forward trucks and frontline issue have other owners. Construction utility trucks can replace a local long carry leg without creating resources.",
+      "notes": "This diagram is the local rear haul path. Strategic manifests, forward trucks and frontline issue have other owners. Construction utility trucks can replace a local long carry leg without creating resources. HaulingPolicy owns preference only. Incoming unloading retains four shared/dedicated slots per berth; ordinary Dispatch retains manifest/route/custody/finite task and real transport/driver. Active safe work is not cancelled by reorder.",
       "primary_files": []
     },
     {
@@ -557,7 +599,7 @@
         {
           "from": "n0",
           "to": "n1",
-          "label": "quote â†’ resource order"
+          "label": "quote \u00e2\u2020\u2019 resource order"
         },
         {
           "from": "n1",
@@ -611,7 +653,7 @@
         "hauling",
         "objectives"
       ],
-      "notes": "Resources and people are parallel order types, not mandatory sequential steps. Empty-field Supply Table has its own configured receiving arrangement; a Receiving Bay is not required for the first worker purchase. Credit from controlled resource objectives goes to this account. Empty-field workers use reserved actual pickup/drop/arrival points and retain original handling durations/cargo claims. Actual arriving foot positions survive admission instead of collapsing onto the Table centre.",
+      "notes": "Resources and people are parallel order types, not mandatory sequential steps. Empty-field Supply Table has its own configured receiving arrangement; a Receiving Bay is not required for the first worker purchase. Credit from controlled resource objectives goes to this account. Empty-field workers use reserved actual pickup/drop/arrival points and retain original handling durations/cargo claims. Actual arriving foot positions survive admission instead of collapsing onto the Table centre. Incoming handling accepts idle common haulers through the existing owner; common entries retire after deposit and do not bypass the next category selection. Combined actual jobs retain four slots per berth and25kg carries.",
       "primary_files": [
         "game/procurement/receiving_simulation.gd",
         "game/procurement/resource_catalog.gd"
@@ -695,7 +737,7 @@
         "production",
         "preview"
       ],
-      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view.",
+      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider.",
       "primary_files": [
         "game/construction/construction_service.gd",
         "game/construction/construction_catalogue.gd"
@@ -1184,7 +1226,7 @@
         "identity",
         "construction"
       ],
-      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01â€“T05 specs are data in vehicle_specs.gd.",
+      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01\u00e2\u20ac\u201cT05 specs are data in vehicle_specs.gd.",
       "primary_files": [
         "game/production/heavy_production.gd"
       ]
@@ -1352,7 +1394,7 @@
     },
     {
       "id": "dispatch",
-      "title": "Rear â†’ HQ manifests and return",
+      "title": "Rear \u00e2\u2020\u2019 HQ manifests and return",
       "group": "Logistics",
       "owner": "DispatchService",
       "summary": "Owns accepted manifests, staging/loading, route, HQ unloading, cancellation and return commitments. Ledger keeps actual cargo/person/hull identities and receipts.",
@@ -1428,7 +1470,7 @@
         "hq",
         "identity"
       ],
-      "notes": "Automatic request fulfilment uses accept_automatic_delivery; retained manual manifests remain distinct. Automatic routine freight does not require a newly added manual Depart action.",
+      "notes": "Automatic request fulfilment uses accept_automatic_delivery; retained manual manifests remain distinct. Automatic routine freight does not require a newly added manual Depart action. Ordinary source/staging/loading can use a supplied exclusive common hauler. Real source/staging access precedes pickup; hull port arrival precedes loading. Vehicle/driver/manifest, specialist guns/passengers/HQ and finite task remain existing authorities.",
       "primary_files": [
         "game/dispatch/dispatch_service.gd"
       ]
@@ -2112,7 +2154,7 @@
     },
     {
       "id": "freight",
-      "title": "HQ â†’ forward stop freight and return",
+      "title": "HQ \u00e2\u2020\u2019 forward stop freight and return",
       "group": "Logistics",
       "owner": "ForwardTransport",
       "summary": "Actual military T01, stock portions, handlers, fuel and both route directions are committed to a job. Unloaded forward stock and return are separate phases.",
@@ -2640,7 +2682,7 @@
         "field",
         "bridge"
       ],
-      "notes": "The normal world is authored Farmland4kmÃ—6km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
+      "notes": "The normal world is authored Farmland4km\u00c3\u20146km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
       "primary_files": [
         "game/terrain/terrain_world.gd",
         "game/terrain/terrain_catalog.gd",
@@ -2953,7 +2995,7 @@
       "title": "Mines, hazards, knowledge and clearance",
       "group": "Engineering",
       "owner": "MineService + DeviceCatalog",
-      "summary": "Actual D01â€“D03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
+      "summary": "Actual D01\u00e2\u20ac\u201cD03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
       "nodes": [
         {
           "id": "n0",
@@ -3075,6 +3117,24 @@
           "label": "Acquire a new blueprint only by construction intent",
           "file": "game/rear_base/base_demo.gd",
           "function": "select_build_kind"
+        },
+        {
+          "id": "haul_grip",
+          "label": "Native six-dot grip drag",
+          "file": "game/rear_base/hauling_priority_row.gd",
+          "function": "_get_drag_data"
+        },
+        {
+          "id": "haul_draft",
+          "label": "Reorder local hauling draft",
+          "file": "game/rear_base/hauling_priority_list.gd",
+          "function": "reorder"
+        },
+        {
+          "id": "haul_confirm",
+          "label": "Confirm authoritative task order",
+          "file": "game/rear_base/hauling_priority_list.gd",
+          "function": "_apply"
         }
       ],
       "edges": [
@@ -3112,6 +3172,16 @@
           "from": "n6",
           "to": "n7",
           "label": "only explicit acquisition intent"
+        },
+        {
+          "from": "haul_grip",
+          "to": "haul_draft",
+          "label": "same-list stable category IDs"
+        },
+        {
+          "from": "haul_draft",
+          "to": "haul_confirm",
+          "label": "explicit user confirmation"
         }
       ],
       "related": [
@@ -3121,7 +3191,7 @@
         "workshop",
         "logistics"
       ],
-      "notes": "Hidden UI intentionally skips expensive refresh. This matters to selection:3D Workshop opens management before resolving current facility metadata. Existing scroll-heavy layout remains; generated diagrams do not establish enjoyable UI acceptance.",
+      "notes": "Hidden UI intentionally skips expensive refresh. This matters to selection:3D Workshop opens management before resolving current facility metadata. Existing scroll-heavy layout remains; generated diagrams do not establish enjoyable UI acceptance. Hauling has a composed inline disclosure with native grip drag/insertion line and keyboard/button fallback. Draft survives live status refresh; Confirm delegates once to Rear; central menu close discards unconfirmed changes.",
       "primary_files": [
         "game/rear_base/base_demo.gd",
         "game/rear_base/base_map.gd",
@@ -3493,7 +3563,7 @@
       "title": "Authored world, opening armies and normal rear start",
       "group": "Foundation",
       "owner": "FarmlandSession + FarmlandScenario + BattlefieldStart / RearStart",
-      "summary": "Scenario creation composes the4kmÃ—6km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
+      "summary": "Scenario creation composes the4km\u00c3\u20146km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
       "nodes": [
         {
           "id": "n0",
@@ -4114,20 +4184,23 @@
     "game/world_probe/full_size_probe.gd": "reviews",
     "game/preview_3d/supplier_convoys.gd": "preview",
     "game/staffing/rear_work_positions.gd": "staffing",
-    "game/characters/character_visual.gd": "character_animation"
+    "game/characters/character_visual.gd": "character_animation",
+    "game/staffing/hauling_policy.gd": "hauling",
+    "game/rear_base/hauling_priority_list.gd": "ui",
+    "game/rear_base/hauling_priority_row.gd": "ui"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
     "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
-    "game/rear_base/base_simulation.gd": "123e1ce48e110a98a89ffe787a0625bcc412a2a85542262bf783a17c71904c7a",
+    "game/rear_base/base_simulation.gd": "200ca294c26372f50b724be6bc71ba18f802b9cf76f96a79578fb0ca828d7e92",
     "game/identity/identity_ledger.gd": "7fce26d3dd685fc1e8c97b70d439bb25b1256242f4af1ef94c94d6506b81dcb8",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "9bf07fd9aad21b9bd7284c474d2d76fb5d1090a56887612ecaf05e81e22ae387",
+    "game/staffing/rear_simulation.gd": "c715c7e860652247a4d465ecdabf66d60808dafe8abc9ca67ddb27bc66c5dd5e",
     "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "b16931c007e49f3a05108747c57793035dc8f43026e301ffe754b8bd17d87ac9",
+    "game/procurement/receiving_simulation.gd": "3f404b92699a01d57349d5b6b3ccc21b48874b87cafaff0ddfb337a44fc17ccf",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "13d0ce6bf86a56b71f0dfb4bd4a405c00ca09cab67b63f5f81bc3c7def2f9c16",
+    "game/construction/construction_service.gd": "fe94864876bd113b29f8cb2198d0a83ad02283cc42c556d5347a71faece29655",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
     "game/construction/construction_truck_service.gd": "63494a47faaa162a10c3b7c0cd75ace2485a5fe4d732e05971460a43983323e9",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
@@ -4140,9 +4213,9 @@
     "game/training/training_service.gd": "2b39cf0e71901b6b7ef73228e05b9876843c50a9be18d41ca8ede207c709fca2",
     "game/vehicles/vehicle_activity.gd": "3681019c138ddb054d6fe0a560475f7a20b98464f42ac100b492509d3b9b0af1",
     "game/production/vehicle_specs.gd": "df5ff29df40502dbad790b3296037f203e7319c7d6ee65448f31dd527bb100cc",
-    "game/dispatch/dispatch_service.gd": "1713db259ab679c5211f1fc22b278a834b27137d48d5b414b21a6553e1c0c1bb",
+    "game/dispatch/dispatch_service.gd": "4d5ace99f524bfa61b913fae887f406411284aa7155cc912957444cf3d980bc3",
     "game/hq/hq_logistics.gd": "a5087c86a6667f89b3ce718ccae405f31f8571d9ca37477f570c3dc43868109f",
-    "game/logistics/rear_logistics.gd": "cc33fc15fcf96ba8aaca04f6dbbbb3164b55f40fd4dabe3665ca549c5cdaa0a4",
+    "game/logistics/rear_logistics.gd": "446ae2f1beb238f96828f2457dbbad171ec0258d5f84fabb9cc71b4f58b3a17b",
     "game/logistics/army_supply_view.gd": "2e4ab489b06eb14cba3f27ccca53ffe565d943237178a663513c1be45c3323da",
     "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
     "game/military/organization.gd": "02ba5a766649f7d0c793a3a29d70b431648e58ac12bb1aa6eb1fdb4aa37c83f0",
@@ -4176,11 +4249,11 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "d56e98ed72fd7d754100c2653db09d838edc0984895d3bc9420954b30e537d1c",
+    "game/rear_base/base_demo.gd": "94677af7fae78c5ff5162163534af7f0dd50d3efc91494f59bf26a4126901b85",
     "game/rear_base/base_map.gd": "e7e8a3d8ed67411f82ffae208c618457aa714c2e760a3ecbd1cee078be9c7e66",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
-    "game/rear_base/workforce_panel.gd": "55547a609a74c5714c5a55300d1d0022320055abac82c626d4732c8073f59ef6",
+    "game/rear_base/workforce_panel.gd": "76803421c5e44bfbba949a9b67bc953c10291292ecff300e538bda09fc813873",
     "game/ui/command_shell.gd": "07df86926a86ea31a95e404b30346ff32e82bcd10b15412f5253904012d776e1",
     "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
@@ -4190,7 +4263,7 @@
     "game/preview_3d/preview.gd": "569f69747685701ba3235620c7ad23dc4fd911a31f7757cdec08e015b3cac958",
     "game/preview_3d/world_presenter.gd": "8e39671374084e94cd5c96c233f78984ea3ba623b0b5d8847491d142c60d1b2f",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
-    "game/preview_3d/rear_workers.gd": "f40d4318d15ae7d56831aed4e3356357a68b85b24841484c293e9c82e214ab34",
+    "game/preview_3d/rear_workers.gd": "22232598fef4942ae0959f30ef3aaaf7678e5755ed12741142ae91cd69b71057",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
     "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
     "game/preview_3d/t01_presentation.gd": "f03c89b76313136d0c4770039576e7b521158b1324624dbb747bef16bce7d1a0",
@@ -4240,6 +4313,9 @@
     "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721",
     "game/preview_3d/supplier_convoys.gd": "55b72ca1e3394c33f809110b8c67269cf7630dbdde077e46bd1523e00c310b3b",
     "game/characters/character_visual.gd": "44635f9f3918115d0474c574acc10942e22f3f64f3d2f0f35ceebd7c5467310c",
-    "game/staffing/rear_work_positions.gd": "d3d90028ddfccdc22a220bae6768193826acdeb2647b0a23b09cb1f10aa1a08c"
+    "game/staffing/rear_work_positions.gd": "9dd72d4dcbc881a7e4995c6ac3d1bb998a842a5770cda192f1e2d05c3b7726ba",
+    "game/rear_base/hauling_priority_list.gd": "a63d92a6173e5e51e9c81b2b7e19dd2f2acea8936228000568f1b0f72c7e5ce5",
+    "game/rear_base/hauling_priority_row.gd": "be6c26f305670bba807eda1136dfc5a85324b6fda4e7bad286dbf81737c9482a",
+    "game/staffing/hauling_policy.gd": "e6932fb523c0efda86681a07f4e2f94c5ad8c36b9f6c4cf772b5ebc9101e5bbc"
   }
 }

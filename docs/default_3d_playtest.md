@@ -1,5 +1,7 @@
 # Play the 3D opening
 
+Workers now default to [Hauling](hauling_priorities.md). Open **Workers / Jobs → Hauling**, drag the six-dot handles (or use Move up/down), then **Confirm hauling priorities**. Top is highest for the next feasible task; existing carries finish safely. Four free workers can each claim25kg from a100kg+ truck.
+
 The [character integration](character_animation.md) replaces provisional worker
 and soldier visuals with the Artist's models/clips. Four unloaders have distinct
 actual work positions and short numbered labels. Order100kg to give all four a

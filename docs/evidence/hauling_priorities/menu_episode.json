@@ -1,0 +1,177 @@
+{
+  "checks": [
+    "Actual normal configured main loaded: PASS",
+    "Four actual opening workers default to exclusive Hauling: PASS",
+    "Actual paid200kg and eight-worker convoy committed: PASS",
+    "Four real workers own eligible stopped200kg freight under explicit model intervals: PASS",
+    "Each common worker owns a distinct real25kg claim: PASS",
+    "Each common worker owns a distinct real25kg claim: PASS",
+    "Each common worker owns a distinct real25kg claim: PASS",
+    "Each common worker owns a distinct real25kg claim: PASS",
+    "Actual Workforce menu contains expandable Hauling: PASS",
+    "Injected Godot grip drag changes draft only: PASS",
+    "Actual live menu refresh preserves unconfirmed draft: PASS",
+    "Move-up fallback edits the same local draft: PASS",
+    "Revert restores committed order: PASS",
+    "Confirm commits category preference once: PASS",
+    "Actual site requests construction materials while existing unload carries remain committed: PASS",
+    "Reorder/site command retains current safe unload claim start-unloader-01: PASS",
+    "Reorder/site command retains current safe unload claim start-unloader-02: PASS",
+    "Reorder/site command retains current safe unload claim start-unloader-03: PASS",
+    "Reorder/site command retains current safe unload claim start-unloader-04: PASS",
+    "Retained actual Hauling menu image: PASS",
+    "Committed top construction category selects real site haul before remaining truck cargo: PASS",
+    "Paid200kg actually deposited without loss or duplicate transfer: PASS",
+    "All eight physically joined new workers default to Hauling: PASS",
+    "Closing management keeps committed order: PASS",
+    "Declared ordinary outbound component hauler: PASS",
+    "Same actual component worker assigned Hauling: PASS",
+    "Declared qualified component driver: PASS",
+    "Actual fixture owned truck gets actual qualified driver: FAIL",
+    "Declared finite25kg component stock: PASS",
+    "Real Dispatch manifest accepts actual owned truck and finite stock: FAIL"
+  ],
+  "failed": true,
+  "observations": {
+    "after": {
+      "actors": 12,
+      "assigned_hauling": 12,
+      "order": [
+        "construction",
+        "unloading",
+        "dispatch",
+        "production",
+        "other"
+      ],
+      "time": 161.0,
+      "unloaded": 200
+    },
+    "controlled_eligibility": {
+      "actors": {
+        "start-unloader-01": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-01",
+          "load": {},
+          "motion": {},
+          "phase": "Unloading"
+        },
+        "start-unloader-02": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-02",
+          "load": {},
+          "motion": {},
+          "phase": "Unloading"
+        },
+        "start-unloader-03": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-03",
+          "load": {},
+          "motion": {},
+          "phase": "Unloading"
+        },
+        "start-unloader-04": {
+          "blocked_since": -1.0,
+          "deadline": 1e99999,
+          "id": "start-unloader-04",
+          "load": {},
+          "motion": {},
+          "phase": "Unloading"
+        }
+      },
+      "simulation_time": 11.0,
+      "workers": {
+        "start-unloader-01": {
+          "job": {
+            "claim_id": "receiving-job-0001",
+            "code": "M01",
+            "destination": "receiving",
+            "ends_at": 20.3333333333333,
+            "order_id": "delivery-0001",
+            "path": [
+              "(117.0, 183.0)",
+              "(117.0, 197.0)"
+            ],
+            "phase": "Approach",
+            "quantity": 25,
+            "slot": 0,
+            "source_id": "delivery-0001-M01",
+            "started_at": 11.0
+          },
+          "person_id": "start-unloader-01",
+          "shared": true
+        },
+        "start-unloader-02": {
+          "job": {
+            "claim_id": "receiving-job-0002",
+            "code": "M01",
+            "destination": "receiving",
+            "ends_at": 20.5721896489461,
+            "order_id": "delivery-0001",
+            "path": [
+              "(119.0, 183.0)",
+              "(117.96, 184.56)",
+              "(119.0, 197.0)"
+            ],
+            "phase": "Approach",
+            "quantity": 25,
+            "slot": 0,
+            "source_id": "delivery-0001-M01",
+            "started_at": 11.0
+          },
+          "person_id": "start-unloader-02",
+          "shared": true
+        },
+        "start-unloader-03": {
+          "job": {
+            "claim_id": "receiving-job-0003",
+            "code": "M01",
+            "destination": "receiving",
+            "ends_at": 20.5721896489461,
+            "order_id": "delivery-0001",
+            "path": [
+              "(121.0, 183.0)",
+              "(122.04, 184.56)",
+              "(121.0, 197.0)"
+            ],
+            "phase": "Approach",
+            "quantity": 25,
+            "slot": 0,
+            "source_id": "delivery-0001-M01",
+            "started_at": 11.0
+          },
+          "person_id": "start-unloader-03",
+          "shared": true
+        },
+        "start-unloader-04": {
+          "job": {
+            "claim_id": "receiving-job-0004",
+            "code": "M01",
+            "destination": "receiving",
+            "ends_at": 20.3333333333333,
+            "order_id": "delivery-0001",
+            "path": [
+              "(123.0, 183.0)",
+              "(123.0, 197.0)"
+            ],
+            "phase": "Approach",
+            "quantity": 25,
+            "slot": 0,
+            "source_id": "delivery-0001-M01",
+            "started_at": 11.0
+          },
+          "person_id": "start-unloader-04",
+          "shared": true
+        }
+      }
+    },
+    "site_command": {
+      "id": "site-0001",
+      "message": "Site placed; Building Materials are requested from the Supply Table and completed Materials Plants. Assign haulers and up to four builders.",
+      "ok": true
+    }
+  },
+  "scope": "Normal main/live1x four-worker assignment; injected Godot GUI drag, explicit-model continuation for current priority/arrival episode; separate finite declared Dispatch component. No OS-native input, wall-time throughput, full factory/army loop, universal crowd or FPS acceptance."
+}
