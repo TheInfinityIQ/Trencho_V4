@@ -1,5 +1,25 @@
 # Gameplay developer team
 
+## Current working agreement — 9 November 2026
+
+The Lead is the only programmer. The Lead performs technical review and owns
+implementation, validation, publication and merges. The Game Designer approves
+the current PR's game meaning; after that approval and required checks pass,
+the Lead merges without another routine Dawson permission question. Dawson is
+not a routine work/PR/merge blocker. Scope a genuine external permission refusal
+to the affected action and continue independent authorized work.
+
+**Trencho — 3D Artist** creates/finds free3D assets and can create2D assets;
+the original2D Artist is retired and must no longer be consulted. Consult UI/UX
+only when a menu update is needed. Existing controls reused by a world
+interaction do not create a standing menu-review gate. Artists/designers
+coordinate content and design with the Lead; other developer chats stay inactive.
+
+The movement/Strategy and broad-settlement architecture assessment is recorded
+in [deferred architecture](deferred_architecture.json) for later. It does not
+block current gameplay delivery or authorize an immediate refactor/benchmark.
+Earlier conflicting roster/assignment text is historical.
+
 ## Current ownership — 8 November 2026
 
 Dawson returned implementation to the Lead as the only developer. Developer C

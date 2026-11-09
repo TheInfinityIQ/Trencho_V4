@@ -1,5 +1,5 @@
 {
-  "updated_date": "2026-11-08",
+  "updated_date": "2026-11-09",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
     "title": "Trencho V4 Developer",
@@ -22,19 +22,19 @@
       "title": "Trencho â€” Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
-      "scope": "Gameplay interpretation, current feature gaps, priorities and observable experience."
+      "scope": "Gameplay vision/rules and current exact-head PR game-meaning approval; Lead performs technical review and merges after Designer approval and required checks."
     },
     {
       "title": "Trencho â€” UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
-      "scope": "Player interactions, menus, required information and reusable presentation handoffs."
+      "scope": "Consult ONLY when an update to menus is needed; no routine feature/code/merge approval gate."
     },
     {
-      "title": "Trencho - 2D Artist",
-      "thread_id": "6aecc998-2d4c-83e9-9cc3-8d7653edbe04",
-      "kind": "chatgpt",
-      "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs."
+      "title": "Trencho — 3D Artist",
+      "thread_id": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
+      "host_id": "local",
+      "scope": "Create or find free 3D assets and create 2D assets as needed. Coordinate bounded asset/export/licence handoffs with Lead; original2D Artist is no longer consulted. No production-code integration ownership."
     }
   ],
   "current_work": "Use developer_team.agents[*].current_assignment for each active developer task and continuity_recovery.lead_next_action for lead dispatch. No duplicate mutable assignment summary is maintained here.",
@@ -76,7 +76,7 @@
     "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
   },
   "developer_team": {
-    "authority": "Dawson direct 8 November 2026 instruction: Lead returns to being the only developer; C finishes the current Workshop task and then stops.",
+    "authority": "Dawson direct9November2026: Lead is only programmer; work with Game Designer for PR approval, then Lead merges. Dawson is not a routine task/publication/merge blocker.",
     "model": "gpt-6.1-sol",
     "reasoning_effort": "medium",
     "charter": "docs/developer_team.md",
@@ -121,7 +121,7 @@
     "review_policy": {
       "technical": "Lead owns engineering review, fixes, validation and integration as sole developer under Dawson 8 November instruction. Do not reactivate another developer to satisfy the earlier supporting-review convention.",
       "design": "Designer explicit game-identity approval at current exact PR head",
-      "default": "Pending or changes requested holds this PR; author/reviewer owns the next action. Lead merges after both approve and required checks pass, without another routine Dawson permission.",
+      "default": "Lead technical approval plus current exact-head Game Designer approval and required checks permit Lead merge without another Dawson permission question. Concrete external permission/tool restrictions remain binding only for their affected action.",
       "native_github_approval": "Report actual submission separately from a recorded role review note",
       "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
@@ -291,7 +291,7 @@
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
       "record_kind": "completed successor history; never dispatch this already integrated work"
     },
-    "lead_next_action": "Lead owns Workshop publication, brief current-change GitHub observation, exact-head technical and Designer game-meaning review, eligible merge and safe main adoption. C has stopped after local source handoff; no successor or fixes assigned. All later implementation remains with Lead. Ordinary factory/supply/repeat/native/FPS acceptance stays open; T03 exterior deferred after declined download, without retry or workaround.",
+    "lead_next_action": "Lead finalizes Supply Table PR136: normal-opening E opens actual existing purchasing/hiring; focused42575068272 PASS at source357bd633 with exact evidence and both images reviewed. Final metadata approval/required checks then Lead merge. GDD alignment PR137 merged eed39b6 with main42576033262 PASS. Next: consult Designer on next bounded ordinary factory-loop connection; no dormant developer activation or human continue gate. Movement/Strategy/coupling review deferred in deferred_architecture.json. Current3D Artist handles3D/2D; retired2D Artist never consulted; UI/UX only for menu updates.",
     "publication": "The partial prototype is merged into mainab2a406. This three-file documentation handoff is a separate local branch until normally published and reviewed; historical candidate receipts do not imply pending source-publication permission.",
     "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
   },
@@ -351,5 +351,16 @@
     "player_launch": "Update a clean local main to the merged revision, open project.godot in Godot and press F5. The main scene starts in the paused empty field. Preserve local changes; no forced pull/reset or human-checkout update was performed by this handoff.",
     "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance.",
     "validation": "Main validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406; changed-production parsing passed, optional demonstration SKIPPED. Lead supplied receipt; B independently read actual head/jobs/steps. No watcher or new run."
-  }
+  },
+  "retired_consultants": [
+    {
+      "title": "Trencho - 2D Artist",
+      "thread_id": "6aecc998-2d4c-83e9-9cc3-8d7653edbe04",
+      "kind": "chatgpt",
+      "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs.",
+      "retired_date": "2026-11-09",
+      "status": "Do not consult; replaced by Trencho — 3D Artist under Dawson direct instruction."
+    }
+  ],
+  "deferred_architecture": "docs/deferred_architecture.json"
 }

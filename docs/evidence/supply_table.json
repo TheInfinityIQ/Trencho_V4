@@ -1,0 +1,65 @@
+{
+  "status": "PASS one normal paused opening/current E/physics and one Hire8 UI commitment; Lead inspected both images. Final exact role decisions belong to PR136.",
+  "source_head": "357bd63317217b19b59f57ab5bd41529fe7646db",
+  "precode": "4b1ef753878371a5271cff8c0b7cc20277e0527b",
+  "required_run": 42575061812,
+  "direct_run": 42575068272,
+  "artifact": 13655076035,
+  "observer_sha256": "98c57b990329ab4945b8c36502afa6b07a90088c8fe04253aa73523a437d9a67",
+  "child_seconds": 35,
+  "wrapper_seconds": 45,
+  "files": {
+    "direct.log.base64": {
+      "bytes": 4553,
+      "sha256": "7069871ffc046db1e618bd511f489ead9406d68029ea59069ad4c9fb0fe620e9",
+      "decoded_bytes": 3412,
+      "decoded_sha256": "857b54c3ce2a4af07fc4b7340a17ce34b741ed049d72ecf28e0f8fda152447d8"
+    },
+    "scope.txt": {
+      "bytes": 268,
+      "sha256": "7d18af8c141d3b638779e4507ee0769e8986f8178a8a3156f3cb503a95687317",
+      "decoded_bytes": 268,
+      "decoded_sha256": "7d18af8c141d3b638779e4507ee0769e8986f8178a8a3156f3cb503a95687317"
+    },
+    "supply_table_open.png": {
+      "bytes": 98244,
+      "sha256": "fa3b1abb11017ef71e1f2ab1f6fbc940ebbfc2537555d09fec96d08e542baaab",
+      "decoded_bytes": 98244,
+      "decoded_sha256": "fa3b1abb11017ef71e1f2ab1f6fbc940ebbfc2537555d09fec96d08e542baaab"
+    },
+    "supply_table_pending.png": {
+      "bytes": 94002,
+      "sha256": "1d9b2fb290ad97d8271973083b0afb9e72b44a2f633de4bfa59536361206f301",
+      "decoded_bytes": 94002,
+      "decoded_sha256": "1d9b2fb290ad97d8271973083b0afb9e72b44a2f633de4bfa59536361206f301"
+    }
+  },
+  "observed": {
+    "entry": "Unreplaced normal empty-field Preview; unchanged default manager/camera",
+    "physical_place": "receiving",
+    "logical_ui_context": "building/terminal → Supplies/Purchase",
+    "on_open": {
+      "requisition": 2500,
+      "M11": 500,
+      "hired_rear_people": 0,
+      "sites": 0,
+      "time": 0,
+      "orders": 0
+    },
+    "after_one_hire": {
+      "requisition": 2360,
+      "order": "delivery-0001",
+      "kind": "Personnel",
+      "cost": 140,
+      "state": "Ordered",
+      "reserved_people": 8,
+      "arrived_people": 0,
+      "arrival_at": 90,
+      "time": 0,
+      "M11": 500
+    },
+    "image_scope": "Open image shows hire price/travel text and raw controls; pending image shows2360REQ/eightworkers Ordered/Booked dispatchdue5s. Arrival_at90 is a log/asserted service fact, not visible in the pending image."
+  },
+  "verification_limits": "Direct injected recapture/E handler, actual queued physics and existing UI button/order-selection signals. Not native OS/viewport clicks, timed90s progression/disembarkation, actual raw purchase/build/manufacture/default staffing/oldWorkshop runtime/full supply/repeat/FPS acceptance. No local engine or regression suite.",
+  "preserved": "Existing Workshop branch source-reviewed, economic/service/UI code and assets/sidecars/fixtures unchanged. Movement/Strategy redesign deferred; team ownership updated without activating retired developers or original2D Artist."
+}
