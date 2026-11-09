@@ -1,0 +1,542 @@
+{
+  "status": "Actual Artist exports integrated in source; Godot observation pending",
+  "creator": "Trencho 3D Artist; character foundation derived from existing Kenney CC0 asset; rifle original project prop",
+  "original_character_source": "https://kenney.nl/assets/animated-characters-protagonists",
+  "license": "Original bundled Kenney CC0 license bytes preserved in assets/kenney_license.txt; source/adaptations and original prop authored for this project.",
+  "artist_qa": "Artist reports geometry/deformation, actual exported clip round-trips and official glTF format validation. Actual worker carry/walk renders inspected by Lead; further engine evidence separate.",
+  "world_motion": "In-place skeleton animation only; game services own world motion, custody, actual work and shots. Hips bone motion retained.",
+  "source_policy": "Editable Blender files are LFS-tracked in source/. Godot ignores that folder; it will not invoke Blender when opening this project.",
+  "assets": [
+    {
+      "character": "worker",
+      "export": "game/characters/assets/construction_worker.glb",
+      "export_sha256": "4e5ab135c98c054ad70f70a906a6539f279f8425571933aefb58a97097f18089",
+      "bytes": 759112,
+      "editable_source": "game/characters/source/construction_worker.blend",
+      "source_sha256": "7a17bf831ae110a1b70a09e19b48b0cd11a409fa83fc6fdf85e0c9afd2b438f0",
+      "animations": [
+        "carry_idle",
+        "carry_walk",
+        "construct",
+        "idle",
+        "pickup",
+        "unload",
+        "walk"
+      ],
+      "skin_joints": [
+        33
+      ],
+      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\worker",
+      "artist_format_report": {
+        "numErrors": 0,
+        "numWarnings": 0,
+        "numInfos": 0,
+        "numHints": 0,
+        "messages": [],
+        "truncated": false
+      },
+      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance.",
+      "clip_metadata": {
+        "character": "worker",
+        "fps": 30,
+        "in_place": true,
+        "root_bone": "Root",
+        "root_world_motion": false,
+        "hips_vertical_bob": true,
+        "clips": {
+          "idle": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": true,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 3.639766857202996e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "walk": {
+            "seconds": 0.6666666666666666,
+            "frames": [
+              1,
+              21
+            ],
+            "loop": true,
+            "nominal_speed_mps": 1.5,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 5.990137062043763e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "carry_idle": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": true,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 3.639766857202996e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "carry_walk": {
+            "seconds": 0.8,
+            "frames": [
+              1,
+              25
+            ],
+            "loop": true,
+            "nominal_speed_mps": 1.2,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 5.9486995757305915e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "pickup": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": false,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 5.539545504880281e-06,
+            "loop_rotation_error_deg": null,
+            "events_advisory": {
+              "reach_low_load_s": 1.0,
+              "ready_to_carry_s": 2.0,
+              "ownership": "Game phase timer controls custody; markers do not transfer inventory."
+            }
+          },
+          "unload": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": false,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 5.528335823522072e-06,
+            "loop_rotation_error_deg": null,
+            "events_advisory": {
+              "release_pose_s": 1.7,
+              "terminal_hold": true,
+              "ownership": "Hold terminal pose until actual Drop phase ends; game controls release."
+            }
+          },
+          "construct": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": true,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 4.072953772626089e-06,
+            "loop_rotation_error_deg": 0.0
+          }
+        },
+        "readiness": "Authored/exported clips; Godot integration acceptance remains Lead-owned."
+      },
+      "roundtrip": {
+        "clips": [
+          {
+            "name": "carry_idle",
+            "seconds": 2.0
+          },
+          {
+            "name": "carry_walk",
+            "seconds": 0.7999999364217122
+          },
+          {
+            "name": "construct",
+            "seconds": 2.0
+          },
+          {
+            "name": "idle",
+            "seconds": 2.0
+          },
+          {
+            "name": "pickup",
+            "seconds": 2.0
+          },
+          {
+            "name": "unload",
+            "seconds": 2.0
+          },
+          {
+            "name": "walk",
+            "seconds": 0.6666666030883789
+          }
+        ],
+        "bones": 33,
+        "armature_scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "walk_midpose_roundtrip_max_bounds_error_m": 4.8160552978515625e-05,
+        "qa_pass": true,
+        "accepted_geometry_warnings": [],
+        "gameplay_and_godot_acceptance": "Not performed by artist; Lead-owned."
+      },
+      "attachment": {
+        "bone": "RightHand",
+        "prop": "Separate0.35m cube; prop origin at its centre.",
+        "space": "glTF/Godot bone-local; apply under BoneAttachment3D without extra axis rotation.",
+        "position_m": [
+          0.037897299975156784,
+          0.08813835680484772,
+          0.1976626217365265
+        ],
+        "rotation_quaternion_xyzw": [
+          -0.5313684344291687,
+          -0.5000067949295044,
+          -0.46651268005371094,
+          0.5000067949295044
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "matrix_rows": [
+          [
+            0.06471848487854004,
+            0.9978947043418884,
+            -0.004233347252011299,
+            0.037897299975156784
+          ],
+          [
+            0.06485669314861298,
+            2.7008847609977238e-05,
+            0.9978950619697571,
+            0.08813835680484772
+          ],
+          [
+            0.9957941174507141,
+            -0.06485675275325775,
+            -0.06471826136112213,
+            0.1976626217365265
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "grip_box_dimensions_m": [
+          0.35,
+          0.35,
+          0.35
+        ],
+        "carrying_box_center_blender_m": [
+          0,
+          -0.37,
+          1.062
+        ],
+        "load_contact_box_center_blender_m": [
+          0,
+          -0.43,
+          0.6
+        ],
+        "load_contact_box_bottom_m": 0.425,
+        "note": "Pickup/unload reach a low loading surface, not a floor pickup. Spawn/hide/release remain game events.",
+        "derivation": "Derived from the delivered GLB carry_idle first-frame RightHand node, not assumed Blender bone axes."
+      }
+    },
+    {
+      "character": "soldier",
+      "export": "game/characters/assets/soldier.glb",
+      "export_sha256": "8ebf9a8cdfc62fac15bade2f02c5dc6bb36285a7d8995c4690ed4529e6c072da",
+      "bytes": 586356,
+      "editable_source": "game/characters/source/soldier.blend",
+      "source_sha256": "009f472d41f06ecd672ebfcfa47a5482e49f14c0ff101057a77bad81cd6506f8",
+      "animations": [
+        "death",
+        "fire",
+        "idle",
+        "run",
+        "walk",
+        "wounded_idle"
+      ],
+      "skin_joints": [
+        33
+      ],
+      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\soldier",
+      "artist_format_report": {
+        "numErrors": 0,
+        "numWarnings": 0,
+        "numInfos": 0,
+        "numHints": 0,
+        "messages": [],
+        "truncated": false
+      },
+      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance.",
+      "clip_metadata": {
+        "character": "soldier",
+        "fps": 30,
+        "in_place": true,
+        "root_bone": "Root",
+        "root_world_motion": false,
+        "hips_vertical_bob": true,
+        "clips": {
+          "idle": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": true,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 3.639766857202996e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "walk": {
+            "seconds": 0.6666666666666666,
+            "frames": [
+              1,
+              21
+            ],
+            "loop": true,
+            "nominal_speed_mps": 1.5,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 5.990137062043763e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "run": {
+            "seconds": 0.6,
+            "frames": [
+              1,
+              19
+            ],
+            "loop": true,
+            "nominal_speed_mps": 2.75,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 7.036267726254403e-06,
+            "loop_rotation_error_deg": 0.0
+          },
+          "fire": {
+            "seconds": 0.3,
+            "frames": [
+              1,
+              10
+            ],
+            "loop": false,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 3.8078225669803137e-06,
+            "loop_rotation_error_deg": null,
+            "note": "Aim/recoil body clip triggered only by an actual shot. Separate rifle attachment required; no projectile or gameplay track."
+          },
+          "death": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": false,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 0,
+            "loop_rotation_error_deg": null,
+            "note": "Non-looping backward fall; hold final frame. Root/object fixed; Hips vertical settling is skeletal motion."
+          },
+          "wounded_idle": {
+            "seconds": 2.0,
+            "frames": [
+              1,
+              61
+            ],
+            "loop": true,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 0,
+            "loop_rotation_error_deg": 0.0,
+            "note": "Supine breathing loop for living casualty. No rifle attachment in wounded/dead state."
+          }
+        },
+        "readiness": "Authored/exported clips; Godot integration acceptance remains Lead-owned."
+      },
+      "roundtrip": {
+        "clips": [
+          {
+            "name": "death",
+            "seconds": 2.0
+          },
+          {
+            "name": "fire",
+            "seconds": 0.3
+          },
+          {
+            "name": "idle",
+            "seconds": 2.0
+          },
+          {
+            "name": "run",
+            "seconds": 0.5999999364217122
+          },
+          {
+            "name": "walk",
+            "seconds": 0.6666666030883789
+          },
+          {
+            "name": "wounded_idle",
+            "seconds": 2.0
+          }
+        ],
+        "bones": 33,
+        "armature_scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "walk_midpose_roundtrip_max_bounds_error_m": 5.364418029785156e-07,
+        "worker_skeleton_rest_matrix_max_difference": 0.0,
+        "qa_pass": true,
+        "accepted_geometry_warnings": [],
+        "observed_poses": {
+          "walk": {
+            "frame": 11,
+            "bounds_blender_m": [
+              [
+                -0.3303968906402588,
+                -0.5233350396156311,
+                -4.4675175558950286e-07
+              ],
+              [
+                0.3366034924983978,
+                0.2990000247955322,
+                1.75600004196167
+              ]
+            ]
+          },
+          "fire": {
+            "frame": 3,
+            "bounds_blender_m": [
+              [
+                -0.3692530393600464,
+                -0.5135233402252197,
+                -1.4109906487647095e-07
+              ],
+              [
+                0.2734251618385315,
+                0.2883903384208679,
+                1.8062851428985596
+              ]
+            ]
+          },
+          "death": {
+            "frame": 61,
+            "bounds_blender_m": [
+              [
+                -0.3771090507507324,
+                -0.9066925048828125,
+                0.005000010132789612
+              ],
+              [
+                0.3771088123321533,
+                0.9360429048538208,
+                0.5949259996414185
+              ]
+            ]
+          },
+          "wounded_idle": {
+            "frame": 1,
+            "bounds_blender_m": [
+              [
+                -0.3771090507507324,
+                -0.9066925048828125,
+                0.005000010132789612
+              ],
+              [
+                0.3771088123321533,
+                0.9360429048538208,
+                0.5949259996414185
+              ]
+            ]
+          }
+        },
+        "gameplay_and_godot_acceptance": "Not performed by artist; Lead-owned."
+      },
+      "attachment": {
+        "bone": "RightHand",
+        "prop_file": "../rifle/rifle_faceted_v01.glb",
+        "space": "glTF/Godot bone-local; apply under BoneAttachment3D without extra rotation.",
+        "position_m": [
+          0.0022712270729243755,
+          0.07743646204471588,
+          0.03497777506709099
+        ],
+        "rotation_quaternion_xyzw": [
+          -0.5313684940338135,
+          -0.5000065565109253,
+          -0.46651265025138855,
+          0.5000067949295044
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "matrix_rows": [
+          [
+            0.06471873819828033,
+            0.9978949427604675,
+            -0.004233256913721561,
+            0.0022712270729243755
+          ],
+          [
+            0.06485641002655029,
+            2.7096873964183033e-05,
+            0.9978951811790466,
+            0.07743646204471588
+          ],
+          [
+            0.995794415473938,
+            -0.0648568794131279,
+            -0.06471812725067139,
+            0.03497777506709099
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "derivation": "Delivered GLB fire first-frame RightHand node and separate prop grip centre.",
+        "origin": "Rifle pistol-grip centre, model local origin.",
+        "visibility": "Only actually equipped; hide for unarmed, wounded, dead, aboard and hidden presentation.",
+        "forward_gltf_godot": "+Z",
+        "presenter_note": "Character presenter rotates PI; attach prop beneath the same skeleton/presenter. Do not independently rotate prop PI.",
+        "mechanics": "No firing, stock, projectile or damage tracks; actual shot triggers fire clip."
+      }
+    },
+    {
+      "character": "rifle",
+      "export": "game/characters/assets/rifle.glb",
+      "export_sha256": "4f6cc693fc2c6cdcd3384de0f5635ac1f184427d3cc321d5b6d48e0673661765",
+      "bytes": 11340,
+      "editable_source": "game/characters/source/rifle.blend",
+      "source_sha256": "09201cb33bdd237c3a364db41115cb861b10872070e64abc82cb252df46d1827",
+      "animations": [],
+      "skin_joints": [],
+      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\rifle",
+      "artist_format_report": {
+        "numErrors": 0,
+        "numWarnings": 0,
+        "numInfos": 0,
+        "numHints": 0,
+        "messages": [],
+        "truncated": false
+      },
+      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance."
+    }
+  ]
+}

@@ -4,6 +4,10 @@ signal changed(id: String)
 signal removing(id: String, anchor: Node3D)
 var anchors: Dictionary[String,Node3D] = {}
 var views: Dictionary[String,Dictionary] = {}
+var bodies: Dictionary[String,Node3D] = {}
+var _model: RefCounted
+var _armed: Dictionary = {}
+var _detailed := false
 var _ledger: RefCounted
 var _owner: String = ""
 var _ground: Callable
@@ -11,20 +15,26 @@ var _human_factory: Callable
 var _ancestors: Dictionary = {}
 var _dependents: Dictionary = {}
 
-func bind(ledger: RefCounted, player_owner: String, ground: Callable, human_factory: Callable) -> void:
+func bind(ledger: RefCounted, player_owner: String, ground: Callable, human_factory: Callable, model: RefCounted = null) -> void:
 	_disconnect_ledger()
 	for id: String in anchors.keys(): _remove(id)
 	_ledger = ledger
 	_owner = player_owner
 	_ground = ground
 	_human_factory = human_factory
+	_model = model
 	_ledger.entity_moved.connect(_on_entity_moved)
 	_ledger.person_position_changed.connect(_on_person_changed)
+	_ledger.person_fired.connect(_on_shot)
 
 func reconcile(permitted: Array) -> void:
 	# Caller supplies its ONE current FieldPolicy result; never discover new IDs.
 	if _ledger == null: return
 	var present: Dictionary = {}
+	var ids: Array = []
+	for row: Dictionary in permitted:
+		if row.kind == "PERSON" and not bool(row.get("aboard",false)): ids.append(str(row.id))
+	_armed = _ledger.field_person_armament(ids,_owner)
 	for row: Dictionary in permitted:
 		if row.kind != "PERSON" or bool(row.get("aboard",false)): continue
 		var id: String = str(row.id)
@@ -40,21 +50,49 @@ func _refresh(id: String) -> void:
 		return
 	var at: Vector2 = row.position
 	var grounded: Vector3 = Vector3(at.x,float(_ground.call(at)),at.y)
+	var motion: Dictionary = _model.rear.battlefield_operations.motions.get(id,{}) if _model != null else {}
+	row.moving = not motion.is_empty() and not bool(motion.get("pending",false))
+	row.armed = bool(_armed.get(id,false))
 	if views.has(id) and views[id] == row and anchors[id].position.is_equal_approx(grounded): return
-	if views.has(id) and bool(views[id].dead) != bool(row.dead): _remove(id)
 	if not anchors.has(id):
 		var anchor: Node3D = Node3D.new()
 		anchor.set_meta("person_id",id)
 		add_child(anchor)
 		anchors[id] = anchor
-		if not bool(row.dead):
-			var human: Node3D = _human_factory.call(anchor)
-			human.rotation.y = PI
-			anchor.set_meta("model_path","res://game/preview_3d/assets/manager.fbx")
+		var human: Node3D = _human_factory.call(anchor)
+		human.rotation.y = PI
+		human.animation_enabled = _detailed
+		bodies[id] = human
+		anchor.set_meta("model_path","res://game/characters/assets/soldier.glb")
 	_replace_dependencies(id,row.ancestors)
+	if views.has(id):
+		var direction: Vector2 = at-Vector2(anchors[id].position.x,anchors[id].position.z)
+		if not direction.is_zero_approx(): anchors[id].rotation.y = atan2(-direction.x,-direction.y)
 	views[id] = row
 	anchors[id].position = grounded
+	if _model != null:
+		var speed := 0.0
+		if row.moving:
+			for part: Dictionary in motion.plan.parts:
+				speed = (part.to as Vector2).distance_to(part.from)/maxf(0.000001,float(part.seconds))
+				if speed > 0.0: break
+		var action: StringName = &"death" if row.dead else (&"wounded" if row.caution else (&"run" if speed > 2.2 else (&"walk" if row.moving else &"idle")))
+		bodies[id].set_activity(action,speed,float(motion.get("started",row.state_entered_at)))
+		bodies[id].set_armed(row.armed)
 	changed.emit(id)
+
+func _on_shot(id: String) -> void:
+	if bodies.has(id): bodies[id].fire()
+
+func sync_playback() -> void:
+	for body: Node3D in bodies.values(): body.sync_playback()
+
+func set_animation_detail(enabled: bool) -> void:
+	if _detailed == enabled: return
+	_detailed = enabled
+	for body: Node3D in bodies.values():
+		body.animation_enabled = enabled
+		body.sync_playback()
 
 func _replace_dependencies(id: String, parents: Array) -> void:
 	if _ancestors.get(id,[]) == parents: return
@@ -86,12 +124,15 @@ func _remove(id: String) -> void:
 	removing.emit(id,anchor) # World and cue references go first, before any free.
 	_clear_dependencies(id)
 	views.erase(id)
+	bodies.erase(id)
 	anchors.erase(id)
 	remove_child(anchor)
 	anchor.queue_free()
 
 func _disconnect_ledger() -> void:
+	_model = null
 	if _ledger != null:
+		if _ledger.person_fired.is_connected(_on_shot): _ledger.person_fired.disconnect(_on_shot)
 		if _ledger.entity_moved.is_connected(_on_entity_moved): _ledger.entity_moved.disconnect(_on_entity_moved)
 		if _ledger.person_position_changed.is_connected(_on_person_changed): _ledger.person_position_changed.disconnect(_on_person_changed)
 	_ledger = null
@@ -101,6 +142,8 @@ func _exit_tree() -> void:
 	for id: String in anchors: removing.emit(id,anchors[id])
 	anchors.clear()
 	views.clear()
+	bodies.clear()
+	_armed.clear()
 	_ancestors.clear()
 	_dependents.clear()
 	_ground = Callable()

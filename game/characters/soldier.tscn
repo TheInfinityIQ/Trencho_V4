@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/characters/character_visual.gd" id="1"]
+[ext_resource type="PackedScene" path="res://game/characters/assets/soldier.glb" id="2"]
+
+[node name="SoldierVisual" type="Node3D"]
+script = ExtResource("1")
+soldier = true
+rifle_transform = Transform3D(0.06471873819828033, 0.06485641002655029, 0.995794415473938, 0.9978949427604675, 2.7096873964183033e-05, -0.0648568794131279, -0.004233256913721561, 0.9978951811790466, -0.06471812725067139, 0.0022712270729243755, 0.07743646204471588, 0.03497777506709099)
+
+[node name="Model" parent="." instance=ExtResource("2")]

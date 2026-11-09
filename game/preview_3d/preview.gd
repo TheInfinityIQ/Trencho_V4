@@ -649,6 +649,7 @@ func _inspect(id: String) -> void:
 	_refresh_inspection()
 
 func _field_camera_changed(_camera: Camera3D) -> void:
+	if world != null: world.field_persons.set_animation_detail(world.rts.size <= 240.0)
 	if _field_cues != null: _field_cues.request_projection()
 	if _truck_cues != null: _truck_cues.request_projection()
 	if _objective_cues != null: _objective_cues.request_projection()
@@ -670,6 +671,7 @@ func _refresh_inspection() -> void:
 
 func _state_changed() -> void:
 	if world != null:
+		world.sync_character_playback()
 		world.rear_workers.request_refresh()
 		world.utility_trucks.request_refresh()
 		world.rear_t01_trucks.request_refresh()
