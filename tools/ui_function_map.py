@@ -518,23 +518,25 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument('--update', action='store_true')
     mode.add_argument('--check', action='store_true')
+    parser.add_argument('--diagram-only', action='store_true', help='Preserve deferred button-test fixtures; generate/check only the diagram.')
     arguments = parser.parse_args()
     document = json.loads((ROOT / 'docs/system_map.json').read_text(encoding='utf-8'))
     index = SourceIndex(ROOT, document)
     result = render(index, (ROOT / TEMPLATE).read_text(encoding='utf-8'))
-    obligations = json.dumps(button_contracts(index), ensure_ascii=False, indent=2) + '\n'
+    obligations = None if arguments.diagram_only else json.dumps(button_contracts(index), ensure_ascii=False, indent=2) + '\n'
     destination = ROOT / OUTPUT
     if arguments.check:
         if not destination.exists() or mapper.normalized_text(destination) != result:
             print('STALE UI function diagram. Run Update System Map.cmd.')
             return 1
-        if not (ROOT / CONTRACTS).exists() or mapper.normalized_text(ROOT / CONTRACTS) != obligations:
+        if not arguments.diagram_only and (not (ROOT / CONTRACTS).exists() or mapper.normalized_text(ROOT / CONTRACTS) != obligations):
             print('STALE UI button-test inventory. Run Update System Map.cmd.')
             return 1
         print('PASS: UI function diagram matches current source and line numbers.')
     else:
         destination.write_text(result, encoding='utf-8', newline='\n')
-        (ROOT / CONTRACTS).write_text(obligations, encoding='utf-8', newline='\n')
+        if not arguments.diagram_only:
+            (ROOT / CONTRACTS).write_text(obligations, encoding='utf-8', newline='\n')
         print('Updated ' + OUTPUT)
     return 0
 

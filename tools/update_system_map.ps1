@@ -22,7 +22,7 @@ if (!(Test-Path -LiteralPath $localParser) -and !(Test-Path -LiteralPath $mapPar
 }
 $mode = if ($Check) { '--check' } else { '--update' }
 if ($OpenUiMap) {
-    & $python @pythonArguments (Join-Path $root 'tools/ui_function_map.py') --check
+    & $python @pythonArguments (Join-Path $root 'tools/ui_function_map.py') --check --diagram-only
     if ($LASTEXITCODE -eq 0) {
         Start-Process -FilePath (Join-Path $root 'docs/ui_function_map.html')
         exit 0
@@ -31,7 +31,10 @@ if ($OpenUiMap) {
 }
 & $python @pythonArguments (Join-Path $PSScriptRoot 'system_map.py') $mode
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& $python @pythonArguments (Join-Path $root 'tools/ui_function_map.py') $mode
+& $python @pythonArguments (Join-Path $root 'tools/ui_function_map.py') $mode --diagram-only
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$atlasArguments = if ($Check) { @('--check') } else { @() }
+& $python @pythonArguments (Join-Path $root 'tools/system_atlas.py') @atlasArguments
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 # The generated HTML is itself part of the living map. Fingerprint it after
 # regeneration; checking stays read-only and never rewrites either document.
