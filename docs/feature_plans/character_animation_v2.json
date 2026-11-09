@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "amends": "character_animation_v1.json",
+  "recorded": "9 November 2026, during implementation/source review before engine observation",
+  "preserved_original_plan": true,
+  "discoveries": [
+    {"id": "work-point-admission", "kind": "planning discovery", "finding": "Adding the Table as a walking obstacle also makes old source-selection routes to its centre invalid. Correcting only execution endpoints would leave legitimate M11 hauls rejected before selection.", "response": "Use the same work-point owner for read-only source/destination route previews and actual reservation/commit. Keep preview selection free of reservation side effects; preserve ownership/custody and safe reroute behavior.", "evidence": "rear_simulation._job_option and _nearest_storage used stock/store centre positions; discovered by source review after the initial endpoint patch. No engine failure or confirmed regression is claimed.", "prior_untimed_cost": "Unknown; first correction occurred during the implementation interval before incident-specific tracking."},
+    {"id": "personal-shot-boundary", "kind": "owner refinement", "finding": "Personal weapons fire at people through Combat and at vehicles through VehicleCombat. A Combat-only signal would miss the second path.", "response": "Emit one keyed presentation event from the actual loaded-round release boundary for person-held weapons. Bind only already-permitted current visual IDs; no animation-owned damage/ammo or shot polling."}
+  ],
+  "verification_amendment": "While the Artist authors the remaining clips, use one brief headless changed-core observation of four distinct starting workers and100kg physical unloading. It checks service-position/handling changes before later animation work can obscure a defect. Final rendered observation covers actual imported clips/presentation, not a regression replay or broad army scenario. Both remain GitHub-only and bounded by current policy.",
+  "presentation_detail": "Use render visibility signals to stop hidden/offscreen skeletal playback. Existing RTS camera projection events toggle detailed skeletal animation only when zoomed in (orthographic size<=240); this leaves gameplay state progressing and adds no camera controls. No FPS claim follows.",
+  "remaining_limits": "Reserved destinations and current narrow unloading routes do not establish a universal crowd/navigation system. The changed four-worker slice must check actual separation; any observed overlap is a defect to resolve at its physical route/position owner, not with visual offsets. Broader scenarios and FPS remain unverified."
+}

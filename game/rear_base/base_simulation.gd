@@ -63,6 +63,8 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	if empty_field:
 		receiving.configure_supply_table()
 		receiving.route = rear.walk_path
+		var work_rear_ref: WeakRef = weakref(rear)
+		receiving.work_point = func(person: String, holder: String) -> Vector2: return work_rear_ref.get_ref().work_point(person,holder)
 	var rear_ref: WeakRef = weakref(rear)
 	receiving.receiving_room = func(slot: int) -> float:
 		var owner: RefCounted = rear_ref.get_ref()
