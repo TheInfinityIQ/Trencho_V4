@@ -1,0 +1,33 @@
+{
+  "feature": "place-manage-buildings",
+  "version": 1,
+  "baseline": "f2728f21ec202f0c3dde05269aa7282dac23495c",
+  "local_workflow_checkpoint": "71ee602",
+  "frozen_before_production_edits": true,
+  "outcome": "Place/manage a real building, start builder work with partial delivered materials, reveal actual completed work bottom-up, finish with tape/scissors/pylons celebration, and normal F5 startup1x.",
+  "accepted": "User approved builder-earned reveal as partial material deliveries arrive. Cyan hologram for unfinished part, orange outline for solid completed part; four orange pylons/tape corners; simultaneous fading/swooping scissors cut each side midpoint, tape falls, ground contact triggers0.5s pylon grow then0.25s shrink/cleanup. Actual building becomes usable at work completion; visuals do not gate gameplay. Pause/speed affect presentation; cancellation removes effects without celebration.",
+  "ownership": {
+    "construction": "Existing ConstructionService owns work, material consumption, shortage/resume, actual completion and cancellation. Track per-site actual consumedM11, cap earned work by cumulative delivered real material, consume integer M11 with progress, preserve total cost/work and exclusive builders.",
+    "hauling": "Existing jobs/claims supply outstanding unconsumed demand; accept additional site material while Building as well as Awaiting. Material shortage retains work/identity; no new poll/clock.",
+    "presentation": "Composed persistent per-site visual, keyed owner progress/state events. Imported building uses bottom-up shader clipping, ghost remainder and orange built outline. No rebuilding every building/collider per progress tick. Existing placement/manager blockers and picking metadata remain authoritative.",
+    "celebration": "Scene-local state machine/tweens for scissors and pylons, finite cosmetic ribbon bodies/ground contact for fall; no permanent physics after cleanup, no collisions with actors/stock/routes. Pause/speed explicit; hidden-area work continues, returning view reconciles without replaying finished celebrations.",
+    "art": "3D Artist supplies prop meshes/rig/snipping clip and actual export QA; Lead integrates Godot state/shaders/physics/sequence. No other programmer.",
+    "startup": "Set normal live empty-field game to1x through existing speed owner after setup; keep standalone fixtures' default semantics and user Pause/1x/2x controls."
+  },
+  "important_boundaries": [
+    "One material ledger: actual incremental consumption governs cancellation loss, completion/debug remaining cost and outstanding delivery math; no old half-cost assumption remains on these paths.",
+    "No progress without actual builders and local unreserved material; exact next boundary at material-supported progress avoids zero-time settle loops. Completion requires full work/materials once.",
+    "Live shader changes do not confer inventory/building capabilities. Site cancel/dismantle/session replacement tears down effects and connections; newly observed completed buildings do not celebrate old completion.",
+    "Read existing building mesh transforms/material palette and footprint rotation; ghost and solid share exact geometry. Progress comes from actual owner, never elapsed animation.",
+    "Tape ground contact affects cosmetic cleanup only. Limited halves/joints can sleep/free; no recurring world scans. Any necessary frame interpolation is scene-local active animation, not gameplay polling.",
+    "New1x startup means idle progression before first input; no pre-order, free goods, worker duplication or automatic changed player decision. Update controls/help and demonstration assumptions accordingly."
+  ],
+  "acceptance": [
+    "Normal F5 opens the same3D project at1x, with working Pause/resume.",
+    "Real placed site shows hologram/corner markers; partial delivery permits proportional real builder work, shortage stops it, next delivery resumes; solid/ghost/outline reflect actual work.",
+    "Actual completion enables facility once; scissors cut, tape lands then timed pylons disappear. Cancellation produces no completion celebration and accounts only consumed materials.",
+    "One complete local block before first push/PR; necessary brief current-change engine evidence on GitHub only. No local engine, regression suites, broad scenarios, raised deadlines or60FPS certification. Final maps/source purposes and exact-head Lead+Designer approvals precede merge/adoption."
+  ],
+  "sources": ["https://docs.godotengine.org/en/4.7/classes/class_shader.html", "https://docs.godotengine.org/en/4.7/classes/class_rigidbody3d.html", "https://docs.godotengine.org/en/4.7/classes/class_tween.html"],
+  "diagram": "docs/diagrams/place_manage_buildings.mmd"
+}

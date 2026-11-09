@@ -1,0 +1,19 @@
+flowchart TD
+  Place[Grid placement / actual footprint validation] --> Site[ConstructionService site identity]
+  Site --> Ghost[Persistent visual: hologram / corner tape and pylons]
+  Delivery[Actual hauling deposit of partial M11] --> Budget[Local material-supported work ceiling]
+  Builders[Exclusive present builders] --> Work[Earned construction work]
+  Budget --> Work
+  Work --> Consume[Incremental real M11 consumption]
+  Work --> Event[Keyed site progress/state event]
+  Event --> Reveal[Bottom-up solid / ghost remainder / orange outline]
+  Work -->|full work and material cost once| Complete[Actual usable facility]
+  Complete --> Scissors[Fade / swoop / snip four tape midpoints / fade]
+  Scissors --> Fall[Finite cosmetic tape physics]
+  Fall -->|ground contact| Pylons[Grow0.5s then shrink0.25s / cleanup]
+  Cancel[Cancel site] --> Recover[Actual consumed loss / recover unconsumed goods]
+  Cancel --> Cleanup[Remove visuals without celebration]
+  Speed[Existing Pause /1x /2x; normal startup1x] --> Work
+  Speed --> Scissors
+  Speed --> Fall
+  Speed --> Pylons
