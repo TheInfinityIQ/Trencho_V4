@@ -17,6 +17,7 @@ var _released := false
 var _started := false
 var _cleaning := false
 var _speed := 1.0
+var _palette: Dictionary = {}
 
 func _ready() -> void:
 	_speed = float(simulation.speed)
@@ -59,13 +60,29 @@ func _prop(file: String) -> Node3D:
 	assert(scene != null,"Missing Artist construction prop: "+file)
 	var node := scene.instantiate() as Node3D
 	add_child(node)
+	for child: Node in _meshes(node):
+		var mesh := child as MeshInstance3D
+		if mesh.mesh == null: continue
+		for surface in mesh.mesh.get_surface_count():
+			var original := mesh.get_active_material(surface) as BaseMaterial3D
+			if original == null: continue
+			var key: int = original.get_instance_id()
+			if not _palette.has(key):
+				var material := original.duplicate() as BaseMaterial3D
+				material.vertex_color_use_as_albedo = true
+				material.vertex_color_is_srgb = false
+				_palette[key] = material
+			mesh.set_surface_override_material(surface,_palette[key])
 	return node
+
+func _meshes(node: Node3D) -> Array[Node]:
+	var meshes: Array[Node] = node.find_children("*","MeshInstance3D",true,false)
+	if node is MeshInstance3D: meshes.push_front(node)
+	return meshes
 
 func _fade_materials(node: Node3D) -> Array:
 	var materials: Array = []
-	var meshes: Array[Node] = node.find_children("*","MeshInstance3D",true,false)
-	if node is MeshInstance3D: meshes.push_front(node)
-	for child: Node in meshes:
+	for child: Node in _meshes(node):
 		var mesh := child as MeshInstance3D
 		if mesh.mesh == null: continue
 		for surface in mesh.mesh.get_surface_count():
