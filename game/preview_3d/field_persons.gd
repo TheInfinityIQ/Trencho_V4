@@ -7,6 +7,7 @@ var views: Dictionary[String,Dictionary] = {}
 var bodies: Dictionary[String,Node3D] = {}
 var _model: RefCounted
 var _armed: Dictionary = {}
+var _reloads: Dictionary = {}
 var _detailed := false
 var _ledger: RefCounted
 var _owner: String = ""
@@ -35,6 +36,9 @@ func reconcile(permitted: Array) -> void:
 	for row: Dictionary in permitted:
 		if row.kind == "PERSON" and not bool(row.get("aboard",false)): ids.append(str(row.id))
 	_armed = _ledger.field_person_armament(ids,_owner)
+	_reloads.clear()
+	if _model != null:
+		for reload: Dictionary in _model.rear.combat.reloads.values(): _reloads[str(reload.operator)] = reload
 	for row: Dictionary in permitted:
 		if row.kind != "PERSON" or bool(row.get("aboard",false)): continue
 		var id: String = str(row.id)
@@ -53,6 +57,7 @@ func _refresh(id: String) -> void:
 	var motion: Dictionary = _model.rear.battlefield_operations.motions.get(id,{}) if _model != null else {}
 	row.moving = not motion.is_empty() and not bool(motion.get("pending",false))
 	row.armed = bool(_armed.get(id,false))
+	row.reload_due = float(_reloads.get(id,{}).get("due",-1.0))
 	if views.has(id) and views[id] == row and anchors[id].position.is_equal_approx(grounded): return
 	if not anchors.has(id):
 		var anchor: Node3D = Node3D.new()
@@ -77,7 +82,13 @@ func _refresh(id: String) -> void:
 				speed = (part.to as Vector2).distance_to(part.from)/maxf(0.000001,float(part.seconds))
 				if speed > 0.0: break
 		var action: StringName = &"death" if row.dead else (&"wounded" if row.caution else (&"run" if speed > 2.2 else (&"walk" if row.moving else &"idle")))
-		bodies[id].set_activity(action,speed,float(motion.get("started",row.state_entered_at)))
+		var started: float = float(motion.get("started",row.state_entered_at))
+		var seconds := 0.0
+		if _reloads.has(id) and not row.dead and not row.caution:
+			action = &"reload"
+			started = float(_reloads[id].started)
+			seconds = float(_reloads[id].seconds)
+		bodies[id].set_activity(action,speed,started,seconds)
 		bodies[id].set_armed(row.armed)
 	changed.emit(id)
 
@@ -144,6 +155,7 @@ func _exit_tree() -> void:
 	views.clear()
 	bodies.clear()
 	_armed.clear()
+	_reloads.clear()
 	_ancestors.clear()
 	_dependents.clear()
 	_ground = Callable()

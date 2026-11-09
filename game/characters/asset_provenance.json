@@ -26,7 +26,7 @@
       "skin_joints": [
         33
       ],
-      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\worker",
+      "artist_package": "character_animation_delivery/worker",
       "artist_format_report": {
         "numErrors": 0,
         "numWarnings": 0,
@@ -252,14 +252,15 @@
     {
       "character": "soldier",
       "export": "game/characters/assets/soldier.glb",
-      "export_sha256": "8ebf9a8cdfc62fac15bade2f02c5dc6bb36285a7d8995c4690ed4529e6c072da",
-      "bytes": 586356,
+      "export_sha256": "aea5877af1a6ca1a1e9ba1273ca56f64ee83a4a5d1f6b0d73dd122a6989ff051",
+      "bytes": 604204,
       "editable_source": "game/characters/source/soldier.blend",
-      "source_sha256": "009f472d41f06ecd672ebfcfa47a5482e49f14c0ff101057a77bad81cd6506f8",
+      "source_sha256": "24163a0eb97c307a181f102c799fe2e485e2f86a06929c7d53aec2c055061f11",
       "animations": [
         "death",
         "fire",
         "idle",
+        "reload",
         "run",
         "walk",
         "wounded_idle"
@@ -267,7 +268,7 @@
       "skin_joints": [
         33
       ],
-      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\soldier",
+      "artist_package": "character_animation_delivery/soldier_reload_v02",
       "artist_format_report": {
         "numErrors": 0,
         "numWarnings": 0,
@@ -359,110 +360,140 @@
             "max_ik_target_error_m": 0,
             "loop_rotation_error_deg": 0.0,
             "note": "Supine breathing loop for living casualty. No rifle attachment in wounded/dead state."
+          },
+          "reload": {
+            "seconds": 3.0,
+            "frames": [
+              1,
+              91
+            ],
+            "loop": false,
+            "nominal_speed_mps": 0,
+            "max_ik_clamp_m": 0,
+            "max_ik_target_error_m": 3.8078225669803137e-06,
+            "loop_rotation_error_deg": null,
+            "note": "Visible pouch, magazine-well and receiver handling gesture. Existing prop grip retained; no detachable magazine or ammunition authority.",
+            "duration_scaling": "Playback speed =3/actual_reload_seconds; actual3/4/6/12s phase and completion remain Combat-owned.",
+            "events_advisory": {
+              "pouch_reach_s": 0.85,
+              "magazine_well_touch_s": 1.55,
+              "receiver_handling_s": 2.15,
+              "ready_s": 3.0,
+              "gameplay_authority": false
+            },
+            "rest_rotation_channels": "Explicit non-root rest rotations retained so fingers/neck do not inherit an earlier clip pose."
           }
         },
         "readiness": "Authored/exported clips; Godot integration acceptance remains Lead-owned."
       },
       "roundtrip": {
-        "clips": [
-          {
-            "name": "death",
-            "seconds": 2.0
-          },
-          {
-            "name": "fire",
-            "seconds": 0.3
-          },
-          {
-            "name": "idle",
-            "seconds": 2.0
-          },
-          {
-            "name": "run",
-            "seconds": 0.5999999364217122
-          },
-          {
-            "name": "walk",
-            "seconds": 0.6666666030883789
-          },
-          {
-            "name": "wounded_idle",
-            "seconds": 2.0
-          }
-        ],
-        "bones": 33,
+        "joints": 33,
+        "meshes": 1,
         "armature_scale": [
           1.0,
           1.0,
           1.0
         ],
-        "walk_midpose_roundtrip_max_bounds_error_m": 5.364418029785156e-07,
-        "worker_skeleton_rest_matrix_max_difference": 0.0,
-        "qa_pass": true,
-        "accepted_geometry_warnings": [],
-        "observed_poses": {
-          "walk": {
-            "frame": 11,
-            "bounds_blender_m": [
-              [
-                -0.3303968906402588,
-                -0.5233350396156311,
-                -4.4675175558950286e-07
-              ],
-              [
-                0.3366034924983978,
-                0.2990000247955322,
-                1.75600004196167
-              ]
+        "imported_clips": [
+          "death",
+          "fire",
+          "idle",
+          "reload",
+          "run",
+          "walk",
+          "wounded_idle"
+        ],
+        "reload_duration_s": 3.0,
+        "reload_magwell_pose_bounds_max_difference_m": 2.384185791015625e-07,
+        "observed_source_pose_bounds_blender_m": {
+          "1": [
+            [
+              -0.3688012361526489,
+              -0.5379087328910828,
+              -1.4109906487647095e-07
+            ],
+            [
+              0.2705833911895752,
+              0.2899440824985504,
+              1.8060961961746216
             ]
-          },
-          "fire": {
-            "frame": 3,
-            "bounds_blender_m": [
-              [
-                -0.3692530393600464,
-                -0.5135233402252197,
-                -1.4109906487647095e-07
-              ],
-              [
-                0.2734251618385315,
-                0.2883903384208679,
-                1.8062851428985596
-              ]
+          ],
+          "28": [
+            [
+              -0.3703869581222534,
+              -0.3979085683822632,
+              -1.4109906487647095e-07
+            ],
+            [
+              0.37191855907440186,
+              0.2899440824985504,
+              1.8070261478424072
             ]
-          },
-          "death": {
-            "frame": 61,
-            "bounds_blender_m": [
-              [
-                -0.3771090507507324,
-                -0.9066925048828125,
-                0.005000010132789612
-              ],
-              [
-                0.3771088123321533,
-                0.9360429048538208,
-                0.5949259996414185
-              ]
+          ],
+          "49": [
+            [
+              -0.3703869581222534,
+              -0.4920129179954529,
+              -1.4109906487647095e-07
+            ],
+            [
+              0.2956303358078003,
+              0.2899440824985504,
+              1.8070261478424072
             ]
-          },
-          "wounded_idle": {
-            "frame": 1,
-            "bounds_blender_m": [
-              [
-                -0.3771090507507324,
-                -0.9066925048828125,
-                0.005000010132789612
-              ],
-              [
-                0.3771088123321533,
-                0.9360429048538208,
-                0.5949259996414185
-              ]
+          ],
+          "67": [
+            [
+              -0.3703869581222534,
+              -0.3716586232185364,
+              -1.4109906487647095e-07
+            ],
+            [
+              0.279502809047699,
+              0.2899440824985504,
+              1.8070261478424072
             ]
-          }
+          ],
+          "91": [
+            [
+              -0.3688012361526489,
+              -0.5379087328910828,
+              -1.4109906487647095e-07
+            ],
+            [
+              0.2705833911895752,
+              0.2899440824985504,
+              1.8060961961746216
+            ]
+          ]
         },
-        "gameplay_and_godot_acceptance": "Not performed by artist; Lead-owned."
+        "godot_run": false,
+        "bound_geometry_qa_pass": true,
+        "geometry_warnings": [],
+        "source_bounds": [
+          [
+            -0.3703869581222534,
+            -0.4920129179954529,
+            -1.4109906487647095e-07
+          ],
+          [
+            0.2956303358078003,
+            0.2899440824985504,
+            1.8070261478424072
+          ]
+        ],
+        "imported_bounds": [
+          [
+            -0.3703869581222534,
+            -0.4920130968093872,
+            -3.53428589505711e-07
+          ],
+          [
+            0.29563039541244507,
+            0.289944052696228,
+            1.8070259094238281
+          ]
+        ]
       },
       "attachment": {
         "bone": "RightHand",
@@ -516,6 +547,53 @@
         "forward_gltf_godot": "+Z",
         "presenter_note": "Character presenter rotates PI; attach prop beneath the same skeleton/presenter. Do not independently rotate prop PI.",
         "mechanics": "No firing, stock, projectile or damage tracks; actual shot triggers fire clip."
+      },
+      "preservation": {
+        "previous_six_exported_clips_byte_identical": {
+          "death": true,
+          "fire": true,
+          "idle": true,
+          "run": true,
+          "walk": true,
+          "wounded_idle": true
+        },
+        "clip_data_sha256_v01": {
+          "death": "c66f2fc422c8a6171337a197e6f5a5721f2b5bf5fab053ff2f19dccaa9322562",
+          "fire": "a63db367d30c9b3796aac56a900275808ae86e847b211c5aeda32c692a5ba603",
+          "idle": "90f8a45d535a3e5d56eefb87cd823b0c454e57e6765e9641b7f32bce491bf7e3",
+          "run": "2427bbec60b2ae49bffaee8ff13505ed389f4e129c3d902e4397001f5b44b162",
+          "walk": "f059126d1850c60a362c9210df109a2ecb8fd52aec524603f7b870f8a528a77f",
+          "wounded_idle": "3e5498f9320eb89c8bcf6144de3787723280e3d0bddbf3bd81be9abb6a169d46"
+        },
+        "clip_data_sha256_v02": {
+          "death": "c66f2fc422c8a6171337a197e6f5a5721f2b5bf5fab053ff2f19dccaa9322562",
+          "fire": "a63db367d30c9b3796aac56a900275808ae86e847b211c5aeda32c692a5ba603",
+          "idle": "90f8a45d535a3e5d56eefb87cd823b0c454e57e6765e9641b7f32bce491bf7e3",
+          "reload": "3486c52709e6b36d218c0de939c1003007ddc0ae47ed21bb8a2ed63225bee16d",
+          "run": "2427bbec60b2ae49bffaee8ff13505ed389f4e129c3d902e4397001f5b44b162",
+          "walk": "f059126d1850c60a362c9210df109a2ecb8fd52aec524603f7b870f8a528a77f",
+          "wounded_idle": "3e5498f9320eb89c8bcf6144de3787723280e3d0bddbf3bd81be9abb6a169d46"
+        },
+        "mesh_attribute_bytes_unchanged": {
+          "POSITION": true,
+          "NORMAL": true,
+          "COLOR_0": true,
+          "JOINTS_0": true,
+          "WEIGHTS_0": true,
+          "indices": true
+        },
+        "joints_and_inverse_bind_bytes_unchanged": true,
+        "materials_unchanged": true,
+        "rifle_attachment_manifest_unchanged": true,
+        "root_object_scale_or_nonbone_tracks": [],
+        "old_production_files_unchanged": {
+          "worker/construction_worker_animated_v01.glb": true,
+          "worker/construction_worker_animated_v01.blend": true,
+          "soldier/soldier_animated_v01.glb": true,
+          "rifle/rifle_faceted_v01.glb": true,
+          "rifle/rifle_faceted_v01.blend": true
+        },
+        "new_clip_only": "reload"
       }
     },
     {
@@ -527,7 +605,7 @@
       "source_sha256": "09201cb33bdd237c3a364db41115cb861b10872070e64abc82cb252df46d1827",
       "animations": [],
       "skin_joints": [],
-      "artist_package": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\rifle",
+      "artist_package": "character_animation_delivery/rifle",
       "artist_format_report": {
         "numErrors": 0,
         "numWarnings": 0,

@@ -60,6 +60,7 @@ var _markers_root := Node3D.new()
 var _collision_root := Node3D.new()
 var _site_snapshot: Dictionary = {}
 var _facility_shells: RefCounted = FacilityShells.new()
+var _character_speed := -1
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -234,6 +235,8 @@ func _add_character(parent: Node3D, kind: String) -> Node3D:
 	return visual
 
 func sync_character_playback() -> void:
+	if _character_speed == simulation.speed: return
+	_character_speed = simulation.speed
 	rear_workers.sync_playback()
 	field_persons.sync_playback()
 

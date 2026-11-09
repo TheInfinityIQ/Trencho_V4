@@ -416,6 +416,7 @@ func field_person_armament(ids: Array, owner: String) -> Dictionary:
 	# full inventory scan for every moved person or animation frame.
 	var selected: Dictionary = {}
 	for id: String in ids: selected[id] = false
+	if selected.is_empty(): return selected
 	for entity: Records.Entity in _entities.values():
 		if entity.kind == Records.Kind.WEAPON and entity.owner == owner and selected.has(entity.holder_id) and entity.design_type in ["E01","E05","E19"]:
 			selected[entity.holder_id] = true

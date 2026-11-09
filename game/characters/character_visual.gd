@@ -15,6 +15,7 @@ var _phase_started := 0.0
 var _phase_seconds := 0.0
 var _motion_speed := 0.0
 var _shot := false
+var _shot_started := 0.0
 var _on_screen := false
 var _carry: MeshInstance3D
 var _rifle: Node3D
@@ -26,6 +27,7 @@ func _ready() -> void:
 	assert(players.size() == 1 and bones.size() == 1,"Character export requires one animator and skeleton")
 	animator = players[0] as AnimationPlayer
 	skeleton = bones[0] as Skeleton3D
+	_bind_palette(self)
 	animator.stop(true)
 	animator.playback_default_blend_time = 0.12
 	for name: StringName in animator.get_animation_list():
@@ -37,7 +39,7 @@ func _ready() -> void:
 		# same declared loop semantics once; do not duplicate keys per person.
 		var clip: Animation = animator.get_animation(name)
 		clip.loop_mode = Animation.LOOP_LINEAR if key in LOOPS else Animation.LOOP_NONE
-	var required: Array = [&"idle",&"walk",&"run",&"fire",&"death",&"wounded"] if soldier else [&"idle",&"walk",&"carry_idle",&"carry_walk",&"pickup",&"unload",&"construct"]
+	var required: Array = [&"idle",&"walk",&"run",&"fire",&"reload",&"death",&"wounded"] if soldier else [&"idle",&"walk",&"carry_idle",&"carry_walk",&"pickup",&"unload",&"construct"]
 	for key: StringName in required: assert(clips.has(key),"Required authored clip missing: "+str(key))
 	assert(skeleton.find_bone(carry_bone) >= 0,"Required hand attachment bone missing")
 	animator.animation_finished.connect(_animation_finished)
@@ -60,6 +62,7 @@ func _ready() -> void:
 	_bind_cargo_tracks()
 	if soldier:
 		_rifle = (load("res://game/characters/assets/rifle.glb") as PackedScene).instantiate()
+		_bind_palette(_rifle)
 		_rifle.transform = rifle_transform
 		_rifle.visible = false
 		socket.add_child(_rifle)
@@ -81,6 +84,15 @@ func set_activity(next: StringName, motion_speed: float = 0.0, started: float = 
 	if next in [&"death",&"wounded"]: _shot = false
 	if not _shot: _play(next)
 	sync_playback()
+
+func _bind_palette(root: Node) -> void:
+	var meshes: Array[Node] = root.find_children("*","MeshInstance3D",true,false)
+	if root is MeshInstance3D: meshes.push_front(root)
+	for node: Node in meshes:
+		var mesh: MeshInstance3D = node as MeshInstance3D
+		for surface in mesh.mesh.get_surface_count():
+			var material: BaseMaterial3D = mesh.get_active_material(surface) as BaseMaterial3D
+			if material != null: material.vertex_color_use_as_albedo = true
 
 func set_cargo(count: int) -> void:
 	# A pickup's already-claimed source parcel becomes visible at contact;
@@ -106,7 +118,7 @@ func set_armed(armed: bool) -> void:
 func fire() -> void:
 	if _base_action in [&"death",&"wounded"] or not clips.has(&"fire"): return
 	_shot = true
-	_phase_started = simulation.rear.time
+	_shot_started = simulation.rear.time
 	# An actual shot may restart the visible recoil; animation changes no ammo.
 	animator.stop(true)
 	action = &""
@@ -122,11 +134,14 @@ func _play(next: StringName) -> void:
 
 func sync_playback() -> void:
 	if animator == null or simulation == null: return
+	if _shot and not animator.active and simulation.rear.time-_shot_started >= animator.get_animation(clips[&"fire"]).length:
+		_shot = false
+		_play(_base_action)
 	var rate := 1.0
 	if action in [&"walk",&"run",&"carry_walk"]:
 		var nominal := 1.2 if action == &"carry_walk" else (2.75 if action == &"run" else 1.5)
 		rate = maxf(0.01,_motion_speed/nominal)
-	elif _phase_seconds > 0.0 and action in [&"pickup",&"unload"]:
+	elif _phase_seconds > 0.0 and action in [&"pickup",&"unload",&"reload"]:
 		rate = animator.get_animation(clips[action]).length/_phase_seconds
 	animator.speed_scale = float(simulation.speed)*rate
 	animator.active = animation_enabled and _on_screen and is_visible_in_tree()
@@ -137,8 +152,12 @@ func _screen_entered() -> void:
 	_on_screen = true
 	# Hidden scenes do not spend bone-evaluation work; resume the real timed
 	# phase rather than replaying an old pickup/death from its beginning.
+	if _shot and simulation.rear.time-_shot_started >= animator.get_animation(clips[&"fire"]).length:
+		_shot = false
+		_play(_base_action)
 	var clip: Animation = animator.get_animation(clips[action])
-	var elapsed: float = maxf(0.0,simulation.rear.time-_phase_started)
+	var elapsed: float = maxf(0.0,simulation.rear.time-(_shot_started if _shot else _phase_started))
+	if _phase_seconds > 0.0 and action in [&"pickup",&"unload",&"reload"]: elapsed *= clip.length/_phase_seconds
 	if action not in LOOPS: animator.seek(minf(elapsed,clip.length),true,true)
 	sync_playback()
 
