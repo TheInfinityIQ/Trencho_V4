@@ -8,8 +8,8 @@ The challenge is building an effective base and allocating scarce people and res
 
 ## Approved opening and core rules
 
-- Character, 2,500 requisition, 500 Building Materials, no hired workers/workshops, and a Supply Table/arrival point at the field's edge.
-- Buy eight untrained workers for 140 requisition including transport; arrival is 90 seconds, followed by actual disembarkation. The shared pool supplies construction, hauling, production, training and crew duties.
+- Development opening9November: character,2,500 requisition,500 actual Building Materials and four real assigned/present unloaders at the prebuilt south-road apron/Table. No free workshops or player trucks. This overrides the former zero-worker start.
+- Buy eight untrained workers for140 including transport; development Confirm creates the physical supplier vehicle immediately, replacing the earlier90-second offscreen wait. Actual driving, disembarkation and arrival still occur. The shared pool supplies construction, hauling, production, training and crew duties.
 - Workers and materials must actually reach their work. Goods at HQ do not instantly appear in a remote weapon. No duplicate people, hidden replenishment or forced battlefield result.
 - Building Materials and Explosives are manufactured. Production inputs and onward shipments use actual available stock and physical handling.
 - Both areas must continue their applicable work while hidden; waiting in one area must not silently stop the other. Pause and speed controls describe player-visible behaviour, not a prescribed scheduling implementation.
@@ -79,3 +79,18 @@ Subsequent Designer priority decision, 8 November: retain the current partial, c
 ## Original vision reaffirmed and GDD consolidated — 9 November 2026
 
 Dawson requested review against the original vision: the player builds a factory/logistics area and sends materials to a military base for an autonomous RTS commander to battle another autonomous commander. The [GDD](game_design_document.md) now states that loop and division of responsibility explicitly, incorporating the accepted opening, automatic starter staffing, request-driven physical shipping, stylized first/third-person rear and RTS observation view. The player's meaningful work is industry and logistics; military organization, operations, tactics, onward supply and combat remain autonomous. No direct military-command controls, second simulated enemy factory, balance revision or claim of completed gameplay follows from this consolidation. The first demo still needs the connected ordinary factory, useful delivery and repeat-supply outcomes.
+
+## Current prototype direction — 9 November 2026
+
+Dawson requested combined explicit order confirmation, immediate visible
+supplier convoys on the road south of the buildable rear, a prebuilt unloading
+apron with four actual assigned workers, an event-owned order cooldown until
+the last truck finishes handover and starts leaving, and top-down grid building.
+The current [contract/diagram](development_convoys_grid.md) records engineering
+scope. Prior60/90-second offscreen waits/zero-worker opening are historical for
+this development flow; prices and physical custody remain real.
+
+Dawson also directed that the GDD guide the game's idea/vibe rather than operate
+as a rigid prototype rule book. Lead owns pragmatic reversible choices; Designer
+reviews coherence and progress toward the factory/logistics/autonomous-war loop.
+Do not invent a human approval gate for routine implementation details.

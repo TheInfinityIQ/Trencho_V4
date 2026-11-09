@@ -1,0 +1,5 @@
+revision=d89cbb129b63893c0c4dece04d747b4de4254a19
+base=490c2df426fff69d01fbbeff38cbb5aa2de71310
+changed_scripts=['game/construction/construction_service.gd', 'game/preview_3d/manager_pose.gd', 'game/preview_3d/preview.gd', 'game/preview_3d/supplier_convoys.gd', 'game/preview_3d/world_presenter.gd', 'game/procurement/receiving_simulation.gd', 'game/rear_base/base_demo.gd', 'game/rear_base/base_map.gd', 'game/rear_base/base_simulation.gd', 'game/rear_base/workforce_panel.gd', 'game/staffing/rear_simulation.gd']
+direct_check=True
+Syntax checks are not gameplay acceptance. No regression suites run.

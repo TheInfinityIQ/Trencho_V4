@@ -56,6 +56,10 @@ var _advanced_panels: CheckButton
 var _uses_shared_navigation := false
 var _staff_control_basis := ""
 var _staff_draft_dirty := false
+var _instructor_draft_dirty := false
+var _instructor_draft_basis := ""
+var _office_draft_dirty := false
+var _office_draft_basis := ""
 var feedback: Label
 var orders: ItemList
 var people: ItemList
@@ -566,6 +570,11 @@ func _draft_worker_purchase() -> void:
 
 func discard_menu_drafts() -> void:
 	_staff_draft_dirty = false
+	_staff_control_basis = ""
+	_instructor_draft_dirty = false
+	_instructor_draft_basis = ""
+	_office_draft_dirty = false
+	_office_draft_basis = ""
 	for spin: SpinBox in cart.values(): spin.set_value_no_signal(0)
 	include_workers.set_pressed_no_signal(false)
 
@@ -1024,6 +1033,9 @@ func _production_panel(box: VBoxContainer) -> void:
 	context_staff.value_changed.connect(func(_value: float) -> void: _staff_draft_dirty = true)
 	context_priority.item_selected.connect(func(_value: int) -> void: _staff_draft_dirty = true)
 	_button(box,"Confirm staffing",func() -> void:
+		if _staff_control_basis != str(simulation.get_instance_id())+":"+_context_duty():
+			_result({"ok":false,"message":"Facility changed. Review the current staffing draft."})
+			return
 		var result: Dictionary = simulation.rear.set_target(_context_duty(),int(context_staff.value),context_priority.selected)
 		if result.ok: _staff_draft_dirty = false
 		_result(result))
@@ -1131,7 +1143,12 @@ func _construction_panel(box: VBoxContainer) -> void:
 		var priority := int(simulation.rear.requests[id].priority)
 		_result(simulation.rear.set_target(id,int(construction_staff.value),priority)))
 	construction_office = _spin(box,"Construction Office staff requested",4)
-	_button(box,"Confirm office staffing",func() -> void: _result(simulation.rear.construction.set_office_staff("construction",int(construction_office.value))))
+	construction_office.value_changed.connect(func(_value: float) -> void: _office_draft_dirty = true)
+	_button(box,"Confirm office staffing",func() -> void:
+		if _office_draft_basis != str(simulation.get_instance_id()): return
+		var result: Dictionary = simulation.rear.construction.set_office_staff("construction",int(construction_office.value))
+		if result.ok: _office_draft_dirty = false
+		_result(result))
 	box = _section(parent,"Remove a site","Unfinished sites can be cancelled. Completed facilities require physical clearing and dismantling.")
 	_button(box,"Cancel unfinished site",func() -> void:
 		_request_construction_cancel())
@@ -1232,11 +1249,17 @@ func _training_panel(box: VBoxContainer) -> void:
 	instructor_hire_status = _label(box,"")
 	instructor_hire_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	instructor_count = _spin(box,"Instructor target",2)
+	instructor_count.value_changed.connect(func(_value: float) -> void: _instructor_draft_dirty = true)
 	_button(box,"Confirm instructor target",func() -> void:
 		var duty := _training_duty()
 		if not duty.is_empty():
+			if _instructor_draft_basis != str(simulation.get_instance_id())+":"+duty:
+				_result({"ok":false,"message":"School changed. Review its current instructor draft."})
+				return
 			var priority := int(simulation.rear.requests.get(duty,{}).get("priority",1))
-			_result(simulation.rear.set_target(duty,int(instructor_count.value),priority)))
+			var result: Dictionary = simulation.rear.set_target(duty,int(instructor_count.value),priority)
+			if result.ok: _instructor_draft_dirty = false
+			_result(result))
 	training_course = _option(box,"Course / declared recipe access",[])
 	training_count = _spin(box,"Requested students",12,1)
 	_button(box,"Request course",func() -> void: _result(simulation.rear.training.request_course(training_course.get_item_metadata(training_course.selected),int(training_count.value))))
@@ -1649,6 +1672,7 @@ func _validate_batch_cancel() -> void:
 	if not _batch_cancel_request.is_empty() and not _batch_cancel_is_current(_batch_cancel_request): _invalidate_batch_cancel()
 
 func _batch_cancel_model_changed(_next: RefCounted) -> void:
+	if include_workers != null: discard_menu_drafts()
 	_bind_purchase_receiving(_next.receiving)
 	if include_workers != null: include_workers.set_pressed_no_signal(false)
 	_invalidate_batch_cancel()
@@ -1925,7 +1949,7 @@ func _refresh_contents() -> void:
 	_sync_haul_stores()
 	_sync_option(store,simulation.rear.stores.keys())
 	_sync_option(construction_source,simulation.rear.stores.keys())
-	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
+	_refresh_office_draft()
 	construction_office.editable = simulation.rear.requests.has("construction") and int(simulation.rear.requests.construction.positions) > 0
 	(construction_office.get_parent() as Control).visible = construction_office.editable
 	var parking_labels: Array = []
@@ -2098,13 +2122,19 @@ func _refresh_production_status(view: Dictionary) -> void:
 		var object: Dictionary = heavy.bay.physical
 		heavy_status.text += "\n%s: %.0f kg; fuel %.0f; %d crew, %d passengers; no ammunition" % [object.design_type,object.unit_mass_kg,object.get("fuel",0.0),object.get("crew",[]).size(),object.get("passengers",[]).size()]
 
+func _refresh_office_draft() -> void:
+	var basis := str(simulation.get_instance_id())
+	if basis != _office_draft_basis: _office_draft_dirty = false
+	_office_draft_basis = basis
+	if not _office_draft_dirty: construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction",0)))
+
 func _refresh_construction() -> void:
 	CallLog.record(&"rear_base/base_demo.gd::_refresh_construction")
 	var view: Dictionary = simulation.construction_view()
 	_refresh_resource_hud(view)
 	_refresh_build_description()
 	_sync_option(construction_source, simulation.rear.stores.keys())
-	construction_office.set_value_no_signal(int(simulation.rear.construction.office_desired.get("construction", 0)))
+	_refresh_office_draft()
 	construction_office.editable = simulation.rear.requests.has("construction") and int(simulation.rear.requests.construction.positions) > 0
 	(construction_office.get_parent() as Control).visible = construction_office.editable
 	_fill(construction_rows, construction_ids, view.construction.rows, func(row: Dictionary) -> String:
@@ -2137,7 +2167,10 @@ func _refresh_training_controls(training: Dictionary, person: Dictionary) -> voi
 	_fill(training_rows,training_ids,training.rows,func(row: Dictionary) -> String: return "%s %s %s | %s %.1f/%.0fs" % [row.id,row.course,row.person_id,row.state,row.work,row.required])
 	var duty := _training_duty()
 	var requested := int(simulation.rear.requests.get(duty,{}).get("target",0))
-	instructor_count.set_value_no_signal(requested)
+	var basis := str(simulation.get_instance_id())+":"+duty
+	if basis != _instructor_draft_basis: _instructor_draft_dirty = false
+	_instructor_draft_basis = basis
+	if not _instructor_draft_dirty: instructor_count.set_value_no_signal(requested)
 	instructor_count.editable = not duty.is_empty()
 	training_status.text = "Selected school's instructor target: %d · Instructors present overall: %d · Coverage: %d students\nStudent places reserved: %d | active %d, paused %d, reporting %d, queued %d\n" % [requested,training.instructors.size(),training.coverage,training.reserved_student_places,training.counts.Active,training.counts.Paused,training.counts.Reporting,training.counts.Queued]
 	if duty.is_empty(): training_status.text += "Build a Training facility before assigning instructors or requesting courses.\n"

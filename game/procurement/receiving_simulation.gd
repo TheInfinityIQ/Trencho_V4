@@ -280,7 +280,7 @@ func buy_people() -> Dictionary:
 
 
 func recovery_instructor_offer() -> Dictionary:
-	if ledger.has_trained_person_in(PLAYER, Rect2(0,0,240,180)):
+	if ledger.has_trained_person_in(PLAYER, Rect2(0,0,240,210 if development_convoys else 180)):
 		return {"available":false,"message":"A basic-trained person remains in the rear; assign an actual instructor."}
 	for order in _orders:
 		if order.get("recovery_instructor",false) and order.state != "Cancelled" and order.people_arrived < 1:
