@@ -1,0 +1,15 @@
+{
+  "source_head": "a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+  "failed_runs": [
+    42635341519,
+    42636373161
+  ],
+  "artifact_digests": {
+    "13682915982": "af880a51393efc6174763a76dcdbb5b79a2b34d3152417079f891b877b596ea6",
+    "13683890787": "52e4500935b4cec04e11b667e89a16bc285f582283382ba5c7b906a9a85dd7bc"
+  },
+  "observed_passed_before_failure": "Same normal opening,25Metal+8workers paid210; population12, Metal25, two convoy events, ready true after56.7 explicit simulation seconds; one grid site committed. Native input, wall-time/FPS and full loop not established.",
+  "failed_boundary": "Actual current-site E selects the right ID but starts/cancels an unintended blueprint, leaving management closed. Dependent builder failures share this cause.",
+  "classification": "One feature defect with a confirmed missed planning boundary; no prior-good evidence for a confirmed regression.",
+  "supplier_uid": "Engine-created via ResourceUID in the permitted remote observer, retained byte-for-byte; no local engine/editor scan."
+}

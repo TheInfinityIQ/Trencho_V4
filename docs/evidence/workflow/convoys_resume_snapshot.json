@@ -1,0 +1,386 @@
+{
+  "schema": 1,
+  "feature": "development-convoys-grid",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/convoys_resume_v1.json",
+  "source_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+  "started_at": "2026-11-09T14:25:48.783290+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 0,
+    "implementation": 0,
+    "direct_check": 103.4831,
+    "repair": 390.53117,
+    "late_handling": 0,
+    "review": 292.695495,
+    "release": 362.680537,
+    "waiting": 243.19747,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "review",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T14:31:48.756493+00:00",
+      "note": "Designer source/game-meaning APPROVED exact a4f2c4f at PR138; no design issue, runtime/visual/FPS approval withheld pending real evidence. Required documentation/current-change job42635163570 passed. Optional direct run42635341519 failed; inspect exact failure stage before attributing a game defect."
+    },
+    {
+      "recorded_at": "2026-11-09T14:53:31.216206+00:00",
+      "note": "Required42638041856 and original same-feature direct42638052133 passed60925c7; Lead inspected both actual images. No native/FPS/full-loop acceptance. Final review/merge remains; actual source hash equivalence will justify later evidence-only head."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-09T14:27:20.375360+00:00",
+      "id": "CONVOY-STAFF-BOUNDARY",
+      "kind": "feature_defect",
+      "summary": "New apron at y186 exceeded the previous y180 staffing boundary, so the first direct feature demonstration failed the four-present-unloaders assertion.",
+      "severity": "feature_blocking",
+      "evidence": [
+        "docs/evidence/development_convoys/failed_initial_scope.txt and failed_initial.log.base64; source diff at35ad12b"
+      ],
+      "planning_assessment": "confirmed",
+      "before_tracking": true,
+      "historical_repair_seconds": null,
+      "historical_token_usage": null,
+      "introducing_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+      "qualification": "Retained prior finding, not a newly observed result",
+      "preavailable_requirement": "Original pre-code contract explicitly placed the staffed apron outside the build area and required service-strip walking/hauling access.",
+      "omitted_assumption": "Not every eligibility consumer of the old rear rectangle had been included in the integration review.",
+      "assessment_rationale": "The original contract required actual four-worker apron service, but an old rectangular eligibility consumer was missed. Lead attribution based on original contract, failed receipt and corrected source; no counterfactual guarantee."
+    },
+    {
+      "recorded_at": "2026-11-09T14:27:20.453589+00:00",
+      "id": "CONVOY-MENU-DRAFT",
+      "kind": "candidate_regression",
+      "summary": "UI source review found instructor/Construction Office refresh could overwrite an unconfirmed selection.",
+      "severity": "review_finding",
+      "evidence": [
+        "Current BaseDemo::_refresh_office_draft and _refresh_training_controls; prior UI/UX source handoff"
+      ],
+      "planning_assessment": "possible",
+      "before_tracking": true,
+      "historical_repair_seconds": null,
+      "historical_token_usage": null,
+      "introducing_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+      "qualification": "No prior-good/current-bad runtime pair established; do not count as a confirmed regression."
+    },
+    {
+      "recorded_at": "2026-11-09T14:27:20.533851+00:00",
+      "id": "CONVOY-CI-DOWNLOAD",
+      "kind": "infrastructure",
+      "summary": "Corrected remote attempts failed while downloading/verifying the pinned engine; parse and demonstration steps were skipped.",
+      "severity": "external_blocker",
+      "evidence": [
+        "GitHub Actions42583186696 latest job129047837982 step4 failed; steps5\u00e2\u20ac\u201c7 skipped"
+      ],
+      "planning_assessment": "no",
+      "before_tracking": true,
+      "historical_repair_seconds": null,
+      "historical_token_usage": null,
+      "introducing_revision": "35ad12bcce218ba89aeab95a039bbded6990beb6",
+      "qualification": "Retained prior finding, not a newly observed result"
+    },
+    {
+      "recorded_at": "2026-11-09T14:53:31.131029+00:00",
+      "id": "CONVOY-SITE-E",
+      "kind": "feature_defect",
+      "summary": "The resumed current-change episode could not open the actual newly placed unfinished site's controls with E; builder-button/target failures follow from that first failure.",
+      "severity": "feature_blocking",
+      "evidence": [
+        "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42635341519",
+        "Artifact13682915982 SHA256af880a51393efc6174763a76dcdbb5b79a2b34d3152417079f891b877b596ea6; direct.log first error at rendered observer line149",
+        "Run42636373161/artifact13683890787: SITE_E_PROBE hit site-0001 with valid guards; SITE_E_RESULT selected that ID but management false; V3 source trace identifies placement_started callback.",
+        "Passing run42638052133/artifact13682819717 at60925c7; docs/evidence/development_convoys/scoped_result.json"
+      ],
+      "planning_assessment": "confirmed",
+      "current_bad_evidence": "The normal opening, paid convoy and explicit placement progressed, then the injected E action failed current-site selection. Native input was not exercised.",
+      "introducing_revision": "d89cbb129b63893c0c4dece04d747b4de4254a19",
+      "cause": "Existing-site navigation invoked show_panel(Build), which emitted placement_started and closed management before its unintended draft was cancelled. One-shot evidence proves correct hit/input/selection, ruling out the observer targeting hypotheses.",
+      "preavailable_requirement": "Original pre-code contract required E on actual unfinished sites to open existing Build controls.",
+      "omitted_assumption": "The contextual selection plan omitted the show_panel -> select_build_kind -> placement_started -> _begin_preview management transition.",
+      "assessment_rationale": "Lead source attribution and current diagnostic agree. This is a new-feature failure, not a confirmed break of previously working unfinished-site E behavior.",
+      "observed_bad_revision": "a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+      "planned_correction": "Explicit preview intent in existing panel API; select/inspect current sites without starting a blueprint. See frozen fix_v3 plan.",
+      "correction_status": "Verified by unchanged scoped acceptance; final review/merge pending",
+      "fixing_revision": "60925c72c3cbd6d33f48a5286a0b93d8be999cf7",
+      "verification": "Run42638052133 passed the same original episode after required42638041856 passed; same35s/45s limits, no alternate opening/interaction fallback.",
+      "history": [
+        {
+          "recorded_at": "2026-11-09T14:33:57.251487+00:00",
+          "id": "CONVOY-SITE-E",
+          "kind": "feature_defect",
+          "summary": "The resumed current-change episode could not open the actual newly placed unfinished site's controls with E; builder-button/target failures follow from that first failure.",
+          "severity": "feature_blocking",
+          "evidence": [
+            "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42635341519",
+            "Artifact13682915982 SHA256af880a51393efc6174763a76dcdbb5b79a2b34d3152417079f891b877b596ea6; direct.log first error at rendered observer line149"
+          ],
+          "planning_assessment": "unknown",
+          "current_bad_evidence": "The normal opening, paid convoy and explicit placement progressed, then the injected E action failed current-site selection. Native input was not exercised.",
+          "introducing_revision": "a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+          "cause": "Under investigation: actual site hit/owner/input route versus observer camera/input assumption. No source attribution or confirmed regression yet."
+        },
+        {
+          "recorded_at": "2026-11-09T14:41:18.683778+00:00",
+          "id": "CONVOY-SITE-E",
+          "kind": "feature_defect",
+          "summary": "The resumed current-change episode could not open the actual newly placed unfinished site's controls with E; builder-button/target failures follow from that first failure.",
+          "severity": "feature_blocking",
+          "evidence": [
+            "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42635341519",
+            "Artifact13682915982 SHA256af880a51393efc6174763a76dcdbb5b79a2b34d3152417079f891b877b596ea6; direct.log first error at rendered observer line149",
+            "Run42636373161/artifact13683890787: SITE_E_PROBE hit site-0001 with valid guards; SITE_E_RESULT selected that ID but management false; V3 source trace identifies placement_started callback."
+          ],
+          "planning_assessment": "confirmed",
+          "current_bad_evidence": "The normal opening, paid convoy and explicit placement progressed, then the injected E action failed current-site selection. Native input was not exercised.",
+          "introducing_revision": "d89cbb129b63893c0c4dece04d747b4de4254a19",
+          "cause": "Existing-site navigation invoked show_panel(Build), which emitted placement_started and closed management before its unintended draft was cancelled. One-shot evidence proves correct hit/input/selection, ruling out the observer targeting hypotheses.",
+          "preavailable_requirement": "Original pre-code contract required E on actual unfinished sites to open existing Build controls.",
+          "omitted_assumption": "The contextual selection plan omitted the show_panel -> select_build_kind -> placement_started -> _begin_preview management transition.",
+          "assessment_rationale": "Lead source attribution and current diagnostic agree. This is a new-feature failure, not a confirmed break of previously working unfinished-site E behavior.",
+          "observed_bad_revision": "a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+          "planned_correction": "Explicit preview intent in existing panel API; select/inspect current sites without starting a blueprint. See frozen fix_v3 plan.",
+          "correction_status": "Implemented locally; remote check pending"
+        }
+      ]
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 1,
+    "feature_defect": 2,
+    "planning_discovery": 0,
+    "pre_existing": 0,
+    "infrastructure": 1,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 2,
+  "tracked_repair_seconds_by_incident": {
+    "CONVOY-STAFF-BOUNDARY": 0,
+    "CONVOY-MENU-DRAFT": 0,
+    "CONVOY-CI-DOWNLOAD": 0,
+    "CONVOY-SITE-E": 390.53117
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 8532553,
+      "cached_input_tokens": 8496128,
+      "output_tokens": 40206,
+      "reasoning_output_tokens": 22782,
+      "total_tokens": 8572759,
+      "uncached_input_tokens": 36425
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 8532553,
+      "cached_input_tokens": 8496128,
+      "output_tokens": 40206,
+      "reasoning_output_tokens": 22782,
+      "total_tokens": 8572759,
+      "uncached_input_tokens": 36425
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "release",
+        "started_at": "2026-11-09T14:25:48.783290+00:00",
+        "ended_at": "2026-11-09T14:30:17.390451+00:00",
+        "receipt_start": "2026-11-09T14:25:31.296Z",
+        "receipt_end": "2026-11-09T14:29:16.750Z",
+        "usage_delta": {
+          "input_tokens": 1280688,
+          "cached_input_tokens": 1278208,
+          "output_tokens": 6607,
+          "reasoning_output_tokens": 3703,
+          "total_tokens": 1287295,
+          "uncached_input_tokens": 2480
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T14:30:17.390451+00:00",
+        "ended_at": "2026-11-09T14:30:46.137648+00:00",
+        "receipt_start": "2026-11-09T14:29:16.750Z",
+        "receipt_end": "2026-11-09T14:30:30.394Z",
+        "usage_delta": {
+          "input_tokens": 260670,
+          "cached_input_tokens": 260096,
+          "output_tokens": 2153,
+          "reasoning_output_tokens": 1114,
+          "total_tokens": 262823,
+          "uncached_input_tokens": 574
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-09T14:30:46.137648+00:00",
+        "ended_at": "2026-11-09T14:32:42.609485+00:00",
+        "receipt_start": "2026-11-09T14:30:30.394Z",
+        "receipt_end": "2026-11-09T14:32:36.247Z",
+        "usage_delta": {
+          "input_tokens": 1607025,
+          "cached_input_tokens": 1599488,
+          "output_tokens": 3660,
+          "reasoning_output_tokens": 2046,
+          "total_tokens": 1610685,
+          "uncached_input_tokens": 7537
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T14:32:42.609485+00:00",
+        "ended_at": "2026-11-09T14:33:57.345388+00:00",
+        "receipt_start": "2026-11-09T14:32:36.247Z",
+        "receipt_end": "2026-11-09T14:33:16.539Z",
+        "usage_delta": {
+          "input_tokens": 547463,
+          "cached_input_tokens": 545792,
+          "output_tokens": 1315,
+          "reasoning_output_tokens": 529,
+          "total_tokens": 548778,
+          "uncached_input_tokens": 1671
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T14:33:57.345388+00:00",
+        "ended_at": "2026-11-09T14:37:50.915045+00:00",
+        "receipt_start": "2026-11-09T14:33:16.539Z",
+        "receipt_end": "2026-11-09T14:36:42.124Z",
+        "usage_delta": {
+          "input_tokens": 1138935,
+          "cached_input_tokens": 1125888,
+          "output_tokens": 6985,
+          "reasoning_output_tokens": 3813,
+          "total_tokens": 1145920,
+          "uncached_input_tokens": 13047
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-09T14:37:50.915045+00:00",
+        "ended_at": "2026-11-09T14:38:42.205881+00:00",
+        "receipt_start": "2026-11-09T14:36:42.124Z",
+        "receipt_end": "2026-11-09T14:38:28.443Z",
+        "usage_delta": {
+          "input_tokens": 891448,
+          "cached_input_tokens": 889088,
+          "output_tokens": 3040,
+          "reasoning_output_tokens": 1876,
+          "total_tokens": 894488,
+          "uncached_input_tokens": 2360
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T14:38:42.205881+00:00",
+        "ended_at": "2026-11-09T14:41:19.167394+00:00",
+        "receipt_start": "2026-11-09T14:38:28.443Z",
+        "receipt_end": "2026-11-09T14:40:35.096Z",
+        "usage_delta": {
+          "input_tokens": 604526,
+          "cached_input_tokens": 600320,
+          "output_tokens": 4012,
+          "reasoning_output_tokens": 2242,
+          "total_tokens": 608538,
+          "uncached_input_tokens": 4206
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-09T14:41:19.167394+00:00",
+        "ended_at": "2026-11-09T14:46:11.862889+00:00",
+        "receipt_start": "2026-11-09T14:40:35.096Z",
+        "receipt_end": "2026-11-09T14:44:45.307Z",
+        "usage_delta": {
+          "input_tokens": 1242902,
+          "cached_input_tokens": 1240704,
+          "output_tokens": 7608,
+          "reasoning_output_tokens": 4357,
+          "total_tokens": 1250510,
+          "uncached_input_tokens": 2198
+        }
+      },
+      {
+        "phase": "release",
+        "started_at": "2026-11-09T14:46:11.862889+00:00",
+        "ended_at": "2026-11-09T14:47:45.936265+00:00",
+        "receipt_start": "2026-11-09T14:44:45.307Z",
+        "receipt_end": "2026-11-09T14:47:02.018Z",
+        "usage_delta": {
+          "input_tokens": 636960,
+          "cached_input_tokens": 635392,
+          "output_tokens": 3643,
+          "reasoning_output_tokens": 2586,
+          "total_tokens": 640603,
+          "uncached_input_tokens": 1568
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-09T14:47:45.936265+00:00",
+        "ended_at": "2026-11-09T14:49:01.371062+00:00",
+        "receipt_start": "2026-11-09T14:47:02.018Z",
+        "receipt_end": "2026-11-09T14:47:51.473Z",
+        "usage_delta": {
+          "input_tokens": 321936,
+          "cached_input_tokens": 321152,
+          "output_tokens": 1183,
+          "reasoning_output_tokens": 516,
+          "total_tokens": 323119,
+          "uncached_input_tokens": 784
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ],
+  "snapshot_scope": "Pre-merge partial resume pilot. Earlier implementation/repair work was untracked; final review/release and final model receipt tail remain open. Not a from-zero workflow comparison.",
+  "tagged_incident_intervals": [
+    {
+      "phase": "repair",
+      "incident": "CONVOY-SITE-E",
+      "started_at": "2026-11-09T14:33:57.345388+00:00",
+      "ended_at": "2026-11-09T14:37:50.915045+00:00",
+      "elapsed_seconds": 233.569657
+    },
+    {
+      "phase": "repair",
+      "incident": "CONVOY-SITE-E",
+      "started_at": "2026-11-09T14:38:42.205881+00:00",
+      "ended_at": "2026-11-09T14:41:19.167394+00:00",
+      "elapsed_seconds": 156.961513
+    },
+    {
+      "phase": "release",
+      "incident": "CONVOY-SITE-E",
+      "started_at": "2026-11-09T14:46:11.862889+00:00",
+      "ended_at": "2026-11-09T14:47:45.936265+00:00",
+      "elapsed_seconds": 94.073376
+    },
+    {
+      "phase": "waiting",
+      "incident": "CONVOY-SITE-E",
+      "started_at": "2026-11-09T14:47:45.936265+00:00",
+      "ended_at": "2026-11-09T14:49:01.371062+00:00",
+      "elapsed_seconds": 75.434797
+    }
+  ],
+  "current_change_result": "docs/evidence/development_convoys/scoped_result.json",
+  "execution_context": {
+    "configured_model": null,
+    "reasoning_setting": null,
+    "context": "Long existing Lead desktop chat; no fresh-context or model-controlled workflow comparison performed. Missing model metadata remains unknown.",
+    "actors": "Actual counters cover Lead chat only; separate Designer/UX model usage is not exposed/attributed here and is unknown.",
+    "measurement_cost": "Workflow adoption and initial inherited graph maintenance are separate in workflow_rollout.json; this resume run has its stated partial-history boundary."
+  },
+  "repair_accounting_scope": "CONVOY-SITE-E tracked repair390.53117s covers tagged investigation/correction intervals only. Tagged release/wait intervals are separate; some review/metadata work is unassigned to an incident. Do not present the repair subtotal as the entire lifecycle cost."
+}

@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "reviewed_baseline": "357bd63317217b19b59f57ab5bd41529fe7646db",
+  "reviewed_baseline": "60925c72c3cbd6d33f48a5286a0b93d8be999cf7",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
-  "title": "Trencho — current implementation atlas",
+  "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
     {
@@ -10,7 +10,7 @@
       "title": "Session and service composition",
       "group": "Foundation",
       "owner": "GameSession + BaseSimulation",
-      "summary": "Main creates a scene-owned session, rear UI and battlefield UI. BaseSimulation injects the same rear/ledger into domain services; this is not an autoload-per-system architecture.",
+      "summary": "Main creates a scene-owned session, rear UI and battlefield UI. BaseSimulation injects the same rear/ledger into domain services; this is not an autoload-per-system architecture. The development opening creates four real present unloaders at the south Table service apron.",
       "nodes": [
         {
           "id": "n0",
@@ -318,7 +318,7 @@
       "title": "Staffing, reporting and priorities",
       "group": "People",
       "owner": "RearSimulation requests + actors",
-      "summary": "Requested staff, assignment and physical presence are separate. Shared people are rebalanced by duties/priorities and walk/report before contributing work.",
+      "summary": "Requested staff, assignment and physical presence are separate. Shared people are rebalanced by duties/priorities and walk/report before contributing work. Development service eligibility includes the apron outside the unchanged construction rectangle.",
       "nodes": [
         {
           "id": "n0",
@@ -349,6 +349,12 @@
           "label": "Production counts present operators",
           "file": "game/production/fixed_production.gd",
           "function": "operators"
+        },
+        {
+          "id": "n5",
+          "label": "Validate actual person and service-strip eligibility",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_eligible"
         }
       ],
       "edges": [
@@ -371,6 +377,11 @@
           "from": "n3",
           "to": "n4",
           "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n5",
+          "label": "duty eligibility filter"
         }
       ],
       "related": [
@@ -462,7 +473,7 @@
       "title": "Purchasing, requisition and inbound deliveries",
       "group": "Rear economy",
       "owner": "ReceivingSimulation",
-      "summary": "Resource and worker purchases debit requisition and create timed supplier orders. Gates, berth/storage promises, passenger exits and unloading retain physical identities.",
+      "summary": "Receiving owns actual paid resource/worker purchases and physical supplier movement, berth/loading capacity and custody. Development Confirm atomically registers and immediately dispatches one convoy; the final actual handover/departure event reopens ordering while empty egress continues.",
       "nodes": [
         {
           "id": "n0",
@@ -499,13 +510,37 @@
           "label": "Unload via worker phases",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_finish_worker_phase"
+        },
+        {
+          "id": "n6",
+          "label": "Quote complete current goods/worker draft",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "quote_delivery"
+        },
+        {
+          "id": "n7",
+          "label": "Validate and commit one paid convoy",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "buy_delivery"
+        },
+        {
+          "id": "n8",
+          "label": "Record actual departure and drain member set",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "_set_state"
+        },
+        {
+          "id": "n9",
+          "label": "Current convoy readiness",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "convoy_ready"
         }
       ],
       "edges": [
         {
           "from": "n0",
           "to": "n1",
-          "label": "quote → resource order"
+          "label": "quote â†’ resource order"
         },
         {
           "from": "n1",
@@ -526,6 +561,31 @@
           "from": "n3",
           "to": "n5",
           "label": "freight unloading"
+        },
+        {
+          "from": "n6",
+          "to": "n7",
+          "label": "explicit Confirm revalidates quote"
+        },
+        {
+          "from": "n7",
+          "to": "n3",
+          "label": "register members, dispatch real carriers"
+        },
+        {
+          "from": "n4",
+          "to": "n8",
+          "label": "completed passenger handover enables departure"
+        },
+        {
+          "from": "n5",
+          "to": "n8",
+          "label": "completed freight deposit enables departure"
+        },
+        {
+          "from": "n8",
+          "to": "n9",
+          "label": "last member removed; convoy_changed event"
         }
       ],
       "related": [
@@ -1107,7 +1167,7 @@
         "identity",
         "construction"
       ],
-      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01–T05 specs are data in vehicle_specs.gd.",
+      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01â€“T05 specs are data in vehicle_specs.gd.",
       "primary_files": [
         "game/production/heavy_production.gd"
       ]
@@ -1275,7 +1335,7 @@
     },
     {
       "id": "dispatch",
-      "title": "Rear → HQ manifests and return",
+      "title": "Rear â†’ HQ manifests and return",
       "group": "Logistics",
       "owner": "DispatchService",
       "summary": "Owns accepted manifests, staging/loading, route, HQ unloading, cancellation and return commitments. Ledger keeps actual cargo/person/hull identities and receipts.",
@@ -2035,7 +2095,7 @@
     },
     {
       "id": "freight",
-      "title": "HQ → forward stop freight and return",
+      "title": "HQ â†’ forward stop freight and return",
       "group": "Logistics",
       "owner": "ForwardTransport",
       "summary": "Actual military T01, stock portions, handlers, fuel and both route directions are committed to a job. Unloaded forward stock and return are separate phases.",
@@ -2563,7 +2623,7 @@
         "field",
         "bridge"
       ],
-      "notes": "The normal world is authored Farmland4km×6km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
+      "notes": "The normal world is authored Farmland4kmÃ—6km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
       "primary_files": [
         "game/terrain/terrain_world.gd",
         "game/terrain/terrain_catalog.gd",
@@ -2876,7 +2936,7 @@
       "title": "Mines, hazards, knowledge and clearance",
       "group": "Engineering",
       "owner": "MineService + DeviceCatalog",
-      "summary": "Actual D01–D03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
+      "summary": "Actual D01â€“D03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
       "nodes": [
         {
           "id": "n0",
@@ -2949,7 +3009,7 @@
       "title": "Main menus, rear controls and guidance",
       "group": "Presentation",
       "owner": "Main + CommandShell + BaseDemo + panels",
-      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards.",
+      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them. Existing-site inspection opens Build controls without acquiring a new blueprint; acquisition retains its separate explicit intent.",
       "nodes": [
         {
           "id": "n0",
@@ -2980,6 +3040,24 @@
           "label": "Refresh visible current panel",
           "file": "game/rear_base/base_demo.gd",
           "function": "_refresh_contents"
+        },
+        {
+          "id": "n5",
+          "label": "Confirm actual combined purchase draft",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_confirm_purchase"
+        },
+        {
+          "id": "n6",
+          "label": "Open panel with explicit preview intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "show_panel"
+        },
+        {
+          "id": "n7",
+          "label": "Acquire a new blueprint only by construction intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "select_build_kind"
         }
       ],
       "edges": [
@@ -3002,6 +3080,21 @@
           "from": "n3",
           "to": "n4",
           "label": "committed command refresh"
+        },
+        {
+          "from": "n5",
+          "to": "n3",
+          "label": "actual Receiving command result"
+        },
+        {
+          "from": "n2",
+          "to": "n6",
+          "label": "existing-site inspection: preview false"
+        },
+        {
+          "from": "n6",
+          "to": "n7",
+          "label": "only explicit acquisition intent"
         }
       ],
       "related": [
@@ -3090,7 +3183,7 @@
       "title": "3D rear view, placement and Workshop interaction",
       "group": "Presentation",
       "owner": "Preview + WorldPresenter + rear presenters",
-      "summary": "Opt-in3D renders the same session and manager, rear sites/workers/trucks, first/third-person views and actual placement, Workshop and normal Supply Table interactions.",
+      "summary": "3D presents the same manager/session, actual site/Table E interactions, first/third-person views and overhead grid construction. Supplier visuals subscribe to Receiving state and keyed ledger movement; they never own purchases or vehicle motion.",
       "nodes": [
         {
           "id": "n0",
@@ -3118,7 +3211,7 @@
         },
         {
           "id": "n4",
-          "label": "Consume current Table / completed Workshop E target",
+          "label": "Consume actual Table or current site E target",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop"
         },
@@ -3133,6 +3226,24 @@
           "label": "Open actual Supply Table purchase controls",
           "file": "game/preview_3d/preview.gd",
           "function": "_open_supply_table"
+        },
+        {
+          "id": "n7",
+          "label": "Static one-metre construction grid",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "_build_grid"
+        },
+        {
+          "id": "n8",
+          "label": "Bind current supplier-event presentation",
+          "file": "game/preview_3d/supplier_convoys.gd",
+          "function": "bind"
+        },
+        {
+          "id": "n9",
+          "label": "Apply keyed actual supplier pose",
+          "file": "game/preview_3d/supplier_convoys.gd",
+          "function": "_moved"
         }
       ],
       "edges": [
@@ -3165,6 +3276,21 @@
           "from": "n4",
           "to": "n6",
           "label": "exact current table hit"
+        },
+        {
+          "from": "n0",
+          "to": "n7",
+          "label": "world build creates overhead mode"
+        },
+        {
+          "from": "n0",
+          "to": "n8",
+          "label": "same Receiving/ledger owners"
+        },
+        {
+          "from": "n8",
+          "to": "n9",
+          "label": "keyed entity_moved events"
         }
       ],
       "related": [
@@ -3349,7 +3475,7 @@
       "title": "Authored world, opening armies and normal rear start",
       "group": "Foundation",
       "owner": "FarmlandSession + FarmlandScenario + BattlefieldStart / RearStart",
-      "summary": "Scenario creation composes the4km×6km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
+      "summary": "Scenario creation composes the4kmÃ—6km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
       "nodes": [
         {
           "id": "n0",
@@ -3861,20 +3987,21 @@
     "game/vehicle_combat/vehicle_combat_demo.gd": "reviews",
     "game/vehicle_recovery/recovery_demo.gd": "reviews",
     "game/vehicle_recovery/recovery_fixture.gd": "reviews",
-    "game/world_probe/full_size_probe.gd": "reviews"
+    "game/world_probe/full_size_probe.gd": "reviews",
+    "game/preview_3d/supplier_convoys.gd": "preview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
     "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
-    "game/rear_base/base_simulation.gd": "08481bc198e12adbca77474696925d4e9c82366a6cda89ec7d2d25f90b6e30e3",
+    "game/rear_base/base_simulation.gd": "85cc1b837253550e3fea7c0e74dabf355d22a496ac25a6b03435469c7c4c46a9",
     "game/identity/identity_ledger.gd": "df9fb95cb861da36c6add7ddd72b9d46e778e269c93f8762d9a1e407a5f0a622",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "49410ac17f10ec1967aec7002ccc0655104e720eb29214bc3192ffc02c579249",
+    "game/staffing/rear_simulation.gd": "50b1d266c6e2ae8eb43ebf2d193044c5a9ae3b8531874be2f956afaf4beb4948",
     "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "fe6c94570946d6de691a01d54eefe0b20e530983c0c14ae208873dc57d656d59",
+    "game/procurement/receiving_simulation.gd": "b46c710f2b0043ce1074d55f37081812601577b422201497d7dde7094122929c",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "860d76850cc8f94d3ef9795c4ae24cf7d95cb4c1e229e1c2e4497660501fde88",
+    "game/construction/construction_service.gd": "fe1b3023f184f3614f59016dc46af69e8e8e1e4c536e952b7149f7efaafb5109",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
     "game/construction/construction_truck_service.gd": "63494a47faaa162a10c3b7c0cd75ace2485a5fe4d732e05971460a43983323e9",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
@@ -3923,19 +4050,19 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "3f888e48280536e78e293837625fb93b254c428c133a1116c3c6280480d6b3a3",
-    "game/rear_base/base_map.gd": "f90f4083ce2f824166c9356c830d4eee2f4d85bb4b35d6d378847932cf948625",
+    "game/rear_base/base_demo.gd": "d56e98ed72fd7d754100c2653db09d838edc0984895d3bc9420954b30e537d1c",
+    "game/rear_base/base_map.gd": "e7e8a3d8ed67411f82ffae208c618457aa714c2e760a3ecbd1cee078be9c7e66",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
-    "game/rear_base/workforce_panel.gd": "760d104bb85cb82b87bcca4eecc96f6c0aedc31d6327474b8b73cbfa9f2b5079",
+    "game/rear_base/workforce_panel.gd": "55547a609a74c5714c5a55300d1d0022320055abac82c626d4732c8073f59ef6",
     "game/ui/command_shell.gd": "07df86926a86ea31a95e404b30346ff32e82bcd10b15412f5253904012d776e1",
     "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "b9f0dc7e157139ec44375450dbff3a379ea75c1bbbf52b64c0d0ec443d57d5d9",
-    "game/preview_3d/world_presenter.gd": "a797d61cd0aec6c740aee8ee5ec44a644bfc80b25e96a43e37f18f9b1884687e",
+    "game/preview_3d/preview.gd": "739b54da5074371f0430deb43c666a99fe000df17ea8e905269216336e5107da",
+    "game/preview_3d/world_presenter.gd": "64cb7bfd80d3fa5fa546c4ff51a0b211d904697e52408c79f8b7c3dd700d3494",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
     "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
@@ -3948,7 +4075,7 @@
     "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
     "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",
     "game/preview_3d/field_objective_cues.gd": "8b817c0779a7df9da91d3027c556422cef6a6fd4d0a00114f733eed12b137ea2",
-    "game/preview_3d/manager_pose.gd": "cb8926f985c332ed309b8396d00629832145f4a12939b84526d4c1592cb2657e",
+    "game/preview_3d/manager_pose.gd": "31e22b220ec911a82d918d9d77e4b4bc3b1a484e709ff8cb2504bd283761ec13",
     "game/scenario/farmland_session.gd": "52e7559e063bc5b419fa3eb5671cf5c747ea1f72f770212c9dfe2c3bf9b17d59",
     "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
     "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
@@ -3984,6 +4111,7 @@
     "game/vehicle_combat/vehicle_combat_demo.gd": "e101b43ced42e5ac417c4852d27611e6752837638f515a48470340068c107f79",
     "game/vehicle_recovery/recovery_demo.gd": "8292d13e3a10eb020a5e9765bcac1b443ea11bdee18f7f2eaac6a3a1aa071843",
     "game/vehicle_recovery/recovery_fixture.gd": "d00db52dd4226a33509c35711d571772e5858ea6372c56ce17159ca5ede6d0e7",
-    "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721"
+    "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721",
+    "game/preview_3d/supplier_convoys.gd": "55b72ca1e3394c33f809110b8c67269cf7630dbdde077e46bd1523e00c310b3b"
   }
 }

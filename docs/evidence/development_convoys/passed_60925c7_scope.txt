@@ -1,0 +1,5 @@
+revision=60925c72c3cbd6d33f48a5286a0b93d8be999cf7
+base=a4f2c4f73b4df718c19735d206d3c87fec05fe86
+changed_scripts=['game/preview_3d/preview.gd', 'game/rear_base/base_demo.gd']
+direct_check=True
+Syntax checks are not gameplay acceptance. No regression suites run.

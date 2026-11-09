@@ -1,5 +1,12 @@
 # One objective, bounded execution
 
+Current operating workflow, 9 November 2026: the Lead is the sole programmer.
+Use [feature planning and measurement](development_workflow.md) and the
+[candidate comparison protocols](workflow_experiments.json) before new production
+edits. The controller and parallel-team descriptions below are retained historical
+capabilities, not instructions to launch workers or old regression checks. Current
+team ownership and `current_change_verification.md` take precedence.
+
 Give the lead agent an objective in this chat, for example: “Fix blueprint
 placement stutter at 1x; keep the existing performance limits.” The lead first
 inspects source, instructions, existing failures and the relevant overhaul plan.

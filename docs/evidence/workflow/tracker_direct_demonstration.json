@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "scope": "One synthetic start/phase/incident/repair/stop/report episode; no Godot, game behavior or regression suite",
+  "synthetic_expected_token_delta": 95,
+  "timestamps_non_overlapping": true,
+  "unknown_counters_remain_null": true,
+  "no_transcript_export": true,
+  "actual_chat_counter_metadata_available": true,
+  "latest_actual_counter_receipt_at": "2026-11-09T14:08:57.196Z"
+}

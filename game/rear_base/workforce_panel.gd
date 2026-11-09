@@ -1,6 +1,7 @@
 extends VBoxContainer
 ## Reads the shared worker pool; all allocation remains with the rear owner.
 signal result_reported(result: Dictionary)
+signal purchase_requested
 const UIKit = preload("res://game/ui/ui_kit.gd")
 const JOB_NAMES := {
 	"receiving":"Supply unloading", "hauling":"Hauling", "workshop":"Workshop",
@@ -29,10 +30,10 @@ func _ready() -> void:
 	var pool: VBoxContainer = _section(self,"Worker pool","")
 	summary = _label(pool, "")
 	var hire := Button.new()
-	hire.text = "Hire 8 workers · 140 requisition · 90 s travel"
+	hire.text = "Order workers at Supply Table"
 	hire.theme_type_variation = "Primary"
 	hire.tooltip_text = "120 requisition + 20 transport. Reserves eight rear places; the supplier carrier and driver leave."
-	hire.pressed.connect(func() -> void: result_reported.emit(simulation.receiving.buy_people()))
+	hire.pressed.connect(func() -> void: purchase_requested.emit())
 	pool.add_child(hire)
 	_label(pool,"Workers join after disembarking.")
 	arrivals = _label(_section(self,"Arrivals","Only workers who finish disembarking and walking join the pool."), "")

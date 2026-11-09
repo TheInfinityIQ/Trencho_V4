@@ -130,6 +130,11 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	if empty_field:
 		var stock: Dictionary = rear.ledger.add_stock("start-supply-table-M11","M11",500,1.0,"receiving",rear.PLAYER)
 		assert(stock.ok,str(stock))
+		for index in 4:
+			var person: Dictionary = rear.add_person("start-unloader-%02d" % (index+1),false,"None","duty-receiving")
+			assert(person.ok,str(person))
+		var assigned: Dictionary = rear.set_target("receiving",4)
+		assert(assigned.ok,str(assigned))
 	elif initial_rear:
 		RearStart.apply(self)
 	rear.advance_time(0)

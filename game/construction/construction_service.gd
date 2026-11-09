@@ -110,7 +110,7 @@ func _empty_field_preview(kind: String, center: Vector2, size: Vector2, door: Ve
 	var table: Vector2 = rear.SUPPLY_TABLE
 	if footprint.grow(0.25).has_point(table): return _fail("Keep the Supply Table and its storage accessible.")
 	# Protect the actual starter service approaches, rather than phantom legacy roads.
-	for lane in [[Vector2(0,table.y-10),table+Vector2(0,-10)], [Vector2(0,table.y+10),table+Vector2(14,10)]]:
+	for lane in [[Vector2(0,200),Vector2(240,200)],[table,Vector2(table.x,200)]]:
 		if _path_hits(lane,footprint.grow(4.0)): return _fail("Keep the Supply Table's arrival and freight access clear.")
 	if walking_path(table,door,footprint).is_empty(): return _fail("No walking access from the Supply Table to this entrance.")
 	for row in instances.values():
@@ -190,7 +190,7 @@ func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: R
 	for box in boxes:
 		var outer: Rect2 = box.grow(0.5)
 		for corner in [outer.position,Vector2(outer.end.x,outer.position.y),outer.end,Vector2(outer.position.x,outer.end.y)]:
-			if BOUNDS.grow(-clearance).has_point(corner): nodes.append(corner)
+			if _access_bounds(clearance).has_point(corner): nodes.append(corner)
 	var distances: Array[float] = []
 	var previous: Array[int] = []
 	var visited: Array[bool] = []
@@ -219,8 +219,11 @@ func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: R
 		result.push_front(nodes[cursor])
 	return result
 
+func _access_bounds(clearance: float) -> Rect2:
+	return Rect2(0,0,240,210).grow(-clearance) if _rear_ref.get_ref().empty_field_opening else BOUNDS.grow(-clearance)
+
 func _vehicle_segment_clear(start: Vector2, goal: Vector2, boxes: Array[Rect2], clearance: float = 4.0) -> bool:
-	var road_bounds: Rect2 = BOUNDS.grow(-clearance)
+	var road_bounds: Rect2 = _access_bounds(clearance)
 	if not (road_bounds.has_point(start) or start == Vector2(240,91)) or not (road_bounds.has_point(goal) or goal == Vector2(240,91)): return false
 	for box in boxes:
 		if _path_hits([start,goal],box): return false

@@ -2,6 +2,13 @@
 
 ## Current working agreement — 9 November 2026
 
+Dawson resumed development after the MCP experiment and requested planning from
+the existing system graph before programming, plus feature-level time/token and
+observed-defect/repair accounting. Follow [development workflow](development_workflow.md).
+The [comparison protocols](workflow_experiments.json) are prepared for later use;
+their existence does not authorize extra benchmarks or regression suites. The
+Lead records scope/unknowns and keeps setup overhead separate from feature work.
+
 The Lead is the only programmer. The Lead performs technical review and owns
 implementation, validation, publication and merges. The Game Designer approves
 the current PR's game meaning; after that approval and required checks pass,
@@ -14,6 +21,11 @@ the original2D Artist is retired and must no longer be consulted. Consult UI/UX
 only when a menu update is needed. Existing controls reused by a world
 interaction do not create a standing menu-review gate. Artists/designers
 coordinate content and design with the Lead; other developer chats stay inactive.
+
+Dawson's9November convention: the GDD guides the game idea and feel, rather
+than acting as a rigid prototype rule book. Lead resolves reversible choices;
+Designer judges coherence, clarity and progress toward the playable loop. Raise
+material changes to player responsibilities; routine details are not new gates.
 
 The movement/Strategy and broad-settlement architecture assessment is recorded
 in [deferred architecture](deferred_architecture.json) for later. It does not

@@ -47,21 +47,48 @@ For example, the player purchases ingredients and chooses rifle and ammunition p
 
 ## 4. Approved opening and controls
 
-The rear starts with a controllable character, 2,500 requisition, 500 Building Materials, no hired workers or workshops, and a Supply Table/arrival point at the field's edge. Dawson explicitly approved this package on 1 November 2026. It replaces the older prebuilt rear package.
+Development opening override — 9 November 2026: start with the same manager,
+2,500 requisition and 500 actual Building Materials, plus four real untrained
+workers already assigned and present at the prebuilt south unloading apron.
+They belong to the shared workforce and can be reassigned. The Supply Table,
+storage and arrival access sit beside the road outside the buildable area. No
+workshops, production buildings or player-owned trucks are granted. This latest
+prototype request replaces the prior no-hired-workers opening.
 
 The first workers and first construction must be obtainable from this opening. Initial purchase access cannot require a Receiving Bay that has not been built. Purchased ordinary workers can build using the declared materials without first constructing an office or materials producer. The character is not a hidden source of free labour, qualifications or crew.
 
 The game uses cohesive stylized 3D. WASD moves the rear manager, with toggleable first- and third-person views of the same character. Switching views preserves that character's actual position and the current session. Camera position is not character position, and the manager is separate from the hired workforce. The initial 3D scope keeps the character in the rear; battlefield character access, jumping, climbing and interiors are not implied by the camera choice.
 
-The build menu supports placement preview, rotation and cancellation, with readable cost, footprint, entrance and access reasons. A solid building cannot be placed over the manager's actual body: reject without spending or moving the character or the requested building location. Opening management or construction controls must provide a usable pointer without unintended movement, looking or placement.
+The build menu uses a top-down RTS camera and visible one-metre grid, edge-snapped footprint preview, rotation, explicit Confirm placement and cancellation, with readable cost, footprint, entrance and access reasons. A solid building cannot be placed over the manager's actual body: reject without spending or moving the character or the requested building location. Opening management or construction controls must provide a usable pointer without unintended movement, looking or placement.
 
 The battlefield has a separate RTS observation camera with pan, zoom and inspection. Close zoom should make represented people and vehicles readable; distant views should retain useful strategic cues. It does not grant direct military orders, target selection, player combat, vehicle driving or additional knowledge of unseen enemies. Both perspectives and areas preserve people, goods, work, orders and progress.
 
 Pause, 1x and 2x remain accessible. Both rear and battlefield must continue their applicable activity while hidden. Waiting or planning in one area must not silently freeze the other. Pause stops timed gameplay while allowing inspection and management. The Developer chooses how to deliver these behaviours; the GDD does not prescribe a shared clock or scheduling mechanism.
 
+### Prototype ordering and interactions — 9 November 2026
+
+E on the current Supply Table/building opens its appropriate existing menu.
+Raw quantities and an optional eight-person batch are draft selections until
+one combined Confirm order validates and pays for the whole purchase. Prices,
+per-vehicle transport charges and finite cargo/passenger capacity remain real.
+Supplier trucks appear immediately at the south road entry and physically drive
+to the prebuilt drop-off. Four starting unloaders handle freight; purchased
+people disembark and arrive before joining the labour pool. Pause freezes that
+progress. One receiving convoy is permitted at a time during development;
+ordering reopens from the final truck's actual completed-handover/departure-start
+event while empty trucks continue driving out. No extra countdown is added.
+
+The GDD is a reference for the game's idea and feel, not an inflexible prototype
+rule book (Dawson's 9 November direction). The priority is approachable factory
+building, satisfying physical logistics and visible support for an autonomous
+war. Lead may choose reversible prototype simplifications; raise only material
+changes to that experience or player responsibilities. Latest human instructions
+and real tool restrictions still govern. Implementation/verification records
+state what actually works; these design paragraphs do not certify completion.
+
 ## 5. Workers, jobs and training
 
-The existing standard worker order brings eight untrained people for 120 requisition plus a 20 transport fee, with a 90-second arrival time. They join the pool through actual arrival and disembarkation. The supplier's driver and carrier leave. The existing rear capacity is 120, including relevant incoming and returning commitments.
+The existing standard worker order brings eight untrained people for 120 requisition plus a 20 transport fee, with immediate supplier-truck creation in the development opening instead of the earlier offscreen 90-second wait. The trucks physically drive, stop and unload; purchased people join the pool through actual arrival and disembarkation. The supplier's driver and carrier leave. The existing rear capacity is 120, including relevant incoming and returning commitments.
 
 The player requests worker counts and priorities for jobs and buildings. Routine assignment should not require selecting every person by name. Show available, assigned, present, arriving and requested people separately. An unmet target is a visible vacancy, not a worker who can already contribute.
 

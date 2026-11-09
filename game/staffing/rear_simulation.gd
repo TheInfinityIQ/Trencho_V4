@@ -12,7 +12,7 @@ const PLAYER := "army-blue"
 const EPS := 0.000001
 
 var ledger := Ledger.new()
-const SUPPLY_TABLE := Vector2(10,90)
+const SUPPLY_TABLE := Vector2(120,186)
 var empty_field_opening := false
 var yard: RefCounted
 var time: float = 0.0
@@ -542,7 +542,7 @@ func _staff_before(a: Dictionary, b: Dictionary, counts: Dictionary) -> bool:
 func _eligible(p: Dictionary, duty: String) -> bool:
 	if p.is_empty() or p.owner != PLAYER or p.assignment not in (["Available", "Rear Labour", "Training"] if duty in ["Available","students"] else ["Available", "Rear Labour"]) or p.health <= 0 or not actors.has(p.id):
 		return false
-	if not Rect2(0, 0, 240, 180).has_point(p.position):
+	if not Rect2(0, 0, 240, 210 if empty_field_opening else 180).has_point(p.position):
 		return false
 	if requests.has(duty) and requests[duty].get("manual",false):
 		if duty.begins_with("builders-"): return true
