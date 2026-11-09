@@ -43,7 +43,8 @@ remain authoritative. Existing debug exceptions remain visibly separate.
 
 Build acquisition opens a dedicated orthographic top-down rear camera with
 visible one-metre grid. WASD/middle drag pans, wheel zooms, R rotates, left click
-confirms once and Escape/right click cancels. Snap footprint edges, including
+selects a preview and the explicit Confirm placement button commits once;
+Escape/right click cancels. Snap footprint edges, including
 half-cell centres for odd dimensions. Draft/rotation/camera changes invalidate
 the old command token. Existing command path revalidates current footprint,
 entrance/access, manager occupation, resources and service identity. Cancel or
