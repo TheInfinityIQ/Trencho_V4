@@ -1,5 +1,21 @@
 # Living system map
 
+The [implementation atlas](system_atlas.html) adds an overview and 48 individual
+system diagrams to the function inventory. Read [all diagrams in Markdown](system_atlas.md)
+or query [its JSON](system_atlas.json). Every game script has a primary owner;
+retained tests and optional review scenes are labelled separately. Diagram nodes
+open the current source line in VS Code. It documents actual implementation,
+including the still-shared clock, rather than the intended overhaul.
+
+The existing explicit updater also refreshes the atlas. When game source changes,
+review affected descriptions and references in `system_atlas_catalog.json`, then
+update only the corresponding normalized SHA256 entries in `reviewed_sources`.
+New non-test scripts need an explicit `file_owners` entry. Generation refuses
+unreviewed source changes; do not stamp hashes without reviewing the code.
+The launcher uses `ui_function_map.py --diagram-only` to preserve deferred
+button-test fixtures. This documentation workflow neither updates those fixtures
+nor executes their retained suites.
+
 `system_map.json` inventories every existing tracked or nonignored project file.
 Every named GDScript function and anonymous callback is included, along with
 Python functions and PowerShell functions/inline scriptblocks in development
@@ -48,11 +64,11 @@ diagram after generation. For direct Python use, run:
 
 ```powershell
 python tools/system_map.py --update
-python tools/ui_function_map.py --update
+python tools/ui_function_map.py --update --diagram-only
 python tools/system_map.py --update
 python tools/system_map.py --purpose game/main/game_session.gd::notify_command "Notify views that a command changed shared session state."
 python tools/system_map.py --check
-python tools/ui_function_map.py --check
+python tools/ui_function_map.py --check --diagram-only
 ```
 
 The updater preserves purpose text. Changed/new function bodies are marked
@@ -64,8 +80,9 @@ are removed from the map. Source hashes normalize line endings for Windows/CI.
 
 `--check` rebuilds facts in memory without rewriting the map. It rejects missing
 files, stale code/locations/connections and pending purpose reviews. The root
-`AGENTS.md` makes this part of future code changes, and repository validation runs
-the check. The updater is an explicit development command, not a background watcher
+`AGENTS.md` makes this part of future code changes. Map freshness is an explicit
+developer check; current CI is limited to changed-production parsing and an
+optional brief current-change demonstration. The updater is an explicit development command, not a background watcher
 or Godot startup task. It does not run gameplay or enable an editor addon.
 
 ## Dependencies and verification

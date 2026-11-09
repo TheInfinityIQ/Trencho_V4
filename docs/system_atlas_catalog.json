@@ -1,0 +1,3977 @@
+{
+  "schema": 1,
+  "reviewed_baseline": "ae6deb6d567d972edf58fc3d60c0b28007206f6c",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
+  "title": "Trencho — current implementation atlas",
+  "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
+  "systems": [
+    {
+      "id": "session",
+      "title": "Session and service composition",
+      "group": "Foundation",
+      "owner": "GameSession + BaseSimulation",
+      "summary": "Main creates a scene-owned session, rear UI and battlefield UI. BaseSimulation injects the same rear/ledger into domain services; this is not an autoload-per-system architecture.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "F5 main creates session",
+          "file": "game/main/main.gd",
+          "function": "_ready"
+        },
+        {
+          "id": "n1",
+          "label": "Scene-owned live session",
+          "file": "game/main/game_session.gd",
+          "function": "_ready"
+        },
+        {
+          "id": "n2",
+          "label": "Build service graph and shared ledger",
+          "file": "game/rear_base/base_simulation.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n3",
+          "label": "Replace session and reconnect listeners",
+          "file": "game/main/game_session.gd",
+          "function": "replace_simulation"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "creates"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "owns model"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "replacement path"
+        }
+      ],
+      "related": [
+        "clock",
+        "identity",
+        "ui",
+        "scenario",
+        "preview"
+      ],
+      "notes": "Default F5 remains main.tscn. Preview inherits Main and is an opt-in F6 entry. Review scenes can create separate diagnostic sessions.",
+      "primary_files": [
+        "game/main/main.gd",
+        "game/main/game_session.gd"
+      ]
+    },
+    {
+      "id": "clock",
+      "title": "Time, deadlines and settlement",
+      "group": "Foundation",
+      "owner": "BaseSimulation + RearSimulation",
+      "summary": "The actual implementation still advances one shared rear time across rear and battlefield services. Live wall-time debt and cooperative route planning feed an event-boundary loop.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Physics callback (at most once per rendered frame in live mode)",
+          "file": "game/main/game_session.gd",
+          "function": "_physics_process"
+        },
+        {
+          "id": "n1",
+          "label": "Accrue scaled wall time",
+          "file": "game/rear_base/base_simulation.gd",
+          "function": "tick_live"
+        },
+        {
+          "id": "n2",
+          "label": "Pump bounded planning / quantum",
+          "file": "game/rear_base/base_simulation.gd",
+          "function": "_pump_live"
+        },
+        {
+          "id": "n3",
+          "label": "Choose nearest service deadline and advance",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "advance_time"
+        },
+        {
+          "id": "n4",
+          "label": "Repeat immediate transitions until stable",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "live pump"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "work debt"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "bounded quantum"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "before / after boundaries"
+        },
+        {
+          "from": "n4",
+          "to": "n3",
+          "label": "new deadlines"
+        }
+      ],
+      "related": [
+        "session",
+        "production",
+        "army",
+        "dispatch",
+        "execution"
+      ],
+      "notes": "advance_time queries next_boundary across services, advances work/motion and calls _settle. _settle has a 1000-iteration safety bound; it is not a thousand unconditional passes. Finite event-woken logistics processing is a separate path. Independent domain clocks/timer-only overhaul is NOT completed.",
+      "primary_files": [
+        "game/rear_base/base_simulation.gd"
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Identity, custody, stock and claims",
+      "group": "Foundation",
+      "owner": "IdentityLedger / Entity / Person / Claim",
+      "summary": "One ledger owns physical people, hulls, stock portions, weapons, holders, ownership, fuel, health and reservations. Services request validated mutations; detached inspections are read models.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Entity / Person / Claim records",
+          "file": "game/identity/identity_records.gd"
+        },
+        {
+          "id": "n1",
+          "label": "Create persistent physical identities",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "add_person"
+        },
+        {
+          "id": "n2",
+          "label": "Reserve actual stock",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "request_stock"
+        },
+        {
+          "id": "n3",
+          "label": "Move an actual entity / emit position events",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "move_entity"
+        },
+        {
+          "id": "n4",
+          "label": "Read a detached entity snapshot",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "inspect_entity"
+        },
+        {
+          "id": "n5",
+          "label": "Check conservation and invariants",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "audit"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "person schema"
+        },
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "claim schema"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "later physical movement"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "query"
+        },
+        {
+          "from": "n2",
+          "to": "n5",
+          "label": "conservation checks"
+        },
+        {
+          "from": "n3",
+          "to": "n5",
+          "label": "invariant checks"
+        }
+      ],
+      "related": [
+        "people",
+        "vehicles",
+        "hauling",
+        "combat",
+        "production"
+      ],
+      "notes": "inspect_entity is a query, not the game-loop controller. Many callers share the ledger because goods/people must retain identity across systems. Broad snapshots, narrow queries and mutation APIs coexist; this atlas does not measure their frequency.",
+      "primary_files": [
+        "game/identity/identity_ledger.gd",
+        "game/identity/identity_records.gd"
+      ]
+    },
+    {
+      "id": "people",
+      "title": "People: civilian workers and infantry",
+      "group": "People",
+      "owner": "Shared Records.Person + role-specific services",
+      "summary": "There are not two independent civilian/infantry entity implementations. The same PERSON identity has assignment, qualification, duty, holder, gear, health, morale and suppression. Different services own its activities.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Shared Person record and Assignment enum",
+          "file": "game/identity/identity_records.gd"
+        },
+        {
+          "id": "n1",
+          "label": "Procurement creates arriving people",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "buy_people"
+        },
+        {
+          "id": "n2",
+          "label": "Exclusive assignment transitions",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "request_assignment"
+        },
+        {
+          "id": "n3",
+          "label": "Training changes same identity",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "complete_training"
+        },
+        {
+          "id": "n4",
+          "label": "Formation reporting keeps same person",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "complete_formation_report"
+        },
+        {
+          "id": "n5",
+          "label": "Wound / death updates ledger",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "injure_person"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "worker origin"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "physical arrival / eligible duty"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "training path"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "eligible military report"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "combat consequence"
+        }
+      ],
+      "related": [
+        "identity",
+        "staffing",
+        "training",
+        "army",
+        "combat",
+        "manager"
+      ],
+      "notes": "Arrows show possible lifecycle stages, not automatic enlistment. Workers, instructors, crew, passengers and infantry have distinct eligibility/commitment rules. The player manager is a separate ManagerPose/CharacterBody3D, not a free worker identity.",
+      "primary_files": []
+    },
+    {
+      "id": "staffing",
+      "title": "Staffing, reporting and priorities",
+      "group": "People",
+      "owner": "RearSimulation requests + actors",
+      "summary": "Requested staff, assignment and physical presence are separate. Shared people are rebalanced by duties/priorities and walk/report before contributing work.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Player changes requested target",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "set_target"
+        },
+        {
+          "id": "n1",
+          "label": "Rebalance actual eligible people",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_rebalance"
+        },
+        {
+          "id": "n2",
+          "label": "Physical reporting phase",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_report"
+        },
+        {
+          "id": "n3",
+          "label": "Finish timed actor phase",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_finish_phase"
+        },
+        {
+          "id": "n4",
+          "label": "Production counts present operators",
+          "file": "game/production/fixed_production.gd",
+          "function": "operators"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "people",
+        "hauling",
+        "production",
+        "construction",
+        "training"
+      ],
+      "notes": "One person cannot fill two jobs at once. Newly completed facilities apply their starting request through Construction once; selecting or changing a recipe must not reset deliberate edits.",
+      "primary_files": [
+        "game/staffing/rear_simulation.gd",
+        "game/staffing/rear_layout.gd",
+        "game/staffing/yard_activity.gd"
+      ]
+    },
+    {
+      "id": "hauling",
+      "title": "Storage, hauling and space promises",
+      "group": "Rear economy",
+      "owner": "RearSimulation jobs / actors / stores + ledger claims",
+      "summary": "Haul requests reserve real source portions and destination capacity. Actor phases represent walking, pickup, carrying and deposit; output space and relocation promises belong to the rear.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request a physical haul",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "request_haul"
+        },
+        {
+          "id": "n1",
+          "label": "Select eligible idle hauler/job",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_start_job"
+        },
+        {
+          "id": "n2",
+          "label": "Reserve and begin actual carry",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "begin_carry"
+        },
+        {
+          "id": "n3",
+          "label": "Finish timed carry phase",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_finish_phase"
+        },
+        {
+          "id": "n4",
+          "label": "Reconcile storage constraints",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "_reconcile_store"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "identity",
+        "staffing",
+        "logistics",
+        "construction",
+        "production"
+      ],
+      "notes": "This diagram is the local rear haul path. Strategic manifests, forward trucks and frontline issue have other owners. Construction utility trucks can replace a local long carry leg without creating resources.",
+      "primary_files": []
+    },
+    {
+      "id": "procurement",
+      "title": "Purchasing, requisition and inbound deliveries",
+      "group": "Rear economy",
+      "owner": "ReceivingSimulation",
+      "summary": "Resource and worker purchases debit requisition and create timed supplier orders. Gates, berth/storage promises, passenger exits and unloading retain physical identities.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Quote raw-resource purchase",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "quote_resources"
+        },
+        {
+          "id": "n1",
+          "label": "Purchase resources / create order",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "buy_resources"
+        },
+        {
+          "id": "n2",
+          "label": "Purchase real worker cohort",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "buy_people"
+        },
+        {
+          "id": "n3",
+          "label": "Admit and progress inbound order",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "_pump"
+        },
+        {
+          "id": "n4",
+          "label": "Disembark actual passengers",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "_disembark"
+        },
+        {
+          "id": "n5",
+          "label": "Unload via worker phases",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "_finish_worker_phase"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "quote → resource order"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "freight branch"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "worker branch"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "passenger exits"
+        },
+        {
+          "from": "n3",
+          "to": "n5",
+          "label": "freight unloading"
+        }
+      ],
+      "related": [
+        "people",
+        "identity",
+        "hauling",
+        "objectives"
+      ],
+      "notes": "Resources and people are parallel order types, not mandatory sequential steps. Empty-field Supply Table has its own configured receiving arrangement; a Receiving Bay is not required for the first worker purchase. Credit from controlled resource objectives goes to this account.",
+      "primary_files": [
+        "game/procurement/receiving_simulation.gd",
+        "game/procurement/resource_catalog.gd"
+      ]
+    },
+    {
+      "id": "construction",
+      "title": "Rear building placement, completion and dismantling",
+      "group": "Rear economy",
+      "owner": "ConstructionService",
+      "summary": "Actual site rows own footprint, entrance, materials, progress and instance-specific facility activity. Placement checks access and occupation before committing; completed sites activate existing services.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Check actual placement and access",
+          "file": "game/construction/construction_service.gd",
+          "function": "preview"
+        },
+        {
+          "id": "n1",
+          "label": "Commit one real site",
+          "file": "game/construction/construction_service.gd",
+          "function": "place"
+        },
+        {
+          "id": "n2",
+          "label": "Order real M11 to site",
+          "file": "game/construction/construction_service.gd",
+          "function": "order_materials"
+        },
+        {
+          "id": "n3",
+          "label": "Earn builder work",
+          "file": "game/construction/construction_service.gd",
+          "function": "advance_work"
+        },
+        {
+          "id": "n4",
+          "label": "Complete and activate site",
+          "file": "game/construction/construction_service.gd",
+          "function": "_activate"
+        },
+        {
+          "id": "n5",
+          "label": "Apply once-only starting staff request",
+          "file": "game/construction/construction_service.gd",
+          "function": "_apply_starter_staffing"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "legal commit"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "materials needed"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "actual goods + builders"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "completed work"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "new request only"
+        }
+      ],
+      "related": [
+        "hauling",
+        "staffing",
+        "truck",
+        "production",
+        "preview"
+      ],
+      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view.",
+      "primary_files": [
+        "game/construction/construction_service.gd",
+        "game/construction/construction_catalogue.gd"
+      ]
+    },
+    {
+      "id": "truck",
+      "title": "Construction Office utility truck",
+      "group": "Rear economy",
+      "owner": "ConstructionTruckService",
+      "summary": "A temporary finite Office bundle provides a real T01 hull. The service owns exclusive hauler trips and loading/driving/unloading phases, not a teleporting delivery bonus.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Create/inspect office truck option",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "option"
+        },
+        {
+          "id": "n1",
+          "label": "Start eligible physical trip",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "start"
+        },
+        {
+          "id": "n2",
+          "label": "Schedule actual walking/driving",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_drive"
+        },
+        {
+          "id": "n3",
+          "label": "Progress to shared deadline",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Finish/release trip and driver",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_finish"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "construction",
+        "hauling",
+        "identity",
+        "vehicles"
+      ],
+      "notes": "This utility is distinct from Vehicle Works output and ordinary army transport. It retains real cargo and uses the existing clock; rendering is a separate presenter.",
+      "primary_files": [
+        "game/construction/construction_truck_service.gd"
+      ]
+    },
+    {
+      "id": "production",
+      "title": "Shared production and recipe selection",
+      "group": "Production",
+      "owner": "FixedProduction + SelectableProduction",
+      "summary": "Shared batch lifecycle validates access, operators, physical local inputs and output promise. SelectableProduction adds per-recipe records and confirmed switching of consumed work.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request recipe / possible confirmation token",
+          "file": "game/production/selectable_production.gd",
+          "function": "request_recipe"
+        },
+        {
+          "id": "n1",
+          "label": "Set stock target",
+          "file": "game/production/fixed_production.gd",
+          "function": "set_stock_target"
+        },
+        {
+          "id": "n2",
+          "label": "Settle prerequisites and consume local batch",
+          "file": "game/production/fixed_production.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n3",
+          "label": "Ledger atomically consumes ingredients",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "consume_local_batch"
+        },
+        {
+          "id": "n4",
+          "label": "Earn operator work",
+          "file": "game/production/fixed_production.gd",
+          "function": "advance_work"
+        },
+        {
+          "id": "n5",
+          "label": "Create real output at completion",
+          "file": "game/production/fixed_production.gd",
+          "function": "_create_output"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "current selected recipe"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "output demand"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "consume at batch start"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "eligible work interval"
+        },
+        {
+          "from": "n4",
+          "to": "n2",
+          "label": "completion boundary"
+        },
+        {
+          "from": "n2",
+          "to": "n5",
+          "label": "completion succeeds"
+        }
+      ],
+      "related": [
+        "workshop",
+        "munitions",
+        "materials",
+        "support",
+        "heavy",
+        "logistics"
+      ],
+      "notes": "These arrows describe batch lifecycle, not a literal call chain. advance_work is driven by the shared coordinator. Pause retains consumed inputs/work/promise; cancelling a consumed batch loses its unfinished work/inputs.",
+      "primary_files": [
+        "game/production/fixed_production.gd",
+        "game/production/selectable_production.gd"
+      ]
+    },
+    {
+      "id": "workshop",
+      "title": "Workshop / F04",
+      "group": "Production",
+      "owner": "R01Production or per-site SelectableProduction",
+      "summary": "Workshop is a configured owner of the shared production lifecycle, not an unrelated crafting engine. Essential R01 manufactures an actual empty E01 rifle; R08 and declared choices share the same facility.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Default Workshop recipe/access owner",
+          "file": "game/production/r01_production.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n1",
+          "label": "Built Workshop gets instance owner",
+          "file": "game/construction/construction_service.gd",
+          "function": "_activate"
+        },
+        {
+          "id": "n2",
+          "label": "Choose allowed recipe",
+          "file": "game/production/selectable_production.gd",
+          "function": "request_recipe"
+        },
+        {
+          "id": "n3",
+          "label": "Use the common batch lifecycle",
+          "file": "game/production/fixed_production.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n4",
+          "label": "Open selected actual Workshop in 3D",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_consume_workshop"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "declared owner"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "constructed owner"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "exclusive recipe"
+        },
+        {
+          "from": "n4",
+          "to": "n2",
+          "label": "existing Work UI"
+        }
+      ],
+      "related": [
+        "production",
+        "construction",
+        "logistics",
+        "identity"
+      ],
+      "notes": "Declared initial-workshop maps explicitly to logical workshop/rear.production. Player-built Workshops use construction.activities[site ID]. The demonstrated 3D interaction used the declared owner; earned full-factory acceptance remains open.",
+      "primary_files": [
+        "game/production/r01_production.gd"
+      ]
+    },
+    {
+      "id": "munitions",
+      "title": "Munitions / F05",
+      "group": "Production",
+      "owner": "R02Production + SelectableProduction",
+      "summary": "One exclusive munitions facility selects among ammunition, explosives and shell-chain recipes; ingredients and output are physical stock.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Configure choices and initial recipe",
+          "file": "game/production/r02_production.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n1",
+          "label": "Guard declared recipe access",
+          "file": "game/production/selectable_production.gd",
+          "function": "recipe_accessible"
+        },
+        {
+          "id": "n2",
+          "label": "Confirm switch if consumed batch exists",
+          "file": "game/production/selectable_production.gd",
+          "function": "confirm_recipe"
+        },
+        {
+          "id": "n3",
+          "label": "Produce with shared lifecycle",
+          "file": "game/production/fixed_production.gd",
+          "function": "settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "allowed choices"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "if switch needs confirmation"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "selected recipe"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "confirmed switch"
+        }
+      ],
+      "related": [
+        "production",
+        "logistics",
+        "mounted",
+        "demolition"
+      ],
+      "notes": "R02, R27, R32 and R33 are choices on the common owner, not four concurrently running batches in one facility. Manufacturing code does not imply that the whole ordinary supply chain has been accepted.",
+      "primary_files": [
+        "game/production/r02_production.gd"
+      ]
+    },
+    {
+      "id": "materials",
+      "title": "Building Materials / F13",
+      "group": "Production",
+      "owner": "R26Production + FixedProduction",
+      "summary": "A configured fixed production activity consumes local Metal/Wood and produces physical M11 Building Materials for further construction.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Configure fixed R26 owner",
+          "file": "game/production/r26_production.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n1",
+          "label": "Supply real missing ingredients",
+          "file": "game/production/fixed_production.gd",
+          "function": "logistics_demand"
+        },
+        {
+          "id": "n2",
+          "label": "Earn work with present operators",
+          "file": "game/production/fixed_production.gd",
+          "function": "advance_work"
+        },
+        {
+          "id": "n3",
+          "label": "Create M11 output stock",
+          "file": "game/production/fixed_production.gd",
+          "function": "_create_output"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "current recipe needs"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "actual inputs/operators required"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "completed batch"
+        }
+      ],
+      "related": [
+        "production",
+        "construction",
+        "hauling",
+        "logistics"
+      ],
+      "notes": "The normal opening 500 M11 is declared starting stock; later R26 output is separately manufactured. Self-sustaining ordinary factory completion remains open.",
+      "primary_files": [
+        "game/production/r26_production.gd"
+      ]
+    },
+    {
+      "id": "support",
+      "title": "Support Workshop / F09",
+      "group": "Production",
+      "owner": "SupportProduction + SelectableProduction",
+      "summary": "Support recipes reuse the same access, exclusive selection, local-input and physical-output lifecycle.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Configure support choices",
+          "file": "game/production/support_production.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n1",
+          "label": "Select allowed recipe",
+          "file": "game/production/selectable_production.gd",
+          "function": "request_recipe"
+        },
+        {
+          "id": "n2",
+          "label": "Consume/work/complete batch",
+          "file": "game/production/fixed_production.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n3",
+          "label": "Read current production/shortage state",
+          "file": "game/production/fixed_production.gd",
+          "function": "snapshot"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "production",
+        "training",
+        "field",
+        "combat"
+      ],
+      "notes": "A support recipe or qualification in a catalogue is not proof of an integrated end-to-end support gameplay loop.",
+      "primary_files": [
+        "game/production/support_production.gd"
+      ]
+    },
+    {
+      "id": "heavy",
+      "title": "Vehicle Works / heavy manufacture",
+      "group": "Production",
+      "owner": "HeavyProduction + ledger admission + Vehicles",
+      "summary": "Heavy production extends selectable recipes with actual bay/fleet/parking promises. Completed hulls or heavy objects have canonical IDs; a blocked occupied bay is retained.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Select heavy recipe",
+          "file": "game/production/heavy_production.gd",
+          "function": "request_recipe"
+        },
+        {
+          "id": "n1",
+          "label": "Accept order and reserve admission",
+          "file": "game/production/heavy_production.gd",
+          "function": "accept_order"
+        },
+        {
+          "id": "n2",
+          "label": "Earn common work",
+          "file": "game/production/fixed_production.gd",
+          "function": "advance_work"
+        },
+        {
+          "id": "n3",
+          "label": "Create canonical heavy output",
+          "file": "game/production/heavy_production.gd",
+          "function": "_create_output"
+        },
+        {
+          "id": "n4",
+          "label": "Register same hull for rear handling",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "register_output"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "production",
+        "vehicles",
+        "identity",
+        "construction"
+      ],
+      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01–T05 specs are data in vehicle_specs.gd.",
+      "primary_files": [
+        "game/production/heavy_production.gd"
+      ]
+    },
+    {
+      "id": "training",
+      "title": "School, instructors and qualifications",
+      "group": "People",
+      "owner": "TrainingService",
+      "summary": "Seats, students and eligible present instructors are real commitments. Elapsed course progress changes qualification on the same Person identity.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request course for real person",
+          "file": "game/training/training_service.gd",
+          "function": "request_course"
+        },
+        {
+          "id": "n1",
+          "label": "Validate student/seat/access",
+          "file": "game/training/training_service.gd",
+          "function": "_eligible"
+        },
+        {
+          "id": "n2",
+          "label": "Account instructor coverage and course time",
+          "file": "game/training/training_service.gd",
+          "function": "advance_work"
+        },
+        {
+          "id": "n3",
+          "label": "Settle completion / withdrawal",
+          "file": "game/training/training_service.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n4",
+          "label": "Update existing Person training",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "complete_training"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "people",
+        "staffing",
+        "army",
+        "vehicles"
+      ],
+      "notes": "Training is elapsed course time with coverage, unlike operator-work manufacturing. Catalogue courses include basic infantry and specialist qualifications; this does not prove every specialist gameplay loop is complete.",
+      "primary_files": [
+        "game/training/training_service.gd"
+      ]
+    },
+    {
+      "id": "vehicles",
+      "title": "Rear vehicles, crew, fuel and parking",
+      "group": "Vehicles",
+      "owner": "VehicleActivity + IdentityLedger",
+      "summary": "VehicleActivity owns registered hull activity and refuelling jobs. Ledger owns hull facts, crew station custody, fuel and damage; the renderer does not own these facts.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Register produced hull",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "register_output"
+        },
+        {
+          "id": "n1",
+          "label": "Assign eligible station",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "assign_station"
+        },
+        {
+          "id": "n2",
+          "label": "Actual crew boarding",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "complete_board"
+        },
+        {
+          "id": "n3",
+          "label": "Request physical refuel",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "request_refuel"
+        },
+        {
+          "id": "n4",
+          "label": "Start measured rear drive",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "start_drive"
+        },
+        {
+          "id": "n5",
+          "label": "Advance route / burn actual fuel",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "advance_to"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "crew request"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "physical report"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "separate fuel job"
+        },
+        {
+          "from": "n2",
+          "to": "n4",
+          "label": "driver required"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "fuel required"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "timed travel"
+        }
+      ],
+      "related": [
+        "heavy",
+        "identity",
+        "dispatch",
+        "troop",
+        "mounted",
+        "recovery"
+      ],
+      "notes": "These are separate vehicle operations, not automatic successive commands. Rear and military fleets retain the same hull ID across accepted handoffs. Different services own different movement activities.",
+      "primary_files": [
+        "game/vehicles/vehicle_activity.gd",
+        "game/production/vehicle_specs.gd"
+      ]
+    },
+    {
+      "id": "dispatch",
+      "title": "Rear → HQ manifests and return",
+      "group": "Logistics",
+      "owner": "DispatchService",
+      "summary": "Owns accepted manifests, staging/loading, route, HQ unloading, cancellation and return commitments. Ledger keeps actual cargo/person/hull identities and receipts.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Accept real manifest",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "accept"
+        },
+        {
+          "id": "n1",
+          "label": "Reserve actual cargo",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "_reserve_cargo"
+        },
+        {
+          "id": "n2",
+          "label": "Load through named handling tasks",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "_schedule_preparation"
+        },
+        {
+          "id": "n3",
+          "label": "Depart when physically ready",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "depart"
+        },
+        {
+          "id": "n4",
+          "label": "Progress route and HQ handling",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n5",
+          "label": "Settle unload / return / cancel",
+          "file": "game/dispatch/dispatch_service.gd",
+          "function": "settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "logistics",
+        "vehicles",
+        "routes",
+        "hq",
+        "identity"
+      ],
+      "notes": "Automatic request fulfilment uses accept_automatic_delivery; retained manual manifests remain distinct. Automatic routine freight does not require a newly added manual Depart action.",
+      "primary_files": [
+        "game/dispatch/dispatch_service.gd"
+      ]
+    },
+    {
+      "id": "hq",
+      "title": "HQ receipts, reserve equipment and local issue",
+      "group": "Logistics",
+      "owner": "HqLogistics",
+      "summary": "HQ issue is a timed local transfer from physically arrived stock to eligible people/vehicles. Receiving at HQ is separate from frontline delivery or use.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Assess and publish genuine rifle need",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "publish_rifle_supply_need"
+        },
+        {
+          "id": "n1",
+          "label": "Request person weapon",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "request_person_weapon"
+        },
+        {
+          "id": "n2",
+          "label": "Request vehicle ammunition/fuel",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "request_vehicle_ammo"
+        },
+        {
+          "id": "n3",
+          "label": "Reserve a real issue job",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "_reserve_job"
+        },
+        {
+          "id": "n4",
+          "label": "Timed pickup/walk/drop",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "_finish_step"
+        },
+        {
+          "id": "n5",
+          "label": "Complete local handoff",
+          "file": "game/hq/hq_logistics.gd",
+          "function": "_finish_drop"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "one weapon need path"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "person job"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "vehicle job"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "reserved source/handler"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "physical deposit"
+        }
+      ],
+      "related": [
+        "dispatch",
+        "army",
+        "identity",
+        "logistics",
+        "forward"
+      ],
+      "notes": "Person weapon, rounds and vehicle issue are parallel job types. rear_supply_needed is connected to RearLogistics; a shortage signal does not manufacture stock.",
+      "primary_files": [
+        "game/hq/hq_logistics.gd"
+      ]
+    },
+    {
+      "id": "logistics",
+      "title": "Automatic factory input and army shipping",
+      "group": "Logistics",
+      "owner": "RearLogistics (event-woken Node)",
+      "summary": "Session commits and genuine HQ/frontline need wake finite passes. It requests missing factory hauls and advances automatic delivery requests through existing owners.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Committed session change wakes finite pass",
+          "file": "game/logistics/rear_logistics.gd",
+          "function": "_wake"
+        },
+        {
+          "id": "n1",
+          "label": "Process one candidate per frame, then idle",
+          "file": "game/logistics/rear_logistics.gd",
+          "function": "_process"
+        },
+        {
+          "id": "n2",
+          "label": "Ask activity for actual missing input demand",
+          "file": "game/logistics/rear_logistics.gd",
+          "function": "_supply_factory"
+        },
+        {
+          "id": "n3",
+          "label": "Create physical rear haul",
+          "file": "game/logistics/rear_logistics.gd",
+          "function": "_ensure_haul"
+        },
+        {
+          "id": "n4",
+          "label": "Progress army delivery request",
+          "file": "game/logistics/rear_logistics.gd",
+          "function": "_advance_request"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "enable finite work"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "factory turn"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "missing real inputs"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "delivery turn"
+        }
+      ],
+      "related": [
+        "hauling",
+        "production",
+        "dispatch",
+        "hq",
+        "policy"
+      ],
+      "notes": "_process is enabled only while finite candidates remain; there is no idle logistics polling timer. This does not make the entire game event-only: the shared clock and scheduled army reviews still run.",
+      "primary_files": [
+        "game/logistics/rear_logistics.gd",
+        "game/logistics/army_supply_view.gd",
+        "game/logistics/army_supply_panel.gd"
+      ]
+    },
+    {
+      "id": "army",
+      "title": "Military organization, equipment and readiness",
+      "group": "Battlefield",
+      "owner": "MilitaryOrganization",
+      "summary": "Companies/platoons/squads, demands, crew reports and replacement reports reference real equipped people and attached hulls. Readiness derives from physical facts.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request equipment/personnel need",
+          "file": "game/military/organization.gd",
+          "function": "request_need"
+        },
+        {
+          "id": "n1",
+          "label": "Form real equipped squad",
+          "file": "game/military/organization.gd",
+          "function": "form_squad"
+        },
+        {
+          "id": "n2",
+          "label": "Report members / settle organization",
+          "file": "game/military/organization.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n3",
+          "label": "Assign actual military crew",
+          "file": "game/military/organization.gd",
+          "function": "assign_crew"
+        },
+        {
+          "id": "n4",
+          "label": "Assess actual capability",
+          "file": "game/military/organization.gd",
+          "function": "capability"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "people",
+        "hq",
+        "troop",
+        "orders",
+        "combat"
+      ],
+      "notes": "Civilian-to-military duties are ledger assignment/receipt changes, not replacement with a new Infantry object. Autonomous organization is not player RTS soldier-command UI.",
+      "primary_files": [
+        "game/military/organization.gd"
+      ]
+    },
+    {
+      "id": "troop",
+      "title": "Military passenger and supply transport",
+      "group": "Vehicles",
+      "owner": "TroopTransport (owned by MilitaryOrganization)",
+      "summary": "Named trips reserve real people/hull/stations/seats and plan bounded routes. Boarding, travel, interruption and dismount preserve current intent and custody.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Queue named transport request",
+          "file": "game/military/troop_transport.gd",
+          "function": "request_trip_deferred"
+        },
+        {
+          "id": "n1",
+          "label": "Prepare routes in bounded chunks",
+          "file": "game/military/troop_transport.gd",
+          "function": "pump_planning"
+        },
+        {
+          "id": "n2",
+          "label": "Commit current physical trip",
+          "file": "game/military/troop_transport.gd",
+          "function": "_commit_planning"
+        },
+        {
+          "id": "n3",
+          "label": "Schedule real boarding",
+          "file": "game/military/troop_transport.gd",
+          "function": "_schedule_board"
+        },
+        {
+          "id": "n4",
+          "label": "Advance physical route",
+          "file": "game/military/troop_transport.gd",
+          "function": "_advance_route"
+        },
+        {
+          "id": "n5",
+          "label": "Finish real dismount",
+          "file": "game/military/troop_transport.gd",
+          "function": "_finish_dismount"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "army",
+        "vehicles",
+        "routes",
+        "collect",
+        "identity"
+      ],
+      "notes": "Reposition and supply-trip methods are additional guarded paths. This owner is different from rear Dispatch and HQ-to-forward freight.",
+      "primary_files": [
+        "game/military/troop_transport.gd"
+      ]
+    },
+    {
+      "id": "orders",
+      "title": "Sight reports, command links and intent",
+      "group": "Battlefield",
+      "owner": "OrderService",
+      "summary": "Observations produce side/echelon-specific contacts and delayed reports/orders. Delivered acknowledged intent is consumed by execution; it is not omniscient hidden-target selection.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Watch a real squad",
+          "file": "game/orders/order_service.gd",
+          "function": "watch"
+        },
+        {
+          "id": "n1",
+          "label": "Sample actual local observation",
+          "file": "game/orders/order_service.gd",
+          "function": "_sample_squad"
+        },
+        {
+          "id": "n2",
+          "label": "Issue hierarchical intent",
+          "file": "game/orders/order_service.gd",
+          "function": "issue_order"
+        },
+        {
+          "id": "n3",
+          "label": "Advance delayed command links",
+          "file": "game/orders/order_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Settle acknowledgment / coordination",
+          "file": "game/orders/order_service.gd",
+          "function": "settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "sample own members"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "informed command path"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "queued link delivery"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "delivered intent"
+        }
+      ],
+      "related": [
+        "army",
+        "terrain",
+        "execution",
+        "policy"
+      ],
+      "notes": "The ACTIONS catalogue is broader than fully demonstrated autonomous execution. Do not infer every action string has a complete playable path.",
+      "primary_files": [
+        "game/orders/order_service.gd"
+      ]
+    },
+    {
+      "id": "execution",
+      "title": "Squad and vehicle action execution",
+      "group": "Battlefield",
+      "owner": "SquadExecution + VehicleExecution",
+      "summary": "Delivered intent drives foot movement, cover, combat and resupply decisions. Pending route/decision work is separated from authoritative commits.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Settle due squad decisions",
+          "file": "game/battlefield/squad_execution.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n1",
+          "label": "Pump current decision / route",
+          "file": "game/battlefield/squad_execution.gd",
+          "function": "pump_planning"
+        },
+        {
+          "id": "n2",
+          "label": "Execute current acknowledged squad intent",
+          "file": "game/battlefield/squad_execution.gd",
+          "function": "_execute"
+        },
+        {
+          "id": "n3",
+          "label": "Advance existing motions",
+          "file": "game/battlefield/squad_execution.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Military vehicle decision owner",
+          "file": "game/battlefield/vehicle_execution.gd",
+          "function": "settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "queue due decisions"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "validated current intent"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "foot motion branch"
+        },
+        {
+          "from": "n0",
+          "to": "n4",
+          "label": "vehicle branch"
+        }
+      ],
+      "related": [
+        "orders",
+        "army",
+        "combat",
+        "collect",
+        "policy",
+        "routes"
+      ],
+      "notes": "Decision scheduling still includes recurring simulation-time reviews. This is not a per-person _process script and is not proof of stable60FPS.",
+      "primary_files": [
+        "game/battlefield/squad_execution.gd",
+        "game/battlefield/vehicle_execution.gd"
+      ]
+    },
+    {
+      "id": "policy",
+      "title": "Authored operations, resupply and resource decisions",
+      "group": "Battlefield",
+      "owner": "OpeningPolicy + OpeningResupply + ResourceOperations + VehicleDeployment",
+      "summary": "The normal Farmland opening installs scenario-specific policy over reusable organization, orders, execution and transport. Resource proposals and replenishment retain genuine capability/need constraints.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Install policy and subordinate owners",
+          "file": "game/battlefield/opening_policy.gd",
+          "function": "_init"
+        },
+        {
+          "id": "n1",
+          "label": "Review authored operations",
+          "file": "game/battlefield/opening_policy.gd",
+          "function": "tick"
+        },
+        {
+          "id": "n2",
+          "label": "Generate knowledge-based resource proposals",
+          "file": "game/battlefield/resource_operations.gd",
+          "function": "proposal"
+        },
+        {
+          "id": "n3",
+          "label": "Manage local resupply requests",
+          "file": "game/battlefield/opening_resupply.gd",
+          "function": "tick"
+        },
+        {
+          "id": "n4",
+          "label": "Track permitted APC deployment",
+          "file": "game/battlefield/vehicle_deployment.gd",
+          "function": "tick"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "installed policy"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "resource proposals"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "genuine local needs"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "permitted hull missions"
+        }
+      ],
+      "related": [
+        "scenario",
+        "orders",
+        "execution",
+        "logistics",
+        "objectives"
+      ],
+      "notes": "Not a generic campaign AI or procedural-war director. ResourceOperations has a ten-second review interval; some army decision work is scheduled sampling. Availability of these owners does not close ordinary repeated supply acceptance.",
+      "primary_files": [
+        "game/battlefield/opening_policy.gd",
+        "game/battlefield/opening_resupply.gd",
+        "game/battlefield/resource_operations.gd",
+        "game/battlefield/vehicle_deployment.gd"
+      ]
+    },
+    {
+      "id": "collect",
+      "title": "Rifle squad collection and return journeys",
+      "group": "Logistics",
+      "owner": "RifleSupplyTravel + SquadExecution",
+      "summary": "Per-request collection travel chooses feasible walking/transport legs. Execution owns actual foot motions; TroopTransport owns actual vehicle jobs and custody.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request named collect/return journey",
+          "file": "game/battlefield/rifle_supply_travel.gd",
+          "function": "request_journey"
+        },
+        {
+          "id": "n1",
+          "label": "Bounded candidate planning",
+          "file": "game/battlefield/rifle_supply_travel.gd",
+          "function": "pump_planning"
+        },
+        {
+          "id": "n2",
+          "label": "Choose feasible current route",
+          "file": "game/battlefield/rifle_supply_travel.gd",
+          "function": "_choose"
+        },
+        {
+          "id": "n3",
+          "label": "Observe real job / gathering progress",
+          "file": "game/battlefield/rifle_supply_travel.gd",
+          "function": "_observe_job"
+        },
+        {
+          "id": "n4",
+          "label": "Interrupt obsolete journey",
+          "file": "game/battlefield/rifle_supply_travel.gd",
+          "function": "interrupt_journey"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "named current journey"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "candidate routes"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "actual chosen job"
+        },
+        {
+          "from": "n0",
+          "to": "n4",
+          "label": "cancellation branch"
+        }
+      ],
+      "related": [
+        "execution",
+        "troop",
+        "forward",
+        "policy",
+        "routes"
+      ],
+      "notes": "Each journey has a cycle/intent identity. It must not revive an obsolete order after resupply. A diagrammed selection path is not a measured optimality or full replenishment result.",
+      "primary_files": [
+        "game/battlefield/rifle_supply_travel.gd"
+      ]
+    },
+    {
+      "id": "forward",
+      "title": "Frontline person supply issue",
+      "group": "Logistics",
+      "owner": "ForwardSupply",
+      "summary": "After stock physically reaches a declared stop, a named eligible handler picks up, walks and deposits rounds into the actual recipient custody.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Register actual forward stop",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "register_delivery_stop"
+        },
+        {
+          "id": "n1",
+          "label": "Request local issue to actual person",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "start_issue"
+        },
+        {
+          "id": "n2",
+          "label": "Finish physical pickup",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_finish_pickup"
+        },
+        {
+          "id": "n3",
+          "label": "Advance timed local handling",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Complete recipient handoff",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_finish_drop"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "freight",
+        "rack",
+        "collect",
+        "combat",
+        "identity"
+      ],
+      "notes": "ForwardSupply composes freight and rack-issue subowners. HQ arrival alone does not replenish a person on the battlefield.",
+      "primary_files": [
+        "game/forward_supply/forward_supply.gd",
+        "game/forward_supply/forward_delivery_panel.gd"
+      ]
+    },
+    {
+      "id": "freight",
+      "title": "HQ → forward stop freight and return",
+      "group": "Logistics",
+      "owner": "ForwardTransport",
+      "summary": "Actual military T01, stock portions, handlers, fuel and both route directions are committed to a job. Unloaded forward stock and return are separate phases.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Queue delivery preparation",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "request_deferred"
+        },
+        {
+          "id": "n1",
+          "label": "Bounded route preparation",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "pump_planning"
+        },
+        {
+          "id": "n2",
+          "label": "Create guarded physical delivery",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_request_delivery"
+        },
+        {
+          "id": "n3",
+          "label": "Load actual portions",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_finish_load"
+        },
+        {
+          "id": "n4",
+          "label": "Advance route / fuel",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_advance_route"
+        },
+        {
+          "id": "n5",
+          "label": "Unload actual stock at stop",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_finish_unload"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "forward",
+        "troop",
+        "logistics",
+        "vehicles",
+        "routes"
+      ],
+      "notes": "This is a separate movement owner from rear Dispatch. Supply policy observes its jobs and may request later genuine replenishment; no stock is credited merely because a timer was scheduled.",
+      "primary_files": [
+        "game/forward_supply/forward_transport.gd"
+      ]
+    },
+    {
+      "id": "rack",
+      "title": "Forward vehicle ammunition rack issue",
+      "group": "Logistics",
+      "owner": "VehicleRackIssue",
+      "summary": "A named local handler moves actual arrived E26 rounds into a permitted vehicle rack, with payload, capacity and exclusivity checks.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Request exact arrived rounds / hull / handler",
+          "file": "game/forward_supply/vehicle_rack_issue.gd",
+          "function": "request"
+        },
+        {
+          "id": "n1",
+          "label": "Validate hull and current station readiness",
+          "file": "game/forward_supply/vehicle_rack_issue.gd",
+          "function": "_hull_error"
+        },
+        {
+          "id": "n2",
+          "label": "Advance physical handling",
+          "file": "game/forward_supply/vehicle_rack_issue.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n3",
+          "label": "Complete due issue phases",
+          "file": "game/forward_supply/vehicle_rack_issue.gd",
+          "function": "settle"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "forward",
+        "identity",
+        "mounted",
+        "policy"
+      ],
+      "notes": "The current forward-rack path is specifically guarded E26 handling, not a universal arbitrary-vehicle ammo refill framework.",
+      "primary_files": [
+        "game/forward_supply/vehicle_rack_issue.gd"
+      ]
+    },
+    {
+      "id": "combat",
+      "title": "Infantry fire, wounds, morale and care",
+      "group": "Battlefield",
+      "owner": "CombatService + ledger physical mutations",
+      "summary": "Combat owns fire eligibility, cadence, reload commitments, stress, bleeding/care and squad cohesion. Terrain owns sight/cover and ledger owns actual rounds, injuries and deaths.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Inspect actual shooter/weapon/target",
+          "file": "game/combat/combat_service.gd",
+          "function": "inspect_fire"
+        },
+        {
+          "id": "n1",
+          "label": "Fire and consume loaded ammunition",
+          "file": "game/combat/combat_service.gd",
+          "function": "fire"
+        },
+        {
+          "id": "n2",
+          "label": "Apply injury to actual person",
+          "file": "game/combat/combat_service.gd",
+          "function": "injure"
+        },
+        {
+          "id": "n3",
+          "label": "Start eligible medic care",
+          "file": "game/combat/combat_service.gd",
+          "function": "start_care"
+        },
+        {
+          "id": "n4",
+          "label": "Resolve timed combat/care/stress",
+          "file": "game/combat/combat_service.gd",
+          "function": "settle"
+        },
+        {
+          "id": "n5",
+          "label": "Read actual squad cohesion",
+          "file": "game/combat/combat_service.gd",
+          "function": "squad_cohesion"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "eligible fire"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "hit / actual casualty"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "eligible care branch"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "cooldown / reload / stress"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "timed care"
+        },
+        {
+          "from": "n2",
+          "to": "n5",
+          "label": "cohesion consequence"
+        }
+      ],
+      "related": [
+        "identity",
+        "terrain",
+        "orders",
+        "army",
+        "forward"
+      ],
+      "notes": "Fire, reload, care and cohesion are different branches, not one mandatory sequential chain. Medical care exists inside this service plus field aid facilities; no standalone complete medical logistics system is implied.",
+      "primary_files": [
+        "game/combat/combat_service.gd"
+      ]
+    },
+    {
+      "id": "mounted",
+      "title": "Mounted weapons, armour and projectiles",
+      "group": "Battlefield",
+      "owner": "VehicleCombatService",
+      "summary": "T03 MG, T04 autocannon and T05 main/coax have explicit data and actual crew/ammo requirements. Timed aim/reload/projectile work uses existing ledger/world.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Inspect mount and crew eligibility",
+          "file": "game/vehicle_combat/vehicle_combat_service.gd",
+          "function": "inspect_fire"
+        },
+        {
+          "id": "n1",
+          "label": "Aim / select current mount target",
+          "file": "game/vehicle_combat/vehicle_combat_service.gd",
+          "function": "aim"
+        },
+        {
+          "id": "n2",
+          "label": "Fire actual loaded ammunition",
+          "file": "game/vehicle_combat/vehicle_combat_service.gd",
+          "function": "fire"
+        },
+        {
+          "id": "n3",
+          "label": "Advance projectile / reload timing",
+          "file": "game/vehicle_combat/vehicle_combat_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Apply actual hull surface and armour damage",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "apply_vehicle_surface_damage"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "vehicles",
+        "army",
+        "combat",
+        "terrain",
+        "recovery"
+      ],
+      "notes": "Canonical backend mount data is not derived from visible model barrels. Detailed3D T03 art is deferred; T01/T02 visuals are partial/provisional. Do not infer presentation parity from combat implementation. People, heavy guns and structures use their separate existing damage owners.",
+      "primary_files": [
+        "game/vehicle_combat/vehicle_combat_service.gd"
+      ]
+    },
+    {
+      "id": "recovery",
+      "title": "Vehicle destruction, repair and towing",
+      "group": "Vehicles",
+      "owner": "RecoveryService",
+      "summary": "A ledger vehicle-damage signal triggers once-only wreck/occupant consequences. Actual qualified workers/materials and timed coupling/towing own recovery jobs.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Vehicle damage signal receiver",
+          "file": "game/vehicle_recovery/recovery_service.gd",
+          "function": "_on_damage"
+        },
+        {
+          "id": "n1",
+          "label": "Resolve wreck once in ledger",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "resolve_vehicle_wreck"
+        },
+        {
+          "id": "n2",
+          "label": "Start material-backed repair",
+          "file": "game/vehicle_recovery/recovery_service.gd",
+          "function": "start_repair"
+        },
+        {
+          "id": "n3",
+          "label": "Couple real tractor/target",
+          "file": "game/vehicle_recovery/recovery_service.gd",
+          "function": "start_coupling"
+        },
+        {
+          "id": "n4",
+          "label": "Start measured tow route",
+          "file": "game/vehicle_recovery/recovery_service.gd",
+          "function": "start_tow_route"
+        },
+        {
+          "id": "n5",
+          "label": "Advance recovery work",
+          "file": "game/vehicle_recovery/recovery_service.gd",
+          "function": "advance_to"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "once-only destruction"
+        },
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "repair branch"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "tow branch"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "coupled route"
+        },
+        {
+          "from": "n2",
+          "to": "n5",
+          "label": "repair interval"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "tow interval"
+        }
+      ],
+      "related": [
+        "identity",
+        "vehicles",
+        "mounted",
+        "field",
+        "routes"
+      ],
+      "notes": "Repair and tow are separate branches after damage; neither automatically restores a whole destroyed crew or lost cargo. Not a claim of a fully polished demo recovery UI.",
+      "primary_files": [
+        "game/vehicle_recovery/recovery_service.gd"
+      ]
+    },
+    {
+      "id": "objectives",
+      "title": "Objective capture, control and income",
+      "group": "Battlefield",
+      "owner": "ObjectiveService + Receiving account",
+      "summary": "Registered physical places track control, owner, contest, eligible presence and income. Actual uncontested Resource control credits the existing requisition account.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Register physical objective",
+          "file": "game/objectives/objective_service.gd",
+          "function": "register"
+        },
+        {
+          "id": "n1",
+          "label": "Derive eligible physical contributors",
+          "file": "game/objectives/objective_service.gd",
+          "function": "_refresh"
+        },
+        {
+          "id": "n2",
+          "label": "Advance control/income interval",
+          "file": "game/objectives/objective_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n3",
+          "label": "Credit real requisition account",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "credit_objective_income"
+        },
+        {
+          "id": "n4",
+          "label": "Read current public objective presentation",
+          "file": "game/battlefield/battlefield_presentation.gd",
+          "function": "markers"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "army",
+        "combat",
+        "procurement",
+        "policy",
+        "field3d"
+      ],
+      "notes": "Capture/ownership/income code exists. The recent3D evidence observed initial neutral markers; actual3D capture/contest/owner-transition runtime acceptance remains open.",
+      "primary_files": [
+        "game/objectives/objective_service.gd"
+      ]
+    },
+    {
+      "id": "terrain",
+      "title": "Terrain, footprint, sight and cover queries",
+      "group": "World",
+      "owner": "TerrainWorld + TerrainCatalog + RouteWork",
+      "summary": "Metre-cell/base-region world facts, overlays, obstacles and shields answer terrain support, route footprint, visibility and cover. It is custom domain geometry, not Godot navigation for every entity.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Author terrain regions / cells",
+          "file": "game/terrain/terrain_world.gd",
+          "function": "paint"
+        },
+        {
+          "id": "n1",
+          "label": "Check footprint/support",
+          "file": "game/terrain/terrain_world.gd",
+          "function": "footprint"
+        },
+        {
+          "id": "n2",
+          "label": "Begin bounded terrain route work",
+          "file": "game/terrain/terrain_world.gd",
+          "function": "begin_route"
+        },
+        {
+          "id": "n3",
+          "label": "Observe actual eye/muzzle sight",
+          "file": "game/terrain/terrain_world.gd",
+          "function": "observe"
+        },
+        {
+          "id": "n4",
+          "label": "Derive target cover",
+          "file": "game/terrain/terrain_world.gd",
+          "function": "cover"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "physical surface"
+        },
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "movement query"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "sight query"
+        },
+        {
+          "from": "n0",
+          "to": "n4",
+          "label": "cover query"
+        }
+      ],
+      "related": [
+        "routes",
+        "combat",
+        "orders",
+        "field",
+        "bridge"
+      ],
+      "notes": "The normal world is authored Farmland4km×6km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
+      "primary_files": [
+        "game/terrain/terrain_world.gd",
+        "game/terrain/terrain_catalog.gd",
+        "game/terrain/route_work.gd"
+      ]
+    },
+    {
+      "id": "routes",
+      "title": "Route, hull load and continuation planning",
+      "group": "World",
+      "owner": "RoutePlanner + RoutePlanWork + Terrain RouteWork",
+      "summary": "Measured gross load, canonical hull dimensions/turning and terrain/bridge constraints produce route parts. Continuations permit preparation across frames; movement owners commit actual travel.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Read gross actual hull + cargo mass",
+          "file": "game/routes/route_planner.gd",
+          "function": "gross_kg"
+        },
+        {
+          "id": "n1",
+          "label": "Begin route continuation",
+          "file": "game/routes/route_planner.gd",
+          "function": "begin_plan"
+        },
+        {
+          "id": "n2",
+          "label": "Route planning work state",
+          "file": "game/routes/route_plan_work.gd"
+        },
+        {
+          "id": "n3",
+          "label": "Terrain segment continuation",
+          "file": "game/terrain/route_work.gd"
+        },
+        {
+          "id": "n4",
+          "label": "Synchronous route convenience path",
+          "file": "game/routes/route_planner.gd",
+          "function": "plan"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "canonical load"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "creates continuation"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "terrain segments"
+        },
+        {
+          "from": "n4",
+          "to": "n2",
+          "label": "sync convenience drives work"
+        }
+      ],
+      "related": [
+        "terrain",
+        "vehicles",
+        "troop",
+        "freight",
+        "dispatch"
+      ],
+      "notes": "Pure planning is distinct from boarding, elapsed travel, fuel debit and job admission. The synchronous API and incremental APIs both exist; do not label all routes asynchronous.",
+      "primary_files": [
+        "game/routes/route_planner.gd",
+        "game/routes/route_plan_work.gd"
+      ]
+    },
+    {
+      "id": "field",
+      "title": "Field structures, roads and support sites",
+      "group": "Engineering",
+      "owner": "FieldService + FieldCatalog",
+      "summary": "Projects own local material delivery, eligible engineer work, damage/rebuild, occupancy and completed service use such as lookout, aid, depot, repair and obstacles.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Order physical field project",
+          "file": "game/field_structures/field_service.gd",
+          "function": "order"
+        },
+        {
+          "id": "n1",
+          "label": "Deliver real material",
+          "file": "game/field_structures/field_service.gd",
+          "function": "deliver_material"
+        },
+        {
+          "id": "n2",
+          "label": "Assign actual engineer",
+          "file": "game/field_structures/field_service.gd",
+          "function": "assign_engineer"
+        },
+        {
+          "id": "n3",
+          "label": "Progress site work",
+          "file": "game/field_structures/field_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n4",
+          "label": "Use completed field service",
+          "file": "game/field_structures/field_service.gd",
+          "function": "service_status"
+        },
+        {
+          "id": "n5",
+          "label": "Enter actual completed structure",
+          "file": "game/field_structures/field_service.gd",
+          "function": "enter"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n4",
+          "to": "n5",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "terrain",
+        "combat",
+        "identity",
+        "bridge",
+        "mines"
+      ],
+      "notes": "Road/structure capabilities are implemented within this owner/catalogue; they are not independent global building entities or proof of all engineering actions being exposed in the normal3D UI.",
+      "primary_files": [
+        "game/field_structures/field_service.gd",
+        "game/field_structures/field_catalogue.gd"
+      ]
+    },
+    {
+      "id": "bridge",
+      "title": "Bridge construction, crossings and repair",
+      "group": "Engineering",
+      "owner": "BridgeService",
+      "summary": "Owns authored/constructed crossing geometry, material/engineer work, traffic queues, load admission, damage and repairs; publishes surfaces to TerrainWorld.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Register an authored crossing",
+          "file": "game/bridges/bridge_service.gd",
+          "function": "register_existing_bridge"
+        },
+        {
+          "id": "n1",
+          "label": "Order a constructed bridge",
+          "file": "game/bridges/bridge_service.gd",
+          "function": "order"
+        },
+        {
+          "id": "n2",
+          "label": "Progress construction / repair",
+          "file": "game/bridges/bridge_service.gd",
+          "function": "advance_to"
+        },
+        {
+          "id": "n3",
+          "label": "Publish actual bridge surface",
+          "file": "game/bridges/bridge_service.gd",
+          "function": "_set_surface"
+        },
+        {
+          "id": "n4",
+          "label": "Request guarded physical crossing",
+          "file": "game/bridges/bridge_service.gd",
+          "function": "request_crossing"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "existing crossing"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "construction branch"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "completed surface"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "actual traffic admission"
+        }
+      ],
+      "related": [
+        "terrain",
+        "routes",
+        "identity",
+        "demolition",
+        "recovery"
+      ],
+      "notes": "Authored registration and new construction are alternate origins. Crossing damage can retime traffic and cause physical losses; a route preview does not reserve or complete a crossing.",
+      "primary_files": [
+        "game/bridges/bridge_service.gd",
+        "game/bridges/bridge_catalogue.gd",
+        "game/bridges/bridge_canvas.gd"
+      ]
+    },
+    {
+      "id": "demolition",
+      "title": "Attached demolition charges",
+      "group": "Engineering",
+      "owner": "DemolitionService",
+      "summary": "D04 is attached to existing field structures/bridges. Local material, qualified engineers, authorization, clearance and fuse/remote-control commitments govern detonation.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Order charge on actual target",
+          "file": "game/bridges/demolition_service.gd",
+          "function": "order"
+        },
+        {
+          "id": "n1",
+          "label": "Deliver/reserve real M06",
+          "file": "game/bridges/demolition_service.gd",
+          "function": "deliver"
+        },
+        {
+          "id": "n2",
+          "label": "Authorize current consequences",
+          "file": "game/bridges/demolition_service.gd",
+          "function": "authorize"
+        },
+        {
+          "id": "n3",
+          "label": "Start fuse or guarded remote trigger",
+          "file": "game/bridges/demolition_service.gd",
+          "function": "start_fuse"
+        },
+        {
+          "id": "n4",
+          "label": "Resolve detonation through target owner",
+          "file": "game/bridges/demolition_service.gd",
+          "function": "_detonate"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "required material"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "ready / consequence review"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "fuse branch; remote is alternate"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "due fuse"
+        }
+      ],
+      "related": [
+        "bridge",
+        "field",
+        "mines",
+        "identity",
+        "mounted"
+      ],
+      "notes": "Despite ID demo, this is demolition gameplay service; review scenes are classified separately. Fuse and remote are alternate modes, not automatic player access to all hostile devices.",
+      "primary_files": [
+        "game/bridges/demolition_service.gd"
+      ]
+    },
+    {
+      "id": "mines",
+      "title": "Mines, hazards, knowledge and clearance",
+      "group": "Engineering",
+      "owner": "MineService + DeviceCatalog",
+      "summary": "Actual D01–D03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Place guarded real device",
+          "file": "game/mines/mine_service.gd",
+          "function": "order"
+        },
+        {
+          "id": "n1",
+          "label": "Observe/record side-specific knowledge",
+          "file": "game/mines/mine_service.gd",
+          "function": "observe_placement"
+        },
+        {
+          "id": "n2",
+          "label": "Start engineer scan / disarm",
+          "file": "game/mines/mine_service.gd",
+          "function": "start_scan"
+        },
+        {
+          "id": "n3",
+          "label": "Actual ledger movement signal",
+          "file": "game/mines/mine_service.gd",
+          "function": "_on_moved"
+        },
+        {
+          "id": "n4",
+          "label": "Resolve device detonation",
+          "file": "game/mines/mine_service.gd",
+          "function": "_detonate"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "observed placement only"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "known hazard clearance"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "armed physical device"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "contact trigger"
+        }
+      ],
+      "related": [
+        "demolition",
+        "terrain",
+        "routes",
+        "field",
+        "combat"
+      ],
+      "notes": "Route hazard knowledge is not omniscient access to every planted device. Placement/knowledge/clearance/contact are branches; main UI and3D visual parity are not established for all.",
+      "primary_files": [
+        "game/mines/mine_service.gd",
+        "game/mines/device_catalogue.gd"
+      ]
+    },
+    {
+      "id": "ui",
+      "title": "Main menus, rear controls and guidance",
+      "group": "Presentation",
+      "owner": "Main + CommandShell + BaseDemo + panels",
+      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Button navigation requests",
+          "file": "game/ui/command_shell.gd",
+          "function": "_ready"
+        },
+        {
+          "id": "n1",
+          "label": "Deferred main navigation",
+          "file": "game/main/main.gd",
+          "function": "_apply_navigation"
+        },
+        {
+          "id": "n2",
+          "label": "Actual BaseDemo panel/selection",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_select"
+        },
+        {
+          "id": "n3",
+          "label": "Command result reconciles session",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_result"
+        },
+        {
+          "id": "n4",
+          "label": "Refresh visible current panel",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_refresh_contents"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "queued panel command"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "current panel/selection"
+        },
+        {
+          "from": "n2",
+          "to": "n4",
+          "label": "visible read model"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "committed command refresh"
+        }
+      ],
+      "related": [
+        "session",
+        "procurement",
+        "construction",
+        "workshop",
+        "logistics"
+      ],
+      "notes": "Hidden UI intentionally skips expensive refresh. This matters to selection:3D Workshop opens management before resolving current facility metadata. Existing scroll-heavy layout remains; generated diagrams do not establish enjoyable UI acceptance.",
+      "primary_files": [
+        "game/rear_base/base_demo.gd",
+        "game/rear_base/base_map.gd",
+        "game/rear_base/factory_plan.gd",
+        "game/rear_base/factory_plan_panel.gd",
+        "game/rear_base/workforce_panel.gd",
+        "game/ui/command_shell.gd",
+        "game/ui/ui_kit.gd",
+        "game/ui/demo_guidance.gd",
+        "game/ui/demo_guidance_panel.gd"
+      ]
+    },
+    {
+      "id": "battleview",
+      "title": "Battlefield read models and 2D inspection",
+      "group": "Presentation",
+      "owner": "BattlefieldPresentation + BattlefieldView",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Build permitted public markers",
+          "file": "game/battlefield/battlefield_presentation.gd",
+          "function": "markers"
+        },
+        {
+          "id": "n1",
+          "label": "Read permitted inspection",
+          "file": "game/battlefield/battlefield_presentation.gd",
+          "function": "inspect"
+        },
+        {
+          "id": "n2",
+          "label": "Refresh visible battlefield UI",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_refresh"
+        },
+        {
+          "id": "n3",
+          "label": "Select actual entity for observation",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "focus_entity"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "visible markers"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "selected permitted facts"
+        },
+        {
+          "from": "n3",
+          "to": "n1",
+          "label": "focus current identity"
+        }
+      ],
+      "related": [
+        "orders",
+        "objectives",
+        "identity",
+        "field3d"
+      ],
+      "notes": "Presentation reads do not issue military orders or grant knowledge. Snapshot/marker APIs are query layers, not independent simulation state owners.",
+      "primary_files": [
+        "game/battlefield/battlefield_presentation.gd",
+        "game/battlefield/battlefield_view.gd"
+      ]
+    },
+    {
+      "id": "preview",
+      "title": "3D rear view, placement and Workshop interaction",
+      "group": "Presentation",
+      "owner": "Preview + WorldPresenter + rear presenters",
+      "summary": "Opt-in3D renders the same session and manager, existing rear sites/workers/trucks, first/third-person views and real placement/Workshop commands.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Bind/replace current3D world",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_replace_world"
+        },
+        {
+          "id": "n1",
+          "label": "Handle explicit gameplay input",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_unhandled_input"
+        },
+        {
+          "id": "n2",
+          "label": "Consume input/geometry work in physics",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_physics_process"
+        },
+        {
+          "id": "n3",
+          "label": "Validate and commit actual placement",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_consume_commit"
+        },
+        {
+          "id": "n4",
+          "label": "Open actual Workshop Work controls",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_consume_workshop"
+        },
+        {
+          "id": "n5",
+          "label": "Reconcile physical rear visuals",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "refresh_rear"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "current world"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "pending input / geometry"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "placement branch"
+        },
+        {
+          "from": "n2",
+          "to": "n4",
+          "label": "Workshop branch"
+        },
+        {
+          "from": "n2",
+          "to": "n5",
+          "label": "committed rear change"
+        }
+      ],
+      "related": [
+        "ui",
+        "manager",
+        "construction",
+        "truck",
+        "vehicles",
+        "field3d"
+      ],
+      "notes": "At this source revision E targets completed Workshops only; Supply Table E integration is accepted next work, not implemented. F5 is still the older main view. Query-only truck contact and incomplete/provisional art remain explicit.",
+      "primary_files": [
+        "game/preview_3d/preview.gd",
+        "game/preview_3d/world_presenter.gd",
+        "game/preview_3d/facility_shells.gd",
+        "game/preview_3d/rear_workers.gd",
+        "game/preview_3d/utility_trucks.gd",
+        "game/preview_3d/rear_t01_trucks.gd",
+        "game/preview_3d/t01_presentation.gd",
+        "game/preview_3d/t02_presentation.gd"
+      ]
+    },
+    {
+      "id": "field3d",
+      "title": "3D RTS markers, units, vehicles and objectives",
+      "group": "Presentation",
+      "owner": "FieldPersons / FieldT01Trucks / FieldObjectives + cached cue overlays",
+      "summary": "Scene-owned presenters reconcile permitted rows; keyed changes update actual poses and cached screen anchors. Cue projection/picking is separate from domain combat.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Reconcile current permitted world markers",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "refresh_markers"
+        },
+        {
+          "id": "n1",
+          "label": "Admit actual friendly people",
+          "file": "game/preview_3d/field_persons.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "n2",
+          "label": "Admit exact canonical T01/T02",
+          "file": "game/preview_3d/field_t01_trucks.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "n3",
+          "label": "Reconcile registered objectives",
+          "file": "game/preview_3d/field_objectives.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "n4",
+          "label": "Pick actual current projected marker",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_select_marker"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "people branch"
+        },
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "T01/T02 branch"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "objective branch"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "cached cue"
+        },
+        {
+          "from": "n2",
+          "to": "n4",
+          "label": "cached cue"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "cached cue"
+        }
+      ],
+      "related": [
+        "battleview",
+        "identity",
+        "objectives",
+        "preview"
+      ],
+      "notes": "People, hulls and objectives are parallel presenters. Existing field_t01 paths support exactly T01/T02; their name is historical. T02 exterior is provisional commercial art, T03 detailed exterior deferred, objective transition runtime open.",
+      "primary_files": [
+        "game/preview_3d/field_persons.gd",
+        "game/preview_3d/field_person_cues.gd",
+        "game/preview_3d/field_t01_trucks.gd",
+        "game/preview_3d/field_t01_cues.gd",
+        "game/preview_3d/field_objectives.gd",
+        "game/preview_3d/field_objective_cues.gd"
+      ]
+    },
+    {
+      "id": "manager",
+      "title": "Player manager pose and movement",
+      "group": "Presentation",
+      "owner": "ManagerPose + WorldPresenter CharacterBody3D",
+      "summary": "The manager has one persistent foot pose with heading; first/third cameras are views of it. The manager is not a PERSON staff member or camera-position proxy.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Build manager body from shared pose",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "_build_player"
+        },
+        {
+          "id": "n1",
+          "label": "Read actual foot pose",
+          "file": "game/preview_3d/manager_pose.gd",
+          "function": "scene_position"
+        },
+        {
+          "id": "n2",
+          "label": "Resolve manager movement",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "move_manager"
+        },
+        {
+          "id": "n3",
+          "label": "Publish resolved physical pose",
+          "file": "game/preview_3d/manager_pose.gd",
+          "function": "publish_resolved"
+        },
+        {
+          "id": "n4",
+          "label": "Supply current occupation to placement",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_consume_commit"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n2",
+          "to": "n3",
+          "label": "workflow / dependency"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "workflow / dependency"
+        }
+      ],
+      "related": [
+        "preview",
+        "people",
+        "construction"
+      ],
+      "notes": "Switching perspective does not create free workers. Full grounded vehicle contact/displacement/hold integration is deferred; current query-only truck shapes must not be called completed manager collision integration.",
+      "primary_files": [
+        "game/preview_3d/manager_pose.gd"
+      ]
+    },
+    {
+      "id": "scenario",
+      "title": "Authored world, opening armies and normal rear start",
+      "group": "Foundation",
+      "owner": "FarmlandSession + FarmlandScenario + BattlefieldStart / RearStart",
+      "summary": "Scenario creation composes the4km×6km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Normal empty-field session factory",
+          "file": "game/scenario/farmland_session.gd",
+          "function": "create_empty_field"
+        },
+        {
+          "id": "n1",
+          "label": "Create shared session and declared world",
+          "file": "game/scenario/farmland_session.gd",
+          "function": "create"
+        },
+        {
+          "id": "n2",
+          "label": "Install authored map geometry",
+          "file": "game/battlefield/farmland_scenario.gd"
+        },
+        {
+          "id": "n3",
+          "label": "Declare actual initial armies",
+          "file": "game/scenario/battlefield_start.gd"
+        },
+        {
+          "id": "n4",
+          "label": "Optional declared rear package",
+          "file": "game/scenario/rear_start.gd"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "empty-field option"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "world"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "initial forces"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "declared rear alternative"
+        }
+      ],
+      "related": [
+        "session",
+        "policy",
+        "terrain",
+        "objectives",
+        "procurement"
+      ],
+      "notes": "The normal opening is one manager,2500REQ,500M11,Supply Table and no free hired workers/workshops. Main debug/review constructors have distinct arrangements. No persistent campaign/save system or complete multi-family procedural generator is established here.",
+      "primary_files": [
+        "game/scenario/farmland_session.gd",
+        "game/scenario/battlefield_start.gd",
+        "game/scenario/rear_start.gd",
+        "game/battlefield/farmland_scenario.gd"
+      ]
+    },
+    {
+      "id": "debug",
+      "title": "Explicit prototype debug actions",
+      "group": "Support",
+      "owner": "RearDebugMenu + RearDebugActions",
+      "summary": "The menu dispatches explicit cheats against the current supplied model and marks debug_used. These bypasses are distinct from ordinary production, purchase and delivery.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Build debug action menu",
+          "file": "game/debug/rear_debug_menu.gd",
+          "function": "_ready"
+        },
+        {
+          "id": "n1",
+          "label": "Execute supplied current model action",
+          "file": "game/debug/rear_debug_actions.gd",
+          "function": "execute"
+        },
+        {
+          "id": "n2",
+          "label": "Instantly complete pending construction",
+          "file": "game/construction/construction_service.gd",
+          "function": "debug_complete_pending"
+        },
+        {
+          "id": "n3",
+          "label": "Force physical worker delivery exception",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "debug_deliver_people"
+        },
+        {
+          "id": "n4",
+          "label": "Free raw-resource order exception",
+          "file": "game/procurement/receiving_simulation.gd",
+          "function": "debug_order_raw_resources"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "explicit click"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "instant-build branch"
+        },
+        {
+          "from": "n1",
+          "to": "n3",
+          "label": "force-deliver workers"
+        },
+        {
+          "from": "n1",
+          "to": "n4",
+          "label": "free resources branch"
+        }
+      ],
+      "related": [
+        "ui",
+        "procurement",
+        "construction",
+        "identity"
+      ],
+      "notes": "The last three nodes are alternate debug branches. They must not be used to claim earned ordinary-loop acceptance.",
+      "primary_files": [
+        "game/debug/rear_debug_actions.gd",
+        "game/debug/rear_debug_menu.gd"
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "title": "Function-call logging and retained performance tooling",
+      "group": "Support",
+      "owner": "FunctionCallLog + performance/report helpers",
+      "summary": "Instrumentation counts instrumented entries and optionally unique caller stacks per real second. It is a diagnostic observer, not every possible function automatically instrumented or tested.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Instrumented entry records counter",
+          "file": "game/diagnostics/function_call_log.gd",
+          "function": "record"
+        },
+        {
+          "id": "n1",
+          "label": "Optional caller-stack grouping",
+          "file": "game/diagnostics/function_call_log.gd",
+          "function": "record"
+        },
+        {
+          "id": "n2",
+          "label": "Flush current reports",
+          "file": "game/diagnostics/function_call_log.gd",
+          "function": "_collect_reports"
+        },
+        {
+          "id": "n3",
+          "label": "Retained performance thresholds",
+          "file": "game/diagnostics/performance_budget.gd"
+        },
+        {
+          "id": "n4",
+          "label": "Retained menu exercise runner",
+          "file": "game/diagnostics/menu_performance_suite.gd"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n2",
+          "label": "per-second reporting"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "stacks only if enabled"
+        },
+        {
+          "from": "n3",
+          "to": "n4",
+          "label": "retained harness dependency"
+        }
+      ],
+      "related": [
+        "clock",
+        "identity",
+        "ui"
+      ],
+      "notes": "Counter reports are not a measured cost ranking. GDUnit/test sources and menu performance harness remain retained; current policy does not run old suites or claim every button/function is tested. No engine or regression was run for this atlas.",
+      "primary_files": [
+        "game/diagnostics/function_call_log.gd",
+        "game/diagnostics/performance_budget.gd",
+        "game/diagnostics/console_report_writer.gd",
+        "game/diagnostics/menu_performance_suite.gd"
+      ]
+    },
+    {
+      "id": "reviews",
+      "title": "Optional review scenes, fixtures and probes",
+      "group": "Support",
+      "owner": "Main.REVIEWS and standalone diagnostic scenes",
+      "summary": "The repo retains subsystem demos/fixtures, a synthetic full-size probe and overhead evaluation. Many are available from optional Diagnostics; they are not evidence of ordinary gameplay completion.",
+      "nodes": [
+        {
+          "id": "n0",
+          "label": "Optional review scene catalogue",
+          "file": "game/main/main.gd"
+        },
+        {
+          "id": "n1",
+          "label": "Instantiate selected separate review",
+          "file": "game/main/main.gd",
+          "function": "_show_review"
+        },
+        {
+          "id": "n2",
+          "label": "Standalone identity fixture",
+          "file": "game/identity/identity_fixture.gd"
+        },
+        {
+          "id": "n3",
+          "label": "Synthetic world-size query probe",
+          "file": "game/world_probe/full_size_probe.gd"
+        },
+        {
+          "id": "n4",
+          "label": "Separate overhead evaluation",
+          "file": "game/overhead_evaluation/overhead_evaluation.gd"
+        }
+      ],
+      "edges": [
+        {
+          "from": "n0",
+          "to": "n1",
+          "label": "optional selection"
+        },
+        {
+          "from": "n1",
+          "to": "n2",
+          "label": "identity review example"
+        },
+        {
+          "from": "n0",
+          "to": "n3",
+          "label": "standalone probe, not main loop"
+        },
+        {
+          "from": "n0",
+          "to": "n4",
+          "label": "standalone evaluation"
+        }
+      ],
+      "related": [
+        "session",
+        "diagnostics"
+      ],
+      "notes": "base_demo is deliberately NOT classified here: it is mounted main UI. Optional scenes may instantiate independent simulations. Test files are listed under their subsystem in the source inventory, with retained-test classification; no test suite was executed.",
+      "primary_files": []
+    }
+  ],
+  "overview": [
+    {
+      "from": "ui",
+      "to": "session",
+      "label": "commands / views"
+    },
+    {
+      "from": "session",
+      "to": "clock",
+      "label": "physics pump"
+    },
+    {
+      "from": "session",
+      "to": "identity",
+      "label": "construct shared services"
+    },
+    {
+      "from": "clock",
+      "to": "production",
+      "label": "work and deadlines"
+    },
+    {
+      "from": "clock",
+      "to": "army",
+      "label": "reporting and deadlines"
+    },
+    {
+      "from": "clock",
+      "to": "combat",
+      "label": "timed combat"
+    },
+    {
+      "from": "clock",
+      "to": "dispatch",
+      "label": "timed travel"
+    },
+    {
+      "from": "procurement",
+      "to": "people",
+      "label": "actual arrivals"
+    },
+    {
+      "from": "people",
+      "to": "staffing",
+      "label": "exclusive duties"
+    },
+    {
+      "from": "staffing",
+      "to": "production",
+      "label": "present operators"
+    },
+    {
+      "from": "logistics",
+      "to": "hauling",
+      "label": "actual input orders"
+    },
+    {
+      "from": "production",
+      "to": "dispatch",
+      "label": "real finished goods"
+    },
+    {
+      "from": "dispatch",
+      "to": "hq",
+      "label": "physical HQ receipt"
+    },
+    {
+      "from": "hq",
+      "to": "army",
+      "label": "equipment / reserve"
+    },
+    {
+      "from": "army",
+      "to": "orders",
+      "label": "actual formations"
+    },
+    {
+      "from": "orders",
+      "to": "execution",
+      "label": "delivered intent"
+    },
+    {
+      "from": "execution",
+      "to": "combat",
+      "label": "eligible actions"
+    },
+    {
+      "from": "hq",
+      "to": "freight",
+      "label": "actual forward stock"
+    },
+    {
+      "from": "freight",
+      "to": "forward",
+      "label": "arrived stock"
+    },
+    {
+      "from": "forward",
+      "to": "combat",
+      "label": "actual issued rounds"
+    },
+    {
+      "from": "objectives",
+      "to": "procurement",
+      "label": "earned income"
+    },
+    {
+      "from": "terrain",
+      "to": "routes",
+      "label": "geometry queries"
+    },
+    {
+      "from": "identity",
+      "to": "preview",
+      "label": "keyed physical facts"
+    },
+    {
+      "from": "identity",
+      "to": "field3d",
+      "label": "permitted physical facts"
+    }
+  ],
+  "file_owners": {
+    "game/main/main.gd": "session",
+    "game/main/game_session.gd": "session",
+    "game/rear_base/base_simulation.gd": "clock",
+    "game/identity/identity_ledger.gd": "identity",
+    "game/identity/identity_records.gd": "identity",
+    "game/staffing/rear_simulation.gd": "staffing",
+    "game/staffing/rear_layout.gd": "staffing",
+    "game/staffing/yard_activity.gd": "staffing",
+    "game/procurement/receiving_simulation.gd": "procurement",
+    "game/procurement/resource_catalog.gd": "procurement",
+    "game/construction/construction_service.gd": "construction",
+    "game/construction/construction_catalogue.gd": "construction",
+    "game/construction/construction_truck_service.gd": "truck",
+    "game/production/fixed_production.gd": "production",
+    "game/production/selectable_production.gd": "production",
+    "game/production/r01_production.gd": "workshop",
+    "game/production/r02_production.gd": "munitions",
+    "game/production/r26_production.gd": "materials",
+    "game/production/support_production.gd": "support",
+    "game/production/heavy_production.gd": "heavy",
+    "game/training/training_service.gd": "training",
+    "game/vehicles/vehicle_activity.gd": "vehicles",
+    "game/production/vehicle_specs.gd": "vehicles",
+    "game/dispatch/dispatch_service.gd": "dispatch",
+    "game/hq/hq_logistics.gd": "hq",
+    "game/logistics/rear_logistics.gd": "logistics",
+    "game/logistics/army_supply_view.gd": "logistics",
+    "game/logistics/army_supply_panel.gd": "logistics",
+    "game/military/organization.gd": "army",
+    "game/military/troop_transport.gd": "troop",
+    "game/orders/order_service.gd": "orders",
+    "game/battlefield/squad_execution.gd": "execution",
+    "game/battlefield/vehicle_execution.gd": "execution",
+    "game/battlefield/opening_policy.gd": "policy",
+    "game/battlefield/opening_resupply.gd": "policy",
+    "game/battlefield/resource_operations.gd": "policy",
+    "game/battlefield/vehicle_deployment.gd": "policy",
+    "game/battlefield/rifle_supply_travel.gd": "collect",
+    "game/forward_supply/forward_supply.gd": "forward",
+    "game/forward_supply/forward_delivery_panel.gd": "forward",
+    "game/forward_supply/forward_transport.gd": "freight",
+    "game/forward_supply/vehicle_rack_issue.gd": "rack",
+    "game/combat/combat_service.gd": "combat",
+    "game/vehicle_combat/vehicle_combat_service.gd": "mounted",
+    "game/vehicle_recovery/recovery_service.gd": "recovery",
+    "game/objectives/objective_service.gd": "objectives",
+    "game/terrain/terrain_world.gd": "terrain",
+    "game/terrain/terrain_catalog.gd": "terrain",
+    "game/terrain/route_work.gd": "terrain",
+    "game/routes/route_planner.gd": "routes",
+    "game/routes/route_plan_work.gd": "routes",
+    "game/field_structures/field_service.gd": "field",
+    "game/field_structures/field_catalogue.gd": "field",
+    "game/bridges/bridge_service.gd": "bridge",
+    "game/bridges/bridge_catalogue.gd": "bridge",
+    "game/bridges/bridge_canvas.gd": "bridge",
+    "game/bridges/demolition_service.gd": "demolition",
+    "game/mines/mine_service.gd": "mines",
+    "game/mines/device_catalogue.gd": "mines",
+    "game/rear_base/base_demo.gd": "ui",
+    "game/rear_base/base_map.gd": "ui",
+    "game/rear_base/factory_plan.gd": "ui",
+    "game/rear_base/factory_plan_panel.gd": "ui",
+    "game/rear_base/workforce_panel.gd": "ui",
+    "game/ui/command_shell.gd": "ui",
+    "game/ui/ui_kit.gd": "ui",
+    "game/ui/demo_guidance.gd": "ui",
+    "game/ui/demo_guidance_panel.gd": "ui",
+    "game/battlefield/battlefield_presentation.gd": "battleview",
+    "game/battlefield/battlefield_view.gd": "battleview",
+    "game/preview_3d/preview.gd": "preview",
+    "game/preview_3d/world_presenter.gd": "preview",
+    "game/preview_3d/facility_shells.gd": "preview",
+    "game/preview_3d/rear_workers.gd": "preview",
+    "game/preview_3d/utility_trucks.gd": "preview",
+    "game/preview_3d/rear_t01_trucks.gd": "preview",
+    "game/preview_3d/t01_presentation.gd": "preview",
+    "game/preview_3d/t02_presentation.gd": "preview",
+    "game/preview_3d/field_persons.gd": "field3d",
+    "game/preview_3d/field_person_cues.gd": "field3d",
+    "game/preview_3d/field_t01_trucks.gd": "field3d",
+    "game/preview_3d/field_t01_cues.gd": "field3d",
+    "game/preview_3d/field_objectives.gd": "field3d",
+    "game/preview_3d/field_objective_cues.gd": "field3d",
+    "game/preview_3d/manager_pose.gd": "manager",
+    "game/scenario/farmland_session.gd": "scenario",
+    "game/scenario/battlefield_start.gd": "scenario",
+    "game/scenario/rear_start.gd": "scenario",
+    "game/battlefield/farmland_scenario.gd": "scenario",
+    "game/debug/rear_debug_actions.gd": "debug",
+    "game/debug/rear_debug_menu.gd": "debug",
+    "game/diagnostics/function_call_log.gd": "diagnostics",
+    "game/diagnostics/performance_budget.gd": "diagnostics",
+    "game/diagnostics/console_report_writer.gd": "diagnostics",
+    "game/diagnostics/menu_performance_suite.gd": "diagnostics",
+    "game/bridges/bridge_demo.gd": "reviews",
+    "game/bridges/demolition_demo.gd": "reviews",
+    "game/combat/combat_demo.gd": "reviews",
+    "game/field_structures/field_demo.gd": "reviews",
+    "game/identity/identity_demo.gd": "reviews",
+    "game/identity/identity_fixture.gd": "reviews",
+    "game/mines/mine_demo.gd": "reviews",
+    "game/objectives/objective_demo.gd": "reviews",
+    "game/orders/order_demo.gd": "reviews",
+    "game/overhead_evaluation/overhead_evaluation.gd": "reviews",
+    "game/overhead_evaluation/sample_map.gd": "reviews",
+    "game/procurement/receiving_demo.gd": "reviews",
+    "game/production/explosives_demo.gd": "reviews",
+    "game/production/materials_demo.gd": "reviews",
+    "game/production/munitions_demo.gd": "reviews",
+    "game/production/production_demo.gd": "reviews",
+    "game/production/shell_chain_demo.gd": "reviews",
+    "game/staffing/rear_demo.gd": "reviews",
+    "game/terrain/lane_simulation.gd": "reviews",
+    "game/terrain/terrain_demo.gd": "reviews",
+    "game/terrain/terrain_diagram.gd": "reviews",
+    "game/terrain/terrain_fixtures.gd": "reviews",
+    "game/vehicle_combat/vehicle_combat_demo.gd": "reviews",
+    "game/vehicle_recovery/recovery_demo.gd": "reviews",
+    "game/vehicle_recovery/recovery_fixture.gd": "reviews",
+    "game/world_probe/full_size_probe.gd": "reviews"
+  },
+  "reviewed_sources": {
+    "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
+    "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
+    "game/rear_base/base_simulation.gd": "08481bc198e12adbca77474696925d4e9c82366a6cda89ec7d2d25f90b6e30e3",
+    "game/identity/identity_ledger.gd": "df9fb95cb861da36c6add7ddd72b9d46e778e269c93f8762d9a1e407a5f0a622",
+    "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
+    "game/staffing/rear_simulation.gd": "49410ac17f10ec1967aec7002ccc0655104e720eb29214bc3192ffc02c579249",
+    "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
+    "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
+    "game/procurement/receiving_simulation.gd": "fe6c94570946d6de691a01d54eefe0b20e530983c0c14ae208873dc57d656d59",
+    "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
+    "game/construction/construction_service.gd": "860d76850cc8f94d3ef9795c4ae24cf7d95cb4c1e229e1c2e4497660501fde88",
+    "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
+    "game/construction/construction_truck_service.gd": "63494a47faaa162a10c3b7c0cd75ace2485a5fe4d732e05971460a43983323e9",
+    "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
+    "game/production/selectable_production.gd": "c55b829a08e2c10af144ce4bdd7aaa04cf10c2d24a139cb33f24f32fa2a7a928",
+    "game/production/r01_production.gd": "c4fcbe33fa5049ad9c5628d3d9f50bfe24c45eb00249583d9f8fcc4a6653ee8a",
+    "game/production/r02_production.gd": "5d73ae979f0ac8b8c86aa735b4f7c862278159e4e67bdc2d9a8ab35ef309cfae",
+    "game/production/r26_production.gd": "2355f49a897506ab53aada0adc7776aae08d0082a0c7942b279667ea8e078345",
+    "game/production/support_production.gd": "52c72da3598fc99e3e2b7a14454d984f890414102dec63e37350421c42b6b22f",
+    "game/production/heavy_production.gd": "6ff081dc61130bf405350f652dfec3831fbeb82649f848ccf5a877e97931c968",
+    "game/training/training_service.gd": "2b39cf0e71901b6b7ef73228e05b9876843c50a9be18d41ca8ede207c709fca2",
+    "game/vehicles/vehicle_activity.gd": "3681019c138ddb054d6fe0a560475f7a20b98464f42ac100b492509d3b9b0af1",
+    "game/production/vehicle_specs.gd": "df5ff29df40502dbad790b3296037f203e7319c7d6ee65448f31dd527bb100cc",
+    "game/dispatch/dispatch_service.gd": "1713db259ab679c5211f1fc22b278a834b27137d48d5b414b21a6553e1c0c1bb",
+    "game/hq/hq_logistics.gd": "a5087c86a6667f89b3ce718ccae405f31f8571d9ca37477f570c3dc43868109f",
+    "game/logistics/rear_logistics.gd": "cc33fc15fcf96ba8aaca04f6dbbbb3164b55f40fd4dabe3665ca549c5cdaa0a4",
+    "game/logistics/army_supply_view.gd": "2e4ab489b06eb14cba3f27ccca53ffe565d943237178a663513c1be45c3323da",
+    "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
+    "game/military/organization.gd": "02ba5a766649f7d0c793a3a29d70b431648e58ac12bb1aa6eb1fdb4aa37c83f0",
+    "game/military/troop_transport.gd": "28624403cf7fec1e5b5869e9bc63c85aef9746aa21293f1b1ba2d34d3bc6b1cf",
+    "game/orders/order_service.gd": "12a54591ffc11ef0679f0c05364c3f932afaf2f81ed8126bc12dc33571df0cbf",
+    "game/battlefield/squad_execution.gd": "8ed604883a78a98a0942927804391c995bf13f194a695f2bafd014a1d95cb2ac",
+    "game/battlefield/vehicle_execution.gd": "c7888a3bcc2aa0d4e331f9956269102d99f891c59c162b559e33d56ab8d3eb9b",
+    "game/battlefield/opening_policy.gd": "35d407f7e329ac3d08fb37f9c6ebbfb1dcf2bd487bdb2af761282be5cbcaef3f",
+    "game/battlefield/opening_resupply.gd": "3e213e215b889ca266ae1df3e5d50af54d255a60817e8f0d1e98eb3ae445d9f3",
+    "game/battlefield/resource_operations.gd": "92d7317edb5eb8a858ce1332f258c2493dcdf7dad344933acf01a5bb3180018f",
+    "game/battlefield/vehicle_deployment.gd": "a7a7cd8fcfef3e105974a7b9d915ae86e5e4c8dfa1f8b4e7dc12888aa905d9fd",
+    "game/battlefield/rifle_supply_travel.gd": "a01e811f3c97d43fe933014906f3211355380638561d48b2af0492d1772d5c84",
+    "game/forward_supply/forward_supply.gd": "d09b12ef7e8b2d1c5e78da88fd73c663374a762388cc1cab9d887a4f129c1930",
+    "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
+    "game/forward_supply/forward_transport.gd": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
+    "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
+    "game/combat/combat_service.gd": "c82a1f68195f8aa5cae2ae0f71cea122742117526485c09218be1ed40bc4255b",
+    "game/vehicle_combat/vehicle_combat_service.gd": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
+    "game/vehicle_recovery/recovery_service.gd": "f7d9eadec3ebc34fcda8c52da6b4e3daad7ae49f7975b889810b021331a486b8",
+    "game/objectives/objective_service.gd": "3813bb06210d95e7a154953d19e50f4e4b4e377d559f15074a493ef3df3a94c1",
+    "game/terrain/terrain_world.gd": "ab2bbc6806db77c266a07c4e2d61c447e8793aa158909611e48471e85d899b0c",
+    "game/terrain/terrain_catalog.gd": "5fb94465b75fd29118bd879304730bda824750b1b1cd1e69fd2a4bde422aa802",
+    "game/terrain/route_work.gd": "632497194d42b0193a9eb6403dcce216c9d481c000a26326d2b00f385a78156b",
+    "game/routes/route_planner.gd": "517aee978efd6499d640b42543ef858ca595501b8db71ba9c645ba05414879e6",
+    "game/routes/route_plan_work.gd": "cb2cf312356419052f97b976307842282ce6670f9a73684b7766cd60ab6fbf6e",
+    "game/field_structures/field_service.gd": "c2d0cfd355cc378bca253a13a0990be37fe7f0ad5443c8285d4d26aba6f1427f",
+    "game/field_structures/field_catalogue.gd": "538cabb046d5cafd91e64cc11e24413078fce20ed6ce121a10ea5d6d5b5ef315",
+    "game/bridges/bridge_service.gd": "ad4bc924b4efc650a8fb8a4a89520dfeb005e29c14bde1ecb6d4d6207bd32b88",
+    "game/bridges/bridge_catalogue.gd": "8a0bea48dcd6a3196a2cfa6b5d7c51801622a32d1c8a2cb6f1b79619bcdf5245",
+    "game/bridges/bridge_canvas.gd": "c7c740a6f3d91cf2fe02d311564c4bdd3af1b83b18ca115be219855ffbe037c7",
+    "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
+    "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
+    "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
+    "game/rear_base/base_demo.gd": "3f888e48280536e78e293837625fb93b254c428c133a1116c3c6280480d6b3a3",
+    "game/rear_base/base_map.gd": "f90f4083ce2f824166c9356c830d4eee2f4d85bb4b35d6d378847932cf948625",
+    "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
+    "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
+    "game/rear_base/workforce_panel.gd": "760d104bb85cb82b87bcca4eecc96f6c0aedc31d6327474b8b73cbfa9f2b5079",
+    "game/ui/command_shell.gd": "07df86926a86ea31a95e404b30346ff32e82bcd10b15412f5253904012d776e1",
+    "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
+    "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
+    "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
+    "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
+    "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
+    "game/preview_3d/preview.gd": "41d0d6e31c3c92a6ee55583438f35e90aa5d5b422a2c94902e82624a1d2055ce",
+    "game/preview_3d/world_presenter.gd": "56484449b1f6d52695f42e1b6bb52fda6e90028308f4578a39c823891691d9c1",
+    "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
+    "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",
+    "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
+    "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
+    "game/preview_3d/t01_presentation.gd": "f03c89b76313136d0c4770039576e7b521158b1324624dbb747bef16bce7d1a0",
+    "game/preview_3d/t02_presentation.gd": "345bc2f10909b6be66fee144c85c14f265d74c912837b3f4f3df7c4225f322f4",
+    "game/preview_3d/field_persons.gd": "dde50b1da6ab016e4256465a2e9a8f8021f7f73f1cf06838c33ffa0b0f57c256",
+    "game/preview_3d/field_person_cues.gd": "f9033097ee9b8d6162db2cf0e2b8da737adc6dde93778cfd64d51a6d6713d3f5",
+    "game/preview_3d/field_t01_trucks.gd": "62c5552105132b1243316acd15c2a40376cecdb61c7f2571cdf7bd640d4e02bb",
+    "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
+    "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",
+    "game/preview_3d/field_objective_cues.gd": "8b817c0779a7df9da91d3027c556422cef6a6fd4d0a00114f733eed12b137ea2",
+    "game/preview_3d/manager_pose.gd": "cb8926f985c332ed309b8396d00629832145f4a12939b84526d4c1592cb2657e",
+    "game/scenario/farmland_session.gd": "52e7559e063bc5b419fa3eb5671cf5c747ea1f72f770212c9dfe2c3bf9b17d59",
+    "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
+    "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
+    "game/battlefield/farmland_scenario.gd": "25f9c3684ead8176beebb2a083b9eba7d39b071f01db69491b27630137729fb9",
+    "game/debug/rear_debug_actions.gd": "96b678baa6a25e4c73aec7ebfa68bc9bc40f9e2d8b8bd613d22c13e582142f6b",
+    "game/debug/rear_debug_menu.gd": "c117edf57e8c0fcab349eaf10088d940f9afce56c7af3a2b857f075870f125a6",
+    "game/diagnostics/function_call_log.gd": "42f717b76bf6e81138b0b29037300470ae0576fbe13064af16824e7b7d827629",
+    "game/diagnostics/performance_budget.gd": "5b90cb52ed6aafd2ce036130b7c661f926547ab2ebb1ca820c60da4c2b4932bf",
+    "game/diagnostics/console_report_writer.gd": "33b6849bb8ed989fa9a62a7d326cf322c98806abc82c5dbb756b8cd2c4754d6f",
+    "game/diagnostics/menu_performance_suite.gd": "abb8e54e4f5c35534361c4e0f754faf1cbabdc62894d657b0649a4415f97ad91",
+    "game/bridges/bridge_demo.gd": "372e55b4efbf920be82f54da2f74e23b959d7fe052d6d98a04866864b87e7542",
+    "game/bridges/demolition_demo.gd": "144abf3969d3d6492b5860408cedbab21d95db40db4dc04b33f8ebe757e50345",
+    "game/combat/combat_demo.gd": "d9e88db528b58f74d14ccba66f52704b13bd96278e08ab0d8d1824ef85511500",
+    "game/field_structures/field_demo.gd": "1341e8f8d29b61b69271d50733a6d97332a4fbfc3d1af9b77c7be81bc0a5e71b",
+    "game/identity/identity_demo.gd": "cf56e2c9f4795ef857b559c0228fac2d4a7096618bdb77d957c8d3209a3c1538",
+    "game/identity/identity_fixture.gd": "3e3bbe494af7bce994175876c2d1a343e292a3188390db3733a9e4f0e8bbb97f",
+    "game/mines/mine_demo.gd": "341fa69bb0bbd13bee0bcb721ee95ab85d96437281264ca7d9a16f4e096b4e3e",
+    "game/objectives/objective_demo.gd": "a218d65f9ca4fc8a1c661be775418fc1cce1cfabf41f34dd344ddc29eebb439b",
+    "game/orders/order_demo.gd": "3990b8ad598c79cbc7a517906cd900d1a2a23accb2892a98e77840f7e6d6542a",
+    "game/overhead_evaluation/overhead_evaluation.gd": "34755868de24a1925e0356f0126a5c68ddc69a2df4c2f56b0b3f925ae8eee336",
+    "game/overhead_evaluation/sample_map.gd": "c30a22df669cb8cd974f9926d6b8d40f5a91662540a440e103a45cfe0f8fed3f",
+    "game/procurement/receiving_demo.gd": "78ab6ce66d119c16ab544dc58cf68ede784ba5d5bce90fbfd13d26a7e67138bd",
+    "game/production/explosives_demo.gd": "d251d095745349b36bec6b0d4f2d33e93eb8d821e239b8e2a0fd00ba2264fee0",
+    "game/production/materials_demo.gd": "ce598a153ee52b18efd0122c5aa1eb3f8043cc1fb22443a5095912790b87b95f",
+    "game/production/munitions_demo.gd": "02db60ed332d655213260b5fe51f418e6f8d9b3399898ee8754f4f7787d49dba",
+    "game/production/production_demo.gd": "c25d8b7036f1a6de13b8f40644a1503f28a647c6c8070a59e9aa3084b27bc99f",
+    "game/production/shell_chain_demo.gd": "2a043eb7fd0874cee999a27fb6b08246305983273333e4268c7c5a218d596c71",
+    "game/staffing/rear_demo.gd": "7338578a23270017daaff93fb12e0e56307a02b22677588ab468935140526e3e",
+    "game/terrain/lane_simulation.gd": "c8ae95eb925e9fc1f28ebd7e11c1648b21d6e53993fd422810ec1e1a920cda7c",
+    "game/terrain/terrain_demo.gd": "edf3553de1d10ef7048365dcfd915535673c029f691f49220355fa4b72da432f",
+    "game/terrain/terrain_diagram.gd": "7c7e46f492ececc43aaba02a735eec35a7fcf501a84f1b722083371c53d01718",
+    "game/terrain/terrain_fixtures.gd": "03f4914cde9f02fefb78f61e6cbb14b0012a1e3033d75f175ab94cc2bf8b2b26",
+    "game/vehicle_combat/vehicle_combat_demo.gd": "e101b43ced42e5ac417c4852d27611e6752837638f515a48470340068c107f79",
+    "game/vehicle_recovery/recovery_demo.gd": "8292d13e3a10eb020a5e9765bcac1b443ea11bdee18f7f2eaac6a3a1aa071843",
+    "game/vehicle_recovery/recovery_fixture.gd": "d00db52dd4226a33509c35711d571772e5858ea6372c56ce17159ca5ede6d0e7",
+    "game/world_probe/full_size_probe.gd": "04d3b1f835b86c9845d5819d021435bd59f65814b9876b801d2e42fe0a384721"
+  }
+}
