@@ -1,5 +1,5 @@
 extends "res://game/main/main.gd"
-## Explicit opt-in entry. Default Main/F5 stays on the existing playable view.
+## Main/F5 instances this 3D presentation around the shared session controller.
 const World = preload("res://game/preview_3d/world_presenter.gd")
 const FieldPolicy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FieldCues = preload("res://game/preview_3d/field_person_cues.gd")
