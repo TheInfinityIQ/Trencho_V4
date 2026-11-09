@@ -1,0 +1,275 @@
+{
+  "schema": 1,
+  "feature": "character-animation",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/character_animation_v1.json",
+  "source_revision": "533473ffa1533cd61592b284f08b5cbd5bbc3d41",
+  "started_at": "2026-11-09T16:50:32.528208+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 564.537953,
+    "implementation": 2084.934489,
+    "direct_check": 1303.696251,
+    "repair": 49.708317,
+    "late_handling": 644.905727,
+    "review": 332.124755,
+    "release": 0,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 593.059727
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "review",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T17:29:27.886002+00:00",
+      "note": "Focused work-position CI42663818654 at4da57b7PASS; actualverified artifact13696195790 SHA256d6f0a6bcccba2782e8bd7e5516f95625809367bd70ca550650aa7d0b8724dbe2. Each of4realworkers carried100kg order viaPickup/Carry/Drop, minimumsampled separation1.0103279m, Tableclear/gatereopened. Explicit0.25s elapsed model intervals, not native/fullarmy/FPS. Artist full7worker+6soldier clips and separate rifle received, source/render/format evidence read; Godot animation check stillpending."
+    },
+    {
+      "recorded_at": "2026-11-09T18:23:25.425362+00:00",
+      "note": "Final rendered current-change run42670461448 at db9edb5 passed; actual four worker cargo/drop and soldier armed/reload images inspected by Lead and Designer. Real Combat reload retained zero loaded rounds before due and committed once after. No local engine, native input, wall-time/FPS or full-loop acceptance. Final docs/maps/import sidecars carry unchanged production source; review/merge/adoption remain."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-09T17:19:46.423065+00:00",
+      "id": "work-point-admission",
+      "kind": "planning_discovery",
+      "summary": "Source/admission route preview still targeted the Table centre after the initial work-point execution change. Found by source review before engine observation.",
+      "severity": "medium potential blocked factory supply; no observed runtime failure",
+      "evidence": "Old _job_option/_nearest_storage centre routes versus new Table obstacle; changed source now uses the same read-only work-point selection and reserved commit. See character_animation_v2.json.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Factory materials must remain reachable; existing _job_option source-selection route gate was available before programming.",
+      "omitted_assumption": "The original endpoint work did not explicitly include read-only job admission routes in the shared point contract.",
+      "assessment_rationale": "An execution-only port fix would not repair the earlier eligibility gate; one owner must serve both preview and commit.",
+      "repair_time": "Initial correction was not separately timed; no retrospective estimate."
+    },
+    {
+      "recorded_at": "2026-11-09T17:38:32.615767+00:00",
+      "id": "ready-typed-array",
+      "kind": "feature_defect",
+      "summary": "A ternary-created Array cannot be assigned to Array[StringName] at runtime; character ready aborted, leaving cargo attachment nil. Source parsing passed but rendered startup exposed it.",
+      "severity": "high new visual initialization failure; isolated draft branch, not merged",
+      "evidence": "CI42665973485/job129329597975 at1080627, verifiedartifact13696287788 SHA2569d06fdb0e16fdbd67e7d1b8dbe5c3d7b630c28b3ca24359e61931aab01f5d0c4 direct.log character_visual.gd:40; Nil cargo errors follow same aborted initialization.",
+      "planning_assessment": "no",
+      "introducing_revision": "10806278bff010a2484c4be6af3a18af35eb4f56",
+      "lesson": "Use supported declared array semantics; source/API parsing does not establish successful _ready initialization. Keep rendered evidence and fail early on incomplete character readiness."
+    },
+    {
+      "recorded_at": "2026-11-09T17:41:41.925596+00:00",
+      "id": "soldier-reload-coverage",
+      "kind": "planning_discovery",
+      "summary": "Designer source review identified actual existing personal-weapon reload omitted from the initial applicable soldier animation mapping.",
+      "severity": "medium incomplete requested character action coverage, not a game-rules regression",
+      "evidence": "Actual Combat.request_reload and reloads existed before programming; Designer exactsource1080627 explicitly identified missing reload mapping/clip. Artist asked for one bounded clip, existing other exports unchanged.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "User requested fully functioning applicable character animations; actual personal-weapon reload was already in Combat.",
+      "omitted_assumption": "Initial six-action soldier list treated idle/walk/run/fire/wounded/death as the complete applicable set.",
+      "assessment_rationale": "The source action inventory needed to include its already-implemented reload phase. Close it with Artist clip + existing phase facts, not a generic animation framework."
+    },
+    {
+      "recorded_at": "2026-11-09T17:46:57.208847+00:00",
+      "id": "vertex-palette",
+      "kind": "feature_defect",
+      "summary": "Successful semantic/rendered receipt still showed white soldier/rifle models: imported vertex palette needed material UseAsAlbedo binding.",
+      "severity": "medium actual asset appearance incorrect; isolated draft, not merged",
+      "evidence": "Personally inspected actual365ca2f renderartifact13697281350/soldier_armed.png; all models white despite actual GLB COLOR_0 arrays and palette author previews. Worker capture camera also missed actors, so that image is not worker appearance evidence.",
+      "planning_assessment": "no",
+      "introducing_revision": "10806278bff010a2484c4be6af3a18af35eb4f56",
+      "lesson": "Review actual gameplay images; clip/node assertions do not establish material appearance. Bind source vertex colors explicitly on new-model materials; never apply manager texture override."
+    },
+    {
+      "recorded_at": "2026-11-09T18:02:48.258683+00:00",
+      "id": "observer-optional-colors",
+      "kind": "workflow_error",
+      "summary": "The new palette observer assumed every Mesh surface has a color array; the separate plain carry cue correctly has no colors and returnedNil.",
+      "severity": "low observer false failure; no production error observed in this run",
+      "evidence": "CI42669756611/job129342851588 artifact13698201699 SHA2566f836b98ec35ad530cdcb71653c7ff76532b20636baeed3fe22e81195a518628: entry_observer.gd palette_ready line25 nonexistent is_empty inNil. Actual character initialization and sevenclip import assertionspassed.",
+      "planning_assessment": "no",
+      "lesson": "Treat optional renderer mesh channels as optional; retain raw failed observer receipt and do not classify its false palette verdict as a new game defect.",
+      "repair_time": "Not separately timed; keep unknown rather than estimate."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 2,
+    "planning_discovery": 2,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 1,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 2,
+  "tracked_repair_seconds_by_incident": {
+    "work-point-admission": 0,
+    "ready-typed-array": 49.708317,
+    "soldier-reload-coverage": 644.905727,
+    "vertex-palette": 0,
+    "observer-optional-colors": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 26706682,
+      "cached_input_tokens": 26152704,
+      "output_tokens": 167346,
+      "reasoning_output_tokens": 106862,
+      "total_tokens": 26874028,
+      "uncached_input_tokens": 553978
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 26706682,
+      "cached_input_tokens": 26152704,
+      "output_tokens": 167346,
+      "reasoning_output_tokens": 106862,
+      "total_tokens": 26874028,
+      "uncached_input_tokens": 553978
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-09T16:50:32.528208+00:00",
+        "ended_at": "2026-11-09T16:59:57.066161+00:00",
+        "receipt_start": "2026-11-09T16:50:15.391Z",
+        "receipt_end": "2026-11-09T16:56:50.782Z",
+        "usage_delta": {
+          "input_tokens": 2492714,
+          "cached_input_tokens": 2431872,
+          "output_tokens": 11297,
+          "reasoning_output_tokens": 7081,
+          "total_tokens": 2504011,
+          "uncached_input_tokens": 60842
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-09T16:59:57.066161+00:00",
+        "ended_at": "2026-11-09T17:34:42.000650+00:00",
+        "receipt_start": "2026-11-09T16:56:50.782Z",
+        "receipt_end": "2026-11-09T17:34:19.803Z",
+        "usage_delta": {
+          "input_tokens": 8884773,
+          "cached_input_tokens": 8852480,
+          "output_tokens": 74403,
+          "reasoning_output_tokens": 46076,
+          "total_tokens": 8959176,
+          "uncached_input_tokens": 32293
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T17:34:42.000650+00:00",
+        "ended_at": "2026-11-09T17:38:32.725389+00:00",
+        "receipt_start": "2026-11-09T17:34:19.803Z",
+        "receipt_end": "2026-11-09T17:38:06.269Z",
+        "usage_delta": {
+          "input_tokens": 3107328,
+          "cached_input_tokens": 3098624,
+          "output_tokens": 6809,
+          "reasoning_output_tokens": 2397,
+          "total_tokens": 3114137,
+          "uncached_input_tokens": 8704
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-09T17:38:32.725389+00:00",
+        "ended_at": "2026-11-09T17:39:22.433706+00:00",
+        "receipt_start": "2026-11-09T17:38:06.269Z",
+        "receipt_end": "2026-11-09T17:38:32.849Z",
+        "usage_delta": {
+          "input_tokens": 355056,
+          "cached_input_tokens": 352256,
+          "output_tokens": 1008,
+          "reasoning_output_tokens": 398,
+          "total_tokens": 356064,
+          "uncached_input_tokens": 2800
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T17:39:22.433706+00:00",
+        "ended_at": "2026-11-09T17:41:42.033997+00:00",
+        "receipt_start": "2026-11-09T17:38:32.849Z",
+        "receipt_end": "2026-11-09T17:39:37.376Z",
+        "usage_delta": {
+          "input_tokens": 715223,
+          "cached_input_tokens": 714240,
+          "output_tokens": 1887,
+          "reasoning_output_tokens": 741,
+          "total_tokens": 717110,
+          "uncached_input_tokens": 983
+        }
+      },
+      {
+        "phase": "late_handling",
+        "started_at": "2026-11-09T17:41:42.033997+00:00",
+        "ended_at": "2026-11-09T17:52:26.939724+00:00",
+        "receipt_start": "2026-11-09T17:39:37.376Z",
+        "receipt_end": "2026-11-09T17:50:04.273Z",
+        "usage_delta": {
+          "input_tokens": 3742215,
+          "cached_input_tokens": 3729792,
+          "output_tokens": 20270,
+          "reasoning_output_tokens": 12789,
+          "total_tokens": 3762485,
+          "uncached_input_tokens": 12423
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-09T17:52:26.939724+00:00",
+        "ended_at": "2026-11-09T17:57:59.064479+00:00",
+        "receipt_start": "2026-11-09T17:50:04.273Z",
+        "receipt_end": "2026-11-09T17:56:23.687Z",
+        "usage_delta": {
+          "input_tokens": 1185910,
+          "cached_input_tokens": 807808,
+          "output_tokens": 12127,
+          "reasoning_output_tokens": 8438,
+          "total_tokens": 1198037,
+          "uncached_input_tokens": 378102
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T17:57:59.064479+00:00",
+        "ended_at": "2026-11-09T18:13:32.435700+00:00",
+        "receipt_start": "2026-11-09T17:56:23.687Z",
+        "receipt_end": "2026-11-09T18:10:04.073Z",
+        "usage_delta": {
+          "input_tokens": 4598430,
+          "cached_input_tokens": 4591744,
+          "output_tokens": 23032,
+          "reasoning_output_tokens": 16489,
+          "total_tokens": 4621462,
+          "uncached_input_tokens": 6686
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T18:13:32.435700+00:00",
+        "ended_at": "2026-11-09T18:23:25.495427+00:00",
+        "receipt_start": "2026-11-09T18:10:04.073Z",
+        "receipt_end": "2026-11-09T18:22:48.179Z",
+        "usage_delta": {
+          "input_tokens": 1625033,
+          "cached_input_tokens": 1573888,
+          "output_tokens": 16513,
+          "reasoning_output_tokens": 12453,
+          "total_tokens": 1641546,
+          "uncached_input_tokens": 51145
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

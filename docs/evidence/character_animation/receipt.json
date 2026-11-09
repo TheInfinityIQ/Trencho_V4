@@ -1,0 +1,50 @@
+{
+  "production_revision": "db9edb5eec670836aa4ac3cccb782d77b911b486",
+  "required_run": 42669711047,
+  "rendered_run": 42670461448,
+  "artifact": 13699505283,
+  "artifact_sha256": "7e27ed93c881f1b92438bcf2bea11608dd98f2f089f2f0f437d1b445cddba3e7",
+  "visual_review": "Lead personally inspected actual final worker carry/unload and soldier reload images: four distinct orange/hard-hat workers and hand cargo, green/tan soldier and dark separate rifle rendered. Table remains separate from bodies. Existing prototype terrain/truck/large world-label presentation is not polishing acceptance.",
+  "scope": "Actual configured main; existing Purchase button100kg, explicit same-model elapsed intervals with session physics pump suspended, artist clip advance/seek for captured poses, visual pause, actual person-held round event and real Combat timed local reload. Camera framing only; no actor relocation or stock grant.",
+  "limits": [
+    "Native input, wall-time pacing, full loop and60FPS not established.",
+    "Normal construction/support/medical variants and general crowd crossings not exercised.",
+    "One core four-worker sample is not a universal avoidance guarantee."
+  ],
+  "prior_receipts": [
+    {
+      "run": 42663818654,
+      "revision": "4da57b71ea6653c3d645eb71a8081c7f45565f96",
+      "result": "PASS focused physical four-worker100kg model; sampled minimum1.0103279m",
+      "artifact": 13696195790,
+      "sha256": "d6f0a6bcccba2782e8bd7e5516f95625809367bd70ca550650aa7d0b8724dbe2"
+    },
+    {
+      "run": 42665973485,
+      "revision": "10806278bff010a2484c4be6af3a18af35eb4f56",
+      "result": "FAIL actual character ready type error and consequential nil attachments; fixed root cause before merge",
+      "artifact": 13696287788,
+      "sha256": "9d06fdb0e16fdbd67e7d1b8dbe5c3d7b630c28b3ca24359e61931aab01f5d0c4"
+    },
+    {
+      "run": 42666772053,
+      "revision": "365ca2f6f8971963cb7702ec2e1f3406e2497ffb",
+      "result": "PASS semantic clip/cargo/pause/shot observation; actual white soldier image not appearance acceptance and first worker camera missed actors",
+      "artifact": 13697281350,
+      "sha256": "3cd4e655fce9122c776d2dc74aa5c87ab69c7847ffd6b7f61cd371c38fdcd90c"
+    },
+    {
+      "run": 42669756611,
+      "revision": "db9edb5eec670836aa4ac3cccb782d77b911b486",
+      "result": "FAIL observer optionalcolor nil; stopped at startup, no purchase/reload observed in that attempt. Observer fixed only; production unchanged.",
+      "artifact": 13698201699,
+      "sha256": "6f836b98ec35ad530cdcb71653c7ff76532b20636baeed3fe22e81195a518628"
+    }
+  ],
+  "image_sha256": {
+    "soldier_armed.png": "15d35819ba25460868879b0cecc64dadc82bfb5e4e75115795fe88ecccaca768",
+    "soldier_reload.png": "0c7e33c77b876e0925714caaf263168a9527ca60e516ee9b98627777122acd9d",
+    "workers_carry.png": "2ec6585367cdb6efd0b20655ba71ee90fb688f5d1b52525704bfc25e7834d102",
+    "workers_unload.png": "b81d4d753d38c1b9b7b58c895c226ca2d2f17a5c5e994f0fb1ba73629116cb79"
+  }
+}

@@ -1,5 +1,10 @@
 # Play the 3D opening
 
+The [character integration](character_animation.md) replaces provisional worker
+and soldier visuals with the Artist's models/clips. Four unloaders have distinct
+actual work positions and short numbered labels. Order100kg to give all four a
+25kg carry; a smaller order can correctly leave some workers idle.
+
 Open this project's root `project.godot` in Godot 4.7.2 and press **F5 / Run
 Project**. The configured entry remains `game/main/main.tscn`; it instances the
 existing 3D scene. F6 on that main scene also opens 3D. This is the same game and

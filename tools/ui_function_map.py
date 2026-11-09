@@ -341,6 +341,14 @@ def reviewed_flows(index: SourceIndex) -> list[dict]:
     ]
     preview_3d = 'game/preview_3d/preview.gd'
     world_3d = 'game/preview_3d/world_presenter.gd'
+    specs.append(('worker-animation', 'Actual worker handling and animation',
+                  'The purchase commits real freight. Existing activity and keyed position facts drive imported character clips; animation never transfers goods or finishes work.',
+                  [(BASE, '_confirm_purchase', 'Confirm the actual current purchase draft', ''),
+                   ('game/procurement/receiving_simulation.gd', '_start_worker_job', 'Reserve goods and a distinct reachable physical pickup point', ''),
+                   ('game/procurement/receiving_simulation.gd', '_finish_worker_phase', 'Actual pickup, carry and deposit boundaries', ''),
+                   ('game/preview_3d/rear_workers.gd', '_sync_activity', 'Map committed activity to a visual action', ''),
+                   ('game/characters/character_visual.gd', 'set_activity', 'Play the Artist clip without owning gameplay', ''),
+                   ('game/characters/character_visual.gd', '_bind_cargo_tracks', 'Present the claimed parcel from hand contact', '')]))
     specs.append(('3d-player-cameras', 'Default 3D game: one manager, two perspectives',
                   'Main/F5 instances the existing 3D scene around the shared session. These command/event branches share one manager pose; full-loop, player and FPS acceptance remain open.',
                   [(preview_3d, '_ready', 'Compose the actual normal session and preview guards', ''),

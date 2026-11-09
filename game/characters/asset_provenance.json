@@ -1,5 +1,5 @@
 {
-  "status": "Actual Artist exports integrated in source; Godot observation pending",
+  "status": "Integrated source db9edb5; actual bounded configured-main rendered observation42670461448PASS, images inspected. Native/full-loop/FPS acceptance separate.",
   "creator": "Trencho 3D Artist; character foundation derived from existing Kenney CC0 asset; rifle original project prop",
   "original_character_source": "https://kenney.nl/assets/animated-characters-protagonists",
   "license": "Original bundled Kenney CC0 license bytes preserved in assets/kenney_license.txt; source/adaptations and original prop authored for this project.",
@@ -35,7 +35,7 @@
         "messages": [],
         "truncated": false
       },
-      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance.",
+      "godot_integration": "Observed imported clips/palette/attachment in run42670461448; source/Artist QA and exact scoped limits in docs/evidence/character_animation/receipt.json.",
       "clip_metadata": {
         "character": "worker",
         "fps": 30,
@@ -277,7 +277,7 @@
         "messages": [],
         "truncated": false
       },
-      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance.",
+      "godot_integration": "Observed imported clips/palette/attachment in run42670461448; source/Artist QA and exact scoped limits in docs/evidence/character_animation/receipt.json.",
       "clip_metadata": {
         "character": "soldier",
         "fps": 30,
@@ -614,7 +614,7 @@
         "messages": [],
         "truncated": false
       },
-      "godot_integration": "Pending final bounded rendered observation; Artist evidence is not engine acceptance."
+      "godot_integration": "Observed imported clips/palette/attachment in run42670461448; source/Artist QA and exact scoped limits in docs/evidence/character_animation/receipt.json."
     }
   ]
 }

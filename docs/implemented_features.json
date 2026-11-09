@@ -179,5 +179,11 @@
     "source_status": "existing 3D presentation reused around the common session controller",
     "stages_1_2": "implemented/scoped checked; pending Dawson playtest acceptance",
     "limits": "Earlier opt-in/F5 unchanged receipts below are historical. Native input, full loop and 60 FPS remain unverified."
+  },
+  "character_animation": {
+    "source_status": "Artist worker/soldier models,7clips each, separate rifle, actual state/shot/reload binding and distinct rear work positions",
+    "handoff": "docs/character_animation.md",
+    "asset_manifest": "game/characters/asset_provenance.json",
+    "scope_limit": "Not every specialised gameplay action or universal avoidance; native/full-loop/FPS acceptance remains open; actual final rendered receipt separate."
   }
 }

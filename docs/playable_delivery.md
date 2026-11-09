@@ -1,5 +1,14 @@
 # Connected playable delivery
 
+## Worker and soldier integration — 9 November 2026
+
+[Character integration](character_animation.md) connects the3D Artist's actual
+worker/soldier models, clips and separate rifle to existing game state. Rear
+workers now reserve distinct actual spawn/handling points instead of occupying
+the Table centre. Existing cargo, timing, labour and army authority remain.
+Scoped evidence and full limits are in that handoff; stages1/2 still await
+Dawson's manual acceptance, and full-loop/60FPS acceptance remains open.
+
 ## Current 3D launch and player acceptance — 9 November 2026
 
 The configured main scene now instances the existing 3D scene. Open the root
