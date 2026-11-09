@@ -130,6 +130,15 @@
         "game/objectives/objective_service.gd",
         "game/battlefield/resource_operations.gd"
       ]
+    },
+    {
+      "feature": "Optional 3D normal-opening Supply Table E opens the existing Supplies/Purchase and hiring controls through the current first-hit physics route. Opening preserves actual account, cart, orders, manager and time.",
+      "sources": [
+        "game/preview_3d/preview.gd",
+        "game/preview_3d/world_presenter.gd"
+      ],
+      "evidence": "docs/evidence/supply_table.json",
+      "limit": "One injected normal-opening E/physics route and one existing Hire8 button signal passed:140REQ spent/eight reserved/90s arrival commitment/none arrived/time0. Two actual images inspected. Timed arrival, native input, raw purchase, ordinary connected factory/supply/repeat and60FPS not established; F5 remains unchanged."
     }
   ],
   "backend_and_review_scenarios": [

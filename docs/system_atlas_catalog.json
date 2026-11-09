@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "ae6deb6d567d972edf58fc3d60c0b28007206f6c",
+  "reviewed_baseline": "357bd63317217b19b59f57ab5bd41529fe7646db",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "title": "Trencho — current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -3090,7 +3090,7 @@
       "title": "3D rear view, placement and Workshop interaction",
       "group": "Presentation",
       "owner": "Preview + WorldPresenter + rear presenters",
-      "summary": "Opt-in3D renders the same session and manager, existing rear sites/workers/trucks, first/third-person views and real placement/Workshop commands.",
+      "summary": "Opt-in3D renders the same session and manager, rear sites/workers/trucks, first/third-person views and actual placement, Workshop and normal Supply Table interactions.",
       "nodes": [
         {
           "id": "n0",
@@ -3118,7 +3118,7 @@
         },
         {
           "id": "n4",
-          "label": "Open actual Workshop Work controls",
+          "label": "Consume current Table / completed Workshop E target",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop"
         },
@@ -3127,6 +3127,12 @@
           "label": "Reconcile physical rear visuals",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "refresh_rear"
+        },
+        {
+          "id": "n6",
+          "label": "Open actual Supply Table purchase controls",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_open_supply_table"
         }
       ],
       "edges": [
@@ -3148,12 +3154,17 @@
         {
           "from": "n2",
           "to": "n4",
-          "label": "Workshop branch"
+          "label": "contextual E branch"
         },
         {
           "from": "n2",
           "to": "n5",
           "label": "committed rear change"
+        },
+        {
+          "from": "n4",
+          "to": "n6",
+          "label": "exact current table hit"
         }
       ],
       "related": [
@@ -3162,9 +3173,10 @@
         "construction",
         "truck",
         "vehicles",
-        "field3d"
+        "field3d",
+        "procurement"
       ],
-      "notes": "At this source revision E targets completed Workshops only; Supply Table E integration is accepted next work, not implemented. F5 is still the older main view. Query-only truck contact and incomplete/provisional art remain explicit.",
+      "notes": "E admits exactly the actual normal-opening Supply Table or an actual completed Workshop through the existing input/physics guards; private Workshop names are retained for compatibility. Table physical receiving place maps to logical terminal/Supplies without creating a terminal entity. One normal-opening hire commitment passed; timed arrival/raw purchase/build/oldWorkshop runtime/full-loop/native/FPS remain unverified. F5 remains main, opt-in F6; contact and T03 detailed art deferred. Movement/Strategy review is explicitly deferred in deferred_architecture.json.",
       "primary_files": [
         "game/preview_3d/preview.gd",
         "game/preview_3d/world_presenter.gd",
@@ -3922,8 +3934,8 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "41d0d6e31c3c92a6ee55583438f35e90aa5d5b422a2c94902e82624a1d2055ce",
-    "game/preview_3d/world_presenter.gd": "56484449b1f6d52695f42e1b6bb52fda6e90028308f4578a39c823891691d9c1",
+    "game/preview_3d/preview.gd": "b9f0dc7e157139ec44375450dbff3a379ea75c1bbbf52b64c0d0ec443d57d5d9",
+    "game/preview_3d/world_presenter.gd": "a797d61cd0aec6c740aee8ee5ec44a644bfc80b25e96a43e37f18f9b1884687e",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
     "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",

@@ -66,3 +66,15 @@ in physics processing; InputEvent flow gives GUI priority over unhandled input.
 
 Sources: https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 and https://docs.godotengine.org/en/stable/tutorials/inputs/inputevent.html.
+
+## Current bounded result
+
+Source357bd633 passed required42575061812 and the single fixed observer in
+direct42575068272/artifact13655076035. Lead inspected the two current images.
+Normal E opened existing Purchase without spend, then one UI hire signal created
+delivery-0001:2360REQ/eightreserved/nonearrived/arrival_at90/time0/M11remaining500.
+The Deliveries image shows Booked dispatchdue5s; arrival_at90 is the service
+receipt/assertion. No timed progression or native click is claimed. Actual image,
+byte-exact stdout(base64), scope and hashes are in
+[evidence](evidence/supply_table.json). Source/API names inherited from the
+Workshop route intentionally remain; there are exactly two contextual targets.
