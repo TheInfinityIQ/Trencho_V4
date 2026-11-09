@@ -1,0 +1,218 @@
+{
+  "status": "Artist static FX mesh/export handoff; Godot emergence, timing, appearance and stutter investigation remain Lead-owned",
+  "files": {
+    ".glb": {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_smoke_puff\\completion_smoke_puff_v01.glb",
+      "bytes": 30824,
+      "sha256": "139b5311eed97e71f1a552102774c24ae5c7bb0f8dd8ab2ffc0aea2cf050978a"
+    },
+    ".blend": {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\construction_smoke_puff\\completion_smoke_puff_v01.blend",
+      "bytes": 115693,
+      "sha256": "77b558692d71f6853d533033ec40c62b4cac22c3f51d4a7581e96c82410039a1"
+    }
+  },
+  "mesh_node": "SM_Completion_Smoke_Puff",
+  "native_scale": [
+    1,
+    1,
+    1
+  ],
+  "origin": "Volume centre; geometry extends below local zero intentionally.",
+  "native_dimensions_gltf_xyz_m": [
+    1.1,
+    0.9,
+    0.85
+  ],
+  "bounds_gltf_xyz_m": [
+    [
+      -0.5499999523162842,
+      -0.44999998807907104,
+      -0.42499998211860657
+    ],
+    [
+      0.5499999523162842,
+      0.44999998807907104,
+      0.42499998211860657
+    ]
+  ],
+  "metrics": {
+    "bounds_blender_xyz_m": [
+      [
+        -0.5499999523162842,
+        -0.42499998211860657,
+        -0.44999998807907104
+      ],
+      [
+        0.5499999523162842,
+        0.42499998211860657,
+        0.44999998807907104
+      ]
+    ],
+    "dimensions_blender_xyz_m": [
+      1.0999999046325684,
+      0.8499999642372131,
+      0.8999999761581421
+    ],
+    "bounds_gltf_xyz_m": [
+      [
+        -0.5499999523162842,
+        -0.44999998807907104,
+        -0.42499998211860657
+      ],
+      [
+        0.5499999523162842,
+        0.44999998807907104,
+        0.42499998211860657
+      ]
+    ],
+    "modeling_vertices": 204,
+    "triangles": 404,
+    "mesh_islands": 1,
+    "material": "M_Construction_Palette",
+    "vertex_color_linear_rgba": [
+      0.45,
+      0.47,
+      0.45,
+      1
+    ],
+    "qa_warnings": [
+      "asset lowest point z=-0.45 (not resting on ground plane z=0)"
+    ]
+  },
+  "material": {
+    "name": "M_Construction_Palette",
+    "definition_matches_pylon_glb_exactly": true,
+    "base_factor": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "roughness": 0.68,
+    "metallic": 0,
+    "alpha_mode": "OPAQUE",
+    "cull_backfaces": true,
+    "vertex_color_linear_rgba": [
+      0.45,
+      0.47,
+      0.45,
+      1
+    ],
+    "godot_vertex_color_use_as_albedo": true,
+    "godot_vertex_color_is_srgb": false,
+    "reuse": "Reuse cached construction/fade material variant where applicable; do not create one material per puff."
+  },
+  "placement": {
+    "independent_unit_scale": true,
+    "relation_to_scissors": "Sibling effect sized for the ceremonial3x scissors. Do not inherit the3x scissors scale.",
+    "proposed_centre_world_height_m": 0.535,
+    "centre_height_relative_to_scissors_hinge_m": 0.04,
+    "nominal_world_bottom_top_m": [
+      0.085,
+      0.985
+    ],
+    "recommended_shadow_casting": "off",
+    "collision": "none authored or requested"
+  },
+  "timing_contract": {
+    "emergence_phase_s": [
+      0,
+      1.5
+    ],
+    "cutting_phase_s": [
+      1.5,
+      3.5
+    ],
+    "smoke_appearance_owner": "Lead finite scale/fade/small-drift sequence; no authored clip needed.",
+    "scissors_open_clip": "open_idle",
+    "scissors_snip_clip": "snip",
+    "existing_snip_native_duration_s": 0.4,
+    "recommended_snip_playback_speed": 0.2,
+    "effective_snip_duration_s": 2.0,
+    "visible_contact_since_snip_start_s": 1.0,
+    "visible_contact_since_completion_s": 2.5,
+    "snip_end_since_completion_s": 3.5,
+    "tape_release": "At3.5s phase end per new request, rather than at the earlier blade-contact marker; Lead owns actual sequence."
+  },
+  "resource_contract": {
+    "mesh_instances_per_puff": 1,
+    "material_surfaces": 1,
+    "textures": 0,
+    "bones": 0,
+    "morph_targets": 0,
+    "clips": 0,
+    "emitters": 0,
+    "custom_shaders": 0,
+    "runtime_source_loading": "Preload/share mesh and material, create/pool finite instances and warm needed fade pipeline before completion.",
+    "performance_claim": "No benchmark or stutter diagnosis; small asset scope only."
+  },
+  "checks": {
+    "official_validator": {
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0
+    },
+    "roundtrip": {
+      "mesh_instances": 1,
+      "rigs": 0,
+      "max_bounds_difference_m": 0.0,
+      "object_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vertex_color_layers": [
+        "Color"
+      ],
+      "godot_run": false
+    },
+    "saved_source": {
+      "bytes": 115693,
+      "scenes": [
+        "Completion_Smoke_Puff"
+      ],
+      "actions": [],
+      "armatures": [],
+      "objects": [
+        "Smoke_Editable_Lobe_6",
+        "Smoke_Editable_Lobe_5",
+        "Smoke_Editable_Lobe_4",
+        "Smoke_Editable_Lobe_3",
+        "Smoke_Editable_Lobe_2",
+        "Smoke_Editable_Lobe_1",
+        "Smoke_Editable_Lobe_0",
+        "SM_Completion_Smoke_Puff",
+        "Construction_Rim",
+        "Construction_Review_Floor",
+        "Construction_Review_Camera",
+        "Construction_Key",
+        "Construction_Fill"
+      ],
+      "images": [
+        "Viewer Node",
+        "Render Result"
+      ],
+      "read_saved_bytes": true
+    },
+    "old_construction_assets_unchanged": {
+      "pylon.glb": true,
+      "pylon.blend": true,
+      "scissors.glb": true,
+      "scissors.blend": true,
+      "tape_half.glb": true,
+      "tape_half.blend": true,
+      "tape_span.glb": true,
+      "tape_span.blend": true
+    }
+  },
+  "provenance": {
+    "source": "Original project-authored faceted mesh and grey palette choice; no external model, texture, image or motion asset.",
+    "licence_dependency": "None introduced; distribution licensing remains project-owned."
+  },
+  "scope_limits": [
+    "No local Godot or project source edits.",
+    "No change to existing scissors, pylons, tape or characters.",
+    "No claim that this asset resolves the actual completion stutter."
+  ]
+}

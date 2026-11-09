@@ -1,8 +1,6 @@
 extends Node3D
 ## Persistent site presentation. Only ConstructionService can earn work/complete.
-const Reveal = preload("res://game/construction/visuals/build_reveal.gdshader")
-const Hologram = preload("res://game/construction/visuals/build_hologram.gdshader")
-const Outline = preload("res://game/construction/visuals/build_outline.gdshader")
+const Appearance = preload("res://game/construction/visuals/construction_appearance.gd")
 const Celebration = preload("res://game/construction/visuals/construction_celebration.gd")
 var simulation: RefCounted
 var site_id: String
@@ -40,44 +38,10 @@ func _ready() -> void:
 	_site_changed(site_id)
 
 func _prepare_reveal(shell: Node3D) -> void:
-	var bounds: AABB = exterior.bounds
-	var meshes: Array[Node] = shell.find_children("*","MeshInstance3D",true,false)
-	for child: Node in meshes:
-		var mesh := child as MeshInstance3D
-		if mesh.mesh == null: continue
-		var outline := _shader(Outline,bounds)
-		for surface in mesh.mesh.get_surface_count():
-			var original: Material = mesh.get_active_material(surface)
-			_originals.append({"mesh":mesh,"surface":surface,"override":mesh.get_surface_override_material(surface)})
-			var reveal := _shader(Reveal,bounds)
-			if original is BaseMaterial3D:
-				var standard := original as BaseMaterial3D
-				reveal.set_shader_parameter("tint",standard.albedo_color)
-				reveal.set_shader_parameter("vertex_colored",standard.vertex_color_use_as_albedo)
-				if standard.albedo_texture != null:
-					reveal.set_shader_parameter("albedo_map",standard.albedo_texture)
-					reveal.set_shader_parameter("textured",true)
-			reveal.next_pass = outline
-			# Whole-mesh overrides would otherwise bypass the surface reveal.
-			mesh.set_surface_override_material(surface,reveal)
-		var whole: Material = mesh.material_override
-		_originals.append({"mesh":mesh,"whole":whole})
-		mesh.material_override = null
-		var ghost := MeshInstance3D.new()
-		ghost.mesh = mesh.mesh
-		ghost.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		ghost.material_override = _shader(Hologram,bounds)
-		add_child(ghost)
-		ghost.global_transform = mesh.global_transform
-		_ghosts.append(ghost)
-
-func _shader(shader: Shader, bounds: AABB) -> ShaderMaterial:
-	var material := ShaderMaterial.new()
-	material.shader = shader
-	material.set_shader_parameter("base_y",global_position.y+bounds.position.y)
-	material.set_shader_parameter("height",bounds.size.y)
-	_materials.append(material)
-	return material
+	var prepared: Dictionary = Appearance.prepare(self,shell,exterior.bounds)
+	_materials = prepared.materials
+	_originals = prepared.originals
+	_ghosts = prepared.ghosts
 
 func _site_changed(id: String) -> void:
 	if id != site_id: return
@@ -92,7 +56,7 @@ func _site_changed(id: String) -> void:
 		_label.text += " · Construction complete"
 		if _was_unfinished and not _completed:
 			_completed = true
-			_restore_exterior()
+			_finish_reveal()
 			if is_instance_valid(_ceremony): _ceremony.start()
 	else:
 		_label.text += " · %s" % str(row.state).replace("M11","materials")
@@ -101,11 +65,14 @@ func _site_changed(id: String) -> void:
 func reconcile() -> void:
 	_site_changed(site_id)
 
-func _restore_exterior() -> void:
+func _finish_reveal() -> void:
 	for saved: Dictionary in _originals:
+		if saved.has("whole"): continue
 		var mesh: MeshInstance3D = saved.mesh
-		if saved.has("whole"): mesh.material_override = saved.whole
-		else: mesh.set_surface_override_material(saved.surface,saved.override)
+		# Keep the already rendered full-height material. Swapping back to an
+		# unseen StandardMaterial at completion compiles new OpenGL variants.
+		var material := mesh.get_surface_override_material(saved.surface) as ShaderMaterial
+		if material != null: material.next_pass = null
 	for ghost: MeshInstance3D in _ghosts: ghost.queue_free()
 	_ghosts.clear()
 	_materials.clear()

@@ -2166,6 +2166,9 @@ func _construction_progress_text(row: Dictionary) -> String:
 	var text := "%s · %s\n%s\nBuilding Materials: used %d / %d · Stored on site: %d\n%s" % [WorkforcePanel.job_name(row.id,simulation),str(row.state).replace("M11","Building Materials"),heading,used,row.m11,stored,str(row.blocker).replace("M11","Building Materials")]
 	if simulation.rear.requests.has(duty):
 		text += "\nBuilders: %d assigned · %d requested" % [simulation.rear._assigned(duty),simulation.rear.requests[duty].target]
+	if row.state in ["Awaiting M11","Building"]:
+		var delivery: Dictionary = simulation.rear.construction.delivery_status(str(row.id))
+		text += "\nHaul deliveries: %d / %d · being carried here: %d\n%s" % [delivery.received,row.m11,delivery.carried,delivery.status]
 	return text
 
 func _refresh_training() -> void:

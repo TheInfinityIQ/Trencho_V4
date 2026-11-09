@@ -7,6 +7,8 @@ uniform vec4 tint : source_color = vec4(1.0);
 uniform sampler2D albedo_map : source_color;
 uniform bool textured = false;
 uniform bool vertex_colored = false;
+uniform float material_roughness = 1.0;
+uniform float material_metallic = 0.0;
 varying float world_y;
 void vertex() { world_y = (MODEL_MATRIX * vec4(VERTEX,1.0)).y; }
 void fragment() {
@@ -16,7 +18,8 @@ void fragment() {
 	if (textured) { color *= texture(albedo_map,UV); }
 	if (vertex_colored) { color *= COLOR; }
 	ALBEDO = color.rgb;
-	ROUGHNESS = 0.85;
+	ROUGHNESS = material_roughness;
+	METALLIC = material_metallic;
 	if (progress < 1.0 && abs(world_y-frontier) < 0.045) {
 		ALBEDO = vec3(1.0,0.32,0.035);
 		EMISSION = ALBEDO * 0.7;

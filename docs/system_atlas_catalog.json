@@ -719,6 +719,18 @@
           "label": "Ground contact then pylon cleanup",
           "file": "game/construction/visuals/construction_celebration.gd",
           "function": "_ground_contact"
+        },
+        {
+          "id": "builder_supply",
+          "label": "Own-site real builder fetching",
+          "file": "game/construction/construction_service.gd",
+          "function": "start_builder_supply"
+        },
+        {
+          "id": "delivery_status",
+          "label": "Actual delivered versus carried",
+          "file": "game/construction/construction_service.gd",
+          "function": "delivery_status"
         }
       ],
       "edges": [
@@ -761,6 +773,16 @@
           "from": "n7",
           "to": "n8",
           "label": "released tape contacts ground"
+        },
+        {
+          "from": "n2",
+          "to": "builder_supply",
+          "label": "own-site shortage / idle builder"
+        },
+        {
+          "from": "builder_supply",
+          "to": "n3",
+          "label": "physical deposit then report/build"
         }
       ],
       "related": [
@@ -770,7 +792,7 @@
         "production",
         "preview"
       ],
-      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime.",
+      "notes": "Cancellation and request_dismantle are separate branches with consumed-material/clearance rules. An incomplete/paused/cancelled site does not become a free functional building. Same manager occupation validation is supplied by the 3D view. Empty-field placement validation starts at the shared Table standing-access point, preserving the solid Table and rejecting blocked routes without starting inside its collider. Live cancellation keeps exact site/session/state validation and refreshes actual material loss while builders continue; it is not invalidated by consumption alone. Normal live empty-field startup is1x. Shared licensed prototype exteriors cover buildable kinds; Vehicle Park remains open ground. Presentation listens to keyed owner signals, preserves meshes/colliders across work updates and tears down with site/session lifetime. Follow-up: assigned starved builders may fetch only their own site M11 on foot through existing real claims/carries; one duty/task, no simultaneous construction. Selected menu distinguishes actual haul receipt/carry. Completed exterior retains full-height prepared material, work state does not rebuild unchanged reservations, zero-alpha effect preparation targets measured first-use OpenGL hitch. Smoke1.5s then snip2s, tape release3.5s; actual capability remains immediate. A one-draw startup loading cover prepares actual construction variants in the real camera before input; shared appearance recipe has no gameplay row/stock/physics, and headless entry skips rendering preparation.",
       "primary_files": [
         "game/construction/construction_service.gd",
         "game/construction/construction_catalogue.gd"
@@ -4222,7 +4244,9 @@
     "game/rear_base/hauling_priority_list.gd": "ui",
     "game/rear_base/hauling_priority_row.gd": "ui",
     "game/construction/visuals/construction_site_visual.gd": "construction",
-    "game/construction/visuals/construction_celebration.gd": "construction"
+    "game/construction/visuals/construction_celebration.gd": "construction",
+    "game/construction/visuals/construction_appearance.gd": "construction",
+    "game/construction/visuals/construction_render_preparation.gd": "construction"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4230,14 +4254,14 @@
     "game/rear_base/base_simulation.gd": "200ca294c26372f50b724be6bc71ba18f802b9cf76f96a79578fb0ca828d7e92",
     "game/identity/identity_ledger.gd": "7fce26d3dd685fc1e8c97b70d439bb25b1256242f4af1ef94c94d6506b81dcb8",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "c715c7e860652247a4d465ecdabf66d60808dafe8abc9ca67ddb27bc66c5dd5e",
+    "game/staffing/rear_simulation.gd": "17a5b28a3802f9b6961bea26cebf55c959a9884c97b37a86e05cba1ae3b95821",
     "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
     "game/procurement/receiving_simulation.gd": "3f404b92699a01d57349d5b6b3ccc21b48874b87cafaff0ddfb337a44fc17ccf",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "8e5688cd428ed172829f9a601c7ddcf754b9ad68853621da9a067399410a4b76",
+    "game/construction/construction_service.gd": "fcf0d96f8aca97e6f8cbf0b2d8cb5067d021fbc7f2ca46edadd9fb9ce6b4760a",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
-    "game/construction/construction_truck_service.gd": "63494a47faaa162a10c3b7c0cd75ace2485a5fe4d732e05971460a43983323e9",
+    "game/construction/construction_truck_service.gd": "1a7403ff97d173987397164d30dcc4b1934964535b94dbcde9068b53e4025e48",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
     "game/production/selectable_production.gd": "c55b829a08e2c10af144ce4bdd7aaa04cf10c2d24a139cb33f24f32fa2a7a928",
     "game/production/r01_production.gd": "c4fcbe33fa5049ad9c5628d3d9f50bfe24c45eb00249583d9f8fcc4a6653ee8a",
@@ -4284,7 +4308,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "b4f8116f6ac299138bc050491f329db0d27c5aa92099402f7438e9bd7dbe86e9",
+    "game/rear_base/base_demo.gd": "0dfbd403c73550b524cc334b36a4f5f06b69d98924cedd71d6d014282ac534cb",
     "game/rear_base/base_map.gd": "e7e8a3d8ed67411f82ffae208c618457aa714c2e760a3ecbd1cee078be9c7e66",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4295,9 +4319,9 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "569f69747685701ba3235620c7ad23dc4fd911a31f7757cdec08e015b3cac958",
-    "game/preview_3d/world_presenter.gd": "7942c1bff00f55bdd394d8e26587973ac65a88855123fe68872865ce56fe60a4",
-    "game/preview_3d/facility_shells.gd": "e7a7812e5017cd1b459b037dbaf6486967894c67131aef941d72dd33bba4ac15",
+    "game/preview_3d/preview.gd": "081bd95b91a3fddf91aa8b644048c45ebc12be623ce249b9d18ddbe8c560ba3d",
+    "game/preview_3d/world_presenter.gd": "54790c5fbccbbfc3790479cbaffc0a137bcf167a3e5350f1bd908f53ff42a394",
+    "game/preview_3d/facility_shells.gd": "0a5ec6261f8006559dc77018393360fa45932a5f1a448a09539d1758f331a3e1",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
     "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
@@ -4352,7 +4376,9 @@
     "game/rear_base/hauling_priority_list.gd": "a63d92a6173e5e51e9c81b2b7e19dd2f2acea8936228000568f1b0f72c7e5ce5",
     "game/rear_base/hauling_priority_row.gd": "be6c26f305670bba807eda1136dfc5a85324b6fda4e7bad286dbf81737c9482a",
     "game/staffing/hauling_policy.gd": "e6932fb523c0efda86681a07f4e2f94c5ad8c36b9f6c4cf772b5ebc9101e5bbc",
-    "game/construction/visuals/construction_site_visual.gd": "424043d0ceecf521ef59b3984f118fb830bca4ef7865abf523f0a6d0577c55cc",
-    "game/construction/visuals/construction_celebration.gd": "064b04ca99379093a5ef9ec567eba350a8a88b65be0a46cac90b608a177611b1"
+    "game/construction/visuals/construction_site_visual.gd": "21cd969f3792e58214a62e9ef86b4194de41a240db415bad8c845d6fc3b243bf",
+    "game/construction/visuals/construction_celebration.gd": "32f92494b8b3820d053708a61910cab20550b2259991346ce2d5c19e23b44ae2",
+    "game/construction/visuals/construction_appearance.gd": "51addcc31278935e1cfeae1d4598312168811be688ffbe4c58ee5b56b461addb",
+    "game/construction/visuals/construction_render_preparation.gd": "3ad4bdc3529a8b43255930b5960a414c592343ef99b8e085bd548a7f5f1bd805"
   }
 }

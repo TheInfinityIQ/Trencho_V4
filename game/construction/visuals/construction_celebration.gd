@@ -1,13 +1,19 @@
 extends Node3D
 ## Finite cosmetic bodies/tweens. Nothing here changes stock, routes or capability.
 signal cleared
+const Appearance = preload("res://game/construction/visuals/construction_appearance.gd")
 const COSMETIC_GROUND := 1 << 20
 const ART := "res://game/construction/assets/"
+const EMERGENCE_SECONDS := 1.5
+const CUT_SECONDS := 2.0
+const AUTHORED_SNIP_SECONDS := 0.4
 var simulation: RefCounted
 var footprint := Vector2.ONE
 var _pylons: Array[Node3D] = []
 var _scissors: Array[Node3D] = []
 var _scissor_materials: Array = []
+var _smoke: Array[Node3D] = []
+var _smoke_materials: Array = []
 var _players: Array[AnimationPlayer] = []
 var _tweens: Array[Tween] = []
 var _bodies: Array[RigidBody3D] = []
@@ -48,12 +54,18 @@ func _ready() -> void:
 		assert(cut != null,"Artist scissors require Cut_Target")
 		# Align the blade contact, not the hinge, with the actual tape midpoint.
 		scissors.position -= to_local(cut.global_position)-scissors.position
-		scissors.hide()
+		# Zero-alpha meshes remain submitted while unfinished, so OpenGL sees
+		# their real skin/fade variant before the completion frame.
 		_scissors.append(scissors)
 		_scissor_materials.append(_fade_materials(scissors))
 		var players := scissors.find_children("*","AnimationPlayer",true,false)
 		assert(not players.is_empty(),"Artist scissors require authored clips")
 		_players.append(players[0] as AnimationPlayer)
+		var puff := _prop("smoke.glb")
+		puff.position = scissors.position+Vector3.UP*0.04
+		for mesh: MeshInstance3D in _meshes(puff): mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_smoke.append(puff)
+		_smoke_materials.append(_fade_materials(puff))
 
 func _prop(file: String) -> Node3D:
 	var scene := load(ART+file) as PackedScene
@@ -81,20 +93,7 @@ func _meshes(node: Node3D) -> Array[Node]:
 	return meshes
 
 func _fade_materials(node: Node3D) -> Array:
-	var materials: Array = []
-	for child: Node in _meshes(node):
-		var mesh := child as MeshInstance3D
-		if mesh.mesh == null: continue
-		for surface in mesh.mesh.get_surface_count():
-			var original := mesh.get_active_material(surface) as BaseMaterial3D
-			if original == null: continue
-			var material := original.duplicate() as BaseMaterial3D
-			material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-			material.vertex_color_use_as_albedo = true
-			mesh.set_surface_override_material(surface,material)
-			materials.append(material)
-	_opacity(0.0,materials)
-	return materials
+	return Appearance.fade_materials(node)
 
 func _opacity(value: float, materials: Array) -> void:
 	for material: BaseMaterial3D in materials:
@@ -145,7 +144,8 @@ func _track(tween: Tween) -> Tween:
 	_tweens.append(tween)
 	tween.set_speed_scale(maxf(_speed,0.01))
 	if _speed == 0: tween.pause()
-	tween.finished.connect(func() -> void: _tweens.erase(tween),CONNECT_ONE_SHOT)
+	# Bounded to this short sequence; retaining finished entries until teardown
+	# avoids a closure that captures its own RefCounted tween on cancellation.
 	return tween
 
 func start() -> void:
@@ -160,15 +160,21 @@ func start() -> void:
 		node.show()
 		var swoop := _track(create_tween())
 		swoop.set_parallel(true)
-		swoop.tween_method(_opacity.bind(_scissor_materials[index]),0.0,1.0,0.25)
-		swoop.tween_property(node,"position",target+Vector3(0.2,0.55,0.2),0.3).set_trans(Tween.TRANS_SINE)
-		swoop.chain().tween_property(node,"position",target,0.3).set_trans(Tween.TRANS_SINE)
+		swoop.tween_method(_opacity.bind(_scissor_materials[index]),0.0,1.0,0.5).set_delay(1.0)
+		swoop.tween_property(node,"position",target+Vector3(0.2,0.55,0.2),0.75).set_trans(Tween.TRANS_SINE)
+		swoop.tween_property(node,"position",target,0.75).from(target+Vector3(0.2,0.55,0.2)).set_delay(0.75).set_trans(Tween.TRANS_SINE)
+		var puff: Node3D = _smoke[index]
+		puff.scale = Vector3.ONE*0.15
+		var cloud := _track(create_tween())
+		cloud.set_parallel(true)
+		cloud.tween_property(puff,"scale",Vector3.ONE*1.1,EMERGENCE_SECONDS).set_trans(Tween.TRANS_SINE)
+		cloud.tween_method(_opacity.bind(_smoke_materials[index]),0.0,0.85,0.2)
+		cloud.tween_method(_opacity.bind(_smoke_materials[index]),0.85,0.0,0.5).set_delay(1.0)
 	var sequence := _track(create_tween())
-	sequence.tween_interval(0.6)
+	sequence.tween_interval(EMERGENCE_SECONDS)
 	sequence.tween_callback(_snip)
-	sequence.tween_interval(0.2)
+	sequence.tween_interval(CUT_SECONDS)
 	sequence.tween_callback(_release_tape)
-	sequence.tween_interval(0.2)
 	sequence.tween_callback(_fade_scissors)
 
 func _snip() -> void:
@@ -179,7 +185,9 @@ func _play_clip(player: AnimationPlayer, name: String) -> void:
 	for clip: StringName in player.get_animation_list():
 		if str(clip).get_file().to_lower() == name:
 			player.play(clip)
-			player.speed_scale = _speed
+			var rate: float = AUTHORED_SNIP_SECONDS/CUT_SECONDS if name == "snip" else 1.0
+			player.set_meta("clip_rate",rate)
+			player.speed_scale = _speed*rate
 			return
 	assert(false,"Missing Artist scissors clip: "+name)
 
@@ -217,7 +225,7 @@ func sync_speed() -> void:
 		if not tween.is_valid(): continue
 		if next == 0: tween.pause()
 		else: tween.set_speed_scale(next); tween.play()
-	for player: AnimationPlayer in _players: player.speed_scale = next
+	for player: AnimationPlayer in _players: player.speed_scale = next*float(player.get_meta("clip_rate",1.0))
 	if _released:
 		for body: RigidBody3D in _bodies:
 			if next == 0:

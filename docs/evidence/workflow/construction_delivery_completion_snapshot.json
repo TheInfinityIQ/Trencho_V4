@@ -1,0 +1,232 @@
+{
+  "schema": 1,
+  "feature": "construction-delivery-completion",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/construction_delivery_completion_v1.json",
+  "source_revision": "d5100e9433254ef586f38ecff4618cbb1eb1bdf6",
+  "started_at": "2026-11-09T22:08:28.316902+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 44.609125,
+    "implementation": 997.606962,
+    "direct_check": 1113.958124,
+    "repair": 0,
+    "late_handling": 432.286244,
+    "review": 0,
+    "release": 0,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 1292.305889
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "review",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-09T23:14:48.428354+00:00",
+      "note": "Partial lead-only accounting: initial source gathering untimed;22:30\u201322:37 direct_check mixes implementation; late_handling mixes observer repair;22:51\u201323:13 workflow_overhead mixes natural truck discovery, warming/resource repair and affected checks. Separate full repair times unknown. Artist/Designer/UI token costs unknown. Exact user no-pickup cause unproven; no regression-free claim."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-09T22:37:56.804305+00:00",
+      "id": "first-use-warming-before-play",
+      "kind": "planning_discovery",
+      "summary": "The first correction removed the completion spike but left cold first-site rendering during interaction; move the real variant warm draw behind startup loading.",
+      "severity": "responsiveness",
+      "evidence": [
+        "915d9d5 check42712440782: completion90.035ms versusbaseline1225.686ms; cold first-site2160.278ms versusprior1555.027ms. Different isolated runs do not establish exact regression cost, but first-use preparation remains outside steady-frame budget.",
+        "Official Godot4.7 Compatibility guidance calls for actual view-frustum rendering during loading, not only resource preparation."
+      ],
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Avoid gameplay stutter and follow actual first-use warming documentation, while normal startup is1x.",
+      "omitted_assumption": "Preparing invisible effect variants at placement shifts preparation into the first interactive site view.",
+      "assessment_rationale": "The documented loading-time warm draw should have been an explicit initial integration boundary.",
+      "resolution": "Share the actual site/fade recipe with a one-draw startup renderer-only cover; consume input until ready, no fake gameplay site/stock/physics or timer.",
+      "repair_time_scope": "Refactor began within direct_check before this boundary; earlier repair/diagnosis cost is mixed and unknown."
+    },
+    {
+      "recorded_at": "2026-11-09T22:45:09.071041+00:00",
+      "id": "phase-probe-render-speed",
+      "kind": "workflow_error",
+      "summary": "The first startup-refinement observer sampled cutting after four rendered frames plus a fixed delay; that active-phase assertion failed without retaining actual phase state.",
+      "severity": "evidence",
+      "evidence": [
+        "42713766221 at3228549 FAIL, artifact2eed3fd1bd8524eb0d953e9554bec2b586517a778ec09162a5401d1e131f6079; startup readiness, geometry, pause/resume and cleanup passed. Actual clipping phase at the failed sample was not captured.",
+        "Current first-site152.338ms/steady58.8\u201359.3ms, completion56.1\u201358.7ms, startup4410ms approximately; a different render speed invalidates assuming a fixed frame count means a fixed phase time."
+      ],
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Observe actual1.5s entrance/2s cutting independently of remote renderer speed.",
+      "omitted_assumption": "A fixed wait added to variable frame waits reliably falls inside active cutting.",
+      "assessment_rationale": "The finite Tween already provides actual step boundaries; source timing should drive the probe and retain state.",
+      "resolution": "Same source retried with native Tween.step_finished timestamps/clip states and phase-based captures, affected visual check only; unchanged delivery component not repeated.",
+      "repair_time_scope": "Initial collector rewrite happened before this record; separate full repair time unknown."
+    },
+    {
+      "recorded_at": "2026-11-09T23:13:32.438293+00:00",
+      "id": "natural-completion-truck-dependency",
+      "kind": "planning_discovery",
+      "summary": "Debug-only completion timing omitted the later natural settle that registers and presents the actual office truck, leaving a first-use draw hitch.",
+      "severity": "responsiveness",
+      "evidence": [
+        "42716141923 at6c79b05: natural actual truck registration/presentation, first render581.934ms vs70\u201374ms steady; debug visual had passed.",
+        "42717474748 atafec36f: actual truck warm draw and scene-owned refs, first completion frame46.860ms vs43\u201349ms steady; no grants/debug in supply path."
+      ],
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Pre-code investigation explicitly included truck presentation in the actual completion path.",
+      "omitted_assumption": "Debug-completing the building exercises every later natural completion dependency.",
+      "assessment_rationale": "The truck is registered by the next real service settle, so the planned path required natural completion before declaring the measured spike removed.",
+      "resolution": "Draw actual truck alongside construction variants behind startup cover, retain resource lifetime, recheck only affected natural completion with real stock and unchanged deadlines.",
+      "repair_time_scope": "Mixed into prior workflow_overhead interval; full separate repair time unknown. Not classified as a proven shipped regression."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 2,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 1,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 3,
+  "tracked_repair_seconds_by_incident": {
+    "first-use-warming-before-play": 432.286244,
+    "phase-probe-render-speed": 0,
+    "natural-completion-truck-dependency": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 21938595,
+      "cached_input_tokens": 21807360,
+      "output_tokens": 122200,
+      "reasoning_output_tokens": 80709,
+      "total_tokens": 22060795,
+      "uncached_input_tokens": 131235
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 21938595,
+      "cached_input_tokens": 21807360,
+      "output_tokens": 122200,
+      "reasoning_output_tokens": 80709,
+      "total_tokens": 22060795,
+      "uncached_input_tokens": 131235
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-09T22:08:28.316902+00:00",
+        "ended_at": "2026-11-09T22:09:12.926027+00:00",
+        "receipt_start": "2026-11-09T22:06:55.654Z",
+        "receipt_end": "2026-11-09T22:08:33.444Z",
+        "usage_delta": {
+          "input_tokens": 277981,
+          "cached_input_tokens": 274688,
+          "output_tokens": 3177,
+          "reasoning_output_tokens": 1698,
+          "total_tokens": 281158,
+          "uncached_input_tokens": 3293
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T22:09:12.926027+00:00",
+        "ended_at": "2026-11-09T22:13:36.261113+00:00",
+        "receipt_start": "2026-11-09T22:08:33.444Z",
+        "receipt_end": "2026-11-09T22:12:55.014Z",
+        "usage_delta": {
+          "input_tokens": 2619397,
+          "cached_input_tokens": 2605568,
+          "output_tokens": 7636,
+          "reasoning_output_tokens": 4545,
+          "total_tokens": 2627033,
+          "uncached_input_tokens": 13829
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-09T22:13:36.261113+00:00",
+        "ended_at": "2026-11-09T22:30:13.868075+00:00",
+        "receipt_start": "2026-11-09T22:12:55.014Z",
+        "receipt_end": "2026-11-09T22:29:41.435Z",
+        "usage_delta": {
+          "input_tokens": 7135697,
+          "cached_input_tokens": 7121152,
+          "output_tokens": 35472,
+          "reasoning_output_tokens": 19726,
+          "total_tokens": 7171169,
+          "uncached_input_tokens": 14545
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T22:30:13.868075+00:00",
+        "ended_at": "2026-11-09T22:37:56.882486+00:00",
+        "receipt_start": "2026-11-09T22:29:41.435Z",
+        "receipt_end": "2026-11-09T22:36:00.246Z",
+        "usage_delta": {
+          "input_tokens": 1776882,
+          "cached_input_tokens": 1769728,
+          "output_tokens": 12779,
+          "reasoning_output_tokens": 8338,
+          "total_tokens": 1789661,
+          "uncached_input_tokens": 7154
+        }
+      },
+      {
+        "phase": "late_handling",
+        "started_at": "2026-11-09T22:37:56.882486+00:00",
+        "ended_at": "2026-11-09T22:45:09.168730+00:00",
+        "receipt_start": "2026-11-09T22:36:00.246Z",
+        "receipt_end": "2026-11-09T22:43:33.078Z",
+        "usage_delta": {
+          "input_tokens": 1882876,
+          "cached_input_tokens": 1879680,
+          "output_tokens": 15642,
+          "reasoning_output_tokens": 10460,
+          "total_tokens": 1898518,
+          "uncached_input_tokens": 3196
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-09T22:45:09.168730+00:00",
+        "ended_at": "2026-11-09T22:51:36.777357+00:00",
+        "receipt_start": "2026-11-09T22:43:33.078Z",
+        "receipt_end": "2026-11-09T22:51:11.880Z",
+        "usage_delta": {
+          "input_tokens": 2788919,
+          "cached_input_tokens": 2780544,
+          "output_tokens": 13268,
+          "reasoning_output_tokens": 10334,
+          "total_tokens": 2802187,
+          "uncached_input_tokens": 8375
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-09T22:51:36.777357+00:00",
+        "ended_at": "2026-11-09T23:13:09.083246+00:00",
+        "receipt_start": "2026-11-09T22:51:11.880Z",
+        "receipt_end": "2026-11-09T23:12:14.106Z",
+        "usage_delta": {
+          "input_tokens": 5456843,
+          "cached_input_tokens": 5376000,
+          "output_tokens": 34226,
+          "reasoning_output_tokens": 25608,
+          "total_tokens": 5491069,
+          "uncached_input_tokens": 80843
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "checks": [
+    "Normal game remains1x: PASS",
+    "Actual completion profile site: PASS",
+    "Completion preserves unchanged reserved geometry: PASS",
+    "Four actual low-poly puff instances prepared: PASS",
+    "Requested1.5+2.0second phase durations: PASS",
+    "Authored0.4s snip retimed to2s: PASS",
+    "Authored0.4s snip retimed to2s: PASS",
+    "Authored0.4s snip retimed to2s: PASS",
+    "Authored0.4s snip retimed to2s: PASS",
+    "Four scissors cut before tape release: PASS",
+    "Pause retains retimed clip position: PASS",
+    "Resume retains cutting base rate: PASS",
+    "Finite smoke/scissors/tape/pylon owner cleared: PASS",
+    "Actual material-source/worker setup for4 builders: PASS",
+    "Real delivery/building finishes with4 builders: PASS",
+    "Original500M11 physically supplied60 once: PASS",
+    "Physical custody/carry/capacity audit for current task: PASS",
+    "Assigned builder physically carries own-site material: PASS",
+    "Actual material-source/worker setup for2 builders: PASS",
+    "Real delivery/building finishes with2 builders: PASS",
+    "Original500M11 physically supplied60 once: PASS",
+    "Physical custody/carry/capacity audit for current task: PASS"
+  ],
+  "completion_call_us": 8671,
+  "debug_completion": {
+    "changed": true,
+    "completed": 1,
+    "debug_materials": 60,
+    "message": "DEBUG: instantly completed 1 building(s); supplied 60 missing Building Materials.",
+    "ok": true
+  },
+  "delivery_2": {
+    "audit": [],
+    "delivery": {
+      "assigned": 0,
+      "carried": 0,
+      "received": 60,
+      "remaining": 0,
+      "status": "Material delivery complete"
+    },
+    "jobs": [
+      {
+        "automatic_site": "site-0001",
+        "blocker": "Complete",
+        "cancelled": false,
+        "constraint_active": false,
+        "created": 0.0,
+        "delivered": 60,
+        "destination": "site-0001",
+        "emergency_contention_since": -1.0,
+        "id": "job-0018",
+        "order": 18,
+        "priority": 1,
+        "recovery_sources": [],
+        "relocation": false,
+        "requested": 60,
+        "selected": 5,
+        "source": "receiving",
+        "type": "M11"
+      }
+    ],
+    "max_carried": 35,
+    "saw_builder_carry": true,
+    "site": {
+      "blocker": "",
+      "builders": {},
+      "center": "(100.0, 165.0)",
+      "consumed_m11": 60,
+      "door": "(94.0, 165.0)",
+      "haul_job": "job-0018",
+      "id": "site-0001",
+      "kind": "construction",
+      "m11": 60,
+      "progress": 80.0,
+      "protected_starter": false,
+      "quarter_turn": false,
+      "site_store": "site-0001",
+      "size": "(10.0, 8.0)",
+      "starter_staffing_recorded": true,
+      "state": "Complete",
+      "work": 80.0,
+      "working": false
+    },
+    "source_remaining": 440,
+    "time": 98.0
+  },
+  "delivery_4": {
+    "audit": [],
+    "delivery": {
+      "assigned": 0,
+      "carried": 0,
+      "received": 60,
+      "remaining": 0,
+      "status": "Material delivery complete"
+    },
+    "jobs": [
+      {
+        "automatic_site": "site-0001",
+        "blocker": "Complete",
+        "cancelled": false,
+        "constraint_active": false,
+        "created": 0.0,
+        "delivered": 60,
+        "destination": "site-0001",
+        "emergency_contention_since": -1.0,
+        "id": "job-0018",
+        "order": 18,
+        "priority": 1,
+        "recovery_sources": [],
+        "relocation": false,
+        "requested": 60,
+        "selected": 6,
+        "source": "receiving",
+        "type": "M11"
+      }
+    ],
+    "max_carried": 60,
+    "saw_builder_carry": true,
+    "site": {
+      "blocker": "",
+      "builders": {},
+      "center": "(100.0, 165.0)",
+      "consumed_m11": 60,
+      "door": "(94.0, 165.0)",
+      "haul_job": "job-0018",
+      "id": "site-0001",
+      "kind": "construction",
+      "m11": 60,
+      "progress": 80.0,
+      "protected_starter": false,
+      "quarter_turn": false,
+      "site_store": "site-0001",
+      "size": "(10.0, 8.0)",
+      "starter_staffing_recorded": true,
+      "state": "Complete",
+      "work": 80.0,
+      "working": false
+    },
+    "source_remaining": 440,
+    "time": 103.0
+  },
+  "failed": false,
+  "geometry_changed": false,
+  "geometry_refresh_us": 372,
+  "post_render_us": [
+    90035,
+    88446,
+    88291,
+    87993
+  ],
+  "pre_render_us": [
+    2160278,
+    94782,
+    95863,
+    89963
+  ],
+  "scope": "Rendered current-change completion CPU/frame observation uses labelled debug completion after4warmup draws; no native FPS claim. Two separate fresh normal empty-field models demonstrate actual automatic site delivery/building at explicit rear intervals with4builders and2builders+commonhaulers. No direct material/worker grant or automatic-demand cancellation. Not a broad suite or normal-clock full-loop acceptance.",
+  "wall_ms": 14934
+}

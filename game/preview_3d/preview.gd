@@ -5,6 +5,9 @@ const FieldPolicy = preload("res://game/battlefield/battlefield_presentation.gd"
 const FieldCues = preload("res://game/preview_3d/field_person_cues.gd")
 const TruckCues = preload("res://game/preview_3d/field_t01_cues.gd")
 const ObjectiveCues = preload("res://game/preview_3d/field_objective_cues.gd")
+var _construction_visuals_ready := false
+var _construction_preparation_usec := 0
+var _construction_render_resources: Array[Resource] = []
 var world: Node3D
 var management_open := false
 var battlefield_open := false
@@ -67,6 +70,16 @@ func _ready() -> void:
 	_build_hud()
 	_replace_world(_session.simulation)
 	_set_management(false)
+	if DisplayServer.get_name() != "headless":
+		var opening_speed: int = _session.simulation.speed
+		_session.set_speed(0) # Loading must not accrue unseen simulation debt.
+		var preparation := preload("res://game/construction/visuals/construction_render_preparation.gd").new()
+		add_child(preparation)
+		await preparation.prepare(world.third)
+		_construction_preparation_usec = preparation.elapsed_usec
+		_construction_render_resources = preparation.resources
+		_session.set_speed(opening_speed)
+	_construction_visuals_ready = true
 
 func _build_hud() -> void:
 	_field_cues = FieldCues.new()
@@ -267,6 +280,9 @@ func _notification(what: int) -> void:
 		_update_hint()
 
 func _input(event: InputEvent) -> void:
+	if not _construction_visuals_ready:
+		get_viewport().set_input_as_handled()
+		return
 	# Tab is a mode shortcut even when a management field owns GUI focus.
 	if world != null and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_TAB and not _modal_open() and get_window().has_focus():
 		_set_management(not management_open)
@@ -280,6 +296,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed: _middle_drag = false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _construction_visuals_ready: return
 	if world == null or _modal_open() or not get_window().has_focus(): return
 	if event is InputEventKey and event.pressed and not event.echo:
 		# A decision modal retained GUI ownership above. Escape handles one layer.

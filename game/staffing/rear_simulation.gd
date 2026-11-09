@@ -728,6 +728,8 @@ func _settle() -> void:
 		for a in actors.values():
 			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
 				changed = (hauling_policy.start(a) if empty_field_opening else _start_job(a)) or changed
+			elif empty_field_opening and a.phase == "Idle" and construction != null:
+				changed = construction.start_builder_supply(a) or changed
 		if receiving != null: _sync_receiving_staff()
 		for activity in _production_activities(): changed = activity.settle() or changed
 		if training != null: changed = training.settle() or changed
@@ -889,12 +891,13 @@ func set_hauling_priorities(values: Array) -> Dictionary:
 	return result
 
 
-func _start_job(a: Dictionary, category: String = "") -> bool:
+func _start_job(a: Dictionary, category: String = "", destination: String = "") -> bool:
 	var person: Dictionary = ledger.inspect_person_status(a.id)
 	if person.pending_assignment != "None":
 		return false
 	var best: Dictionary = {}
 	for job in jobs:
+		if not destination.is_empty() and str(job.destination) != destination: continue
 		if not category.is_empty() and hauling_policy.category(job) != category: continue
 		if job.cancelled or job.delivered + _in_flight(job.id) >= job.requested:
 			continue
@@ -939,7 +942,7 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 		for stock in _stock_at(source_id,false):
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
-			if construction != null and job.type == "M11" and construction.instances.has(job.destination):
+			if person.duty_id == "hauling" and construction != null and job.type == "M11" and construction.instances.has(job.destination):
 				var utility: Dictionary = construction.trucks.option(job,person,stock)
 				fallback = str(utility.get("reason",""))
 				if utility.has("stock"):

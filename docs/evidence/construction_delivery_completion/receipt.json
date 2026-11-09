@@ -1,0 +1,53 @@
+{
+  "scope": "Separate bounded current-change receipts, not one aggregate game/60FPS acceptance. No local engine or regression suite. Original45/35/28-second limits unchanged. Main-world natural paths use explicit rear intervals after startup; visual-only paths explicitly debug-complete.",
+  "receipts": [
+    {
+      "run": 42712440782,
+      "head": "915d9d5558ef4d65730629326a10bc17dd38f69e",
+      "artifact_sha256": "00e543a8b3f48d32a494da6016fe797ba5aaeeb0e8186c048be35e3657f08989",
+      "result": "PASS: real-stock model delivery and separate debug visual",
+      "receipt": "first/construction_followup.json"
+    },
+    {
+      "run": 42713766221,
+      "head": "3228549958e24161a15e0668391e3416f277363d",
+      "artifact_sha256": "2eed3fd1bd8524eb0d953e9554bec2b586517a778ec09162a5401d1e131f6079",
+      "result": "FAIL: fixed-delay active-cut probe, actual failed phase not retained",
+      "receipt": "warm-first/construction_followup.json"
+    },
+    {
+      "run": 42714412200,
+      "head": "3228549958e24161a15e0668391e3416f277363d",
+      "artifact_sha256": "abf8a8b51603e6f9e22ba8567d30c8388dd566bdab8156a407ed128d35025350",
+      "result": "PASS: same-source phase-aware visual check",
+      "receipt": "warm-pass/construction_visual_ready.json"
+    },
+    {
+      "run": 42715152031,
+      "head": "6c79b059d24775cd543a4568eb45280ae22de9be",
+      "artifact_sha256": "52396259e8a044fdc90ca93f2b089049a8c8d27ac9b716957006f712f17ed31c",
+      "result": "PASS: actual loading cover, visible smoke, cut, pause/resume, cleanup",
+      "receipt": "final-visual/construction_visual_ready.json"
+    },
+    {
+      "run": 42716141923,
+      "head": "6c79b059d24775cd543a4568eb45280ae22de9be",
+      "artifact_sha256": "7010b713759988e0cd5515676d624f2abcc14c4e278ecd1a5a9de7b37d43d2e5",
+      "result": "Functional PASS; actual natural truck first frame581.934ms revealed missing warm dependency",
+      "receipt": "natural/construction_natural.json"
+    },
+    {
+      "run": 42717474748,
+      "head": "afec36f90ca1171c3bfa5afcebece2f6bc8bae2a",
+      "artifact_sha256": "396ca2c68c0d36a3c82d427268b05ce4b4db98a3619c7a4923f92134bdf34a49",
+      "result": "PASS: real-stock natural completion/truck; first frame46.860ms matches43\u201349ms software-renderer steady",
+      "receipt": "natural-final/construction_natural.json"
+    }
+  ],
+  "required_source_run": 42717465642,
+  "unverified": [
+    "Exact user no-pickup session: some haulers remained and never picked up; no supplied building/location/save reproduces that session.",
+    "Human native rendering/input, all facility/lifecycle combinations, full game loop and60FPS.",
+    "Headless warm-skip branch source reviewed only."
+  ]
+}

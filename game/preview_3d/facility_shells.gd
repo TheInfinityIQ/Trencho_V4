@@ -20,7 +20,7 @@ const OCCLUDER_LAYER: int = 4
 var _scenes: Dictionary = {}
 var _shapes: Dictionary = {}
 
-func build(row: Dictionary, include_unfinished: bool = false) -> Dictionary:
+func build(row: Dictionary, include_unfinished: bool = false, include_occluders: bool = true) -> Dictionary:
 	if row.state != "Complete" and not include_unfinished: return {"ok":false,"reason":"unfinished"}
 	if row.kind == "park": return _parking_ground(row)
 	if not MODELS.has(row.kind): return {"ok":false,"reason":"unmapped exterior"}
@@ -65,7 +65,7 @@ func build(row: Dictionary, include_unfinished: bool = false) -> Dictionary:
 	var fitted: AABB = AABB(Vector3(-extent.x/2.0,0,-extent.z/2.0),extent)
 	var entrance: Vector3 = Vector3(fitted.position.x+float(spec.get("front_inset",0.0))*factor,0,lerpf(fitted.position.z,fitted.end.z,float(spec.front_fraction)))
 	var label_anchor: Vector3 = Vector3(fitted.position.x-1.0,clampf(fitted.size.y*0.45,2.4,3.2),entrance.z)
-	_add_occluders(instance)
+	if include_occluders: _add_occluders(instance)
 	shell.set_meta("site_id",str(row.id))
 	shell.set_meta("model",file)
 	shell.set_meta("model_path",path)

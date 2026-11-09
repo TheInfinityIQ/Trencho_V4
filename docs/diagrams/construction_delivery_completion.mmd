@@ -1,0 +1,21 @@
+flowchart TD
+  Startup[Covered actual startup draw: site / props / truck] --> Refs[Scene-owned resources retained / restore1x before input]
+  Refs --> Assign
+  Assign[Actual builder assignment] --> Ready[Idle builder / own unfinished site]
+  Ready -->|real local material| Build[Present earned builder work]
+  Ready -->|own-site material shortage| Claim[Existing real M11 haul demand / claim]
+  Common[Common Hauling] --> Claim
+  Claim --> Carry[Physical pickup / carry / deposit]
+  Carry --> Report[Report back to own duty / safe handoff]
+  Report --> Build
+  Build --> Complete[Actual paid completion / capability once]
+  Complete --> Profile[Measured activation / visual / geometry costs]
+  Complete --> Smoke[Four finite Artist smoke entrances1.5s]
+  Smoke --> Snip[Authored scissors retimed2.0s]
+  Snip --> Tape[Release at3.5s phase end / tape fall]
+  Complete --> Truck[Actual office utility truck registration / presentation]
+  Claim --> Status[Selected-menu actual pickup and carrier blocker]
+  Tape --> Pylon[Ground contact / pylon grow and shrink]
+  Pause[Existing Pause /1x /2x] --> Smoke
+  Pause --> Snip
+  Cancel[Cancel or session teardown] --> Safe[Existing custody / finite visual cleanup]

@@ -1,0 +1,81 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+[Calls/s] Runtime counters enabled; caller stacks disabled. One report per real second; instrumented entries only.
+[Calls/s] engine second 5 [5, 6):
+     765  identity/identity_ledger.gd::inspect_entity
+      33  identity/identity_ledger.gd::person_is_alive
+      28  staffing/rear_simulation.gd::_settle
+       9  identity/identity_ledger.gd::formation_cohesion_counts
+       2  staffing/rear_simulation.gd::advance_time
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::map_markers
+       1  rear_base/base_demo.gd::_request_refresh
+[Scope wall time/us] engine second 5 (inclusive, completed scopes): {"battlefield/battlefield_view.gd::_refresh":{"calls":1,"maximum":111,"total":111},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":195,"total":362}}
+[Calls/s] engine second 6 [6, 7):
+     249  identity/identity_ledger.gd::inspect_entity
+      24  identity/identity_ledger.gd::military_hull_ready_at
+      20  identity/identity_ledger.gd::person_has_living_duty
+      20  identity/identity_ledger.gd::person_ready_for_hq_issue
+      12  identity/identity_ledger.gd::active_formation_member_ids
+      10  identity/identity_ledger.gd::sight_candidates
+       8  main/game_session.gd::_physics_process
+       3  battlefield/battlefield_view.gd::_request_refresh
+       3  main/main.gd::_refresh_clock
+       3  rear_base/base_demo.gd::_request_refresh
+       2  identity/identity_ledger.gd::ammunition_quantities_at
+       2  identity/identity_ledger.gd::person_is_alive
+       1  battlefield/battlefield_view.gd::_refresh
+       1  identity/identity_ledger.gd::formation_cohesion_counts
+       1  rear_base/base_demo.gd::_refresh
+       1  rear_base/base_simulation.gd::_pump_live
+       1  rear_base/base_simulation.gd::tick_live
+       1  staffing/rear_simulation.gd::_settle
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 6 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":72,"total":72},"rear_base/base_demo.gd::_refresh":{"calls":1,"maximum":2,"total":2},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":8,"maximum":671,"total":3967},"rear_base/base_simulation.gd::tick_live":{"calls":1,"maximum":4067,"total":4067},"staffing/rear_simulation.gd::_settle":{"calls":1,"maximum":4917,"total":4917}}
+Normal live opening remains1x after covered preparation: PASS
+Actual site after startup readiness: PASS
+Actual completion does not replace reserved geometry: PASS
+[Calls/s] engine second 10 [10, 11):
+     197  identity/identity_ledger.gd::inspect_entity
+      70  identity/identity_ledger.gd::person_has_living_duty
+      60  identity/identity_ledger.gd::military_hull_ready_at
+      34  identity/identity_ledger.gd::person_ready_for_hq_issue
+      13  main/game_session.gd::_physics_process
+       7  identity/identity_ledger.gd::person_is_alive
+       5  staffing/rear_simulation.gd::_settle
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       2  rear_base/base_simulation.gd::_pump_live
+       2  rear_base/base_simulation.gd::tick_live
+       1  identity/identity_ledger.gd::ammunition_quantities_at
+       1  rear_base/base_demo.gd::_request_refresh
+       1  staffing/rear_simulation.gd::advance_time
+[Scope wall time/us] engine second 10 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":5,"maximum":353,"total":399},"rear_base/base_simulation.gd::_pump_live/work_chunk/forward_supply/forward_transport.gd":{"calls":10,"maximum":750,"total":3963},"rear_base/base_simulation.gd::tick_live":{"calls":2,"maximum":4080,"total":6845},"staffing/rear_simulation.gd::_settle":{"calls":2,"maximum":1566,"total":2533},"staffing/rear_simulation.gd::advance_time":{"calls":1,"maximum":2738,"total":2738}}
+Effect alive at actual cutting boundary: PASS
+Actual1.5s boundary starts four2s clips before tape release: PASS
+[Calls/s] engine second 11 [11, 12):
+       0  no instrumented calls
+[Scope wall time/us] engine second 11 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":159,"total":159}}
+Pause retains actual cut position: PASS
+Resume retains2s clip rate: PASS
+[Calls/s] engine second 12 [12, 13):
+       2  battlefield/battlefield_view.gd::_request_refresh
+       2  main/main.gd::_refresh_clock
+       2  rear_base/base_demo.gd::_request_refresh
+[Scope wall time/us] engine second 12 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":92,"total":92}}
+[Calls/s] engine second 13 [13, 14):
+       0  no instrumented calls
+[Scope wall time/us] engine second 13 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":92,"total":92}}
+Tape release follows finite cutting phase: PASS
+[Calls/s] engine second 14 [14, 15):
+       0  no instrumented calls
+[Scope wall time/us] engine second 14 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":80,"total":80}}
+Finite effect clears after contact/pylon cleanup: PASS
+[Calls/s] engine second 15 [15, 16):
+       0  no instrumented calls
+[Scope wall time/us] engine second 15 (inclusive, completed scopes): {"diagnostics/function_call_log.gd::_collect_reports":{"calls":1,"maximum":78,"total":78}}

@@ -132,5 +132,13 @@
       }
     }
   },
-  "scope": "Artist static/animated delivery; Godot integration and sequence checked separately."
+  "scope": "Artist static/animated delivery; Godot integration and sequence checked separately.",
+  "smoke": {
+    "game_path": "game/construction/assets/smoke.glb",
+    "source_path": "game/construction/assets/source/smoke.blend",
+    "sha256": "139b5311eed97e71f1a552102774c24ae5c7bb0f8dd8ab2ffc0aea2cf050978a",
+    "source_sha256": "77b558692d71f6853d533033ec40c62b4cac22c3f51d4a7581e96c82410039a1",
+    "authorship": "Original Trencho3D Artist; no external model/texture/motion dependency.",
+    "integration": "Unit-scale sibling puff with linear gray vertex colours; finite1.5s emergence, existing snip0.4s at0.2x for2s cutting."
+  }
 }

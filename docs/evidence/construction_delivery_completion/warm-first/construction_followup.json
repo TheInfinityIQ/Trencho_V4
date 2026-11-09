@@ -1,0 +1,40 @@
+{
+  "checks": [
+    "Normal game remains1x: PASS",
+    "Actual completion profile site: PASS",
+    "Completion preserves unchanged reserved geometry: PASS",
+    "Four actual low-poly puff instances prepared: PASS",
+    "Requested1.5+2.0second phase durations: PASS",
+    "Four scissors cut before tape release: FAIL",
+    "Pause retains retimed clip position: PASS",
+    "Resume retains cutting base rate: PASS",
+    "Finite smoke/scissors/tape/pylon owner cleared: PASS",
+    "Actual material-source/worker setup for4 builders: PASS"
+  ],
+  "completion_call_us": 6049,
+  "debug_completion": {
+    "changed": true,
+    "completed": 1,
+    "debug_materials": 60,
+    "message": "DEBUG: instantly completed 1 building(s); supplied 60 missing Building Materials.",
+    "ok": true
+  },
+  "failed": true,
+  "geometry_changed": false,
+  "geometry_refresh_us": 275,
+  "post_render_us": [
+    56395,
+    56050,
+    56441,
+    58710
+  ],
+  "pre_render_us": [
+    152338,
+    59252,
+    58779,
+    58798
+  ],
+  "scope": "Rendered current-change completion CPU/frame observation uses labelled debug completion after4warmup draws; no native FPS claim. Two separate fresh normal empty-field models demonstrate actual automatic site delivery/building at explicit rear intervals with4builders and2builders+commonhaulers. No direct material/worker grant or automatic-demand cancellation. Not a broad suite or normal-clock full-loop acceptance.",
+  "startup_preparation_us": 4403327,
+  "wall_ms": 10257
+}

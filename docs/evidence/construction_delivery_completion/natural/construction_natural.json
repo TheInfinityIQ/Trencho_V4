@@ -1,0 +1,112 @@
+{
+  "checks": [
+    "Real placed office,2builders and remaining common haulers: PASS",
+    "Office physically supplied/earned80work/completed without debug: PASS",
+    "Actual utility truck registered through natural settle: PASS",
+    "Natural construction custody/capacity audit: PASS",
+    "Actual truck presentation joined normal3Dworld: PASS"
+  ],
+  "completion_step_us": 25948,
+  "delivery": {
+    "assigned": 0,
+    "carried": 0,
+    "received": 60,
+    "remaining": 0,
+    "status": "Material delivery complete"
+  },
+  "failed": false,
+  "post_frames_us": [
+    581934,
+    72335,
+    70379,
+    71575,
+    70963,
+    74011
+  ],
+  "pre_frames_us": [
+    161602,
+    74019,
+    74923,
+    72972
+  ],
+  "scope": "Single current reported construction path through normal main, actual starting500M11 and2builders/commonhaulers, no grants/debug/cancelled demand. Explicit rear intervals after startup, not natural wall-clock/full-loop/FPS acceptance. Includes actual completion activation/truck registration/presentation cost omitted by debug-only timing. Original45/35/28s bounds.",
+  "simulation_time": 98.1,
+  "site": {
+    "blocker": "",
+    "builders": {},
+    "center": "(100.0, 165.0)",
+    "consumed_m11": 60,
+    "door": "(94.0, 165.0)",
+    "haul_job": "job-0018",
+    "id": "site-0001",
+    "kind": "construction",
+    "m11": 60,
+    "progress": 80.0,
+    "protected_starter": false,
+    "quarter_turn": false,
+    "site_store": "site-0001",
+    "size": "(10.0, 8.0)",
+    "starter_staffing_recorded": true,
+    "state": "Complete",
+    "work": 80.0,
+    "working": false
+  },
+  "slow_steps": [
+    {
+      "state": "Awaiting M11",
+      "time": 24.1,
+      "us": 22462
+    },
+    {
+      "state": "Building",
+      "time": 37.1,
+      "us": 16883
+    },
+    {
+      "state": "Building",
+      "time": 40.1,
+      "us": 16752
+    },
+    {
+      "state": "Building",
+      "time": 49.1,
+      "us": 17170
+    },
+    {
+      "state": "Building",
+      "time": 78.1,
+      "us": 16059
+    },
+    {
+      "state": "Building",
+      "time": 80.1,
+      "us": 20718
+    },
+    {
+      "state": "Complete",
+      "time": 98.1,
+      "us": 25948
+    }
+  ],
+  "source_remaining": 440,
+  "trucks": {
+    "site-0001": {
+      "blocker": "",
+      "burned": 0.0,
+      "created": true,
+      "deadline": 1e99999,
+      "delivered": 0,
+      "distance": 0.0,
+      "home": "(90.0, 165.0)",
+      "id": "site-0001-utility-truck",
+      "loaded": 0,
+      "motion": {},
+      "office": "site-0001",
+      "phase": "Parked",
+      "recovering": false,
+      "trips": 0,
+      "worker": ""
+    }
+  },
+  "wall_ms": 7247
+}
