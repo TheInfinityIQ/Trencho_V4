@@ -577,7 +577,7 @@ func _eligible(p: Dictionary, duty: String) -> bool:
 func _any_eligible(ids: Array, duty: String, facts: Dictionary = {}, starter_only: bool = false) -> bool:
 	for id in ids:
 		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
-		if starter_only and person.assignment != "Available" and person.duty_id != duty: continue
+		if starter_only and not _starter_candidate(person,duty): continue
 		if _eligible(person,duty): return true
 	return false
 
@@ -588,7 +588,7 @@ func _choose_person(ids: Array, duty: String, facts: Dictionary = {}, starter_on
 	var best_rank := 100
 	for id in ids:
 		var person: Dictionary = facts[id] if facts.has(id) else ledger.inspect_person_status(id)
-		if starter_only and person.assignment != "Available" and person.duty_id != duty: continue
+		if starter_only and not _starter_candidate(person,duty): continue
 		if not _eligible(person,duty): continue
 		var qualification := 2 if person.qualification != "None" else (1 if person.basic_training else 0)
 		var rank: int = (0 if person.duty_id == duty else 6)+(0 if person.assignment == "Available" else 3)+qualification
@@ -596,6 +596,13 @@ func _choose_person(ids: Array, duty: String, facts: Dictionary = {}, starter_on
 			best = id
 			best_rank = rank
 	return best
+
+
+func _starter_candidate(person: Dictionary, duty: String) -> bool:
+	if person.assignment == "Available" or person.duty_id == duty: return true
+	# Default fallback is uncommitted labour; deliberately requested Hauling and
+	# actual reserved handling/carries keep their existing exclusive commitment.
+	return requests.hauling.get("fallback",false) and person.duty_id == "hauling" and actors[person.id].phase in ["Idle","Reporting","Available"]
 
 
 func _report(a: Dictionary) -> void:
@@ -776,6 +783,7 @@ func _finish_phase(a: Dictionary) -> void:
 				vehicles.begin_fuel_pickup(a.id)
 			else:
 				a.phase = "Idle"
+				if requests.hauling.get("fallback",false): _rebalance()
 		"Vehicle Board":
 			var result: Dictionary = vehicles.complete_board(a.id)
 			a.phase = "Vehicle Station" if result.ok else "Vehicle Blocked"

@@ -1,6 +1,7 @@
 flowchart TD
   Arrival[Actual worker arrival / four opening workers] --> Staffing[Rear exclusive staffing allocation]
   Explicit[Explicit facility / crew / qualified commitments] --> Staffing
+  Starter[Existing once-only workplace starter requests] -->|eligible default labour at safe boundary| Staffing
   Staffing -->|remaining eligible workers| Hauling[Default Hauling pool]
   UI[Workers / Jobs: expand Hauling] --> Draft[Native grip drag or Move up/down: local draft]
   Draft --> Confirm[Confirm complete category order]
