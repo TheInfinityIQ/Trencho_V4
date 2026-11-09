@@ -4,14 +4,14 @@
   "reviewed_baseline": "35ad12bcce218ba89aeab95a039bbded6990beb6",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "3b1c992bf3bad0d3494af50fdb7e5017ea7f114b47bff912c92914390b3d9c03",
+  "source_fingerprint": "07d6b1a1280f0f7c8856849e2ab89c3feb40cadea73156cc2639cbc81ae15053",
   "totals": {
     "systems": 48,
     "game_scripts": 216,
     "non_test_scripts": 122,
     "retained_test_scripts": 94,
     "functions_in_inventory": 3350,
-    "diagram_function_links": 245
+    "diagram_function_links": 247
   },
   "systems": [
     {
@@ -24899,7 +24899,7 @@
       "title": "Main menus, rear controls and guidance",
       "group": "Presentation",
       "owner": "Main + CommandShell + BaseDemo + panels",
-      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them.",
+      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them. Existing-site inspection opens Build controls without acquiring a new blueprint; acquisition retains its separate explicit intent.",
       "nodes": [
         {
           "id": "n0",
@@ -24920,28 +24920,42 @@
           "label": "Actual BaseDemo panel/selection",
           "file": "game/rear_base/base_demo.gd",
           "function": "_select",
-          "line": 1716
+          "line": 1717
         },
         {
           "id": "n3",
           "label": "Command result reconciles session",
           "file": "game/rear_base/base_demo.gd",
           "function": "_result",
-          "line": 1706
+          "line": 1707
         },
         {
           "id": "n4",
           "label": "Refresh visible current panel",
           "file": "game/rear_base/base_demo.gd",
           "function": "_refresh_contents",
-          "line": 1887
+          "line": 1888
         },
         {
           "id": "n5",
           "label": "Confirm actual combined purchase draft",
           "file": "game/rear_base/base_demo.gd",
           "function": "_confirm_purchase",
-          "line": 581
+          "line": 582
+        },
+        {
+          "id": "n6",
+          "label": "Open panel with explicit preview intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "show_panel",
+          "line": 347
+        },
+        {
+          "id": "n7",
+          "label": "Acquire a new blueprint only by construction intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "select_build_kind",
+          "line": 1162
         }
       ],
       "edges": [
@@ -24969,6 +24983,16 @@
           "from": "n5",
           "to": "n3",
           "label": "actual Receiving command result"
+        },
+        {
+          "from": "n2",
+          "to": "n6",
+          "label": "existing-site inspection: preview false"
+        },
+        {
+          "from": "n6",
+          "to": "n7",
+          "label": "only explicit acquisition intent"
         }
       ],
       "related": [
@@ -24993,7 +25017,7 @@
       "files": [
         {
           "path": "game/rear_base/base_demo.gd",
-          "sha256": "43ba1dacd5b9a7ea6c2c11cbac371731cf6feb5a1873483c13109b4584eefc45",
+          "sha256": "d56e98ed72fd7d754100c2653db09d838edc0984895d3bc9420954b30e537d1c",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -25144,16 +25168,16 @@
               "id": "game/rear_base/base_demo.gd::show_panel",
               "name": "show_panel",
               "line": 347,
-              "end_line": 357,
+              "end_line": 358,
               "kind": "method",
-              "purpose": "Show panel for base demo. Implementation: calls {\"Staff\":\"Workers/Jobs\",\"Orders\":\"Supplies\"}.get, tabs.get_tab_count, tabs.get_tab_control, str; updates panel.scroll_vertical, tabs.current_tab, title.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Open the requested current management panel, starting a blueprint only when the caller explicitly retains acquisition intent; inspection cancels an old draft without starting a new one.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/rear_base/base_demo.gd::_panel",
               "name": "_panel",
-              "line": 359,
-              "end_line": 369,
+              "line": 360,
+              "end_line": 370,
               "kind": "method",
               "purpose": "Panel for base demo. Implementation: calls ScrollContainer.new, title.replace, scroll.set_meta, tabs.add_child; updates box.size_flags_horizontal, scroll.horizontal_scroll_mode, scroll.name.",
               "purpose_origin": "implementation_derived"
@@ -25161,8 +25185,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_label",
               "name": "_label",
-              "line": 371,
-              "end_line": 372,
+              "line": 372,
+              "end_line": 373,
               "kind": "method",
               "purpose": "Return UIKit.label(parent,text) for base demo. Implementation: calls UIKit.label.",
               "purpose_origin": "implementation_derived"
@@ -25170,8 +25194,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_section",
               "name": "_section",
-              "line": 374,
-              "end_line": 379,
+              "line": 375,
+              "end_line": 380,
               "kind": "method",
               "purpose": "Return body for base demo. Implementation: calls UIKit.card, UIKit.label, description.is_empty.",
               "purpose_origin": "implementation_derived"
@@ -25179,8 +25203,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_button",
               "name": "_button",
-              "line": 381,
-              "end_line": 382,
+              "line": 382,
+              "end_line": 383,
               "kind": "method",
               "purpose": "Return UIKit.button(parent,text,action,primary) for base demo. Implementation: calls UIKit.button.",
               "purpose_origin": "implementation_derived"
@@ -25188,8 +25212,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_spin",
               "name": "_spin",
-              "line": 384,
-              "end_line": 395,
+              "line": 385,
+              "end_line": 396,
               "kind": "method",
               "purpose": "Spin for base demo. Implementation: calls HBoxContainer.new, parent.add_child, _label, SpinBox.new; updates _label(row, title).size_flags_horizontal, spin.custom_minimum_size.x, spin.max_value, spin.min_value.",
               "purpose_origin": "implementation_derived"
@@ -25197,8 +25221,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_option",
               "name": "_option",
-              "line": 397,
-              "end_line": 402,
+              "line": 398,
+              "end_line": 403,
               "kind": "method",
               "purpose": "Return option for base demo. Implementation: calls _label, OptionButton.new, option.add_item, str.",
               "purpose_origin": "implementation_derived"
@@ -25206,8 +25230,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_list",
               "name": "_list",
-              "line": 404,
-              "end_line": 409,
+              "line": 405,
+              "end_line": 410,
               "kind": "method",
               "purpose": "Return list for base demo. Implementation: calls ItemList.new, parent.add_child; updates list.clip_contents, list.custom_minimum_size.y.",
               "purpose_origin": "implementation_derived"
@@ -25215,8 +25239,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel",
               "name": "_orders_panel",
-              "line": 411,
-              "end_line": 496,
+              "line": 412,
+              "end_line": 497,
               "kind": "method",
               "purpose": "Build the combined goods/worker draft and explicit purchase command alongside existing delivery and recovery controls.",
               "purpose_origin": "reviewed"
@@ -25224,8 +25248,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#1>",
               "name": "_orders_panel/<lambda#1>",
-              "line": 434,
-              "end_line": 434,
+              "line": 435,
+              "end_line": 435,
               "kind": "lambda",
               "purpose": "Refresh the selected army-request explanation when its actual list selection changes.",
               "purpose_origin": "reviewed"
@@ -25233,8 +25257,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#2>",
               "name": "_orders_panel/<lambda#2>",
-              "line": 442,
-              "end_line": 442,
+              "line": 443,
+              "end_line": 443,
               "kind": "lambda",
               "purpose": "Refresh the read-only purchase quote when the optional worker draft changes.",
               "purpose_origin": "reviewed"
@@ -25242,8 +25266,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#3>",
               "name": "_orders_panel/<lambda#3>",
-              "line": 447,
-              "end_line": 447,
+              "line": 448,
+              "end_line": 448,
               "kind": "lambda",
               "purpose": "Select the clicked real procurement order for inspection without issuing a domain command.",
               "purpose_origin": "reviewed"
@@ -25251,8 +25275,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#4>",
               "name": "_orders_panel/<lambda#4>",
-              "line": 455,
-              "end_line": 456,
+              "line": 456,
+              "end_line": 457,
               "kind": "lambda",
               "purpose": "Cancel the selected procurement order through its existing undispatched-order rules and display the result.",
               "purpose_origin": "reviewed"
@@ -25260,8 +25284,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#5>",
               "name": "_orders_panel/<lambda#5>",
-              "line": 470,
-              "end_line": 470,
+              "line": 471,
+              "end_line": 471,
               "kind": "lambda",
               "purpose": "Refresh the resource purchase quote after the corresponding requested whole-quantity control changes.",
               "purpose_origin": "reviewed"
@@ -25269,8 +25293,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_orders_panel/<lambda#6>",
               "name": "_orders_panel/<lambda#6>",
-              "line": 481,
-              "end_line": 481,
+              "line": 482,
+              "end_line": 482,
               "kind": "lambda",
               "purpose": "Submit the existing paid recovery-instructor purchase through the actual Receiving owner and display its result.",
               "purpose_origin": "reviewed"
@@ -25278,8 +25302,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_start_session",
               "name": "_start_session",
-              "line": 498,
-              "end_line": 502,
+              "line": 499,
+              "end_line": 503,
               "kind": "method",
               "purpose": "Start session for base demo. Implementation: calls simulation.cancel_live_planning, preload(\"res://game/scenario/farmland_session.gd\").create, preload, Simulation.new; updates simulation.",
               "purpose_origin": "implementation_derived"
@@ -25287,8 +25311,8 @@
             {
               "id": "game/rear_base/base_demo.gd::start_empty_field_session",
               "name": "start_empty_field_session",
-              "line": 504,
-              "end_line": 508,
+              "line": 505,
+              "end_line": 509,
               "kind": "method",
               "purpose": "Cancel old-session private preparation, create the live empty-field opening with bounded planning enabled before initial policy work, and bind the new persistent session/UI.",
               "purpose_origin": "reviewed"
@@ -25296,8 +25320,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_bind_started_session",
               "name": "_bind_started_session",
-              "line": 510,
-              "end_line": 546,
+              "line": 511,
+              "end_line": 547,
               "kind": "method",
               "purpose": "Clear pending batch and construction UI decisions before the existing session replacement/binding; preserve reset, draft and presentation behavior.",
               "purpose_origin": "reviewed"
@@ -25305,8 +25329,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_staff_panel",
               "name": "_staff_panel",
-              "line": 548,
-              "end_line": 558,
+              "line": 549,
+              "end_line": 559,
               "kind": "method",
               "purpose": "Build the shared workforce panel and route its purchase request to the explicit Supplies draft.",
               "purpose_origin": "reviewed"
@@ -25314,8 +25338,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_staff_panel/<lambda#1>",
               "name": "_staff_panel/<lambda#1>",
-              "line": 555,
-              "end_line": 555,
+              "line": 556,
+              "end_line": 556,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _select.",
               "purpose_origin": "implementation_derived"
@@ -25323,8 +25347,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_staff_panel/<lambda#2>",
               "name": "_staff_panel/<lambda#2>",
-              "line": 557,
-              "end_line": 558,
+              "line": 558,
+              "end_line": 559,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke people.get_selected_items().is_empty, people.get_selected_items, _result, simulation.rear.reassign_person.",
               "purpose_origin": "implementation_derived"
@@ -25332,8 +25356,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_bind_purchase_receiving",
               "name": "_bind_purchase_receiving",
-              "line": 560,
-              "end_line": 563,
+              "line": 561,
+              "end_line": 564,
               "kind": "method",
               "purpose": "Disconnect the old Receiving order-gate subscription and bind the current owner to coalesced UI refresh.",
               "purpose_origin": "reviewed"
@@ -25341,8 +25365,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_draft_worker_purchase",
               "name": "_draft_worker_purchase",
-              "line": 565,
-              "end_line": 569,
+              "line": 566,
+              "end_line": 570,
               "kind": "method",
               "purpose": "Select the optional worker batch and open the Supplies purchase draft without committing or spending.",
               "purpose_origin": "reviewed"
@@ -25350,8 +25374,8 @@
             {
               "id": "game/rear_base/base_demo.gd::discard_menu_drafts",
               "name": "discard_menu_drafts",
-              "line": 571,
-              "end_line": 579,
+              "line": 572,
+              "end_line": 580,
               "kind": "method",
               "purpose": "Clear unconfirmed staffing/context and purchasing drafts when management closes or the model is replaced.",
               "purpose_origin": "reviewed"
@@ -25359,8 +25383,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_confirm_purchase",
               "name": "_confirm_purchase",
-              "line": 581,
-              "end_line": 595,
+              "line": 582,
+              "end_line": 596,
               "kind": "method",
               "purpose": "Submit the current combined development draft or supported legacy purchase once, clearing selections only after success.",
               "purpose_origin": "reviewed"
@@ -25368,8 +25392,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_purchase_quote",
               "name": "_refresh_purchase_quote",
-              "line": 597,
-              "end_line": 620,
+              "line": 598,
+              "end_line": 621,
               "kind": "method",
               "purpose": "Display the current combined costs, destination and readiness or legacy quote without spending or issuing a purchase.",
               "purpose_origin": "reviewed"
@@ -25377,8 +25401,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_order_summary",
               "name": "_order_summary",
-              "line": 622,
-              "end_line": 625,
+              "line": 623,
+              "end_line": 626,
               "kind": "method",
               "purpose": "Return \"%s · %s · %d requisition\" % [contents,order.state,int(order.cost)] for base demo. Implementation: calls _named_quantities, int, order.get; updates contents.",
               "purpose_origin": "implementation_derived"
@@ -25386,8 +25410,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_delivery_status",
               "name": "_refresh_delivery_status",
-              "line": 627,
-              "end_line": 675,
+              "line": 628,
+              "end_line": 676,
               "kind": "method",
               "purpose": "Refresh delivery status for base demo. Implementation: calls receiving.orders.is_empty, orders.get_selected_items().is_empty, orders.get_selected_items, current.is_empty; updates current, delivery_cancel_button.disabled, delivery_cancel_reason.text, delivery_progress.value.",
               "purpose_origin": "implementation_derived"
@@ -25395,8 +25419,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_core_ui",
               "name": "_refresh_core_ui",
-              "line": 677,
-              "end_line": 681,
+              "line": 678,
+              "end_line": 682,
               "kind": "method",
               "purpose": "Refresh core ui for base demo. Implementation: calls workforce_panel.refresh, _refresh_purchase_quote, _refresh_resource_hud, _refresh_production_context.",
               "purpose_origin": "implementation_derived"
@@ -25404,8 +25428,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_resource_hud",
               "name": "_refresh_resource_hud",
-              "line": 683,
-              "end_line": 706,
+              "line": 684,
+              "end_line": 707,
               "kind": "method",
               "purpose": "Refresh resource hud for base demo. Implementation: calls stock_totals.has, int, physical.append, _material_label; updates outstanding[type], resource_hud.text, stock_totals[type], stock_totals[type].physical.",
               "purpose_origin": "implementation_derived"
@@ -25413,8 +25437,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_production_context",
               "name": "_refresh_production_context",
-              "line": 708,
-              "end_line": 728,
+              "line": 709,
+              "end_line": 729,
               "kind": "method",
               "purpose": "Show actual current facility status while preserving unconfirmed staffing/priority within its current model/duty context.",
               "purpose_origin": "reviewed"
@@ -25422,8 +25446,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_build_description",
               "name": "_refresh_build_description",
-              "line": 730,
-              "end_line": 734,
+              "line": 731,
+              "end_line": 735,
               "kind": "method",
               "purpose": "Refresh build description for base demo. Implementation: calls _construction_kind, BUILD_PURPOSES.get, str, ConstructionCatalog.footprint; updates construction_description.text.",
               "purpose_origin": "implementation_derived"
@@ -25431,8 +25455,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_named_quantities",
               "name": "_named_quantities",
-              "line": 736,
-              "end_line": 740,
+              "line": 737,
+              "end_line": 741,
               "kind": "method",
               "purpose": "Return \", \".join(result) if not result.is_empty() else \"none\" for base demo. Implementation: calls result.append, _material_label, str, \", \".join.",
               "purpose_origin": "implementation_derived"
@@ -25440,8 +25464,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_context_duty",
               "name": "_context_duty",
-              "line": 742,
-              "end_line": 743,
+              "line": 743,
+              "end_line": 744,
               "kind": "method",
               "purpose": "Return str(facility.get_item_metadata(facility.selected)) if facility.get_item_metadata(facility.selected) != null else facility.get_item_text(facility.selected) for base demo. Implementation: calls str, facility.get_item_metadata, facility.get_item_text.",
               "purpose_origin": "implementation_derived"
@@ -25449,8 +25473,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_facilities",
               "name": "_sync_facilities",
-              "line": 745,
-              "end_line": 757,
+              "line": 746,
+              "end_line": 758,
               "kind": "method",
               "purpose": "Sync facilities for base demo. Implementation: calls ids.is_empty, _context_duty, existing.append, str; updates ids.",
               "purpose_origin": "implementation_derived"
@@ -25458,8 +25482,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_haul_panel",
               "name": "_haul_panel",
-              "line": 759,
-              "end_line": 783,
+              "line": 760,
+              "end_line": 784,
               "kind": "method",
               "purpose": "Haul panel for base demo. Implementation: calls _label, _option, _sync_haul_stores, destination.select; updates destination, goods_type, haul_category, haul_count.",
               "purpose_origin": "implementation_derived"
@@ -25467,15 +25491,6 @@
             {
               "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#1>",
               "name": "_haul_panel/<lambda#1>",
-              "line": 773,
-              "end_line": 773,
-              "kind": "lambda",
-              "purpose": "Provide an inline callback for base demo; invoke _mark_haul_draft_dirty.",
-              "purpose_origin": "implementation_derived"
-            },
-            {
-              "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#2>",
-              "name": "_haul_panel/<lambda#2>",
               "line": 774,
               "end_line": 774,
               "kind": "lambda",
@@ -25483,10 +25498,19 @@
               "purpose_origin": "implementation_derived"
             },
             {
+              "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#2>",
+              "name": "_haul_panel/<lambda#2>",
+              "line": 775,
+              "end_line": 775,
+              "kind": "lambda",
+              "purpose": "Provide an inline callback for base demo; invoke _mark_haul_draft_dirty.",
+              "purpose_origin": "implementation_derived"
+            },
+            {
               "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#3>",
               "name": "_haul_panel/<lambda#3>",
-              "line": 776,
-              "end_line": 779,
+              "line": 777,
+              "end_line": 780,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; update _haul_draft_dirty, haul_draft_status.text; invoke haul_count.set_value_no_signal.",
               "purpose_origin": "implementation_derived"
@@ -25494,8 +25518,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#4>",
               "name": "_haul_panel/<lambda#4>",
-              "line": 781,
-              "end_line": 781,
+              "line": 782,
+              "end_line": 782,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _select.",
               "purpose_origin": "implementation_derived"
@@ -25503,8 +25527,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_haul_panel/<lambda#5>",
               "name": "_haul_panel/<lambda#5>",
-              "line": 782,
-              "end_line": 783,
+              "line": 783,
+              "end_line": 784,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke jobs.get_selected_items().is_empty, jobs.get_selected_items, _result, simulation.rear.cancel_job.",
               "purpose_origin": "implementation_derived"
@@ -25512,8 +25536,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_haul_goods",
               "name": "_load_haul_goods",
-              "line": 785,
-              "end_line": 796,
+              "line": 786,
+              "end_line": 797,
               "kind": "method",
               "purpose": "Load haul goods for base demo. Implementation: calls goods_type.clear, goods_type.add_item, _material_label, goods_type.set_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -25521,8 +25545,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_haul_choice",
               "name": "_haul_choice",
-              "line": 798,
-              "end_line": 799,
+              "line": 799,
+              "end_line": 800,
               "kind": "method",
               "purpose": "Return str(option.get_item_metadata(option.selected)) if option.selected >= 0 else \"\" for base demo. Implementation: calls str, option.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -25530,8 +25554,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_mark_haul_draft_dirty",
               "name": "_mark_haul_draft_dirty",
-              "line": 801,
-              "end_line": 803,
+              "line": 802,
+              "end_line": 804,
               "kind": "method",
               "purpose": "Mark haul draft dirty for base demo. Implementation: updates _haul_draft_dirty, haul_draft_status.text.",
               "purpose_origin": "implementation_derived"
@@ -25539,8 +25563,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_haul_stores",
               "name": "_sync_haul_stores",
-              "line": 805,
-              "end_line": 818,
+              "line": 806,
+              "end_line": 819,
               "kind": "method",
               "purpose": "Sync haul stores for base demo. Implementation: calls simulation.rear.stores.keys, _haul_choice, ids.size, option.get_item_metadata; updates same.",
               "purpose_origin": "implementation_derived"
@@ -25548,8 +25572,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_order_haul",
               "name": "_order_haul",
-              "line": 820,
-              "end_line": 826,
+              "line": 821,
+              "end_line": 827,
               "kind": "method",
               "purpose": "Order haul for base demo. Implementation: calls simulation.rear.request_haul, _haul_choice, int, _result; updates _haul_draft_dirty, haul_draft_status.text.",
               "purpose_origin": "implementation_derived"
@@ -25557,8 +25581,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_material_label",
               "name": "_material_label",
-              "line": 828,
-              "end_line": 829,
+              "line": 829,
+              "end_line": 830,
               "kind": "method",
               "purpose": "Return str(Catalog.MATERIALS[type].name) if Catalog.MATERIALS.has(type) else {\"M06\":\"Explosives\",\"M11\":\"Building Materials\",\"E01\":\"Service rifles\",\"E02\":\"Rifle rounds\",\"E03\":\"Helmets\",\"E… for base demo. Implementation: calls str, Catalog.MATERIALS.has, {\"M06\":\"Explosives\",\"M11\":\"Building Materials\",\"E01\":\"Service rifles\",\"E02\":\"Rifle rounds\",\"E03\":\"Helmets\",\"E04\":\"Body armour\",\"E05\":\"Support machine guns\",\"E06\":\"Mortars\",\"E07\":\"Mortar bombs\",\"E08\":\"Engineer kits\",\"E11\":\"Medic kits\",\"E12\":\"Medical packs\",\"E13\":\"Field guns\",\"E14\":\"Artillery shells\"….",
               "purpose_origin": "implementation_derived"
@@ -25566,8 +25590,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_request_army_delivery",
               "name": "_request_army_delivery",
-              "line": 831,
-              "end_line": 834,
+              "line": 832,
+              "end_line": 835,
               "kind": "method",
               "purpose": "Submit the selected supply and quantity through the existing owner, retain failure feedback/context, and on success refresh the newly returned stable request ID into selection and its actual receipt.",
               "purpose_origin": "reviewed"
@@ -25575,8 +25599,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_cancel_army_delivery",
               "name": "_cancel_army_delivery",
-              "line": 836,
-              "end_line": 838,
+              "line": 837,
+              "end_line": 839,
               "kind": "method",
               "purpose": "Cancel the selected actual request's unsent remainder through its owner and display the retained physical-work rules.",
               "purpose_origin": "reviewed"
@@ -25584,8 +25608,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_army_requests",
               "name": "_refresh_army_requests",
-              "line": 840,
-              "end_line": 856,
+              "line": 841,
+              "end_line": 857,
               "kind": "method",
               "purpose": "Refresh actual request summaries, optionally select and reveal a successful command's stable ID, then render only the current selected request's actual HQ receipt, state, blocker and cancellation availability.",
               "purpose_origin": "reviewed"
@@ -25593,8 +25617,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_army_requests/<lambda#1>",
               "name": "_refresh_army_requests/<lambda#1>",
-              "line": 844,
-              "end_line": 845,
+              "line": 845,
+              "end_line": 846,
               "kind": "lambda",
               "purpose": "Format an actual request row with army provenance, readable supply name, once-credited physical totals and current state.",
               "purpose_origin": "reviewed"
@@ -25602,8 +25626,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_input_hauls",
               "name": "_input_hauls",
-              "line": 858,
-              "end_line": 864,
+              "line": 859,
+              "end_line": 865,
               "kind": "method",
               "purpose": "Input hauls for base demo. Implementation: calls maxi, int, job.get; updates result.carried, result.open.",
               "purpose_origin": "implementation_derived"
@@ -25611,8 +25635,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_prepare_ingredient_haul",
               "name": "_prepare_ingredient_haul",
-              "line": 866,
-              "end_line": 897,
+              "line": 867,
+              "end_line": 898,
               "kind": "method",
               "purpose": "Prepare ingredient haul for base demo. Implementation: calls _activity().snapshot, _activity, _input_hauls, maxi; updates _haul_draft_dirty, available, haul_draft_status.text, source_id.",
               "purpose_origin": "implementation_derived"
@@ -25620,8 +25644,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_ingredients",
               "name": "_refresh_ingredients",
-              "line": 899,
-              "end_line": 955,
+              "line": 900,
+              "end_line": 956,
               "kind": "method",
               "purpose": "Preserve ingredient and Prepare-haul facts/rules; capture its original tooltip before the neutral Review-supply override, then expose the purchasable uncovered-zero-source navigation link with exact current factory/field identity and no new stock reads.",
               "purpose_origin": "reviewed"
@@ -25629,8 +25653,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_ingredient_supply_request",
               "name": "_ingredient_supply_request",
-              "line": 957,
-              "end_line": 968,
+              "line": 958,
+              "end_line": 969,
               "kind": "method",
               "purpose": "Capture actual complete construction site reference, live session/model/service/selected owner/duty/context, recipe/input/type and existing valid purchase field from the current rendered ingredient; reject absent/mismatched contexts without mutation.",
               "purpose_origin": "reviewed"
@@ -25638,8 +25662,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_ingredient_supply_is_current",
               "name": "_ingredient_supply_is_current",
-              "line": 970,
-              "end_line": 980,
+              "line": 971,
+              "end_line": 981,
               "kind": "method",
               "purpose": "Verify same live session/model/service/selected context, exact actual complete site Dictionary and production owner/recipe/input/type plus same existing cart field; reject stale or successor identity without scans or commands.",
               "purpose_origin": "reviewed"
@@ -25647,8 +25671,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hide_ingredient_supply_review",
               "name": "_hide_ingredient_supply_review",
-              "line": 982,
-              "end_line": 989,
+              "line": 983,
+              "end_line": 990,
               "kind": "method",
               "purpose": "Clear/hide only stale supply-review intent, remove its added reason and restore the captured original Prepare-haul tooltip (or clear absent metadata); never navigate, reload controls, overwrite drafts or reconcile gameplay.",
               "purpose_origin": "reviewed"
@@ -25656,8 +25680,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_review_ingredient_supply",
               "name": "_review_ingredient_supply",
-              "line": 991,
-              "end_line": 1020,
+              "line": 992,
+              "end_line": 1021,
               "kind": "method",
               "purpose": "Validate captured visible row/context; read current selected ingredient deficit/open hauls and accessible same-type source stock once on explicit click; reject stale/unneeded/source-available link, otherwise open existing Purchase and focus/reveal exact cart field without quantities or gameplay commands.",
               "purpose_origin": "reviewed"
@@ -25665,8 +25689,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel",
               "name": "_production_panel",
-              "line": 1022,
-              "end_line": 1077,
+              "line": 1023,
+              "end_line": 1078,
               "kind": "method",
               "purpose": "Build production controls and explicit context-checked staffing confirmation, retaining recipe, pause, loss-decision, heavy-order and access commands.",
               "purpose_origin": "reviewed"
@@ -25674,8 +25698,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#1>",
               "name": "_production_panel/<lambda#1>",
-              "line": 1028,
-              "end_line": 1028,
+              "line": 1029,
+              "end_line": 1029,
               "kind": "lambda",
               "purpose": "Invalidate any pending consumed-batch cancellation on facility selection, then use the existing production-control load and refresh without issuing a production command.",
               "purpose_origin": "reviewed"
@@ -25683,8 +25707,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#2>",
               "name": "_production_panel/<lambda#2>",
-              "line": 1033,
-              "end_line": 1033,
+              "line": 1034,
+              "end_line": 1034,
               "kind": "lambda",
               "purpose": "Mark the requested-worker control as an unconfirmed staffing draft.",
               "purpose_origin": "reviewed"
@@ -25692,8 +25716,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#3>",
               "name": "_production_panel/<lambda#3>",
-              "line": 1034,
-              "end_line": 1034,
+              "line": 1035,
+              "end_line": 1035,
               "kind": "lambda",
               "purpose": "Mark the chosen priority as an unconfirmed staffing draft.",
               "purpose_origin": "reviewed"
@@ -25701,8 +25725,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#4>",
               "name": "_production_panel/<lambda#4>",
-              "line": 1035,
-              "end_line": 1041,
+              "line": 1036,
+              "end_line": 1042,
               "kind": "lambda",
               "purpose": "Recheck the current facility/model basis and explicitly submit its staffing/priority draft, clearing dirty state only on success.",
               "purpose_origin": "reviewed"
@@ -25710,8 +25734,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#5>",
               "name": "_production_panel/<lambda#5>",
-              "line": 1050,
-              "end_line": 1053,
+              "line": 1051,
+              "end_line": 1054,
               "kind": "lambda",
               "purpose": "Apply the chosen output stock target and production mode to the actual current activity.",
               "purpose_origin": "reviewed"
@@ -25719,8 +25743,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#6>",
               "name": "_production_panel/<lambda#6>",
-              "line": 1058,
-              "end_line": 1058,
+              "line": 1059,
+              "end_line": 1059,
               "kind": "lambda",
               "purpose": "Toggle the current activity pause state through its existing command owner.",
               "purpose_origin": "reviewed"
@@ -25728,8 +25752,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#7>",
               "name": "_production_panel/<lambda#7>",
-              "line": 1059,
-              "end_line": 1059,
+              "line": 1060,
+              "end_line": 1060,
               "kind": "lambda",
               "purpose": "Open the informed consumed-batch cancellation decision or existing no-active-batch stop path.",
               "purpose_origin": "reviewed"
@@ -25737,8 +25761,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#8>",
               "name": "_production_panel/<lambda#8>",
-              "line": 1060,
-              "end_line": 1060,
+              "line": 1061,
+              "end_line": 1061,
               "kind": "lambda",
               "purpose": "Enable/resume the current production activity through its existing owner.",
               "purpose_origin": "reviewed"
@@ -25746,8 +25770,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#9>",
               "name": "_production_panel/<lambda#9>",
-              "line": 1064,
-              "end_line": 1064,
+              "line": 1065,
+              "end_line": 1065,
               "kind": "lambda",
               "purpose": "Accept the currently selected heavy production order through its existing owner.",
               "purpose_origin": "reviewed"
@@ -25755,8 +25779,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#10>",
               "name": "_production_panel/<lambda#10>",
-              "line": 1071,
-              "end_line": 1071,
+              "line": 1072,
+              "end_line": 1072,
               "kind": "lambda",
               "purpose": "Apply the heavy bay and parking-route access selections to the current activity.",
               "purpose_origin": "reviewed"
@@ -25764,8 +25788,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_production_panel/<lambda#11>",
               "name": "_production_panel/<lambda#11>",
-              "line": 1073,
-              "end_line": 1073,
+              "line": 1074,
+              "end_line": 1074,
               "kind": "lambda",
               "purpose": "Change the current heavy activity promised parking destination through its owner.",
               "purpose_origin": "reviewed"
@@ -25773,8 +25797,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_inspect_panel",
               "name": "_inspect_panel",
-              "line": 1079,
-              "end_line": 1092,
+              "line": 1080,
+              "end_line": 1093,
               "kind": "method",
               "purpose": "Inspect panel for base demo. Implementation: calls _label, _option, simulation.rear.stores.keys, store.item_selected.connect; updates accessible, accessible.text, capacity, inspection.",
               "purpose_origin": "implementation_derived"
@@ -25782,8 +25806,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_inspect_panel/<lambda#1>",
               "name": "_inspect_panel/<lambda#1>",
-              "line": 1083,
-              "end_line": 1083,
+              "line": 1084,
+              "end_line": 1084,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _load_store.",
               "purpose_origin": "implementation_derived"
@@ -25791,8 +25815,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_inspect_panel/<lambda#2>",
               "name": "_inspect_panel/<lambda#2>",
-              "line": 1088,
-              "end_line": 1092,
+              "line": 1089,
+              "end_line": 1093,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke store.get_item_text, simulation.receiving.receiving_kg, simulation.rear._reserved_space, _result.",
               "purpose_origin": "implementation_derived"
@@ -25800,8 +25824,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel",
               "name": "_construction_panel",
-              "line": 1094,
-              "end_line": 1156,
+              "line": 1095,
+              "end_line": 1157,
               "kind": "method",
               "purpose": "Build placement, explicit Office staffing confirmation, builder and informed removal controls for the current construction context.",
               "purpose_origin": "reviewed"
@@ -25809,8 +25833,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#1>",
               "name": "_construction_panel/<lambda#1>",
-              "line": 1106,
-              "end_line": 1106,
+              "line": 1107,
+              "end_line": 1107,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke select_build_kind, _construction_kind, _request_refresh.",
               "purpose_origin": "implementation_derived"
@@ -25818,8 +25842,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#2>",
               "name": "_construction_panel/<lambda#2>",
-              "line": 1107,
-              "end_line": 1107,
+              "line": 1108,
+              "end_line": 1108,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke select_build_kind, _construction_kind.",
               "purpose_origin": "implementation_derived"
@@ -25827,8 +25851,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#3>",
               "name": "_construction_panel/<lambda#3>",
-              "line": 1121,
-              "end_line": 1123,
+              "line": 1122,
+              "end_line": 1124,
               "kind": "lambda",
               "purpose": "Update the selected building description after orientation changes and, during placement, redraw provisional geometry at the current coordinate fields without route validation.",
               "purpose_origin": "reviewed"
@@ -25836,8 +25860,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#4>",
               "name": "_construction_panel/<lambda#4>",
-              "line": 1124,
-              "end_line": 1124,
+              "line": 1125,
+              "end_line": 1125,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke preview_build_at, _construction_point.",
               "purpose_origin": "implementation_derived"
@@ -25845,8 +25869,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#5>",
               "name": "_construction_panel/<lambda#5>",
-              "line": 1125,
-              "end_line": 1125,
+              "line": 1126,
+              "end_line": 1126,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke confirm_build_at, _construction_point.",
               "purpose_origin": "implementation_derived"
@@ -25854,8 +25878,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#6>",
               "name": "_construction_panel/<lambda#6>",
-              "line": 1128,
-              "end_line": 1128,
+              "line": 1129,
+              "end_line": 1129,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _select.",
               "purpose_origin": "implementation_derived"
@@ -25863,8 +25887,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#7>",
               "name": "_construction_panel/<lambda#7>",
-              "line": 1134,
-              "end_line": 1135,
+              "line": 1135,
+              "end_line": 1136,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.construction.order_materials, _construction_site, construction_source.get_item_text.",
               "purpose_origin": "implementation_derived"
@@ -25872,8 +25896,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#8>",
               "name": "_construction_panel/<lambda#8>",
-              "line": 1136,
-              "end_line": 1137,
+              "line": 1137,
+              "end_line": 1138,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.construction.set_builders, _construction_site, int.",
               "purpose_origin": "implementation_derived"
@@ -25881,8 +25905,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#9>",
               "name": "_construction_panel/<lambda#9>",
-              "line": 1138,
-              "end_line": 1144,
+              "line": 1139,
+              "end_line": 1145,
               "kind": "lambda",
               "purpose": "Submit the selected facility draft count together with its current authoritative staffing priority; reject an absent selected request before lookup through the existing user-facing result, without changing selection or the domain setter/default.",
               "purpose_origin": "reviewed"
@@ -25890,8 +25914,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#10>",
               "name": "_construction_panel/<lambda#10>",
-              "line": 1146,
-              "end_line": 1146,
+              "line": 1147,
+              "end_line": 1147,
               "kind": "lambda",
               "purpose": "Mark the Construction Office count as an unconfirmed staffing draft.",
               "purpose_origin": "reviewed"
@@ -25899,8 +25923,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#11>",
               "name": "_construction_panel/<lambda#11>",
-              "line": 1147,
-              "end_line": 1151,
+              "line": 1148,
+              "end_line": 1152,
               "kind": "lambda",
               "purpose": "Confirm the Office staffing draft only for its current simulation and clear dirty state after success.",
               "purpose_origin": "reviewed"
@@ -25908,8 +25932,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#12>",
               "name": "_construction_panel/<lambda#12>",
-              "line": 1153,
-              "end_line": 1154,
+              "line": 1154,
+              "end_line": 1155,
               "kind": "lambda",
               "purpose": "Request an informed cancellation decision for the selected unfinished construction site.",
               "purpose_origin": "reviewed"
@@ -25917,8 +25941,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_panel/<lambda#13>",
               "name": "_construction_panel/<lambda#13>",
-              "line": 1155,
-              "end_line": 1156,
+              "line": 1156,
+              "end_line": 1157,
               "kind": "lambda",
               "purpose": "Request physical dismantling of the selected existing site through Construction.",
               "purpose_origin": "reviewed"
@@ -25926,8 +25950,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_kind",
               "name": "_construction_kind",
-              "line": 1158,
-              "end_line": 1159,
+              "line": 1159,
+              "end_line": 1160,
               "kind": "method",
               "purpose": "Return str(construction_kind.get_item_metadata(construction_kind.selected)) for base demo. Implementation: calls str, construction_kind.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -25935,8 +25959,8 @@
             {
               "id": "game/rear_base/base_demo.gd::select_build_kind",
               "name": "select_build_kind",
-              "line": 1161,
-              "end_line": 1168,
+              "line": 1162,
+              "end_line": 1169,
               "kind": "method",
               "purpose": "Select a valid buildable facility, preserve its existing draft and notify an opt-in presenter that preview mode began.",
               "purpose_origin": "reviewed"
@@ -25944,8 +25968,8 @@
             {
               "id": "game/rear_base/base_demo.gd::preview_build_hint_at",
               "name": "preview_build_hint_at",
-              "line": 1170,
-              "end_line": 1171,
+              "line": 1171,
+              "end_line": 1172,
               "kind": "method",
               "purpose": "Route an event-driven hovered or rotated blueprint position to the shared preview presenter with full validation disabled.",
               "purpose_origin": "reviewed"
@@ -25953,8 +25977,8 @@
             {
               "id": "game/rear_base/base_demo.gd::preview_build_at",
               "name": "preview_build_at",
-              "line": 1173,
-              "end_line": 1192,
+              "line": 1174,
+              "end_line": 1193,
               "kind": "method",
               "purpose": "Snap the current rotated footprint, update placement controls and evaluate manager occupation plus cheap or explicit full domain preview.",
               "purpose_origin": "reviewed"
@@ -25962,8 +25986,8 @@
             {
               "id": "game/rear_base/base_demo.gd::confirm_build_at",
               "name": "confirm_build_at",
-              "line": 1194,
-              "end_line": 1210,
+              "line": 1195,
+              "end_line": 1211,
               "kind": "method",
               "purpose": "Snap and revalidate the actual current footprint/manager occupation, submit Construction.place once and preserve result/draft/selection semantics.",
               "purpose_origin": "reviewed"
@@ -25971,8 +25995,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_cancel_placement",
               "name": "_cancel_placement",
-              "line": 1212,
-              "end_line": 1216,
+              "line": 1213,
+              "end_line": 1217,
               "kind": "method",
               "purpose": "End only the uncommitted blueprint and notify its scene input owner, without domain site cancellation.",
               "purpose_origin": "reviewed"
@@ -25980,8 +26004,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_snap_build_point",
               "name": "_snap_build_point",
-              "line": 1218,
-              "end_line": 1222,
+              "line": 1219,
+              "end_line": 1223,
               "kind": "method",
               "purpose": "Snap actual footprint edges to one-metre cells in bound 3D placement, allowing half-cell centers for odd dimensions; retain ordinary non-3D points.",
               "purpose_origin": "reviewed"
@@ -25989,8 +26013,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_point",
               "name": "_construction_point",
-              "line": 1224,
-              "end_line": 1225,
+              "line": 1225,
+              "end_line": 1226,
               "kind": "method",
               "purpose": "Return Vector2(construction_x.value,construction_y.value) for base demo. Implementation: calls Vector2.",
               "purpose_origin": "implementation_derived"
@@ -25998,8 +26022,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_site",
               "name": "_construction_site",
-              "line": 1227,
-              "end_line": 1228,
+              "line": 1228,
+              "end_line": 1229,
               "kind": "method",
               "purpose": "Return construction_ids[construction_rows.get_selected_items()[0]] if not construction_rows.get_selected_items().is_empty() else \"\" for base demo. Implementation: calls construction_rows.get_selected_items, construction_rows.get_selected_items().is_empty.",
               "purpose_origin": "implementation_derived"
@@ -26007,8 +26031,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_option",
               "name": "_sync_option",
-              "line": 1230,
-              "end_line": 1240,
+              "line": 1231,
+              "end_line": 1241,
               "kind": "method",
               "purpose": "Sync option for base demo. Implementation: calls option.get_item_text, values.size, str, option.clear; updates same.",
               "purpose_origin": "implementation_derived"
@@ -26016,8 +26040,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel",
               "name": "_training_panel",
-              "line": 1242,
-              "end_line": 1280,
+              "line": 1243,
+              "end_line": 1281,
               "kind": "method",
               "purpose": "Build actual school/course controls with a separate context-checked instructor-target draft and explicit confirmation.",
               "purpose_origin": "reviewed"
@@ -26025,8 +26049,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#1>",
               "name": "_training_panel/<lambda#1>",
-              "line": 1245,
-              "end_line": 1245,
+              "line": 1246,
+              "end_line": 1246,
               "kind": "lambda",
               "purpose": "Open the existing Training-building placement preview without buying, placing or assigning a school.",
               "purpose_origin": "reviewed"
@@ -26034,8 +26058,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#2>",
               "name": "_training_panel/<lambda#2>",
-              "line": 1247,
-              "end_line": 1247,
+              "line": 1248,
+              "end_line": 1248,
               "kind": "lambda",
               "purpose": "Request fresh presentation after the player selects an actual training school; issue no staffing command merely on selection.",
               "purpose_origin": "reviewed"
@@ -26043,8 +26067,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#3>",
               "name": "_training_panel/<lambda#3>",
-              "line": 1248,
-              "end_line": 1248,
+              "line": 1249,
+              "end_line": 1249,
               "kind": "lambda",
               "purpose": "Purchase the existing priced first/recovery instructor through its authoritative receiving command and report the actual result.",
               "purpose_origin": "reviewed"
@@ -26052,8 +26076,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#4>",
               "name": "_training_panel/<lambda#4>",
-              "line": 1252,
-              "end_line": 1252,
+              "line": 1253,
+              "end_line": 1253,
               "kind": "lambda",
               "purpose": "Mark the selected school instructor count as an unconfirmed draft.",
               "purpose_origin": "reviewed"
@@ -26061,8 +26085,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#5>",
               "name": "_training_panel/<lambda#5>",
-              "line": 1253,
-              "end_line": 1262,
+              "line": 1254,
+              "end_line": 1263,
               "kind": "lambda",
               "purpose": "Confirm the instructor target only for the same current school/model, retaining its current priority and clearing dirty state after success.",
               "purpose_origin": "reviewed"
@@ -26070,8 +26094,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#6>",
               "name": "_training_panel/<lambda#6>",
-              "line": 1265,
-              "end_line": 1265,
+              "line": 1266,
+              "end_line": 1266,
               "kind": "lambda",
               "purpose": "Submit the selected course identity and requested student count to the current training owner.",
               "purpose_origin": "reviewed"
@@ -26079,8 +26103,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#7>",
               "name": "_training_panel/<lambda#7>",
-              "line": 1267,
-              "end_line": 1270,
+              "line": 1268,
+              "end_line": 1271,
               "kind": "lambda",
               "purpose": "Select the current course row identity and request presentation refresh without changing its state.",
               "purpose_origin": "reviewed"
@@ -26088,8 +26112,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#8>",
               "name": "_training_panel/<lambda#8>",
-              "line": 1271,
-              "end_line": 1272,
+              "line": 1272,
+              "end_line": 1273,
               "kind": "lambda",
               "purpose": "Withdraw the selected existing course through the actual training owner.",
               "purpose_origin": "reviewed"
@@ -26097,8 +26121,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_panel/<lambda#9>",
               "name": "_training_panel/<lambda#9>",
-              "line": 1277,
-              "end_line": 1277,
+              "line": 1278,
+              "end_line": 1278,
               "kind": "lambda",
               "purpose": "Apply the chosen training-access setting through the existing training owner.",
               "purpose_origin": "reviewed"
@@ -26106,8 +26130,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel",
               "name": "_vehicles_panel",
-              "line": 1282,
-              "end_line": 1309,
+              "line": 1283,
+              "end_line": 1310,
               "kind": "method",
               "purpose": "Build normal supply-truck preparation guidance and production/training/fuel navigation, actual hull selection, distinct crew and available fuel-worker choices, physical station/fuel/parking actions and current status. Retain advanced vehicle owners without placing or granting a hull.",
               "purpose_origin": "reviewed"
@@ -26115,8 +26139,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#1>",
               "name": "_vehicles_panel/<lambda#1>",
-              "line": 1286,
-              "end_line": 1286,
+              "line": 1287,
+              "end_line": 1287,
               "kind": "lambda",
               "purpose": "Open ordinary Training controls from truck preparation without requesting a course or changing a draft.",
               "purpose_origin": "reviewed"
@@ -26124,8 +26148,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#2>",
               "name": "_vehicles_panel/<lambda#2>",
-              "line": 1287,
-              "end_line": 1290,
+              "line": 1288,
+              "end_line": 1291,
               "kind": "lambda",
               "purpose": "Open the existing Supplies purchase subtab and focus the fuel quantity field while preserving the purchase cart.",
               "purpose_origin": "reviewed"
@@ -26133,8 +26157,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#3>",
               "name": "_vehicles_panel/<lambda#3>",
-              "line": 1292,
-              "end_line": 1292,
+              "line": 1293,
+              "end_line": 1293,
               "kind": "lambda",
               "purpose": "Refresh the current hull's physical station choices and presentation after vehicle selection.",
               "purpose_origin": "reviewed"
@@ -26142,8 +26166,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#4>",
               "name": "_vehicles_panel/<lambda#4>",
-              "line": 1295,
-              "end_line": 1297,
+              "line": 1296,
+              "end_line": 1298,
               "kind": "lambda",
               "purpose": "Request the selected actual rear crew member to report and board the selected physical station through fresh vehicle-owner admission.",
               "purpose_origin": "reviewed"
@@ -26151,8 +26175,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#5>",
               "name": "_vehicles_panel/<lambda#5>",
-              "line": 1298,
-              "end_line": 1299,
+              "line": 1299,
+              "end_line": 1300,
               "kind": "lambda",
               "purpose": "Request the selected rear crew member's safe reassignment to Available through the existing exclusive-duty and station-exit rules.",
               "purpose_origin": "reviewed"
@@ -26160,8 +26184,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#6>",
               "name": "_vehicles_panel/<lambda#6>",
-              "line": 1302,
-              "end_line": 1304,
+              "line": 1303,
+              "end_line": 1305,
               "kind": "lambda",
               "purpose": "Request the independently selected available worker to carry the chosen purchased fuel quantity into the current produced hull, retaining owner capacity and custody checks.",
               "purpose_origin": "reviewed"
@@ -26169,8 +26193,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicles_panel/<lambda#7>",
               "name": "_vehicles_panel/<lambda#7>",
-              "line": 1305,
-              "end_line": 1306,
+              "line": 1306,
+              "end_line": 1307,
               "kind": "lambda",
               "purpose": "Request the same selected manufactured hull to drive from its bay to its promised parking place through existing crew, fuel, route and occupancy admission.",
               "purpose_origin": "reviewed"
@@ -26178,8 +26202,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel",
               "name": "_dispatch_panel",
-              "line": 1311,
-              "end_line": 1368,
+              "line": 1312,
+              "end_line": 1369,
               "kind": "method",
               "purpose": "Dispatch panel for base demo. Implementation: calls _label, _option, _spin, _list; updates _label(box,\"Accepted manifests | requested, reserved, staged, onboard, arrived and unloaded use the same physical IDs.\"…, _label(box,\"G12/G13 | Accept one actual parked produced hull. Passenger seats exclude crew; Strategic returns hull/crew…, _label(box,\"Select named rear passengers (Ctrl-click for multiple). They remain separate from crew.\").autowrap_mode, dispatch_bridge.",
               "purpose_origin": "implementation_derived"
@@ -26187,8 +26211,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#1>",
               "name": "_dispatch_panel/<lambda#1>",
-              "line": 1331,
-              "end_line": 1334,
+              "line": 1332,
+              "end_line": 1335,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; update dispatch_draft[type]; invoke dispatch_cargo_type.get_item_text, int, dispatch_draft.get, _request_refresh.",
               "purpose_origin": "implementation_derived"
@@ -26196,8 +26220,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#2>",
               "name": "_dispatch_panel/<lambda#2>",
-              "line": 1335,
-              "end_line": 1335,
+              "line": 1336,
+              "end_line": 1336,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_draft.clear, _request_refresh.",
               "purpose_origin": "implementation_derived"
@@ -26205,8 +26229,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#3>",
               "name": "_dispatch_panel/<lambda#3>",
-              "line": 1336,
-              "end_line": 1343,
+              "line": 1337,
+              "end_line": 1344,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, dispatch_people.get_selected_items, passengers.append, guns.append.",
               "purpose_origin": "implementation_derived"
@@ -26214,8 +26238,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#4>",
               "name": "_dispatch_panel/<lambda#4>",
-              "line": 1346,
-              "end_line": 1346,
+              "line": 1347,
+              "end_line": 1347,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _request_refresh.",
               "purpose_origin": "implementation_derived"
@@ -26223,8 +26247,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#5>",
               "name": "_dispatch_panel/<lambda#5>",
-              "line": 1347,
-              "end_line": 1348,
+              "line": 1348,
+              "end_line": 1349,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.depart.",
               "purpose_origin": "implementation_derived"
@@ -26232,8 +26256,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#6>",
               "name": "_dispatch_panel/<lambda#6>",
-              "line": 1349,
-              "end_line": 1352,
+              "line": 1350,
+              "end_line": 1353,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, simulation.rear.dispatch.route_preview, _dispatch_profile.",
               "purpose_origin": "implementation_derived"
@@ -26241,8 +26265,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#7>",
               "name": "_dispatch_panel/<lambda#7>",
-              "line": 1353,
-              "end_line": 1354,
+              "line": 1354,
+              "end_line": 1355,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.set_route_profile.",
               "purpose_origin": "implementation_derived"
@@ -26250,8 +26274,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#8>",
               "name": "_dispatch_panel/<lambda#8>",
-              "line": 1355,
-              "end_line": 1356,
+              "line": 1356,
+              "end_line": 1357,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.change_mode.",
               "purpose_origin": "implementation_derived"
@@ -26259,8 +26283,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#9>",
               "name": "_dispatch_panel/<lambda#9>",
-              "line": 1357,
-              "end_line": 1358,
+              "line": 1358,
+              "end_line": 1359,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.add_field_gun.",
               "purpose_origin": "implementation_derived"
@@ -26268,8 +26292,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#10>",
               "name": "_dispatch_panel/<lambda#10>",
-              "line": 1359,
-              "end_line": 1360,
+              "line": 1360,
+              "end_line": 1361,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.cancel.",
               "purpose_origin": "implementation_derived"
@@ -26277,8 +26301,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#11>",
               "name": "_dispatch_panel/<lambda#11>",
-              "line": 1361,
-              "end_line": 1362,
+              "line": 1362,
+              "end_line": 1363,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.request_safe_return.",
               "purpose_origin": "implementation_derived"
@@ -26286,8 +26310,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#12>",
               "name": "_dispatch_panel/<lambda#12>",
-              "line": 1363,
-              "end_line": 1364,
+              "line": 1364,
+              "end_line": 1365,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.report_route_hazard.",
               "purpose_origin": "implementation_derived"
@@ -26295,8 +26319,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_panel/<lambda#13>",
               "name": "_dispatch_panel/<lambda#13>",
-              "line": 1365,
-              "end_line": 1366,
+              "line": 1366,
+              "end_line": 1367,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke dispatch_rows.get_selected_items().is_empty, dispatch_rows.get_selected_items, _result, simulation.rear.dispatch.clear_route_hazard.",
               "purpose_origin": "implementation_derived"
@@ -26304,8 +26328,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel",
               "name": "_hq_panel",
-              "line": 1370,
-              "end_line": 1393,
+              "line": 1371,
+              "end_line": 1394,
               "kind": "method",
               "purpose": "Hq panel for base demo. Implementation: calls _label, _option, _spin, _button; updates hq_count, hq_hull, hq_person, hq_rows.",
               "purpose_origin": "implementation_derived"
@@ -26313,8 +26337,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel/<lambda#1>",
               "name": "_hq_panel/<lambda#1>",
-              "line": 1377,
-              "end_line": 1379,
+              "line": 1378,
+              "end_line": 1380,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.hq.request_person_stock, str, hq_person.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -26322,8 +26346,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel/<lambda#2>",
               "name": "_hq_panel/<lambda#2>",
-              "line": 1380,
-              "end_line": 1382,
+              "line": 1381,
+              "end_line": 1383,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.hq.request_person_weapon, str, hq_person.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -26331,8 +26355,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel/<lambda#3>",
               "name": "_hq_panel/<lambda#3>",
-              "line": 1383,
-              "end_line": 1385,
+              "line": 1384,
+              "end_line": 1386,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.hq.request_vehicle_ammo, str, hq_hull.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -26340,8 +26364,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel/<lambda#4>",
               "name": "_hq_panel/<lambda#4>",
-              "line": 1386,
-              "end_line": 1388,
+              "line": 1387,
+              "end_line": 1389,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke _result, simulation.rear.hq.request_vehicle_fuel, str, hq_hull.get_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -26349,8 +26373,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_hq_panel/<lambda#5>",
               "name": "_hq_panel/<lambda#5>",
-              "line": 1390,
-              "end_line": 1391,
+              "line": 1391,
+              "end_line": 1392,
               "kind": "lambda",
               "purpose": "Provide an inline callback for base demo; invoke hq_rows.get_selected_items().is_empty, hq_rows.get_selected_items, _result, simulation.rear.hq.cancel.",
               "purpose_origin": "implementation_derived"
@@ -26358,8 +26382,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_hq_option",
               "name": "_refresh_hq_option",
-              "line": 1395,
-              "end_line": 1402,
+              "line": 1396,
+              "end_line": 1403,
               "kind": "method",
               "purpose": "Refresh hq option for base demo. Implementation: calls str, option.get_item_metadata, option.clear, option.add_item.",
               "purpose_origin": "implementation_derived"
@@ -26367,8 +26391,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_hq",
               "name": "_refresh_hq",
-              "line": 1404,
-              "end_line": 1424,
+              "line": 1405,
+              "end_line": 1425,
               "kind": "method",
               "purpose": "Refresh hq for base demo. Implementation: calls people.append, hulls.append, weapons.append, int; updates hq_status.text.",
               "purpose_origin": "implementation_derived"
@@ -26376,8 +26400,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_hq/<lambda#1>",
               "name": "_refresh_hq/<lambda#1>",
-              "line": 1423,
-              "end_line": 1423,
+              "line": 1424,
+              "end_line": 1424,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns \"%s | %s %s | %d/%d | %s | %s\" % [row.id,row.kind,row.target,row.issued,row.requested,row.state,row.blocker].",
               "purpose_origin": "implementation_derived"
@@ -26385,8 +26409,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_profile",
               "name": "_dispatch_profile",
-              "line": 1426,
-              "end_line": 1429,
+              "line": 1427,
+              "end_line": 1430,
               "kind": "method",
               "purpose": "Return profile for base demo. Implementation: calls dispatch_surface.get_item_text(dispatch_surface.selected).get_slice, dispatch_surface.get_item_text, dispatch_bridge.get_item_text(dispatch_bridge.selected).get_slice, dispatch_bridge.get_item_text; updates profile.bridge.",
               "purpose_origin": "implementation_derived"
@@ -26394,8 +26418,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_vehicle_id",
               "name": "_vehicle_id",
-              "line": 1431,
-              "end_line": 1432,
+              "line": 1432,
+              "end_line": 1433,
               "kind": "method",
               "purpose": "Return vehicle_ids[vehicle_rows.get_selected_items()[0]] if not vehicle_rows.get_selected_items().is_empty() else \"\" for base demo. Implementation: calls vehicle_rows.get_selected_items, vehicle_rows.get_selected_items().is_empty.",
               "purpose_origin": "implementation_derived"
@@ -26403,8 +26427,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_vehicle_people",
               "name": "_load_vehicle_people",
-              "line": 1434,
-              "end_line": 1445,
+              "line": 1435,
+              "end_line": 1446,
               "kind": "method",
               "purpose": "Read each existing rear actor's person facts once and list living owned Occupied rear people for qualified crew or existing free-worker fuel handling; keep qualified seated rear crew selectable for safe extraction.",
               "purpose_origin": "reviewed"
@@ -26412,8 +26436,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_vehicle_people",
               "name": "_sync_vehicle_people",
-              "line": 1447,
-              "end_line": 1461,
+              "line": 1448,
+              "end_line": 1462,
               "kind": "method",
               "purpose": "Reuse an action-specific person picker, update readable training/duty labels and identity metadata, preserve an eligible selected ID and show a disabled empty state without rebuilding or moving focus.",
               "purpose_origin": "reviewed"
@@ -26421,8 +26445,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_open_vehicle_production",
               "name": "_open_vehicle_production",
-              "line": 1463,
-              "end_line": 1468,
+              "line": 1464,
+              "end_line": 1469,
               "kind": "method",
               "purpose": "Navigate to an existing surviving Vehicle Works, preferring completion, or open its construction preview; reuse draft-preserving contextual navigation without selecting a recipe or creating an order.",
               "purpose_origin": "reviewed"
@@ -26430,8 +26454,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_training_duty",
               "name": "_training_duty",
-              "line": 1470,
-              "end_line": 1475,
+              "line": 1471,
+              "end_line": 1476,
               "kind": "method",
               "purpose": "Resolve the school selector's identity against the current model's active training sites, rejecting stale or absent duties instead of falling back to a zero-capacity legacy school.",
               "purpose_origin": "reviewed"
@@ -26439,8 +26463,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_training_sites",
               "name": "_sync_training_sites",
-              "line": 1477,
-              "end_line": 1491,
+              "line": 1478,
+              "end_line": 1492,
               "kind": "method",
               "purpose": "Reuse school options from active current training sites, retain a valid selected duty and disable the selector with a build prompt when no school exists.",
               "purpose_origin": "reviewed"
@@ -26448,8 +26472,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_training_sites/<lambda#1>",
               "name": "_sync_training_sites/<lambda#1>",
-              "line": 1479,
-              "end_line": 1479,
+              "line": 1480,
+              "end_line": 1480,
               "kind": "lambda",
               "purpose": "Select only active school records for current training-site presentation.",
               "purpose_origin": "reviewed"
@@ -26457,8 +26481,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_vehicle_stations",
               "name": "_load_vehicle_stations",
-              "line": 1493,
-              "end_line": 1502,
+              "line": 1494,
+              "end_line": 1503,
               "kind": "method",
               "purpose": "Load vehicle stations for base demo. Implementation: calls vehicle_station.get_item_text, vehicle_station.clear, _vehicle_id, id.is_empty.",
               "purpose_origin": "implementation_derived"
@@ -26466,8 +26490,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_courses",
               "name": "_load_courses",
-              "line": 1504,
-              "end_line": 1511,
+              "line": 1505,
+              "end_line": 1512,
               "kind": "method",
               "purpose": "Load courses for base demo. Implementation: calls training_course.clear, simulation.rear.training.course_accessible, training_course.add_item, training_course.set_item_metadata.",
               "purpose_origin": "implementation_derived"
@@ -26475,8 +26499,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_activity",
               "name": "_activity",
-              "line": 1513,
-              "end_line": 1522,
+              "line": 1514,
+              "end_line": 1523,
               "kind": "method",
               "purpose": "Activity for base demo. Implementation: calls _context_duty, simulation.rear.construction.activities.has.",
               "purpose_origin": "implementation_derived"
@@ -26484,8 +26508,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_production",
               "name": "_load_production",
-              "line": 1524,
-              "end_line": 1542,
+              "line": 1525,
+              "end_line": 1543,
               "kind": "method",
               "purpose": "Discard the old staffing draft, validate current pending batch-loss context and load current activity/recipe controls.",
               "purpose_origin": "reviewed"
@@ -26493,8 +26517,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_load_store",
               "name": "_load_store",
-              "line": 1544,
-              "end_line": 1547,
+              "line": 1545,
+              "end_line": 1548,
               "kind": "method",
               "purpose": "Load store for base demo. Implementation: calls store.get_item_text, capacity.set_value_no_signal, accessible.set_pressed_no_signal.",
               "purpose_origin": "implementation_derived"
@@ -26502,8 +26526,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_build_construction_cancel_dialog",
               "name": "_build_construction_cancel_dialog",
-              "line": 1549,
-              "end_line": 1558,
+              "line": 1550,
+              "end_line": 1559,
               "kind": "method",
               "purpose": "Create one scene-owned native confirmation with explicit Cancel construction and default Keep construction actions wired to single-use confirm and UI-only dismissal.",
               "purpose_origin": "reviewed"
@@ -26511,8 +26535,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_request_construction_cancel",
               "name": "_request_construction_cancel",
-              "line": 1560,
-              "end_line": 1574,
+              "line": 1561,
+              "end_line": 1575,
               "kind": "method",
               "purpose": "Resolve current Construction and selected site, keep direct owner validation for no Building loss, otherwise capture owner/site reference/context/disclosed count and show actual-site loss/recovery wording with Keep focus.",
               "purpose_origin": "reviewed"
@@ -26520,8 +26544,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_cancel_is_current",
               "name": "_construction_cancel_is_current",
-              "line": 1576,
-              "end_line": 1584,
+              "line": 1577,
+              "end_line": 1585,
               "kind": "method",
               "purpose": "Validate captured live session/model/Construction, current site/context, exact dictionary reference and unchanged Building loss count; allow normal progress but reject completion, replacement or undisclosed loss.",
               "purpose_origin": "reviewed"
@@ -26529,8 +26553,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_confirm_construction_cancel",
               "name": "_confirm_construction_cancel",
-              "line": 1586,
-              "end_line": 1594,
+              "line": 1587,
+              "end_line": 1595,
               "kind": "method",
               "purpose": "Consume pending UI intent before validation; reject stale with no reconciliation, otherwise invoke captured Construction.cancel once for the same site.",
               "purpose_origin": "reviewed"
@@ -26538,8 +26562,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_keep_construction_cancel",
               "name": "_keep_construction_cancel",
-              "line": 1596,
-              "end_line": 1598,
+              "line": 1597,
+              "end_line": 1599,
               "kind": "method",
               "purpose": "Clear only pending construction UI intent and hide its dialog without gameplay command, reconciliation or time change.",
               "purpose_origin": "reviewed"
@@ -26547,8 +26571,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_invalidate_construction_cancel",
               "name": "_invalidate_construction_cancel",
-              "line": 1600,
-              "end_line": 1603,
+              "line": 1601,
+              "end_line": 1604,
               "kind": "method",
               "purpose": "If a construction decision exists, clear/hide it and report stale selection/site without cancelling or reconciling gameplay.",
               "purpose_origin": "reviewed"
@@ -26556,8 +26580,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_validate_construction_cancel",
               "name": "_validate_construction_cancel",
-              "line": 1605,
-              "end_line": 1606,
+              "line": 1606,
+              "end_line": 1607,
               "kind": "method",
               "purpose": "Validate only a nonempty construction decision at existing committed events and reject stale identities without polling or domain mutation.",
               "purpose_origin": "reviewed"
@@ -26565,8 +26589,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_build_batch_cancel_dialog",
               "name": "_build_batch_cancel_dialog",
-              "line": 1608,
-              "end_line": 1618,
+              "line": 1609,
+              "end_line": 1619,
               "kind": "method",
               "purpose": "Create the scene-owned loss confirmation with explicit Keep batch and Cancel batch and stop buttons, wrapped current-owner explanation and synchronous confirm/cancel handlers; no production state owner or clock.",
               "purpose_origin": "reviewed"
@@ -26574,8 +26598,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_request_batch_cancel",
               "name": "_request_batch_cancel",
-              "line": 1620,
-              "end_line": 1636,
+              "line": 1621,
+              "end_line": 1637,
               "kind": "method",
               "purpose": "Resolve the current activity; directly stop if no active consumed batch exists, otherwise capture exact session/model/activity/selection/recipe/batch identity and show actual consumed receipt amounts/loss warning with Keep focus, without cancelling or pausing.",
               "purpose_origin": "reviewed"
@@ -26583,8 +26607,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_batch_cancel_is_current",
               "name": "_batch_cancel_is_current",
-              "line": 1638,
-              "end_line": 1645,
+              "line": 1639,
+              "end_line": 1646,
               "kind": "method",
               "purpose": "Compare pending identities to the current session/model, selected context/activity, actual recipe and batch ID using narrow existing owner fields; reject replaced or completed work without recomputation or mutation.",
               "purpose_origin": "reviewed"
@@ -26592,8 +26616,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_confirm_batch_cancel",
               "name": "_confirm_batch_cancel",
-              "line": 1647,
-              "end_line": 1655,
+              "line": 1648,
+              "end_line": 1656,
               "kind": "method",
               "purpose": "Consume the UI request once before revalidating its captured identities, then call only that captured owner cancel command; report stale decisions without domain reconciliation or cancelling another batch.",
               "purpose_origin": "reviewed"
@@ -26601,8 +26625,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_keep_batch_cancel",
               "name": "_keep_batch_cancel",
-              "line": 1657,
-              "end_line": 1659,
+              "line": 1658,
+              "end_line": 1660,
               "kind": "method",
               "purpose": "Clear the pending UI decision and hide its dialog only; do not issue a domain command, reconciliation or pause, allowing existing simulation progress to continue.",
               "purpose_origin": "reviewed"
@@ -26610,8 +26634,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_invalidate_batch_cancel",
               "name": "_invalidate_batch_cancel",
-              "line": 1661,
-              "end_line": 1664,
+              "line": 1662,
+              "end_line": 1665,
               "kind": "method",
               "purpose": "Close a nonempty stale decision and report that nothing was cancelled through a presentation-only result; leave production, custody and elapsed work unchanged.",
               "purpose_origin": "reviewed"
@@ -26619,8 +26643,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_on_session_state_changed",
               "name": "_on_session_state_changed",
-              "line": 1666,
-              "end_line": 1669,
+              "line": 1667,
+              "end_line": 1670,
               "kind": "method",
               "purpose": "Retain shared-state refresh and validate only pending batch/construction decisions in the existing single subscription, without domain commands or polling.",
               "purpose_origin": "reviewed"
@@ -26628,8 +26652,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_validate_batch_cancel",
               "name": "_validate_batch_cancel",
-              "line": 1671,
-              "end_line": 1672,
+              "line": 1672,
+              "end_line": 1673,
               "kind": "method",
               "purpose": "On a committed update or production-control reload, inspect only a nonempty pending request and invalidate it if current identities differ; do no reads when no decision is pending.",
               "purpose_origin": "reviewed"
@@ -26637,8 +26661,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_batch_cancel_model_changed",
               "name": "_batch_cancel_model_changed",
-              "line": 1674,
-              "end_line": 1679,
+              "line": 1675,
+              "end_line": 1680,
               "kind": "method",
               "purpose": "Discard stale menu/loss decisions and rebind purchase events when the shared simulation is replaced; cancel neither model.",
               "purpose_origin": "reviewed"
@@ -26646,8 +26670,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_batch_cancel_selection_changed",
               "name": "_batch_cancel_selection_changed",
-              "line": 1681,
-              "end_line": 1682,
+              "line": 1682,
+              "end_line": 1683,
               "kind": "method",
               "purpose": "Invalidate the batch-loss UI decision when the player changes the recipe selection; do not apply that recipe or issue production commands.",
               "purpose_origin": "reviewed"
@@ -26655,8 +26679,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 1684,
-              "end_line": 1690,
+              "line": 1685,
+              "end_line": 1691,
               "kind": "method",
               "purpose": "Unbind Receiving and session events and retire pending scene-owned loss decisions during UI teardown.",
               "purpose_origin": "reviewed"
@@ -26664,8 +26688,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_change_recipe",
               "name": "_change_recipe",
-              "line": 1692,
-              "end_line": 1704,
+              "line": 1693,
+              "end_line": 1705,
               "kind": "method",
               "purpose": "Change recipe for base demo. Implementation: calls _activity, activity.has_method, _result, activity.request_recipe; updates _pending_activity, _pending_token, confirmation.dialog_text.",
               "purpose_origin": "implementation_derived"
@@ -26673,8 +26697,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_result",
               "name": "_result",
-              "line": 1706,
-              "end_line": 1714,
+              "line": 1707,
+              "end_line": 1715,
               "kind": "method",
               "purpose": "Preserve existing reconciliation/command feedback and notify the 3D status presenter of actual results, including selected-site cancellation.",
               "purpose_origin": "reviewed"
@@ -26682,17 +26706,17 @@
             {
               "id": "game/rear_base/base_demo.gd::_select",
               "name": "_select",
-              "line": 1716,
-              "end_line": 1752,
+              "line": 1717,
+              "end_line": 1753,
               "kind": "method",
-              "purpose": "Invalidate pending batch and construction decisions before actual context kind/ID changes, retaining existing navigation, construction inspection, production/draft focus and refresh.",
+              "purpose": "Select the actual current entity/site and its appropriate management context without implicitly acquiring a blueprint; preserve current row/activity mapping and invalidate stale loss decisions.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/rear_base/base_demo.gd::_fill",
               "name": "_fill",
-              "line": 1754,
-              "end_line": 1775,
+              "line": 1755,
+              "end_line": 1776,
               "kind": "method",
               "purpose": "Fill for base demo. Implementation: calls next_ids.append, entries.size, make_text.call, list.get_item_text.",
               "purpose_origin": "implementation_derived"
@@ -26700,8 +26724,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_dispatch_choices",
               "name": "_refresh_dispatch_choices",
-              "line": 1778,
-              "end_line": 1837,
+              "line": 1779,
+              "end_line": 1838,
               "kind": "method",
               "purpose": "Refresh dispatch choices for base demo. Implementation: calls str, dispatch_site.get_item_metadata, simulation.rear.dispatch.dispatch_sites.keys, site_ids.sort; updates dispatch_person_ids, guns_changed, same_hulls, sites_changed.",
               "purpose_origin": "implementation_derived"
@@ -26709,8 +26733,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_dispatch_army_diagnostics",
               "name": "_dispatch_army_diagnostics",
-              "line": 1839,
-              "end_line": 1855,
+              "line": 1840,
+              "end_line": 1856,
               "kind": "method",
               "purpose": "Assemble detailed military organization, readiness, combat/care and cohesion text only for a view explicitly containing broad military/combat diagnostics.",
               "purpose_origin": "reviewed"
@@ -26718,8 +26742,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_dispatch",
               "name": "_refresh_dispatch",
-              "line": 1857,
-              "end_line": 1876,
+              "line": 1858,
+              "end_line": 1877,
               "kind": "method",
               "purpose": "Render current freight choices, manifest rows, HQ capacities/stock and actual selected trip details with one changed-value text assignment; append army-wide detail only when the supplied diagnostic view contains it.",
               "purpose_origin": "reviewed"
@@ -26727,8 +26751,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_dispatch/<lambda#1>",
               "name": "_refresh_dispatch/<lambda#1>",
-              "line": 1859,
-              "end_line": 1859,
+              "line": 1860,
+              "end_line": 1860,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns \"%s | %s | %s %s | %s\" % [row.id,row.mode,row.hull,row.state,row.blocker].",
               "purpose_origin": "implementation_derived"
@@ -26736,8 +26760,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh",
               "name": "_refresh",
-              "line": 1878,
-              "end_line": 1885,
+              "line": 1879,
+              "end_line": 1886,
               "kind": "method",
               "purpose": "Consume any pending one-shot presentation when invoked directly, refresh current visible contents and record the inclusive refresh duration for profiling.",
               "purpose_origin": "reviewed"
@@ -26745,8 +26769,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_contents",
               "name": "_refresh_contents",
-              "line": 1887,
-              "end_line": 1997,
+              "line": 1888,
+              "end_line": 1998,
               "kind": "method",
               "purpose": "Refresh current rear management data while preserving selected construction identity and any still-current unconfirmed Office staffing draft.",
               "purpose_origin": "reviewed"
@@ -26754,8 +26778,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_contents/<lambda#1>",
               "name": "_refresh_contents/<lambda#1>",
-              "line": 1968,
-              "end_line": 1969,
+              "line": 1969,
+              "end_line": 1970,
               "kind": "lambda",
               "purpose": "Format each physical construction row using readable job name, current state and required Building Materials.",
               "purpose_origin": "reviewed"
@@ -26763,8 +26787,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_contents/<lambda#2>",
               "name": "_refresh_contents/<lambda#2>",
-              "line": 1992,
-              "end_line": 1992,
+              "line": 1993,
+              "end_line": 1993,
               "kind": "lambda",
               "purpose": "Keep actual player-owned people in the individual worker inspection list.",
               "purpose_origin": "reviewed"
@@ -26772,8 +26796,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_contents/<lambda#3>",
               "name": "_refresh_contents/<lambda#3>",
-              "line": 1993,
-              "end_line": 1993,
+              "line": 1994,
+              "end_line": 1994,
               "kind": "lambda",
               "purpose": "Format a current person inspection row with identity, requested/current duty and physical activity phase.",
               "purpose_origin": "reviewed"
@@ -26781,8 +26805,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_inspection",
               "name": "_refresh_inspection",
-              "line": 1999,
-              "end_line": 2036,
+              "line": 2000,
+              "end_line": 2037,
               "kind": "method",
               "purpose": "Render the selected physical site, entity, building, course, haul or purchase from its current facts, including actual capacity, custody, earned work and blockers.",
               "purpose_origin": "reviewed"
@@ -26790,8 +26814,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_haul_rows",
               "name": "_refresh_haul_rows",
-              "line": 2038,
-              "end_line": 2039,
+              "line": 2039,
+              "end_line": 2040,
               "kind": "method",
               "purpose": "Populate real hauling-job rows from the supplied current inspected jobs, preserving selection and reporting current staff shortages or physical blockers.",
               "purpose_origin": "reviewed"
@@ -26799,8 +26823,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_haul_rows/<lambda#1>",
               "name": "_refresh_haul_rows/<lambda#1>",
-              "line": 2039,
-              "end_line": 2039,
+              "line": 2040,
+              "end_line": 2040,
               "kind": "lambda",
               "purpose": "Format each real haul with delivered/requested quantity and the actual missing-hauler or domain blocker.",
               "purpose_origin": "reviewed"
@@ -26808,8 +26832,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_transport_truck_status",
               "name": "_transport_truck_status",
-              "line": 2041,
-              "end_line": 2071,
+              "line": 2042,
+              "end_line": 2072,
               "kind": "method",
               "purpose": "Describe construction-only identity, finite tank, same retained hauler/phase/blocker and existing physical M08 refuel action; preserve normal transport status for other hulls.",
               "purpose_origin": "reviewed"
@@ -26817,8 +26841,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_vehicle_controls",
               "name": "_refresh_vehicle_controls",
-              "line": 2073,
-              "end_line": 2085,
+              "line": 2074,
+              "end_line": 2086,
               "kind": "method",
               "purpose": "Show actual construction utility rows distinctly without inventing an F11 slot; retain real selection/fuel controls and normal vehicle state rendering.",
               "purpose_origin": "reviewed"
@@ -26826,8 +26850,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_vehicle_controls/<lambda#1>",
               "name": "_refresh_vehicle_controls/<lambda#1>",
-              "line": 2075,
-              "end_line": 2075,
+              "line": 2076,
+              "end_line": 2076,
               "kind": "lambda",
               "purpose": "Label actual utility truck identity/state/fuel separately from ordinary F11 manufactured hull rows; no state changes.",
               "purpose_origin": "reviewed"
@@ -26835,8 +26859,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_work",
               "name": "_refresh_work",
-              "line": 2087,
-              "end_line": 2098,
+              "line": 2088,
+              "end_line": 2099,
               "kind": "method",
               "purpose": "Refresh the common HUD and existing production-facility selection, staffing, ingredients, output/work summaries and heavy controls using the scoped production view.",
               "purpose_origin": "reviewed"
@@ -26844,8 +26868,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_production_status",
               "name": "_refresh_production_status",
-              "line": 2100,
-              "end_line": 2123,
+              "line": 2101,
+              "end_line": 2124,
               "kind": "method",
               "purpose": "Assemble summaries for supplied actual production activities or the retained diagnostic overview, then present current selected heavy bay/order/fleet details when available.",
               "purpose_origin": "reviewed"
@@ -26853,8 +26877,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_office_draft",
               "name": "_refresh_office_draft",
-              "line": 2125,
-              "end_line": 2129,
+              "line": 2126,
+              "end_line": 2130,
               "kind": "method",
               "purpose": "Reset Office dirty state on model replacement and otherwise preserve unconfirmed Office staffing across read-only refreshes.",
               "purpose_origin": "reviewed"
@@ -26862,8 +26886,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction",
               "name": "_refresh_construction",
-              "line": 2131,
-              "end_line": 2144,
+              "line": 2132,
+              "end_line": 2145,
               "kind": "method",
               "purpose": "Refresh actual construction status and current site selection while preserving the same-context Office staffing draft.",
               "purpose_origin": "reviewed"
@@ -26871,8 +26895,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction/<lambda#1>",
               "name": "_refresh_construction/<lambda#1>",
-              "line": 2140,
-              "end_line": 2141,
+              "line": 2141,
+              "end_line": 2142,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns \"%s · %s · %d Building Materials\" % [WorkforcePanel.job_name(row.id, simulation), str(row.state).replace(\"M11\", \"Building Materials\"), row.m11].",
               "purpose_origin": "implementation_derived"
@@ -26880,8 +26904,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction_progress",
               "name": "_refresh_construction_progress",
-              "line": 2146,
-              "end_line": 2153,
+              "line": 2147,
+              "end_line": 2154,
               "kind": "method",
               "purpose": "Display the selected actual site's state, local Building Materials, earned work, blocker and present/assigned/requested builders without rebuilding the whole panel.",
               "purpose_origin": "reviewed"
@@ -26889,8 +26913,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training",
               "name": "_refresh_training",
-              "line": 2155,
-              "end_line": 2163,
+              "line": 2156,
+              "end_line": 2164,
               "kind": "method",
               "purpose": "Read one scoped current Training view, update the ordinary first-instructor offer/price availability and shared resource/population HUD, then render school/course facts without a world snapshot or new polling.",
               "purpose_origin": "reviewed"
@@ -26898,8 +26922,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls",
               "name": "_refresh_training_controls",
-              "line": 2165,
-              "end_line": 2182,
+              "line": 2166,
+              "end_line": 2183,
               "kind": "method",
               "purpose": "Refresh actual current school/course and staffing facts while preserving an unconfirmed instructor target for the same model/duty.",
               "purpose_origin": "reviewed"
@@ -26907,8 +26931,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls/<lambda#1>",
               "name": "_refresh_training_controls/<lambda#1>",
-              "line": 2167,
-              "end_line": 2167,
+              "line": 2168,
+              "end_line": 2168,
               "kind": "lambda",
               "purpose": "Format each training row's course/person identity, state and elapsed/required work for the Train list.",
               "purpose_origin": "reviewed"
@@ -26916,8 +26940,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_purchasing",
               "name": "_refresh_purchasing",
-              "line": 2185,
-              "end_line": 2196,
+              "line": 2186,
+              "end_line": 2197,
               "kind": "method",
               "purpose": "Render scoped procurement balance, quote, real orders/unloading/recovery status and current army delivery requests.",
               "purpose_origin": "reviewed"
@@ -26925,8 +26949,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce",
               "name": "_refresh_workforce",
-              "line": 2198,
-              "end_line": 2205,
+              "line": 2199,
+              "end_line": 2206,
               "kind": "method",
               "purpose": "Refresh workforce for base demo. Implementation: calls simulation.workforce_view, _refresh_resource_hud, workforce_panel.refresh, _sync_option.",
               "purpose_origin": "implementation_derived"
@@ -26934,8 +26958,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce/<lambda#1>",
               "name": "_refresh_workforce/<lambda#1>",
-              "line": 2204,
-              "end_line": 2205,
+              "line": 2205,
+              "end_line": 2206,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns person.id+\" | \"+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+\" | \"+person.phase.",
               "purpose_origin": "implementation_derived"
@@ -26943,8 +26967,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_factory_plan_action",
               "name": "_factory_plan_action",
-              "line": 2207,
-              "end_line": 2229,
+              "line": 2208,
+              "end_line": 2230,
               "kind": "method",
               "purpose": "Route only enable/pause guidance through current recovery validation/focus; retain existing Build/Work/other navigation and non-recovery same-facility draft behavior.",
               "purpose_origin": "reviewed"
@@ -26952,8 +26976,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_needs_panel",
               "name": "_army_needs_panel",
-              "line": 2231,
-              "end_line": 2235,
+              "line": 2232,
+              "end_line": 2236,
               "kind": "method",
               "purpose": "Create the scene-owned Army needs panel, bind the current session to the pure authoritative reader and route emitted action intent to the rear controller.",
               "purpose_origin": "reviewed"
@@ -26961,8 +26985,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_supply_action",
               "name": "_army_supply_action",
-              "line": 2237,
-              "end_line": 2262,
+              "line": 2238,
+              "end_line": 2263,
               "kind": "method",
               "purpose": "Resolve fresh current action identity before command; explicit HQ rifle resume targets E01 separately from unchanged E02 ammunition resume, preserving other navigation/observation flows.",
               "purpose_origin": "reviewed"
@@ -26970,8 +26994,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_focus_factory_recovery",
               "name": "_focus_factory_recovery",
-              "line": 2264,
-              "end_line": 2281,
+              "line": 2265,
+              "end_line": 2282,
               "kind": "method",
               "purpose": "Resolve current recovery once per click; preserve same-factory drafts or select/load exact other factory, then recheck model/site/owner/scalar state and focus/reveal existing control without pressing or mutating gameplay.",
               "purpose_origin": "reviewed"
@@ -26979,8 +27003,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_construction_selection",
               "name": "_sync_construction_selection",
-              "line": 2283,
-              "end_line": 2286,
+              "line": 2284,
+              "end_line": 2287,
               "kind": "method",
               "purpose": "Select the existing row matching the actual returned or chosen site identity after construction rows refresh.",
               "purpose_origin": "reviewed"
@@ -26988,8 +27012,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_manager_placement_rejection",
               "name": "_manager_placement_rejection",
-              "line": 2288,
-              "end_line": 2303,
+              "line": 2289,
+              "end_line": 2304,
               "kind": "method",
               "purpose": "Check exact positive overlap between the live upright unscaled capsule ground circle and current Catalog footprint, with no added clearance, cached permission or phantom blocker for unbound 2D.",
               "purpose_origin": "reviewed"
@@ -28460,7 +28484,7 @@
         },
         {
           "path": "game/preview_3d/preview.gd",
-          "sha256": "b4a4e7cd36907aeefe433fd685e53dffd5a6cfa9760dc4d3854ed736c701dbcd",
+          "sha256": "739b54da5074371f0430deb43c666a99fe000df17ea8e905269216336e5107da",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -28676,7 +28700,7 @@
               "line": 414,
               "end_line": 460,
               "kind": "method",
-              "purpose": "Consume one current physics-hit E request and open the actual Table, production activity or existing selected-site management panel with stale-context guards.",
+              "purpose": "Consume one current first-hit E request and inspect the actual Table, activity or site controls without starting a construction blueprint; preserve identity, focus and input guards.",
               "purpose_origin": "reviewed"
             },
             {

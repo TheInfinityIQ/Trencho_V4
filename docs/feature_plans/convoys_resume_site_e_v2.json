@@ -1,0 +1,14 @@
+{
+  "schema":1,
+  "amends":"docs/feature_plans/convoys_resume_v1.json",
+  "original_plan_sha256":"edc566ac9813f705bbcdb55c10df5ad09430250d1fa59a76865821e554dd8092",
+  "incident":"CONVOY-SITE-E",
+  "source_revision":"a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+  "evidence":"Run42635341519 reached the real demonstration, passed convoy/placement checks and failed opening unfinished-site controls; dependent builder assertions also failed.",
+  "diagram":"docs/diagrams/convoy_site_interaction.mmd",
+  "investigation_before_production_edits":["Inspect current input guards and camera ownership", "Record the actual current camera projection, first-hit collider/site identity and input/selection state during the same bounded episode", "Use one single-shot diagnostic physics callback, preserving the existing real session and input route", "Stop at the first failed dependent interaction; preserve its screenshot/log and unchanged acceptance", "Classify as game defect versus observer setup error before selecting any production correction"],
+  "current_hypotheses":["The observer rotates the SpringArm-owned camera directly; Godot can update child position during following physics frames, so target stability must be observed", "An intervening body or absent/stale site identity could reject the correct first-hit contract", "Input recapture or management state may reject E before the query"],
+  "constraints":"No production changes yet, no alternate successful interaction fallback, no new scenario/suite, no local engine, no increase to the35s child/45s wrapper limit.",
+  "sources":["https://docs.godotengine.org/en/stable/classes/class_springarm3d.html","https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html"],
+  "assessment":"Production attribution and planning-gap classification remain unknown until diagnostics identify the first failed boundary. Existing failed evidence stays preserved."
+}

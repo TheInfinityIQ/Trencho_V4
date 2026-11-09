@@ -1,0 +1,15 @@
+{
+  "schema":1,
+  "amends":"docs/feature_plans/convoys_resume_site_e_v2.json",
+  "incident":"CONVOY-SITE-E",
+  "source_revision":"a4f2c4f73b4df718c19735d206d3c87fec05fe86",
+  "diagnostic_evidence":"Run42636373161/artifact13683890787: focused/captured/current camera ray hit site-0001 at the projected screen center; E selected that site but management was false afterward.",
+  "cause":"BaseDemo.show_panel(Build) implicitly calls select_build_kind, which emits placement_started. Preview._begin_preview closes management. BaseDemo._select then cancels that unintended draft, leaving the actual selected site without visible controls.",
+  "diagram":"docs/diagrams/convoy_site_interaction_fix.mmd",
+  "decision_before_production_edits":"Add an explicit start_build_preview argument to the existing show_panel API, defaulting true for existing acquisition/navigation callers. Existing-site selection and contextual building panel routing pass false. The same method cancels an old draft when inspecting without creating a new one. Keep the existing controls, construction owner, mouse/focus guards and canonical manager.",
+  "source_scope":["game/rear_base/base_demo.gd::show_panel","game/rear_base/base_demo.gd::_select","game/preview_3d/preview.gd::_consume_workshop"],
+  "justification":"The UI owner should distinguish navigation/inspection from an explicit state-changing acquisition command. This removes the unintended placement signal at its source instead of reopening the menu after conflicting callbacks, adding a new mode owner or weakening input checks.",
+  "planning_gap":{"assessment":"confirmed","preavailable_requirement":"Original feature contract required E on an unfinished actual site to expose its existing Build controls.","omitted_assumption":"The planned contextual selection path did not include show_panel's placement_started fanout and the resulting Preview._begin_preview management transition.","learning":"Inspect emitted signals and state-changing side effects along navigation helpers as part of the existing graph review. This inherited feature/resume pilot did not catch that connection before the direct failure; do not claim planning prevented it."},
+  "acceptance":"Rerun only the same permitted brief current-change convoy/grid/site-E/explicit-builder/cancel episode after changed-script parsing. Its existing site-E and builder assertions must pass without alternate targeting, re-opening fallback or relaxed limits. Preserve both failed receipts.",
+  "limits":"No local engine, regression suite, additional scenario, polling, economic/gameplay change or FPS claim. Retain the engine-created supplier UID from prior evidence; future observers preserve it when already present."
+}

@@ -434,7 +434,7 @@ func _consume_workshop() -> void:
 			_base._select("site",site_id,true)
 			if row.state == "Complete":
 				var panel_name: String = {"training":"Train","dispatch":"Dispatch","park":"Vehicles","receiving":"Info","depot":"Info","construction":"Build"}.get(str(row.kind),"Build")
-				_base.show_panel(panel_name)
+				_base.show_panel(panel_name,false)
 				if panel_name == "Info":
 					for index in _base.store.item_count:
 						if _base.store.get_item_text(index) == site_id:

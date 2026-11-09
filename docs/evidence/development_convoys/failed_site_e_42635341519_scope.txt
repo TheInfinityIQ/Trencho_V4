@@ -1,0 +1,5 @@
+revision=a4f2c4f73b4df718c19735d206d3c87fec05fe86
+base=35ad12bcce218ba89aeab95a039bbded6990beb6
+changed_scripts=[]
+direct_check=True
+Syntax checks are not gameplay acceptance. No regression suites run.

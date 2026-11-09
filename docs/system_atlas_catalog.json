@@ -3009,7 +3009,7 @@
       "title": "Main menus, rear controls and guidance",
       "group": "Presentation",
       "owner": "Main + CommandShell + BaseDemo + panels",
-      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them.",
+      "summary": "The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them. Existing-site inspection opens Build controls without acquiring a new blueprint; acquisition retains its separate explicit intent.",
       "nodes": [
         {
           "id": "n0",
@@ -3046,6 +3046,18 @@
           "label": "Confirm actual combined purchase draft",
           "file": "game/rear_base/base_demo.gd",
           "function": "_confirm_purchase"
+        },
+        {
+          "id": "n6",
+          "label": "Open panel with explicit preview intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "show_panel"
+        },
+        {
+          "id": "n7",
+          "label": "Acquire a new blueprint only by construction intent",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "select_build_kind"
         }
       ],
       "edges": [
@@ -3073,6 +3085,16 @@
           "from": "n5",
           "to": "n3",
           "label": "actual Receiving command result"
+        },
+        {
+          "from": "n2",
+          "to": "n6",
+          "label": "existing-site inspection: preview false"
+        },
+        {
+          "from": "n6",
+          "to": "n7",
+          "label": "only explicit acquisition intent"
         }
       ],
       "related": [
@@ -4028,7 +4050,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "43ba1dacd5b9a7ea6c2c11cbac371731cf6feb5a1873483c13109b4584eefc45",
+    "game/rear_base/base_demo.gd": "d56e98ed72fd7d754100c2653db09d838edc0984895d3bc9420954b30e537d1c",
     "game/rear_base/base_map.gd": "e7e8a3d8ed67411f82ffae208c618457aa714c2e760a3ecbd1cee078be9c7e66",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4039,7 +4061,7 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "b4a4e7cd36907aeefe433fd685e53dffd5a6cfa9760dc4d3854ed736c701dbcd",
+    "game/preview_3d/preview.gd": "739b54da5074371f0430deb43c666a99fe000df17ea8e905269216336e5107da",
     "game/preview_3d/world_presenter.gd": "64cb7bfd80d3fa5fa546c4ff51a0b211d904697e52408c79f8b7c3dd700d3494",
     "game/preview_3d/facility_shells.gd": "eceec0e3f9a6a71ef0b40665b49f25e2f9f326f139fa521d938a009ce1c0a937",
     "game/preview_3d/rear_workers.gd": "86dcbb9e519cc62e59baefe5267d1c70e17f539e09519e3697956fa58b2e540b",

@@ -1255,7 +1255,7 @@ Route hazard knowledge is not omniscient access to every planted device. Placeme
 <a id="ui"></a>
 ## Main menus, rear controls and guidance
 
-**Owner:** Main + CommandShell + BaseDemo + panels. The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them.
+**Owner:** Main + CommandShell + BaseDemo + panels. The mounted base_demo.gd is the real main management UI despite its filename. Button commands use service owners; retained panels refresh through session commits/time with visibility guards. Combined purchases and staffing use explicit confirmation; model refresh preserves current unconfirmed staffing drafts and model/context replacement invalidates them. Existing-site inspection opens Build controls without acquiring a new blueprint; acquisition retains its separate explicit intent.
 
 ```mermaid
 flowchart TD
@@ -1265,11 +1265,15 @@ flowchart TD
     n3["Command result reconciles session"]
     n4["Refresh visible current panel"]
     n5["Confirm actual combined purchase draft"]
+    n6["Open panel with explicit preview intent"]
+    n7["Acquire a new blueprint only by construction intent"]
     n0 -->|"queued panel command"| n1
     n1 -->|"current panel/selection"| n2
     n2 -->|"visible read model"| n4
     n3 -->|"committed command refresh"| n4
     n5 -->|"actual Receiving command result"| n3
+    n2 -->|"existing-site inspection: preview false"| n6
+    n6 -->|"only explicit acquisition intent"| n7
 ```
 
 Hidden UI intentionally skips expensive refresh. This matters to selection:3D Workshop opens management before resolving current facility metadata. Existing scroll-heavy layout remains; generated diagrams do not establish enjoyable UI acceptance.
@@ -1278,10 +1282,12 @@ Hidden UI intentionally skips expensive refresh. This matters to selection:3D Wo
 
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/ui/command_shell.gd#L34) — Button navigation requests
 - [_apply_navigation](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/main/main.gd#L87) — Deferred main navigation
-- [_select](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1716) — Actual BaseDemo panel/selection
-- [_result](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1706) — Command result reconciles session
-- [_refresh_contents](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1887) — Refresh visible current panel
-- [_confirm_purchase](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L581) — Confirm actual combined purchase draft
+- [_select](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1717) — Actual BaseDemo panel/selection
+- [_result](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1707) — Command result reconciles session
+- [_refresh_contents](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1888) — Refresh visible current panel
+- [_confirm_purchase](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L582) — Confirm actual combined purchase draft
+- [show_panel](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L347) — Open panel with explicit preview intent
+- [select_build_kind](https://github.com/TheInfinityIQ/Trencho_V4/blob/35ad12bcce218ba89aeab95a039bbded6990beb6/game/rear_base/base_demo.gd#L1162) — Acquire a new blueprint only by construction intent
 
 <a id="battleview"></a>
 ## Battlefield read models and 2D inspection

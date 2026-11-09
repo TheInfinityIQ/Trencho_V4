@@ -344,14 +344,15 @@ func use_shared_navigation() -> void:
 	tabs.tabs_visible = false
 	_request_refresh()
 
-func show_panel(title: String) -> bool:
+func show_panel(title: String, start_build_preview: bool = true) -> bool:
 	title = {"Staff":"Workers/Jobs","Orders":"Supplies"}.get(title,title)
 	for index in tabs.get_tab_count():
 		var panel: Control = tabs.get_tab_control(index)
 		if str(panel.get_meta("panel_title", panel.name)) != title: continue
 		tabs.current_tab = index
 		if panel is ScrollContainer: panel.scroll_vertical = 0
-		if title == "Build": select_build_kind(_construction_kind())
+		# Inspecting an existing site opens controls without acquiring a blueprint.
+		if title == "Build" and start_build_preview: select_build_kind(_construction_kind())
 		elif _placing_building: _cancel_placement()
 		return true
 	return false
@@ -1725,7 +1726,7 @@ func _select(kind: String, id: String, open_panel: bool = true) -> void:
 		elif kind == "site" and not simulation.rear.construction.activities.has(id): target = "Build"
 		elif kind == "building" or (kind == "site" and simulation.rear.construction.activities.has(id)): target = "Work"
 		var previous_tab: int = tabs.current_tab
-		show_panel(target)
+		show_panel(target,false)
 		# Hidden controls can be old while Supplies is open. Refresh the target
 		# before resolving its selection; tab_changed handles a visible new tab.
 		if target == "Work" or previous_tab == tabs.current_tab or not is_visible_in_tree(): _refresh()

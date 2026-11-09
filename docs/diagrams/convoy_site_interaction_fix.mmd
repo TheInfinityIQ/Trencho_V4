@@ -1,0 +1,10 @@
+flowchart TD
+    Hit[Actual E hit current unfinished site] --> Select[Select existing site]
+    Select --> Intent[Open Build controls with start_build_preview false]
+    Intent --> Panel[Visible existing site management]
+    Panel --> Set[Explicit Set builders command]
+    Set --> Staffing[Existing site's real staffing target]
+    Catalogue[Explicit construction navigation or catalogue choice] --> Acquire[Open Build with preview intent]
+    Acquire --> Started[Existing placement_started event]
+    Started --> RTS[Overhead grid blueprint mode]
+    Old[Old implicit show_panel Build] -.-> Conflict[Started blueprint while inspecting then cancelled it leaving menu closed]
