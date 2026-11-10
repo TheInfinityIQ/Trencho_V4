@@ -191,9 +191,9 @@ func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: R
 		boxes.append(Rect2(rear.SUPPLY_TABLE-Vector2(1.29,0.69),Vector2(2.58,1.38)).grow(clearance))
 	for row in instances.values():
 		if row.id in ignored or row.kind == "park" or row.state in ["Cancelled","Dismantled"]: continue
-		if rear.warehouse != null and rear.warehouse.modules.has(row.id): continue
+		if rear.warehouse != null and clearance < 1.0 and rear.warehouse.modules.has(row.id): continue
 		boxes.append(Rect2(row.center-row.size/2.0,row.size).grow(clearance))
-	if rear.warehouse != null:
+	if rear.warehouse != null and clearance < 1.0:
 		for obstacle: Rect2 in rear.warehouse.obstacles(): boxes.append(obstacle.grow(clearance))
 	if candidate.has_area():
 		var grown: Rect2 = candidate.grow(clearance)

@@ -178,7 +178,7 @@ advance_time queries next_boundary across services, advances work/motion and cal
 - [tick_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L192) — Accrue scaled wall time
 - [_pump_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L210) — Pump bounded planning / quantum
 - [advance_time](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L346) — Choose nearest service deadline and advance
-- [_settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L685) — Repeat immediate transitions until stable
+- [_settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L687) — Repeat immediate transitions until stable
 
 <a id="identity"></a>
 ## Identity, custody, stock and claims
@@ -269,11 +269,11 @@ One person cannot fill two jobs at once. Newly completed facilities apply their 
 **Source anchors:**
 
 - [set_target](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L123) — Player changes requested target
-- [_rebalance](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L504) — Rebalance actual eligible people
-- [_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L635) — Physical reporting phase
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L808) — Finish timed actor phase
+- [_rebalance](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L506) — Rebalance actual eligible people
+- [_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L637) — Physical reporting phase
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L810) — Finish timed actor phase
 - [operators](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L86) — Production counts present operators
-- [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L589) — Validate actual person and service-strip eligibility
+- [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L591) — Validate actual person and service-strip eligibility
 - [point](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_work_positions.gd#L12) — Choose reachable distinct physical work point
 
 <a id="hauling"></a>
@@ -306,9 +306,9 @@ This diagram is the local rear haul path. Strategic manifests, forward trucks an
 **Source anchors:**
 
 - [request_haul](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L150) — Request a physical haul
-- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L955) — Select eligible idle hauler/job
+- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L957) — Select eligible idle hauler/job
 - [begin_carry](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1061) — Reserve and begin actual carry
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L808) — Finish timed carry phase
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L810) — Finish timed carry phase
 - [_reconcile_store](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L292) — Reconcile storage constraints
 - [set_order](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L11) — Validate complete category preference
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L33) — Start highest-priority feasible idle work
@@ -427,11 +427,11 @@ This utility is distinct from Vehicle Works output and ordinary army transport. 
 
 **Source anchors:**
 
-- [option](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L91) — Create/inspect office truck option
-- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L136) — Start eligible physical trip
-- [_drive](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L176) — Schedule actual walking/driving
-- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L196) — Progress to shared deadline
-- [_finish](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L356) — Finish/release trip and driver
+- [option](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L134) — Create/inspect office truck option
+- [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L182) — Start eligible physical trip
+- [_drive](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L223) — Schedule actual walking/driving
+- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L243) — Progress to shared deadline
+- [_finish](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L430) — Finish/release trip and driver
 
 <a id="production"></a>
 ## Shared production and recipe selection
@@ -652,10 +652,10 @@ These are separate vehicle operations, not automatic successive commands. Rear a
 
 - [register_output](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L18) — Register produced hull
 - [assign_station](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L65) — Assign eligible station
-- [complete_board](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L122) — Actual crew boarding
-- [request_refuel](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L144) — Request physical refuel
-- [start_drive](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L229) — Start measured rear drive
-- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L355) — Advance route / burn actual fuel
+- [complete_board](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L126) — Actual crew boarding
+- [request_refuel](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L155) — Request physical refuel
+- [start_drive](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L246) — Start measured rear drive
+- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L372) — Advance route / burn actual fuel
 
 <a id="dispatch"></a>
 ## Rear â†’ HQ manifests and return
@@ -1614,7 +1614,7 @@ AnimationPlayer performs fixed cross-fades for this finite exclusive clip set; n
 <a id="warehousing"></a>
 ## Enterable warehouse and physical material storage
 
-**Owner:** WarehouseService + IdentityLedger; WarehouseView presents actual state. Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate. Empty unreserved fixtures can be converted by a real worker; existing first-person mode retains the ceiling.
+**Owner:** WarehouseService + IdentityLedger; WarehouseView presents actual state. Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits.
 
 ```mermaid
 flowchart TD
@@ -1627,6 +1627,11 @@ flowchart TD
     view["Keyed shelves / labels / lights / cutaway"]
     routes["Guarded native pedestrian routing"]
     summary["Actual selected/connected storage facts"]
+    batch["Existing utility selects actual connected package batch"]
+    load["Real worker collects reserved shelf package"]
+    handoff["Existing truck deposit / site delivery / return"]
+    fuel["Explicit20kg limit / exact partial shelf fuel"]
+    wake["Actual access events wake existing work"]
     opening -->|"initial finite fixtures"| reserve
     reserve -->|"new rack requires worker visit"| prepare
     prepare -->|"actual ready fixture"| access
@@ -1637,9 +1642,16 @@ flowchart TD
     commit -->|"keyed state change"| view
     join -->|"actual shared boundaries"| view
     access -->|"real endpoint/segment guards"| routes
+    summary -->|"actual indexed source packages"| batch
+    batch -->|"atomic per-package claims / exterior curb"| load
+    load -->|"one actual pickup and onboard deposit"| handoff
+    handoff -->|"next claimed package if any"| load
+    wake -->|"specific source access retry"| load
+    wake -->|"wake retained source wait"| fuel
+    fuel -->|"actual shelf service face"| routes
 ```
 
-Current normal288M02receipt has scoped evidence; full-state admission/join has explicit prepopulation/Instant Build limitations. Ordinary return/reload/staging recovery, true paired timber custody, renderer/native movement and60FPS acceptance remain pending. Source routing uses deterministic nearest feasible warehouse estimate, not exhaustive globally shortest per-crate optimization.
+Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization.
 
 **Source anchors:**
 
@@ -1651,7 +1663,12 @@ Current normal288M02receipt has scoped evidence; full-state admission/join has e
 - [register_module](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L62) — Completed full-edge join
 - [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_view.gd#L33) — Keyed shelves / labels / lights / cutaway
 - [find](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_paths.gd#L15) — Guarded native pedestrian routing
-- [summary](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L309) — Actual selected/connected storage facts
+- [summary](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L334) — Actual selected/connected storage facts
+- [option](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L134) — Existing utility selects actual connected package batch
+- [_next_load](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L396) — Real worker collects reserved shelf package
+- [_finish](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_truck_service.gd#L430) — Existing truck deposit / site delivery / return
+- [request_refuel](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicles/vehicle_activity.gd#L155) — Explicit20kg limit / exact partial shelf fuel
+- [warehouse_space_changed](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L489) — Actual access events wake existing work
 
 ## Scope and maintenance
 

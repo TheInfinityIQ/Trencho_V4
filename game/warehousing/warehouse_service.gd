@@ -306,8 +306,7 @@ func physical_space_status(code: String, quantity: int) -> String:
 		preparing = true
 	return "Preparing" if preparing else "Unprepared" if empty_site else "Full"
 
-func summary(module_id: String) -> Dictionary:
-	if _summaries.has(module_id): return _summaries[module_id]
+func connected_modules(module_id: String) -> Dictionary:
 	if not modules.has(module_id): return {}
 	var connected := {module_id:true}
 	var queue: Array[String] = [module_id]
@@ -317,6 +316,25 @@ func summary(module_id: String) -> Dictionary:
 			if not connected.has(other) and joined(modules[id],modules[other]):
 				connected[other] = true
 				queue.append(other)
+	return connected
+
+func stock_module(stock_id: String) -> String:
+	var address: Dictionary = _stock_cells.get(stock_id,{})
+	return str(bays[address.bay].module) if not address.is_empty() else ""
+
+func exterior_doors(module_id: String) -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	for id: String in connected_modules(module_id):
+		var module: Dictionary = modules[id]
+		if module.retiring or hidden_boundaries(id).has("Boundary_Front"): continue
+		var turn: float = PI/2.0 if bool(module.quarter_turn) else PI
+		result.append(module.center+Vector2(0,-9).rotated(turn))
+	return result
+
+func summary(module_id: String) -> Dictionary:
+	if _summaries.has(module_id): return _summaries[module_id]
+	if not modules.has(module_id): return {}
+	var connected := connected_modules(module_id)
 	var result := {"modules":connected.size(),"ready":0,"preparing":0,"scheduled":0,"empty":0,
 		"kg":0,"module_kg":0,"reserved":0,"packages":0,"contents":{},"module_contents":{},
 		"empty_crate_positions":0,"empty_timber_positions":0}

@@ -4,14 +4,14 @@
   "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "d1dc81297c22564eed1905ffb77238bd8042044935806ec5182c79ae164dde6b",
+  "source_fingerprint": "47cd77066873a32a3433c81f8e8eba8f97dc3e27a588afba71c1e6933af8b8dc",
   "totals": {
     "systems": 50,
     "game_scripts": 231,
     "non_test_scripts": 137,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3547,
-    "diagram_function_links": 278
+    "functions_in_inventory": 3556,
+    "diagram_function_links": 283
   },
   "systems": [
     {
@@ -364,7 +364,7 @@
           "label": "Repeat immediate transitions until stable",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_settle",
-          "line": 685
+          "line": 687
         }
       ],
       "edges": [
@@ -3308,21 +3308,21 @@
           "label": "Rebalance actual eligible people",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_rebalance",
-          "line": 504
+          "line": 506
         },
         {
           "id": "n2",
           "label": "Physical reporting phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_report",
-          "line": 635
+          "line": 637
         },
         {
           "id": "n3",
           "label": "Finish timed actor phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 808
+          "line": 810
         },
         {
           "id": "n4",
@@ -3336,7 +3336,7 @@
           "label": "Validate actual person and service-strip eligibility",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_eligible",
-          "line": 589
+          "line": 591
         },
         {
           "id": "work_points",
@@ -3468,7 +3468,7 @@
         },
         {
           "path": "game/staffing/rear_simulation.gd",
-          "sha256": "0ef11e7b8f9ea3c62e5c2746a2550bde5d7774e9f5b1af4f31b2d91b3c6c54ef",
+          "sha256": "749755561650a5af50489b158fc9325510b2de2b3cf595bfc7c55245cb84f4d7",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -3664,16 +3664,16 @@
               "id": "game/staffing/rear_simulation.gd::warehouse_space_changed",
               "name": "warehouse_space_changed",
               "line": 489,
-              "end_line": 491,
+              "end_line": 493,
               "kind": "method",
-              "purpose": "Wake only actors waiting on a warehouse preparation/access boundary; do not settle recursively inside an event.",
+              "purpose": "Wake warehouse waiting actors and mark existing truck/fuel access for reconsideration after a real space/occupancy change without recursive settlement.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_warehouse_approach_source",
               "name": "_warehouse_approach_source",
-              "line": 493,
-              "end_line": 502,
+              "line": 495,
+              "end_line": 504,
               "kind": "method",
               "purpose": "After actual shelf preparation, route the same worker to the actual source package or retain its explicit blocked state.",
               "purpose_origin": "reviewed"
@@ -3681,8 +3681,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_rebalance",
               "name": "_rebalance",
-              "line": 504,
-              "end_line": 575,
+              "line": 506,
+              "end_line": 577,
               "kind": "method",
               "purpose": "Plan compatible actual staffing quotas, preserve incumbents/pending handoffs, count busy Dispatch workers once and fill fallback Hauling only after workplace/qualified commitments.",
               "purpose_origin": "reviewed"
@@ -3690,8 +3690,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_rebalance/<lambda#1>",
               "name": "_rebalance/<lambda#1>",
-              "line": 553,
-              "end_line": 558,
+              "line": 555,
+              "end_line": 560,
               "kind": "lambda",
               "purpose": "Order actual assignment application with deliberate workplace/qualified roles before fallback Hauling, then existing priority/role/order ties.",
               "purpose_origin": "reviewed"
@@ -3699,8 +3699,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_staff_before",
               "name": "_staff_before",
-              "line": 578,
-              "end_line": 586,
+              "line": 580,
+              "end_line": 588,
               "kind": "method",
               "purpose": "Compare staffing request quotas with fallback last, then existing priority, unmet share and request age.",
               "purpose_origin": "reviewed"
@@ -3708,8 +3708,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_eligible",
               "name": "_eligible",
-              "line": 589,
-              "end_line": 601,
+              "line": 591,
+              "end_line": 603,
               "kind": "method",
               "purpose": "Validate actual worker availability, assignment, training and service eligibility within the applicable development service strip or legacy rear bounds.",
               "purpose_origin": "reviewed"
@@ -3717,8 +3717,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_any_eligible",
               "name": "_any_eligible",
-              "line": 604,
-              "end_line": 609,
+              "line": 606,
+              "end_line": 611,
               "kind": "method",
               "purpose": "Use the shared starter-candidate boundary and actual duty qualification to determine whether a candidate pool can fill a request.",
               "purpose_origin": "reviewed"
@@ -3726,8 +3726,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_choose_person",
               "name": "_choose_person",
-              "line": 611,
-              "end_line": 625,
+              "line": 613,
+              "end_line": 627,
               "kind": "method",
               "purpose": "Select one compatible actual person by existing incumbent/availability/qualification/identity preference using the same starter rule as quota planning.",
               "purpose_origin": "reviewed"
@@ -3735,8 +3735,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_starter_candidate",
               "name": "_starter_candidate",
-              "line": 628,
-              "end_line": 632,
+              "line": 630,
+              "end_line": 634,
               "kind": "method",
               "purpose": "Distinguish uncommitted Available/default-idle Hauling people from deliberate jobs or reserved handling when filling existing once-only workplace starter requests.",
               "purpose_origin": "reviewed"
@@ -3744,8 +3744,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_report",
               "name": "_report",
-              "line": 635,
-              "end_line": 654,
+              "line": 637,
+              "end_line": 656,
               "kind": "method",
               "purpose": "Release safe old work reservations and route the actual worker toward their current duty's reachable distinct station, preserving vehicle/student special handling.",
               "purpose_origin": "reviewed"
@@ -3753,8 +3753,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_ordinary_report_path",
               "name": "_ordinary_report_path",
-              "line": 657,
-              "end_line": 671,
+              "line": 659,
+              "end_line": 673,
               "kind": "method",
               "purpose": "Resolve a current physical heavy bay matching origin, exclude the empty-opening legacy template, and return origin through that owner's actual site door plus a complete outward route; return no route when outward travel is blocked, otherwise use normal walking.",
               "purpose_origin": "reviewed"
@@ -3762,8 +3762,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_move",
               "name": "_move",
-              "line": 674,
-              "end_line": 682,
+              "line": 676,
+              "end_line": 684,
               "kind": "method",
               "purpose": "Store a timed walking motion/path and its next activity deadline on a rear actor.",
               "purpose_origin": "reviewed"
@@ -3771,8 +3771,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_settle",
               "name": "_settle",
-              "line": 685,
-              "end_line": 769,
+              "line": 687,
+              "end_line": 771,
               "kind": "method",
               "purpose": "Reconcile the existing finite physical boundaries/services and common hauling; allow an idle empty-field builder to fetch only its own missing site material without contributing simultaneous work.",
               "purpose_origin": "reviewed"
@@ -3780,8 +3780,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_people",
               "name": "_sync_receiving_people",
-              "line": 772,
-              "end_line": 795,
+              "line": 774,
+              "end_line": 797,
               "kind": "method",
               "purpose": "Add newly arrived people and finish safe unloading handoffs; unchanged warehouse Hauling workers continue locally instead of returning to the Table.",
               "purpose_origin": "reviewed"
@@ -3789,8 +3789,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_staff",
               "name": "_sync_receiving_staff",
-              "line": 798,
-              "end_line": 805,
+              "line": 800,
+              "end_line": 807,
               "kind": "method",
               "purpose": "Synchronize actual rear staffing with receiving workers and pump newly eligible receiving work.",
               "purpose_origin": "reviewed"
@@ -3798,8 +3798,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_finish_phase",
               "name": "_finish_phase",
-              "line": 808,
-              "end_line": 890,
+              "line": 810,
+              "end_line": 892,
               "kind": "method",
               "purpose": "Complete actual reporting/handling/vehicle phases, preserving custody and safe handoffs; a default worker becoming idle at reporting completion retries existing starter staffing intent. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3807,8 +3807,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_factory_hauls",
               "name": "_reconcile_factory_hauls",
-              "line": 893,
-              "end_line": 944,
+              "line": 895,
+              "end_line": 946,
               "kind": "method",
               "purpose": "Group live explicitly tagged factory jobs and current captured actor loads once at the admission boundary. Query enduring input intent once per affected actual owner, deduct other/manual promises and own captured portions once, allocate only needed old unselected portions and shrink requested targets no lower than delivered plus captured floor. Preserve all claims/carry/deposit fields and untagged/cancelled/manual/relocation work; retain no demand/history cache.",
               "purpose_origin": "reviewed"
@@ -3816,8 +3816,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::set_hauling_priorities",
               "name": "set_hauling_priorities",
-              "line": 947,
-              "end_line": 952,
+              "line": 949,
+              "end_line": 954,
               "kind": "method",
               "purpose": "Validate a category-order command through the scene-owned policy and settle/notify actual owners only after a real preference change.",
               "purpose_origin": "reviewed"
@@ -3825,26 +3825,26 @@
             {
               "id": "game/staffing/rear_simulation.gd::_start_job",
               "name": "_start_job",
-              "line": 955,
-              "end_line": 999,
+              "line": 957,
+              "end_line": 1010,
               "kind": "method",
-              "purpose": "Select and reserve one eligible real haul, optionally restricted to one exact destination, then use existing physical approach/handling or eligible common-hauler truck authority. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
+              "purpose": "Choose eligible real hauling work, atomically reserve each actual source package with full rollback, retain exact trip/destination promises and start the existing walking or utility-truck owner.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_job_option",
               "name": "_job_option",
-              "line": 1002,
-              "end_line": 1067,
+              "line": 1013,
+              "end_line": 1080,
               "kind": "method",
-              "purpose": "Select a feasible real source, count and physical carry route; warehouse sources use deterministic nearest feasible geometric estimate instead of exhaustive per-crate route optimization, while preserving actual safety/capacity and other source-store competition.",
+              "purpose": "Compare eligible physical sources and accepting destinations; consider warehouse utility batching once per source, otherwise choose the nearest actually feasible bounded personal package haul.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_job_option/<lambda#1>",
               "name": "_job_option/<lambda#1>",
-              "line": 1022,
-              "end_line": 1025,
+              "line": 1033,
+              "end_line": 1036,
               "kind": "lambda",
               "purpose": "Order current warehouse candidates by pure geometric pick/delivery estimate with deterministic stock-ID ties; no custody or route promise is created.",
               "purpose_origin": "reviewed"
@@ -3852,8 +3852,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job_before",
               "name": "_job_before",
-              "line": 1070,
-              "end_line": 1075,
+              "line": 1083,
+              "end_line": 1088,
               "kind": "method",
               "purpose": "Compare viable haul choices by effective priority, stable job order and approach distance.",
               "purpose_origin": "reviewed"
@@ -3861,8 +3861,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_in_flight",
               "name": "_in_flight",
-              "line": 1078,
-              "end_line": 1082,
+              "line": 1091,
+              "end_line": 1095,
               "kind": "method",
               "purpose": "Count the quantity currently committed/carried for a hauling job.",
               "purpose_origin": "reviewed"
@@ -3870,8 +3870,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reserved_space",
               "name": "_reserved_space",
-              "line": 1085,
-              "end_line": 1093,
+              "line": 1098,
+              "end_line": 1106,
               "kind": "method",
               "purpose": "Sum inbound carry/output/receiving capacity promises for a destination, optionally excluding one person.",
               "purpose_origin": "reviewed"
@@ -3879,8 +3879,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::reserve_output_space",
               "name": "reserve_output_space",
-              "line": 1096,
-              "end_line": 1100,
+              "line": 1109,
+              "end_line": 1113,
               "kind": "method",
               "purpose": "Validate and apply reserve output space in rear simulation. Successful outcomes: Full output capacity promised to ",
               "purpose_origin": "implementation_derived"
@@ -3888,8 +3888,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::release_output_space",
               "name": "release_output_space",
-              "line": 1103,
-              "end_line": 1104,
+              "line": 1116,
+              "end_line": 1117,
               "kind": "method",
               "purpose": "Release output space for rear simulation. Implementation: calls _output_promises.erase.",
               "purpose_origin": "implementation_derived"
@@ -3897,8 +3897,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::output_space_valid",
               "name": "output_space_valid",
-              "line": 1107,
-              "end_line": 1111,
+              "line": 1120,
+              "end_line": 1124,
               "kind": "method",
               "purpose": "Output space valid for rear simulation. Implementation: calls _output_promises.has, store.filter.is_empty, ledger.loose_stock_mass_at, _reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -3906,8 +3906,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_free_space",
               "name": "_free_space",
-              "line": 1114,
-              "end_line": 1115,
+              "line": 1127,
+              "end_line": 1128,
               "kind": "method",
               "purpose": "Subtract physical loose-stock mass and inbound promises from a store's capacity.",
               "purpose_origin": "reviewed"
@@ -3915,8 +3915,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_valid_destination",
               "name": "_valid_destination",
-              "line": 1118,
-              "end_line": 1119,
+              "line": 1131,
+              "end_line": 1132,
               "kind": "method",
               "purpose": "Require an existing accessible store whose filter accepts the goods and whose unpromised capacity fits the load. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3924,8 +3924,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_nearest_storage",
               "name": "_nearest_storage",
-              "line": 1122,
-              "end_line": 1137,
+              "line": 1135,
+              "end_line": 1150,
               "kind": "method",
               "purpose": "Select nearest accepting reachable storage using the same person's unreserved work-point preview and stable tie-break, excluding piles and the former destination. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3933,8 +3933,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reroute",
               "name": "_reroute",
-              "line": 1140,
-              "end_line": 1158,
+              "line": 1153,
+              "end_line": 1171,
               "kind": "method",
               "purpose": "Retain actual carried goods and demand while selecting safe alternative storage or a recoverable pile, then physically carry to its reserved work point. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3942,8 +3942,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_deposit",
               "name": "_deposit",
-              "line": 1161,
-              "end_line": 1189,
+              "line": 1174,
+              "end_line": 1202,
               "kind": "method",
               "purpose": "Commit a carry into physical storage, update its job and release/report the actor or reroute an invalid destination. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3951,17 +3951,17 @@
             {
               "id": "game/staffing/rear_simulation.gd::_release_load",
               "name": "_release_load",
-              "line": 1192,
-              "end_line": 1202,
+              "line": 1205,
+              "end_line": 1216,
               "kind": "method",
-              "purpose": "Release the actor's live source claim, warehouse space/access promises and motion, then leave the same actor idle.",
+              "purpose": "Release actual package batch and storage/service-face claims before clearing an uncarried actor activity; quantities remain Ledger-owned.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at",
               "name": "_stock_at",
-              "line": 1205,
-              "end_line": 1206,
+              "line": 1219,
+              "end_line": 1220,
               "kind": "method",
               "purpose": "Return the player's positive stock inspections at one holder, optionally omitting mass.",
               "purpose_origin": "reviewed"
@@ -3969,8 +3969,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at/<lambda#1>",
               "name": "_stock_at/<lambda#1>",
-              "line": 1206,
-              "end_line": 1206,
+              "line": 1220,
+              "end_line": 1220,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns e.owner == PLAYER and e.quantity > 0.",
               "purpose_origin": "implementation_derived"
@@ -3978,8 +3978,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_relocation",
               "name": "_reconcile_relocation",
-              "line": 1209,
-              "end_line": 1240,
+              "line": 1223,
+              "end_line": 1254,
               "kind": "method",
               "purpose": "Reconcile one relocation job with current quantity and any active actor commitment.",
               "purpose_origin": "reviewed"
@@ -3987,8 +3987,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::workforce_snapshot",
               "name": "workforce_snapshot",
-              "line": 1243,
-              "end_line": 1269,
+              "line": 1257,
+              "end_line": 1283,
               "kind": "method",
               "purpose": "Inspect rear people and requested duties to report actual, pending, present and unfilled workforce positions.",
               "purpose_origin": "reviewed"
@@ -3996,8 +3996,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::hauling_snapshot",
               "name": "hauling_snapshot",
-              "line": 1271,
-              "end_line": 1280,
+              "line": 1285,
+              "end_line": 1294,
               "kind": "method",
               "purpose": "Clone actual haul jobs and annotate current age, effective priority, in-flight quantity and Emergency contention/starvation without exporting the full rear or mutating jobs.",
               "purpose_origin": "reviewed"
@@ -4005,8 +4005,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::snapshot",
               "name": "snapshot",
-              "line": 1283,
-              "end_line": 1315,
+              "line": 1297,
+              "end_line": 1329,
               "kind": "method",
               "purpose": "Build the broad rear staffing, people, store, service/event and optional audit/ledger inspection, reusing the current detached hauling-job view.",
               "purpose_origin": "reviewed"
@@ -4014,8 +4014,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_refresh_contention",
               "name": "_refresh_contention",
-              "line": 1318,
-              "end_line": 1324,
+              "line": 1332,
+              "end_line": 1338,
               "kind": "method",
               "purpose": "Update whether waiting haul demands are blocked by competing viable work.",
               "purpose_origin": "reviewed"
@@ -4023,8 +4023,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_waiting_job_viable",
               "name": "_waiting_job_viable",
-              "line": 1327,
-              "end_line": 1344,
+              "line": 1341,
+              "end_line": 1358,
               "kind": "method",
               "purpose": "Check whether a waiting job can be served by an eligible actor under current reservations and routes.",
               "purpose_origin": "reviewed"
@@ -4032,8 +4032,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::audit",
               "name": "audit",
-              "line": 1347,
-              "end_line": 1367,
+              "line": 1361,
+              "end_line": 1381,
               "kind": "method",
               "purpose": "Preserve ordinary25kg actor/load invariants; distinguish truck-owned bulk destination promises from actual personal carried mass, whose25kg check remains intact.",
               "purpose_origin": "reviewed"
@@ -4041,8 +4041,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_assigned",
               "name": "_assigned",
-              "line": 1370,
-              "end_line": 1374,
+              "line": 1384,
+              "end_line": 1388,
               "kind": "method",
               "purpose": "Count rear actors whose authoritative current duty equals the requested duty.",
               "purpose_origin": "reviewed"
@@ -4050,8 +4050,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_committed",
               "name": "_committed",
-              "line": 1377,
-              "end_line": 1381,
+              "line": 1391,
+              "end_line": 1395,
               "kind": "method",
               "purpose": "Count current and pending assignments committed to a duty using narrow duty reads.",
               "purpose_origin": "reviewed"
@@ -4059,8 +4059,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_pending_in",
               "name": "_pending_in",
-              "line": 1384,
-              "end_line": 1389,
+              "line": 1398,
+              "end_line": 1403,
               "kind": "method",
               "purpose": "Count actors with a pending assignment into the requested duty.",
               "purpose_origin": "reviewed"
@@ -4068,8 +4068,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_retaining",
               "name": "_retaining",
-              "line": 1392,
-              "end_line": 1397,
+              "line": 1406,
+              "end_line": 1411,
               "kind": "method",
               "purpose": "Count actors currently assigned to the duty who are not pending a transfer away.",
               "purpose_origin": "reviewed"
@@ -4077,8 +4077,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_present",
               "name": "_present",
-              "line": 1400,
-              "end_line": 1404,
+              "line": 1414,
+              "end_line": 1418,
               "kind": "method",
               "purpose": "Count currently assigned actors physically idle/unloading at the duty.",
               "purpose_origin": "reviewed"
@@ -4086,8 +4086,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job",
               "name": "_job",
-              "line": 1407,
-              "end_line": 1410,
+              "line": 1421,
+              "end_line": 1424,
               "kind": "method",
               "purpose": "Find a hauling job dictionary by ID, returning an empty dictionary when absent.",
               "purpose_origin": "reviewed"
@@ -4095,8 +4095,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_next",
               "name": "_next",
-              "line": 1413,
-              "end_line": 1415,
+              "line": 1427,
+              "end_line": 1429,
               "kind": "method",
               "purpose": "Increment and return the shared rear identifier/order sequence.",
               "purpose_origin": "reviewed"
@@ -4104,8 +4104,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_result",
               "name": "_result",
-              "line": 1418,
-              "end_line": 1419,
+              "line": 1432,
+              "end_line": 1433,
               "kind": "method",
               "purpose": "Return a rear command result containing success and message.",
               "purpose_origin": "reviewed"
@@ -4834,7 +4834,7 @@
           "label": "Select eligible idle hauler/job",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_start_job",
-          "line": 955
+          "line": 957
         },
         {
           "id": "n2",
@@ -4848,7 +4848,7 @@
           "label": "Finish timed carry phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 808
+          "line": 810
         },
         {
           "id": "n4",
@@ -6625,7 +6625,7 @@
         },
         {
           "path": "game/construction/construction_service.gd",
-          "sha256": "0cbdd942dbf7539792cda7bc0d8d40a0ff036df582d3e9a1c950c27f52553e9a",
+          "sha256": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -6724,7 +6724,7 @@
               "line": 185,
               "end_line": 243,
               "kind": "method",
-              "purpose": "Route against the same actual clearances: use guarded native warehouse pedestrian search when applicable, and retain the existing visibility search for unsupported/vehicle/legacy geometry.",
+              "purpose": "Build current clearance-grown obstacles; keep whole warehouse envelopes solid for vehicles, actual walls/racks for pedestrians, use guarded native walking-grid search and preserve legacy visibility fallback.",
               "purpose_origin": "reviewed"
             },
             {
@@ -7485,35 +7485,35 @@
           "label": "Create/inspect office truck option",
           "file": "game/construction/construction_truck_service.gd",
           "function": "option",
-          "line": 91
+          "line": 134
         },
         {
           "id": "n1",
           "label": "Start eligible physical trip",
           "file": "game/construction/construction_truck_service.gd",
           "function": "start",
-          "line": 136
+          "line": 182
         },
         {
           "id": "n2",
           "label": "Schedule actual walking/driving",
           "file": "game/construction/construction_truck_service.gd",
           "function": "_drive",
-          "line": 176
+          "line": 223
         },
         {
           "id": "n3",
           "label": "Progress to shared deadline",
           "file": "game/construction/construction_truck_service.gd",
           "function": "advance_to",
-          "line": 196
+          "line": 243
         },
         {
           "id": "n4",
           "label": "Finish/release trip and driver",
           "file": "game/construction/construction_truck_service.gd",
           "function": "_finish",
-          "line": 356
+          "line": 430
         }
       ],
       "edges": [
@@ -7551,14 +7551,14 @@
       "files": [
         {
           "path": "game/construction/construction_truck_service.gd",
-          "sha256": "1a7403ff97d173987397164d30dcc4b1934964535b94dbcde9068b53e4025e48",
+          "sha256": "ad97b82be03f3b2b18fa308f97845ef186cb12353cb844f6e72923e62aa6c85b",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/construction/construction_truck_service.gd::_init",
               "name": "_init",
-              "line": 9,
-              "end_line": 10,
+              "line": 11,
+              "end_line": 12,
               "kind": "method",
               "purpose": "Keep a weak reference to the owning rear model; no global lifetime or timer.",
               "purpose_origin": "reviewed"
@@ -7566,8 +7566,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_rear",
               "name": "_rear",
-              "line": 12,
-              "end_line": 13,
+              "line": 14,
+              "end_line": 15,
               "kind": "method",
               "purpose": "Resolve the current owning rear instance without a second inventory or clock.",
               "purpose_origin": "reviewed"
@@ -7575,8 +7575,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_curb",
               "name": "_curb",
-              "line": 15,
-              "end_line": 20,
+              "line": 17,
+              "end_line": 22,
               "kind": "method",
               "purpose": "Find a real clear roadside point near a physical store with valid last-metre walking access; never park inside a facility footprint.",
               "purpose_origin": "reviewed"
@@ -7584,8 +7584,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_clear",
               "name": "_clear",
-              "line": 22,
-              "end_line": 31,
+              "line": 24,
+              "end_line": 33,
               "kind": "method",
               "purpose": "Validate actual truck corridors against current construction footprints and other physical carriers, excluding this same truck only.",
               "purpose_origin": "reviewed"
@@ -7593,8 +7593,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_route",
               "name": "_route",
-              "line": 33,
-              "end_line": 52,
+              "line": 35,
+              "end_line": 54,
               "kind": "method",
               "purpose": "Reuse construction geometry and normal T01 turn radius to find a clearance-valid route; wider internal corridor/stubs permit real turns or return honest failure.",
               "purpose_origin": "reviewed"
@@ -7602,8 +7602,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_road_anchors",
               "name": "_road_anchors",
-              "line": 54,
-              "end_line": 60,
+              "line": 56,
+              "end_line": 62,
               "kind": "method",
               "purpose": "Find bounded clear standoff points joining actual roadside handling to a wider turning corridor using the existing construction geometry; never invent endpoint clearance.",
               "purpose_origin": "reviewed"
@@ -7611,35 +7611,71 @@
             {
               "id": "game/construction/construction_truck_service.gd::_register",
               "name": "_register",
-              "line": 62,
-              "end_line": 89,
+              "line": 64,
+              "end_line": 91,
               "kind": "method",
               "purpose": "Bundle one actual finite-fuel construction-domain truck per completed office at a legal berth; retain pending identity when no safe staging exists, never spawn at an invalid office door.",
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/construction/construction_truck_service.gd::warehouse_access_changed",
+              "name": "warehouse_access_changed",
+              "line": 93,
+              "end_line": 94,
+              "kind": "method",
+              "purpose": "Mark actual warehouse access dirty; settlement retries queued pickup and compares cached real walking geometry only after this event.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/construction/construction_truck_service.gd::_source_batch",
+              "name": "_source_batch",
+              "line": 96,
+              "end_line": 111,
+              "kind": "method",
+              "purpose": "Plan exact available M11 portions from actual packages in the selected connected warehouse component up to demand/payload limits; preserve single-stack legacy sources.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/construction/construction_truck_service.gd::_source_curb",
+              "name": "_source_curb",
+              "line": 113,
+              "end_line": 120,
+              "kind": "method",
+              "purpose": "Find a legal exterior loading curb at an open unjoined portal of the actual connected source warehouse, or the legacy source position.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/construction/construction_truck_service.gd::release_source_claims",
+              "name": "release_source_claims",
+              "line": 122,
+              "end_line": 132,
+              "kind": "method",
+              "purpose": "Release every uncollected trip package claim once and the current shelf service face without changing actual carried or onboard stock.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/construction/construction_truck_service.gd::option",
               "name": "option",
-              "line": 91,
-              "end_line": 134,
+              "line": 134,
+              "end_line": 180,
               "kind": "method",
-              "purpose": "Select only an idle actual office truck for pending-site M11 bulk demand, real available hauler/stock/space, valid walking/vehicle routes and complete finite return-fuel budget; otherwise report truthful foot fallback.",
+              "purpose": "Select an available fuelled office utility truck, real source package batch, legal source/destination curbs and safe drive/worker routes only when bulk demand exceeds personal handling.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::start",
               "name": "start",
-              "line": 136,
-              "end_line": 158,
+              "line": 182,
+              "end_line": 205,
               "kind": "method",
-              "purpose": "Retain the selected actual hauler and existing actor load/claim/destination promise for one exclusive utility trip; move that person physically to the actual truck.",
+              "purpose": "Retain the actual driver, planned package batch and trip routes, then physically approach the same construction truck; initialize one batch cursor.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::_wait",
               "name": "_wait",
-              "line": 160,
-              "end_line": 163,
+              "line": 207,
+              "end_line": 210,
               "kind": "method",
               "purpose": "Schedule a finite physical handling boundary on the existing rear clock, without advancing or polling time.",
               "purpose_origin": "reviewed"
@@ -7647,8 +7683,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_walk",
               "name": "_walk",
-              "line": 165,
-              "end_line": 174,
+              "line": 212,
+              "end_line": 221,
               "kind": "method",
               "purpose": "Schedule the same actual worker walking/carrying to a true handling point; retain cargo and ownership when access is blocked.",
               "purpose_origin": "reviewed"
@@ -7656,8 +7692,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_drive",
               "name": "_drive",
-              "line": 176,
-              "end_line": 189,
+              "line": 223,
+              "end_line": 236,
               "kind": "method",
               "purpose": "Start a clear route with the same occupied construction truck and actual finite fuel; recover safely instead of moving through invalid access.",
               "purpose_origin": "reviewed"
@@ -7665,8 +7701,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::next_boundary",
               "name": "next_boundary",
-              "line": 191,
-              "end_line": 194,
+              "line": 238,
+              "end_line": 241,
               "kind": "method",
               "purpose": "Contribute only utility trip handling/motion deadlines to the existing shared chronological clock.",
               "purpose_origin": "reviewed"
@@ -7674,8 +7710,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::advance_to",
               "name": "advance_to",
-              "line": 196,
-              "end_line": 215,
+              "line": 243,
+              "end_line": 262,
               "kind": "method",
               "purpose": "Move the actual worker or occupied truck along its scheduled path and burn measured normal T01 distance fuel; no teleport or duplicate worker motion.",
               "purpose_origin": "reviewed"
@@ -7683,8 +7719,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::cancel_actor",
               "name": "cancel_actor",
-              "line": 217,
-              "end_line": 223,
+              "line": 264,
+              "end_line": 270,
               "kind": "method",
               "purpose": "Intercept cancellation or reassignment of a retained utility actor before generic hauling load cleanup can discard physical trip ownership.",
               "purpose_origin": "reviewed"
@@ -7692,26 +7728,26 @@
             {
               "id": "game/construction/construction_truck_service.gd::_recover",
               "name": "_recover",
-              "line": 225,
-              "end_line": 263,
+              "line": 272,
+              "end_line": 308,
               "kind": "method",
-              "purpose": "Release only unpicked source claims, retain actual truck/hand cargo and its remaining promise, create a real local recoverable pile and schedule physical unload/safe release.",
+              "purpose": "Release all uncollected package claims, retain actual onboard/carried cargo and enter existing physical recovery handling after interruption.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::settle",
               "name": "settle",
-              "line": 265,
-              "end_line": 319,
+              "line": 310,
+              "end_line": 380,
               "kind": "method",
-              "purpose": "Reconcile real office utility-truck registration/lifetime and active tasks; opt-in profiling measures only actual registration attempts.",
+              "purpose": "Reconcile finite utility-truck activity boundaries and changed access; use actual warehouse interior walking geometry and event-woken queued shelf pickup while preserving office/site/crew/fuel guards.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::_block",
               "name": "_block",
-              "line": 321,
-              "end_line": 326,
+              "line": 382,
+              "end_line": 387,
               "kind": "method",
               "purpose": "Retain actual worker/cargo in explicit blocked recovery with cause and an existing Workers/Jobs Available-reassignment retry action, rather than silently parking an unhandled station/handling failure at an infinite deadline.",
               "purpose_origin": "reviewed"
@@ -7719,8 +7755,8 @@
             {
               "id": "game/construction/construction_truck_service.gd::_station",
               "name": "_station",
-              "line": 328,
-              "end_line": 333,
+              "line": 389,
+              "end_line": 394,
               "kind": "method",
               "purpose": "Invoke only the ledger construction-scoped actual station boundary; preserve qualification and record physical blocking feedback.",
               "purpose_origin": "reviewed"
@@ -7728,17 +7764,17 @@
             {
               "id": "game/construction/construction_truck_service.gd::_next_load",
               "name": "_next_load",
-              "line": 335,
-              "end_line": 343,
+              "line": 396,
+              "end_line": 417,
               "kind": "method",
-              "purpose": "Load the remaining claimed amount in actual personal-allowance portions, releasing the fulfilled source claim before driving the true bulk cargo.",
+              "purpose": "Finish only after actual batch quantity is onboard; otherwise select the next claimed package, acquire its actual shelf face or wait for an access event before walking.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::_next_unload",
               "name": "_next_unload",
-              "line": 345,
-              "end_line": 354,
+              "line": 419,
+              "end_line": 428,
               "kind": "method",
               "purpose": "Schedule actual truck cargo pickup or physical empty return/release; never credit reservation or onboard stock as delivered.",
               "purpose_origin": "reviewed"
@@ -7746,19 +7782,19 @@
             {
               "id": "game/construction/construction_truck_service.gd::_finish",
               "name": "_finish",
-              "line": 356,
-              "end_line": 426,
+              "line": 430,
+              "end_line": 510,
               "kind": "method",
-              "purpose": "Resolve due actual approach, station, 25kg loading/carrying, fuelled bulk travel, portion unloading and return boundaries; decrement remaining actor count/mass only after physical drop and credit original live demand once.",
+              "purpose": "Apply each actual worker/truck phase boundary, transferring stock once at pickup and deposit, advancing the package cursor only after onboard handoff and preserving real site delivery/return.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/construction/construction_truck_service.gd::_release",
               "name": "_release",
-              "line": 428,
-              "end_line": 448,
+              "line": 512,
+              "end_line": 532,
               "kind": "method",
-              "purpose": "Release the same worker only after cargo and station handoff, apply pending duty safely and park/retire the same actual truck without replacement or qualification grants.",
+              "purpose": "Release the actual construction driver and any remaining package claims, restore the same parked/retired truck and return its person to safe eligible work.",
               "purpose_origin": "reviewed"
             }
           ]
@@ -11417,28 +11453,28 @@
           "label": "Actual crew boarding",
           "file": "game/vehicles/vehicle_activity.gd",
           "function": "complete_board",
-          "line": 122
+          "line": 126
         },
         {
           "id": "n3",
           "label": "Request physical refuel",
           "file": "game/vehicles/vehicle_activity.gd",
           "function": "request_refuel",
-          "line": 144
+          "line": 155
         },
         {
           "id": "n4",
           "label": "Start measured rear drive",
           "file": "game/vehicles/vehicle_activity.gd",
           "function": "start_drive",
-          "line": 229
+          "line": 246
         },
         {
           "id": "n5",
           "label": "Advance route / burn actual fuel",
           "file": "game/vehicles/vehicle_activity.gd",
           "function": "advance_to",
-          "line": 355
+          "line": 372
         }
       ],
       "edges": [
@@ -11653,7 +11689,7 @@
         },
         {
           "path": "game/vehicles/vehicle_activity.gd",
-          "sha256": "3681019c138ddb054d6fe0a560475f7a20b98464f42ac100b492509d3b9b0af1",
+          "sha256": "3ef05320bd583d07394a3e89642475c9fbec31ec5cbee2dadd8efee58c2ed086",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -11732,16 +11768,16 @@
               "id": "game/vehicles/vehicle_activity.gd::report_path",
               "name": "report_path",
               "line": 77,
-              "end_line": 85,
+              "end_line": 89,
               "kind": "method",
-              "purpose": "Report path for vehicle activity. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, duty.begins_with, fuel_jobs.get.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Route assigned crew to their actual hull or fuel handlers to a reserved real shelf service face; preserve legacy heavy-bay exit routing.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/vehicles/vehicle_activity.gd::_path_to_hull",
               "name": "_path_to_hull",
-              "line": 87,
-              "end_line": 96,
+              "line": 91,
+              "end_line": 100,
               "kind": "method",
               "purpose": "Path to hull for vehicle activity. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, rear.heavy_owner, _walk_from.",
               "purpose_origin": "implementation_derived"
@@ -11749,8 +11785,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_walk_from",
               "name": "_walk_from",
-              "line": 98,
-              "end_line": 109,
+              "line": 102,
+              "end_line": 113,
               "kind": "method",
               "purpose": "Plan rear crew/fuel walks through the current rear navigator, preserving an occupied-bay exit through its actual facility door and the unchanged template navigator in legacy sessions.",
               "purpose_origin": "reviewed"
@@ -11758,8 +11794,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::begin_board",
               "name": "begin_board",
-              "line": 111,
-              "end_line": 120,
+              "line": 115,
+              "end_line": 124,
               "kind": "method",
               "purpose": "Validate and apply begin board in vehicle activity. Successful outcomes: Three seconds of stopped station entry started.",
               "purpose_origin": "implementation_derived"
@@ -11767,8 +11803,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::complete_board",
               "name": "complete_board",
-              "line": 122,
-              "end_line": 126,
+              "line": 126,
+              "end_line": 130,
               "kind": "method",
               "purpose": "Complete board for vehicle activity. Implementation: calls _rear_ref.get_ref, String(rear.ledger.inspect_entity(person_id).duty_id).split, String, rear.ledger.inspect_entity.",
               "purpose_origin": "implementation_derived"
@@ -11776,8 +11812,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::request_exit",
               "name": "request_exit",
-              "line": 128,
-              "end_line": 133,
+              "line": 132,
+              "end_line": 137,
               "kind": "method",
               "purpose": "Preserve ordinary vehicle exit scheduling and leave retained utility trip exits to the construction owner so cargo/station ownership cannot be discarded.",
               "purpose_origin": "reviewed"
@@ -11785,26 +11821,44 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::complete_exit",
               "name": "complete_exit",
-              "line": 135,
-              "end_line": 142,
+              "line": 139,
+              "end_line": 146,
               "kind": "method",
               "purpose": "Complete exit for vehicle activity. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, vehicles.has, _result; updates rear.requests[person.duty_id].target.",
               "purpose_origin": "implementation_derived"
             },
             {
+              "id": "game/vehicles/vehicle_activity.gd::fuel_carry_limit",
+              "name": "fuel_carry_limit",
+              "line": 148,
+              "end_line": 150,
+              "kind": "method",
+              "purpose": "Return one physical warehouse can capacity20kg or the legacy personal25kg limit without changing requested quantities.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/vehicles/vehicle_activity.gd::warehouse_access_changed",
+              "name": "warehouse_access_changed",
+              "line": 152,
+              "end_line": 153,
+              "kind": "method",
+              "purpose": "Mark retained fuel jobs eligible for an event-driven source access retry after an actual warehouse change.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/vehicles/vehicle_activity.gd::request_refuel",
               "name": "request_refuel",
-              "line": 144,
-              "end_line": 175,
+              "line": 155,
+              "end_line": 190,
               "kind": "method",
-              "purpose": "Validate and apply request refuel in vehicle activity. Successful outcomes: Worker reporting to purchased M08; pickup, carry and tank handling remain.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Reject unsupported quantities before mutation, find real unreserved fuel at a reachable shelf face, reserve its exact kilograms and assign one actual free worker to physical handling.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/vehicles/vehicle_activity.gd::begin_fuel_pickup",
               "name": "begin_fuel_pickup",
-              "line": 177,
-              "end_line": 188,
+              "line": 192,
+              "end_line": 203,
               "kind": "method",
               "purpose": "Validate and apply begin fuel pickup in vehicle activity. Successful outcomes: Two-second source pickup started.",
               "purpose_origin": "implementation_derived"
@@ -11812,26 +11866,26 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::cancel_unpicked_fuel",
               "name": "cancel_unpicked_fuel",
-              "line": 190,
-              "end_line": 197,
+              "line": 205,
+              "end_line": 213,
               "kind": "method",
-              "purpose": "Cancel unpicked fuel for vehicle activity. Implementation: calls fuel_jobs.has, _rear_ref.get_ref, job.claim.is_empty, rear.ledger.release_claim; updates rear.requests[\"fuel:\"+job.hull].target.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Release an uncollected fuel claim and shelf service point and clear its duty; carried fuel retains safe physical handoff.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/vehicles/vehicle_activity.gd::complete_fuel_pickup",
               "name": "complete_fuel_pickup",
-              "line": 199,
-              "end_line": 212,
+              "line": 215,
+              "end_line": 229,
               "kind": "method",
-              "purpose": "Complete fuel pickup for vehicle activity. Implementation: calls _rear_ref.get_ref, fuel_jobs.get, job.is_empty, _result; updates job.carried, job.claim.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Transfer the exact reserved fuel into the actual worker carry, release source access and start walking toward the same hull tank.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/vehicles/vehicle_activity.gd::begin_fuel_deposit",
               "name": "begin_fuel_deposit",
-              "line": 214,
-              "end_line": 217,
+              "line": 231,
+              "end_line": 234,
               "kind": "method",
               "purpose": "Begin fuel deposit for vehicle activity. Implementation: calls _rear_ref.get_ref; updates rear.actors[person_id].deadline, rear.actors[person_id].phase.",
               "purpose_origin": "implementation_derived"
@@ -11839,8 +11893,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::complete_fuel_deposit",
               "name": "complete_fuel_deposit",
-              "line": 219,
-              "end_line": 227,
+              "line": 236,
+              "end_line": 244,
               "kind": "method",
               "purpose": "Keep real purchased M08 carry/tank handoff; an already-promised fuel carry may finish into the same stopped retired utility hull rather than trapping cargo/worker.",
               "purpose_origin": "reviewed"
@@ -11848,8 +11902,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::start_drive",
               "name": "start_drive",
-              "line": 229,
-              "end_line": 258,
+              "line": 246,
+              "end_line": 275,
               "kind": "method",
               "purpose": "Validate and apply start drive in vehicle activity. Successful outcomes: Same F10 hull moving physically toward its promised F11 place.",
               "purpose_origin": "implementation_derived"
@@ -11857,8 +11911,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_route",
               "name": "_route",
-              "line": 260,
-              "end_line": 290,
+              "line": 277,
+              "end_line": 307,
               "kind": "method",
               "purpose": "Plan and validate the produced hull's route to its reserved parking place against actual built sites and occupied hulls; apply immutable facility obstacles only in legacy template sessions so empty-field vehicles are not blocked by unbuilt buildings.",
               "purpose_origin": "reviewed"
@@ -11866,8 +11920,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_rounded",
               "name": "_rounded",
-              "line": 292,
-              "end_line": 316,
+              "line": 309,
+              "end_line": 333,
               "kind": "method",
               "purpose": "Rounded for vehicle activity. Implementation: calls range, corners.size, (corner-before).normalized, (after-corner).normalized.",
               "purpose_origin": "implementation_derived"
@@ -11875,8 +11929,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_turn_radius",
               "name": "_turn_radius",
-              "line": 318,
-              "end_line": 319,
+              "line": 335,
+              "end_line": 336,
               "kind": "method",
               "purpose": "Return {\"T01\":10.0,\"T02\":9.0,\"T03\":7.0,\"T04\":8.0,\"T05\":0.0}[type] for vehicle activity.",
               "purpose_origin": "implementation_derived"
@@ -11884,8 +11938,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_drive_speed",
               "name": "_drive_speed",
-              "line": 321,
-              "end_line": 324,
+              "line": 338,
+              "end_line": 341,
               "kind": "method",
               "purpose": "Drive speed for vehicle activity. Implementation: calls _road_speed, minf, _turn_radius, deg_to_rad.",
               "purpose_origin": "implementation_derived"
@@ -11893,8 +11947,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_drive_seconds",
               "name": "_drive_seconds",
-              "line": 326,
-              "end_line": 327,
+              "line": 343,
+              "end_line": 344,
               "kind": "method",
               "purpose": "Return length/_drive_speed(type)+(3.0 if type == \"T05\" else 0.0) for vehicle activity. Implementation: calls _drive_speed.",
               "purpose_origin": "implementation_derived"
@@ -11902,8 +11956,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_distance_at_time",
               "name": "_distance_at_time",
-              "line": 329,
-              "end_line": 342,
+              "line": 346,
+              "end_line": 359,
               "kind": "method",
               "purpose": "Distance at time for vehicle activity. Implementation: calls minf, maxf, _drive_speed, range; updates remaining, travelled.",
               "purpose_origin": "implementation_derived"
@@ -11911,8 +11965,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_road_speed",
               "name": "_road_speed",
-              "line": 344,
-              "end_line": 345,
+              "line": 361,
+              "end_line": 362,
               "kind": "method",
               "purpose": "Return {\"T01\":12.0,\"T02\":15.0,\"T03\":18.0,\"T04\":12.0,\"T05\":9.0}[type] for vehicle activity.",
               "purpose_origin": "implementation_derived"
@@ -11920,8 +11974,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_fuel_rate",
               "name": "_fuel_rate",
-              "line": 347,
-              "end_line": 348,
+              "line": 364,
+              "end_line": 365,
               "kind": "method",
               "purpose": "Return {\"T01\":2.0,\"T02\":2.0,\"T03\":1.5,\"T04\":4.0,\"T05\":6.0}[type] for vehicle activity.",
               "purpose_origin": "implementation_derived"
@@ -11929,8 +11983,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::next_boundary",
               "name": "next_boundary",
-              "line": 350,
-              "end_line": 353,
+              "line": 367,
+              "end_line": 370,
               "kind": "method",
               "purpose": "Return the next scheduled vehicle activity event time for the shared scheduler. Implementation: calls vehicles.values, minf; updates deadline.",
               "purpose_origin": "implementation_derived"
@@ -11938,8 +11992,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::advance_to",
               "name": "advance_to",
-              "line": 355,
-              "end_line": 373,
+              "line": 372,
+              "end_line": 390,
               "kind": "method",
               "purpose": "Advance scheduled vehicle activity work to the supplied simulation time. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, hull.get, minf; updates row.burned, row.deadline, row.distance, row.elapsed.",
               "purpose_origin": "implementation_derived"
@@ -11947,17 +12001,17 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::settle",
               "name": "settle",
-              "line": 375,
-              "end_line": 417,
+              "line": 392,
+              "end_line": 436,
               "kind": "method",
-              "purpose": "Preserve actual vehicle/fuel lifecycle; allow existing carried fuel to finish its safe stopped retired-utility handoff without granting new fuel or work.",
+              "purpose": "Apply existing finite vehicle arrivals and crew state, retry warehouse fuel source waits only after a relevant access event and preserve carried-fuel waiting for a stopped hull.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/vehicles/vehicle_activity.gd::readiness",
               "name": "readiness",
-              "line": 419,
-              "end_line": 436,
+              "line": 438,
+              "end_line": 455,
               "kind": "method",
               "purpose": "Readiness for vehicle activity. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, hull.is_empty, hull.crew_by_station.get; updates ready_stations[station].",
               "purpose_origin": "implementation_derived"
@@ -11965,8 +12019,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::snapshot",
               "name": "snapshot",
-              "line": 438,
-              "end_line": 455,
+              "line": 457,
+              "end_line": 474,
               "kind": "method",
               "purpose": "Keep detached actual hull/fuel facts and surface utility owner phase/worker/blocker for real Vehicles UI; no fake F11 occupancy or gameplay mutation.",
               "purpose_origin": "reviewed"
@@ -11974,8 +12028,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::audit",
               "name": "audit",
-              "line": 457,
-              "end_line": 468,
+              "line": 476,
+              "end_line": 487,
               "kind": "method",
               "purpose": "Preserve manufactured hull bay/F11/fleet invariants; construction-domain utility rows belong to their actual office service rather than ordinary fleet parking promises.",
               "purpose_origin": "reviewed"
@@ -11983,8 +12037,8 @@
             {
               "id": "game/vehicles/vehicle_activity.gd::_result",
               "name": "_result",
-              "line": 470,
-              "end_line": 471,
+              "line": 489,
+              "end_line": 490,
               "kind": "method",
               "purpose": "Build a structured vehicle activity result from its success flag and explanation.",
               "purpose_origin": "implementation_derived"
@@ -25796,7 +25850,7 @@
       "files": [
         {
           "path": "game/rear_base/base_demo.gd",
-          "sha256": "f71300e2ad245a9ff5d1fb53f98afc462d1f2d4cfd6de2ad53f19a82e0b642d8",
+          "sha256": "82b6f37719d403757bf3d07831c689348cd83843831e22b18c986ec8392b6a9e",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -26912,7 +26966,7 @@
               "line": 1285,
               "end_line": 1312,
               "kind": "method",
-              "purpose": "Build normal supply-truck preparation guidance and production/training/fuel navigation, actual hull selection, distinct crew and available fuel-worker choices, physical station/fuel/parking actions and current status. Retain advanced vehicle owners without placing or granting a hull.",
+              "purpose": "Build existing vehicle selection, staffing, fuel carry and drive controls; show the actual current-mode fuel carry limit in kilograms.",
               "purpose_origin": "reviewed"
             },
             {
@@ -27639,16 +27693,16 @@
               "id": "game/rear_base/base_demo.gd::_refresh_vehicle_controls",
               "name": "_refresh_vehicle_controls",
               "line": 2106,
-              "end_line": 2118,
+              "end_line": 2120,
               "kind": "method",
-              "purpose": "Show actual construction utility rows distinctly without inventing an F11 slot; retain real selection/fuel controls and normal vehicle state rendering.",
+              "purpose": "Refresh actual vehicle/staffing/status projections and current model fuel limit after binding or panel updates so warehouse cans support at most20kg.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/rear_base/base_demo.gd::_refresh_vehicle_controls/<lambda#1>",
               "name": "_refresh_vehicle_controls/<lambda#1>",
-              "line": 2108,
-              "end_line": 2108,
+              "line": 2110,
+              "end_line": 2110,
               "kind": "lambda",
               "purpose": "Label actual utility truck identity/state/fuel separately from ordinary F11 manufactured hull rows; no state changes.",
               "purpose_origin": "reviewed"
@@ -27656,8 +27710,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_work",
               "name": "_refresh_work",
-              "line": 2120,
-              "end_line": 2131,
+              "line": 2122,
+              "end_line": 2133,
               "kind": "method",
               "purpose": "Refresh the common HUD and existing production-facility selection, staffing, ingredients, output/work summaries and heavy controls using the scoped production view.",
               "purpose_origin": "reviewed"
@@ -27665,8 +27719,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_production_status",
               "name": "_refresh_production_status",
-              "line": 2133,
-              "end_line": 2156,
+              "line": 2135,
+              "end_line": 2158,
               "kind": "method",
               "purpose": "Assemble summaries for supplied actual production activities or the retained diagnostic overview, then present current selected heavy bay/order/fleet details when available.",
               "purpose_origin": "reviewed"
@@ -27674,8 +27728,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_office_draft",
               "name": "_refresh_office_draft",
-              "line": 2158,
-              "end_line": 2162,
+              "line": 2160,
+              "end_line": 2164,
               "kind": "method",
               "purpose": "Reset Office dirty state on model replacement and otherwise preserve unconfirmed Office staffing across read-only refreshes.",
               "purpose_origin": "reviewed"
@@ -27683,8 +27737,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction",
               "name": "_refresh_construction",
-              "line": 2164,
-              "end_line": 2177,
+              "line": 2166,
+              "end_line": 2179,
               "kind": "method",
               "purpose": "Refresh actual construction status and current site selection while preserving the same-context Office staffing draft.",
               "purpose_origin": "reviewed"
@@ -27692,8 +27746,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction/<lambda#1>",
               "name": "_refresh_construction/<lambda#1>",
-              "line": 2173,
-              "end_line": 2174,
+              "line": 2175,
+              "end_line": 2176,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns \"%s · %s · %d Building Materials\" % [WorkforcePanel.job_name(row.id, simulation), str(row.state).replace(\"M11\", \"Building Materials\"), row.m11].",
               "purpose_origin": "implementation_derived"
@@ -27701,8 +27755,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_construction_progress",
               "name": "_refresh_construction_progress",
-              "line": 2179,
-              "end_line": 2183,
+              "line": 2181,
+              "end_line": 2185,
               "kind": "method",
               "purpose": "Render the current selected actual site through the shared construction text formatter.",
               "purpose_origin": "reviewed"
@@ -27710,8 +27764,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_construction_progress_text",
               "name": "_construction_progress_text",
-              "line": 2185,
-              "end_line": 2199,
+              "line": 2187,
+              "end_line": 2201,
               "kind": "method",
               "purpose": "Present actual earned work, builder presence, used/local material and selected-site physical haul deliveries/carries/current blocker through the existing menu refresh.",
               "purpose_origin": "reviewed"
@@ -27719,8 +27773,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training",
               "name": "_refresh_training",
-              "line": 2201,
-              "end_line": 2209,
+              "line": 2203,
+              "end_line": 2211,
               "kind": "method",
               "purpose": "Read one scoped current Training view, update the ordinary first-instructor offer/price availability and shared resource/population HUD, then render school/course facts without a world snapshot or new polling.",
               "purpose_origin": "reviewed"
@@ -27728,8 +27782,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls",
               "name": "_refresh_training_controls",
-              "line": 2211,
-              "end_line": 2228,
+              "line": 2213,
+              "end_line": 2230,
               "kind": "method",
               "purpose": "Refresh actual current school/course and staffing facts while preserving an unconfirmed instructor target for the same model/duty.",
               "purpose_origin": "reviewed"
@@ -27737,8 +27791,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_training_controls/<lambda#1>",
               "name": "_refresh_training_controls/<lambda#1>",
-              "line": 2213,
-              "end_line": 2213,
+              "line": 2215,
+              "end_line": 2215,
               "kind": "lambda",
               "purpose": "Format each training row's course/person identity, state and elapsed/required work for the Train list.",
               "purpose_origin": "reviewed"
@@ -27746,8 +27800,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_purchasing",
               "name": "_refresh_purchasing",
-              "line": 2231,
-              "end_line": 2242,
+              "line": 2233,
+              "end_line": 2244,
               "kind": "method",
               "purpose": "Render scoped procurement balance, quote, real orders/unloading/recovery status and current army delivery requests.",
               "purpose_origin": "reviewed"
@@ -27755,8 +27809,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce",
               "name": "_refresh_workforce",
-              "line": 2244,
-              "end_line": 2251,
+              "line": 2246,
+              "end_line": 2253,
               "kind": "method",
               "purpose": "Refresh workforce for base demo. Implementation: calls simulation.workforce_view, _refresh_resource_hud, workforce_panel.refresh, _sync_option.",
               "purpose_origin": "implementation_derived"
@@ -27764,8 +27818,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_refresh_workforce/<lambda#1>",
               "name": "_refresh_workforce/<lambda#1>",
-              "line": 2250,
-              "end_line": 2251,
+              "line": 2252,
+              "end_line": 2253,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns person.id+\" | \"+(person.duty_id if not person.duty_id.is_empty() else person.assignment)+\" | \"+person.phase.",
               "purpose_origin": "implementation_derived"
@@ -27773,8 +27827,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_factory_plan_action",
               "name": "_factory_plan_action",
-              "line": 2253,
-              "end_line": 2275,
+              "line": 2255,
+              "end_line": 2277,
               "kind": "method",
               "purpose": "Route only enable/pause guidance through current recovery validation/focus; retain existing Build/Work/other navigation and non-recovery same-facility draft behavior.",
               "purpose_origin": "reviewed"
@@ -27782,8 +27836,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_needs_panel",
               "name": "_army_needs_panel",
-              "line": 2277,
-              "end_line": 2281,
+              "line": 2279,
+              "end_line": 2283,
               "kind": "method",
               "purpose": "Create the scene-owned Army needs panel, bind the current session to the pure authoritative reader and route emitted action intent to the rear controller.",
               "purpose_origin": "reviewed"
@@ -27791,8 +27845,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_army_supply_action",
               "name": "_army_supply_action",
-              "line": 2283,
-              "end_line": 2308,
+              "line": 2285,
+              "end_line": 2310,
               "kind": "method",
               "purpose": "Resolve fresh current action identity before command; explicit HQ rifle resume targets E01 separately from unchanged E02 ammunition resume, preserving other navigation/observation flows.",
               "purpose_origin": "reviewed"
@@ -27800,8 +27854,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_focus_factory_recovery",
               "name": "_focus_factory_recovery",
-              "line": 2310,
-              "end_line": 2327,
+              "line": 2312,
+              "end_line": 2329,
               "kind": "method",
               "purpose": "Resolve current recovery once per click; preserve same-factory drafts or select/load exact other factory, then recheck model/site/owner/scalar state and focus/reveal existing control without pressing or mutating gameplay.",
               "purpose_origin": "reviewed"
@@ -27809,8 +27863,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_sync_construction_selection",
               "name": "_sync_construction_selection",
-              "line": 2329,
-              "end_line": 2332,
+              "line": 2331,
+              "end_line": 2334,
               "kind": "method",
               "purpose": "Select the existing row matching the actual returned or chosen site identity after construction rows refresh.",
               "purpose_origin": "reviewed"
@@ -27818,8 +27872,8 @@
             {
               "id": "game/rear_base/base_demo.gd::_manager_placement_rejection",
               "name": "_manager_placement_rejection",
-              "line": 2334,
-              "end_line": 2349,
+              "line": 2336,
+              "end_line": 2351,
               "kind": "method",
               "purpose": "Check exact positive overlap between the live upright unscaled capsule ground circle and current Catalog footprint, with no added clearance, cached permission or phantom blocker for unbound 2D.",
               "purpose_origin": "reviewed"
@@ -37158,7 +37212,7 @@
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
       "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate. Empty unreserved fixtures can be converted by a real worker; existing first-person mode retains the ceiling.",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits.",
       "nodes": [
         {
           "id": "opening",
@@ -37221,7 +37275,42 @@
           "label": "Actual selected/connected storage facts",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "summary",
-          "line": 309
+          "line": 334
+        },
+        {
+          "id": "batch",
+          "label": "Existing utility selects actual connected package batch",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "option",
+          "line": 134
+        },
+        {
+          "id": "load",
+          "label": "Real worker collects reserved shelf package",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_next_load",
+          "line": 396
+        },
+        {
+          "id": "handoff",
+          "label": "Existing truck deposit / site delivery / return",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_finish",
+          "line": 430
+        },
+        {
+          "id": "fuel",
+          "label": "Explicit20kg limit / exact partial shelf fuel",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "request_refuel",
+          "line": 155
+        },
+        {
+          "id": "wake",
+          "label": "Actual access events wake existing work",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "warehouse_space_changed",
+          "line": 489
         }
       ],
       "edges": [
@@ -37274,6 +37363,41 @@
           "from": "access",
           "to": "routes",
           "label": "real endpoint/segment guards"
+        },
+        {
+          "from": "summary",
+          "to": "batch",
+          "label": "actual indexed source packages"
+        },
+        {
+          "from": "batch",
+          "to": "load",
+          "label": "atomic per-package claims / exterior curb"
+        },
+        {
+          "from": "load",
+          "to": "handoff",
+          "label": "one actual pickup and onboard deposit"
+        },
+        {
+          "from": "handoff",
+          "to": "load",
+          "label": "next claimed package if any"
+        },
+        {
+          "from": "wake",
+          "to": "load",
+          "label": "specific source access retry"
+        },
+        {
+          "from": "wake",
+          "to": "fuel",
+          "label": "wake retained source wait"
+        },
+        {
+          "from": "fuel",
+          "to": "routes",
+          "label": "actual shelf service face"
         }
       ],
       "related": [
@@ -37282,7 +37406,8 @@
         "hauling",
         "construction",
         "preview",
-        "debug"
+        "debug",
+        "vehicles"
       ],
       "primary_files": [
         "game/warehousing/material_packages.gd",
@@ -37292,7 +37417,7 @@
         "game/warehousing/warehouse_service.gd",
         "game/warehousing/warehouse_view.gd"
       ],
-      "notes": "Current normal288M02receipt has scoped evidence; full-state admission/join has explicit prepopulation/Instant Build limitations. Ordinary return/reload/staging recovery, true paired timber custody, renderer/native movement and60FPS acceptance remain pending. Source routing uses deterministic nearest feasible warehouse estimate, not exhaustive globally shortest per-crate optimization.",
+      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization.",
       "files": [
         {
           "path": "game/warehousing/material_packages.gd",
@@ -37440,7 +37565,7 @@
         },
         {
           "path": "game/warehousing/warehouse_service.gd",
-          "sha256": "f1aee15179ed6c400ceadedefbbd42f57276e7d2746830f4ab6166c2bbda7a1e",
+          "sha256": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -37615,19 +37740,46 @@
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/warehousing/warehouse_service.gd::connected_modules",
+              "name": "connected_modules",
+              "line": 309,
+              "end_line": 319,
+              "kind": "method",
+              "purpose": "Traverse only completed full-edge warehouse joins from one actual module and return its connected membership without moving or copying stock.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/warehousing/warehouse_service.gd::stock_module",
+              "name": "stock_module",
+              "line": 321,
+              "end_line": 323,
+              "kind": "method",
+              "purpose": "Resolve an indexed physical package to its owning fixture module, or return empty for legacy/nonwarehouse sources.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/warehousing/warehouse_service.gd::exterior_doors",
+              "name": "exterior_doors",
+              "line": 325,
+              "end_line": 332,
+              "kind": "method",
+              "purpose": "List nonretiring open front portals of one actual connected warehouse, excluding front boundaries removed by completed joins.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/warehousing/warehouse_service.gd::summary",
               "name": "summary",
-              "line": 309,
-              "end_line": 350,
+              "line": 334,
+              "end_line": 368,
               "kind": "method",
-              "purpose": "Cache actual connected-module and selected-module quantities, package counts and finite fixture/claim readiness after keyed changes.",
+              "purpose": "Cache actual connected/module stock quantities, package counts, fixture readiness and promised capacity from existing cell indexes and the single Ledger inventory.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::work_point",
               "name": "work_point",
-              "line": 352,
-              "end_line": 353,
+              "line": 370,
+              "end_line": 371,
               "kind": "method",
               "purpose": "Return a worker's currently held warehouse handling point without rescanning stock or geometry.",
               "purpose_origin": "reviewed"
@@ -37635,8 +37787,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_service_point",
               "name": "stock_service_point",
-              "line": 355,
-              "end_line": 359,
+              "line": 373,
+              "end_line": 377,
               "kind": "method",
               "purpose": "Read the exact package cell service coordinate without a path search, stock duplication or handling reservation.",
               "purpose_origin": "reviewed"
@@ -37644,8 +37796,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_point",
               "name": "stock_point",
-              "line": 361,
-              "end_line": 370,
+              "line": 379,
+              "end_line": 388,
               "kind": "method",
               "purpose": "Resolve the actual selected stock cell to a reachable free service face; optionally register that worker's physical handling access.",
               "purpose_origin": "reviewed"
@@ -37653,8 +37805,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release_point",
               "name": "release_point",
-              "line": 372,
-              "end_line": 373,
+              "line": 390,
+              "end_line": 391,
               "kind": "method",
               "purpose": "Release one worker's warehouse service face and wake waiting allocations without rebuilding presentation.",
               "purpose_origin": "reviewed"
@@ -37662,8 +37814,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::take_clearance",
               "name": "take_clearance",
-              "line": 375,
-              "end_line": 378,
+              "line": 393,
+              "end_line": 396,
               "kind": "method",
               "purpose": "Consume a finished-deposit access-clearance request once, rather than repeatedly sending idle workers away.",
               "purpose_origin": "reviewed"
@@ -37671,8 +37823,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::watch_clearance",
               "name": "watch_clearance",
-              "line": 380,
-              "end_line": 381,
+              "line": 398,
+              "end_line": 399,
               "kind": "method",
               "purpose": "Watch only this departing worker and former handling position until the access radius is clear.",
               "purpose_origin": "reviewed"
@@ -37680,8 +37832,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path",
               "name": "clearance_path",
-              "line": 383,
-              "end_line": 413,
+              "line": 401,
+              "end_line": 431,
               "kind": "method",
               "purpose": "Choose a distinct reachable end-apron rest point that clears every shelf service face; use the ordinary outside waiting owner only when needed.",
               "purpose_origin": "reviewed"
@@ -37689,8 +37841,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path/<lambda#1>",
               "name": "clearance_path/<lambda#1>",
-              "line": 408,
-              "end_line": 408,
+              "line": 426,
+              "end_line": 426,
               "kind": "lambda",
               "purpose": "Prefer the shortest geometric approach to a legal warehouse rest point before actual route validation.",
               "purpose_origin": "reviewed"
@@ -37698,8 +37850,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_slot_body",
               "name": "set_slot_body",
-              "line": 415,
-              "end_line": 421,
+              "line": 433,
+              "end_line": 439,
               "kind": "method",
               "purpose": "Apply Area3D enter/exit occupancy to one fixture site and wake preparation; never poll overlaps per frame.",
               "purpose_origin": "reviewed"
@@ -37707,8 +37859,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::fixture_bounds",
               "name": "fixture_bounds",
-              "line": 423,
-              "end_line": 425,
+              "line": 441,
+              "end_line": 443,
               "kind": "method",
               "purpose": "Return the rotated physical2.6x1m rack footprint for clearance and path ownership.",
               "purpose_origin": "reviewed"
@@ -37716,8 +37868,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_module_body",
               "name": "set_module_body",
-              "line": 427,
-              "end_line": 431,
+              "line": 445,
+              "end_line": 449,
               "kind": "method",
               "purpose": "Track player/vehicle presence in one module through Area3D events for safe removal.",
               "purpose_origin": "reviewed"
@@ -37725,8 +37877,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::obstacles",
               "name": "obstacles",
-              "line": 433,
-              "end_line": 441,
+              "line": 451,
+              "end_line": 459,
               "kind": "method",
               "purpose": "Reuse topology/fixture-invalidated actual wall/post/rack routing rectangles; stock quantity changes do not rebuild them.",
               "purpose_origin": "reviewed"
@@ -37734,8 +37886,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::can_remove",
               "name": "can_remove",
-              "line": 443,
-              "end_line": 463,
+              "line": 461,
+              "end_line": 481,
               "kind": "method",
               "purpose": "Require an empty, unreserved, unoccupied non-connecting module before removal; preserve current access conservatively.",
               "purpose_origin": "reviewed"
@@ -37743,8 +37895,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::retire",
               "name": "retire",
-              "line": 465,
-              "end_line": 471,
+              "line": 483,
+              "end_line": 489,
               "kind": "method",
               "purpose": "Stop new admissions to a dismantling module and track actual remaining occupants until removal is safe.",
               "purpose_origin": "reviewed"
@@ -37752,8 +37904,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::joined",
               "name": "joined",
-              "line": 473,
-              "end_line": 475,
+              "line": 491,
+              "end_line": 493,
               "kind": "method",
               "purpose": "Accept only equal-span, full matching cardinal warehouse edges; reject corner, diagonal and partial-edge contact.",
               "purpose_origin": "reviewed"
@@ -37761,8 +37913,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_walls",
               "name": "_walls",
-              "line": 477,
-              "end_line": 483,
+              "line": 495,
+              "end_line": 501,
               "kind": "method",
               "purpose": "Project only actual below-person-height solid wall/post proxies into pedestrian routing; exclude floors and overhead geometry.",
               "purpose_origin": "reviewed"
@@ -37770,8 +37922,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::hidden_boundaries",
               "name": "hidden_boundaries",
-              "line": 485,
-              "end_line": 494,
+              "line": 503,
+              "end_line": 512,
               "kind": "method",
               "purpose": "Derive which complete neighbouring modules remove each local boundary group symmetrically.",
               "purpose_origin": "reviewed"
@@ -37779,8 +37931,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::module_colliders",
               "name": "module_colliders",
-              "line": 496,
-              "end_line": 508,
+              "line": 514,
+              "end_line": 526,
               "kind": "method",
               "purpose": "Transform the Artist-measured collision proxies into world metres, omitting only actual joined boundary groups.",
               "purpose_origin": "reviewed"
@@ -37788,8 +37940,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_make_cells",
               "name": "_make_cells",
-              "line": 510,
-              "end_line": 517,
+              "line": 528,
+              "end_line": 535,
               "kind": "method",
               "purpose": "Create finite two-deck physical package positions for crates or separate long-stock saddles.",
               "purpose_origin": "reviewed"
@@ -37797,8 +37949,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_free_cells",
               "name": "_free_cells",
-              "line": 519,
-              "end_line": 534,
+              "line": 537,
+              "end_line": 552,
               "kind": "method",
               "purpose": "Return only wholly unoccupied and unpromised cells; a partially filled package still occupies its full envelope.",
               "purpose_origin": "reviewed"
@@ -37806,8 +37958,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_quantity",
               "name": "_cell_quantity",
-              "line": 536,
-              "end_line": 540,
+              "line": 554,
+              "end_line": 558,
               "kind": "method",
               "purpose": "Read current actual Ledger quantity for the stock IDs indexed by one physical package cell.",
               "purpose_origin": "reviewed"
@@ -37815,8 +37967,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_attach_stock",
               "name": "_attach_stock",
-              "line": 542,
-              "end_line": 551,
+              "line": 560,
+              "end_line": 569,
               "kind": "method",
               "purpose": "Index one real stock ID at a fixture cell and update only that existing stock's physical position.",
               "purpose_origin": "reviewed"
@@ -37824,8 +37976,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_service_point",
               "name": "_cell_service_point",
-              "line": 553,
-              "end_line": 555,
+              "line": 571,
+              "end_line": 573,
               "kind": "method",
               "purpose": "Compute the package's own accessible shelf face in world coordinates without any route search.",
               "purpose_origin": "reviewed"
@@ -37833,8 +37985,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_choose_point",
               "name": "_choose_point",
-              "line": 557,
-              "end_line": 574,
+              "line": 575,
+              "end_line": 592,
               "kind": "method",
               "purpose": "Validate distinct person/reservation clearance and real routing for one exact package service face; watch only actual blocking passers-by.",
               "purpose_origin": "reviewed"
@@ -37842,8 +37994,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_clear_for_appearance",
               "name": "_clear_for_appearance",
-              "line": 576,
-              "end_line": 582,
+              "line": 594,
+              "end_line": 600,
               "kind": "method",
               "purpose": "Require the actual future rack volume to be free of tracked bodies and real worker positions.",
               "purpose_origin": "reviewed"
@@ -37851,8 +38003,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_stock_changed",
               "name": "_stock_changed",
-              "line": 584,
-              "end_line": 593,
+              "line": 602,
+              "end_line": 611,
               "kind": "method",
               "purpose": "Remove departed/consumed stock from its cell index and invalidate the owning module summary after an actual Ledger mutation.",
               "purpose_origin": "reviewed"
@@ -37860,8 +38012,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_entity_moved",
               "name": "_entity_moved",
-              "line": 595,
-              "end_line": 622,
+              "line": 613,
+              "end_line": 640,
               "kind": "method",
               "purpose": "Wake only watched blocked access, shelf appearance or retiring-module occupancy when a relevant person actually moves clear.",
               "purpose_origin": "reviewed"
@@ -37869,8 +38021,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_site_changed",
               "name": "_site_changed",
-              "line": 624,
-              "end_line": 642,
+              "line": 642,
+              "end_line": 660,
               "kind": "method",
               "purpose": "Register completed warehouse modules or safely retire removed ones; invalidate topology only when actual site state changes.",
               "purpose_origin": "reviewed"
@@ -37878,8 +38030,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_touch",
               "name": "_touch",
-              "line": 644,
-              "end_line": 649,
+              "line": 662,
+              "end_line": 667,
               "kind": "method",
               "purpose": "Increment logical freshness and wake waiting work; emit keyed presentation changes only for a nonempty module ID.",
               "purpose_origin": "reviewed"
@@ -37887,8 +38039,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_reject",
               "name": "_reject",
-              "line": 651,
-              "end_line": 652,
+              "line": 669,
+              "end_line": 670,
               "kind": "method",
               "purpose": "Return a structured warehouse blocker with its player-facing explanation without mutating custody.",
               "purpose_origin": "reviewed"

@@ -44,5 +44,26 @@
     "artifact_sha256": "cd6109b6311b4d29e34a58c202c81882de4a690a8a0e919306f0f73742a89275",
     "result": "warehouse-receipt-restored-queue-result.json",
     "scope": "Same288M02 at1x/180explicit simulated seconds and unchanged process limits; required conversion behavior retained. Optional face-first allocation was removed after it delayed the last crate; no threshold raised."
+  },
+  "native_presentation": {
+    "run_id": 42875874141,
+    "source_head": "122393122869076ad614c1c33af035aab8b5e9fc",
+    "artifact_sha256": "fac9a406fb2e06a8138e549f3aaa66e47bb0b5f92b80fc3ea67a56605c623bf0",
+    "result": "warehouse-native-result.json",
+    "scope": "Actual F5 configured scene/imported warehouse, manager-body doorway/floor and camera roof modes; staged existing-worker shelf smoke preview recorded640x360/60frames. Not keyboard/E, live delivery, paired timber or60FPS. First1280x720 recording exceeded28s despite passed entrance assertions; reduced video readback resolution, no deadline raised."
+  },
+  "utility_and_fuel": {
+    "run_id": 42875849582,
+    "artifact_sha256": "01c99021731c41bf1afdf601eaaac6399fd3c70e7c17a39d6c711634853a1b78",
+    "result": "warehouse-vehicles-result.json",
+    "source_manifest": "warehouse-vehicles-source-manifest.json",
+    "scope": "Exact100kg from multiple actual M11 packages via same finite utility truck, return and7kg partial shelf fuel handoff. DEBUG office/fuel setup and349.001explicit simulated seconds; not normal office build or60FPS. Subsequent small cleanup awaits current-head parser/direct evidence."
+  },
+  "utility_and_fuel_final": {
+    "run_id": 42876605327,
+    "artifact_sha256": "3cf5200392ec2a017135451901ab95162ef97541f0355e085187eab6247964e3",
+    "result": "warehouse-vehicles-final-result.json",
+    "source_manifest": "warehouse-vehicles-final-source-manifest.json",
+    "scope": "Current utility100kg multi-package trip and7kg exact shelf refuel only. DEBUG office/partial-can setup; explicit1x simulated steps. Not normal office construction, native input, paired timber, recovery matrix or60FPS."
   }
 }

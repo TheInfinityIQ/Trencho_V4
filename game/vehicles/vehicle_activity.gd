@@ -79,7 +79,11 @@ func report_path(person_id: String, duty: String) -> Array:
 	var origin: Vector2 = rear.ledger.inspect_entity(person_id).position
 	if duty.begins_with("fuel:"):
 		var job: Dictionary = fuel_jobs.get(person_id,{})
-		return _walk_from(origin,rear.ledger.inspect_entity(job.source).position) if not job.is_empty() else []
+		if job.is_empty(): return []
+		job.retry = false
+		var source: Dictionary = rear.ledger.inspect_entity(job.source,{},false)
+		var point: Vector2 = rear.stock_work_point(person_id,source,true) if rear.warehouse != null else source.position
+		return _walk_from(origin,point) if point.is_finite() else []
 	var id := duty.split(":")[1]
 	if not vehicles.has(id) or vehicles[id].state not in ["In F10","Parked"]: return []
 	return _path_to_hull(origin,id)
@@ -141,6 +145,13 @@ func complete_exit(person_id: String) -> Dictionary:
 	if result.ok and rear.requests.has(person.duty_id): rear.requests[person.duty_id].target = 0
 	return result
 
+func fuel_carry_limit() -> int:
+	var rear: RefCounted = _rear_ref.get_ref()
+	return 20 if rear.warehouse != null else 25
+
+func warehouse_access_changed() -> void:
+	for job: Dictionary in fuel_jobs.values(): job.retry = true
+
 func request_refuel(id: String, person_id: String, units: int) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if not vehicles.has(id) or vehicles[id].state not in ["In F10","Parked"]: return _result(false,"Refuelling needs a stopped produced hull.")
@@ -148,15 +159,19 @@ func request_refuel(id: String, person_id: String, units: int) -> Dictionary:
 	var pending := 0
 	for job in fuel_jobs.values():
 		if job.hull == id: pending += int(job.units)
-	if units <= 0 or units > 25 or float(units + pending) > float(hull.vehicle_spec.tank_capacity)-hull.fuel+EPS: return _result(false,"Request 1–25 whole M08 units within free tank space after retained fuel carries.")
+	if units <= 0 or units > fuel_carry_limit() or float(units + pending) > float(hull.vehicle_spec.tank_capacity)-hull.fuel+EPS: return _result(false,"Request 1–%d kg of M08 within free tank space; larger requests need separate carries." % fuel_carry_limit())
 	var person: Dictionary = rear.ledger.inspect_entity(person_id)
 	if person.is_empty() or not eligible(person,"fuel:"+id) or person.pending_assignment != "None" or not person.carrying_stock_id.is_empty() or not person.crew_station.is_empty() or fuel_jobs.has(person_id): return _result(false,"Select an actual free rear worker without a carry or station.")
 	var source: Dictionary = {}
 	for store in rear.stores.values():
 		if not store.accessible: continue
 		for stock in rear._stock_at(store.id):
-			if stock.design_type == "M08" and stock.available >= units and not _walk_from(person.position,stock.position).is_empty():
-				if source.is_empty() or person.position.distance_to(stock.position) < person.position.distance_to(source.position): source = stock
+			if stock.design_type != "M08" or stock.available < units: continue
+			var point: Vector2 = rear.stock_work_point(person_id,stock,false) if rear.warehouse != null else stock.position
+			if not point.is_finite() or _walk_from(person.position,point).is_empty(): continue
+			if source.is_empty() or person.position.distance_squared_to(point) < float(source.fuel_distance):
+				source = stock.duplicate()
+				source.fuel_distance = person.position.distance_squared_to(point)
 	if source.is_empty(): return _result(false,"No accessible local unreserved purchased M08 stack has those units.")
 	_sequence += 1
 	var claim := "vehicle-fuel-%04d" % _sequence
@@ -164,7 +179,7 @@ func request_refuel(id: String, person_id: String, units: int) -> Dictionary:
 	if not reserved.ok or rear.ledger.inspect_claim(claim).reserved != units:
 		if reserved.ok: rear.ledger.release_claim(claim)
 		return _result(false,"Actual fuel source could not be reserved.")
-	fuel_jobs[person_id] = {"hull":id,"source":source.id,"units":units,"claim":claim,"state":"Reporting"}
+	fuel_jobs[person_id] = {"hull":id,"source":source.id,"units":units,"claim":claim,"state":"Reporting","retry":true}
 	var duty := "fuel:" + id
 	var assigned: Dictionary = rear.reassign_person(person_id,duty)
 	if not assigned.ok:
@@ -193,6 +208,7 @@ func cancel_unpicked_fuel(person_id: String) -> void:
 	var job: Dictionary = fuel_jobs[person_id]
 	if job.claim.is_empty(): return # Carried goods must finish their physical safe handoff.
 	rear.ledger.release_claim(job.claim)
+	if rear.warehouse != null: rear.warehouse.release_point(person_id)
 	rear.requests["fuel:"+job.hull].target = 0
 	fuel_jobs.erase(person_id)
 
@@ -206,6 +222,7 @@ func complete_fuel_pickup(person_id: String) -> Dictionary:
 	if not result.ok: return result
 	job.carried = result.entity_id
 	job.claim = ""
+	if rear.warehouse != null: rear.warehouse.release_point(person_id)
 	var route: Array = _path_to_hull(rear.ledger.inspect_entity(person_id).position,job.hull)
 	if route.is_empty(): return _result(false,"Carried fuel waits with worker for a clear route to hull.")
 	rear._move(rear.actors[person_id],"Vehicle Fuel Carry",route,1.2)
@@ -405,7 +422,9 @@ func settle() -> bool:
 			changed = true
 	for person_id in fuel_jobs:
 		var job: Dictionary = fuel_jobs[person_id]
-		if rear.actors[person_id].phase == "Vehicle Fuel Blocked":
+		if rear.actors[person_id].phase in ["Vehicle Fuel Blocked","Route blocked"]:
+			if rear.warehouse != null and not str(job.claim).is_empty() and not job.get("retry",false): continue
+			job.retry = false
 			if not job.claim.is_empty() and rear.stores[rear.ledger.inspect_entity(job.source).holder_id].accessible:
 				rear._report(rear.actors[person_id])
 				changed = true

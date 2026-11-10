@@ -3997,7 +3997,7 @@
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
       "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate. Empty unreserved fixtures can be converted by a real worker; existing first-person mode retains the ceiling.",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits.",
       "nodes": [
         {
           "id": "opening",
@@ -4052,6 +4052,36 @@
           "label": "Actual selected/connected storage facts",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "summary"
+        },
+        {
+          "id": "batch",
+          "label": "Existing utility selects actual connected package batch",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "option"
+        },
+        {
+          "id": "load",
+          "label": "Real worker collects reserved shelf package",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_next_load"
+        },
+        {
+          "id": "handoff",
+          "label": "Existing truck deposit / site delivery / return",
+          "file": "game/construction/construction_truck_service.gd",
+          "function": "_finish"
+        },
+        {
+          "id": "fuel",
+          "label": "Explicit20kg limit / exact partial shelf fuel",
+          "file": "game/vehicles/vehicle_activity.gd",
+          "function": "request_refuel"
+        },
+        {
+          "id": "wake",
+          "label": "Actual access events wake existing work",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "warehouse_space_changed"
         }
       ],
       "edges": [
@@ -4104,6 +4134,41 @@
           "from": "access",
           "to": "routes",
           "label": "real endpoint/segment guards"
+        },
+        {
+          "from": "summary",
+          "to": "batch",
+          "label": "actual indexed source packages"
+        },
+        {
+          "from": "batch",
+          "to": "load",
+          "label": "atomic per-package claims / exterior curb"
+        },
+        {
+          "from": "load",
+          "to": "handoff",
+          "label": "one actual pickup and onboard deposit"
+        },
+        {
+          "from": "handoff",
+          "to": "load",
+          "label": "next claimed package if any"
+        },
+        {
+          "from": "wake",
+          "to": "load",
+          "label": "specific source access retry"
+        },
+        {
+          "from": "wake",
+          "to": "fuel",
+          "label": "wake retained source wait"
+        },
+        {
+          "from": "fuel",
+          "to": "routes",
+          "label": "actual shelf service face"
         }
       ],
       "related": [
@@ -4112,7 +4177,8 @@
         "hauling",
         "construction",
         "preview",
-        "debug"
+        "debug",
+        "vehicles"
       ],
       "primary_files": [
         "game/warehousing/material_packages.gd",
@@ -4122,7 +4188,7 @@
         "game/warehousing/warehouse_service.gd",
         "game/warehousing/warehouse_view.gd"
       ],
-      "notes": "Current normal288M02receipt has scoped evidence; full-state admission/join has explicit prepopulation/Instant Build limitations. Ordinary return/reload/staging recovery, true paired timber custody, renderer/native movement and60FPS acceptance remain pending. Source routing uses deterministic nearest feasible warehouse estimate, not exhaustive globally shortest per-crate optimization."
+      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization."
     }
   ],
   "overview": [
@@ -4417,14 +4483,14 @@
     "game/rear_base/base_simulation.gd": "7983a2b2178d4275a60daa6520649d487cebe5b54c85ebb95eafbe420c3faa7a",
     "game/identity/identity_ledger.gd": "0bb48e19a01a7912ac08dfa8e452306cad57265a614525f6a98cea4be359fdfa",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "0ef11e7b8f9ea3c62e5c2746a2550bde5d7774e9f5b1af4f31b2d91b3c6c54ef",
+    "game/staffing/rear_simulation.gd": "749755561650a5af50489b158fc9325510b2de2b3cf595bfc7c55245cb84f4d7",
     "game/staffing/rear_layout.gd": "9813a0caeea2c2a5347768807b905e4a9b1f3b4296f1af03871b36f6d6421851",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
     "game/procurement/receiving_simulation.gd": "a695c9f44fed7dcfa9124932369a02481d01fdd880ac2952731976345f992272",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "0cbdd942dbf7539792cda7bc0d8d40a0ff036df582d3e9a1c950c27f52553e9a",
+    "game/construction/construction_service.gd": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
-    "game/construction/construction_truck_service.gd": "1a7403ff97d173987397164d30dcc4b1934964535b94dbcde9068b53e4025e48",
+    "game/construction/construction_truck_service.gd": "ad97b82be03f3b2b18fa308f97845ef186cb12353cb844f6e72923e62aa6c85b",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
     "game/production/selectable_production.gd": "c55b829a08e2c10af144ce4bdd7aaa04cf10c2d24a139cb33f24f32fa2a7a928",
     "game/production/r01_production.gd": "c4fcbe33fa5049ad9c5628d3d9f50bfe24c45eb00249583d9f8fcc4a6653ee8a",
@@ -4433,7 +4499,7 @@
     "game/production/support_production.gd": "52c72da3598fc99e3e2b7a14454d984f890414102dec63e37350421c42b6b22f",
     "game/production/heavy_production.gd": "6ff081dc61130bf405350f652dfec3831fbeb82649f848ccf5a877e97931c968",
     "game/training/training_service.gd": "2b39cf0e71901b6b7ef73228e05b9876843c50a9be18d41ca8ede207c709fca2",
-    "game/vehicles/vehicle_activity.gd": "3681019c138ddb054d6fe0a560475f7a20b98464f42ac100b492509d3b9b0af1",
+    "game/vehicles/vehicle_activity.gd": "3ef05320bd583d07394a3e89642475c9fbec31ec5cbee2dadd8efee58c2ed086",
     "game/production/vehicle_specs.gd": "df5ff29df40502dbad790b3296037f203e7319c7d6ee65448f31dd527bb100cc",
     "game/dispatch/dispatch_service.gd": "4d5ace99f524bfa61b913fae887f406411284aa7155cc912957444cf3d980bc3",
     "game/hq/hq_logistics.gd": "a5087c86a6667f89b3ce718ccae405f31f8571d9ca37477f570c3dc43868109f",
@@ -4471,7 +4537,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "f71300e2ad245a9ff5d1fb53f98afc462d1f2d4cfd6de2ad53f19a82e0b642d8",
+    "game/rear_base/base_demo.gd": "82b6f37719d403757bf3d07831c689348cd83843831e22b18c986ec8392b6a9e",
     "game/rear_base/base_map.gd": "9bbafa6ceda346b796711842deffe74fee0981eb118d1671945c5fab14ab6a41",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4547,7 +4613,7 @@
     "game/warehousing/warehouse_assets.gd": "3a836b021e46128f866298ad110a805ff40e6c8e156c47e4a18aed399bf2a1ac",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "f1aee15179ed6c400ceadedefbbd42f57276e7d2746830f4ab6166c2bbda7a1e",
+    "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
     "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac"
   }
 }

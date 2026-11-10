@@ -1,9 +1,9 @@
 # Physical Supply Depot warehouse
 
 Current implementation belongs to `codex/materials-warehouse-loop`, based on
-`1d7ae006e123861c6138ac0ec2ee0cfdd967acea`. It is not yet the human checkout's
-playable default. [Accepted design](supply_depot_warehouse_design.md),
-[pre-code plans](feature_plans/warehouse_v9.json) and the
+`1d7ae006e123861c6138ac0ec2ee0cfdd967acea`. Publication/merge status is tracked in
+[PR145](https://github.com/TheInfinityIQ/Trencho_V4/pull/145). [Accepted design](supply_depot_warehouse_design.md),
+[pre-code plans](feature_plans/warehouse_v11.json) and the
 [actual system atlas](system_atlas.html) distinguish current code from recovery
 and transport work still to implement.
 
@@ -116,18 +116,20 @@ and makes no change to the human editor or mouse.
 
 ## Remaining delivery work
 
-- Verify the actual imported models, default F5 scene, native entrance/collision,
-  lighting, joined appearance and reused smoke in Godot on GitHub.
-- Retain engine-generated UID/import sidecars and finish exact-head review before
-  publishing/adopting a playable default.
+- Actual default-scene models, entrance/floor, lighting, roof camera modes and
+  existing smoke preview passed scoped remote presentation. Joined native
+  appearance and keyboard/E acceptance remain unverified.
+- Engine-generated UID/import sidecars are retained. Exact-head technical/design
+  review and required checks govern publication; human F5 acceptance is separate.
 - Implement the separately diagrammed ordinary return/reload and finite staging
   recovery. Neither exists merely because its design is recorded.
 - Implement genuine paired timber custody/handling; current legacy single-person
   receipt is not acceptance of the requested two-worker timber transport.
-- Adapt existing construction utility trips to batches of actual24kg warehouse
-  packages and refuelling to real shelf service points/20kg cans. Source audit
-  found the old single-stack bulk threshold and stock-centre fuel routing are
-  incompatible with physical racks; these connected fixes remain open.
+- Utility trips now reserve and collect actual packages from one connected
+  warehouse, use exterior curbs and release each shelf face after pickup. The
+  direct100kg trip/return and exact7kg fuel carry passed again after final
+  claim-release/event-wait cleanup in run42876605327. Publication review is separate. Refuelling exposes
+  an explicit20kg can limit and never silently clamps an API request.
 - Finish the separate cargo truck/personnel/pickup integration and paused animation
   work under their own readiness records. Static exports are not human appearance
   approval or completed transport gameplay.
@@ -148,3 +150,24 @@ and makes no change to the human editor or mouse.
   accepted static QA and provisional hand-contact limitations. Editable Blender
   sources are preserved beneath `source/.gdignore`, so opening the game imports
   explicit GLBs without launching Blender conversion.
+
+## Current-change vehicle compatibility
+
+The [pre-code adapter diagram](diagrams/warehouse_vehicle_compatibility.mmd)
+preserves the existing utility-truck and fuel activities. Ledger claims are
+reserved atomically per package; a worker collects them one at a time at actual
+shelf faces and deposits into the same finite truck. Source access waits wake
+from warehouse events. Walking geometry is compared only after those events;
+vehicle clearance continues to exclude whole warehouse footprints.
+
+Run42875849582 observed exact100kg delivery/return and7kg partial-can refuelling
+at1x in349.001explicit simulated seconds, including explicit DEBUG office/fuel
+setup. Its manifest identifies the source overlay. Run42875874141 at1223931
+observed the configured native3D entry, open portal, floor and camera ceiling.
+The reused shelf-smoke recording stages an existing worker at the preparation
+point; actual worker travel is evidenced separately by the domain conversion
+receipt. Neither result proves full-game60FPS or Dawson's player acceptance.
+
+Run42876605327 repeats only the affected utility/fuel episode after final
+claim-release deduplication and source-wait cleanup; all16assertions pass and
+its retained manifest matches all25current changed production scripts exactly.

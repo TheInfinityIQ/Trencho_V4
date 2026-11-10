@@ -1301,7 +1301,7 @@ func _vehicles_panel(box: VBoxContainer) -> void:
 	_button(box,"Extract selected station occupant",func() -> void:
 		if vehicle_person.selected >= 0: _result(simulation.rear.reassign_person(vehicle_person.get_item_metadata(vehicle_person.selected),"Available")))
 	vehicle_fuel_person = _option(box,"Available fuel-handling worker",[])
-	vehicle_fuel_units = _spin(box,"Whole M08 units (up to 25 per carry)",25,1)
+	vehicle_fuel_units = _spin(box,"Fuel to carry (kg)",simulation.rear.vehicles.fuel_carry_limit(),1)
 	_button(box,"Carry purchased fuel into this tank",func() -> void:
 		if not vehicle_rows.get_selected_items().is_empty() and vehicle_fuel_person.selected >= 0:
 			_result(simulation.rear.vehicles.request_refuel(_vehicle_id(),vehicle_fuel_person.get_item_metadata(vehicle_fuel_person.selected),int(vehicle_fuel_units.value))))
@@ -2104,6 +2104,8 @@ static func _transport_truck_status(row: Dictionary, delivery: Dictionary) -> St
 	return "\n".join(lines)
 
 func _refresh_vehicle_controls(view: Dictionary, include_people: bool) -> void:
+	vehicle_fuel_units.max_value = simulation.rear.vehicles.fuel_carry_limit()
+	vehicle_fuel_units.tooltip_text = "One fuel can holds up to20kg. Partial cans carry the exact requested amount." if simulation.rear.warehouse != null else "Up to25kg per personal carry."
 	if include_people: _load_vehicle_people()
 	_fill(vehicle_rows,vehicle_ids,view.vehicles.rows,func(row: Dictionary) -> String: return ("Construction utility · %s | %s | fuel %.2f/%.0f" % [row.id,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity]) if row.get("utility",false) else ("%s %s | %s | fuel %.1f/%.0f | F11 %d" % [row.id,row.hull.design_type,row.state,row.hull.fuel,row.hull.vehicle_spec.tank_capacity,row.slot+1]))
 	if vehicle_rows.get_selected_items().is_empty() and vehicle_rows.item_count > 0:

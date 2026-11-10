@@ -487,6 +487,8 @@ func stock_work_point(person: String, stock: Dictionary, reserve: bool = false) 
 	return work_point(person,str(stock.holder_id),reserve)
 
 func warehouse_space_changed() -> void:
+	if vehicles != null: vehicles.warehouse_access_changed()
+	if construction != null: construction.trucks.warehouse_access_changed()
 	for actor: Dictionary in actors.values():
 		if actor.phase == "Warehouse wait": actor.deadline = time
 
@@ -976,15 +978,24 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 		if not storage.ok:
 			job.blocker = str(storage.message)
 			return false
-	var claim := "haul-claim-%04d" % _next()
-	var result: Dictionary = ledger.request_stock(claim, best.stock.id, best.count, a.id, job.id, PLAYER)
-	if not result.ok or ledger.inspect_claim(claim).reserved != best.count:
-		if not storage.is_empty(): warehouse.release(str(storage.id))
-		push_error("Atomic haul reservation failed: " + str(result))
-		return false
+	var claim := ""
+	var batch: Array = best.get("batch",[{"stock":str(best.stock.id),"count":int(best.count),"claim":""}])
+	var admitted: Array[String] = []
+	for part: Dictionary in batch:
+		var reservation := "haul-claim-%04d" % _next()
+		var result: Dictionary = ledger.request_stock(reservation,part.stock,part.count,a.id,job.id,PLAYER)
+		if result.ok: admitted.append(reservation)
+		if not result.ok or ledger.inspect_claim(reservation).reserved != int(part.count):
+			for retained: String in admitted: ledger.release_claim(retained)
+			if not storage.is_empty(): warehouse.release(str(storage.id))
+			job.blocker = "Physical source changed before reservation; no partial trip admitted."
+			return false
+		part.claim = reservation
+		if claim.is_empty(): claim = reservation
 	a.load = {"job": job.id, "claim": claim, "stock": best.stock.id,
 		"source": best.stock.holder_id, "destination": job.destination,
 		"type": job.type, "count": best.count, "mass": best.count * best.stock.unit_mass_kg, "carried": ""}
+	if best.has("batch"): a.load.batch = batch
 	if not storage.is_empty(): a.load.storage = str(storage.id)
 	job.selected += 1
 	if not storage.is_empty() and storage.prepare:
@@ -1023,10 +1034,12 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 				var first: float = float(a.get("warehouse_bound",INF))
 				var second: float = float(b.get("warehouse_bound",INF))
 				return str(a.id)<str(b.id) if is_equal_approx(first,second) else first<second)
+		var utility_considered := false
 		for stock in stock_options:
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
-			if person.duty_id == "hauling" and construction != null and job.type == "M11" and construction.instances.has(job.destination):
+			if not utility_considered and person.duty_id == "hauling" and construction != null and job.type == "M11" and construction.instances.has(job.destination):
+				utility_considered = warehouse != null and source_id == "receiving"
 				var utility: Dictionary = construction.trucks.option(job,person,stock)
 				fallback = str(utility.get("reason",""))
 				if utility.has("stock"):
@@ -1190,6 +1203,7 @@ func _deposit(a: Dictionary) -> void:
 
 
 func _release_load(a: Dictionary) -> void:
+	if a.load.has("batch") and construction != null: construction.trucks.release_source_claims(a)
 	if warehouse != null:
 		if a.load.has("storage"): warehouse.release(str(a.load.storage))
 		warehouse.release_point(str(a.id))

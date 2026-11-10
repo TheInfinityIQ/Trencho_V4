@@ -1,0 +1,31 @@
+{
+  "base": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "hashes": {
+    "game/construction/construction_service.gd": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
+    "game/construction/construction_truck_service.gd": "ad97b82be03f3b2b18fa308f97845ef186cb12353cb844f6e72923e62aa6c85b",
+    "game/construction/visuals/construction_render_preparation.gd": "647a2af4be5b076d50ac217757266620182823b614b0edbae2a595570d81bc4b",
+    "game/construction/visuals/construction_site_visual.gd": "8161f8032a8eac02c21d8ee731d276a60a513b45f8b2773a6a2ef83211139323",
+    "game/debug/rear_debug_actions.gd": "4c6e109cd1366afe7ea8e929f44a2339c1b35005999236206a8eb8bc09b4bd15",
+    "game/identity/identity_ledger.gd": "0bb48e19a01a7912ac08dfa8e452306cad57265a614525f6a98cea4be359fdfa",
+    "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
+    "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
+    "game/preview_3d/supplier_convoys.gd": "0133b912da58d0633a28ec7ff65b46b628a4dbbd4725b54423cb4bfe7eca36d7",
+    "game/preview_3d/world_presenter.gd": "0b974a8d04b0b6dfe1f6c61e288e25a09f803acad35612c7f88c24385c348fb3",
+    "game/procurement/receiving_simulation.gd": "a695c9f44fed7dcfa9124932369a02481d01fdd880ac2952731976345f992272",
+    "game/rear_base/base_demo.gd": "82b6f37719d403757bf3d07831c689348cd83843831e22b18c986ec8392b6a9e",
+    "game/rear_base/base_map.gd": "9bbafa6ceda346b796711842deffe74fee0981eb118d1671945c5fab14ab6a41",
+    "game/rear_base/base_simulation.gd": "7983a2b2178d4275a60daa6520649d487cebe5b54c85ebb95eafbe420c3faa7a",
+    "game/staffing/hauling_policy.gd": "a4c59f77dd9526c352dbb5219ac6adfe36e6cef23bc76268a3f4a24c000d9cab",
+    "game/staffing/rear_layout.gd": "9813a0caeea2c2a5347768807b905e4a9b1f3b4296f1af03871b36f6d6421851",
+    "game/staffing/rear_simulation.gd": "749755561650a5af50489b158fc9325510b2de2b3cf595bfc7c55245cb84f4d7",
+    "game/staffing/rear_work_positions.gd": "1fee58f6e87db0d26f91c6975a2e19c546d620af9953774dde07ae050f8c58bb",
+    "game/vehicles/vehicle_activity.gd": "3ef05320bd583d07394a3e89642475c9fbec31ec5cbee2dadd8efee58c2ed086",
+    "game/warehousing/material_packages.gd": "70128b0c201c00c1242e5cbb20e2cc199a4c28922cddd71ee6afdf281d42ab2b",
+    "game/warehousing/warehouse_assets.gd": "3a836b021e46128f866298ad110a805ff40e6c8e156c47e4a18aed399bf2a1ac",
+    "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
+    "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
+    "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
+    "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac"
+  },
+  "scope": "All25changedproduction script bytes match current source; run42876605327 includes final claim deduplication and source-wait cleanup."
+}

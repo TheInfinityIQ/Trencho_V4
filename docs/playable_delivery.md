@@ -3,7 +3,8 @@
 [Physical warehousing](warehousing.md) is the active integration block: the
 starting12×16m depot, finite packages, worker-prepared fixtures, held-truck
 warnings and completed full-edge joins have scoped domain receipts. Actual
-imported rendering, native entrance and main-checkout adoption remain pending.
+imported rendering, native entrance and camera ceiling have scoped receipts;
+publication/adoption status is tracked in PR145.
 Ordinary return/staging recovery and paired timber transport are separately
 planned; this does not mark stages1/2 or full-game60FPS accepted.
 
