@@ -1,5 +1,5 @@
 extends RefCounted
-## One world-space foot pose; never a free logistics worker or a camera pose.
+## One physical manager pose, walking or seated; never a free worker/camera pose.
 const SPAWN_GROUND := Vector2(126,186)
 var _position := Vector3(126,0,186)
 var _heading := PI/2.0

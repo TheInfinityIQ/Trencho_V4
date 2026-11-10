@@ -201,6 +201,23 @@ def scan_controls(index: SourceIndex, path: str) -> list[dict]:
 def reviewed_flows(index: SourceIndex) -> list[dict]:
     """Define verified signal, placement, timing and refresh chains that cross source files."""
     specs = [
+        ('builder-capacity', 'Construction: shared workforce capacity', 'Two base construction places plus four per completed office, shared targets and real safe handoffs; at most four per site.', [
+            (CONSTRUCTION, 'set_builders', 'Choose site construction target', ''),
+            (REAR, 'set_target', 'Validate shared target capacity', ''),
+            (CONSTRUCTION, 'builder_allocation', 'Count distinct people plus unfilled target places', ''),
+            (CONSTRUCTION, 'builder_capacity', 'Read2+4per actual completed office', ''),
+            (REAR, 'reassign_person', 'Protect direct person reassignment too', ''),
+        ]),
+        ('personal-pickup', 'Player: enter and drive personal pickup', 'Source-reviewed contextual input and physics ownership, not an exhaustive runtime trace. AI trucks keep their own workers/cargo/fuel.', [
+            ('game/preview_3d/preview.gd', '_queue_workshop', 'Queue contextualE', ''),
+            ('game/preview_3d/preview.gd', '_consume_workshop', 'Validate current first hit / occupied vehicle', ''),
+            ('game/preview_3d/preview.gd', '_interact_pickup', 'Guard Pause and change player mode', ''),
+            ('game/player_vehicle/player_pickup.gd', 'interact', 'Enter nearby / stopped safe exit', ''),
+            ('game/player_vehicle/player_pickup.gd', '_clear_exit', 'Query actual adjacent grounded capsule clearance', ''),
+            ('game/preview_3d/preview.gd', '_physics_process', 'Existing input owner steps active motion', ''),
+            ('game/player_vehicle/player_pickup.gd', 'step', 'Actual collisions / wheel travel / visual sway', ''),
+            ('game/player_vehicle/player_pickup.gd', '_publish_footprint', 'Publish moved footprint for fresh construction validation', ''),
+        ]),
         ('navigation', 'Main navigation', 'Choosing Rear base, Build, Workers / Jobs, Supplies or Production.', [
             (SHELL, '_navigation_button', 'Click navigation button', 'navigation_requested.emit(action)'),
             (MAIN, '_ready', 'Signal connected to navigation handler', 'navigation_requested.connect'),

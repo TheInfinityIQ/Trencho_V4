@@ -155,6 +155,9 @@ func _replace_world(model: RefCounted) -> void:
 	world = World.new()
 	add_child(world)
 	world.build(model,_session.manager_pose)
+	world.personal_pickup = World.PersonalPickup.new()
+	world.rear_root.add_child(world.personal_pickup)
+	world.personal_pickup.bind(_session.pickup_state,world.player,world.manager_collision,_session.manager_pose,model.rear.construction)
 	_base.placement_manager_body = world.player
 	_base.placement_manager_shape = world.manager_collision
 	world.first.pose_changed.connect(_camera_changed)
@@ -226,13 +229,15 @@ func _apply_view() -> void:
 	_release_controls()
 	world.rear_root.visible = not battlefield_open
 	world.field_root.visible = battlefield_open
-	world.player_visual.visible = not first_person
+	world.player_visual.visible = not first_person and not _session.pickup_state.occupied
 	var building: bool = _base._placing_building and not battlefield_open
 	world.build_camera.current = building
 	world.build_grid.visible = building and not management_open
 	world.first.current = not battlefield_open and not building and first_person
 	world.third.current = not battlefield_open and not building and not first_person
 	world.rts.current = battlefield_open
+	if _session.pickup_state.occupied and not battlefield_open and not building:
+		world.personal_pickup.camera(first_person).current = true
 	_field_cues.visible = battlefield_open and not management_open
 	_field_cues.request_projection()
 	_truck_cues.visible = battlefield_open and not management_open
@@ -247,13 +252,18 @@ func _apply_view() -> void:
 
 func _toggle_camera() -> void:
 	if battlefield_open or management_open or _modal_open() or _base._placing_building: return
+	var captured := not _needs_capture and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 	first_person = not first_person
 	_apply_view()
+	if captured:
+		_needs_capture = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_update_hint()
 
 func _release_controls() -> void:
 	_held.clear()
 	_suppressed.clear()
-	for key in [KEY_W,KEY_A,KEY_S,KEY_D]:
+	for key in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE]:
 		if Input.is_physical_key_pressed(key): _suppressed[key] = true
 	_middle_drag = false
 	_left_down = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
@@ -313,7 +323,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_R:
 				if not battlefield_open and _base._placing_building:
 					_base.construction_turn.button_pressed = not _base.construction_turn.button_pressed
-			KEY_W,KEY_A,KEY_S,KEY_D:
+			KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE:
 				if not _suppressed.has(event.physical_keycode) and (battlefield_open or _base._placing_building or not _needs_capture): _held[event.physical_keycode] = true
 			_: return
 		get_viewport().set_input_as_handled()
@@ -358,6 +368,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			if _middle_drag: _pan_build(Vector2(-event.relative.x,-event.relative.y)*world.build_camera.size/get_viewport_rect().size.y)
 			elif moved_pointer: _invalidate_preview()
 		elif not battlefield_open and not _needs_capture:
+			if _session.pickup_state.occupied:
+				world.personal_pickup.look(event.relative)
+				return
 			world.player.global_rotation.y -= event.relative.x*0.003
 			world.eye.rotation.x = clampf(world.eye.rotation.x-event.relative.y*0.003,-1.25,0.8)
 			_session.manager_pose.heading = world.player.global_rotation.y
@@ -365,6 +378,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	if world == null: return
+	var drive_direction := Vector2(float(_held.has(KEY_D))-float(_held.has(KEY_A)),float(_held.has(KEY_S))-float(_held.has(KEY_W)))
+	var driving_allowed: bool = _construction_visuals_ready and not battlefield_open and not management_open and not _modal_open() and not _base._placing_building and not _needs_capture and get_window().has_focus()
+	if world.personal_pickup.step(delta,_session.simulation.speed,drive_direction,_held.has(KEY_SPACE),driving_allowed) and _base._placing_building: _invalidate_preview(false)
 	var geometry_refreshed := false
 	if _rear_dirty:
 		_rear_dirty = false
@@ -394,7 +410,7 @@ func _physics_process(delta: float) -> void:
 			_select_marker()
 		return
 	if _base._placing_building and not _needs_capture and not direction.is_zero_approx(): _pan_build(direction*world.build_camera.size*delta*0.55)
-	if not _needs_capture and not _base._placing_building and _session.simulation.speed > 0:
+	if not _session.pickup_state.occupied and not _needs_capture and not _base._placing_building and _session.simulation.speed > 0:
 		if world.move_manager(direction,_session.simulation.speed,_session.manager_pose): _pick_pending = true
 
 	# Newly attached/removed colliders synchronize before the next physics query.
@@ -409,9 +425,26 @@ func _physics_process(delta: float) -> void:
 
 func _queue_workshop() -> void:
 	if battlefield_open or management_open or _needs_capture or _base._placing_building or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
-	var camera: Camera3D = world.first if first_person else world.third
+	var camera: Camera3D = _interaction_camera()
 	# One contextual E request; same current-world and first-hit guards for every site.
 	_workshop_request = {"world":world,"model":_session.simulation,"service":_session.simulation.rear.construction,"receiving":_session.simulation.receiving,"camera":camera}
+
+func _interaction_camera() -> Camera3D:
+	if _session.pickup_state.occupied: return world.personal_pickup.camera(first_person)
+	return world.first if first_person else world.third
+
+func _interact_pickup() -> void:
+	if _session.simulation.speed == 0:
+		_command_message = "Resume time before entering or exiting the pickup."
+		_update_hint()
+		return
+	var result: Dictionary = world.personal_pickup.interact()
+	if result.ok:
+		_apply_view()
+		_needs_capture = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_command_message = str(result.message)
+	_update_hint()
 
 func _workshop_target(site_id: String) -> Dictionary:
 	var model: RefCounted = _session.simulation
@@ -432,13 +465,19 @@ func _consume_workshop() -> void:
 	var request: Dictionary = _workshop_request
 	_workshop_request = {}
 	if request.is_empty() or not is_instance_valid(request.world) or request.world != world or request.model != _session.simulation or request.model != _base.simulation or request.service != _session.simulation.rear.construction or request.get("receiving") != _session.simulation.receiving: return
-	var camera: Camera3D = world.first if first_person else world.third
+	var camera: Camera3D = _interaction_camera()
 	if request.camera != camera or battlefield_open or management_open or _modal_open() or _needs_capture or _base._placing_building or not get_window().has_focus() or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED: return
+	if _session.pickup_state.occupied:
+		_interact_pickup()
+		return
 	var point: Vector2 = get_viewport_rect().size/2.0
 	var origin: Vector3 = camera.project_ray_origin(point)
-	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(point)*camera.far,5)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin,origin+camera.project_ray_normal(point)*camera.far,13)
 	var hit: Dictionary = world.get_world_3d().direct_space_state.intersect_ray(query)
 	var collider: Node = hit.get("collider") as Node
+	if collider == world.personal_pickup:
+		_interact_pickup()
+		return
 	if world.is_supply_table_collider(collider):
 		_open_supply_table(request)
 		return
@@ -719,6 +758,8 @@ func _update_hint() -> void:
 		_hint.text += "\nBUILD · 1 m grid · WASD / middle drag pan · wheel zoom · LMB select · Confirm placement to build · R rotate · RMB/Esc cancel"
 		if not _preview_message.is_empty(): _hint.text += "\n"+_preview_message
 	if not _command_message.is_empty(): _hint.text += "\n"+_command_message
+	if _session.pickup_state.occupied and not battlefield_open:
+		_hint.text += "\nPERSONAL PICKUP · WASD drive/reverse/steer · Space brake · E exit when stopped · V view\nPrototype personal fuel: unmetered"
 	if _place_button != null:
 		_place_button.visible = _base._placing_building and not battlefield_open
 		_place_button.disabled = not _build_target_locked or _candidate.is_empty()

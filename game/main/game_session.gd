@@ -7,6 +7,8 @@ signal time_advanced
 
 const ManagerPose = preload("res://game/preview_3d/manager_pose.gd")
 var manager_pose: RefCounted = ManagerPose.new()
+const PickupState = preload("res://game/player_vehicle/pickup_state.gd")
+var pickup_state: RefCounted = PickupState.new()
 
 const Simulation = preload("res://game/rear_base/base_simulation.gd")
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
@@ -68,6 +70,7 @@ func replace_simulation(next_simulation: RefCounted) -> void:
 	simulation.rear.state_changed.disconnect(_on_state_changed)
 	simulation.cancel_live_planning()
 	simulation = next_simulation
+	pickup_state.reset()
 	manager_pose.reset(simulation.rear.combat.world.ground(ManagerPose.SPAWN_GROUND))
 	_last_live_process_frame = -1
 	_presentation_pending = false

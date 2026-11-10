@@ -124,6 +124,8 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 		return construction.set_office_staff(id,count,priority)
 	if not requests.has(id) or count < 0 or count > int(requests[id].positions) or priority < 0 or priority > 3:
 		return _result(false, "Target must fit actual catalogue positions and a valid priority.")
+	if construction != null and construction.is_builder_duty(id) and count > int(requests[id].target) and construction.builder_allocation(id,count) > construction.builder_capacity():
+		return _result(false,"Not enough construction capacity. Reduce another target and finish current handoffs. "+construction.builder_limit_message())
 	var r: Dictionary = requests[id]
 	r.erase("starter_request") # A successful player edit is now their ordinary instruction.
 	if r.target != count or r.priority != priority:
@@ -211,6 +213,8 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 		return _result(same_handoff, "Existing safe handoff remains pending; no second assignment created.")
 	if destination != "Available" and _committed(destination) >= int(requests[destination].positions):
 		return _result(false, "Every actual/pending position in that duty is occupied.")
+	if construction != null and construction.is_builder_duty(destination) and construction.builder_allocation("",-1,id,destination) > construction.builder_capacity():
+		return _result(false,"Not enough construction capacity. Reduce another target and finish current handoffs. "+construction.builder_limit_message())
 	var a: Dictionary = actors[id]
 	if str(a.phase).begins_with("Dispatch "):
 		return _result(false,"Finish the current outbound handling task before changing this person's job. Staffing targets apply at its safe completion.")

@@ -19,6 +19,38 @@ var office_members: Dictionary = {} # real person ID -> F12 office while serving
 var _syncing_offices := false
 var _transferring := false
 var _sequence := 0
+var dynamic_occupants: Dictionary[String,Rect2] = {}
+
+func builder_capacity() -> int:
+	var offices := 0
+	for row: Dictionary in instances.values():
+		if row.kind == "construction" and row.state == "Complete": offices += 1
+	return 2+4*offices
+
+func is_builder_duty(duty: String) -> bool:
+	return duty.begins_with("builders-") or is_office(duty)
+
+func builder_allocation(target_duty: String = "", target: int = -1, person_id: String = "", destination: String = "") -> int:
+	# One real/pending person counts once, plus genuinely unfilled target places.
+	# An outgoing carrier keeps capacity until its safe handoff actually finishes.
+	var rear: RefCounted = _rear_ref.get_ref()
+	var actual := 0
+	var fills: Dictionary = {}
+	for id: String in rear.actors:
+		var status: Dictionary = rear.ledger.duty_status(id)
+		var current: String = str(status.duty_id)
+		var pending: String = str(status.pending_duty) if status.pending_assignment != "None" else current
+		if id == person_id: pending = destination
+		if is_builder_duty(current) or is_builder_duty(pending): actual += 1
+		if is_builder_duty(pending): fills[pending] = int(fills.get(pending,0))+1
+	for duty: String in rear.requests:
+		if not is_builder_duty(duty): continue
+		var wanted: int = target if duty == target_duty else int(rear.requests[duty].target)
+		actual += maxi(0,wanted-int(fills.get(duty,0)))
+	return actual
+
+func builder_limit_message() -> String:
+	return "Construction commitments: %d / %d · Up to 4 builders per site.\n2 base places + 4 per completed Construction Office. Office staff and pending safe handoffs share this limit." % [builder_allocation(),builder_capacity()]
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -55,6 +87,8 @@ func _footprint_preview(kind: String, center: Vector2, quarter_turn: bool) -> Di
 		var at: Vector2 = rear.ledger.inspect_entity(truck.id,{},false).position
 		if footprint.grow(4.0).has_point(at): return _fail("Construction truck occupies this footprint/vehicle clearance. Let it return before placing here.")
 	var door := center-Vector2(size.x/2.0+1.0,0)
+	for occupant: Rect2 in dynamic_occupants.values():
+		if footprint.grow(0.25).intersects(occupant): return _fail("Player pickup occupies this footprint. Park it elsewhere before placing here.")
 	for row in instances.values():
 		if row.state in ["Dismantled","Cancelled"] and _rear_ref.get_ref().ledger.loose_stock_mass_at(row.id) <= EPS: continue
 		var other := Rect2(row.center-row.size/2.0,row.size)
@@ -323,6 +357,8 @@ func _sync_office(office: String, priority: int = -1, player_edit: bool = false)
 func set_office_staff(office: String, count: int, priority: int = 1) -> Dictionary:
 	if not is_office(office) or count < 0 or count > 4 or priority < 0 or priority > 3: return _fail("Choose a complete F12 and zero to four real office builders.")
 	var rear: RefCounted = _rear_ref.get_ref()
+	var new_target: int = maxi(0,count-_office_site_count(office))
+	if new_target > int(rear.requests[office].target) and builder_allocation(office,new_target) > builder_capacity(): return _fail("Not enough construction capacity. Reduce another target and finish current handoffs. "+builder_limit_message())
 	var assigned: Array[String] = []
 	for person_id in office_members:
 		if office_members[person_id] == office and rear.ledger.inspect_entity(person_id).duty_id.begins_with("builders-"): assigned.append(person_id)
@@ -383,10 +419,16 @@ func set_builders(id: String, count: int, priority: int = 1) -> Dictionary:
 	if candidates.size() < needed: return _fail("Staff an F12 office with enough actual available builders before assigning this site.")
 	for index in needed:
 		var chosen: Dictionary = candidates[index]
+		# Moving this same office worker to a site frees its resident target;
+		# reserve the transfer before capacity validation, then restore on failure.
+		var old_target: int = int(rear.requests[chosen.office].target)
+		rear.requests[chosen.office].target = maxi(0,old_target-1)
 		_transferring = true
 		var result: Dictionary = rear.reassign_person(chosen.person,"builders-"+id)
 		_transferring = false
-		if not result.ok: return result
+		if not result.ok:
+			rear.requests[chosen.office].target = old_target
+			return result
 		office_members[chosen.person] = chosen.office
 		_sync_office(chosen.office)
 	rear.requests["builders-"+id].target = count
@@ -729,6 +771,10 @@ func request_dismantle(id: String) -> Dictionary:
 		return _fail("This F07 berth has an active manifest or returning vehicle.")
 	if row.kind == "construction" and (_office_site_count(id) > 0 or rear._committed(id) > 0):
 		return _fail("Return or reassign this F12 office's actual builders before dismantling.")
+	if row.kind == "construction":
+		var used: int = builder_allocation()
+		var after: int = builder_capacity()-4
+		if used > after: return _fail("Cannot remove this Office: capacity would fall to %d, below %d committed. Reduce construction targets and finish pending handoffs first." % [after,used])
 	if row.kind == "park":
 		for slot in row.get("parking_slots",[]):
 			if not rear.yard.occupied[slot].is_empty() or not rear.yard.reserved[slot].is_empty():

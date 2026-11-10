@@ -60,6 +60,12 @@ func prepare(camera: Camera3D) -> void:
 	stage.add_child(truck)
 	truck.scale = Vector3.ONE*TruckArt.MODEL_SCALE
 	truck.position = Vector3(10,1,0)
+	# The personal pickup can start outside the manager's first view as well.
+	var personal_scene := load("res://game/player_vehicle/assets/pickup.glb") as PackedScene
+	resources.append(personal_scene)
+	var personal := personal_scene.instantiate() as Node3D
+	stage.add_child(personal)
+	personal.position = Vector3(-10,1,8)
 	await RenderingServer.frame_post_draw
 	elapsed_usec = Time.get_ticks_usec()-started
 	stage.queue_free()
