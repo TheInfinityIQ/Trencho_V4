@@ -1,0 +1,34 @@
+flowchart TD
+  subgraph Receipt[Physical receipt and shelf preparation]
+    Truck[Actual package remains aboard truck] --> Reserve[Reserve compatible fixture space + netkg + access]
+    Reserve -->|existing ready fixture| Pickup[Real worker pickup]
+    Reserve -->|free suitable floor slot| Visit[Reserve actual Hauling worker / walk to service point]
+    Visit --> Clear[Slot clear of other people]
+    Clear --> Puff[Reused smoke / commit fixture ready]
+    Puff --> Pickup
+    Reserve -->|no feasible space| Hold[Keep cargo aboard / above-truck warning]
+    Hold -->|actual capacity / route / fixture / staffing event| Reserve
+    Pickup --> Carry[Actual carry / reserved destination retained]
+    Carry --> Deposit[IdentityLedger real deposit once]
+    Deposit --> Occupied[Commit package space / release reservation]
+    Occupied --> Outgoing[Actual factory or construction pickup]
+    Outgoing -->|real space freed| Reserve
+  end
+  subgraph Expansion[Paid physical expansion]
+    Place[Grid placement] --> Gap{Matching warehouse edge?}
+    Gap -->|no| Space[Require 2m ordinary footprint separation]
+    Gap -->|yes| Adjacent[Allow touching / reserve unfinished module]
+    Adjacent --> Build[Existing F03 construction / no new usable capacity yet]
+    Build --> Complete[Actual completion]
+    Complete --> Join[Open shared wall / connect walkable floor and lights]
+    Join --> Slots[Add finite slots / preserve existing stock IDs]
+    Slots --> Reserve
+  end
+  subgraph View[Keyed presentation]
+    Occupied --> Signal[Warehouse state changed]
+    Puff --> Signal
+    Hold --> Signal
+    Join --> Signal
+    Signal --> Visual[Shelves / package labels / open walls / truck warning]
+    Entry[Player Area3D entered or exited] --> Roof[Interior visibility / roof cutaway]
+  end
