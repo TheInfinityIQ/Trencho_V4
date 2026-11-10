@@ -45,10 +45,10 @@
     },
     {
       "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v01\\construction_worker_driver_v01.glb",
-      "runtime_or_source": "game/supplier_transport/assets/supplier_driver.glb",
+      "runtime_or_source": "game/supplier_transport/assets/source/construction_worker_driver_v01.glb",
       "bytes": 773896,
       "sha256": "9de840b867f2d5eaa9823129c0bc79c63df175a63b1e3326b7b61e6957e68ed5",
-      "stage": "Independent Artist-reviewed driver increment only; seven original clips preserved. Native integration and human visual approval separate."
+      "stage": "Preserved driver v01 history; approval video rejected for obscured insufficiently legible motion."
     },
     {
       "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v01\\construction_worker_driver_v01.blend",
@@ -63,6 +63,62 @@
       "bytes": 472399,
       "sha256": "55a703a5a3e61adacf00204402cec1bda51786b370796809da46fe53fd7455cb",
       "stage": "Independent Artist-reviewed driver increment only; seven original clips preserved. Native integration and human visual approval separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v02\\construction_worker_driver_v02.glb",
+      "runtime_or_source": "game/supplier_transport/assets/supplier_driver.glb",
+      "bytes": 807976,
+      "sha256": "340234b61fc425d4006cb7648e691330c7eff2afc6d20298d2316ca3c6fa7cd3",
+      "stage": "Driver v02 encoded mid-cycle phases visually inspected by Lead; human approval/native integration separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v02\\construction_worker_driver_v02.blend",
+      "runtime_or_source": "game/supplier_transport/assets/source/construction_worker_driver_v02.blend",
+      "bytes": 814098,
+      "sha256": "5b6f2bbde739412a2e834f06efc1050f82cfdff9f32ece06c1cd2953bc4818d5",
+      "stage": "Driver v02 encoded mid-cycle phases visually inspected by Lead; human approval/native integration separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v02\\supplier_driver_complete_review_v02.mp4",
+      "runtime_or_source": "game/supplier_transport/assets/source/supplier_driver_complete_review_v02.mp4",
+      "bytes": 2377892,
+      "sha256": "49dd455246188ae863157851d55836af5fc514f78ff6f1de3e2c9081ef2c6d25",
+      "stage": "SUPERSEDED: visible motion but incorrect1x timing. GLB imported at24fps/96frames then sampled at30fps;1.25x motion followed byhold. Original retained."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s2_crateshelf_v01.glb",
+      "runtime_or_source": "game/supplier_transport/assets/s2_crateshelf_v01.glb",
+      "bytes": 297540,
+      "sha256": "8e316683100da54c661faa2b0307a5ce724c2f358f20d2ff8d9c8d41b0b4b12f",
+      "stage": "Reviewed static shelf only; no worker contact, item hauling animation or gameplay acceptance."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s3_restraintrack_v01.glb",
+      "runtime_or_source": "game/supplier_transport/assets/s3_restraintrack_v01.glb",
+      "bytes": 223884,
+      "sha256": "07ecc831eafd2ffe950a1b8fab160748ce5bc100d9f7e0500e0bfc0f5ee5ce57",
+      "stage": "Reviewed static shelf only; no worker contact, item hauling animation or gameplay acceptance."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s4_protectedcargo_v01.glb",
+      "runtime_or_source": "game/supplier_transport/assets/s4_protectedcargo_v01.glb",
+      "bytes": 270316,
+      "sha256": "75a7444d180393f783c6aba0648e5113e062b6556b079b93467565c4ecaec442",
+      "stage": "Reviewed static shelf only; no worker contact, item hauling animation or gameplay acceptance."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s2_s3_s4_static_v01.blend",
+      "runtime_or_source": "game/supplier_transport/assets/source/s2_s3_s4_static_v01.blend",
+      "bytes": 258662,
+      "sha256": "f5ce4a1274cb991cda3af03a10d83a31af2135360cbcaf42e8f20fd7668bcefb",
+      "stage": "Reviewed static shelf only; no worker contact, item hauling animation or gameplay acceptance."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v02\\supplier_driver_complete_review_timing_v03.mp4",
+      "runtime_or_source": "game/supplier_transport/assets/source/supplier_driver_complete_review_timing_v03.mp4",
+      "bytes": 2392913,
+      "sha256": "202808a38eba837c7b0fb980b52a29324f4f83b945a969d42cfa1ae3bbb32cc1",
+      "stage": "Corrected4s cycles:30fps before GLB import,120samples percycle,3cycles each. Lead inspected encoded25/50/75percent phases of each action; human appearance/native gameplay approval separate."
     }
   ]
 }

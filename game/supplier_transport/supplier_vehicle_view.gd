@@ -4,6 +4,7 @@ const Assets = preload("res://game/warehousing/warehouse_assets.gd")
 const Packages = preload("res://game/warehousing/material_packages.gd")
 const ActorView = preload("res://game/supplier_transport/supplier_actor_view.gd")
 const ROOT := "res://game/supplier_transport/assets/"
+const SHELVES := {"S2":"s2_crateshelf_v01.glb","S3":"s3_restraintrack_v01.glb","S4":"s4_protectedcargo_v01.glb"}
 static var _scenes: Dictionary = {}
 var _receiving: RefCounted
 var _model: RefCounted
@@ -15,6 +16,8 @@ var _mechanism_started := 0.0
 var _spins: Array[Node3D] = []
 var _steers: Array[Node3D] = []
 var _cargo: Dictionary = {}
+var _racks: Dictionary = {}
+var _cargo_floor: Node3D
 var _last_position := Vector2.ZERO
 var _last_time := 0.0
 var _last_speed := 0.0
@@ -44,6 +47,7 @@ func bind(receiving: RefCounted, simulation: RefCounted, row: Dictionary) -> voi
 	_art = model("materials_truck.glb" if row.kind == "Freight" else "civilian_carrier.glb")
 	add_child(_art)
 	_pivot = _art.find_child("Body_Pivot",true,false) as Node3D
+	_cargo_floor = _art.find_child("Cargo_Floor",true,false) as Node3D
 	_animator = _art.find_child("AnimationPlayer",true,false) as AnimationPlayer
 	if _animator != null:
 		_animator.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
@@ -84,6 +88,7 @@ func refresh(row: Dictionary) -> void:
 		_mechanism = phase
 		_mechanism_started = float(row.get("mechanism_started",0.0))
 		_sync_mechanism()
+	_sync_racks(row.get("racks",[]))
 	for packet: Dictionary in row.get("packages",[]):
 		var id: String = str(packet.stock)
 		var quantity: int = int(row.get("aboard",{}).get(id,0))
@@ -108,6 +113,27 @@ func _bind_driver(id: String) -> void:
 	# Driver_Seat is the hip marker. The authored actor root is floor-relative;
 	# apply the raw-worker visual correction exactly once below the truck pivot.
 	_driver.set_root(marker.transform*Transform3D(Basis(Vector3.UP,PI),Vector3(0,-0.407,0)))
+
+func _sync_racks(rows: Array) -> void:
+	for row: Dictionary in rows:
+		if not SHELVES.has(str(row.family)): continue # S1 remains a separate unfinished handoff.
+		var id: String = str(row.id)
+		if not _racks.has(id):
+			assert(_cargo_floor != null and _cargo_floor.get_parent() == _pivot,"Static racks require the actual retained Cargo_Floor marker")
+			var rack := model(str(SHELVES[str(row.family)]))
+			_cargo_floor.add_child(rack)
+			var dimensions: Vector3 = row.size
+			var at: Vector3 = Vector3(row.origin)+Vector3(dimensions.x/2.0,-_pivot.position.y,dimensions.z/2.0)
+			var basis := Basis(Vector3.UP,PI if int(row.side) < 0 else 0.0)
+			rack.transform = _cargo_floor.transform.affine_inverse()*Transform3D(basis,at)
+			_racks[id] = rack
+		# Static restraints are prepared once access is unlocked, before pickup;
+		# they are not an invented worker animation or an inventory authority.
+		var secured: bool = _mechanism not in ["unloading","ramp_stow","door_close","closed"]
+		if _racks[id].get_meta("secured",null) == secured: continue
+		_racks[id].set_meta("secured",secured)
+		for child: Node in _racks[id].find_children("Restraint_*","",true,false):
+			if child is Node3D: child.visible = secured
 
 func _create_packet(packet: Dictionary, quantity: int) -> void:
 	var node := Node3D.new()

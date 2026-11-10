@@ -62,6 +62,7 @@ jobs:
           models = ["game/construction/assets/smoke.glb", "game/construction/assets/pylon.glb", "game/construction/assets/scissors.glb", "game/construction/assets/tape_half.glb", "game/characters/assets/construction_worker.glb", "game/characters/assets/soldier.glb", "game/characters/assets/rifle.glb", "game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb", "game/preview_3d/assets/industrial/building_h.glb", "game/preview_3d/assets/industrial/building_k.glb", "game/preview_3d/assets/industrial/building_l.glb", "game/preview_3d/assets/industrial/textures/colormap.png", "game/preview_3d/assets/commercial/building_a.glb", "game/preview_3d/assets/commercial/textures/colormap.png", "game/preview_3d/assets/car_kit/truck_flat.glb", "game/preview_3d/assets/car_kit/delivery.glb", "game/preview_3d/assets/car_kit/textures/colormap.png"]
           models += ["game/warehousing/assets/" + name + ".glb" for name in ['warehouse_shell', 'warehouse_crate_rack', 'warehouse_long_stock_rack', 'medium_crate', 'small_crate', 'metal_stock', 'closed_keg', 'timber_bundle', 'textile_bale', 'fuel_can']]
           models += ["game/supplier_transport/assets/materials_truck.glb", "game/supplier_transport/assets/civilian_carrier.glb", "game/supplier_transport/assets/supplier_driver.glb"]
+          models += ["game/supplier_transport/assets/" + name + ".glb" for name in ["s2_crateshelf_v01", "s3_restraintrack_v01", "s4_protectedcargo_v01"]]
           dependencies = textures + models
           asset_update = any(p in dependencies or p in [t + ".import" for t in dependencies] for p in changed)
           (output / "scripts.json").write_text(json.dumps(scripts), encoding="utf-8")
@@ -103,6 +104,7 @@ jobs:
           models = ["game/construction/assets/smoke.glb", "game/construction/assets/pylon.glb", "game/construction/assets/scissors.glb", "game/construction/assets/tape_half.glb", "game/characters/assets/construction_worker.glb", "game/characters/assets/soldier.glb", "game/characters/assets/rifle.glb", "game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb", "game/preview_3d/assets/industrial/building_h.glb", "game/preview_3d/assets/industrial/building_k.glb", "game/preview_3d/assets/industrial/building_l.glb", "game/preview_3d/assets/industrial/textures/colormap.png", "game/preview_3d/assets/commercial/building_a.glb", "game/preview_3d/assets/commercial/textures/colormap.png", "game/preview_3d/assets/car_kit/truck_flat.glb", "game/preview_3d/assets/car_kit/delivery.glb", "game/preview_3d/assets/car_kit/textures/colormap.png"]
           models += ["game/warehousing/assets/" + name + ".glb" for name in ['warehouse_shell', 'warehouse_crate_rack', 'warehouse_long_stock_rack', 'medium_crate', 'small_crate', 'metal_stock', 'closed_keg', 'timber_bundle', 'textile_bale', 'fuel_can']]
           models += ["game/supplier_transport/assets/materials_truck.glb", "game/supplier_transport/assets/civilian_carrier.glb", "game/supplier_transport/assets/supplier_driver.glb"]
+          models += ["game/supplier_transport/assets/" + name + ".glb" for name in ["s2_crateshelf_v01", "s3_restraintrack_v01", "s4_protectedcargo_v01"]]
           dependencies = textures + models
           # Only these data assets enter the isolated project; no game scripts or plugins.
           # FBX uses pinned Godot's built-in ufbx importer, not an external converter.
@@ -173,7 +175,7 @@ jobs:
               if result.returncode or re.search(r"^\s*(SCRIPT ERROR:|ERROR:)", result.stdout, re.MULTILINE):
                   raise SystemExit(result.returncode or 1)
       - name: Prepare remote display tools only for the explicit warehouse visual check
-        if: steps.scope.outputs.direct == 'true' && contains(inputs.direct_check, 'WAREHOUSE_NATIVE_SOURCE')
+        if: steps.scope.outputs.direct == 'true' && (contains(inputs.direct_check, 'WAREHOUSE_NATIVE_SOURCE') || contains(inputs.direct_check, 'SUPPLIER_NATIVE_SOURCE'))
         timeout-minutes: 2
         shell: bash
         run: |

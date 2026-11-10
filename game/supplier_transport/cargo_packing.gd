@@ -7,13 +7,13 @@ const FLOOR_Y := 1.02
 const FRONT_Z := 0.35
 const SIDE_SPAN := 2.20
 const RACK_DEPTH := 0.53
-const POST := 0.02
 const TRAY := 0.03
+const RELEASE := 0.05
 const SPECS := {
-	"S1":{"length":2.20,"tops":[0.425,0.85]},
-	"S2":{"length":0.70,"tops":[0.10,0.55,1.00]},
-	"S3":{"length":0.70,"tops":[0.10,0.70]},
-	"S4":{"length":0.70,"tops":[0.10,0.70]},
+	"S1":{"length":2.20,"tops":[0.425,0.85],"inset":0.02},
+	"S2":{"length":0.70,"tops":[0.10,0.55,1.00],"inset":0.028},
+	"S3":{"length":0.70,"tops":[0.10,0.70],"inset":0.028},
+	"S4":{"length":0.70,"tops":[0.10,0.70],"inset":0.036},
 }
 const FAMILY := {"M01":"S1","M02":"S2","M03":"S3","M04":"S1","M05":"S4","M06":"S2","M07":"S4","M08":"S3","M09":"S4","M10":"S4","M11":"S2"}
 
@@ -182,9 +182,10 @@ static func _add_rack(truck: Dictionary, family: String, left_only: bool = false
 		var origin := Vector3(-0.93 if side < 0 else 0.40,FLOOR_Y,FRONT_Z+0.10+used)
 		var row := {"id":"rack-%02d" % truck.racks.size(),"family":family,"side":side,"origin":origin,"size":Vector3(RACK_DEPTH,1.50,length),"spaces":[]}
 		var tops: Array = SPECS[family].tops
+		var inset: float = SPECS[family].inset
 		for index in tops.size():
-			var ceiling: float = float(tops[index+1])-TRAY if index+1 < tops.size() else 1.50
-			_space(row,AABB(origin+Vector3(POST,float(tops[index]),POST),Vector3(RACK_DEPTH-2.0*POST,ceiling-float(tops[index]),length-2.0*POST)),"deck-%02d" % index)
+			var ceiling: float = (float(tops[index+1])-TRAY if index+1 < tops.size() else 1.50)-RELEASE
+			_space(row,AABB(origin+Vector3(inset,float(tops[index]),inset),Vector3(RACK_DEPTH-2.0*inset,ceiling-float(tops[index]),length-2.0*inset)),"deck-%02d" % index)
 		truck.racks.append(row)
 		return true
 	return false
