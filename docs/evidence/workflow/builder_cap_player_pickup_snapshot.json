@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "feature": "builder-cap-player-pickup",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/builder_cap_player_pickup_v1.json",
+  "source_revision": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "started_at": "2026-11-10T00:22:08.549706+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 151.899583,
+    "implementation": 0,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 0,
+    "release": 0,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "implementation",
+  "observation_scope": [],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-10T00:48:33.120099+00:00",
+      "id": "authoring-context-and-working-directory",
+      "kind": "workflow_error",
+      "summary": "Several atomic patches included mismatched trailing context, and one map command initially selected the root working directory rather than the isolated feature checkout.",
+      "severity": "workflow",
+      "evidence": [
+        "Patch validation rejected the changes atomically; source readback confirmed no partial edits.",
+        "Wrong-root map session27883 was interrupted before writing; git diff --name-only docs/system_map.json remained empty. Correct isolated update72963 completed."
+      ],
+      "planning_assessment": "no",
+      "resolution": "Use narrow exact patch contexts and explicit workdir for each mutation; verify root remains untouched and run map only in the isolated checkout. No gameplay regression or lost human work observed.",
+      "repair_time_scope": "Small authoring corrections mixed into implementation interval; no invented separate repair duration."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 0,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 1,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "authoring-context-and-working-directory": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 1140945,
+      "cached_input_tokens": 1115008,
+      "output_tokens": 4758,
+      "reasoning_output_tokens": 1730,
+      "total_tokens": 1145703,
+      "uncached_input_tokens": 25937
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 1140945,
+      "cached_input_tokens": 1115008,
+      "output_tokens": 4758,
+      "reasoning_output_tokens": 1730,
+      "total_tokens": 1145703,
+      "uncached_input_tokens": 25937
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-10T00:22:08.549706+00:00",
+        "ended_at": "2026-11-10T00:24:40.449289+00:00",
+        "receipt_start": "2026-11-10T00:21:52.317Z",
+        "receipt_end": "2026-11-10T00:24:26.388Z",
+        "usage_delta": {
+          "input_tokens": 1140945,
+          "cached_input_tokens": 1115008,
+          "output_tokens": 4758,
+          "reasoning_output_tokens": 1730,
+          "total_tokens": 1145703,
+          "uncached_input_tokens": 25937
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

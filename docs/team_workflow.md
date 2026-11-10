@@ -2,6 +2,12 @@
 
 ## Current working agreement — 9 November 2026
 
+Ready animations require [complete video playback](animation_review.md) for
+Dawson's approval, including existing ready worker/soldier clips, construction
+and new driving motion. Asset-only and integrated footage are separate readiness
+claims. Provisional integration can continue; acceptance remains pending until
+he approves the displayed version. This adds no routine engine/suite run.
+
 Dawson's latest publication convention: one complete playable game-loop block
 per PR, with small local checkpoint commits and a consolidated first feature
 push after code/UI/integration documentation are ready. Fixes remain in that PR.

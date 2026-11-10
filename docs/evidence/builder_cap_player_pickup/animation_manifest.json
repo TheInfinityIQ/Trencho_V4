@@ -1,0 +1,19 @@
+{
+  "approval": "pending Dawson",
+  "videos": [
+    {
+      "file": "pickup_artist_v02.mp4",
+      "stage": "Artist motion study, not Godot gameplay",
+      "seconds": 20,
+      "frames": 480,
+      "fps": 24,
+      "sha256": "75ab6749592162b4217465ab2a73d05d43b930fa02b593a96de31f4a1ce6d4a6",
+      "asset_sha256": "d6f6de7458f16517ab2c4ab2945aa9b6c4ff6be3d03fd3d20582f217ab5fb812",
+      "scope": "Full turntable and complete start/left/right/brake/settle; personally Artist decoded-stage checked."
+    }
+  ],
+  "pending": [
+    "Actual integrated driving/construction video",
+    "Complete current worker/soldier reels"
+  ]
+}

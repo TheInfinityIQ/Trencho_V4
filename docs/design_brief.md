@@ -8,7 +8,7 @@ The challenge is building an effective base and allocating scarce people and res
 
 ## Approved opening and core rules
 
-- Development opening9November: character,2,500 requisition,500 actual Building Materials and four real assigned/present unloaders at the prebuilt south-road apron/Table. No free workshops or player trucks. This overrides the former zero-worker start.
+- Development opening9November: character,2,500 requisition,500 actual Building Materials and four real assigned/present unloaders at the prebuilt south-road apron/Table. No free workshops or freight trucks. The later personal-pickup request adds one development vehicle for the manager, separate from logistics transport. This overrides the former zero-worker start.
 - Buy eight untrained workers for140 including transport; development Confirm creates the physical supplier vehicle immediately, replacing the earlier90-second offscreen wait. Actual driving, disembarkation and arrival still occur. The shared pool supplies construction, hauling, production, training and crew duties.
 - Workers and materials must actually reach their work. Goods at HQ do not instantly appear in a remote weapon. No duplicate people, hidden replenishment or forced battlefield result.
 - Building Materials and Explosives are manufactured. Production inputs and onward shipments use actual available stock and physical handling.
@@ -94,3 +94,15 @@ Dawson also directed that the GDD guide the game's idea/vibe rather than operate
 as a rigid prototype rule book. Lead owns pragmatic reversible choices; Designer
 reviews coherence and progress toward the factory/logistics/autonomous-war loop.
 Do not invent a human approval gate for routine implementation details.
+
+## Construction capacity and personal driving accepted 9 November 2026
+
+Dawson's direct instruction in the Lead Developer chat limits construction to two workers without an office, adding four places per completed Construction Office. The shared total is therefore 2, 6, 10 and so on, across sites and office builder pools; the existing four-worker limit at one site remains. Capacity does not grant people or depend on filling the office's staff request. Travel and own-site material fetching retain the worker's place, with no duplicate counting. Designer decision: reject office dismantling when resulting capacity would be too small for construction commitments, explaining what must be reduced rather than silently evicting workers.
+
+The same instruction requests a player-drivable faceted pickup inspired by Dawson's blue 1980 Toyota Hilux reference, E entry and body sway during turning, starting and stopping. Designer scope is one personal development pickup in the rear, separate from office/army/supplier transport, stopped entry/clear-ground exit, WASD driving, Space braking and an initial third-person chase view. Management, focus loss and battlefield observation brake it to rest; Pause freezes it. Its fuel is explicitly unmetered during this development slice. Existing operational vehicle fuel, cargo and workforce rules remain real. This request supersedes the older no-player-driving exclusion for this personal vehicle, without adopting a broader AI traffic/contact system.
+
+Dawson also requires full videos of every ready animation for his approval, including existing ready clips. Record the presented version as pending until he approves it. Provisional integration may continue; this does not introduce a blanket development pause. The [accepted detailed rules](manager_pickup_and_construction_capacity.md) separate those human requirements from the Designer's bounded defaults. The Lead remains engineering/integration owner and the 3D Artist remains art/animation owner.
+
+## Simplified AI prototype hierarchy accepted 9 November 2026
+
+Dawson accepted Commander → squads / vehicle elements → individuals for the separate AI prototype and eventual Trencho integration. Company and platoon command layers are removed from that design; temporary operation coordination is not another rank or order-relay layer. This records the accepted direction without claiming the current implementation was rewritten.

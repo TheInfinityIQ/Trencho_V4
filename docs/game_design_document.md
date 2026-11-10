@@ -52,10 +52,12 @@ Development opening override — 9 November 2026: start with the same manager,
 workers already assigned and present at the prebuilt south unloading apron.
 They belong to the shared workforce and can be reassigned. The Supply Table,
 storage and arrival access sit beside the road outside the buildable area. No
-workshops, production buildings or player-owned trucks are granted. This latest
-prototype request replaces the prior no-hired-workers opening.
+workshops, production buildings or freight trucks are granted. The later personal
+pickup request adds one development vehicle for the manager, separate from
+logistics transport. This latest prototype request replaces the prior
+no-hired-workers opening.
 
-The first workers and first construction must be obtainable from this opening. Initial purchase access cannot require a Receiving Bay that has not been built. Purchased ordinary workers can build using the declared materials without first constructing an office or materials producer. The character is not a hidden source of free labour, qualifications or crew.
+The first workers and first construction must be obtainable from this opening. Initial purchase access cannot require a Receiving Bay that has not been built. Up to two ordinary workers can build using the declared materials before the first Construction Office is ready. Each completed operational office adds four places to the base's shared construction capacity. The character is not a hidden source of free labour, qualifications or crew.
 
 The game uses cohesive stylized 3D. WASD moves the rear manager, with toggleable first- and third-person views of the same character. Switching views preserves that character's actual position and the current session. Camera position is not character position, and the manager is separate from the hired workforce. The initial 3D scope keeps the character in the rear; battlefield character access, jumping, climbing and interiors are not implied by the camera choice.
 
@@ -64,6 +66,8 @@ The build menu uses a top-down RTS camera and visible one-metre grid, edge-snapp
 The battlefield has a separate RTS observation camera with pan, zoom and inspection. Close zoom should make represented people and vehicles readable; distant views should retain useful strategic cues. It does not grant direct military orders, target selection, player combat, vehicle driving or additional knowledge of unseen enemies. Both perspectives and areas preserve people, goods, work, orders and progress.
 
 Pause, 1x and 2x remain accessible. Both rear and battlefield must continue their applicable activity while hidden. Waiting or planning in one area must not silently freeze the other. Pause stops timed gameplay while allowing inspection and management. The Developer chooses how to deliver these behaviours; the GDD does not prescribe a shared clock or scheduling mechanism.
+
+The manager can enter the personal pickup with E, drive around the rear and exit onto clear ground when stopped. Steering, acceleration and braking produce readable body sway. The first driving slice uses a third-person chase view and unmetered personal fuel; ordinary transport keeps its real fuel requirements. Management, focus loss and battlefield observation stop driving input and brake the pickup to rest without replacing the manager. The [pickup and construction rules](manager_pickup_and_construction_capacity.md) record these accepted prototype details and Dawson's full-animation-video review requirement.
 
 ### Prototype ordering and interactions — 9 November 2026
 
@@ -103,6 +107,8 @@ Every newly completed workplace applies a starting staffing request once, so the
 
 These are requests, not free people, qualifications or maximum capacities. Available eligible workers fill them through the existing shared pool and physical reporting rules; shortages remain visible. The player can change the count or priority, including setting it to zero. Opening a menu, changing a recipe, pausing or enabling a building must not restore the default or overwrite a deliberate edit. Haulers, students and vehicle crews retain their separate exclusive duties.
 
+Construction has one shared limit: **two workers plus four for each completed operational Construction Office**, with at most four working at one site. Office builder pools and site assignments count the same people once; travel and own-site material fetching still occupy their construction places. The office bonus depends on completion, not on filling its starting staff request. Show used/total capacity and apply the limit to staffing targets and individual reassignment. If dismantling an office would leave construction commitments above the resulting limit, explain the shortage and require the player to reduce those commitments first rather than automatically removing workers.
+
 A person performs one role at a time. Reassignment must finish or safely put down an existing carry. Training, crew duty and military commitment remove that person from incompatible industrial work. Qualifications persist, but do not grant equipment or let one person fill several stations.
 
 Training turns available people into useful capability. Basic infantry, engineers, medics, heavy-weapons specialists, artillery specialists, drone operators, marksmen and vehicle crew remain in scope. Courses need real students, instructors, facilities and time. An instructor-recovery route must prevent a rear with no trained people from becoming permanently stuck.
@@ -137,7 +143,7 @@ Later consumption or changed operations can create new demand. The same transpor
 
 ## 8. Autonomous army and battlefield consequences
 
-There are two opposing autonomous commanders, each operating a military hierarchy. Commander, Company, Platoon, Squad, vehicle elements and individual roles retain distinct responsibilities. Orders travel down; observations, progress, shortages and inability reports travel up. Decisions use delivered information and actual capability, not hidden enemy inventory or knowledge supplied by the player's camera.
+There are two opposing autonomous commanders. Dawson's accepted prototype structure is **Commander → squads / vehicle elements → individuals**, with no company or platoon command layers. The commander chooses effects and allocates forces; squads and vehicle elements handle local execution; individuals perform the physical actions. Several elements can coordinate on an operation without another command rank. Orders travel down; observations, progress, shortages and inability reports travel up. Decisions use delivered information and actual capability, not hidden enemy inventory or knowledge supplied by the player's camera. This is the intended future integration direction; it does not claim the current game's hierarchy has already been replaced.
 
 Each commander pursues feasible objectives, coordinates support, maintains supply and fallback routes, and holds or withdraws when it cannot continue safely. The friendly commander must act without the player issuing tactical orders. The opposing commander must operate and react through its own information, resources and actual forces. Supply can restore a lost capability; it does not guarantee a successful attack. Real leadership, strength, ammunition, morale, cohesion, terrain and enemy capability still matter.
 
@@ -147,7 +153,7 @@ The opponent follows the same physical constraints. Its industry may be represen
 
 ## 9. Vehicles, engineering and support
 
-All five vehicle roles remain part of the intended game: resource transport, troop transport, technical, APC and tank. Vehicles need the appropriate actual crew, fuel, capacity, route and equipment. Ammunition and fuel resupply are general vehicle requirements, not an APC-only rule. A vehicle's loaded ammunition counts once, and its crew cannot simultaneously work elsewhere.
+All five vehicle roles remain part of the intended game: resource transport, troop transport, technical, APC and tank. These operational vehicles need the appropriate actual crew, fuel, capacity, route and equipment. Ammunition and fuel resupply are general vehicle requirements, not an APC-only rule. A vehicle's loaded ammunition counts once, and its crew cannot simultaneously work elsewhere. The personal development pickup's unmetered fuel is the explicit prototype exception described above.
 
 Engineers use real tools and supplies to build defences and forward services, prepare or restore crossings, clear mines and carry out authorized denial. Bridges have meaningful movement and load limits. A damaged route can interrupt supply and make repair, rerouting or withdrawal necessary. Engineers do not undertake a project merely because materials exist.
 
@@ -155,7 +161,7 @@ Vehicle damage, repair, towing and recovery preserve the same hull and its conte
 
 These are wider-game requirements. Their backend presence must not be presented as a connected player experience until the normal game uses them.
 
-Manager contact with vehicles remains a deferred physical-interaction requirement, not a prerequisite for the next factory interaction. The accepted target is consistent grounded contact while time runs, without damage, crushing, riding or arbitrary relocation; Pause freezes the character. If local contact cannot leave a valid grounded position, the vehicle's existing activity may wait before the obstructing movement, explain why and resume the same job when clear, preserving cargo, crew, remaining work and real waiting time without charging distance fuel for no movement. Menus or the battlefield view do not grant user movement or automatically close because of contact. Already overlapping initial or restored states still need a feasible agreed solution before this interaction is enabled. Current partial presentation must not be described as completed physical contact; the detailed decision record remains in the [design brief](design_brief.md).
+Manager contact with autonomous vehicles remains a deferred physical-interaction requirement, separate from the new personal-driving slice. The accepted target is consistent grounded contact while time runs, without damage, crushing, riding or arbitrary relocation; Pause freezes the character. If local contact cannot leave a valid grounded position, the vehicle's existing activity may wait before the obstructing movement, explain why and resume the same job when clear, preserving cargo, crew, remaining work and real waiting time without charging distance fuel for no movement. Menus or the battlefield view do not grant user movement or automatically close because of contact. Already overlapping initial or restored states still need a feasible agreed solution before this interaction is enabled. Current partial presentation must not be described as completed physical contact; the detailed decision record remains in the [design brief](design_brief.md).
 
 ## 10. World, campaign and persistence
 
@@ -195,4 +201,4 @@ Exact balance values remain provisional where previously described that way. A g
 
 Older GitHub issues use G01–G33, D01–D03 and A01–A60 identifiers and old GDD section numbers. Their historical detail is retained in [v0.2 / v0.2.1](reference/gameplay_specification_v0_2.md). Current scope comes from this GDD and later human decisions; historical test matrices, old team assignments and technical gates do not reactivate automatically.
 
-This revision consolidates Dawson's accepted opening and automatic army-request shipping, 7 November default staffing and stylized 3D direction, and the subsequent deferred contact decision. Dawson's 9 November request explicitly reaffirmed the central vision: the player builds the factory/logistics area and supplies a military base whose autonomous RTS commander battles another autonomous commander. Detailed decision provenance remains in the [design brief](design_brief.md); engineering structure belongs in [foundation](foundation.md) and the [implementation atlas](system_atlas.md). No recipe, capacity, price, starting military stock or combat balance change is made by this review.
+This document consolidates Dawson's accepted opening and automatic army-request shipping, default staffing, stylized 3D direction and original factory-to-autonomous-war vision. Later accepted direction adds the shared construction limit, personal driving and full animation videos, and simplifies the AI prototype hierarchy. Detailed decision provenance remains in the [design brief](design_brief.md); engineering structure belongs in [foundation](foundation.md) and the [implementation atlas](system_atlas.md). The construction capacity change and personal pickup are explicit prototype revisions; recipes, prices, starting military stock and combat balance remain unchanged.

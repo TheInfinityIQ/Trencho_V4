@@ -28,6 +28,8 @@ const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const ConstructionSiteVisual = preload("res://game/construction/visuals/construction_site_visual.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
+const PersonalPickup = preload("res://game/player_vehicle/player_pickup.gd")
+var personal_pickup: PersonalPickup
 var rear_workers: RearWorkers = RearWorkers.new()
 var utility_trucks: UtilityTrucks = UtilityTrucks.new()
 var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
@@ -177,7 +179,7 @@ func _build_grid() -> void:
 func _build_player(pose: RefCounted) -> void:
 	player.name = "Manager"
 	player.collision_layer = 2
-	player.collision_mask = 1
+	player.collision_mask = 9
 	player.floor_snap_length = 0.3
 	rear_root.add_child(player)
 	player.global_position = pose.scene_position()

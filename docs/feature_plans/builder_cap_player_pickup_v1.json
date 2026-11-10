@@ -1,0 +1,51 @@
+{
+  "feature": "builder-cap-player-pickup",
+  "baseline": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "frozen_before_production": true,
+  "outcome": "Global construction workforce capacity2+4per completed office; usable original faceted player pickup withEenter/exit and continuous turn/acceleration sway; complete video previews for animation approval.",
+  "integration": "docs/diagrams/builder_cap_player_pickup.mmd",
+  "existing_owners": [
+    "ConstructionService owns facility lifecycle, per-site builder commands and own-site material fetching.",
+    "RearSimulation owns shared staffing targets, rebalancing and safe actual/pending handoffs. Every assignment entry must enforce capacity, not only the Build menu.",
+    "GameSession retains canonical manager pose; Preview owns input modes and WorldPresenter owns3D composition and player movement. Existing AI trucks retain cargo/person/fuel authority.",
+    "Artist supplies original geometry, pivots, editable source, exportQA and full video. Lead owns physics, camera/input integration and actual Godot preview video."
+  ],
+  "proposed_rules_pending_designer": [
+    "Count all active site/office construction-worker commitments globally, including requested/pending and actual carrying-outgoing workers conservatively; max4at one site remains.2baseline permits first office bootstrap.",
+    "Completed office adds4without creating workers. On removal reject if current requested/actual commitments need its capacity; no forced cargo loss or silent reassignment.",
+    "Separate personal development pickup near the rear road, no supply-cargo or workforce role. Fuel treatment explicitly resolved with Designer before implementation.",
+    "Efirst-hit nearby pickup enters; Ewhen stopped checks actual safe grounded exits. Same manager identity/pose, no teleport through blocked exit. WASD throttle/reverse/steer,Spacebrake,Vperspective. Input release, focus/modal/management/build/area changes stop driving input and park; Pause freezes.",
+    "Current grounded rear flat-space driving uses CharacterBody3D collision/motion; visual body tilt only, actual collider upright. Moving vehicle shape queries are physical motion validation, not recurring gameplay-service polling. Parked vehicle does no motion work.",
+    "Actual pickup footprint blocks new sites on preview/commit, including numeric placement. Existing AI contact/traffic policy remains deferred, no damage/crushing rules added.",
+    "A complete current integrated motion video is an approval deliverable, never anFPS receipt. Review status remains awaitingDawson until explicitly approved."
+  ],
+  "acceptance": [
+    "Brief remote direct case: two site targets cannot exceed2before office, completed office raises global capacity6, cross-site/manual assignment cannot bypass, busy removal preserves state.",
+    "Actualmain scene pickup visible; enter/accelerate/left-right steer/brake/reverse/stop/exit with same manager; safe blocked exit preserves occupant, Pause/inputmode clear works; actual pickup blocks placement.",
+    "Full video includes complete smoke/cut/tape/pylon sequence and actual pickup motion/sway with clear source/state labels; Artist asset preview distinguished from integration.",
+    "No local engine or regression suite. Only bounded current-change GitHub demonstration and changed-script parsing, original45/35/28s limits. Plan/source/maps/assetprovenance before firstpush. Exact-head Designer+Lead approvals/requiredPASS beforemerge; preserve human dirty files."
+  ],
+  "sources": [
+    "https://docs.godotengine.org/en/4.7/classes/class_characterbody3d.html",
+    "https://docs.godotengine.org/en/4.7/classes/class_physicsdirectspacestate3d.html",
+    "https://docs.godotengine.org/en/4.7/tutorials/animation/creating_movies.html",
+    "https://www.classic.com/veh/1980-toyota-hilux-rn37023005-4y86xop/"
+  ],
+  "risks": [
+    "Pending safe handoff must not count one person twice or free capacity before actual old-duty work stops.",
+    "Old office staffing residents/deployed members need same capacity authority; preserve old diagnostic fixtures without claiming broad verification.",
+    "Vehicle camera/exit/manager collision and placement must use actual pose; reset destroys old controller and clears occupancy.",
+    "Record complete motion offline at small resolution without weakening directcheck deadlines; movie pacing is not runtime performance."
+  ],
+  "design_resolution": {
+    "source": "docs/manager_pickup_and_construction_capacity.md",
+    "decisions": [
+      "Global2+4completedoffice,4per site, shared real people count once, office2starter remains.",
+      "Office removal rejected if resulting capacity insufficient; no forced loss.",
+      "One personal pickup unmetered development fuel;AItrucks unaffected.",
+      "Eenter/stopped clear exit,WASD,Spacebrake, optionalV;focus/menu/build/area brakes and keeps occupancy;Pause freezes.",
+      "Full ready worker/soldier, construction and driving videos, Dawson acceptance pending."
+    ],
+    "timing": "After pre-code freeze, before associated policy implementation finalization."
+  }
+}

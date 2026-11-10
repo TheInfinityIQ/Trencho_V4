@@ -1,0 +1,23 @@
+{
+  "pass": true,
+  "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_personal_pickup/faceted_personal_pickup_v02.blend",
+  "glb": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_personal_pickup/faceted_personal_pickup_v02.glb",
+  "summary": {
+    "bytes": 1854808,
+    "mesh_resources": 3,
+    "mesh_instances": 6,
+    "primitives": 3,
+    "materials": 3,
+    "triangles_per_mesh_resource": 19398,
+    "vertices_per_mesh_resource": 48196,
+    "joints": [],
+    "clips": [],
+    "has_vertex_colors": false,
+    "external_uris": []
+  },
+  "qa_warnings": [
+    "SM_Pickup_Body: duplicate verts=4 loose verts=0",
+    "hidden back-to-back faces: SM_Pickup_Body (42 pairs) - delete to save tris",
+    "hidden back-to-back faces: SM_Pickup_Glass<->SM_Pickup_Body (4 pairs) - delete to save tris"
+  ]
+}

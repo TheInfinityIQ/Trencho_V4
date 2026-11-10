@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "meshes": [
+    {
+      "name": "SM_Pickup_Body",
+      "bounds_error_m": 0.0
+    },
+    {
+      "name": "SM_Pickup_Glass",
+      "bounds_error_m": 0.0
+    },
+    {
+      "name": "SM_Wheel_RL",
+      "bounds_error_m": 0.0
+    },
+    {
+      "name": "SM_Wheel_RR",
+      "bounds_error_m": 0.0
+    },
+    {
+      "name": "SM_Wheel_FL",
+      "bounds_error_m": 0.0
+    },
+    {
+      "name": "SM_Wheel_FR",
+      "bounds_error_m": 0.0
+    }
+  ],
+  "bounds_blender_xyz_m": [
+    [
+      -0.9925000071525574,
+      -2.25600004196167,
+      -2.911686897277832e-05
+    ],
+    [
+      0.9925000071525574,
+      2.25600004196167,
+      1.746000051498413
+    ]
+  ],
+  "shared_wheels": true
+}

@@ -1131,7 +1131,8 @@ func _construction_panel(box: VBoxContainer) -> void:
 	construction_status = _label(box,"")
 	construction_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	construction_source = _option(box,"Building Materials source",simulation.rear.stores.keys())
-	construction_builders = _spin(box,"Builder target (max four)",4)
+	construction_builders = _spin(box,"Site builder target (4 per site; shared capacity)",4)
+	construction_builders.max_value = mini(4,simulation.rear.construction.builder_capacity())
 	construction_staff = _spin(box,"Completed facility staff target",8)
 	_button(box,"Deliver Building Materials to site",func() -> void:
 		_result(simulation.rear.construction.order_materials(_construction_site(),construction_source.get_item_text(construction_source.selected))))
@@ -2150,6 +2151,7 @@ func _refresh_construction() -> void:
 	status.text = "  %.0f req | %d rear + %d incoming" % [view.receiving.money, view.rear_population, simulation.receiving.incoming_people()]
 
 func _refresh_construction_progress() -> void:
+	construction_builders.max_value = mini(4,simulation.rear.construction.builder_capacity())
 	construction_status.text = "Select a site or building to inspect its physical work."
 	var row: Dictionary = simulation.rear.construction.instances.get(_construction_site(),{})
 	if row.is_empty(): return
@@ -2169,6 +2171,7 @@ func _construction_progress_text(row: Dictionary) -> String:
 	if row.state in ["Awaiting M11","Building"]:
 		var delivery: Dictionary = simulation.rear.construction.delivery_status(str(row.id))
 		text += "\nHaul deliveries: %d / %d · being carried here: %d\n%s" % [delivery.received,row.m11,delivery.carried,delivery.status]
+	text += "\n"+simulation.rear.construction.builder_limit_message()
 	return text
 
 func _refresh_training() -> void:

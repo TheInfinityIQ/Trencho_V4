@@ -1,0 +1,462 @@
+{
+  "stage": "Static visual vehicle ready for provisional integration; human motion approval pending. No engine demonstration claimed.",
+  "units": "metres",
+  "axes": "glTF/Godot +Y up, -Z forward, X left negative; Blender +Z up,+Y forward.",
+  "dimensions_godot_xyz_m": [
+    1.9850000143051147,
+    1.7460291683673859,
+    4.51200008392334
+  ],
+  "origin": "Ground centre between wheelbase ends, source ground Z0 / Godot Y0.",
+  "wheel_radius_m": 0.34,
+  "wheelbase_m": 2.62,
+  "track_m": 1.54,
+  "body_roll_axis": "local Z, \u00b12.5deg proposed",
+  "body_pitch_axis": "local X, \u00b11.5deg proposed",
+  "steer_axis": "local +Y; positive steers left, \u00b125deg art clearance inspected",
+  "spin_axis": "local X; angle=-signed_forward_distance_m/0.34",
+  "driver_markers": {
+    "seat": "Hip centre, root-world(-.4,.89,-.13); child of body sway pivot.",
+    "eye": "Eye camera marker, root-world(-.4,1.40,-.21); child of body sway pivot.",
+    "exit": "Ground-level feet target; Lead resolves clear-ground exit."
+  },
+  "nodes": {
+    "Driver_Eye": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4000000059604645,
+        0.6000000834465027,
+        -0.20999999344348907
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Seat": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4000000059604645,
+        0.0899999737739563,
+        -0.12999999523162842
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.4000000059604645,
+        0.0899999737739563,
+        -0.12999999523162842
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Pickup_Body": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 0
+    },
+    "SM_Pickup_Glass": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Body_Pivot": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        0,
+        0.800000011920929,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Exit_Left": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        -1.4500000476837158,
+        0,
+        -0.12999999523162842
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RL": {
+      "parent": "Spin_RL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_RL": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        -0.7699999809265137,
+        0.3400000035762787,
+        1.3200000524520874
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RR": {
+      "parent": "Spin_RR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_RR": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        0.7699999809265137,
+        0.3400000035762787,
+        1.3200000524520874
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FL": {
+      "parent": "Spin_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_FL": {
+      "parent": "Steer_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FL": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        -0.7699999809265137,
+        0.3400000035762787,
+        -1.2999999523162842
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FR": {
+      "parent": "Spin_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_FR": {
+      "parent": "Steer_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FR": {
+      "parent": "Pickup_Visual",
+      "translation": [
+        0.7699999809265137,
+        0.3400000035762787,
+        -1.2999999523162842
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Pickup_Visual": {
+      "parent": null,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "mesh_resources": 3,
+  "mesh_instances": 6,
+  "triangles_total_instances": 31674,
+  "triangles_unique_resources": 19398,
+  "materials": [
+    {
+      "name": "M_Pickup_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.4300000071525574
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "name": "M_Pickup_Glass",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.23999999463558197,
+          0.3799999952316284,
+          0.44999998807907104,
+          0.20000000298023224
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.18000000715255737
+      }
+    },
+    {
+      "name": "M_Pickup_Wheel_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.800000011920929
+      }
+    }
+  ],
+  "images": 0,
+  "skins": 0,
+  "clips": 0,
+  "accepted_qa_warnings": {
+    "actual": [
+      "SM_Pickup_Body: duplicate verts=4 loose verts=0",
+      "hidden back-to-back faces: SM_Pickup_Body (42 pairs) - delete to save tris",
+      "hidden back-to-back faces: SM_Pickup_Glass<->SM_Pickup_Body (4 pairs) - delete to save tris"
+    ],
+    "reason": "Four coincident component contacts,42 hidden opaque contact pairs and4 glass/frame contact pairs are retained closed-component mounting seams, not visible z-fighting. Zero floating/degenerate/nonmanifold/winding errors. Tiny~0.03mm tread bound below ground is within nominal0.34m wheel-radius/contact tolerance."
+  },
+  "provenance": {
+    "type": "Original unbranded geometry and vertex colors authored for Trencho; no third-party mesh/texture.",
+    "reference": "https://www.classic.com/veh/1980-toyota-hilux-rn37023005-4y86xop/",
+    "reference_scope": "Blue compact two-door/longbed silhouette inspiration only; no Toyota badges, logos, reference photograph or external geometry embedded. Analysis photograph excluded from delivery."
+  },
+  "checks": {
+    "geometry": "mesh_review_v02_final.json passes",
+    "roundtrip": "roundtrip_check_v02.json exact mesh bounds within1e-4m, one shared wheel resource",
+    "source": "saved_source_check_v02.json reopens source, one scene, zero actions, neutral pivots",
+    "contract": "Every node parent, translation,rotation,scale numerically matches v01 within1e-5. Only visual mesh/materials changed.",
+    "format": "Khronos0errors/0warnings;4intentional NODE_EMPTY marker notices."
+  },
+  "unverified": [
+    "Godot import/runtime controls/physics/collision",
+    "Driver character seating",
+    "Runtime performance",
+    "Human approval of motion video"
+  ],
+  "files": [
+    {
+      "file": "faceted_personal_pickup_v02.glb",
+      "bytes": 1854808,
+      "sha256": "d6f6de7458f16517ab2c4ab2945aa9b6c4ff6be3d03fd3d20582f217ab5fb812"
+    },
+    {
+      "file": "faceted_personal_pickup_v02.blend",
+      "bytes": 755262,
+      "sha256": "27ccd362411a1320225e610bb28f5c1861fcee516d21108eda8c1c3b44b7d142"
+    }
+  ],
+  "version": "v02",
+  "style": "Softened faceted mid-poly interpretation: rounded manufactured edge bands, crowned roof, pressed hood,32-sided contoured tires with geometric tread, wipers/mouldings. Pending Dawson visual approval.",
+  "bounds_blender_xyz_m": [
+    [
+      -0.9925000071525574,
+      -2.25600004196167,
+      -2.911686897277832e-05
+    ],
+    [
+      0.9925000071525574,
+      2.25600004196167,
+      1.746000051498413
+    ]
+  ]
+}

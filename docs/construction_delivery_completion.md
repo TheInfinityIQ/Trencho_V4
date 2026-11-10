@@ -1,5 +1,10 @@
 # Construction delivery and completion follow-up
 
+Later [shared construction capacity](builder_cap_player_pickup.md) supersedes
+the former four-builders-without-office opening: two base places plus four per
+completed office, at most four per site. Historical receipts keep their original
+source/rules; they are not rerun or relabeled as current capacity acceptance.
+
 Dawson reported construction goods not reaching the building even with some
 workers left in Hauling, and a large completion hitch. The requested presentation
 is now1.5seconds of faceted smoke/scissor emergence, then2seconds of cutting.
