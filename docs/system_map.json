@@ -782,13 +782,13 @@
     ]},
     "docs/evidence/warehousing/receipts.json": {"role":"data","system":"docs","sha256":"3eb8bfde3c89fbbf52c63357dc19acd98fc22c77a37d5853686ca57122d0cf08","lines":36,"purpose":"Supply structured settings, dependency pins or catalogue data for receipts.","functions":[
     ]},
-    "docs/evidence/warehousing/warehouse-receipt-final-navigation-direct.txt": {"role":"configuration","system":"docs","sha256":"13722ae6fc49aef4c95689bb13df03e572bda34463ef94c9f6380c8170c6d878","lines":19,"purpose":"Supply warehouse-receipt-final-navigation-direct project settings or repository metadata.","functions":[
+    "docs/evidence/warehousing/warehouse-receipt-final-navigation-direct.txt": {"role":"configuration","system":"docs","sha256":"bf39adb36e8ff83603b49b689335ae97035a16771932179414c3856139b7cdd2","lines":18,"purpose":"Supply warehouse-receipt-final-navigation-direct project settings or repository metadata.","functions":[
     ]},
     "docs/evidence/warehousing/warehouse-receipt-final-navigation-result.json": {"role":"data","system":"docs","sha256":"0669bfbe1ad4d7410d5cf4b6b8544a1cb7187a084aaf8fa8b084ab3f40654897","lines":287,"purpose":"Supply structured settings, dependency pins or catalogue data for warehouse-receipt-final-navigation-result.","functions":[
     ]},
     "docs/evidence/warehousing/warehouse-receipt-final-navigation-source-manifest.json": {"role":"data","system":"docs","sha256":"82cf38845966093f6ca42879eed29ebc4d2dec6113ee67112760b8caeaeba77c","lines":29,"purpose":"Supply structured settings, dependency pins or catalogue data for warehouse-receipt-final-navigation-source-manifest.","functions":[
     ]},
-    "docs/evidence/warehousing/warehouse-space-query-reuse-direct.txt": {"role":"configuration","system":"docs","sha256":"fcb2aea8a74986e9f1be1d60bdf43fee3a1b2d6477628fdf19b079ddba51aa79","lines":31,"purpose":"Supply warehouse-space-query-reuse-direct project settings or repository metadata.","functions":[
+    "docs/evidence/warehousing/warehouse-space-query-reuse-direct.txt": {"role":"configuration","system":"docs","sha256":"954a5484f7ff9641228263efac88d2728775a6fbf5ab2520f51bb070ae85bd16","lines":30,"purpose":"Supply warehouse-space-query-reuse-direct project settings or repository metadata.","functions":[
     ]},
     "docs/evidence/warehousing/warehouse-space-query-reuse-result.json": {"role":"data","system":"docs","sha256":"870f163ed4fdd796f182be315716649c8cca77c49f184a75992819871644543d","lines":173,"purpose":"Supply structured settings, dependency pins or catalogue data for warehouse-space-query-reuse-result.","functions":[
     ]},
@@ -1002,7 +1002,7 @@
     ]},
     "docs/vehicle_assembly.md": {"role":"documentation","system":"docs","sha256":"5bf45ee44f588f4013b216313ca0d7d0c844e8d859f78096a5b1f571f9f5ba55","lines":18,"purpose":"Document G07 manufactured hulls, crew and rear clearance.","functions":[
     ]},
-    "docs/warehousing.md": {"role":"documentation","system":"docs","sha256":"8d0c77160bd51f0dcc354530904b481962171f2bcd4d3bec88cacb1c7bfeeb1b","lines":125,"purpose":"Document Physical Supply Depot warehouse.","functions":[
+    "docs/warehousing.md": {"role":"documentation","system":"docs","sha256":"588e2b65453e16b80f1a07b0687bc316407a44385e93a07357a4a11b80e00723","lines":133,"purpose":"Document Physical Supply Depot warehouse.","functions":[
     ]},
     "docs/workflow_experiments.json": {"role":"data","system":"docs","sha256":"68558de521b78fe1fb0828c046b9e328c4a99bdadd3c63b37a7c7cb824e7ab66","lines":58,"purpose":"Supply structured settings, dependency pins or catalogue data for workflow experiments.","functions":[
     ]},

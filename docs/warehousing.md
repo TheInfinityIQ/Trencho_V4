@@ -93,6 +93,14 @@ The navigation-affected receipt was rechecked in42856096688. All these are
 unpublished source overlays on the recorded main base, with normalized source
 hash manifests; a green main check alone is not candidate acceptance.
 
+Initial PR validation42860686208 stopped before Godot because copied console
+transcripts had extra blank lines at EOF. Their documentation copies now normalize
+only those trailing blank lines; original artifact bytes/digests remain retained.
+Publication must check the staged/base-to-head diff, including newly added files.
+The native current-change check explicitly loads all changed production scripts,
+so a subsequent documentation-only required job cannot imply unperformed source
+validation.
+
 ## Remaining delivery work
 
 - Verify the actual imported models, default F5 scene, native entrance/collision,

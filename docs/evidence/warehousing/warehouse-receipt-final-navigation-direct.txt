@@ -16,4 +16,3 @@ Worker physically reached reserved shelf site before appearance: initial-depot/b
 Finished deposits consumed their space promises: PASS
 Exact actual resource totals retained: PASS
 Ledger accounting remains consistent: PASS
-

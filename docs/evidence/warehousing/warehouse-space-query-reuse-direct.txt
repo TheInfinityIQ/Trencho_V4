@@ -28,4 +28,3 @@ Actual route geometry connects both interiors: PASS
 Expansion join duplicates no existing warehouse stock: PASS
 Ordinary building cannot use1m warehouse gap: PASS
 Ledger accounting consistent after admission and join: PASS
-
