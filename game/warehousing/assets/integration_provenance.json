@@ -43,5 +43,11 @@
     "source/warehouse_shell_v01.blend",
     "source/warehouse_fixtures_v01.blend"
   ],
-  "source_import_policy": "Editable Blender sources are retained beneath source/.gdignore. Godot imports only exported GLBs; opening the game must not launch Blender or auto-convert source scenes."
+  "source_import_policy": "Editable Blender sources are retained beneath source/.gdignore. Godot imports only exported GLBs; opening the game must not launch Blender or auto-convert source scenes.",
+  "import_evidence": {
+    "run_id": 42861751047,
+    "source_head": "b2bec5f4a9f1cc37ab5b507623295edddef59a37",
+    "asset_import": "All10actual warehouse/package GLBs imported by Godot4.7.2; source/sidecar hashes independently verified.",
+    "native_check": "Did not start: runner display/video tools missing. Native/default-scene/animation/FPS acceptance remains pending."
+  }
 }

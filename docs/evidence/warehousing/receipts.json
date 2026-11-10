@@ -32,5 +32,17 @@
     "run_id": 42855896720,
     "placement_usec": 22278,
     "outcome": "Functional pass; single-run timing is not a controlled cache benchmark."
+  },
+  "empty_reconfiguration": {
+    "run_id": 42864955592,
+    "artifact_sha256": "794be2fb3ee2d26e60ff483000471a1ee9ee1e56597a144d28f62c5bcd16cd28",
+    "result": "warehouse-empty-reconfiguration-result.json",
+    "scope": "Six empty preexisting crate fixtures set up; real paid Timber order triggered actual worker visit and1.5s conversion, stopping before pickup. No paired-carry acceptance."
+  },
+  "current_normal_receipt": {
+    "run_id": 42869108745,
+    "artifact_sha256": "cd6109b6311b4d29e34a58c202c81882de4a690a8a0e919306f0f73742a89275",
+    "result": "warehouse-receipt-restored-queue-result.json",
+    "scope": "Same288M02 at1x/180explicit simulated seconds and unchanged process limits; required conversion behavior retained. Optional face-first allocation was removed after it delayed the last crate; no threshold raised."
   }
 }

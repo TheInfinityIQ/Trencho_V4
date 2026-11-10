@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "Empty reusable fixtures are preparation space, not false Full: PASS",
+    "Readonly destination query finds a convertible empty fixture: PASS",
+    "Occupied opening fixture cannot be replaced: PASS",
+    "Ordinary paid Timber order accepted: PASS",
+    "Actual Hauling worker walked to conversion point before appearance: PASS",
+    "Old empty fixture retained through preparation: PASS",
+    "Actual Ready boundary commits new timber family once: PASS",
+    "Real preparation activity retains1.5seconds: PASS",
+    "Conversion reuses existing floor site without new capacity: PASS",
+    "Occupied opening stock remains unchanged: PASS",
+    "Stop before pickup; claimed Timber remains physically aboard and no paired-carry claim is made: PASS",
+    "Actual Ledger accounting remains consistent: PASS"
+  ],
+  "failed": false,
+  "observed": {
+    "preparing": {
+      "arrived": true,
+      "bay": "initial-depot/bay-01",
+      "previous_family": "crates",
+      "time": 20.1035064061483,
+      "worker": "start-unloader-01"
+    },
+    "ready": {
+      "bay": "initial-depot/bay-01",
+      "previous_cleared": true,
+      "time": 21.6035064061483
+    }
+  },
+  "scope": "Only new empty/unreserved wrong-family fixture conversion. Setup supplies six preexisting empty crate fixtures, preserving the two occupied opening racks and500M11. One ordinary paid1kg Timber order triggers actual worker travel/preparation; stop at Ready before pickup. This is NOT acceptance of legacy single-person Timber carry, paired custody, normal eight-rack construction, rendering, native input or60FPS."
+}

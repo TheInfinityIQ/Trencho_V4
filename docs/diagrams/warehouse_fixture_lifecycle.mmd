@@ -1,0 +1,19 @@
+flowchart TD
+  Request[Actual material destination request] --> Compatible{Compatible Ready space?}
+  Compatible -->|yes| Reserve[Reserve exact cell / acquire safe access before pickup]
+  Compatible -->|no| Floor{Suitable Empty floor site?}
+  Floor -->|yes| New[Reserve worker and new fixture site]
+  Floor -->|no| Replace{Empty unreserved Ready fixture / no held handling face?}
+  Replace -->|no| Hold[Keep goods aboard / actual blocker]
+  Replace -->|yes| Previous[Reserve conversion / retain old empty fixture]
+  Previous --> Visit[Actual worker walk to clear service point]
+  New --> Visit
+  Visit --> Puff[Existing1.5s smoke / no new authored clip]
+  Puff --> Opaque[Opaque midpoint swaps exactly one fixture]
+  Opaque --> Ready[Actual Ready boundary commits new family]
+  Ready --> Reserve
+  Previous --> Cancel[Cancellation before Ready restores prior empty fixture]
+  Opaque --> Cancel
+  Entry[Actual body entry or exit] --> Visibility[Reconcile roof visibility only]
+  Mode[Existing first/third/overhead mode event] --> Visibility
+  Visibility --> First[First person keeps roof / occupied third person may cut away]

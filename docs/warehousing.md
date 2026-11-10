@@ -44,6 +44,13 @@ events wake the wait. Finished haulers continue from the warehouse instead of
 reporting to the Table between trips. Idle workers clear all shelf service
 positions by using distinct end-apron rest points.
 
+If no empty floor remains, a wrong-family Ready fixture can be converted only
+when completely empty, unreserved and without a held handling face. The worker
+still visits; the old fixture stays visible until the opaque smoke swap. Ready
+commits the new family, while cancellation before Ready restores the previous
+empty fixture. Domain episode42864955592 observed the actual visit and1.5s
+conversion, preserving occupied opening stock and stopping before Timber pickup.
+
 Full compatible storage leaves affected goods aboard the real truck and supplies
 its above-truck warning. Readiness, preparation and blocked access are separate
 states. There is no recurring overlap poll or whole-warehouse visual rebuild.
@@ -59,6 +66,7 @@ The existing additional-depot cost remains100M11/160builder-work.
 Actual measured wall/post/floor/rack/package colliders replace the completed
 warehouse's former solid footprint. Player entry/exit uses `Area3D` events for
 roof cutaway and removal safety; hiding the roof never removes wall collision.
+The existing camera-mode event keeps the actual ceiling visible in first person.
 Occupied, reserved or connecting modules cannot be casually dismantled.
 
 ## Routing decision and evidence limits
@@ -101,6 +109,11 @@ The native current-change check explicitly loads all changed production scripts,
 so a subsequent documentation-only required job cannot imply unperformed source
 validation.
 
+The explicit remote visual demonstration prepares missing virtual-display/video
+utilities on its GitHub runner only. This infrastructure setup is separate from
+the unchanged45s outer/28s native-child deadlines. It opens no local game window
+and makes no change to the human editor or mouse.
+
 ## Remaining delivery work
 
 - Verify the actual imported models, default F5 scene, native entrance/collision,
@@ -111,6 +124,10 @@ validation.
   recovery. Neither exists merely because its design is recorded.
 - Implement genuine paired timber custody/handling; current legacy single-person
   receipt is not acceptance of the requested two-worker timber transport.
+- Adapt existing construction utility trips to batches of actual24kg warehouse
+  packages and refuelling to real shelf service points/20kg cans. Source audit
+  found the old single-stack bulk threshold and stock-centre fuel routing are
+  incompatible with physical racks; these connected fixes remain open.
 - Finish the separate cargo truck/personnel/pickup integration and paused animation
   work under their own readiness records. Static exports are not human appearance
   approval or completed transport gameplay.

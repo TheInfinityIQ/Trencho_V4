@@ -228,6 +228,7 @@ func _apply_view() -> void:
 	world.field_root.visible = battlefield_open
 	world.player_visual.visible = not first_person
 	var building: bool = _base._placing_building and not battlefield_open
+	if world.warehouse_view != null: world.warehouse_view.set_cutaway_enabled(building or not first_person)
 	world.build_camera.current = building
 	world.build_grid.visible = building and not management_open
 	world.first.current = not battlefield_open and not building and first_person

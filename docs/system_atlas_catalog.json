@@ -3997,7 +3997,7 @@
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
       "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate.",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate. Empty unreserved fixtures can be converted by a real worker; existing first-person mode retains the ceiling.",
       "nodes": [
         {
           "id": "opening",
@@ -4482,7 +4482,7 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "4a384e6ebe650af38c941054c0e4cbafb618ef5936bd9a651343512e8d12fee6",
+    "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
     "game/preview_3d/world_presenter.gd": "0b974a8d04b0b6dfe1f6c61e288e25a09f803acad35612c7f88c24385c348fb3",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
@@ -4547,7 +4547,7 @@
     "game/warehousing/warehouse_assets.gd": "3a836b021e46128f866298ad110a805ff40e6c8e156c47e4a18aed399bf2a1ac",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "c32428da8209ceb8132858f892b49b3ca9e8844309035e227564054cf9555479",
-    "game/warehousing/warehouse_view.gd": "417c50808a6c09a8882d02570b59ebc8e24631da41eeb154e4c2ab1dd2be2e28"
+    "game/warehousing/warehouse_service.gd": "f1aee15179ed6c400ceadedefbbd42f57276e7d2746830f4ab6166c2bbda7a1e",
+    "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac"
   }
 }

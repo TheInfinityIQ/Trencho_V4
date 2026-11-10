@@ -84,10 +84,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 	if quantity <= 0 or quantity > Packages.capacity(code): return _reject("INVALID_PACKAGE","Invalid material package.")
 	if free_net_kg() < quantity: return _reject("WAREHOUSE_FULL","Warehouse full — free storage or expand it.")
 	var family := Packages.fixture_family(code)
-	var candidates: Array = bays.values()
-	# Reuse ready compatible fixtures before preparing another floor slot.
-	candidates.sort_custom(func(a: Dictionary,b: Dictionary) -> bool:
-		return (0 if a.state == "Ready" and a.family == family else 1) < (0 if b.state == "Ready" and b.family == family else 1))
+	var candidates: Array = _candidate_bays(family)
 	var rear: RefCounted = _rear_ref.get_ref()
 	var origin: Vector2 = rear.ledger.inspect_entity(person,{},false).position
 	var has_position := false
@@ -98,19 +95,21 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 		if not _free_cells(pending.id,pending.cells,code,quantity).is_empty(): pending_room = true
 	for bay: Dictionary in candidates:
 		if modules[bay.module].retiring: continue
-		if not allow_prepare and bay.state != "Ready": continue
-		if bay.state != "Empty" and not (bay.state == "Ready" and bay.family == family): continue
-		if bay.state == "Empty":
+		var compatible: bool = bay.state == "Ready" and bay.family == family
+		var replacing: bool = bay.state == "Ready" and bay.family != family and _can_reconfigure(bay)
+		var preparing: bool = bay.state == "Empty" or replacing
+		if not compatible and not (allow_prepare and preparing): continue
+		if preparing:
 			if ready_position_blocked: return _reject("ROUTE_BLOCKED","Route blocked — clear warehouse handling access.")
 			if pending_room: return _reject("STORAGE_PREPARING","Preparing storage — waiting for the reserved shelf to become ready.")
-		var cells: Array = bay.cells if bay.state == "Ready" else _make_cells(family)
+		var cells: Array = bay.cells if compatible else _make_cells(family)
 		var cell_index := -1
 		var at := Vector2.INF
 		var queued := false
 		for candidate: int in _free_cells(bay.id,cells,code,quantity):
 			has_position = true
 			at = _choose_point(bay,person,origin,cells[candidate])
-			if not at.is_finite() and queue_access and bay.state == "Ready":
+			if not at.is_finite() and queue_access and compatible:
 				var waiting: Vector2 = _cell_service_point(bay,cells[candidate])
 				if not rear.walk_path(origin,waiting).is_empty():
 					at = waiting
@@ -119,11 +118,12 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 				cell_index = candidate
 				break
 		if not at.is_finite():
-			if bay.state == "Ready" and not _free_cells(bay.id,cells,code,quantity).is_empty(): ready_position_blocked = true
+			if compatible and not _free_cells(bay.id,cells,code,quantity).is_empty(): ready_position_blocked = true
 			continue
 		_sequence += 1
 		var token := "warehouse-space-%06d" % _sequence
-		if bay.state == "Empty":
+		if preparing:
+			if replacing: bay.previous_family = str(bay.family)
 			bay.family = family
 			bay.cells = cells
 			bay.state = "Reserved"
@@ -132,7 +132,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 		reservations[token] = {"id":token,"person":person,"bay":bay.id,"cell":cell_index,
 			"code":code,"quantity":quantity,"point":at,"queued":queued}
 		if not queued:
-			_work_points[person] = {"holder":STORE,"point":at}
+			_work_points[person] = {"holder":STORE,"point":at,"bay":str(bay.id)}
 			rear.ledger.register_handling_point(STORE,person,at)
 		_touch(bay.module)
 		return {"ok":true,"id":token,"point":at,"prepare":bay.state != "Ready"}
@@ -146,15 +146,34 @@ func probe(person: String, code: String, quantity: int, allow_prepare: bool = tr
 	var origin: Vector2 = rear.ledger.inspect_entity(person,{},false).get("position",fallback_origin)
 	if not origin.is_finite(): return Vector2.INF
 	var family := Packages.fixture_family(code)
-	for bay: Dictionary in bays.values():
+	for bay: Dictionary in _candidate_bays(family):
 		if modules[bay.module].retiring: continue
-		if not allow_prepare and bay.state != "Ready": continue
-		if bay.state != "Empty" and not (bay.state == "Ready" and bay.family == family): continue
-		var cells: Array = bay.cells if bay.state == "Ready" else _make_cells(family)
+		var compatible: bool = bay.state == "Ready" and bay.family == family
+		var preparing: bool = bay.state == "Empty" or (bay.state == "Ready" and bay.family != family and _can_reconfigure(bay))
+		if not compatible and not (allow_prepare and preparing): continue
+		var cells: Array = bay.cells if compatible else _make_cells(family)
 		for index: int in _free_cells(bay.id,cells,code,quantity):
 			var at := _choose_point(bay,person,origin,cells[index])
 			if at.is_finite(): return at
 	return Vector2.INF
+
+func _candidate_bays(family: String) -> Array:
+	var result: Array = bays.values()
+	result.sort_custom(func(a: Dictionary,b: Dictionary) -> bool:
+		var first := 0 if a.state == "Ready" and a.family == family else 1 if a.state == "Empty" else 2
+		var second := 0 if b.state == "Ready" and b.family == family else 1 if b.state == "Empty" else 2
+		return str(a.id)<str(b.id) if first == second else first<second)
+	return result
+
+func _can_reconfigure(bay: Dictionary) -> bool:
+	if bay.state != "Ready" or modules[bay.module].retiring: return false
+	for cell: Dictionary in bay.cells:
+		if not cell.stocks.is_empty(): return false
+	for promise: Dictionary in reservations.values():
+		if promise.bay == bay.id: return false
+	for point: Dictionary in _work_points.values():
+		if point.get("bay","") == bay.id: return false
+	return true
 
 func begin_preparation(token: String) -> Dictionary:
 	if not reservations.has(token): return _reject("NO_SPACE_PROMISE","Storage reservation no longer exists.")
@@ -183,6 +202,7 @@ func finish_preparation(token: String) -> bool:
 		_blocked_bays[bay.id] = true
 		return false
 	bay.state = "Ready"
+	bay.erase("previous_family")
 	bay.preparer = ""
 	bay.blocked = false
 	_blocked_bays.erase(bay.id)
@@ -218,7 +238,7 @@ func acquire_access(token: String) -> bool:
 	if not at.is_finite(): return false
 	promise.point = at
 	promise.queued = false
-	_work_points[promise.person] = {"holder":STORE,"point":at}
+	_work_points[promise.person] = {"holder":STORE,"point":at,"bay":str(bay.id)}
 	rear.ledger.register_handling_point(STORE,str(promise.person),at)
 	return true
 
@@ -245,10 +265,12 @@ func release(token: String) -> void:
 	reservations.erase(token)
 	_work_points.erase(promise.person)
 	if bay.state != "Ready" and bay.preparer == promise.person:
-		bay.state = "Empty"
-		bay.family = ""
+		var previous: String = str(bay.get("previous_family",""))
+		bay.state = "Ready" if not previous.is_empty() else "Empty"
+		bay.family = previous
 		bay.preparer = ""
-		bay.cells = []
+		bay.cells = _make_cells(previous) if not previous.is_empty() else []
+		bay.erase("previous_family")
 		bay.blocked = false
 		_blocked_bays.erase(bay.id)
 		_obstacles_dirty = true
@@ -274,6 +296,9 @@ func physical_space_status(code: String, quantity: int) -> String:
 	for bay: Dictionary in bays.values():
 		if modules[bay.module].retiring: continue
 		if bay.state == "Empty":
+			empty_site = true
+			continue
+		if bay.state == "Ready" and bay.family != family and _can_reconfigure(bay):
 			empty_site = true
 			continue
 		if bay.family != family or _free_cells(bay.id,bay.cells,code,quantity).is_empty(): continue
@@ -340,7 +365,7 @@ func stock_point(stock_id: String, person: String, keep: bool = false) -> Vector
 	var origin: Vector2 = rear.ledger.inspect_entity(person,{},false).position
 	var point := _choose_point(bay,person,origin,bay.cells[int(_stock_cells[stock_id].cell)])
 	if point.is_finite() and keep:
-		_work_points[person] = {"holder":STORE,"point":point}
+		_work_points[person] = {"holder":STORE,"point":point,"bay":str(bay.id)}
 		rear.ledger.register_handling_point(STORE,person,point)
 	return point
 

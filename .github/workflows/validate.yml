@@ -170,6 +170,20 @@ jobs:
               print(script, result.stdout, flush=True)
               if result.returncode or re.search(r"^\s*(SCRIPT ERROR:|ERROR:)", result.stdout, re.MULTILINE):
                   raise SystemExit(result.returncode or 1)
+      - name: Prepare remote display tools only for the explicit warehouse visual check
+        if: steps.scope.outputs.direct == 'true' && contains(inputs.direct_check, 'WAREHOUSE_NATIVE_SOURCE')
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          warehouse_packages=()
+          command -v xvfb-run >/dev/null || warehouse_packages+=(xvfb)
+          command -v xauth >/dev/null || warehouse_packages+=(xauth)
+          command -v ffmpeg >/dev/null || warehouse_packages+=(ffmpeg)
+          if (( ${#warehouse_packages[@]} )); then
+            sudo apt-get update --quiet
+            sudo env DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes --no-install-recommends "${warehouse_packages[@]}"
+          fi
       - name: Run the optional brief demonstration of the current change
         if: steps.scope.outputs.direct == 'true'
         timeout-minutes: 1

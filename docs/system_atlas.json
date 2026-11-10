@@ -4,13 +4,13 @@
   "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "8326f31d7be61816a0a51484ccafe79c7b5900443187af0c3903f1cfa6c4ac91",
+  "source_fingerprint": "d1dc81297c22564eed1905ffb77238bd8042044935806ec5182c79ae164dde6b",
   "totals": {
     "systems": 50,
     "game_scripts": 231,
     "non_test_scripts": 137,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3544,
+    "functions_in_inventory": 3547,
     "diagram_function_links": 278
   },
   "systems": [
@@ -10101,7 +10101,7 @@
           "label": "Open selected actual Workshop in 3D",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop",
-          "line": 431
+          "line": 432
         }
       ],
       "edges": [
@@ -29393,28 +29393,28 @@
           "label": "Handle explicit gameplay input",
           "file": "game/preview_3d/preview.gd",
           "function": "_unhandled_input",
-          "line": 298
+          "line": 299
         },
         {
           "id": "n2",
           "label": "Consume input/geometry work in physics",
           "file": "game/preview_3d/preview.gd",
           "function": "_physics_process",
-          "line": 366
+          "line": 367
         },
         {
           "id": "n3",
           "label": "Validate and commit actual placement",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_commit",
-          "line": 610
+          "line": 611
         },
         {
           "id": "n4",
           "label": "Consume actual Table or current site E target",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop",
-          "line": 431
+          "line": 432
         },
         {
           "id": "n5",
@@ -29428,7 +29428,7 @@
           "label": "Open actual Supply Table purchase controls",
           "file": "game/preview_3d/preview.gd",
           "function": "_open_supply_table",
-          "line": 483
+          "line": 484
         },
         {
           "id": "n7",
@@ -29567,7 +29567,7 @@
         },
         {
           "path": "game/preview_3d/preview.gd",
-          "sha256": "4a384e6ebe650af38c941054c0e4cbafb618ef5936bd9a651343512e8d12fee6",
+          "sha256": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -29691,16 +29691,16 @@
               "id": "game/preview_3d/preview.gd::_apply_view",
               "name": "_apply_view",
               "line": 225,
-              "end_line": 246,
+              "end_line": 247,
               "kind": "method",
-              "purpose": "Select the exclusive character, overhead-build or battlefield camera and roots while preserving manager identity and dirty-view reconciliation.",
+              "purpose": "Release held controls, select the actual rear/field/first/third/build camera and projections, update placement/hints and send warehouse roof-cutaway eligibility only at that existing mode-change boundary.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_toggle_camera",
               "name": "_toggle_camera",
-              "line": 248,
-              "end_line": 251,
+              "line": 249,
+              "end_line": 252,
               "kind": "method",
               "purpose": "Toggle first/third-person preference only while ordinary rear-world input owns control, outside management, modal and construction modes.",
               "purpose_origin": "reviewed"
@@ -29708,8 +29708,8 @@
             {
               "id": "game/preview_3d/preview.gd::_release_controls",
               "name": "_release_controls",
-              "line": 253,
-              "end_line": 269,
+              "line": 254,
+              "end_line": 270,
               "kind": "method",
               "purpose": "Preserve existing movement/capture/placement release and cancel any queued identity-bound Workshop interaction on modal/view/focus/session changes so it cannot act later on a replaced context.",
               "purpose_origin": "reviewed"
@@ -29717,8 +29717,8 @@
             {
               "id": "game/preview_3d/preview.gd::_modal_open",
               "name": "_modal_open",
-              "line": 271,
-              "end_line": 275,
+              "line": 272,
+              "end_line": 276,
               "kind": "method",
               "purpose": "Read the existing decision dialogs to keep modal input ahead of management and world controls.",
               "purpose_origin": "reviewed"
@@ -29726,8 +29726,8 @@
             {
               "id": "game/preview_3d/preview.gd::_notification",
               "name": "_notification",
-              "line": 277,
-              "end_line": 280,
+              "line": 278,
+              "end_line": 281,
               "kind": "method",
               "purpose": "Release capture and held controls on application focus loss.",
               "purpose_origin": "reviewed"
@@ -29735,8 +29735,8 @@
             {
               "id": "game/preview_3d/preview.gd::_input",
               "name": "_input",
-              "line": 282,
-              "end_line": 296,
+              "line": 283,
+              "end_line": 297,
               "kind": "method",
               "purpose": "Consume input while startup visuals prepare, then preserve existing Tab/mouse/key release ownership.",
               "purpose_origin": "reviewed"
@@ -29744,8 +29744,8 @@
             {
               "id": "game/preview_3d/preview.gd::_unhandled_input",
               "name": "_unhandled_input",
-              "line": 298,
-              "end_line": 364,
+              "line": 299,
+              "end_line": 365,
               "kind": "method",
               "purpose": "Reject startup interaction until prepared, then retain the current focused world/menu controls.",
               "purpose_origin": "reviewed"
@@ -29753,8 +29753,8 @@
             {
               "id": "game/preview_3d/preview.gd::_physics_process",
               "name": "_physics_process",
-              "line": 366,
-              "end_line": 408,
+              "line": 367,
+              "end_line": 409,
               "kind": "method",
               "purpose": "Consume dirty geometry/presentation and queued physics queries or placement intents, then apply only the current permitted manager/RTS/build camera movement.",
               "purpose_origin": "reviewed"
@@ -29762,8 +29762,8 @@
             {
               "id": "game/preview_3d/preview.gd::_queue_workshop",
               "name": "_queue_workshop",
-              "line": 410,
-              "end_line": 414,
+              "line": 411,
+              "end_line": 415,
               "kind": "method",
               "purpose": "Queue one captured rear E request with the current world, simulation, construction, Receiving and camera identities.",
               "purpose_origin": "reviewed"
@@ -29771,8 +29771,8 @@
             {
               "id": "game/preview_3d/preview.gd::_workshop_target",
               "name": "_workshop_target",
-              "line": 416,
-              "end_line": 429,
+              "line": 417,
+              "end_line": 430,
               "kind": "method",
               "purpose": "Resolve an actual completed production site to its current activity/duty, including the declared initial Workshop mapping; reject mismatched owners.",
               "purpose_origin": "reviewed"
@@ -29780,8 +29780,8 @@
             {
               "id": "game/preview_3d/preview.gd::_consume_workshop",
               "name": "_consume_workshop",
-              "line": 431,
-              "end_line": 481,
+              "line": 432,
+              "end_line": 482,
               "kind": "method",
               "purpose": "Consume one current first-hit E request and inspect the actual Table, activity or site controls without starting a construction blueprint; preserve identity, focus and input guards. Inspect the actual warehouse receiving storage from its building E interaction.",
               "purpose_origin": "reviewed"
@@ -29789,8 +29789,8 @@
             {
               "id": "game/preview_3d/preview.gd::_open_supply_table",
               "name": "_open_supply_table",
-              "line": 483,
-              "end_line": 505,
+              "line": 484,
+              "end_line": 506,
               "kind": "method",
               "purpose": "Validate the normal opening and current physical receiving place against the exact table position, reveal management before refreshing existing Supplies/Purchase controls and preserve the current model, cart and order state without spending or advancing gameplay.",
               "purpose_origin": "reviewed"
@@ -29798,8 +29798,8 @@
             {
               "id": "game/preview_3d/preview.gd::_focus_workshop",
               "name": "_focus_workshop",
-              "line": 507,
-              "end_line": 514,
+              "line": 508,
+              "end_line": 515,
               "kind": "method",
               "purpose": "Revalidate deferred current world/model/service/physical owner and selected Work context before scrolling/focusing the existing facility control, leaving backend commands and unrelated panels unchanged.",
               "purpose_origin": "reviewed"
@@ -29807,8 +29807,8 @@
             {
               "id": "game/preview_3d/preview.gd::_pan_field",
               "name": "_pan_field",
-              "line": 516,
-              "end_line": 518,
+              "line": 517,
+              "end_line": 519,
               "kind": "method",
               "purpose": "Bound the independent RTS camera pan without moving entities or changing orders.",
               "purpose_origin": "reviewed"
@@ -29816,8 +29816,8 @@
             {
               "id": "game/preview_3d/preview.gd::_pan_build",
               "name": "_pan_build",
-              "line": 520,
-              "end_line": 524,
+              "line": 521,
+              "end_line": 525,
               "kind": "method",
               "purpose": "Pan the overhead rear camera within service bounds, unlock the old target and invalidate its queued placement candidate.",
               "purpose_origin": "reviewed"
@@ -29825,8 +29825,8 @@
             {
               "id": "game/preview_3d/preview.gd::_begin_preview",
               "name": "_begin_preview",
-              "line": 526,
-              "end_line": 533,
+              "line": 527,
+              "end_line": 534,
               "kind": "method",
               "purpose": "Start a fresh blueprint generation with overhead camera and visible pointer, preserving manager pose and requesting a new ground candidate.",
               "purpose_origin": "reviewed"
@@ -29834,8 +29834,8 @@
             {
               "id": "game/preview_3d/preview.gd::_draft_changed",
               "name": "_draft_changed",
-              "line": 535,
-              "end_line": 537,
+              "line": 536,
+              "end_line": 538,
               "kind": "method",
               "purpose": "Advance the local draft generation from explicit kind/rotation events and invalidate its represented candidate.",
               "purpose_origin": "reviewed"
@@ -29843,8 +29843,8 @@
             {
               "id": "game/preview_3d/preview.gd::_draft_ended",
               "name": "_draft_ended",
-              "line": 539,
-              "end_line": 544,
+              "line": 540,
+              "end_line": 545,
               "kind": "method",
               "purpose": "Retire the blueprint generation and restore the appropriate character view without cancelling any committed construction site.",
               "purpose_origin": "reviewed"
@@ -29852,8 +29852,8 @@
             {
               "id": "game/preview_3d/preview.gd::_camera_changed",
               "name": "_camera_changed",
-              "line": 546,
-              "end_line": 547,
+              "line": 547,
+              "end_line": 548,
               "kind": "method",
               "purpose": "Invalidate placement when the active rear camera reports an actually changed represented ray.",
               "purpose_origin": "reviewed"
@@ -29861,8 +29861,8 @@
             {
               "id": "game/preview_3d/preview.gd::_invalidate_preview",
               "name": "_invalidate_preview",
-              "line": 549,
-              "end_line": 559,
+              "line": 550,
+              "end_line": 560,
               "kind": "method",
               "purpose": "Retire obsolete candidate/intent revisions and queue only a needed cheap physics pick, retaining actionable command feedback when appropriate.",
               "purpose_origin": "reviewed"
@@ -29870,8 +29870,8 @@
             {
               "id": "game/preview_3d/preview.gd::_cancel_preview",
               "name": "_cancel_preview",
-              "line": 561,
-              "end_line": 564,
+              "line": 562,
+              "end_line": 565,
               "kind": "method",
               "purpose": "Cancel only the uncommitted draft and report that no actual site was cancelled.",
               "purpose_origin": "reviewed"
@@ -29879,8 +29879,8 @@
             {
               "id": "game/preview_3d/preview.gd::_pick_ground",
               "name": "_pick_ground",
-              "line": 566,
-              "end_line": 587,
+              "line": 567,
+              "end_line": 588,
               "kind": "method",
               "purpose": "Query actual rear ground from the overhead camera, snap the current footprint and seal a cheap-preview candidate with owner, camera and blocker identities.",
               "purpose_origin": "reviewed"
@@ -29888,8 +29888,8 @@
             {
               "id": "game/preview_3d/preview.gd::_candidate_is_current",
               "name": "_candidate_is_current",
-              "line": 589,
-              "end_line": 596,
+              "line": 590,
+              "end_line": 597,
               "kind": "method",
               "purpose": "Validate candidate session/model/service, draft/revision, blueprint/orientation, active ray and relevant truck clearance without granting construction permission.",
               "purpose_origin": "reviewed"
@@ -29897,8 +29897,8 @@
             {
               "id": "game/preview_3d/preview.gd::_queue_commit",
               "name": "_queue_commit",
-              "line": 598,
-              "end_line": 608,
+              "line": 599,
+              "end_line": 609,
               "kind": "method",
               "purpose": "Queue one explicit Confirm-button intent only for a locked current candidate; otherwise request a fresh preview and truthful rejection feedback.",
               "purpose_origin": "reviewed"
@@ -29906,8 +29906,8 @@
             {
               "id": "game/preview_3d/preview.gd::_consume_commit",
               "name": "_consume_commit",
-              "line": 610,
-              "end_line": 619,
+              "line": 611,
+              "end_line": 620,
               "kind": "method",
               "purpose": "Consume the queued placement before callbacks, revalidate context/focus and submit the actual shared construction command once.",
               "purpose_origin": "reviewed"
@@ -29915,8 +29915,8 @@
             {
               "id": "game/preview_3d/preview.gd::_check_candidate",
               "name": "_check_candidate",
-              "line": 621,
-              "end_line": 631,
+              "line": 622,
+              "end_line": 632,
               "kind": "method",
               "purpose": "Run expensive full validation only for an explicit check of the same current candidate; checked feedback is never a reservation.",
               "purpose_origin": "reviewed"
@@ -29924,8 +29924,8 @@
             {
               "id": "game/preview_3d/preview.gd::_placement_result",
               "name": "_placement_result",
-              "line": 633,
-              "end_line": 637,
+              "line": 634,
+              "end_line": 638,
               "kind": "method",
               "purpose": "Show actual returned site identity or explicitly historical last-attempt rejection, retaining feedback across unrelated events and preserving failed drafts without automatic retry.",
               "purpose_origin": "reviewed"
@@ -29933,8 +29933,8 @@
             {
               "id": "game/preview_3d/preview.gd::_select_marker",
               "name": "_select_marker",
-              "line": 639,
-              "end_line": 663,
+              "line": 640,
+              "end_line": 664,
               "kind": "method",
               "purpose": "Select the nearest current ordered visible marker under strict18px and first-row ties; represented objectives use their shared current ground-point/viewport/behind cache, preserving PERSON/T01 and legacy marker behavior.",
               "purpose_origin": "reviewed"
@@ -29942,8 +29942,8 @@
             {
               "id": "game/preview_3d/preview.gd::_inspect",
               "name": "_inspect",
-              "line": 665,
-              "end_line": 670,
+              "line": 666,
+              "end_line": 671,
               "kind": "method",
               "purpose": "Synchronize actual battlefield selected identity, all bounded cue selections and existing permitted inspection without issuing orders or requiring literal internal IDs in readable text.",
               "purpose_origin": "reviewed"
@@ -29951,8 +29951,8 @@
             {
               "id": "game/preview_3d/preview.gd::_field_camera_changed",
               "name": "_field_camera_changed",
-              "line": 672,
-              "end_line": 676,
+              "line": 673,
+              "end_line": 677,
               "kind": "method",
               "purpose": "Request existing cue reprojection and update detailed skeletal playback from the current RTS zoom without changing camera controls or gameplay.",
               "purpose_origin": "reviewed"
@@ -29960,8 +29960,8 @@
             {
               "id": "game/preview_3d/preview.gd::_field_viewport_changed",
               "name": "_field_viewport_changed",
-              "line": 678,
-              "end_line": 681,
+              "line": 679,
+              "end_line": 682,
               "kind": "method",
               "purpose": "Invalidate the bounded objective and existing PERSON/T01 projection caches when the current viewport resizes.",
               "purpose_origin": "reviewed"
@@ -29969,8 +29969,8 @@
             {
               "id": "game/preview_3d/preview.gd::_field_truck_removed",
               "name": "_field_truck_removed",
-              "line": 683,
-              "end_line": 685,
+              "line": 684,
+              "end_line": 686,
               "kind": "method",
               "purpose": "Coalesce the existing current Policy refresh after a detailed truck removal so an ineligible detail can recover its unchanged abstract fallback.",
               "purpose_origin": "reviewed"
@@ -29978,8 +29978,8 @@
             {
               "id": "game/preview_3d/preview.gd::_refresh_inspection",
               "name": "_refresh_inspection",
-              "line": 687,
-              "end_line": 691,
+              "line": 688,
+              "end_line": 692,
               "kind": "method",
               "purpose": "Reuse existing battlefield inspection text and explicitly display reported contact confidence.",
               "purpose_origin": "reviewed"
@@ -29987,8 +29987,8 @@
             {
               "id": "game/preview_3d/preview.gd::_state_changed",
               "name": "_state_changed",
-              "line": 693,
-              "end_line": 705,
+              "line": 694,
+              "end_line": 706,
               "kind": "method",
               "purpose": "Apply a changed character playback speed, coalesce rear/field presenter refreshes, invalidate stale checked construction facts and update current feedback.",
               "purpose_origin": "reviewed"
@@ -29996,8 +29996,8 @@
             {
               "id": "game/preview_3d/preview.gd::_time_changed",
               "name": "_time_changed",
-              "line": 707,
-              "end_line": 715,
+              "line": 708,
+              "end_line": 716,
               "kind": "method",
               "purpose": "Update cached battlefield motion and candidate-relevant truck clearance transitions, without global inventory or per-render draft polling.",
               "purpose_origin": "reviewed"
@@ -30005,8 +30005,8 @@
             {
               "id": "game/preview_3d/preview.gd::_update_hint",
               "name": "_update_hint",
-              "line": 717,
-              "end_line": 731,
+              "line": 718,
+              "end_line": 732,
               "kind": "method",
               "purpose": "Present current mode, economy, interaction/placement feedback and the availability of the explicit placement controls.",
               "purpose_origin": "reviewed"
@@ -30014,8 +30014,8 @@
             {
               "id": "game/preview_3d/preview.gd::_blocker_membership",
               "name": "_blocker_membership",
-              "line": 733,
-              "end_line": 741,
+              "line": 734,
+              "end_line": 742,
               "kind": "method",
               "purpose": "Read only existing created construction-truck holder positions inside the current footprint clearance, matching provisional geometry without inventory scans.",
               "purpose_origin": "reviewed"
@@ -30023,8 +30023,8 @@
             {
               "id": "game/preview_3d/preview.gd::_command_reported",
               "name": "_command_reported",
-              "line": 743,
-              "end_line": 746,
+              "line": 744,
+              "end_line": 747,
               "kind": "method",
               "purpose": "Carry existing BaseDemo command and cancellation feedback into the 3D status area without ending an unrelated draft.",
               "purpose_origin": "reviewed"
@@ -30743,7 +30743,7 @@
           "label": "Pick actual current projected marker",
           "file": "game/preview_3d/preview.gd",
           "function": "_select_marker",
-          "line": 639
+          "line": 640
         }
       ],
       "edges": [
@@ -31436,7 +31436,7 @@
           "label": "Supply current occupation to placement",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_commit",
-          "line": 610
+          "line": 611
         }
       ],
       "edges": [
@@ -37158,7 +37158,7 @@
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
       "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate.",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate. Empty unreserved fixtures can be converted by a real worker; existing first-person mode retains the ceiling.",
       "nodes": [
         {
           "id": "opening",
@@ -37179,21 +37179,21 @@
           "label": "Worker reaches clear fixture site",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "begin_preparation",
-          "line": 159
+          "line": 178
         },
         {
           "id": "access",
           "label": "Safe handling access before pickup",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "acquire_access",
-          "line": 211
+          "line": 231
         },
         {
           "id": "commit",
           "label": "Actual stock deposited once",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "commit",
-          "line": 225
+          "line": 245
         },
         {
           "id": "join",
@@ -37207,7 +37207,7 @@
           "label": "Keyed shelves / labels / lights / cutaway",
           "file": "game/warehousing/warehouse_view.gd",
           "function": "_refresh",
-          "line": 32
+          "line": 33
         },
         {
           "id": "routes",
@@ -37221,7 +37221,7 @@
           "label": "Actual selected/connected storage facts",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "summary",
-          "line": 284
+          "line": 309
         }
       ],
       "edges": [
@@ -37440,7 +37440,7 @@
         },
         {
           "path": "game/warehousing/warehouse_service.gd",
-          "sha256": "c32428da8209ceb8132858f892b49b3ca9e8844309035e227564054cf9555479",
+          "sha256": "f1aee15179ed6c400ceadedefbbd42f57276e7d2746830f4ab6166c2bbda7a1e",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -37476,32 +37476,50 @@
               "line": 83,
               "end_line": 141,
               "kind": "method",
-              "purpose": "Promise one exact unoccupied package cell and netkg, preferring compatible ready/pending fixtures; incoming freight may queue transient access before pickup.",
-              "purpose_origin": "reviewed"
-            },
-            {
-              "id": "game/warehousing/warehouse_service.gd::reserve/<lambda#1>",
-              "name": "reserve/<lambda#1>",
-              "line": 89,
-              "end_line": 90,
-              "kind": "lambda",
-              "purpose": "Order compatible ready fixtures before empty sites so allocation reuses existing storage.",
+              "purpose": "Promise one exact cell/netkg with safe access or incoming queue; prefer compatible ready space, then empty floor, then only an empty/unreserved wrong-family fixture converted by a real visiting worker.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::probe",
               "name": "probe",
               "line": 143,
-              "end_line": 157,
+              "end_line": 158,
               "kind": "method",
-              "purpose": "Preview a feasible compatible destination without creating a package-space promise; use a supplied origin for non-person queries.",
+              "purpose": "Preview the same compatible/new/convertible fixture eligibility as reservation without promising space; already-carried reroutes may require Ready compatibility only.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/warehousing/warehouse_service.gd::_candidate_bays",
+              "name": "_candidate_bays",
+              "line": 160,
+              "end_line": 166,
+              "kind": "method",
+              "purpose": "Order compatible ready fixtures before empty floor and other candidates with stable bay-ID ties; callers separately validate safe conversion eligibility.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/warehousing/warehouse_service.gd::_candidate_bays/<lambda#1>",
+              "name": "_candidate_bays/<lambda#1>",
+              "line": 162,
+              "end_line": 165,
+              "kind": "lambda",
+              "purpose": "Compare existing fixture reuse priority and deterministic bay identity without moving goods or reserving work.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/warehousing/warehouse_service.gd::_can_reconfigure",
+              "name": "_can_reconfigure",
+              "line": 168,
+              "end_line": 176,
+              "kind": "method",
+              "purpose": "Require a non-retiring Ready fixture with no stock, space promise or held service face before conversion can reserve it.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::begin_preparation",
               "name": "begin_preparation",
-              "line": 159,
-              "end_line": 176,
+              "line": 178,
+              "end_line": 195,
               "kind": "method",
               "purpose": "Require the promised actual worker at the service point and a clear fixture footprint before shelf preparation starts.",
               "purpose_origin": "reviewed"
@@ -37509,17 +37527,17 @@
             {
               "id": "game/warehousing/warehouse_service.gd::finish_preparation",
               "name": "finish_preparation",
-              "line": 178,
-              "end_line": 190,
+              "line": 197,
+              "end_line": 210,
               "kind": "method",
-              "purpose": "Make the promised fixture ready after its activity boundary and a final occupancy check; wake real waiting work.",
+              "purpose": "Commit the new fixture family at the actual Ready activity boundary after final occupancy validation, clearing any prior-fixture rollback metadata.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::reveal_preparation",
               "name": "reveal_preparation",
-              "line": 192,
-              "end_line": 203,
+              "line": 212,
+              "end_line": 223,
               "kind": "method",
               "purpose": "Expose the prepared fixture at the opaque-smoke midpoint only if its actual footprint is clear.",
               "purpose_origin": "reviewed"
@@ -37527,8 +37545,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::ready",
               "name": "ready",
-              "line": 205,
-              "end_line": 206,
+              "line": 225,
+              "end_line": 226,
               "kind": "method",
               "purpose": "Report whether this live space promise refers to an actually ready fixture.",
               "purpose_origin": "reviewed"
@@ -37536,8 +37554,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::destination_point",
               "name": "destination_point",
-              "line": 208,
-              "end_line": 209,
+              "line": 228,
+              "end_line": 229,
               "kind": "method",
               "purpose": "Return the exact promised shelf handling point, or infinity for a missing reservation.",
               "purpose_origin": "reviewed"
@@ -37545,8 +37563,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::acquire_access",
               "name": "acquire_access",
-              "line": 211,
-              "end_line": 223,
+              "line": 231,
+              "end_line": 243,
               "kind": "method",
               "purpose": "Acquire the promised ready cell service face only when people/reservations and the actual route permit pickup; retain queued cargo aboard otherwise.",
               "purpose_origin": "reviewed"
@@ -37554,8 +37572,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::commit",
               "name": "commit",
-              "line": 225,
-              "end_line": 239,
+              "line": 245,
+              "end_line": 259,
               "kind": "method",
               "purpose": "Accept only the exact actually deposited Ledger stock, attach its cell once and consume its promise; schedule the finished worker to clear access.",
               "purpose_origin": "reviewed"
@@ -37563,17 +37581,17 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release",
               "name": "release",
-              "line": 241,
-              "end_line": 255,
+              "line": 261,
+              "end_line": 277,
               "kind": "method",
-              "purpose": "Release an unconsumed space promise and handling point; undo an abandoned unfinished preparation without moving any stock.",
+              "purpose": "Release one unconsumed space/access promise; unfinished conversion restores the prior empty fixture, while unfinished new preparation restores an empty site without changing stock.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::free_net_kg",
               "name": "free_net_kg",
-              "line": 257,
-              "end_line": 261,
+              "line": 279,
+              "end_line": 283,
               "kind": "method",
               "purpose": "Subtract actual canonical warehouse stock and outstanding promises from completed non-retiring structural capacity.",
               "purpose_origin": "reviewed"
@@ -37581,8 +37599,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::structural_capacity",
               "name": "structural_capacity",
-              "line": 263,
-              "end_line": 267,
+              "line": 285,
+              "end_line": 289,
               "kind": "method",
               "purpose": "Sum10000kg ceilings of actually completed non-retiring modules; physical package fit can bind sooner.",
               "purpose_origin": "reviewed"
@@ -37590,8 +37608,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::physical_space_status",
               "name": "physical_space_status",
-              "line": 269,
-              "end_line": 282,
+              "line": 291,
+              "end_line": 307,
               "kind": "method",
               "purpose": "Classify compatible ready, preparing, unprepared or full physical storage for event-driven truck feedback.",
               "purpose_origin": "reviewed"
@@ -37599,8 +37617,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::summary",
               "name": "summary",
-              "line": 284,
-              "end_line": 325,
+              "line": 309,
+              "end_line": 350,
               "kind": "method",
               "purpose": "Cache actual connected-module and selected-module quantities, package counts and finite fixture/claim readiness after keyed changes.",
               "purpose_origin": "reviewed"
@@ -37608,8 +37626,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::work_point",
               "name": "work_point",
-              "line": 327,
-              "end_line": 328,
+              "line": 352,
+              "end_line": 353,
               "kind": "method",
               "purpose": "Return a worker's currently held warehouse handling point without rescanning stock or geometry.",
               "purpose_origin": "reviewed"
@@ -37617,8 +37635,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_service_point",
               "name": "stock_service_point",
-              "line": 330,
-              "end_line": 334,
+              "line": 355,
+              "end_line": 359,
               "kind": "method",
               "purpose": "Read the exact package cell service coordinate without a path search, stock duplication or handling reservation.",
               "purpose_origin": "reviewed"
@@ -37626,8 +37644,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_point",
               "name": "stock_point",
-              "line": 336,
-              "end_line": 345,
+              "line": 361,
+              "end_line": 370,
               "kind": "method",
               "purpose": "Resolve the actual selected stock cell to a reachable free service face; optionally register that worker's physical handling access.",
               "purpose_origin": "reviewed"
@@ -37635,8 +37653,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release_point",
               "name": "release_point",
-              "line": 347,
-              "end_line": 348,
+              "line": 372,
+              "end_line": 373,
               "kind": "method",
               "purpose": "Release one worker's warehouse service face and wake waiting allocations without rebuilding presentation.",
               "purpose_origin": "reviewed"
@@ -37644,8 +37662,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::take_clearance",
               "name": "take_clearance",
-              "line": 350,
-              "end_line": 353,
+              "line": 375,
+              "end_line": 378,
               "kind": "method",
               "purpose": "Consume a finished-deposit access-clearance request once, rather than repeatedly sending idle workers away.",
               "purpose_origin": "reviewed"
@@ -37653,8 +37671,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::watch_clearance",
               "name": "watch_clearance",
-              "line": 355,
-              "end_line": 356,
+              "line": 380,
+              "end_line": 381,
               "kind": "method",
               "purpose": "Watch only this departing worker and former handling position until the access radius is clear.",
               "purpose_origin": "reviewed"
@@ -37662,8 +37680,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path",
               "name": "clearance_path",
-              "line": 358,
-              "end_line": 388,
+              "line": 383,
+              "end_line": 413,
               "kind": "method",
               "purpose": "Choose a distinct reachable end-apron rest point that clears every shelf service face; use the ordinary outside waiting owner only when needed.",
               "purpose_origin": "reviewed"
@@ -37671,8 +37689,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path/<lambda#1>",
               "name": "clearance_path/<lambda#1>",
-              "line": 383,
-              "end_line": 383,
+              "line": 408,
+              "end_line": 408,
               "kind": "lambda",
               "purpose": "Prefer the shortest geometric approach to a legal warehouse rest point before actual route validation.",
               "purpose_origin": "reviewed"
@@ -37680,8 +37698,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_slot_body",
               "name": "set_slot_body",
-              "line": 390,
-              "end_line": 396,
+              "line": 415,
+              "end_line": 421,
               "kind": "method",
               "purpose": "Apply Area3D enter/exit occupancy to one fixture site and wake preparation; never poll overlaps per frame.",
               "purpose_origin": "reviewed"
@@ -37689,8 +37707,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::fixture_bounds",
               "name": "fixture_bounds",
-              "line": 398,
-              "end_line": 400,
+              "line": 423,
+              "end_line": 425,
               "kind": "method",
               "purpose": "Return the rotated physical2.6x1m rack footprint for clearance and path ownership.",
               "purpose_origin": "reviewed"
@@ -37698,8 +37716,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_module_body",
               "name": "set_module_body",
-              "line": 402,
-              "end_line": 406,
+              "line": 427,
+              "end_line": 431,
               "kind": "method",
               "purpose": "Track player/vehicle presence in one module through Area3D events for safe removal.",
               "purpose_origin": "reviewed"
@@ -37707,8 +37725,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::obstacles",
               "name": "obstacles",
-              "line": 408,
-              "end_line": 416,
+              "line": 433,
+              "end_line": 441,
               "kind": "method",
               "purpose": "Reuse topology/fixture-invalidated actual wall/post/rack routing rectangles; stock quantity changes do not rebuild them.",
               "purpose_origin": "reviewed"
@@ -37716,8 +37734,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::can_remove",
               "name": "can_remove",
-              "line": 418,
-              "end_line": 438,
+              "line": 443,
+              "end_line": 463,
               "kind": "method",
               "purpose": "Require an empty, unreserved, unoccupied non-connecting module before removal; preserve current access conservatively.",
               "purpose_origin": "reviewed"
@@ -37725,8 +37743,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::retire",
               "name": "retire",
-              "line": 440,
-              "end_line": 446,
+              "line": 465,
+              "end_line": 471,
               "kind": "method",
               "purpose": "Stop new admissions to a dismantling module and track actual remaining occupants until removal is safe.",
               "purpose_origin": "reviewed"
@@ -37734,8 +37752,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::joined",
               "name": "joined",
-              "line": 448,
-              "end_line": 450,
+              "line": 473,
+              "end_line": 475,
               "kind": "method",
               "purpose": "Accept only equal-span, full matching cardinal warehouse edges; reject corner, diagonal and partial-edge contact.",
               "purpose_origin": "reviewed"
@@ -37743,8 +37761,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_walls",
               "name": "_walls",
-              "line": 452,
-              "end_line": 458,
+              "line": 477,
+              "end_line": 483,
               "kind": "method",
               "purpose": "Project only actual below-person-height solid wall/post proxies into pedestrian routing; exclude floors and overhead geometry.",
               "purpose_origin": "reviewed"
@@ -37752,8 +37770,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::hidden_boundaries",
               "name": "hidden_boundaries",
-              "line": 460,
-              "end_line": 469,
+              "line": 485,
+              "end_line": 494,
               "kind": "method",
               "purpose": "Derive which complete neighbouring modules remove each local boundary group symmetrically.",
               "purpose_origin": "reviewed"
@@ -37761,8 +37779,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::module_colliders",
               "name": "module_colliders",
-              "line": 471,
-              "end_line": 483,
+              "line": 496,
+              "end_line": 508,
               "kind": "method",
               "purpose": "Transform the Artist-measured collision proxies into world metres, omitting only actual joined boundary groups.",
               "purpose_origin": "reviewed"
@@ -37770,8 +37788,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_make_cells",
               "name": "_make_cells",
-              "line": 485,
-              "end_line": 492,
+              "line": 510,
+              "end_line": 517,
               "kind": "method",
               "purpose": "Create finite two-deck physical package positions for crates or separate long-stock saddles.",
               "purpose_origin": "reviewed"
@@ -37779,8 +37797,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_free_cells",
               "name": "_free_cells",
-              "line": 494,
-              "end_line": 509,
+              "line": 519,
+              "end_line": 534,
               "kind": "method",
               "purpose": "Return only wholly unoccupied and unpromised cells; a partially filled package still occupies its full envelope.",
               "purpose_origin": "reviewed"
@@ -37788,8 +37806,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_quantity",
               "name": "_cell_quantity",
-              "line": 511,
-              "end_line": 515,
+              "line": 536,
+              "end_line": 540,
               "kind": "method",
               "purpose": "Read current actual Ledger quantity for the stock IDs indexed by one physical package cell.",
               "purpose_origin": "reviewed"
@@ -37797,8 +37815,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_attach_stock",
               "name": "_attach_stock",
-              "line": 517,
-              "end_line": 526,
+              "line": 542,
+              "end_line": 551,
               "kind": "method",
               "purpose": "Index one real stock ID at a fixture cell and update only that existing stock's physical position.",
               "purpose_origin": "reviewed"
@@ -37806,8 +37824,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_service_point",
               "name": "_cell_service_point",
-              "line": 528,
-              "end_line": 530,
+              "line": 553,
+              "end_line": 555,
               "kind": "method",
               "purpose": "Compute the package's own accessible shelf face in world coordinates without any route search.",
               "purpose_origin": "reviewed"
@@ -37815,8 +37833,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_choose_point",
               "name": "_choose_point",
-              "line": 532,
-              "end_line": 549,
+              "line": 557,
+              "end_line": 574,
               "kind": "method",
               "purpose": "Validate distinct person/reservation clearance and real routing for one exact package service face; watch only actual blocking passers-by.",
               "purpose_origin": "reviewed"
@@ -37824,8 +37842,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_clear_for_appearance",
               "name": "_clear_for_appearance",
-              "line": 551,
-              "end_line": 557,
+              "line": 576,
+              "end_line": 582,
               "kind": "method",
               "purpose": "Require the actual future rack volume to be free of tracked bodies and real worker positions.",
               "purpose_origin": "reviewed"
@@ -37833,8 +37851,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_stock_changed",
               "name": "_stock_changed",
-              "line": 559,
-              "end_line": 568,
+              "line": 584,
+              "end_line": 593,
               "kind": "method",
               "purpose": "Remove departed/consumed stock from its cell index and invalidate the owning module summary after an actual Ledger mutation.",
               "purpose_origin": "reviewed"
@@ -37842,8 +37860,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_entity_moved",
               "name": "_entity_moved",
-              "line": 570,
-              "end_line": 597,
+              "line": 595,
+              "end_line": 622,
               "kind": "method",
               "purpose": "Wake only watched blocked access, shelf appearance or retiring-module occupancy when a relevant person actually moves clear.",
               "purpose_origin": "reviewed"
@@ -37851,8 +37869,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_site_changed",
               "name": "_site_changed",
-              "line": 599,
-              "end_line": 617,
+              "line": 624,
+              "end_line": 642,
               "kind": "method",
               "purpose": "Register completed warehouse modules or safely retire removed ones; invalidate topology only when actual site state changes.",
               "purpose_origin": "reviewed"
@@ -37860,8 +37878,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_touch",
               "name": "_touch",
-              "line": 619,
-              "end_line": 624,
+              "line": 644,
+              "end_line": 649,
               "kind": "method",
               "purpose": "Increment logical freshness and wake waiting work; emit keyed presentation changes only for a nonempty module ID.",
               "purpose_origin": "reviewed"
@@ -37869,8 +37887,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_reject",
               "name": "_reject",
-              "line": 626,
-              "end_line": 627,
+              "line": 651,
+              "end_line": 652,
               "kind": "method",
               "purpose": "Return a structured warehouse blocker with its player-facing explanation without mutating custody.",
               "purpose_origin": "reviewed"
@@ -37879,14 +37897,14 @@
         },
         {
           "path": "game/warehousing/warehouse_view.gd",
-          "sha256": "417c50808a6c09a8882d02570b59ebc8e24631da41eeb154e4c2ab1dd2be2e28",
+          "sha256": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/warehousing/warehouse_view.gd::bind",
               "name": "bind",
-              "line": 18,
-              "end_line": 24,
+              "line": 19,
+              "end_line": 25,
               "kind": "method",
               "purpose": "Bind this persistent scene-owned presenter to the existing warehouse service and coalesce keyed change notifications.",
               "purpose_origin": "reviewed"
@@ -37894,8 +37912,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_request_refresh",
               "name": "_request_refresh",
-              "line": 26,
-              "end_line": 30,
+              "line": 27,
+              "end_line": 31,
               "kind": "method",
               "purpose": "Queue one deferred refresh for affected module IDs; repeated same-turn events do not rebuild immediately.",
               "purpose_origin": "reviewed"
@@ -37903,8 +37921,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_refresh",
               "name": "_refresh",
-              "line": 32,
-              "end_line": 49,
+              "line": 33,
+              "end_line": 50,
               "kind": "method",
               "purpose": "Reconcile actual modules and changed bays; rebuild wall colliders only for topology changes.",
               "purpose_origin": "reviewed"
@@ -37912,8 +37930,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_create_module",
               "name": "_create_module",
-              "line": 51,
-              "end_line": 74,
+              "line": 52,
+              "end_line": 75,
               "kind": "method",
               "purpose": "Create one module's persistent collision/occupancy containers and finite bay presenters; no gameplay stock or capacity is granted.",
               "purpose_origin": "reviewed"
@@ -37921,8 +37939,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_rebuild_walls",
               "name": "_rebuild_walls",
-              "line": 76,
-              "end_line": 83,
+              "line": 77,
+              "end_line": 84,
               "kind": "method",
               "purpose": "Replace one module's actual measured wall/post colliders after topology changes, then reconcile the Artist shell.",
               "purpose_origin": "reviewed"
@@ -37930,8 +37948,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_create_bay",
               "name": "_create_bay",
-              "line": 85,
-              "end_line": 108,
+              "line": 86,
+              "end_line": 109,
               "kind": "method",
               "purpose": "Create a persistent fixture/package container and event-based occupancy Area for one real floor slot.",
               "purpose_origin": "reviewed"
@@ -37939,17 +37957,17 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_refresh_bay",
               "name": "_refresh_bay",
-              "line": 110,
-              "end_line": 160,
+              "line": 111,
+              "end_line": 163,
               "kind": "method",
-              "purpose": "Reconcile actual fixture state and exact indexed packages with Artist models, labels and physical envelopes; reuse unchanged nodes.",
+              "purpose": "Reconcile exact actual packages and fixture state; preserve an old empty fixture through reserved/preparing conversion and swap it only under opaque smoke.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_view.gd::_fixture",
               "name": "_fixture",
-              "line": 162,
-              "end_line": 180,
+              "line": 165,
+              "end_line": 183,
               "kind": "method",
               "purpose": "Instantiate the appropriate crate rack or open timber saddles and their measured post/deck/support colliders.",
               "purpose_origin": "reviewed"
@@ -37957,8 +37975,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_shape",
               "name": "_shape",
-              "line": 182,
-              "end_line": 188,
+              "line": 185,
+              "end_line": 191,
               "kind": "method",
               "purpose": "Attach one box collision proxy with explicit local dimensions and placement to its owning body.",
               "purpose_origin": "reviewed"
@@ -37966,8 +37984,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke",
               "name": "_smoke",
-              "line": 190,
-              "end_line": 203,
+              "line": 193,
+              "end_line": 206,
               "kind": "method",
               "purpose": "Reuse the existing low-poly construction smoke for one finite1.5-second shelf appearance; author no new animation clip.",
               "purpose_origin": "reviewed"
@@ -37975,8 +37993,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke_alpha",
               "name": "_smoke_alpha",
-              "line": 205,
-              "end_line": 209,
+              "line": 208,
+              "end_line": 212,
               "kind": "method",
               "purpose": "Fade only the temporary smoke material copies through the existing effect tween.",
               "purpose_origin": "reviewed"
@@ -37984,8 +38002,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::sync_speed",
               "name": "sync_speed",
-              "line": 211,
-              "end_line": 220,
+              "line": 214,
+              "end_line": 223,
               "kind": "method",
               "purpose": "Pause or retime only currently active finite smoke tweens after an actual simulation-speed command.",
               "purpose_origin": "reviewed"
@@ -37993,8 +38011,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_slot_body",
               "name": "_slot_body",
-              "line": 222,
-              "end_line": 223,
+              "line": 225,
+              "end_line": 226,
               "kind": "method",
               "purpose": "Forward the actual body enter/exit event to that fixture site's occupancy owner.",
               "purpose_origin": "reviewed"
@@ -38002,17 +38020,26 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_module_body",
               "name": "_module_body",
-              "line": 225,
-              "end_line": 230,
+              "line": 228,
+              "end_line": 233,
               "kind": "method",
               "purpose": "Track actual module entry/exit for safe removal and roof cutaway, preserving wall collisions.",
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/warehousing/warehouse_view.gd::set_cutaway_enabled",
+              "name": "set_cutaway_enabled",
+              "line": 235,
+              "end_line": 238,
+              "kind": "method",
+              "purpose": "Apply an actual camera-mode command once and reconcile current modules so first person retains the ceiling while occupied third/overhead views may cut it away.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/warehousing/warehouse_view.gd::_reconcile_shell",
               "name": "_reconcile_shell",
-              "line": 232,
-              "end_line": 261,
+              "line": 240,
+              "end_line": 269,
               "kind": "method",
               "purpose": "Hide only joined boundaries and interior roof as appropriate, preserve real walls/colliders and create bounded shadow-free lights at authored anchors once.",
               "purpose_origin": "reviewed"
@@ -38020,8 +38047,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 263,
-              "end_line": 264,
+              "line": 271,
+              "end_line": 272,
               "kind": "method",
               "purpose": "Disconnect the warehouse change signal when this presenter leaves its scene.",
               "purpose_origin": "reviewed"

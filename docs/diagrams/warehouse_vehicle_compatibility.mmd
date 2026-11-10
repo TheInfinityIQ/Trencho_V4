@@ -1,0 +1,17 @@
+flowchart TD
+  Demand[Existing construction material demand] --> Plan[Plan real packages in same connected warehouse]
+  Plan --> Claims[Atomic per-package Ledger claims / one actual hauler and truck]
+  Claims --> Curb[Drive to valid exterior portal curb]
+  Curb --> Face[Acquire actual shelf service face]
+  Face --> Pickup[Actual <=25kg worker pickup under that package claim]
+  Pickup --> Release[Release source face / carry to same truck]
+  Release --> Loaded[Actual truck deposit / close that package claim]
+  Loaded -->|more claimed packages| Face
+  Loaded -->|trip batch loaded| Deliver[Existing drive / physical site unload / return]
+  Cancel[Cancellation / safe reassignment / recovery] --> Unclaimed[Release all uncollected package claims]
+  Unclaimed --> Retain[Existing owner retains actual carried/onboard goods]
+  Space[Actual warehouse access/geometry event] --> Face
+  Space --> Repath[Replan only changed real walking geometry]
+  Fuel[Existing refuel request / explicit1..20kg warehouse can limit] --> Source[Reserve real fuel and actual shelf service point]
+  Source --> Carry[Real pickup / release source face / carry to same hull]
+  Carry --> Tank[Existing exact tank deposit / no kg-litre conversion]

@@ -14,6 +14,7 @@ var _scheduled := false
 var _topology := -1
 var _smoke_tweens: Dictionary = {}
 var _inside: Dictionary = {}
+var _cutaway_enabled := true
 
 func bind(world: Node3D, model: RefCounted) -> void:
 	_world = world
@@ -110,16 +111,18 @@ func _create_bay(bay: Dictionary, parent: Node3D) -> void:
 func _refresh_bay(bay: Dictionary) -> void:
 	if not _bays.has(bay.id): return
 	var view: Dictionary = _bays[bay.id]
-	var visible_fixture: bool = bay.state in ["Revealed","Ready"]
-	if view.fixture_visible != visible_fixture or view.family != bay.family:
+	var old_fixture: bool = bay.has("previous_family") and bay.state in ["Reserved","Preparing"]
+	var visual_family: String = str(bay.previous_family) if old_fixture else str(bay.family)
+	var visible_fixture: bool = old_fixture or bay.state in ["Revealed","Ready"]
+	if view.fixture_visible != visible_fixture or view.family != visual_family:
 		for child: Node in view.fixture.get_children():
 			view.fixture.remove_child(child)
 			child.queue_free()
-		if visible_fixture: _fixture(view.fixture,str(bay.family))
+		if visible_fixture: _fixture(view.fixture,visual_family)
 		view.fixture_visible = visible_fixture
 	if bay.state == "Preparing" and view.state != "Preparing": _smoke(bay,view.node)
 	view.state = bay.state
-	view.family = bay.family
+	view.family = visual_family
 	var present := {}
 	for index in bay.cells.size():
 		var cell: Dictionary = bay.cells[index]
@@ -229,6 +232,11 @@ func _module_body(body: Node3D, id: String, inside: bool) -> void:
 	else: _inside[id].erase(body.get_instance_id())
 	_reconcile_shell(id)
 
+func set_cutaway_enabled(enabled: bool) -> void:
+	if _cutaway_enabled == enabled: return
+	_cutaway_enabled = enabled
+	for id: String in _modules: _reconcile_shell(id)
+
 func _reconcile_shell(id: String) -> void:
 	if not _service.modules.has(id) or not _world._site_visuals.has(id): return
 	var shell: Node3D = _world._site_visuals[id].exterior.node
@@ -258,7 +266,7 @@ func _reconcile_shell(id: String) -> void:
 		var group := visual.find_child(name,true,false) as Node3D
 		if group != null: group.visible = not hidden.has(name)
 	var roof := visual.find_child("Roof",true,false) as Node3D
-	if roof != null: roof.visible = _inside.get(id,{}).is_empty()
+	if roof != null: roof.visible = not _cutaway_enabled or _inside.get(id,{}).is_empty()
 
 func _exit_tree() -> void:
 	if _service != null and _service.changed.is_connected(_request_refresh): _service.changed.disconnect(_request_refresh)
