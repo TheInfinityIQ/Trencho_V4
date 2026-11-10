@@ -40,4 +40,14 @@ func start(actor: Dictionary) -> bool:
 			return true
 		if task == "dispatch" and rear.dispatch != null and rear.dispatch.start_shared_preparation(actor.id): return true
 		if task != "unloading" and not rear.jobs.is_empty() and rear._start_job(actor,task): return true
+	if rear.warehouse != null:
+		var previous: Vector2 = rear.warehouse.take_clearance(str(actor.id))
+		if previous.is_finite():
+			var origin: Vector2 = rear.ledger.inspect_entity(actor.id,{},false).position
+			if origin.distance_to(previous) < 1.3:
+				var path: Array = rear.warehouse.clearance_path(str(actor.id),origin)
+				if not path.is_empty():
+					rear.warehouse.watch_clearance(str(actor.id),previous)
+					rear._move(actor,"Clearing warehouse access",path,1.5)
+					return true
 	return false

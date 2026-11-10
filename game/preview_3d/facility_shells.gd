@@ -19,9 +19,12 @@ const EDGE_INSET: float = 0.4
 const OCCLUDER_LAYER: int = 4
 var _scenes: Dictionary = {}
 var _shapes: Dictionary = {}
+var warehouse_enabled := false
 
 func build(row: Dictionary, include_unfinished: bool = false, include_occluders: bool = true) -> Dictionary:
 	if row.state != "Complete" and not include_unfinished: return {"ok":false,"reason":"unfinished"}
+	if row.kind == "depot" and warehouse_enabled:
+		return preload("res://game/warehousing/warehouse_assets.gd").shell(row)
 	if row.kind == "park": return _parking_ground(row)
 	if not MODELS.has(row.kind): return {"ok":false,"reason":"unmapped exterior"}
 	var center: Vector2 = row.center

@@ -67,8 +67,14 @@ func reconcile() -> void:
 
 func _finish_reveal() -> void:
 	for saved: Dictionary in _originals:
-		if saved.has("whole"): continue
 		var mesh: MeshInstance3D = saved.mesh
+		# The warehouse has actual glass and illuminated lamp surfaces. Its
+		# originals are explicitly drawn at startup before this completion swap.
+		if bool(exterior.get("warehouse",false)):
+			if saved.has("whole"): mesh.material_override = saved.whole
+			else: mesh.set_surface_override_material(saved.surface,saved.override)
+			continue
+		if saved.has("whole"): continue
 		# Keep the already rendered full-height material. Swapping back to an
 		# unseen StandardMaterial at completion compiles new OpenGL variants.
 		var material := mesh.get_surface_override_material(saved.surface) as ShaderMaterial

@@ -1,0 +1,141 @@
+{
+  "stage": "Concept and dimensioned static-authoring contract; no animation authoring. World placement/game integration Lead-owned.",
+  "units": "metres",
+  "axes": "Warehouse local Godot X width/Z depth/Yup; front portal local-Z. Lead orients Front toward world south. Blender +Zup, front+Y.",
+  "outer_footprint": [
+    12,
+    16
+  ],
+  "wall_thickness": 0.2,
+  "clear_inside_before_posts": [
+    11.6,
+    15.6
+  ],
+  "general_clear_height": 4.5,
+  "door_clear": [
+    4,
+    4
+  ],
+  "floor_top": 0,
+  "main_aisle_width": 3,
+  "full_matching_cardinal_edges_only": true,
+  "slot_size": [
+    3,
+    2
+  ],
+  "slot_centres_xz": [
+    [
+      -3,
+      -4.5
+    ],
+    [
+      3,
+      -4.5
+    ],
+    [
+      -3,
+      -1.5
+    ],
+    [
+      3,
+      -1.5
+    ],
+    [
+      -3,
+      1.5
+    ],
+    [
+      3,
+      1.5
+    ],
+    [
+      -3,
+      4.5
+    ],
+    [
+      3,
+      4.5
+    ]
+  ],
+  "initial_rack_slots": [
+    1,
+    2
+  ],
+  "rack_outer_LDH": [
+    2.6,
+    1,
+    1.8
+  ],
+  "rack_clear_LD": [
+    2.5,
+    0.9
+  ],
+  "rack_deck_top": [
+    0.25,
+    0.95
+  ],
+  "medium_crate_outer_LDH": [
+    0.6,
+    0.4,
+    0.32
+  ],
+  "medium_crate_column_centres": [
+    -0.93,
+    -0.31,
+    0.31,
+    0.93
+  ],
+  "crate_row_centres": [
+    -0.25,
+    0.25
+  ],
+  "clear_gap_between_columns": 0.02,
+  "crate_end_margin_each": 0.02,
+  "crate_back_to_back_middle_gap": 0.1,
+  "crate_capacity_M11_kg": 24,
+  "crate_count_per_deck": 8,
+  "crate_count_per_rack": 16,
+  "initial_crates": [
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    20
+  ],
+  "initial_stock_kg": 500,
+  "initial_rack_package_counts": [
+    16,
+    5
+  ],
+  "clear_between_actual_rack_rows": 2,
+  "clear_side_wall_to_actual_racks": 1.5,
+  "clear_front_rear_wall_to_actual_racks": 2.8,
+  "longstock_length": 2,
+  "longstock_end_zone_min": 2.5,
+  "new_animation_authoring": "PAUSED",
+  "warehouse_truck_entry": "Not required; trucks stay road",
+  "source_reuse": "Existing Kenney CC0 building_k actual inspected; visual palette/sawtooth reference only unless specific source geometry is later explicitly recorded.",
+  "notes": [
+    "Open completed static shutter; no new door clip.",
+    "Separate full-edge visual/trim/collider groups; floor reaches outer boundary.",
+    "Two accessible rack faces; rear-row crates face their access aisle.",
+    "Generated concept crate counts/perspective are illustrative; this exact contract and final actual meshes take precedence.",
+    "Half500kg grant prohibited: keep the SAME pre-existing500M11,20full24kg +20kgpartial."
+  ]
+}

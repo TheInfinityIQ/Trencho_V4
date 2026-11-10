@@ -1,0 +1,16 @@
+flowchart TD
+  Request[Actual pedestrian route request] --> Geometry[Same current warehouse wall/rack/site clearances]
+  Geometry --> Direct{Exact straight segment clear?}
+  Direct -->|yes| Result[Actual endpoint route]
+  Direct -->|no / warehouse mode| Grid[Godot AStarGrid2D / cached current geometry /0.5m cells]
+  Grid --> Guard[Validate exact endpoint connectors and every segment]
+  Guard -->|valid| Smooth[Smooth only geometry-approved straight segments]
+  Smooth --> Result
+  Guard -->|unsupported or no usable grid path| Legacy[Existing guarded visibility search]
+  Legacy --> Result
+  NewGeometry[Actual wall/fixture/site topology changes] --> Geometry
+  Stock[Actual warehouse stock cell] --> Bound[Pure service coordinate / Euclidean lower bound]
+  Bound --> Select[Sort current source candidates]
+  Select --> Prune{Can improve best actual route?}
+  Prune -->|yes| Request
+  Prune -->|no| Skip[Skip redundant route search / preserve actual stock]

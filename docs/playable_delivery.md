@@ -1,5 +1,12 @@
 # Connected playable delivery
 
+[Physical warehousing](warehousing.md) is the active integration block: the
+starting12×16m depot, finite packages, worker-prepared fixtures, held-truck
+warnings and completed full-edge joins have scoped domain receipts. Actual
+imported rendering, native entrance and main-checkout adoption remain pending.
+Ordinary return/staging recovery and paired timber transport are separately
+planned; this does not mark stages1/2 or full-game60FPS accepted.
+
 [Construction follow-up](construction_delivery_completion.md): builders can fetch
 actual materials for their own starved site. The site menu shows actual delivery,
 carry and pickup blockers. Startup prepares construction/truck rendering behind

@@ -1,0 +1,2651 @@
+{
+  "stage": "Static warehouse/racks/crates handoff; pending Dawson appearance approval and Lead game integration. NO new animation authored.",
+  "axes": "Metres. Godot+Yup. All assets have localX=L,widthacrossrack;localZ=depth;localY=height. WarehouseFront=-Z; Lead orients toworldSouth. TruckpackageL-longitudinal requires intentionalquarterturn whereapplicable.",
+  "contract": {
+    "stage": "Concept and dimensioned static-authoring contract; no animation authoring. World placement/game integration Lead-owned.",
+    "units": "metres",
+    "axes": "Warehouse local Godot X width/Z depth/Yup; front portal local-Z. Lead orients Front toward world south. Blender +Zup, front+Y.",
+    "outer_footprint": [
+      12,
+      16
+    ],
+    "wall_thickness": 0.2,
+    "clear_inside_before_posts": [
+      11.6,
+      15.6
+    ],
+    "general_clear_height": 4.5,
+    "door_clear": [
+      4,
+      4
+    ],
+    "floor_top": 0,
+    "main_aisle_width": 3,
+    "full_matching_cardinal_edges_only": true,
+    "slot_size": [
+      3,
+      2
+    ],
+    "slot_centres_xz": [
+      [
+        -3,
+        -4.5
+      ],
+      [
+        3,
+        -4.5
+      ],
+      [
+        -3,
+        -1.5
+      ],
+      [
+        3,
+        -1.5
+      ],
+      [
+        -3,
+        1.5
+      ],
+      [
+        3,
+        1.5
+      ],
+      [
+        -3,
+        4.5
+      ],
+      [
+        3,
+        4.5
+      ]
+    ],
+    "initial_rack_slots": [
+      1,
+      2
+    ],
+    "rack_outer_LDH": [
+      2.6,
+      1,
+      1.8
+    ],
+    "rack_clear_LD": [
+      2.5,
+      0.9
+    ],
+    "rack_deck_top": [
+      0.25,
+      0.95
+    ],
+    "medium_crate_outer_LDH": [
+      0.6,
+      0.4,
+      0.32
+    ],
+    "medium_crate_column_centres": [
+      -0.93,
+      -0.31,
+      0.31,
+      0.93
+    ],
+    "crate_row_centres": [
+      -0.25,
+      0.25
+    ],
+    "clear_gap_between_columns": 0.02,
+    "crate_end_margin_each": 0.02,
+    "crate_back_to_back_middle_gap": 0.1,
+    "crate_capacity_M11_kg": 24,
+    "crate_count_per_deck": 8,
+    "crate_count_per_rack": 16,
+    "initial_crates": [
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      20
+    ],
+    "initial_stock_kg": 500,
+    "initial_rack_package_counts": [
+      16,
+      5
+    ],
+    "clear_between_actual_rack_rows": 2,
+    "clear_side_wall_to_actual_racks": 1.5,
+    "clear_front_rear_wall_to_actual_racks": 2.8,
+    "longstock_length": 2,
+    "longstock_end_zone_min": 2.5,
+    "new_animation_authoring": "PAUSED",
+    "warehouse_truck_entry": "Not required; trucks stay road",
+    "source_reuse": "Existing Kenney CC0 building_k actual inspected; visual palette/sawtooth reference only unless specific source geometry is later explicitly recorded.",
+    "notes": [
+      "Open completed static shutter; no new door clip.",
+      "Separate full-edge visual/trim/collider groups; floor reaches outer boundary.",
+      "Two accessible rack faces; rear-row crates face their access aisle.",
+      "Generated concept crate counts/perspective are illustrative; this exact contract and final actual meshes take precedence.",
+      "Half500kg grant prohibited: keep the SAME pre-existing500M11,20full24kg +20kgpartial."
+    ]
+  },
+  "assets": [
+    {
+      "file": "warehouse_shell_v01.glb",
+      "root": "Warehouse_Visual",
+      "bytes": 465444,
+      "sha256": "372df5e56071e4e63d903ed9b778006495790765c190253f36a399f156660675",
+      "triangles_unique": 6568,
+      "vertices_unique": 11551,
+      "mesh_resources": 12,
+      "materials": [
+        {
+          "name": "M_Construction_Palette",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        },
+        {
+          "alphaMode": "BLEND",
+          "name": "M_Warehouse_Glass",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.23999999463558197,
+              0.3799999952316284,
+              0.44999998807907104,
+              0.20000000298023224
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.18000000715255737
+          }
+        },
+        {
+          "emissiveFactor": [
+            1,
+            0.7799999713897705,
+            0.41999998688697815
+          ],
+          "extensions": {
+            "KHR_materials_emissive_strength": {
+              "emissiveStrength": 2
+            }
+          },
+          "name": "M_Warehouse_Light_Diffuser",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "images": 0,
+      "skins": 0,
+      "clips": 0,
+      "nodes": {
+        "SM_Boundary_North": {
+          "parent": "Boundary_Back",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 0
+        },
+        "SM_Boundary_North_Glass": {
+          "parent": "Boundary_Back",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 1
+        },
+        "Boundary_Back": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Boundary_South": {
+          "parent": "Boundary_Front",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 2
+        },
+        "SM_Boundary_South_Glass": {
+          "parent": "Boundary_Front",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 3
+        },
+        "Boundary_Front": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Boundary_West": {
+          "parent": "Boundary_Left",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 4
+        },
+        "Boundary_Left": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Boundary_East": {
+          "parent": "Boundary_Right",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 5
+        },
+        "Boundary_Right": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Edge_Back": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            8
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Edge_Front": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            -8
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Edge_Left": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            -6,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Edge_Right": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            6,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Entry_Inside": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            -6.900000095367432
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Entry_Outside": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            -9.199999809265137
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Floor": {
+          "parent": "Floor",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 6
+        },
+        "Floor": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Front": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            -8
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_00": {
+          "parent": "Lighting",
+          "translation": [
+            -3,
+            4.449999809265137,
+            6
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_01": {
+          "parent": "Lighting",
+          "translation": [
+            3,
+            4.449999809265137,
+            6
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_02": {
+          "parent": "Lighting",
+          "translation": [
+            -3,
+            4.449999809265137,
+            2
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_03": {
+          "parent": "Lighting",
+          "translation": [
+            3,
+            4.449999809265137,
+            2
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_04": {
+          "parent": "Lighting",
+          "translation": [
+            -3,
+            4.449999809265137,
+            -2
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_05": {
+          "parent": "Lighting",
+          "translation": [
+            3,
+            4.449999809265137,
+            -2
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_06": {
+          "parent": "Lighting",
+          "translation": [
+            -3,
+            4.449999809265137,
+            -6
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Light_Anchor_07": {
+          "parent": "Lighting",
+          "translation": [
+            3,
+            4.449999809265137,
+            -6
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Light_Diffusers": {
+          "parent": "Lighting",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 7
+        },
+        "SM_Lights": {
+          "parent": "Lighting",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 8
+        },
+        "Lighting": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Roof": {
+          "parent": "Roof",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 9
+        },
+        "SM_Roof_Glass": {
+          "parent": "Roof",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 10
+        },
+        "Roof": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Columns": {
+          "parent": "Shared_Frame",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 11
+        },
+        "Shared_Frame": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_01": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            -3,
+            0,
+            -4.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_02": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            3,
+            0,
+            -4.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_03": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            -3,
+            0,
+            -1.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_04": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            3,
+            0,
+            -1.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_05": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            -3,
+            0,
+            1.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_06": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            3,
+            0,
+            1.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_07": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            -3,
+            0,
+            4.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Shelf_Slot_08": {
+          "parent": "Warehouse_Visual",
+          "translation": [
+            3,
+            0,
+            4.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Warehouse_Visual": {
+          "parent": null,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "accepted_qa_warnings": [
+        "SM_Roof: duplicate verts=8 loose verts=0",
+        "SM_Boundary_South: duplicate verts=4 loose verts=0",
+        "hidden back-to-back faces: SM_Boundary_South (50 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Columns (32 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Lights (32 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Lights<->SM_Light_Diffusers (32 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Roof<->SM_Boundary_South (20 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Roof<->SM_Boundary_North (18 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Boundary_East<->SM_Columns (16 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Boundary_West<->SM_Columns (16 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Columns<->SM_Boundary_South (16 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Boundary_West (14 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Boundary_East (14 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Floor<->SM_Columns (12 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Boundary_North (12 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Columns<->SM_Boundary_North (12 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Roof<->SM_Boundary_West (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Roof<->SM_Boundary_East (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Roof (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Floor<->SM_Boundary_South (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Floor<->SM_Boundary_East (2 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_Floor<->SM_Boundary_North (2 pairs) - delete to save tris",
+        "asset lowest point z=-0.2 (not resting on ground plane z=0)"
+      ],
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "file": "warehouse_crate_rack_v01.glb",
+      "root": "Warehouse_Crate_Rack",
+      "bytes": 117124,
+      "sha256": "6ca65fa822fa9c978d5a3cc6b250606e01365109cd6303d68e6f478bf6494727",
+      "triangles_unique": 1800,
+      "vertices_unique": 2902,
+      "mesh_resources": 1,
+      "materials": [
+        {
+          "name": "M_Construction_Palette",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "images": 0,
+      "skins": 0,
+      "clips": 0,
+      "nodes": {
+        "Access_Back_Deck_1": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0.25,
+            0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Back_Deck_2": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0.949999988079071,
+            0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Front_Deck_1": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0.25,
+            -0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Front_Deck_2": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0.949999988079071,
+            -0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Warehouse_Crate_Rack": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 0
+        },
+        "Smoke_Anchor": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0.800000011920929,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Work_Back": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0,
+            1.100000023841858
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Work_Front": {
+          "parent": "Warehouse_Crate_Rack",
+          "translation": [
+            0,
+            0,
+            -1.100000023841858
+          ],
+          "rotation_xyzw": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Warehouse_Crate_Rack": {
+          "parent": null,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "accepted_qa_warnings": [
+        "SM_Warehouse_Crate_Rack: duplicate verts=16 loose verts=0",
+        "hidden back-to-back faces: SM_Warehouse_Crate_Rack (160 pairs) - delete to save tris"
+      ],
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "file": "warehouse_long_stock_rack_v01.glb",
+      "root": "Warehouse_Long_Stock_Rack",
+      "bytes": 129076,
+      "sha256": "d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189",
+      "triangles_unique": 1980,
+      "vertices_unique": 3188,
+      "mesh_resources": 1,
+      "materials": [
+        {
+          "name": "M_Construction_Palette",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "images": 0,
+      "skins": 0,
+      "clips": 0,
+      "nodes": {
+        "Access_Back_Deck_1": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0.25,
+            0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Back_Deck_2": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0.949999988079071,
+            0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Front_Deck_1": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0.25,
+            -0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Access_Front_Deck_2": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0.949999988079071,
+            -0.5
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Extract_End_Left_Deck_1": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            -1.2999999523162842,
+            0.25,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Extract_End_Left_Deck_2": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            -1.2999999523162842,
+            0.949999988079071,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Extract_End_Right_Deck_1": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            1.2999999523162842,
+            0.25,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Extract_End_Right_Deck_2": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            1.2999999523162842,
+            0.949999988079071,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Warehouse_Long_Stock_Rack": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 0
+        },
+        "Smoke_Anchor": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0.800000011920929,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Work_Back": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0,
+            1.100000023841858
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Work_Front": {
+          "parent": "Warehouse_Long_Stock_Rack",
+          "translation": [
+            0,
+            0,
+            -1.100000023841858
+          ],
+          "rotation_xyzw": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Warehouse_Long_Stock_Rack": {
+          "parent": null,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "accepted_qa_warnings": [
+        "SM_Warehouse_Long_Stock_Rack: duplicate verts=16 loose verts=0",
+        "hidden back-to-back faces: SM_Warehouse_Long_Stock_Rack (92 pairs) - delete to save tris"
+      ],
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "file": "medium_crate_v01.glb",
+      "root": "Medium_Crate",
+      "bytes": 69504,
+      "sha256": "f52f8e73e0c39f58588a323e026ef12c003018ff28af9789ecec07f1ddf43e95",
+      "triangles_unique": 1064,
+      "vertices_unique": 1696,
+      "mesh_resources": 1,
+      "materials": [
+        {
+          "name": "M_Construction_Palette",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "images": 0,
+      "skins": 0,
+      "clips": 0,
+      "nodes": {
+        "Grip_Back_Left": {
+          "parent": "Medium_Crate",
+          "translation": [
+            -0.20499999821186066,
+            0.23499999940395355,
+            0.20000000298023224
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Back_Right": {
+          "parent": "Medium_Crate",
+          "translation": [
+            0.20499999821186066,
+            0.23499999940395355,
+            0.20000000298023224
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Front_Left": {
+          "parent": "Medium_Crate",
+          "translation": [
+            -0.20499999821186066,
+            0.23499999940395355,
+            -0.20000000298023224
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Front_Right": {
+          "parent": "Medium_Crate",
+          "translation": [
+            0.20499999821186066,
+            0.23499999940395355,
+            -0.20000000298023224
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Quantity_Label_Back": {
+          "parent": "Medium_Crate",
+          "translation": [
+            0,
+            0.10999999940395355,
+            0.20100000500679016
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Quantity_Label_Front": {
+          "parent": "Medium_Crate",
+          "translation": [
+            0,
+            0.10999999940395355,
+            -0.20100000500679016
+          ],
+          "rotation_xyzw": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Medium_Crate": {
+          "parent": "Medium_Crate",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 0
+        },
+        "Medium_Crate": {
+          "parent": null,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "accepted_qa_warnings": [
+        "hidden back-to-back faces: SM_Medium_Crate (46 pairs) - delete to save tris"
+      ],
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "file": "small_crate_v01.glb",
+      "root": "Small_Crate",
+      "bytes": 69804,
+      "sha256": "2e37b5e0713a6f5202cd38f4e80e2362364d8eab77e6a0c81d4ceaf65d9701ac",
+      "triangles_unique": 1064,
+      "vertices_unique": 1696,
+      "mesh_resources": 1,
+      "materials": [
+        {
+          "name": "M_Construction_Palette",
+          "pbrMetallicRoughness": {
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "images": 0,
+      "skins": 0,
+      "clips": 0,
+      "nodes": {
+        "Grip_Back_Left": {
+          "parent": "Small_Crate",
+          "translation": [
+            -0.1366666704416275,
+            0.17624999582767487,
+            0.15000000596046448
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Back_Right": {
+          "parent": "Small_Crate",
+          "translation": [
+            0.1366666704416275,
+            0.17624999582767487,
+            0.15000000596046448
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Front_Left": {
+          "parent": "Small_Crate",
+          "translation": [
+            -0.1366666704416275,
+            0.17624999582767487,
+            -0.15000000596046448
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Grip_Front_Right": {
+          "parent": "Small_Crate",
+          "translation": [
+            0.1366666704416275,
+            0.17624999582767487,
+            -0.15000000596046448
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Quantity_Label_Back": {
+          "parent": "Small_Crate",
+          "translation": [
+            0,
+            0.08249999582767487,
+            0.15075001120567322
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Quantity_Label_Front": {
+          "parent": "Small_Crate",
+          "translation": [
+            0,
+            0.08249999582767487,
+            -0.15075001120567322
+          ],
+          "rotation_xyzw": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        },
+        "SM_Small_Crate": {
+          "parent": "Small_Crate",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "mesh": 0
+        },
+        "Small_Crate": {
+          "parent": null,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "accepted_qa_warnings": [
+        "hidden back-to-back faces: SM_Small_Crate (46 pairs) - delete to save tris"
+      ],
+      "format_errors": 0,
+      "format_warnings": 0
+    }
+  ],
+  "source_files": [
+    {
+      "file": "warehouse_shell_v01.blend",
+      "bytes": 241264,
+      "sha256": "6593559dd0a13837206a9538dacd6d7c21bd7dcc574b1b6e65494e6034c52859"
+    },
+    {
+      "file": "warehouse_fixtures_v01.blend",
+      "bytes": 198634,
+      "sha256": "e7c4547d00ec34b24bf5a3667d0c2864a579eb1e33feb318a1e02e962308eb0a"
+    },
+    {
+      "file": "warehouse_static_review_v01.blend",
+      "bytes": 420152,
+      "sha256": "b48d554b85c056e3cfa1170036aeb8501824ead122c678a10fffe11d2954727f"
+    }
+  ],
+  "shell_dimensions": {
+    "pass": true,
+    "floor_bounds": [
+      [
+        -6.0,
+        -8.0,
+        -0.20000000298023224
+      ],
+      [
+        6.0,
+        8.0,
+        0.0
+      ]
+    ],
+    "general_roof_solid_min_m": 4.700000286102295,
+    "lamp_solid_min_m": 4.5,
+    "light_anchor_emission_y_m": 4.45,
+    "light_anchor_note": "Empty emission point, not solid fixture underside. Actual solid min checked>=4.5m.",
+    "clear_portal_W_H_m": [
+      4,
+      4
+    ],
+    "portal_proxy_intrusions": [],
+    "collision_proxies": [
+      {
+        "name": "Floor_Collider-colonly",
+        "group": "Floor",
+        "bounds_blender_xyz_m": [
+          [
+            -6.0,
+            -8.0,
+            -0.20000000298023224
+          ],
+          [
+            6.0,
+            8.0,
+            0.0
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Column_Collider_-5.85_-7.85-colonly",
+        "group": "Shared_Frame",
+        "bounds_blender_xyz_m": [
+          [
+            -6.0,
+            -8.0,
+            0.0
+          ],
+          [
+            -5.699999809265137,
+            -7.699999809265137,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Column_Collider_-5.85_7.85-colonly",
+        "group": "Shared_Frame",
+        "bounds_blender_xyz_m": [
+          [
+            -6.0,
+            7.699999809265137,
+            0.0
+          ],
+          [
+            -5.699999809265137,
+            8.0,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Column_Collider_5.85_-7.85-colonly",
+        "group": "Shared_Frame",
+        "bounds_blender_xyz_m": [
+          [
+            5.699999809265137,
+            -8.0,
+            0.0
+          ],
+          [
+            6.0,
+            -7.699999809265137,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Column_Collider_5.85_7.85-colonly",
+        "group": "Shared_Frame",
+        "bounds_blender_xyz_m": [
+          [
+            5.699999809265137,
+            7.699999809265137,
+            0.0
+          ],
+          [
+            6.0,
+            8.0,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "North_Wall_Collider-colonly",
+        "group": "Boundary_Back",
+        "bounds_blender_xyz_m": [
+          [
+            -5.699999809265137,
+            -8.0,
+            0.0
+          ],
+          [
+            5.699999809265137,
+            -7.800000190734863,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Boundary_East_Wall_Collider-colonly",
+        "group": "Boundary_Right",
+        "bounds_blender_xyz_m": [
+          [
+            5.800000190734863,
+            -7.699999809265137,
+            0.0
+          ],
+          [
+            6.0,
+            7.699999809265137,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Boundary_West_Wall_Collider-colonly",
+        "group": "Boundary_Left",
+        "bounds_blender_xyz_m": [
+          [
+            -6.0,
+            -7.699999809265137,
+            0.0
+          ],
+          [
+            -5.800000190734863,
+            7.699999809265137,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Front_Wall_Collider_-1-colonly",
+        "group": "Boundary_Front",
+        "bounds_blender_xyz_m": [
+          [
+            -5.699999809265137,
+            7.800000190734863,
+            0.0
+          ],
+          [
+            -2.25,
+            8.0,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Portal_Jamb_Collider_-1-colonly",
+        "group": "Boundary_Front",
+        "bounds_blender_xyz_m": [
+          [
+            -2.25,
+            7.699999809265137,
+            0.0
+          ],
+          [
+            -2.0,
+            8.0,
+            4.0
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Front_Wall_Collider_1-colonly",
+        "group": "Boundary_Front",
+        "bounds_blender_xyz_m": [
+          [
+            2.25,
+            7.800000190734863,
+            0.0
+          ],
+          [
+            5.699999809265137,
+            8.0,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Portal_Jamb_Collider_1-colonly",
+        "group": "Boundary_Front",
+        "bounds_blender_xyz_m": [
+          [
+            2.0,
+            7.699999809265137,
+            0.0
+          ],
+          [
+            2.25,
+            8.0,
+            4.0
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Portal_Header_Collider-colonly",
+        "group": "Boundary_Front",
+        "bounds_blender_xyz_m": [
+          [
+            -2.25,
+            7.699999809265137,
+            3.999999761581421
+          ],
+          [
+            2.25,
+            8.0,
+            4.899999618530273
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Slope_0-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            -6.0,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            -2.299999952316284,
+            7.980000019073486,
+            5.699999809265137
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Return_0-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            -2.299999952316284,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            -2.0,
+            7.980000019073486,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Slope_1-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            -2.0,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            1.7000000476837158,
+            7.980000019073486,
+            5.699999809265137
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Return_1-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            1.7000000476837158,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            2.0,
+            7.980000019073486,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Slope_2-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            2.0,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            5.699999809265137,
+            7.980000019073486,
+            5.699999809265137
+          ]
+        ],
+        "exported": false
+      },
+      {
+        "name": "Roof_Return_2-colonly",
+        "group": "Roof",
+        "bounds_blender_xyz_m": [
+          [
+            5.699999809265137,
+            -7.980000019073486,
+            4.820000171661377
+          ],
+          [
+            6.0,
+            7.980000019073486,
+            4.900000095367432
+          ]
+        ],
+        "exported": false
+      }
+    ],
+    "collision_policy": "Source/reference geometry only, NOT exported; Lead owns actual runtime fixed-rectangle primitives. No whole-building hull."
+  },
+  "layout": {
+    "pass": true,
+    "scope": "Actual imported static geometry and existing idle snapshot; NOT game walking/IK/structure/capacity acceptance.",
+    "installed_racks": 2,
+    "empty_slot_count": 6,
+    "packages": [
+      {
+        "id": "M11_Package_01",
+        "rack": 1,
+        "deck": 1,
+        "row": 1,
+        "column": 1,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.930000066757202,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_02",
+        "rack": 1,
+        "deck": 1,
+        "row": 1,
+        "column": 2,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.309999942779541,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_03",
+        "rack": 1,
+        "deck": 1,
+        "row": 1,
+        "column": 3,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.690000057220459,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_04",
+        "rack": 1,
+        "deck": 1,
+        "row": 1,
+        "column": 4,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.069999933242798,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_05",
+        "rack": 1,
+        "deck": 1,
+        "row": 2,
+        "column": 1,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.930000066757202,
+          4.25,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_06",
+        "rack": 1,
+        "deck": 1,
+        "row": 2,
+        "column": 2,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.309999942779541,
+          4.25,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_07",
+        "rack": 1,
+        "deck": 1,
+        "row": 2,
+        "column": 3,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.690000057220459,
+          4.25,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_08",
+        "rack": 1,
+        "deck": 1,
+        "row": 2,
+        "column": 4,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.069999933242798,
+          4.25,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_09",
+        "rack": 1,
+        "deck": 2,
+        "row": 1,
+        "column": 1,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.930000066757202,
+          4.75,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_10",
+        "rack": 1,
+        "deck": 2,
+        "row": 1,
+        "column": 2,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.309999942779541,
+          4.75,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_11",
+        "rack": 1,
+        "deck": 2,
+        "row": 1,
+        "column": 3,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.690000057220459,
+          4.75,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_12",
+        "rack": 1,
+        "deck": 2,
+        "row": 1,
+        "column": 4,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.069999933242798,
+          4.75,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_13",
+        "rack": 1,
+        "deck": 2,
+        "row": 2,
+        "column": 1,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.930000066757202,
+          4.25,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_14",
+        "rack": 1,
+        "deck": 2,
+        "row": 2,
+        "column": 2,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -3.309999942779541,
+          4.25,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_15",
+        "rack": 1,
+        "deck": 2,
+        "row": 2,
+        "column": 3,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.690000057220459,
+          4.25,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_16",
+        "rack": 1,
+        "deck": 2,
+        "row": 2,
+        "column": 4,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          -2.069999933242798,
+          4.25,
+          0.949999988079071
+        ]
+      },
+      {
+        "id": "M11_Package_17",
+        "rack": 2,
+        "deck": 1,
+        "row": 1,
+        "column": 1,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          2.069999933242798,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_18",
+        "rack": 2,
+        "deck": 1,
+        "row": 1,
+        "column": 2,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          2.690000057220459,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_19",
+        "rack": 2,
+        "deck": 1,
+        "row": 1,
+        "column": 3,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          3.309999942779541,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_20",
+        "rack": 2,
+        "deck": 1,
+        "row": 1,
+        "column": 4,
+        "net_kg": 24,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          3.930000066757202,
+          4.75,
+          0.25
+        ]
+      },
+      {
+        "id": "M11_Package_21",
+        "rack": 2,
+        "deck": 1,
+        "row": 2,
+        "column": 1,
+        "net_kg": 20,
+        "capacity_kg": 24,
+        "position_blender_xyz_m": [
+          2.069999933242798,
+          4.25,
+          0.25
+        ]
+      }
+    ],
+    "net_M11_kg": 500,
+    "rack_package_counts": [
+      16,
+      5
+    ],
+    "main_actual_clear_m": 3.4,
+    "designated_main_clear_m": 3,
+    "side_actual_clear_m": 1.5,
+    "front_rear_actual_clear_m": 2.8,
+    "cross_row_clear_m": 2,
+    "joined_floor_seam_error_m": 0.0,
+    "joined_removed_groups": [
+      "Boundary_Right",
+      "Joined_Module_02_Boundary_Left"
+    ],
+    "actions": 0,
+    "new_animation_authoring": "PAUSED"
+  },
+  "collision_policy": "Production visualGLBs have NOcollisionproxies/suffixbodies. Editable source retains actualclosedbox/roof proxies; shell_direct_dimensions.json hasexactbounds. Lead owns runtimefixedrectprimitives matchingfloor/frame/walls/racks, neverawhole-buildinghull.",
+  "label_policy": "Static labelplates/griprecesses,Quantity_Label_Front/Back exactmarkers. Runtime material+actualnetkg/capacity, notbaked24kg;One materialpercrate. Left/Right gripnamesdenote localX-/+, notautomaticanatomicalbonebinding. Labelsfaceoutward onbothlongfaces.",
+  "stock_rack": "Open endssuitableforlengthwiseextraction localX. Enddiagonalbraces removed;one sidebraceinstead. Fixed saddlesatX\u00b1.25, supportwidth.10; freegraspregionsoutside\u00b1.30. Exactworkercontactstillunverified. FourExtract_End_Left/Right_Deck_1/2markers.",
+  "lighting": "Eightphysicalfixtures;solidunderside4.50m,roofbeammin4.70m checked. Light_Anchor_00..07Y4.45m areemptyemissionpoints, notsolidgeometry. No modelinglights exported. Godotlighting/runtimecostLead-owned.",
+  "accepted_warnings_reason": "Coincidentvertices andoppositehiddencontactfaces onrecoverableclosedmountedcomponents;nozfight/floating/winding/degen/nonmanifolderrors. Slabextendsbelowfloor0to-.20m intentionally;finishedfloortop0. Thisisnotfloating/sunkactororigin.",
+  "provenance": {
+    "geometry": "Originalmetricgeometryafterall-angleconcept+licensedfoundationinspection. ExistingKenneyCC0building_k usedforpalette/sawtoothvisualreferenceonly;noexternalmesh/texturecopied.",
+    "reference_evidence": "../warehouse_review/existing_shell_inventory.json andwarehouse_recommendations.md;exactbundledCC0license/sourceSHAretainedthere.",
+    "concepts": [
+      "concept_all_angles_v02.png",
+      "concept_interior_v01.png"
+    ],
+    "exact_prompts": [
+      "concept_exterior_prompt_v01.txt",
+      "concept_exterior_edit_prompt_v02.txt",
+      "concept_interior_prompt_v01.txt"
+    ],
+    "scale_worker": "Presentation-onlyevaluatedsnapshotofexistingworkeridlepose. No newclip/noexportedoccupant/noadditionalworkforce grant."
+  },
+  "checks": {
+    "source": [
+      "shell_saved_source_check.json",
+      "fixture_saved_source_check.json"
+    ],
+    "mesh": "shell_mesh_review_final.json andper-GLB.mesh_review.json",
+    "format": "EachGLB.validation.json Khronos0errors/0warnings",
+    "roundtrip": [
+      "shell_roundtrip_check.json",
+      "fixture_roundtrip_check.json"
+    ],
+    "layout": "static_layout_check.json:2racks,21sameM11packages=500kg,other6slotsno racks,actualAABBclearances,joinedfloorseam0m",
+    "viewed": [
+      "shell_export_three_quarter.png",
+      "shell_export_wire.png",
+      "warehouse_populated_cutaway.png",
+      "warehouse_eye_height_interior.png",
+      "warehouse_populated_floor_plan.png",
+      "warehouse_joined_cutaway.png",
+      "rack/cratefrontrearwirePNGs"
+    ]
+  },
+  "unverified": [
+    "ActualGodotimport/materialpreparation/colliders/nativewalking",
+    "Warehouseinitialstockledgerandfixturejob/smoke/slot-stateintegration",
+    "Workerhandreach/pairedcarry/physicalloadstructure",
+    "Allnewhaul/driver/crewdisembarkanimationsarePAUSED",
+    "Runtimeperformance",
+    "Dawsonappearanceapproval"
+  ]
+}

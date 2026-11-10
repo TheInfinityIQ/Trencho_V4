@@ -33,6 +33,18 @@ func _refresh() -> void:
 		Freight.apply_pose(body,row)
 		var label: Label3D = body.get_node("TruckState") as Label3D
 		label.text = "%s · Supplier\n%s · %s" % [row.id,row.kind,row.state]
+		var warning: Label3D = body.get_node_or_null("StorageWarning") as Label3D
+		if warning == null:
+			warning = Label3D.new()
+			warning.name = "StorageWarning"
+			warning.position = Vector3(0,4.5,0)
+			warning.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			warning.pixel_size = 0.025
+			warning.modulate = Color("ffbe56")
+			body.add_child(warning)
+		var reason: String = str(row.get("storage_warning","")) if row.state == "Berthed" else ""
+		warning.visible = not reason.is_empty()
+		warning.text = "⚠ " + reason if not reason.is_empty() else ""
 	for id: String in bodies.keys():
 		if present.has(id): continue
 		var body: Node3D = bodies[id]

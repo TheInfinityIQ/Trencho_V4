@@ -114,6 +114,7 @@ var person_duty: OptionButton
 var store: OptionButton
 var capacity: SpinBox
 var accessible: CheckBox
+var store_apply: Button
 var confirmation: ConfirmationDialog
 var training_course: OptionButton
 var training_count: SpinBox
@@ -1087,7 +1088,7 @@ func _inspect_panel(box: VBoxContainer) -> void:
 	accessible = CheckBox.new()
 	accessible.text = "Store accessible"
 	box.add_child(accessible)
-	_button(box, "Apply store settings", func() -> void:
+	store_apply = _button(box, "Apply store settings", func() -> void:
 		var id := store.get_item_text(store.selected)
 		if id == "receiving" and capacity.value < simulation.receiving.receiving_kg() + simulation.rear._reserved_space(id):
 			_result({"ok": false, "message": "Receiving capacity must retain deposited goods and all promised inbound loads."})
@@ -1547,6 +1548,18 @@ func _load_store() -> void:
 	var entry: Dictionary = simulation.rear.stores[store.get_item_text(store.selected)]
 	capacity.set_value_no_signal(entry.capacity)
 	accessible.set_pressed_no_signal(entry.accessible)
+	_warehouse_store_controls()
+
+func _warehouse_store_controls() -> void:
+	var warehouse_context: bool = simulation.rear.warehouse != null and _selected_kind == "site" and simulation.rear.warehouse.modules.has(_selected_id)
+	var warehouse_store: bool = simulation.rear.warehouse != null and store.get_item_text(store.selected) == "receiving"
+	(store.get_parent() as Control).visible = not warehouse_context
+	(capacity.get_parent() as Control).visible = not warehouse_context
+	accessible.visible = not warehouse_context
+	store_apply.visible = not warehouse_context
+	capacity.editable = not warehouse_store
+	accessible.disabled = warehouse_store
+	store_apply.disabled = warehouse_store
 
 func _build_construction_cancel_dialog() -> void:
 	_construction_cancel_dialog = ConfirmationDialog.new()
@@ -2004,6 +2017,20 @@ func _refresh_contents() -> void:
 
 func _refresh_inspection(view: Dictionary) -> void:
 	var info := _selected_kind + ": " + _selected_id + "\n"
+	_warehouse_store_controls()
+	if simulation.rear.warehouse != null and _selected_kind == "site" and simulation.rear.warehouse.modules.has(_selected_id):
+		var warehouse: Dictionary = simulation.rear.warehouse.summary(_selected_id)
+		info = "Supply Depot" + (" · %d connected modules" % int(warehouse.modules) if int(warehouse.modules) > 1 else "")
+		info += "\nStored in this module: %d kg" % int(warehouse.module_kg)
+		if int(warehouse.modules) > 1: info += "\nConnected warehouse total: %d kg" % int(warehouse.kg)
+		info += "\nReserved incoming space: %d kg" % int(warehouse.reserved)
+		info += "\nEmpty ready positions — crates: %d · timber: %d" % [warehouse.empty_crate_positions,warehouse.empty_timber_positions]
+		info += "\nPreparing shelves: %d · Worker visits scheduled: %d · Not yet prepared: %d\n" % [warehouse.preparing,warehouse.scheduled,warehouse.empty]
+		for code: String in warehouse.module_contents:
+			info += "\n%s: %d kg" % [preload("res://game/warehousing/material_packages.gd").TYPES[code].name,warehouse.module_contents[code]]
+		info += "\n\nHaulers prepare shelves when needed. Keep aisles clear; expand when usable storage fills."
+		inspection.text = info
+		return
 	match _selected_kind:
 		"site":
 			if simulation.rear.construction.instances.has(_selected_id):

@@ -5,6 +5,7 @@ signal vehicle_damaged(vehicle_id: String)
 signal vehicle_facing_changed(vehicle_id: String)
 signal entity_moved(entity_id: String, start: Vector2, finish: Vector2)
 signal person_fired(person_id: String)
+signal stock_changed(stock_id: String)
 var route_hazard: Callable
 var _handling_points: Dictionary = {} # Holder -> person -> explicit local service point.
 ## Authoritative, scene-owned G01 accounting. Movement methods commit a completed
@@ -950,7 +951,43 @@ func add_stock(id: String, type: String, quantity: int, mass_kg: float,
 	stock.unit_mass_kg = mass_kg
 	stock.origin_id = id
 	_created[type] = _created.get(type, 0) + quantity
+	stock_changed.emit(id)
 	return _ok("Stock created once.", id)
+
+func position_stored_stock(id: String, holder_id: String, at: Vector2) -> Dictionary:
+	# Storage activity supplies a real fixture location after an actual deposit.
+	# Holder, owner, claims and quantity remain unchanged at this boundary.
+	var stock := _stock(id)
+	if stock == null or stock.holder_id != holder_id or not _is_place(holder_id) or not at.is_finite() or _is_active_carry(id):
+		return _reject("INVALID_STORED_POSITION","Only stock already deposited in this place can receive its fixture position.")
+	stock.position = at-_world_position(holder_id)
+	stock_changed.emit(id)
+	return _ok("Same deposited stock positioned on its actual storage fixture.",id)
+
+func add_debug_stock_batch(entries: Array[Dictionary], holder_id: String, owner: String) -> Dictionary:
+	# Explicit debug acquisition only. Validate the complete batch before any fact
+	# changes, then publish notifications after all nine resources exist.
+	if entries.is_empty() or not _is_place(holder_id) or owner.is_empty():
+		return _reject("INVALID_DEBUG_BATCH","Debug supplies require an existing cache and owner.")
+	var seen := {}
+	for row: Dictionary in entries:
+		var id: String = str(row.get("id",""))
+		if not _free_id(id) or seen.has(id) or str(row.get("type","")).is_empty() or typeof(row.get("quantity")) != TYPE_INT or int(row.quantity) <= 0:
+			return _reject("INVALID_DEBUG_BATCH","Entire debug batch must have unique IDs and positive whole kilograms.")
+		seen[id] = true
+	var ids: Array[String] = []
+	for row: Dictionary in entries:
+		var id: String = str(row.id)
+		var code: String = str(row.type)
+		var stock := _new_entity(id,Records.Kind.STOCK,code,owner,"",holder_id,"DEBUG supply cache: "+code)
+		stock.quantity = int(row.quantity)
+		stock.unit_mass_kg = 1.0
+		stock.origin_id = id
+		_created[code] = int(_created.get(code,0))+int(row.quantity)
+		ids.append(id)
+	for id: String in ids: stock_changed.emit(id)
+	_event("Explicit DEBUG batch bypassed acquisition and normal warehouse storage",holder_id)
+	return {"ok":true,"ids":ids,"message":"Exact debug batch created once."}
 
 
 func add_weapon(id: String, type: String, mass_kg: float, holder_id: String,
@@ -1982,6 +2019,8 @@ func _split_stock(source: Records.Entity, quantity: int, destination_id: String)
 	if source.quantity == 0:
 		source.state = "Depleted"
 		source.state_entered_at = _time
+	stock_changed.emit(source.id)
+	stock_changed.emit(portion.id)
 	return portion
 
 
@@ -1998,6 +2037,7 @@ func _remove_stock(id: String, quantity: int, reason: String, loss: bool) -> Dic
 	var totals := _lost if loss else _consumed
 	totals[stock.design_type] = totals.get(stock.design_type, 0) + quantity
 	_event(("Loss: " if loss else "Consumption: ") + reason, id)
+	stock_changed.emit(id)
 	return _ok("Count removed once with an explicit accounting reason.", id)
 
 

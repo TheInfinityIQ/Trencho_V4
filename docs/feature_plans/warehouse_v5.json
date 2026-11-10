@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "version": 5,
+  "frozen_before_production_edits": true,
+  "source_revision": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "outcome": "Normal F5 starts with an enterable lit supply warehouse; actual workers prepare compatible fixtures and deposit real packages; full warehouses hold freight aboard; completed adjoining modules become a continuous usable warehouse.",
+  "status": "Pre-code receipt queue amendment; ordinary recovery remains planned, not implemented.",
+  "delivery_block": "Connected materials/civilian supply block; preserve the separate unfinished pickup/capacity PR144 and its protected dirty work",
+  "dimensions": {
+    "grid_cell_m": 1,
+    "module_external_m": [
+      12,
+      16
+    ],
+    "clear_internal_height_m": 4.5,
+    "door_clear_width_height_m": [
+      4,
+      4
+    ],
+    "main_aisle_m": 3,
+    "cross_aisle_target_m": 2,
+    "ordinary_building_gap_cells": 2,
+    "initial_center_candidate": [
+      120,
+      169
+    ],
+    "initial_footprint_candidate": [
+      114,
+      161,
+      12,
+      16
+    ],
+    "initial_orientation": "South-facing entrance toward Supply Table (120,186) and supplier road y200; exact geometry and opening/pickup/worker spawns must be checked before integration freeze",
+    "wall_thickness_m": 0.2,
+    "clear_plan_before_posts_m": [
+      11.6,
+      15.6
+    ]
+  },
+  "starting_state": {
+    "building": "One free, already-complete Supply Depot module; doors raised/open and lights on",
+    "stock": "SAME existing500M11; 20full24kg crates plus one20kg remainder; not an additional grant",
+    "fixtures": "Minimum two real preinstalled crate racks: first16packages384kg, second5packages116kg. Further empty slots have no racks until worker preparation.",
+    "workers": "Preserve four real Hauling workers, no depot resident staff or new profession",
+    "funds": "Preserve2500req",
+    "table": "Retain Supply Table ordering/arrival interactions; remove fictitious Table overflow capacity for materials moved into warehouse. Personnel arrival remains distinct."
+  },
+  "fixtures": {
+    "floor_slots": "Eight initial3x2m floor-slot reservations, two banks of four; permanent main/cross aisles and wall-join circulation are excluded",
+    "crate_rack_proposal": "2.6x1.0x1.8m external,2.5x0.9m clear deck, two decks at0.25/0.95m; two-sided access, at most8medium600x400packages per deck geometrically. Actual frame/lip/grip/release limits still require Artist review.",
+    "long_stock_rack_proposal": "Distinct open supports for2m timber/long stock, same bounded external module, separated saddles/free grip zones and real longitudinal extraction; no shelf deck intersecting fingers",
+    "other_packages": "Crate-rack variants have restrained upright can/keg compartments and textile space; labels/compatible orientations and explicit supports remain required",
+    "preparation": "Existing compatible free space first; otherwise reserve one suitable empty slot and real Hauling worker, walk to service point, play reused scissors low-poly puff1.5s, commit fixture ready, then collect and deposit cargo",
+    "cost": "Fixtures are included in warehouse building cost: no extra requisition/M11, recipe or construction-capacity debit for shelf preparation",
+    "occupancy": "Worker stands outside future shelf footprint. Player/other-body occupation delays appearance until actual clearance event; do not materialize a collider through a person.",
+    "persistence": "Shelves persist when emptied. Empty unreserved incompatible fixtures may be replaced only through real worker visit/space reservation; no occupied rack rearrangement or inventory loss.",
+    "long_stock_extraction": "Reserve at least2.5m clear longitudinal extraction space into3m main aisle, plus demonstrated carried swept envelope and actual grip reach. Main-aisle turning alone does not certify paired poses."
+  },
+  "storage_contract": {
+    "identity": "IdentityLedger remains sole owner of actual goods/person identities, quantities, claims and custody. Warehouse owner tracks physical slots/fixture state/package-space reservations, not a second stock ledger.",
+    "capacity": "10000kg/module structural upper bound retained; usable compatible package space, shelf geometry/support and real handling routes are independent hard limits",
+    "reservation": "Before leaving truck reserve exact package/netkg, compatible destination slot and path/access. Existing stock+all incoming reservations count once; reserve slots under preparation so concurrent unloaders cannot choose same slot.",
+    "deposit": "Only successful real Ledger deposit consumes one space reservation and updates physical package occupancy. Shelves/smoke completion do not transfer inventory.",
+    "outgoing": "Factory/construction/dispatch/relocation pickups remove from actual shelf/package and release only actual freed compartment space after safe custody transfer; no generic material polling scan each frame",
+    "full": "If no feasible compatible fixture/free-slot/path/netkg reservation exists, affected package stays on its truck. Other packages with valid space may unload. No floor/Table spillover bypass.",
+    "warning": "Keyed above-truck icon plus readable cause. Distinguish Warehouse full, Preparing storage, Access blocked and Waiting for hauler. Wake jobs on capacity/fixture/route/worker events, not repeated full truck scans.",
+    "failure": "Before lift, reassignment/cancellation releases source+space+fixture-work reservation safely. After lift keep destination commitment until actual deposit or explicit safe put-down. Expansion/cancelled work never deletes stock.",
+    "debug": "Explicit Instant Resources atomically grants exact1000kg of each9rawtypes, free, to labelled DEBUG supply cache. Normal receiving never targets it and it contributes no normal warehouse capacity. It remains a physical haul source only in marked debug session. No package-fit, normal convoy or extra warehouse prerequisite for this testing shortcut.",
+    "logical_store": "Normal empty-field warehouse stock retains existing logical receiving holder for construction/factory callers. Each actual stock portion has a real warehouse handling position and one fixture-cell association. Warehouse grouping/modules never copy it. Additional F03 modules join finite storage under same warehouse owner; per-module views filter actual package locations.",
+    "physical_positions": "Add explicit Ledger stock-position update and stock-changed event at actual mutations; physical offsets are accounting facts, not a second quantity ledger. Warehouse indexes stock IDs/cell reservations and reads true quantities at keyed changes. Incoming/outgoing/recovery/vehicle callers must resolve the actual chosen stock service point."
+  },
+  "expansion": {
+    "eligibility": "Warehouse modules touch only on full matching cardinal12m or16m edges; grid-aligned orientation, no corner/diagonal/partial-edge merge. Ordinary-to-ordinary and warehouse-to-ordinary need2m footprint gap.",
+    "construction": "AdditionalF03modules retain100M11/160work. Preview/unfinished site grants no capacity or passage and does not remove a functioning existing wall.",
+    "completion": "On actual construction completion open shared wall, preserve structural posts where needed, connect floor/lighting/routes and admit new finite slots. Existing inventory IDs/claims stay owned once; grouping is a derived connected-component view.",
+    "layout": "Keep connection corridors free of fixture placement from outset. Reject access-blocking placement; do not move existing racks, workers or stock to manufacture a join.",
+    "removal": "Refuse removal of occupied/reserved module or one whose removal would trap workers/strand access. Rebuild only changed wall/route/connected-component records; no full-world rewrite."
+  },
+  "existing_source_boundaries": [
+    {
+      "path": "game/procurement/receiving_simulation.gd",
+      "functions": [
+        "free_receiving_kg",
+        "_finish_worker_phase"
+      ],
+      "finding": "Currently kg-only destination promises; phase pickup must retain freight until physical fixture/path reservation is ready."
+    },
+    {
+      "path": "game/staffing/hauling_policy.gd",
+      "functions": [
+        "start"
+      ],
+      "finding": "Existing unloading priority and real shared workers should own preparation as part of unload work; no new permanent worker loop."
+    },
+    {
+      "path": "game/construction/construction_service.gd",
+      "functions": [
+        "_footprint_preview",
+        "_clearance_path",
+        "_activate"
+      ],
+      "finding": "Current whole-building rectangles block interiors; change warehouse geometry to real walls/posts/racks and completion-keyed joins. Default footprint gap currently only0.5m."
+    },
+    {
+      "path": "game/preview_3d/world_presenter.gd",
+      "functions": [
+        "_build_grid"
+      ],
+      "finding": "Grid is1m; current invisible site volume remains a solid collider even when shell drawn. Warehouse needs actual frame/rack collisions instead."
+    },
+    {
+      "path": "game/preview_3d/facility_shells.gd",
+      "functions": [
+        "build"
+      ],
+      "finding": "Existing depot exterior adapter fits a shell and does not establish walkable interior; use actual approved modular asset contract."
+    },
+    {
+      "path": "game/construction/visuals/construction_celebration.gd",
+      "functions": [
+        "start"
+      ],
+      "finding": "Reuse smoke asset/material appearance through a small independent effect; do not instantiate tape/scissors/physics for a shelf."
+    },
+    {
+      "path": "game/rear_base/base_simulation.gd",
+      "functions": [
+        "_init"
+      ],
+      "finding": "Receiving shares Ledger and capacity callback; compose warehouse owner here with explicit dependencies, not global autoload."
+    },
+    {
+      "path": "game/scenario/farmland_session.gd",
+      "functions": [
+        "create_empty_field"
+      ],
+      "finding": "Place only explicit initial depot/500M11 fixtures in normal opening. Current source starts1x and should remain1x."
+    },
+    {
+      "path": "game/staffing/rear_layout.gd",
+      "functions": [],
+      "finding": "Current F03 footprint20x16m must be deliberately changed to12x16m module consistently with catalogue, placement, real geometry and view. No nonuniform visual shrink while retaining stale footprint."
+    }
+  ],
+  "event_and_engine_design": {
+    "decisions": "Existing service/event deadlines own shelf preparation and reservations even while hidden. Active worker movement still advances normally; no full-storage query every_process and no hovering path solver.",
+    "view": "Warehouse/shelf/package/truck-warning signals update keyed scene nodes. Area3D box enter/exit signals can own player-inside roof cutaway and fixture occupation; floor/wall/rack collision is independent of roof visibility.",
+    "routing": "Keep current route owner; expose real warehouse obstacle segments/rectangles to its existing path query and invalidate only on topology/fixture changes. Do not add a second competing global navigator merely for this feature.",
+    "lighting": "Interior fixtures and bounded static/local lights remain on in completed warehouse; no new electricity-simulation prerequisite. Reuse a few shared materials and avoid an unmeasured dynamic-shadow light per shelf.",
+    "animation_pause": "No new authored animations. Doors are already-open static pose; smoke reuses existing1.5s effect. Future door/worker animation requests remain paused until Dawson resumes them."
+  },
+  "acceptance": [
+    "Normal F5 has exactly one12x16m lit enterable starting depot, existing500M11 represented by21real packages on2compatible fixtures, existing4workers/funds and1xspeed preserved.",
+    "One actual incoming package with no compatible shelf but a valid free slot causes a real worker visit, smoke and fixture creation before true package deposit.",
+    "No available compatible destination makes affected truck cargo wait with above-truck warning; actual capacity release resumes without inventory duplication or a frame-loop query.",
+    "Completed edge-adjacent module physically opens continuous interior and adds finite usable storage; unfinished/cancelled module does neither. Ordinary placement keeps2empty gridcells.",
+    "Player and workers use actual warehouse doors/aisles and cannot pass through walls/racks; roof cutaway does not remove collisions. Native human play acceptance remains separate."
+  ],
+  "verification_policy": "No local engine or new regression suite. Only changed-production parsing and one brief current-change connected demonstration onGitHub under existing45souter/35schild/28swatchdog limits; exact observed head/assets/results retained. NoFPS or full-loop acceptance inferred from offline video.",
+  "diagram": "warehouse_systems_v1.mmd",
+  "references": [
+    "https://docs.godotengine.org/en/4.7/classes/class_area3d.html",
+    "docs/system_atlas.json systems: identity,hauling,procurement,construction",
+    "docs/material_cargo_and_civilian_arrival_design.md"
+  ],
+  "supersedes": "warehouse_v4.json",
+  "amendment": "Separate physical package-space promise from transient shelf access. Actual direct receipts exposed serial allocation when a valid free cell had a busy service face. Queue only incoming freight before pickup; retain source claim and cargo aboard until actual safe access event.",
+  "designer_note": "docs/supply_depot_warehouse_design.md",
+  "designer_note_sha256": "4826f13c37a644074eda578b94c18ebdebe6a01c61d3b1ffe835d83dd17ef64d",
+  "artist_review": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/warehouse_review/warehouse_recommendations.md",
+  "asset_contract": "12x16 outer boundary, flush floor all the way to module edge;4.5m clearance below beams/lights; separate roof, raised-open shutters4x4m and removable matching boundary walls/trims/colliders/occluders. Posts outside reserved circulation. Existing depot shell is not directly usable because closed doors are part of one mesh.",
+  "recovery": {
+    "return": "Player confirms same still-present truck return. Stop new unload admissions, safely release uncollected claims; already-carried goods deposit normally. Remaining aboard goods exit on same truck. Optional eligible stored packages reload physically only if actual payload/packing fits.",
+    "refund": "One goods-only refund on actual exit, original fee retained. Only unused/unreserved paid raw packages with actual recorded order origin; initial/free/debug/manufactured/consumed stock excluded. Undispatched cancellation keeps existing5-second rule.",
+    "staging": "One empty-at-opening6x4m area, one source fixture batch. Reserve entire supported legal fixture layout before pickup, close source bay to new deposits, keep stock IDs/origin/qty. Reuse visit/smoke fixture preparation; no extra staff/cost. No normal incoming freight or production-output destination, no automatic overflow.",
+    "candidate_location": {
+      "center": [
+        106,
+        186
+      ],
+      "size": [
+        6,
+        4
+      ],
+      "status": "Candidate only; actual expansion/road/player/carry routes must be checked before freeze"
+    },
+    "timber": "Require two real workers even for a light remainder. Existing single-person25kg cap remains. Introduce one explicitly owned shared carry, not copied inventory or duplicate person stock pointers; safe assignment/loss handling and rendered contacts must be source-traced before implementation.",
+    "ui": "Consult UI/UX for explicit Return cargo and Clear selected bay controls; keep paid/refundable/pending/actual counts distinct.",
+    "acceptance": "One brief current-change demonstration only, preserve actual accounting/refund-once and normal full-warehouse hold. No local engine, regression matrix or animation authoring."
+  },
+  "presentation_evidence": {
+    "warehouse": "Five static exports hashed and integrated; native/collision/join/lighting acceptance pending.",
+    "packages": "Five additional static exports hash-verified; no clips, conservative timber packing retained.",
+    "sources": [
+      "https://docs.godotengine.org/en/4.7/classes/class_omnilight3d.html",
+      "https://docs.godotengine.org/en/4.7/tutorials/3d/lights_and_shadows.html",
+      "https://docs.godotengine.org/en/stable/classes/class_resourceloader.html"
+    ],
+    "rationale": "Finite module/fixture/package claims belong to WarehouseService; quantities remain Ledger-owned. Event-driven keyed refresh and actual Area3D occupancy; bounded shadow-free fixture lights, retained scene/material resources, startup draw of actual appearance variants. Not a frame-rate guarantee."
+  },
+  "receipt_access_queue": {
+    "ownership": "WarehouseService owns exact cell promise and optional queued shelf access. Receiving owns worker activity/source claim; Ledger owns cargo once. No copied stock, no new pool or clock.",
+    "admission": "Incoming freight may reserve a free cell on an already-ready compatible fixture even when its standing face is busy, if the actual geometric path exists. This consumes the cell and netkg, never phantom usable capacity. New fixture preparation still requires a real clear worker approach.",
+    "pickup": "At actual Pickup boundary acquire the service face and verify path. If occupied, enter Storage access with infinite deadline; goods remain aboard and source claim remains real.",
+    "wake": "Only warehouse reservation release, specific blocked-person departure, actual deposit or topology/occupancy event schedules another pickup attempt. No per-frame overlap/route scan.",
+    "other_callers": "Existing internal warehouse hauls keep conservative nonqueued reservation until their own pickup state explicitly supports queuing.",
+    "acceptance": "Same paid288M02 episode at1x,180 explicitly supplied simulated seconds, same45/35/28-second process limits; all stock deposited, onlyone newrack, no remaining promises, exact accounting. This is not native frame-rate acceptance."
+  }
+}

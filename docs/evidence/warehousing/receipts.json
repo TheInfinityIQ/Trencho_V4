@@ -1,0 +1,36 @@
+{
+  "scope": "Scoped unpublished source overlays; exact production hashes in manifests. Does not establish native rendering, player input, complete freight transport, normal full-fill/construction or60FPS. All existing45/35/28second limits retained.",
+  "normal_receipt": {
+    "run_id": 42856096688,
+    "artifact_sha256": "6c585045abc4bb72255eea7c81852e826c581cf4595d559845fb96ff2b0dbeab",
+    "result": "warehouse-receipt-final-navigation-result.json"
+  },
+  "full_admission_join": {
+    "run_id": 42856744885,
+    "artifact_sha256": "e8dd26be868cf8e49812a5ca1cce2495cc095662cf0ed720001851208e405499",
+    "result": "warehouse-space-query-reuse-result.json"
+  },
+  "initial_weak_assertion": {
+    "run_id": 42847412353,
+    "observed": "Receipt accounting passed, but5ready/3new racks exposed unnecessary concurrent preparation. Assertion was strengthened without raising limits."
+  },
+  "failed_route_measurement": {
+    "run_id": 42854233894,
+    "artifact_sha256": "0ea53b26857bf8ceab24b8d3052428f511203cc6691f551d0d3cec978b8a4656",
+    "observed_calls_before_interrupt": 736,
+    "observed_route_usec_before_interrupt": 26483204,
+    "max_route_usec": 46279,
+    "outcome": "28second watchdog; placement failed to return."
+  },
+  "native_grid_intermediate": {
+    "run_id": 42855334060,
+    "calls": 1519,
+    "total_route_usec": 4064606,
+    "outcome": "Functional pass; excessive enumeration remained and was fixed before delivery."
+  },
+  "nearest_feasible_intermediate": {
+    "run_id": 42855896720,
+    "placement_usec": 22278,
+    "outcome": "Functional pass; single-run timing is not a controlled cache benchmark."
+  }
+}

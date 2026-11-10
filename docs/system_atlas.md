@@ -20,6 +20,7 @@ flowchart TD
     staffing["Staffing, reporting and priorities"]
     hauling["Storage, hauling and space promises"]
     procurement["Purchasing, requisition and inbound deliveries"]
+    construction["Rear building placement, completion and dismantling"]
     production["Shared production and recipe selection"]
     dispatch["Rear â†’ HQ manifests and return"]
     hq["HQ receipts, reserve equipment and local issue"]
@@ -37,6 +38,7 @@ flowchart TD
     preview["Default 3D rear view, placement and Workshop interaction"]
     field3d["3D RTS markers, units, vehicles and objectives"]
     character_animation["Worker and soldier model animation"]
+    warehousing["Enterable warehouse and physical material storage"]
     ui -->|"commands / views"| session
     session -->|"physics pump"| clock
     session -->|"construct shared services"| identity
@@ -62,6 +64,10 @@ flowchart TD
     identity -->|"keyed physical facts"| preview
     identity -->|"permitted physical facts"| field3d
     preview -->|"actual state and imported visual clips"| character_animation
+    procurement -->|"finite material receipt"| warehousing
+    warehousing -->|"one actual stock/custody owner"| identity
+    construction -->|"completed modular expansion"| warehousing
+    warehousing -->|"real preparation/pickup/deposit"| hauling
 ```
 
 ## System index
@@ -115,6 +121,7 @@ flowchart TD
 - [Function-call logging and retained performance tooling](#diagnostics) — FunctionCallLog + performance/report helpers
 - [Optional review scenes, fixtures and probes](#reviews) — Main.REVIEWS and standalone diagnostic scenes
 - [Worker and soldier model animation](#character_animation) — CharacterVisual with RearWorkers and FieldPersons
+- [Enterable warehouse and physical material storage](#warehousing) — WarehouseService + IdentityLedger; WarehouseView presents actual state
 
 <a id="session"></a>
 ## Session and service composition
@@ -141,7 +148,7 @@ Configured main.tscn is a root instance of preview.tscn, whose script extends co
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L49) — Default 3D scene initializes common controller
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/main/main.gd#L39) — F5 main creates session
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/main/game_session.gd#L21) — Scene-owned live session
-- [_init](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L54) — Build service graph and shared ledger
+- [_init](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L55) — Build service graph and shared ledger
 - [replace_simulation](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/main/game_session.gd#L66) — Replace session and reconnect listeners
 
 <a id="clock"></a>
@@ -168,10 +175,10 @@ advance_time queries next_boundary across services, advances work/motion and cal
 **Source anchors:**
 
 - [_physics_process](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/main/game_session.gd#L32) — Physics callback (at most once per rendered frame in live mode)
-- [tick_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L186) — Accrue scaled wall time
-- [_pump_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L204) — Pump bounded planning / quantum
-- [advance_time](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L342) — Choose nearest service deadline and advance
-- [_settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L658) — Repeat immediate transitions until stable
+- [tick_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L192) — Accrue scaled wall time
+- [_pump_live](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_simulation.gd#L210) — Pump bounded planning / quantum
+- [advance_time](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L346) — Choose nearest service deadline and advance
+- [_settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L685) — Repeat immediate transitions until stable
 
 <a id="identity"></a>
 ## Identity, custody, stock and claims
@@ -199,11 +206,11 @@ inspect_entity is a query, not the game-loop controller. Many callers share the 
 **Source anchors:**
 
 - [identity_records.gd](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_records.gd#L1) — Entity / Person / Claim records
-- [add_person](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L676) — Create persistent physical identities
-- [request_stock](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1156) — Reserve actual stock
-- [move_entity](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L699) — Move an actual entity / emit position events
-- [inspect_entity](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1706) — Read a detached entity snapshot
-- [audit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1897) — Check conservation and invariants
+- [add_person](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L677) — Create persistent physical identities
+- [request_stock](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1193) — Reserve actual stock
+- [move_entity](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L700) — Move an actual entity / emit position events
+- [inspect_entity](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1743) — Read a detached entity snapshot
+- [audit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1934) — Check conservation and invariants
 
 <a id="people"></a>
 ## People: civilian workers and infantry
@@ -230,11 +237,11 @@ Arrows show possible lifecycle stages, not automatic enlistment. Workers, instru
 **Source anchors:**
 
 - [identity_records.gd](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_records.gd#L1) — Shared Person record and Assignment enum
-- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L267) — Procurement creates arriving people
-- [request_assignment](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L987) — Exclusive assignment transitions
-- [complete_training](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L970) — Training changes same identity
-- [complete_formation_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L796) — Formation reporting keeps same person
-- [injure_person](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1363) — Wound / death updates ledger
+- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L314) — Procurement creates arriving people
+- [request_assignment](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1024) — Exclusive assignment transitions
+- [complete_training](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1007) — Training changes same identity
+- [complete_formation_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L797) — Formation reporting keeps same person
+- [injure_person](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1400) — Wound / death updates ledger
 
 <a id="staffing"></a>
 ## Staffing, reporting and priorities
@@ -261,12 +268,12 @@ One person cannot fill two jobs at once. Newly completed facilities apply their 
 
 **Source anchors:**
 
-- [set_target](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L121) — Player changes requested target
-- [_rebalance](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L477) — Rebalance actual eligible people
-- [_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L608) — Physical reporting phase
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L771) — Finish timed actor phase
+- [set_target](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L123) — Player changes requested target
+- [_rebalance](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L504) — Rebalance actual eligible people
+- [_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L635) — Physical reporting phase
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L808) — Finish timed actor phase
 - [operators](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L86) — Production counts present operators
-- [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L562) — Validate actual person and service-strip eligibility
+- [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L589) — Validate actual person and service-strip eligibility
 - [point](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_work_positions.gd#L12) — Choose reachable distinct physical work point
 
 <a id="hauling"></a>
@@ -298,14 +305,14 @@ This diagram is the local rear haul path. Strategic manifests, forward trucks an
 
 **Source anchors:**
 
-- [request_haul](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L148) — Request a physical haul
-- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L894) — Select eligible idle hauler/job
-- [begin_carry](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1024) — Reserve and begin actual carry
-- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L771) — Finish timed carry phase
-- [_reconcile_store](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L288) — Reconcile storage constraints
+- [request_haul](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L150) — Request a physical haul
+- [_start_job](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L955) — Select eligible idle hauler/job
+- [begin_carry](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1061) — Reserve and begin actual carry
+- [_finish_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L808) — Finish timed carry phase
+- [_reconcile_store](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/rear_simulation.gd#L292) — Reconcile storage constraints
 - [set_order](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L11) — Validate complete category preference
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/staffing/hauling_policy.gd#L33) — Start highest-priority feasible idle work
-- [start_shared_unload](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L655) — Actual common worker / incoming claim
+- [start_shared_unload](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L711) — Actual common worker / incoming claim
 - [start_shared_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/dispatch/dispatch_service.gd#L500) — Ordinary manifest preparation / common worker
 
 <a id="procurement"></a>
@@ -341,16 +348,16 @@ Resources and people are parallel order types, not mandatory sequential steps. E
 
 **Source anchors:**
 
-- [quote_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L134) — Quote raw-resource purchase
-- [buy_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L142) — Purchase resources / create order
-- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L267) — Purchase real worker cohort
-- [_pump](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L541) — Admit and progress inbound order
-- [_disembark](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L631) — Disembark actual passengers
-- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L702) — Unload via worker phases
-- [quote_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L78) — Quote complete current goods/worker draft
-- [buy_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L97) — Validate and commit one paid convoy
-- [_set_state](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L827) — Record actual departure and drain member set
-- [convoy_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L75) — Current convoy readiness
+- [quote_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L181) — Quote raw-resource purchase
+- [buy_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L189) — Purchase resources / create order
+- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L314) — Purchase real worker cohort
+- [_pump](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L594) — Admit and progress inbound order
+- [_disembark](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L687) — Disembark actual passengers
+- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L786) — Unload via worker phases
+- [quote_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L125) — Quote complete current goods/worker draft
+- [buy_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L144) — Validate and commit one paid convoy
+- [_set_state](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L963) — Record actual departure and drain member set
+- [convoy_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L122) — Current convoy readiness
 
 <a id="construction"></a>
 ## Rear building placement, completion and dismantling
@@ -386,17 +393,17 @@ Cancellation and request_dismantle are separate branches with consumed-material/
 
 **Source anchors:**
 
-- [preview](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L66) — Check actual placement and access
-- [place](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L144) — Commit one real site
-- [order_materials](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L264) — Order real M11 to site
-- [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L533) — Earn builder work
-- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L651) — Complete and activate site
-- [_apply_starter_staffing](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L701) — Apply once-only starting staff request
+- [preview](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L72) — Check actual placement and access
+- [place](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L150) — Commit one real site
+- [order_materials](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L293) — Order real M11 to site
+- [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L563) — Earn builder work
+- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L685) — Complete and activate site
+- [_apply_starter_staffing](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L738) — Apply once-only starting staff request
 - [_site_changed](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_site_visual.gd#L46) — Keyed earned-work reveal
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L151) — Scissors then finite tape physics
 - [_ground_contact](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/visuals/construction_celebration.gd#L208) — Ground contact then pylon cleanup
-- [start_builder_supply](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L445) — Own-site real builder fetching
-- [delivery_status](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L459) — Actual delivered versus carried
+- [start_builder_supply](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L474) — Own-site real builder fetching
+- [delivery_status](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L488) — Actual delivered versus carried
 
 <a id="truck"></a>
 ## Construction Office utility truck
@@ -454,7 +461,7 @@ These arrows describe batch lifecycle, not a literal call chain. advance_work is
 - [request_recipe](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/selectable_production.gd#L37) — Request recipe / possible confirmation token
 - [set_stock_target](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L150) — Set stock target
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L255) — Settle prerequisites and consume local batch
-- [consume_local_batch](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1471) — Ledger atomically consumes ingredients
+- [consume_local_batch](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1508) — Ledger atomically consumes ingredients
 - [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L243) — Earn operator work
 - [_create_output](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L339) — Create real output at completion
 
@@ -481,7 +488,7 @@ Declared initial-workshop maps explicitly to logical workshop/rear.production. P
 **Source anchors:**
 
 - [_init](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/r01_production.gd#L8) — Default Workshop recipe/access owner
-- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L651) — Built Workshop gets instance owner
+- [_activate](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L685) — Built Workshop gets instance owner
 - [request_recipe](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/selectable_production.gd#L37) — Choose allowed recipe
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/production/fixed_production.gd#L255) — Use the common batch lifecycle
 - [_consume_workshop](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L431) — Open selected actual Workshop in 3D
@@ -616,7 +623,7 @@ Training is elapsed course time with coverage, unlike operator-work manufacturin
 - [_eligible](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/training/training_service.gd#L80) — Validate student/seat/access
 - [advance_work](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/training/training_service.gd#L149) — Account instructor coverage and course time
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/training/training_service.gd#L154) — Settle completion / withdrawal
-- [complete_training](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L970) — Update existing Person training
+- [complete_training](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1007) — Update existing Person training
 
 <a id="vehicles"></a>
 ## Rear vehicles, crew, fuel and parking
@@ -1053,7 +1060,7 @@ Canonical backend mount data is not derived from visible model barrels. Detailed
 - [aim](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_combat/vehicle_combat_service.gd#L103) — Aim / select current mount target
 - [fire](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_combat/vehicle_combat_service.gd#L171) — Fire actual loaded ammunition
 - [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_combat/vehicle_combat_service.gd#L239) — Advance projectile / reload timing
-- [apply_vehicle_surface_damage](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1544) — Apply actual hull surface and armour damage
+- [apply_vehicle_surface_damage](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1581) — Apply actual hull surface and armour damage
 
 <a id="recovery"></a>
 ## Vehicle destruction, repair and towing
@@ -1081,7 +1088,7 @@ Repair and tow are separate branches after damage; neither automatically restore
 **Source anchors:**
 
 - [_on_damage](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_recovery/recovery_service.gd#L22) — Vehicle damage signal receiver
-- [resolve_vehicle_wreck](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1585) — Resolve wreck once in ledger
+- [resolve_vehicle_wreck](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1622) — Resolve wreck once in ledger
 - [start_repair](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_recovery/recovery_service.gd#L96) — Start material-backed repair
 - [start_coupling](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_recovery/recovery_service.gd#L236) — Couple real tractor/target
 - [start_tow_route](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/vehicle_recovery/recovery_service.gd#L244) — Start measured tow route
@@ -1112,7 +1119,7 @@ Capture/ownership/income code exists. The recent3D evidence observed initial neu
 - [register](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/objectives/objective_service.gd#L19) — Register physical objective
 - [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/objectives/objective_service.gd#L120) — Derive eligible physical contributors
 - [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/objectives/objective_service.gd#L45) — Advance control/income interval
-- [credit_objective_income](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L389) — Credit real requisition account
+- [credit_objective_income](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L436) — Credit real requisition account
 - [markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/battlefield/battlefield_presentation.gd#L4) — Read current public objective presentation
 
 <a id="terrain"></a>
@@ -1321,12 +1328,12 @@ Hidden UI intentionally skips expensive refresh. This matters to selection:3D Wo
 
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/ui/command_shell.gd#L34) — Button navigation requests
 - [_apply_navigation](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/main/main.gd#L87) — Deferred main navigation
-- [_select](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1725) — Actual BaseDemo panel/selection
-- [_result](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1715) — Command result reconciles session
-- [_refresh_contents](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1896) — Refresh visible current panel
-- [_confirm_purchase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L583) — Confirm actual combined purchase draft
-- [show_panel](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L347) — Open panel with explicit preview intent
-- [select_build_kind](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1163) — Acquire a new blueprint only by construction intent
+- [_select](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1738) — Actual BaseDemo panel/selection
+- [_result](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1728) — Command result reconciles session
+- [_refresh_contents](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1909) — Refresh visible current panel
+- [_confirm_purchase](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L584) — Confirm actual combined purchase draft
+- [show_panel](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L348) — Open panel with explicit preview intent
+- [select_build_kind](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/base_demo.gd#L1164) — Acquire a new blueprint only by construction intent
 - [_get_drag_data](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/hauling_priority_row.gd#L39) — Native six-dot grip drag
 - [reorder](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/hauling_priority_list.gd#L85) — Reorder local hauling draft
 - [_apply](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/rear_base/hauling_priority_list.gd#L118) — Confirm authoritative task order
@@ -1391,13 +1398,13 @@ Default main.tscn instances this scene; preview.tscn remains a compatible direct
 - [_replace_world](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L146) — Bind/replace current3D world
 - [_unhandled_input](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L298) — Handle explicit gameplay input
 - [_physics_process](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L366) — Consume input/geometry work in physics
-- [_consume_commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L606) — Validate and commit actual placement
+- [_consume_commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L610) — Validate and commit actual placement
 - [_consume_workshop](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L431) — Consume actual Table or current site E target
-- [refresh_rear](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L342) — Reconcile physical rear visuals
-- [_open_supply_table](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L479) — Open actual Supply Table purchase controls
-- [_build_grid](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L157) — Static one-metre construction grid
+- [refresh_rear](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L350) — Reconcile physical rear visuals
+- [_open_supply_table](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L483) — Open actual Supply Table purchase controls
+- [_build_grid](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L164) — Static one-metre construction grid
 - [bind](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/supplier_convoys.gd#L10) — Bind current supplier-event presentation
-- [_moved](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/supplier_convoys.gd#L43) — Apply keyed actual supplier pose
+- [_moved](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/supplier_convoys.gd#L55) — Apply keyed actual supplier pose
 
 <a id="field3d"></a>
 ## 3D RTS markers, units, vehicles and objectives
@@ -1423,11 +1430,11 @@ People, hulls and objectives are parallel presenters. Existing field_t01 paths s
 
 **Source anchors:**
 
-- [refresh_markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L431) — Reconcile current permitted world markers
+- [refresh_markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L442) — Reconcile current permitted world markers
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_persons.gd#L31) — Admit actual friendly people
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_t01_trucks.gd#L29) — Admit exact canonical T01/T02
 - [reconcile](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_objectives.gd#L14) — Reconcile registered objectives
-- [_select_marker](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L635) — Pick actual current projected marker
+- [_select_marker](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L639) — Pick actual current projected marker
 
 <a id="manager"></a>
 ## Player manager pose and movement
@@ -1451,11 +1458,11 @@ Switching perspective does not create free workers. Full grounded vehicle contac
 
 **Source anchors:**
 
-- [_build_player](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L177) — Build manager body from shared pose
+- [_build_player](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L184) — Build manager body from shared pose
 - [scene_position](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/manager_pose.gd#L17) — Read actual foot pose
-- [move_manager](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L514) — Resolve manager movement
+- [move_manager](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/world_presenter.gd#L525) — Resolve manager movement
 - [publish_resolved](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/manager_pose.gd#L23) — Publish resolved physical pose
-- [_consume_commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L606) — Supply current occupation to placement
+- [_consume_commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/preview.gd#L610) — Supply current occupation to placement
 
 <a id="scenario"></a>
 ## Authored world, opening armies and normal rear start
@@ -1508,10 +1515,10 @@ The last three nodes are alternate debug branches. They must not be used to clai
 **Source anchors:**
 
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/debug/rear_debug_menu.gd#L9) — Build debug action menu
-- [execute](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/debug/rear_debug_actions.gd#L5) — Execute supplied current model action
-- [debug_complete_pending](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L609) — Instantly complete pending construction
-- [debug_deliver_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L228) — Force physical worker delivery exception
-- [debug_order_raw_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L170) — Free raw-resource order exception
+- [execute](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/debug/rear_debug_actions.gd#L6) — Execute supplied current model action
+- [debug_complete_pending](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/construction/construction_service.gd#L643) — Instantly complete pending construction
+- [debug_deliver_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L275) — Force physical worker delivery exception
+- [debug_order_raw_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/procurement/receiving_simulation.gd#L217) — Free raw-resource order exception
 
 <a id="diagnostics"></a>
 ## Function-call logging and retained performance tooling
@@ -1600,9 +1607,51 @@ AnimationPlayer performs fixed cross-fades for this finite exclusive clip set; n
 - [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/preview_3d/field_persons.gd#L50) — Update only permitted current soldier facts
 - [set_activity](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/characters/character_visual.gd#L79) — Select authored in-place action
 - [_bind_cargo_tracks](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/characters/character_visual.gd#L103) — Bind pickup-contact cargo presentation only
-- [fire_loaded_round](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1346) — Real person-held loaded-round release
+- [fire_loaded_round](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/identity/identity_ledger.gd#L1383) — Real person-held loaded-round release
 - [fire](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/characters/character_visual.gd#L118) — Play keyed actual-shot recoil
 - [sync_playback](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/characters/character_visual.gd#L135) — Pause speed and visibility/detail gating
+
+<a id="warehousing"></a>
+## Enterable warehouse and physical material storage
+
+**Owner:** WarehouseService + IdentityLedger; WarehouseView presents actual state. Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger remains sole quantity/custody authority. Actual GLBs and collision proxies form a walkable lit interior; rendering/native acceptance remains separate.
+
+```mermaid
+flowchart TD
+    opening["Actual12x16 starting warehouse"]
+    reserve["Exact package-space promise"]
+    prepare["Worker reaches clear fixture site"]
+    access["Safe handling access before pickup"]
+    commit["Actual stock deposited once"]
+    join["Completed full-edge join"]
+    view["Keyed shelves / labels / lights / cutaway"]
+    routes["Guarded native pedestrian routing"]
+    summary["Actual selected/connected storage facts"]
+    opening -->|"initial finite fixtures"| reserve
+    reserve -->|"new rack requires worker visit"| prepare
+    prepare -->|"actual ready fixture"| access
+    reserve -->|"ready cell can queue transient access"| access
+    access -->|"real truck pickup and safe carry"| commit
+    commit -->|"keyed quantity/position event"| summary
+    join -->|"new capacity only at completion"| reserve
+    commit -->|"keyed state change"| view
+    join -->|"actual shared boundaries"| view
+    access -->|"real endpoint/segment guards"| routes
+```
+
+Current normal288M02receipt has scoped evidence; full-state admission/join has explicit prepopulation/Instant Build limitations. Ordinary return/reload/staging recovery, true paired timber custody, renderer/native movement and60FPS acceptance remain pending. Source routing uses deterministic nearest feasible warehouse estimate, not exhaustive globally shortest per-crate optimization.
+
+**Source anchors:**
+
+- [initialize_opening](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L39) — Actual12x16 starting warehouse
+- [reserve](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L83) — Exact package-space promise
+- [begin_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L159) — Worker reaches clear fixture site
+- [acquire_access](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L211) — Safe handling access before pickup
+- [commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L225) — Actual stock deposited once
+- [register_module](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L62) — Completed full-edge join
+- [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_view.gd#L32) — Keyed shelves / labels / lights / cutaway
+- [find](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_paths.gd#L15) — Guarded native pedestrian routing
+- [summary](https://github.com/TheInfinityIQ/Trencho_V4/blob/5fdd5561f3337896b85eef4ebb942bfdeb75101e/game/warehousing/warehouse_service.gd#L284) — Actual selected/connected storage facts
 
 ## Scope and maintenance
 
