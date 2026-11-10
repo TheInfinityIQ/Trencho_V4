@@ -12,6 +12,7 @@ var construction: RefCounted
 var visual: Node3D
 var body_pivot: Node3D
 var steering: Array[Node3D] = []
+var _steering_rest: Array[Transform3D] = []
 var wheels: Array[Node3D] = []
 var collider := CollisionShape3D.new()
 var view_pivot := Node3D.new()
@@ -24,6 +25,23 @@ var _body_base := Transform3D.IDENTITY
 var _seat := Vector3(-0.38,0.85,-0.55)
 var _exits: Array[Vector3] = []
 var _last_footprint := Rect2()
+
+static func prepare_materials(root: Node3D) -> Array[BaseMaterial3D]:
+	# Shared with covered first-use preparation; actual palette/glass variants.
+	var shared: Dictionary = {}
+	var result: Array[BaseMaterial3D] = []
+	for mesh: MeshInstance3D in root.find_children("*","MeshInstance3D",true,false):
+		for surface in mesh.mesh.get_surface_count():
+			var source := mesh.get_active_material(surface) as BaseMaterial3D
+			if source == null: continue
+			if not shared.has(source):
+				var material := source.duplicate() as BaseMaterial3D
+				material.vertex_color_use_as_albedo = true
+				material.vertex_color_is_srgb = false
+				shared[source] = material
+				result.append(material)
+			mesh.set_surface_override_material(surface,shared[source])
+	return result
 
 func bind(next_state: RefCounted, player: CharacterBody3D, shape: CollisionShape3D, pose: RefCounted, service: RefCounted) -> void:
 	state = next_state
@@ -42,6 +60,7 @@ func bind(next_state: RefCounted, player: CharacterBody3D, shape: CollisionShape
 	add_child(collider)
 	visual = (load(MODEL_PATH) as PackedScene).instantiate() as Node3D
 	add_child(visual)
+	prepare_materials(visual)
 	var label := Label3D.new()
 	label.text = "Personal pickup · E"
 	label.position.y = 2.2
@@ -55,13 +74,15 @@ func bind(next_state: RefCounted, player: CharacterBody3D, shape: CollisionShape
 		var pivot := visual.find_child(id,true,false) as Node3D
 		assert(pivot != null,"Pickup requires "+id)
 		steering.append(pivot)
+		_steering_rest.append(pivot.transform)
 	for id: String in ["Spin_FL","Spin_FR","Spin_RL","Spin_RR"]:
 		var wheel := visual.find_child(id,true,false) as Node3D
 		assert(wheel != null,"Pickup requires "+id)
 		wheels.append(wheel)
 	var seat := visual.find_child("Driver_Seat",true,false) as Node3D
 	var left_exit := visual.find_child("Driver_Exit_Left",true,false) as Node3D
-	assert(seat != null and left_exit != null,"Pickup requires Artist seat and adjacent exit markers")
+	var driver_eye := visual.find_child("Driver_Eye",true,false) as Node3D
+	assert(seat != null and left_exit != null and driver_eye != null,"Pickup requires Artist seat, eye and adjacent exit markers")
 	_seat = visual.to_local(seat.global_position)
 	var exit_offset: Vector3 = visual.to_local(left_exit.global_position)
 	exit_offset.y = 0.0
@@ -76,8 +97,8 @@ func bind(next_state: RefCounted, player: CharacterBody3D, shape: CollisionShape
 	spring.add_excluded_object(get_rid())
 	spring.add_child(third)
 	third.far = 500
-	add_child(first)
-	first.position = _seat+Vector3(0,0.65,0)
+	body_pivot.add_child(first)
+	first.position = body_pivot.to_local(driver_eye.global_position)
 	first.near = 0.06
 	first.far = 500
 	global_position = state.position
@@ -85,7 +106,8 @@ func bind(next_state: RefCounted, player: CharacterBody3D, shape: CollisionShape
 	_publish_footprint()
 	if state.occupied: _seat_manager()
 
-func interact() -> Dictionary:
+func interact(game_speed: int) -> Dictionary:
+	if game_speed <= 0: return {"ok":false,"message":"Resume time before entering or exiting the pickup."}
 	if not is_zero_approx(state.speed): return {"ok":false,"message":"Stop the pickup before entering or exiting. Space brakes."}
 	if state.occupied:
 		var point: Variant = _clear_exit()
@@ -154,8 +176,9 @@ func step(delta: float, game_speed: int, controls: Vector2, brake: bool, enabled
 		var proposed := global_transform.rotated_local(Vector3.UP,yaw_step)
 		var query := PhysicsShapeQueryParameters3D.new()
 		query.shape = collider.shape
-		query.transform = proposed*collider.transform
-		query.transform.origin.y += 0.01 # Ignore resting floor contact for angular clearance.
+		var clearance_transform := proposed*collider.transform
+		clearance_transform.origin.y += 0.01 # Ignore resting floor contact for angular clearance.
+		query.transform = clearance_transform
 		query.collision_mask = 3
 		query.exclude = [get_rid(),manager.get_rid()]
 		if get_world_3d().direct_space_state.intersect_shape(query,1).is_empty():
@@ -166,8 +189,8 @@ func step(delta: float, game_speed: int, controls: Vector2, brake: bool, enabled
 	move_and_slide()
 	var travel: float = (global_position-previous).dot(-global_basis.z)
 	if absf(state.speed) > 0.1 and absf(travel) < absf(state.speed)*dt*0.2: state.speed = 0.0
-	for pivot: Node3D in steering: pivot.rotation.y = -steer_angle
-	for wheel: Node3D in wheels: wheel.rotation.x -= travel/WHEEL_RADIUS
+	for index in steering.size(): steering[index].transform = _steering_rest[index].rotated_local(Vector3.UP,-steer_angle)
+	for wheel: Node3D in wheels: wheel.rotate_object_local(Vector3.RIGHT,-travel/WHEEL_RADIUS)
 	var acceleration: float = (float(state.speed)-old_speed)/maxf(dt,0.0001)
 	var tilt := _body_base.basis.get_euler()+Vector3(clampf(acceleration*0.009,-0.07,0.07),0,clampf(-state.speed*actual_yaw_rate*0.012,-0.09,0.09))
 	body_pivot.rotation = body_pivot.rotation.lerp(tilt,1.0-exp(-7.0*dt))

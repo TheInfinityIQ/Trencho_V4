@@ -1,0 +1,16 @@
+{
+  "asset": "Original softened faceted personal pickup v02",
+  "author": "Trencho \u20143D Artist",
+  "reference": "https://www.classic.com/veh/1980-toyota-hilux-rn37023005-4y86xop/",
+  "rights": "Original project-authored geometry/palette; no copied reference photos, badges or third-party model distributed.",
+  "runtime_sha256": "d6f6de7458f16517ab2c4ab2945aa9b6c4ff6be3d03fd3d20582f217ab5fb812",
+  "source_sha256": "27ccd362411a1320225e610bb28f5c1861fcee516d21108eda8c1c3b44b7d142",
+  "evidence": "docs/evidence/builder_cap_player_pickup/artist/delivery_manifest_v02.json",
+  "readiness": "Artist static export/QA ready; runtime and animation approval separate",
+  "triangles_instances": 31674,
+  "mesh_resources": 3,
+  "materials": 3,
+  "textures": 0,
+  "clips": 0,
+  "triangles_unique": 19398
+}

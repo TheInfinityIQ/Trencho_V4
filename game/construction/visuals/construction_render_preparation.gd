@@ -3,6 +3,7 @@ extends CanvasLayer
 const Appearance = preload("res://game/construction/visuals/construction_appearance.gd")
 const Shells = preload("res://game/preview_3d/facility_shells.gd")
 const TruckArt = preload("res://game/preview_3d/t01_presentation.gd")
+const PersonalPickup = preload("res://game/player_vehicle/player_pickup.gd")
 var elapsed_usec := 0
 var resources: Array[Resource] = []
 
@@ -66,6 +67,7 @@ func prepare(camera: Camera3D) -> void:
 	var personal := personal_scene.instantiate() as Node3D
 	stage.add_child(personal)
 	personal.position = Vector3(-10,1,8)
+	for material: BaseMaterial3D in PersonalPickup.prepare_materials(personal): resources.append(material)
 	await RenderingServer.frame_post_draw
 	elapsed_usec = Time.get_ticks_usec()-started
 	stage.queue_free()

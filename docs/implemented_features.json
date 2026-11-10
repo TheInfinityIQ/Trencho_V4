@@ -2,6 +2,17 @@
   "scope": "Source-observed current implementation, not a claim that all features/states are tested, polished or accepted at 60 FPS. Advanced standalone review scenes are distinguished below.",
   "main_game": [
     {
+      "feature": "Global construction commitments2+4per completed office, max4per site, target/direct-assignment admission and safe over-capacity removal rejection. Separate personal development pickup, same-managerEentry/stopped clear exit, WASD/Space/V, grounded collision and visual turn/acceleration sway; Pause/inputmode ownership; unmetered personal fuel exception.",
+      "sources": [
+        "game/construction/construction_service.gd",
+        "game/staffing/rear_simulation.gd",
+        "game/player_vehicle/player_pickup.gd",
+        "game/player_vehicle/pickup_state.gd",
+        "game/preview_3d/preview.gd"
+      ],
+      "evidence": "Implementation checkpoint; current directcheck and actual Artist export/reels pending at preparation. See docs/builder_cap_player_pickup.md for final receipt. Dawson animation/nativeFPS/stage1/2 acceptance pending."
+    },
+    {
       "feature": "Place/manage buildings with partial real-material-supported builder work and incremental consumption; persistent cyan remainder/bottom-up solid/orange built outline; Artist pylons/tape/four snipping scissors and finite ground-contact cleanup; live usable cancellation with actual consumed loss; normal live F5 startup1x. Own-site builder foot fetching when materials run out, actual selected-site pickup/carry blockers, covered shader/truck warm draw with scene-owned resources; Artist smoke1.5s then retimed scissors2s before tape release.",
       "sources": [
         "game/construction/construction_service.gd",

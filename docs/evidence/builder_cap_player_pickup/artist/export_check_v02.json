@@ -1,0 +1,13 @@
+{
+  "bytes": 1854808,
+  "mesh_resources": 3,
+  "mesh_instances": 6,
+  "primitives": 3,
+  "materials": 3,
+  "triangles_per_mesh_resource": 19398,
+  "vertices_per_mesh_resource": 48196,
+  "joints": [],
+  "clips": [],
+  "has_vertex_colors": false,
+  "external_uris": []
+}

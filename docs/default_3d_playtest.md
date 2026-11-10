@@ -1,5 +1,13 @@
 # Play the 3D opening
 
+[Construction capacity and personal pickup](builder_cap_player_pickup.md): begin
+with at most two builders across sites; each completed Construction Office adds
+four places. Walk to the blue personal pickup beside the rear road and press **E**.
+**W/S** drive or reverse, **A/D** steer, **Space** brakes, **V** changes view,
+and **E** exits when stopped
+on clear adjacent ground. Its prototype fuel is unmetered. Animation approval
+requires the complete videos and remains pending.
+
 [Construction follow-up](construction_delivery_completion.md): builders can fetch
 actual materials for their own starved site. The site menu shows actual delivery,
 carry and pickup blockers. Startup prepares construction/truck rendering behind

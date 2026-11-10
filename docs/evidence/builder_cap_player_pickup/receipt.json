@@ -1,0 +1,9 @@
+{
+  "feature": "builder-cap-player-pickup",
+  "baseline": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "status": "Preparing integrated candidate; no runtime PASS claimed",
+  "limits_seconds": {"outer":45,"rendered_child":35,"wall_watchdog":28},
+  "scope": "One current-change construction-capacity and personal-driving demonstration with complete staged integrated motion recording. Existing regression suites and local engine runs remain paused.",
+  "animation_acceptance": "pending Dawson",
+  "unverified": ["Runtime results pending", "Native input and GPU frame pacing", "Full game loop", "All vehicles/buildings/lifecycle combinations", "60 FPS and stage1/2 acceptance"]
+}

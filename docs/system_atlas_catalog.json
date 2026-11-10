@@ -664,7 +664,7 @@
       "title": "Rear building placement, completion and dismantling",
       "group": "Rear economy",
       "owner": "ConstructionService",
-      "summary": "ConstructionService owns actual sites, access, partial local-material-supported earned work and incremental consumption. Persistent scene adapters reveal the building; finite scissors/tape/pylons celebrate actual completion without owning capability.",
+      "summary": "ConstructionService owns actual sites, access, partial local-material-supported earned work and incremental consumption. Persistent scene adapters reveal the building; finite scissors/tape/pylons celebrate actual completion without owning capability. Global construction commitments share2base places plus4per actual completed office, capped4per site. Target/manual admission and office removal preserve real safe handoffs; office membership/site deployment counts one person once.",
       "nodes": [
         {
           "id": "n0",
@@ -731,6 +731,18 @@
           "label": "Actual delivered versus carried",
           "file": "game/construction/construction_service.gd",
           "function": "delivery_status"
+        },
+        {
+          "id": "capacity",
+          "file": "game/construction/construction_service.gd",
+          "function": "builder_capacity",
+          "label": "Actual completed offices grant construction capacity"
+        },
+        {
+          "id": "allocation",
+          "file": "game/construction/construction_service.gd",
+          "function": "builder_allocation",
+          "label": "Unique actual/pending workers plus unfilled target slots"
         }
       ],
       "edges": [
@@ -3548,7 +3560,7 @@
       "title": "Player manager pose and movement",
       "group": "Presentation",
       "owner": "ManagerPose + WorldPresenter CharacterBody3D",
-      "summary": "The manager has one persistent foot pose with heading; first/third cameras are views of it. The manager is not a PERSON staff member or camera-position proxy.",
+      "summary": "The manager has one session-owned physical pose and heading, on foot or occupying the personal pickup. First/third views do not duplicate a person or grant workforce labour. Grounded safe exit restores the same manager; body collision is disabled only while seated.",
       "nodes": [
         {
           "id": "n0",
@@ -3986,6 +3998,111 @@
       "primary_files": [
         "game/characters/character_visual.gd"
       ]
+    },
+    {
+      "id": "personal_vehicle",
+      "title": "Personal player pickup",
+      "group": "Presentation",
+      "owner": "GameSession PickupState + PlayerPickup CharacterBody3D + existing Preview input owner",
+      "summary": "One original Artist faceted development pickup, separate from AI fleet/workforce/cargo. ContextualE enters nearby or exits stopped onto clear adjacent ground. Existing input mode owns WASD/Space/V; hidden/menu/focus modes brake, Pause freezes. Actual collision/movement publishes canonical manager seat and placement footprint; wheel travel/body sway are visual. Personal fuel is explicitly unmetered for this slice, not a fleet fuel exemption.",
+      "nodes": [
+        {
+          "id": "entry",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_consume_workshop",
+          "label": "Actual contextualE first hit / same occupied vehicle"
+        },
+        {
+          "id": "command",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_interact_pickup",
+          "label": "Pause guard and input/view handoff"
+        },
+        {
+          "id": "occupy",
+          "file": "game/player_vehicle/player_pickup.gd",
+          "function": "interact",
+          "label": "Near/stopped single-manager entry or exit"
+        },
+        {
+          "id": "exit",
+          "file": "game/player_vehicle/player_pickup.gd",
+          "function": "_clear_exit",
+          "label": "E-only grounded adjacent capsule clearance"
+        },
+        {
+          "id": "step",
+          "file": "game/preview_3d/preview.gd",
+          "function": "_physics_process",
+          "label": "Existing mode-aware physics input owner"
+        },
+        {
+          "id": "motion",
+          "file": "game/player_vehicle/player_pickup.gd",
+          "function": "step",
+          "label": "Actual body motion / wheel travel / visual sway"
+        },
+        {
+          "id": "footprint",
+          "file": "game/player_vehicle/player_pickup.gd",
+          "function": "_publish_footprint",
+          "label": "Publish changed actual placement footprint"
+        },
+        {
+          "id": "pose",
+          "file": "game/preview_3d/manager_pose.gd",
+          "function": "publish_resolved",
+          "label": "Same manager physical seat/exit pose"
+        },
+        {
+          "id": "reset",
+          "file": "game/player_vehicle/pickup_state.gd",
+          "function": "reset",
+          "label": "New session resets personal transport"
+        }
+      ],
+      "edges": [
+        {
+          "from": "entry",
+          "to": "command",
+          "label": "fresh context"
+        },
+        {
+          "from": "command",
+          "to": "occupy",
+          "label": "same-manager command"
+        },
+        {
+          "from": "occupy",
+          "to": "exit",
+          "label": "exit clearance"
+        },
+        {
+          "from": "step",
+          "to": "motion",
+          "label": "mode-gated motion"
+        },
+        {
+          "from": "motion",
+          "to": "footprint",
+          "label": "changed footprint"
+        },
+        {
+          "from": "motion",
+          "to": "pose",
+          "label": "physical pose"
+        }
+      ],
+      "related": [
+        "manager",
+        "construction",
+        "session"
+      ],
+      "notes": "Continuous physical motion uses physics ticks only while needed; no new recurring supply/staffing scans. Prototype personal fuel is unmetered; fleet fuel and cargo remain with existing owners. Complete animation videos require Dawson approval; offline footage is notFPS evidence.",
+      "primary_files": [
+        "game/player_vehicle/player_pickup.gd",
+        "game/player_vehicle/pickup_state.gd"
+      ]
     }
   ],
   "overview": [
@@ -4246,20 +4363,22 @@
     "game/construction/visuals/construction_site_visual.gd": "construction",
     "game/construction/visuals/construction_celebration.gd": "construction",
     "game/construction/visuals/construction_appearance.gd": "construction",
-    "game/construction/visuals/construction_render_preparation.gd": "construction"
+    "game/construction/visuals/construction_render_preparation.gd": "construction",
+    "game/player_vehicle/player_pickup.gd": "personal_vehicle",
+    "game/player_vehicle/pickup_state.gd": "personal_vehicle"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
-    "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
+    "game/main/game_session.gd": "1d2bbdce42bf541cc73ccef301741a7e1616851a9b35fd62710fa1915af25bfb",
     "game/rear_base/base_simulation.gd": "200ca294c26372f50b724be6bc71ba18f802b9cf76f96a79578fb0ca828d7e92",
     "game/identity/identity_ledger.gd": "7fce26d3dd685fc1e8c97b70d439bb25b1256242f4af1ef94c94d6506b81dcb8",
     "game/identity/identity_records.gd": "adc853726df17511bc47767eaa8f31d53e6db59f522365d74f718516ba35e5af",
-    "game/staffing/rear_simulation.gd": "17a5b28a3802f9b6961bea26cebf55c959a9884c97b37a86e05cba1ae3b95821",
+    "game/staffing/rear_simulation.gd": "738802b7b49f9a296a03ac98bacb7cb47df6f41f939645ff2802cc6fcad31191",
     "game/staffing/rear_layout.gd": "06b5e6439895b60c33d61e46bd812aed5249121fa29cbf86e56c3411986b3cc7",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
     "game/procurement/receiving_simulation.gd": "3f404b92699a01d57349d5b6b3ccc21b48874b87cafaff0ddfb337a44fc17ccf",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
-    "game/construction/construction_service.gd": "fcf0d96f8aca97e6f8cbf0b2d8cb5067d021fbc7f2ca46edadd9fb9ce6b4760a",
+    "game/construction/construction_service.gd": "ec8f0ba8355c2bdc3df6f6ac6039257c59f0597125a0b6844554ca274e66531a",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
     "game/construction/construction_truck_service.gd": "1a7403ff97d173987397164d30dcc4b1934964535b94dbcde9068b53e4025e48",
     "game/production/fixed_production.gd": "4eba9a9e2a52dea6d9642bebd5e07b88608d15e20fe6fcfc0d6bc959ae4f6419",
@@ -4308,7 +4427,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "0dfbd403c73550b524cc334b36a4f5f06b69d98924cedd71d6d014282ac534cb",
+    "game/rear_base/base_demo.gd": "80da2e77d528de82f363458a96d094ec18dfbdae4ad5750f8797f133f7564beb",
     "game/rear_base/base_map.gd": "e7e8a3d8ed67411f82ffae208c618457aa714c2e760a3ecbd1cee078be9c7e66",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4319,8 +4438,8 @@
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "081bd95b91a3fddf91aa8b644048c45ebc12be623ce249b9d18ddbe8c560ba3d",
-    "game/preview_3d/world_presenter.gd": "54790c5fbccbbfc3790479cbaffc0a137bcf167a3e5350f1bd908f53ff42a394",
+    "game/preview_3d/preview.gd": "063ce84c8de7c549d2096793e53be86ebbfaf2c3807272bfa80bcddc0c1d27f7",
+    "game/preview_3d/world_presenter.gd": "f7abcae1501b360708bf4b6f66101c89f6fd743474f27cd0d2288ced00eb4f71",
     "game/preview_3d/facility_shells.gd": "0a5ec6261f8006559dc77018393360fa45932a5f1a448a09539d1758f331a3e1",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
@@ -4333,7 +4452,7 @@
     "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
     "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",
     "game/preview_3d/field_objective_cues.gd": "8b817c0779a7df9da91d3027c556422cef6a6fd4d0a00114f733eed12b137ea2",
-    "game/preview_3d/manager_pose.gd": "31e22b220ec911a82d918d9d77e4b4bc3b1a484e709ff8cb2504bd283761ec13",
+    "game/preview_3d/manager_pose.gd": "bb21c83e37ddc2a845ec8d35ccd654305d07c21d8bc0390d5f0d0e6437b40237",
     "game/scenario/farmland_session.gd": "c9907def6017d65501a5f9796a6101942b03a08ac4eecd3316cc510893c4d395",
     "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
     "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
@@ -4379,6 +4498,8 @@
     "game/construction/visuals/construction_site_visual.gd": "21cd969f3792e58214a62e9ef86b4194de41a240db415bad8c845d6fc3b243bf",
     "game/construction/visuals/construction_celebration.gd": "32f92494b8b3820d053708a61910cab20550b2259991346ce2d5c19e23b44ae2",
     "game/construction/visuals/construction_appearance.gd": "51addcc31278935e1cfeae1d4598312168811be688ffbe4c58ee5b56b461addb",
-    "game/construction/visuals/construction_render_preparation.gd": "3ad4bdc3529a8b43255930b5960a414c592343ef99b8e085bd548a7f5f1bd805"
+    "game/construction/visuals/construction_render_preparation.gd": "a20a9276526606a5fb035d49357ee6bbc99bb41f9ad794eea550aefbf1864d98",
+    "game/player_vehicle/player_pickup.gd": "97c1800f3da3d5bc1523859c6c951e64f399e43bf4410cb34490e5a448ac7b48",
+    "game/player_vehicle/pickup_state.gd": "07e0b09c764a8bca76eef5ea1f560c56d1a3d527eebe27f9c9606e586a00d6df"
   }
 }

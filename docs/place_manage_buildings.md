@@ -1,5 +1,10 @@
 # Place and manage buildings
 
+Later [shared construction capacity](builder_cap_player_pickup.md) supersedes
+the former four-builders-without-office opening: two base places plus four per
+completed office, at most four per site. Historical receipts keep their original
+source/rules; they are not rerun or relabeled as current capacity acceptance.
+
 The [delivery/completion follow-up](construction_delivery_completion.md) records
 the latest builder-fetch behavior, delivery visibility, measured hitch correction
 and1.5s smoke +2s cutting sequence. Earlier scoped receipts below retain their

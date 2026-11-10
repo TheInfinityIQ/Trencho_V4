@@ -253,9 +253,13 @@ func _apply_view() -> void:
 func _toggle_camera() -> void:
 	if battlefield_open or management_open or _modal_open() or _base._placing_building: return
 	var captured := not _needs_capture and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
+	var held_keys := _held.duplicate()
+	var suppressed_keys := _suppressed.duplicate()
 	first_person = not first_person
 	_apply_view()
 	if captured:
+		_held = held_keys
+		_suppressed = suppressed_keys
 		_needs_capture = false
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_update_hint()
@@ -379,7 +383,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if world == null: return
 	var drive_direction := Vector2(float(_held.has(KEY_D))-float(_held.has(KEY_A)),float(_held.has(KEY_S))-float(_held.has(KEY_W)))
-	var driving_allowed: bool = _construction_visuals_ready and not battlefield_open and not management_open and not _modal_open() and not _base._placing_building and not _needs_capture and get_window().has_focus()
+	var modal := _modal_open()
+	var focused := get_window().has_focus()
+	var driving_allowed: bool = _construction_visuals_ready and not battlefield_open and not management_open and not modal and not _base._placing_building and not _needs_capture and focused
 	if world.personal_pickup.step(delta,_session.simulation.speed,drive_direction,_held.has(KEY_SPACE),driving_allowed) and _base._placing_building: _invalidate_preview(false)
 	var geometry_refreshed := false
 	if _rear_dirty:
@@ -398,10 +404,10 @@ func _physics_process(delta: float) -> void:
 	if battlefield_open and _inspection_dirty:
 		_inspection_dirty = false
 		_refresh_inspection()
-	if _modal_open():
+	if modal:
 		_release_controls()
 		return
-	if management_open or not get_window().has_focus(): return
+	if management_open or not focused: return
 	var direction := Vector2(float(_held.has(KEY_D))-float(_held.has(KEY_A)),float(_held.has(KEY_S))-float(_held.has(KEY_W))).limit_length()
 	if battlefield_open:
 		if not direction.is_zero_approx(): _pan_field(direction*world.rts.size*delta*0.55)
@@ -434,11 +440,7 @@ func _interaction_camera() -> Camera3D:
 	return world.first if first_person else world.third
 
 func _interact_pickup() -> void:
-	if _session.simulation.speed == 0:
-		_command_message = "Resume time before entering or exiting the pickup."
-		_update_hint()
-		return
-	var result: Dictionary = world.personal_pickup.interact()
+	var result: Dictionary = world.personal_pickup.interact(_session.simulation.speed)
 	if result.ok:
 		_apply_view()
 		_needs_capture = false
