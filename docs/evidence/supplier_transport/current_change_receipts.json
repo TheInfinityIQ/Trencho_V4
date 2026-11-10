@@ -1,0 +1,106 @@
+{
+  "base": "a2d182f367bf584315f9e516a91152198e333204",
+  "method": "Pinned Godot4.7.2 GitHub-only current-change source overlays. Each run asserts base and normalized production script hashes before executing one bounded demonstration; no local engine or regression suite.",
+  "bounds": "Unchanged28second child /45second outer deadline; current connected receipt episodes capped300explicit simulated seconds at1x.",
+  "receipts": [
+    {
+      "run": 42891206496,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42891206496",
+      "artifact_sha256": "daac28a8e7a991ae3d594da81c6eed2d5354ec82621952035146230b5fc1207c",
+      "scope": "Pure order-time packing only;9exact mixed packets/one truck; group-preserving two-truck case. One939microsecond mixed quote is not frame-time evidence.",
+      "production_source_sha256": {
+        "game/supplier_transport/cargo_packing.gd": "ca56ade603d7f4095b6847f70689e07b3c027d19ba7e84ee41f6304a0e3506bc"
+      }
+    },
+    {
+      "run": 42894421224,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42894421224",
+      "artifact_sha256": "2f202b5868802595c570ca56c0516428436474b5e18abdd94e02bc9ae6afe922",
+      "scope": "One normal paid48M02+21M08 receipt at1x; four actual packets, mechanism boundaries, planar bed/ramp pickup and exact warehouse deposits; complete at158simulated seconds.",
+      "production_source_sha256": {
+        "game/supplier_transport/cargo_packing.gd": "5675648dad758b50bf5ce803812a125bdb62cdd2ede764d09125c9eac540adda",
+        "game/supplier_transport/supplier_freight.gd": "bfed2a9abd8e9b2175fbe07e16ef2abb4498aed0b3a49bc899bc3bf1ada8a5db",
+        "game/procurement/receiving_simulation.gd": "a2a06dd47e1eb18b617af339dd10da2c34bb184a87ce5ea1d1885a0459fddd01",
+        "game/identity/identity_records.gd": "1d6b52e60bd4b0306cf4d0aea348d817637613a0d23a59e5382c4ee6051c539d",
+        "game/identity/identity_ledger.gd": "e56420116f186b4c455f220d307f6d148aa99145f7eb32b8802329c45d0c1118"
+      }
+    },
+    {
+      "run": 42897422532,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42897422532",
+      "artifact_sha256": "ce414a1ba11cb2d345ade262511521d2498c40835c2b1177e9fe35f85da3a59d",
+      "scope": "One positive50kg two-real-worker custody pickup/move/deposit. No pair routes, shelf contacts or animation acceptance.",
+      "production_source_sha256": {
+        "game/supplier_transport/cargo_packing.gd": "d9c3fdb31972594d8e639bce636588a6ad3123ee156d11bd165c8f283fec60b6",
+        "game/supplier_transport/supplier_freight.gd": "bfed2a9abd8e9b2175fbe07e16ef2abb4498aed0b3a49bc899bc3bf1ada8a5db",
+        "game/staffing/joint_material_carry.gd": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
+        "game/staffing/rear_simulation.gd": "c2b5e67985131b42908b5ead2bd126e572ca1b6d17439c74c0f4a0a91605e179",
+        "game/procurement/receiving_simulation.gd": "a2a06dd47e1eb18b617af339dd10da2c34bb184a87ce5ea1d1885a0459fddd01",
+        "game/identity/identity_records.gd": "d44aaf36ba405361dd423af438a8d3af16b9d0204daa51014b247a2a8216cc7d",
+        "game/identity/identity_ledger.gd": "1766b39e179a33620ed0bd6699274cc1c52d66a722d29976e182cee3a6c8d27c"
+      }
+    },
+    {
+      "run": 42899734098,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42899734098",
+      "artifact_sha256": "fcc1123b5255bff4c25a75e4eb29305359e1837fc165bcb5ebe84077297b6948",
+      "scope": "One normal paid48M02+21M08+eight-person convoy at1x: separate stops, real south bypass while material truck unloads, exact identities/deposits/gate/accounting. Complete at159simulated seconds. Existing passenger exit cadence retained; not acceptance of new animation.",
+      "production_source_sha256": {
+        "game/supplier_transport/cargo_packing.gd": "48176f8ab18173dea20db677c9c38473cac8bb4b83e5d466137d4284950f3e3b",
+        "game/supplier_transport/supplier_freight.gd": "bfed2a9abd8e9b2175fbe07e16ef2abb4498aed0b3a49bc899bc3bf1ada8a5db",
+        "game/supplier_transport/supplier_road.gd": "1ca8d4f2901e0a7f0ac4fa3506c27ebd125b6f69d2b696a8b9cd310eea10e9e4",
+        "game/staffing/joint_material_carry.gd": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
+        "game/staffing/rear_simulation.gd": "c2b5e67985131b42908b5ead2bd126e572ca1b6d17439c74c0f4a0a91605e179",
+        "game/warehousing/warehouse_service.gd": "e08fa24eb109989ddc55df223b973be16843073427fa1f67b61826d9e306fb48",
+        "game/procurement/receiving_simulation.gd": "647545e5eb9448bc012e158008ef2b46ef9bc268243c0cf36199fcd87b9d8759",
+        "game/identity/identity_records.gd": "d44aaf36ba405361dd423af438a8d3af16b9d0204daa51014b247a2a8216cc7d",
+        "game/identity/identity_ledger.gd": "559d1e61e93a358c335f7f1e8452063663b73bd493d0c6badcee93f32510736d"
+      }
+    },
+    {
+      "run": 42902605505,
+      "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/42902605505",
+      "artifact_sha256": "fcf4af65eca7951a20ef28310156869848c047059af4b8c5e2bb81ba835b2caf",
+      "scope": "Same current-change normal convoy with newly distinct actual seat positions and aligned bypass approach; supplier presenter script compilation, not scene/asset rendering. Godot-generated sidecar IDs retained. New authored passenger sequence still pending.",
+      "production_source_sha256": {
+        "game/supplier_transport/cargo_packing.gd": "48176f8ab18173dea20db677c9c38473cac8bb4b83e5d466137d4284950f3e3b",
+        "game/supplier_transport/supplier_freight.gd": "bfed2a9abd8e9b2175fbe07e16ef2abb4498aed0b3a49bc899bc3bf1ada8a5db",
+        "game/supplier_transport/supplier_road.gd": "70fcc29c2d8abe5753981faa3dad19e7a74c3091cafb379f39be172269616c6a",
+        "game/supplier_transport/supplier_seating.gd": "5f91ad61dd84f014bf6b9446e4973a288f586353121141322159c1ce71476f40",
+        "game/supplier_transport/supplier_vehicle_view.gd": "9f447195f75b07d6ebf5184b277476be58d282b4c2294c89d0815164cc751a5b",
+        "game/staffing/joint_material_carry.gd": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
+        "game/staffing/rear_simulation.gd": "c2b5e67985131b42908b5ead2bd126e572ca1b6d17439c74c0f4a0a91605e179",
+        "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
+        "game/procurement/receiving_simulation.gd": "6d0c50f1ff1bf2bd3c8ec34d9590c8ac18ed16a79102eaa849d682cd34eae108",
+        "game/identity/identity_records.gd": "d44aaf36ba405361dd423af438a8d3af16b9d0204daa51014b247a2a8216cc7d",
+        "game/identity/identity_ledger.gd": "28bbc68f2d0ecb62c4ff643e8b81fec1c1753b38369ad4ddf32f13ae08dc2d60"
+      }
+    }
+  ],
+  "failed_attempts": [
+    {
+      "run": 42890971924,
+      "reason": "Wrapper omitted Python -c; no production game code executed."
+    },
+    {
+      "run": 42892996002,
+      "reason": "Source-aisle waiters retained warehouse standing faces; fixed acquisition order and distinct outside queue."
+    },
+    {
+      "run": 42897214825,
+      "reason": "Positive custody demo incorrectly initialized Rear Labour directly; fixed fixture to Available then request assignment."
+    },
+    {
+      "run": 42899317360,
+      "reason": "A completed supplier was mistakenly cached as a foreign obstacle after active-list removal; corrected full-lifetime owner classification."
+    }
+  ],
+  "unverified": [
+    "Native imported models, shaders, camera appearance, input and motion videos",
+    "Actual pair warehouse/slope/turn contact and route connection",
+    "New driver/passenger and paired animation integration",
+    "Cancellation, casualty, external intrusion or failure matrices",
+    "60FPS, render/frame time and broader game-loop acceptance",
+    "Final published feature head; source overlays apply only to their exact listed scripts"
+  ]
+}

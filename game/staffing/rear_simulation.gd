@@ -218,7 +218,7 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 		return _result(false,"Finish the current outbound handling task before changing this person's job. Staffing targets apply at its safe completion.")
 	var assignment := Records.Assignment.AVAILABLE if destination == "Available" else (Records.Assignment.TRAINING if destination == "students" else Records.Assignment.REAR_LABOUR)
 	var duty := "" if destination == "Available" else destination
-	if not a.load.is_empty() and not a.load.has("truck") and a.phase not in ["Carry", "Drop"]:
+	if str(p.get("joint_carry_id","")).is_empty() and not a.load.is_empty() and not a.load.has("truck") and a.phase not in ["Carry", "Drop"]:
 		_release_load(a)
 	if a.phase == "Yard" and yard.state == "Entering station":
 		yard.cancel_entry(id)
@@ -235,6 +235,9 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 	elif not p.crew_station.is_empty():
 		if vehicles != null and vehicles.vehicles.has(p.holder_id): vehicles.request_exit(id)
 		else: yard.request_exit()
+	elif not str(p.get("supplier_access_id","")).is_empty() or not str(p.get("joint_carry_id","")).is_empty():
+		# Receiving owns the real aisle/ramp exit before the requested duty.
+		if receiving != null: receiving._sync_workers()
 	elif a.phase not in ["Carry", "Drop"] and ledger.inspect_entity(id).carrying_stock_id.is_empty():
 		_report(a)
 	if construction != null and not construction._transferring and construction.office_members.has(id) and former_duty.begins_with("builders-") and destination != former_duty:
@@ -636,6 +639,8 @@ func _starter_candidate(person: Dictionary, duty: String) -> bool:
 
 func _report(a: Dictionary) -> void:
 	var p: Dictionary = ledger.inspect_entity(a.id)
+	if not str(p.get("supplier_access_id","")).is_empty() or not str(p.get("joint_carry_id","")).is_empty():
+		return # Do not overwrite Receiving's physical safe-exit activity.
 	a.load = {}
 	a.motion = {}
 	a.deadline = INF

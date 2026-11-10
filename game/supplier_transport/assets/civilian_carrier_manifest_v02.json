@@ -1,0 +1,1190 @@
+{
+  "stage": "Static crew vehicle. Comfortable seated pose fit is an artist study, not exported seated/disembark clips or verified game routes. Pending Dawson visual approval and Lead integration.",
+  "axes": "Metres; Godot/glTF+Yup/-Zforward, Blender+Zup/+Yforward.",
+  "dimensions_godot_xyz_m": [
+    2.434999942779541,
+    2.505036950111389,
+    6.5299999713897705
+  ],
+  "bounds_blender_xyz_m": [
+    [
+      -1.2174999713897705,
+      -3.9800000190734863,
+      -3.6835670471191406e-05
+    ],
+    [
+      1.2174999713897705,
+      2.549999952316284,
+      2.505000114440918
+    ]
+  ],
+  "root": "Crew_Visual",
+  "body_pivot": "Body_Pivot atGodotY1.0, rolllocalZ/pitchlocalX",
+  "wheels": {
+    "radius_m": 0.43,
+    "track_m": 1.8,
+    "axles_godot_z_m": [
+      -1.85,
+      2.22,
+      3.14
+    ],
+    "spin": "Spin_FL/FR/ML/MR/RL/RR localX angle=-forwardtravel/0.43. Sixinstances ONEsharedmesh.",
+    "steer": "Steer_FL/FR localY positiveleft"
+  },
+  "seating": {
+    "passengers": 8,
+    "rear_floor_world_y_m": 1.02,
+    "useful_deck_length_m": 3.35,
+    "nominal_inner_width_m": 1.9,
+    "bench_pad_top_world_y_m": 1.38,
+    "bench_pad_depth_m": 0.44,
+    "passenger_hip_above_floor_m": 0.407,
+    "passenger_root_x_m": [
+      -0.73,
+      0.73
+    ],
+    "passenger_rows_godot_z_m": [
+      0.9,
+      1.62,
+      2.34,
+      3.06
+    ],
+    "driver_hip_world": [
+      -0.45,
+      1.4,
+      -0.23
+    ],
+    "driver_floor_world": [
+      -0.45,
+      0.993,
+      -0.23
+    ],
+    "marker_orientation": "Passenger markers orient ENTITYforward(-ZGodot/+YBlender) inward. Retain the usual raw-avatar visual presenter pi rotation. Left marker BlenderZ=-pi/2 / GodotY=-pi/2; Right +pi/2. Freshimport inward direction checked.",
+    "occupied_aisle_limit": "Comfortable opposing seated boots extend into the otherwise clear center aisle. Initial pose estimate leaves about0.112m between boot tips; do not route a standing worker between fully occupied opposing rows. Rear-to-front unloading with measured staged clearance/foot movement, or a revised physical layout, must be agreed and demonstrated before disembark clips/integration. The rejected compact knees/feet study is not the selected pose.",
+    "stand_markers": "Proposed destinations, not validated collision-free stand transitions. No runtime state/custody callbacks inasset."
+  },
+  "exit": {
+    "rear_edge_godot_z_m": 3.7,
+    "rear_floor_y_m": 1.02,
+    "markers": [
+      "Rear_Stand",
+      "Rear_Jump_Edge",
+      "Rear_Landing",
+      "Rear_Access"
+    ],
+    "landing": "Referenceflatground, not terrainorphysicsproof."
+  },
+  "nodes": {
+    "Crew_Deck_Floor": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        2.0250000953674316
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Crew_Deck_Front": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        0.3499999940395355
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Crew_Deck_Rear": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        3.700000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Eye": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        1.0799999237060547,
+        -0.23999999463558197
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Floor": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        -0.00700002908706665,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Seat": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        0.3999999761581421,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Exhaust_Emitter": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.9900000095367432,
+        1.505000114440918,
+        0.029999999329447746
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Left_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.019999980926513672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Left_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.019999980926513672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Left_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.019999980926513672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Left_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.019999980926513672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Right_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.019999980926513672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Right_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.019999980926513672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Right_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.019999980926513672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Floor_Right_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.019999980926513672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Left_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.4270000457763672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Left_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.4270000457763672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Left_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.4270000457763672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Left_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.7300000190734863,
+        0.4270000457763672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Right_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.4270000457763672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Right_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.4270000457763672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Right_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.4270000457763672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat_Right_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.7300000190734863,
+        0.4270000457763672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Left_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4050000011920929,
+        0.019999980926513672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Left_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4050000011920929,
+        0.019999980926513672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Left_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4050000011920929,
+        0.019999980926513672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Left_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.4050000011920929,
+        0.019999980926513672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        -0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Right_01": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.4050000011920929,
+        0.019999980926513672,
+        0.8999999761581421
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Right_02": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.4050000011920929,
+        0.019999980926513672,
+        1.6200000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Right_03": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.4050000011920929,
+        0.019999980926513672,
+        2.3399999141693115
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Stand_Right_04": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.4050000011920929,
+        0.019999980926513672,
+        3.059999942779541
+      ],
+      "rotation_xyzw": [
+        0,
+        0.7071068286895752,
+        0,
+        0.7071068286895752
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Jump_Edge": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        3.700000047683716
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Stand": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        3.4600000381469727
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Crew_Body": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 0
+    },
+    "SM_Crew_Glass": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Body_Pivot": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0,
+        1,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Exit_Left": {
+      "parent": "Crew_Visual",
+      "translation": [
+        -1.649999976158142,
+        0,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Access": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0,
+        0,
+        5.099999904632568
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Landing": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0,
+        0,
+        4.400000095367432
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_ML": {
+      "parent": "Spin_ML",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_ML": {
+      "parent": "Crew_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        2.2200000286102295
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_MR": {
+      "parent": "Spin_MR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_MR": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        2.2200000286102295
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RL": {
+      "parent": "Spin_RL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_RL": {
+      "parent": "Crew_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        3.140000104904175
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RR": {
+      "parent": "Spin_RR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_RR": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        3.140000104904175
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FL": {
+      "parent": "Spin_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_FL": {
+      "parent": "Steer_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FL": {
+      "parent": "Crew_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        -1.850000023841858
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FR": {
+      "parent": "Spin_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "Spin_FR": {
+      "parent": "Steer_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FR": {
+      "parent": "Crew_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        -1.850000023841858
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Crew_Visual": {
+      "parent": null,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "mesh_resources": 3,
+  "mesh_instances": 8,
+  "triangles_unique": 15836,
+  "triangles_instances": 36296,
+  "vertices_unique": 28699,
+  "materials": [
+    {
+      "name": "M_Crew_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5199999809265137
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "name": "M_Crew_Glass",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.23999999463558197,
+          0.3799999952316284,
+          0.44999998807907104,
+          0.20000000298023224
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.18000000715255737
+      }
+    },
+    {
+      "name": "M_Pickup_Wheel_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.800000011920929
+      }
+    }
+  ],
+  "images": 0,
+  "skins": 0,
+  "clips": [],
+  "provenance": "All-angleconcept first; AlexSafayan CC BYtruckdownloaded/actualmeshesinspected/rejected. MrSorbias customnotice rejected. Ownmaterialsvehiclecab/interior/wheel reused; newcrewbody/hood/frame/rails/benches. Seeasset_reference/README.md.",
+  "accepted_warnings": {
+    "raw": [
+      "hidden back-to-back faces: SM_Crew_Body (151 pairs) - delete to save tris",
+      "hidden back-to-back faces: SM_Crew_Glass<->SM_Crew_Body (12 pairs) - delete to save tris"
+    ],
+    "reason": "Mountedclosedcomponentfixedbody andglass/frame hiddenoppositecontactfaces. No errors/floating/zfight/winding/degen/nonmanifold findings. Tiny~.04mmtreadcontactbelowground is nominaltolerance."
+  },
+  "checks": {
+    "mesh": "mesh_review_published_v02.json",
+    "roundtrip": "roundtrip_check_v02.json: all8meshboundswithin1e-4m;8markersandentityinwardorientations checked",
+    "source": "saved_source_check_v02.json: one scene,zeroactions",
+    "format": "faceted_crew_vehicle_v02.glb.validation.json",
+    "views": "v02_export_front/left/rear/right/top.png same ortho scale;v02_export_wireframe.png"
+  },
+  "unverified": [
+    "Occupiedcrewexitroute/footcontacts",
+    "Driver/passenger/stand/crouch/jump/land/walk-onexportedclips",
+    "Godotcontrollers/collision/terrain/sway/exhaust/occupantIDs",
+    "Runtimeperformance",
+    "Dawsonappearanceapproval"
+  ],
+  "files": [
+    {
+      "file": "faceted_crew_vehicle_v02.blend",
+      "bytes": 510241,
+      "sha256": "e376939b77860f224e9a010a85073ea2cacfb7e59ff4c1a0cd47ed476b698fe6"
+    },
+    {
+      "file": "faceted_crew_vehicle_v02.glb",
+      "bytes": 1136016,
+      "sha256": "3cd69bc845e54b94463abd5f00e730869dda20c8f10a828f7e5e10085712816e"
+    },
+    {
+      "file": "concept_all_angles_v01.png",
+      "bytes": 2053039,
+      "sha256": "949adfe458fc049c87be8a7228f5375b189787bce9bce0df7472217af9e13a89"
+    }
+  ]
+}

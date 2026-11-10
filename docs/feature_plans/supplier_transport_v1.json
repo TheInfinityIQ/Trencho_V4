@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "frozen_before_production_edits": true,
+  "base": "a2d182f367bf584315f9e516a91152198e333204",
+  "outcome": "Playable materials truck to physical warehouse receipt, followed by the actual eight-person supplier transport and safe independent service/departure.",
+  "authority": "Dawson resumed both supplier vehicles while preserving existing assets/concepts; explicit reply in Lead turn01a1c6fc-6bab-7db2-af11-a090b04ffabb resumes animation authoring only for these vehicles.",
+  "diagram": "docs/diagrams/supplier_transport_loop.mmd",
+  "existing_graph_connections": ["ReceivingSimulation owns supplier identities, source claims and activity boundaries", "IdentityLedger is the single inventory/person/custody authority", "WarehouseService owns actual package cells and safe shelf access", "SupplierConvoys and CharacterVisual present committed activity only", "RearSimulation/HaulingPolicy own exclusive shared workforce"],
+  "stages_same_feature_block": ["Spatial quote and actual packet manifest; material vehicle/mechanism integration", "Rear aisle/ramp pickup, real warehouse deposits and paired timber custody", "Independent material/personnel berths, occupied passenger exit and safe passing", "Current-change checks, full visible animation videos, exact-head reviews and main playable handoff"],
+  "preserve": ["Existing v02 materials and crew GLBs, editable sources, concepts and old clips", "Warehouse assets/package envelopes and opening500M11/four real haulers", "Existing prices,5000kg payload,20fee per actual material truck and140eight-person order", "Unrelated human-main edits and unfinished PR144", "No local engine and no regression suites; animation pause remains outside these two supplier vehicles"],
+  "art_contract": {
+    "materials_box_m": {"length": 2.735249243, "width": 1.9, "floor_y": 1.02, "portal_width": 1.9, "portal_height": 1.94, "aisle": 0.8, "ramp_width": 0.9, "ramp_run": 3.0},
+    "plank_length_m": 2.0,
+    "shelves": "S1 length2.20/depth.53/height1.50, revised study levels.425/.85 after failed actual lower contact at.25m; S2 length.70 levels.10/.55/1.00; S3 .70 levels.10/.70; S4 .70 two full-width levels.10/.70, no fixed divider. Artist supplies exact clear decks/markers and scoped contacts before runtime contract freezes.",
+    "timber": "Approve scoped375mm airborne left overhang beyond ramp edge only with both real workers maintaining grips/feet on actual aisle/ramp and measured swept body/wheel/cargo/ground clearance. No independent stock centering or claimed feasibility before study.",
+    "crew": "Preserve eight comfortable inward seats and source v02.112mm occupied boot aisle is not a walking path; Artist measures rear-to-front feet-preparation/stand/exit or reports exact geometry conflict. No squeezed permanent passenger pose.",
+    "ownership": "Artist asks Lead for any missing new asset brief, preserves existing coherent concepts, scouts only genuinely missing references and authors original static/animation exports. Lead integrates; new clips require complete visible approval videos."
+  },
+  "packing": {
+    "owner": "New pure CargoPacking module composed by Receiving for development supply orders; old catalogue validation/prices and legacy/debug routes preserved.",
+    "geometry": "Finite racks in left/right side zones, outside the reserved central aisle and rear strip. Whole package envelopes, upright can/keg/crate orientations, horizontal timber, non-overlap and fully supported deck or package stacking. No free-floating cargo or nominal box-volume capacity.",
+    "algorithm": "Deterministic bounded group-first best-fit packing into supported residual cuboids, comparing a small fixed set of material orders; whole-material placement preferred when it does not add vehicles. Return a valid heuristic, never claim global optimality.",
+    "cost": "Actual spatial truck count and complete fees before atomic Confirm; exact full/remainder package quantities remain unchanged.",
+    "scheduling": "Plan on cart/contract changes only; cache immutable plan and recompute live money/admission gates cheaply. No per-frame solver, stock scans or broad routing framework. Measure a suspected quote/frame issue before optimizing."
+  },
+  "joint_carry": "Before implementation freeze a Ledger-owned scoped joint-carry contract: exactly two real workers, one actual stock holder/quantity and one pair operation; preserve25kg/person and50kgfull timber, two carriers even light remainders. Exclusive work, source/destination promises, safe reassignment/loss/put-down and person views must be traced. Do not duplicate stock or pretend two independent carries are one bundle.",
+  "traffic": "One bounded supplier route owner; actual footprints and protected rear handling zone. Separate concurrent berths. Completed carrier may pass only on actual clear route; player/pickup intrusion holds before collision and wakes on actual clearance, without moving player or burning distance fuel while waiting. Existing general contact recovery remains separate.",
+  "passengers": "Same eight purchased IDs and separate supplier driver; seated/stand/rear/land/arrival activity preserves custody once. Driver never joins workforce. Carrier can depart after last landing/rear clearance; convoy purchase gate still requires actual workforce arrivals and cargo deposits/departure starts.",
+  "acceptance": ["One brief current-change connected GitHub episode at1x for paid mixed exact-remainder materials and eight passengers; retain logs and exact source scope", "Real rear pickup and finite compatible shelf reservations; full storage holds actual freight with reason; timber counts two real people and one package", "Existing authored door/ramp clips open before access and close after physical handoff; Pause/speed follow committed activity", "Actual vehicle/worker/packet presenters and complete unobscured animation videos before claiming visual readiness", "No raised performance limits, local engine, regression matrices or60FPS claim from simulated time; human numbered-stage approval remains distinct"],
+  "open_before_code": ["Exact shelf deck/packet/grip markers from Artist", "Ledger joint-carry ownership and existing assignment/loss caller trace", "Crew occupied clearance contract before passenger clips", "Route/handling transforms from actual new models"]
+}

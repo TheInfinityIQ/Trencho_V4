@@ -17,6 +17,7 @@ func bind(model: RefCounted, human_factory: Callable) -> void:
 	_ledger = model.rear.ledger
 	_human_factory = human_factory
 	_ledger.entity_moved.connect(_on_entity_moved)
+	_model.receiving.worker_activity_changed.connect(_on_worker_activity_changed)
 	request_refresh()
 
 func request_refresh() -> void:
@@ -75,7 +76,7 @@ func _make_label(parent: Node3D, label_name: String, height: float, colour: Colo
 func _apply_row(row: Dictionary) -> void:
 	var visual: Node3D = visuals[row.id]
 	var at: Vector2 = row.position
-	visual.position = Vector3(at.x,0,at.y)
+	visual.position = Vector3(at.x,_model.receiving.worker_height(str(row.id),at),at.y)
 	var count: int = int(row.carried_count)
 	var cargo: Label3D = visual.get_node("WorkerCargo") as Label3D
 	cargo.visible = count > 0
@@ -114,13 +115,22 @@ func sync_playback() -> void:
 func _on_entity_moved(id: String, start: Vector2, finish: Vector2) -> void:
 	if not visuals.has(id) or not finish.is_finite(): return
 	var visual: Node3D = visuals[id]
-	visual.position = Vector3(finish.x,0,finish.y)
+	visual.position = Vector3(finish.x,_model.receiving.worker_height(id,finish),finish.y)
 	_rows[id].position = finish
 	var direction: Vector2 = finish-start
 	if not direction.is_zero_approx(): visual.rotation.y = atan2(-direction.x,-direction.y)
 	_sync_activity(id)
 
+func _on_worker_activity_changed(id: String) -> void:
+	if not visuals.has(id): return
+	var rows: Array[Dictionary] = _ledger.rear_worker_views([id],_model.rear.PLAYER)
+	if rows.is_empty(): return
+	_rows[id] = rows[0]
+	_apply_row(rows[0])
+
 func _disconnect_ledger() -> void:
+	if _model != null and _model.receiving.worker_activity_changed.is_connected(_on_worker_activity_changed):
+		_model.receiving.worker_activity_changed.disconnect(_on_worker_activity_changed)
 	if _ledger != null and _ledger.entity_moved.is_connected(_on_entity_moved):
 		_ledger.entity_moved.disconnect(_on_entity_moved)
 	_ledger = null

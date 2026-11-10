@@ -88,14 +88,14 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	# Rear has flat TR01 ground in the accepted normal Farmland opening.
 	var ground := _box(rear_root, Vector3(120,-0.25,90), Vector3(240,0.5,180), Color("70815b"), true)
 	rear_ground = ground.get_child(0) as StaticBody3D
-	for edge in [Vector3(-0.5,1,105),Vector3(240.5,1,105)]:
-		_box(rear_root,edge,Vector3(1,2,212),Color("59664e"),true)
-	for edge in [Vector3(120,1,-0.5),Vector3(120,1,210.5)]:
+	for edge in [Vector3(-0.5,1,94),Vector3(240.5,1,94)]:
+		_box(rear_root,edge,Vector3(1,2,188),Color("59664e"),true)
+	for edge in [Vector3(120,1,-0.5),Vector3(120,1,218.5)]:
 		_box(rear_root,edge,Vector3(240,2,1),Color("59664e"),true)
 	# Prebuilt service strip is outside construction bounds, with an open rear edge.
-	_box(rear_root,Vector3(120,-0.25,195),Vector3(240,0.5,30),Color("8a8d7c"),true)
-	_box(rear_root,Vector3(120,0.01,200),Vector3(288,0.02,8),Color("42494a"))
-	for x in range(-12,253,12): _box(rear_root,Vector3(x,0.025,200),Vector3(5,0.02,0.15),Color("dfd4a7"))
+	_box(rear_root,Vector3(120,-0.25,200),Vector3(240,0.5,40),Color("8a8d7c"),true)
+	_box(rear_root,Vector3(6,0.01,206),Vector3(516,0.02,20),Color("42494a"),true)
+	for x in range(-252,253,12): _box(rear_root,Vector3(x,0.025,200),Vector3(5,0.02,0.15),Color("dfd4a7"))
 	_box(rear_root,Vector3(120,0.02,190),Vector3(18,0.03,12),Color("b8b19a"))
 	_label(rear_root,"PREBUILT UNLOADING APRON",Vector3(120,3.5,193),0.018)
 	var table_at: Vector2 = model.receiving.receiving_position
@@ -139,7 +139,7 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	build_camera.far = 500
 	rear_root.add_child(build_camera)
 	rear_root.add_child(supplier_convoys)
-	supplier_convoys.bind(model.receiving)
+	supplier_convoys.bind(model.receiving,model)
 	rts.position = Vector3(2000,3400,4800)
 	rts.rotation_degrees = Vector3(-65,0,0)
 	rts.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -247,6 +247,7 @@ func sync_character_playback() -> void:
 	if _character_speed == simulation.speed: return
 	_character_speed = simulation.speed
 	if warehouse_view != null: warehouse_view.sync_speed()
+	supplier_convoys.sync_speed()
 	rear_workers.sync_playback()
 	field_persons.sync_playback()
 	for visual: Node3D in _site_visuals.values():
@@ -528,7 +529,10 @@ func move_manager(direction: Vector2, speed: int, pose: RefCounted) -> bool:
 	player.velocity.y = -2.0
 	player.move_and_slide()
 	pose.publish_resolved(player.global_position,player.global_rotation.y)
-	return not player.global_position.is_equal_approx(previous)
+	var changed := not player.global_position.is_equal_approx(previous)
+	if changed and simulation.receiving.development_convoys:
+		simulation.receiving.road.set_external("manager",Vector2(player.global_position.x,player.global_position.z),0.5)
+	return changed
 
 func refresh_marker_positions() -> void:
 	# PERSON poses are affected-event owned. Other cached proxies keep the

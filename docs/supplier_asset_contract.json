@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "owner": "Lead engineering contract for Artist's resumed materials then crew deliverables",
+  "preserve": "Existing approved concepts, both v02 vehicles and existing four door/ramp clips; separate shelf GLBs and separate versioned animation export. No geometry imported from viewing references.",
+  "coordinates": "Godot metres, truck root: Cargo_Front Z.35, floorY1.02, Cargo_Floor worldZ1.7176246643. Shelf placement table must state rack-root-to-Cargo_Floor transform explicitly; no hidden scale. Underlying truck GLB remains byte-identical.",
+  "shelves_accepted": {
+    "S1_LongStockRack": {
+      "length": 2.2,
+      "depth": 0.53,
+      "height": 1.5,
+      "front_offsets": [
+        0.1,
+        2.3
+      ],
+      "support_tops": [
+        0.425,
+        0.85
+      ],
+      "structure": "Wall-side braced/cantilever, no continuous aisle-face longitudinal rails through measured bent head/torso/hand stations. Endframes/cornerposts only where actual lifted people/bundle sweep clears them, including aft carrier crossing rear frame.",
+      "saddles": "Longitudinal centre plus/minus.25m; width.10m, leaving delivered hand zones outside plus/minus.30m."
+    },
+    "S2_CrateShelf": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.55,
+        1.0
+      ]
+    },
+    "S3_RestraintRack": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.7
+      ]
+    },
+    "S4_ProtectedCargo": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.7
+      ],
+      "permanent_divider": false
+    },
+    "routine_details": "30mm tray structure,50mm release travel and removable static restraints accepted. Artist reports actual clear deck dimensions and permitted loading/stacking surfaces; Lead does not infer them from outer boxes."
+  },
+  "timber_overhang_decision": "YES to375mm airborne LEFT overhang beyond0.9m ramp while both carrier feet remain on actual aisle/ramp, conditional on actual rear-body/wheel/cargo/ground swept clearance and retained hand contacts. Not permission for cargo-only centering or fictitious supported load. A failed clearance study is a concrete blocker to resolve before animation, not a reason for repeated poses.",
+  "timber_contact_study": {
+    "status": "Lead accepts these as proposed study targets, not proven limb/contact fit",
+    "bundle_center_x_z": [
+      -0.665,
+      1.55
+    ],
+    "fore_worker_root_x_z": [
+      -0.12,
+      0.9
+    ],
+    "aft_worker_root_x_z": [
+      -0.12,
+      2.2
+    ],
+    "facing": "both toward-X, step rearward together; front worker enters first so people do not pass within0.8m aisle",
+    "undergrip_x": -0.525,
+    "undergrip_z": [
+      0.72,
+      1.08,
+      2.02,
+      2.38
+    ],
+    "lift_bundle_base_relative_floor": [
+      0.85,
+      1.0
+    ],
+    "separation_m": 1.3,
+    "ownership": "Worker clips in place. Lead owns one shared bundle path, both station paths, root transforms and cargo custody; Artist owns actual joint motion and exact grip transforms, including crest/toe transitions. No90degreeboxyaw or independently recentered cargo.",
+    "observed_static_evidence": "Artist timber_contact_study_v01: four targets reached without arm extension, error<0.0000004m, bootsX[-.285,+.026] within aisle; actual pickup head/torso intersects illustrative continuous aisle rails. Two static poses only; slope/exit/deformation unverified. S1 correction accepted before geometry.",
+    "packing_support_contract": "Exactly one full/remainder timber bundle per S1 deck, centredZ1.55 on accepted saddles; no unverified bundle-on-bundle stack. Both.425m lower and.85m upper support levels need actual contacts. Unload upper overlapping cargo before lower cargo. Runtime must not infer lower pickup fit from upper static study.",
+    "lower_deck_correction": "Artist lower_timber_fit_v01 measured22.7mm reach deficit and102/96 body-vs-timber intersections at.25m despite clear rack frame. Lead accepts.425m as a reversible new S1 study target; actual fit/exit and final clearances remain unverified. Preserve truck/package/worker proportions.",
+    "coupled_withdrawal_study": "Fixed upper saddles block a direct lower lift. Accept study: lower release.425→.475, BOTH rootsX-.12→+.23 and loadX-.665→-.255, preservingZ.90/2.20; raise to1m only after actual saddle clearance. Proposed load now fully within ramp. Full posed body/partner/opposite rack/rear sweep and exact root/load/grip samples remain required; boot margin alone proves nothing. Ordinary.25m ground route clearance is not applied to authored truck-specific stations; no global worker shrinking.",
+    "pending_warehouse_handoff": "Preserved original fixture SHA d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189 has no validated two-worker put-down: upper128.6mm reach deficit at staging, continuous face rail collision closer in; lower also body collision. Original retained. Lead approves a NEW VERSION, same2.6x1x1.8m/cell count, support tops.425/.95, clear both long faces, central50mm spine within180mm row gap and endposts outside2m cargo/grips. Artist makes bounded concept revision then measures both rows/decks. Candidate new.485offset grip midpointZ+/−.735; staging markers+/−1.1 are not grip positions. Actual full contacts and aligned engagement/turn paths remain open before route freezes.",
+    "packing_side_scope": "Current M04 packing uses only measured left-side handling, one bundle/deck centredX-.665/Z1.55. Right-side M04 access is not inferred by mirroring the worker skeleton or reversing a rear exit. Actual spatial truck count and fees remain visible before Confirm."
+  },
+  "marker_names": "Use accepted shelf root names, Deck_00 etc for actual support planes, and a handoff table of named handling/grip markers and transforms. Keep delivered Undergrip_Reference_1..4 as actual timber contacts after the deliberate quarter-turn. Artist proposes additional marker names/table; Lead freezes corresponding runtime identifiers before integration.",
+  "animation_interface": "Preserve existing game worker/soldier rigs and required clips. Compare current construction_worker.glb skeleton and visual-root orientation before authoring additions; report an incompatible bone/root contract before changing it. Export explicitly named new clips and lengths/contact windows in a manifest. Root movement/custody belong to Lead, not animation method tracks. Existing mechanism clips remain2seconds each.",
+  "crew_next": "Existing eight comfortable inward seats retained; investigate measured rear-to-front exit with genuine temporary feet-under-knees preparation. No permanently cramped anatomy. Return exact occupied-clearance conflict if it cannot fit before authoring the complete stand/walk/crouch/jump/land/walk-on sequence.",
+  "acceptance": "Scoped static/export/contact QA, editable source, exact export hashes/transforms, actual readiness and limitations. Complete visible videos with framing inspected before sharing. New authoring authorized only for these two supplier vehicles; no local Godot, new regression matrix or unrelated asset reset."
+}

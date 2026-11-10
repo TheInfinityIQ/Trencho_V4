@@ -1,0 +1,68 @@
+{
+  "preservation": "Byte-identical existing Artist v02 models/editable sources and original concepts; aliases only, no asset regeneration. New shelf/character integration stages remain separate.",
+  "files": [
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_materials_vehicle\\faceted_materials_vehicle_v02.glb",
+      "runtime_or_source": "game/supplier_transport/assets/materials_truck.glb",
+      "sha256": "55c6af7bc322131bb0fce6c54b7c58319a7c390a421823c93c684563a895e271",
+      "bytes": 1041888,
+      "stage": "Static materials vehicle with authored door/ramp clips. Pending Dawson visual/motion approval and Lead integration. Driver/paired carry/package stages separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_materials_vehicle\\faceted_materials_vehicle_v02.blend",
+      "runtime_or_source": "game/supplier_transport/assets/source/faceted_materials_vehicle_v02.blend",
+      "sha256": "b12de44ca4a8d1790f47227da73a331c950e4e1d22c9edcb934027cce617f1c6",
+      "bytes": 515313,
+      "stage": "Static materials vehicle with authored door/ramp clips. Pending Dawson visual/motion approval and Lead integration. Driver/paired carry/package stages separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_materials_vehicle\\concept_all_angles_v01.png",
+      "runtime_or_source": "game/supplier_transport/assets/source/materials_truck_concept_v01.png",
+      "sha256": "c36e8713e26eeb9ee3b770dd105efe51f152f8a7b00deefd7859fb9313ea9d19",
+      "bytes": 2106223,
+      "stage": "Static materials vehicle with authored door/ramp clips. Pending Dawson visual/motion approval and Lead integration. Driver/paired carry/package stages separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_crew_vehicle\\faceted_crew_vehicle_v02.glb",
+      "runtime_or_source": "game/supplier_transport/assets/civilian_carrier.glb",
+      "sha256": "3cd69bc845e54b94463abd5f00e730869dda20c8f10a828f7e5e10085712816e",
+      "bytes": 1136016,
+      "stage": "Static crew vehicle. Comfortable seated pose fit is an artist study, not exported seated/disembark clips or verified game routes. Pending Dawson visual approval and Lead integration."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_crew_vehicle\\faceted_crew_vehicle_v02.blend",
+      "runtime_or_source": "game/supplier_transport/assets/source/faceted_crew_vehicle_v02.blend",
+      "sha256": "e376939b77860f224e9a010a85073ea2cacfb7e59ff4c1a0cd47ed476b698fe6",
+      "bytes": 510241,
+      "stage": "Static crew vehicle. Comfortable seated pose fit is an artist study, not exported seated/disembark clips or verified game routes. Pending Dawson visual approval and Lead integration."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_crew_vehicle\\concept_all_angles_v01.png",
+      "runtime_or_source": "game/supplier_transport/assets/source/civilian_carrier_concept_v01.png",
+      "sha256": "949adfe458fc049c87be8a7228f5375b189787bce9bce0df7472217af9e13a89",
+      "bytes": 2053039,
+      "stage": "Static crew vehicle. Comfortable seated pose fit is an artist study, not exported seated/disembark clips or verified game routes. Pending Dawson visual approval and Lead integration."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v01\\construction_worker_driver_v01.glb",
+      "runtime_or_source": "game/supplier_transport/assets/supplier_driver.glb",
+      "bytes": 773896,
+      "sha256": "9de840b867f2d5eaa9823129c0bc79c63df175a63b1e3326b7b61e6957e68ed5",
+      "stage": "Independent Artist-reviewed driver increment only; seven original clips preserved. Native integration and human visual approval separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v01\\construction_worker_driver_v01.blend",
+      "runtime_or_source": "game/supplier_transport/assets/source/construction_worker_driver_v01.blend",
+      "bytes": 687519,
+      "sha256": "9d9c3f35394971f846c78209aae528f069ad90c2ffc4b4ce24ec435461decc6c",
+      "stage": "Independent Artist-reviewed driver increment only; seven original clips preserved. Native integration and human visual approval separate."
+    },
+    {
+      "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\driver_delivery_v01\\supplier_driver_complete_review_v01.mp4",
+      "runtime_or_source": "game/supplier_transport/assets/source/supplier_driver_complete_review_v01.mp4",
+      "bytes": 472399,
+      "sha256": "55a703a5a3e61adacf00204402cec1bda51786b370796809da46fe53fd7455cb",
+      "stage": "Independent Artist-reviewed driver increment only; seven original clips preserved. Native integration and human visual approval separate."
+    }
+  ]
+}

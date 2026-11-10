@@ -1,6 +1,7 @@
 extends RefCounted
 signal convoy_changed
 signal supplier_state_changed
+signal worker_activity_changed(person_id: String)
 ## G02's one predefined Receiving bay and independent Personnel pull-off.
 ## Timed service activities use G01's physical identities, never a staff-count grant.
 
@@ -8,6 +9,9 @@ const Ledger = preload("res://game/identity/identity_ledger.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
 const Packages = preload("res://game/warehousing/material_packages.gd")
+const Packing = preload("res://game/supplier_transport/cargo_packing.gd")
+const Freight = preload("res://game/supplier_transport/supplier_freight.gd")
+const Seating = preload("res://game/supplier_transport/supplier_seating.gd")
 const PLAYER := "army-blue"
 const SUPPLIER := "supplier"
 const FREIGHT_LIMIT: int = 11
@@ -52,6 +56,10 @@ var _events: Array[Dictionary] = []
 var warehouse: RefCounted
 var _storage_attempts: Dictionary = {}
 var _storage_warning_dirty := false
+var freight: RefCounted
+var road: RefCounted
+var _packing_key := ""
+var _packing_quote: Dictionary = {}
 
 func bind_warehouse(owner: RefCounted) -> void:
 	warehouse = owner
@@ -64,7 +72,7 @@ func _warehouse_changed() -> void:
 	# Queue a boundary; never run the simulation inside a Ledger/Area3D signal.
 	for worker: Dictionary in _workers.values():
 		var job: Dictionary = worker.job
-		if not job.is_empty() and job.phase in ["Storage blocked","Storage access"]: job.ends_at = _time
+		if not job.is_empty() and job.phase in ["Storage blocked","Storage access","Carry blocked"]: job.ends_at = _time
 	_storage_warning_dirty = true
 	supplier_state_changed.emit()
 
@@ -107,6 +115,8 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	receiving_position = ledger.inspect_entity("receiving").position
 	freight_berths[0].receiving_position = receiving_position
 	personnel_position = ledger.inspect_entity("personnel").position
+	freight = Freight.new(self)
+	road = preload("res://game/supplier_transport/supplier_road.gd").new(self)
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
@@ -116,15 +126,29 @@ func configure_supply_table() -> void:
 	assert(_time == 0.0 and _orders.is_empty())
 	supply_table_access = true
 	development_convoys = true
-	freight_berths[0].berth = DROP_OFF
+	freight_berths[0].berth = Vector2(132,ROAD_Y)
 	freight_berths[0].site = "supply-table"
 
 func convoy_ready() -> bool:
 	return _convoy_pending.is_empty()
 
+func _spatial_quote(cart: Dictionary) -> Dictionary:
+	var limit := freight_limit()
+	var validated: Dictionary = Catalog.quote(cart,limit)
+	if not validated.ok: return validated
+	var keys: Array = cart.keys()
+	keys.sort()
+	var pieces := PackedStringArray([str(limit)])
+	for code: String in keys: pieces.append("%s:%d" % [code,int(cart[code])])
+	var key := "/".join(pieces)
+	if key != _packing_key:
+		_packing_quote = Packing.quote(cart,limit)
+		_packing_key = key
+	return _packing_quote.duplicate(true)
+
 func quote_delivery(cart: Dictionary, workers: bool = false) -> Dictionary:
 	var quote: Dictionary = {"ok":true,"vehicles":[],"vehicle_count":0,"mass_kg":0,"transport_fees":0,"cost":0,"message":"Choose resources or eight workers."}
-	if not cart.is_empty(): quote = Catalog.quote(cart,freight_limit())
+	if not cart.is_empty(): quote = _spatial_quote(cart)
 	if not quote.ok: return quote
 	quote.workers = 8 if workers else 0
 	quote.cost += 140 if workers else 0
@@ -148,7 +172,7 @@ func buy_delivery(cart: Dictionary, workers: bool = false) -> Dictionary:
 	if not quote.ok: return quote
 	if not quote.can_commit: return _reject("ORDER_UNAVAILABLE",str(quote.message))
 	var created: Array[Dictionary] = []
-	for vehicle: Dictionary in quote.vehicles: created.append(_new_order("Freight",vehicle.cost,vehicle.cargo))
+	for vehicle: Dictionary in quote.vehicles: created.append(_new_order("Freight",vehicle.cost,vehicle.cargo,vehicle))
 	if workers:
 		var people: Dictionary = _new_order("Personnel",140,{})
 		people.people_reserved = 8
@@ -171,8 +195,14 @@ func _begin_convoy(created: Array[Dictionary]) -> void:
 func supplier_vehicle_views() -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	for order: Dictionary in _active_suppliers.values():
-		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"position":ledger._world_position(order.id),"facing_degrees":0.0,"storage_warning":str(order.get("storage_warning",""))})
+		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"state_started":float(order.state_entered_at),"driver_id":str(order.id)+"-driver","position":ledger._world_position(order.id),"facing_degrees":float(order.get("facing_degrees",0.0)),"storage_warning":str(order.get("storage_warning","")),"moving":not order.motion.is_empty(),"mechanism":str(order.get("mechanism","")),"mechanism_started":float(order.get("mechanism_started",0.0)),"packages":order.packet_manifest.duplicate(true),"racks":order.rack_manifest.duplicate(true),"aboard":order.get("aboard_packets",{}).duplicate()})
 	return rows
+
+func worker_height(id: String, at: Vector2) -> float:
+	var job: Dictionary = _workers.get(id,{}).get("job",{})
+	if job.get("phase","") not in ["Approach","Pickup","Truck egress","Truck return"]: return 0.0
+	var order: Dictionary = _find_order(str(job.order_id))
+	return Freight.height(order,at) if not order.get("packet_manifest",[]).is_empty() else 0.0
 
 func requisition_balance() -> float:
 	return _money
@@ -235,6 +265,10 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 	for order in _orders:
 		if order.kind == "Freight" and order.state not in ["Cancelled","Complete"] and (ids.is_empty() or order.id in ids):
 			pending[order.id] = order
+	for person_id: String in _workers:
+		var job: Dictionary = _workers[person_id].job
+		if not job.is_empty() and pending.has(job.order_id) and not str(ledger.inspect_person_status(person_id).get("joint_carry_id","")).is_empty():
+			return _reject("JOINT_HANDOFF_REQUIRED","Finish the actual shared timber handoff before this debug delivery; nothing changed.")
 	# Release reserved source portions before transferring any remaining cargo.
 	for worker in _workers.values():
 		var job: Dictionary = worker.job
@@ -244,12 +278,25 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 	for person_id in _workers:
 		var job: Dictionary = _workers[person_id].job
 		if job.is_empty() or not pending.has(job.order_id): continue
-		if job.phase in ["Carry","Drop"]:
-			var person: Dictionary = ledger.inspect_person_status(person_id)
+		var person: Dictionary = ledger.inspect_person_status(person_id)
+		if not str(person.get("carrying_stock_id","")).is_empty():
 			var deposited: Dictionary = ledger.debug_deposit_stock(str(person.carrying_stock_id),destination,PLAYER)
 			if not deposited.ok: return deposited
 			var order: Dictionary = pending[job.order_id]
 			order.unloaded[job.code] = int(order.unloaded.get(job.code,0))+int(deposited.quantity)
+		if not str(person.get("supplier_access_id","")).is_empty():
+			var order: Dictionary = pending[job.order_id]
+			var exit_point := Freight.to_world(order,Vector3(0,0,Freight.REAR_Z))
+			_must(ledger.move_entity(person_id,"rear-lane",exit_point)) # Explicit debug travel bypass.
+			ledger.register_handling_point(str(order.id),person_id,exit_point)
+			_must(ledger.release_supplier_access(person_id,str(order.id)))
+			ledger.release_handling_points(person_id,str(order.id))
+			freight.release_aisle(order)
+		if warehouse != null:
+			if job.has("storage"): warehouse.release(str(job.storage))
+			warehouse.release_point(person_id)
+		ledger.release_handling_points(person_id,destination)
+		ledger.release_handling_points(person_id,"receiving")
 		_workers[person_id].job = {}
 	var completed: Array[String] = []
 	for order: Dictionary in pending.values():
@@ -264,6 +311,7 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 		order.next_at = INF
 		order.admission = false
 		order.debug_delivered = true
+		order.departure_started = true # Explicit debug bypass includes road clearance.
 		_set_state(order,"Complete")
 		completed.append(order.id)
 	_event("DEBUG incoming resource orders delivered immediately",", ".join(completed))
@@ -298,10 +346,12 @@ func debug_deliver_people() -> Dictionary:
 		var moved: Dictionary = ledger.move_entity(order.id,"supplier-transit",_exit(order))
 		if not moved.ok: return moved
 		order.people_exited = order.expected_people
+		if order.has("aboard_people"): order.aboard_people.clear()
 		order.motion = {}
 		order.next_at = INF
 		order.admission = false
 		order.debug_delivered = true
+		order.departure_started = true # Same explicit debug travel bypass.
 		_set_state(order,"Complete")
 		ids.append(order.id)
 	_event("DEBUG same purchased personnel delivered immediately",", ".join(ids))
@@ -416,7 +466,7 @@ func advance_time(seconds: float) -> Dictionary:
 
 
 func next_boundary() -> float:
-	var boundary := INF
+	var boundary: float = freight.next_boundary() if development_convoys else INF
 	for order in _orders:
 		if order.next_at > _time: boundary = minf(boundary, order.next_at)
 	for walk in _walks: boundary = minf(boundary, walk.ends_at)
@@ -578,7 +628,7 @@ func audit() -> Array[String]:
 	return failures
 
 
-func _new_order(kind: String, cost: int, cargo: Dictionary) -> Dictionary:
+func _new_order(kind: String, cost: int, cargo: Dictionary, layout: Dictionary = {}) -> Dictionary:
 	_order_sequence += 1
 	var id := "delivery-%04d" % _order_sequence
 	var order := {"id": id, "kind": kind, "owner": PLAYER, "cost": cost,
@@ -587,6 +637,8 @@ func _new_order(kind: String, cost: int, cargo: Dictionary) -> Dictionary:
 		"state": "Ordered", "purchased_at": _time, "state_entered_at": _time,
 		"arrival_at": _time + (60.0 if kind == "Freight" else 90.0),
 		"next_at": _time + 5.0, "motion": {}}
+	order.packet_manifest = layout.get("packages",[]).duplicate(true)
+	order.rack_manifest = layout.get("racks",[]).duplicate(true)
 	_orders.append(order)
 	return order
 
@@ -595,7 +647,8 @@ func _pump() -> void:
 	_sync_workers()
 	var again := true
 	while again:
-		again = false
+		again = freight.settle() if development_convoys else false
+		if development_convoys: again = road.settle() or again
 		for order in _orders:
 			if order.next_at > _time:
 				continue
@@ -610,6 +663,7 @@ func _pump() -> void:
 					order.motion = {}
 					order.next_at = INF
 					_set_state(order, "Berthed")
+					if not order.packet_manifest.is_empty(): freight.begin(order)
 					if order.kind == "Personnel":
 						_disembark(order)
 				"Disembarking":
@@ -630,6 +684,7 @@ func _pump() -> void:
 				_must(ledger.complete_person_arrival(walk.person_id, "personnel", PLAYER))
 				order.people_reserved -= 1
 				order.people_arrived += 1
+				_update_convoy_gate(order)
 				_walks.erase(walk)
 				_event("Same arriving person disembarked; incoming place becomes one physical rear person", walk.person_id)
 				again = true
@@ -645,8 +700,10 @@ func _pump() -> void:
 				_start_vehicle_motion(order, "Berthing", _berth(order))
 				again = true
 			if order.state == "Berthed" and _freight_finished(order):
-				_start_vehicle_motion(order, "Departing", _exit(order))
-				again = true
+				if order.packet_manifest.is_empty() or order.get("mechanism","") == "closed":
+					_start_vehicle_motion(order, "Departing", _exit(order))
+					again = true
+				else: again = freight.close(order) or again
 			if order.state == "Disembarking" and order.people_arrived == order.expected_people:
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
@@ -663,21 +720,34 @@ func _dispatch(order: Dictionary) -> void:
 	_must(ledger.add_person(order.id + "-driver", order.id, SUPPLIER,
 		Records.Assignment.STRATEGIC_CREW, true, "P08"))
 	if order.kind == "Freight":
-		for code in order.cargo:
-			var stock_id: String = order.id + "-" + code
-			_must(ledger.add_stock(stock_id, code, order.cargo[code], 1.0, order.id, PLAYER))
-			order.stock_ids.append(stock_id)
+		if not order.packet_manifest.is_empty():
+			for packet: Dictionary in order.packet_manifest:
+				var stock_id: String = str(order.id)+"-"+str(packet.id)
+				_must(ledger.add_stock(stock_id,str(packet.code),int(packet.quantity),1.0,str(order.id),PLAYER))
+				packet.stock = stock_id
+				order.stock_ids.append(stock_id)
+			freight.register(order)
+		else:
+			for code in order.cargo:
+				var stock_id: String = order.id + "-" + code
+				_must(ledger.add_stock(stock_id, code, order.cargo[code], 1.0, order.id, PLAYER))
+				order.stock_ids.append(stock_id)
 	else:
+		order.aboard_people = {}
 		for index in range(order.expected_people):
 			var person_id := "%s-person-%02d" % [order.id, index + 1]
 			_must(ledger.add_person(person_id, order.id, SUPPLIER, Records.Assignment.PASSENGER, order.recovery_instructor))
 			order.passenger_ids.append(person_id)
+			order.aboard_people[person_id] = index
 	var gate := _gate(order)
-	var origin := Vector2(-12-float(order.get("convoy_index",0))*8,ROAD_Y) if development_convoys else gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
+	var origin := Vector2(-12-float(order.get("convoy_index",0))*20,ROAD_Y) if development_convoys else gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
 	if development_convoys:
 		order.arrival_at = _time+origin.distance_to(gate)/_speed(order)
 		_active_suppliers[order.id] = order
+	order.world_position = origin
 	_must(ledger.move_entity(order.id, "supplier-transit", origin))
+	if development_convoys:
+		_position_supplier_occupants(order)
 	order.motion = {"path": [origin, gate], "started_at": _time, "ends_at": order.arrival_at}
 	order.next_at = order.arrival_at
 	_set_state(order, "Incoming")
@@ -688,6 +758,12 @@ func _disembark(order: Dictionary) -> void:
 	_set_state(order, "Disembarking")
 	order.next_at = _time + PASSENGER_EXIT_SECONDS
 	_event("Stopped; one passenger exit per second, independently for this vehicle", order.id)
+
+func _position_supplier_occupants(order: Dictionary) -> void:
+	_must(ledger.position_supplier_occupant(str(order.id)+"-driver",str(order.id),Freight.to_world(order,Seating.DRIVER)))
+	for id: String in order.get("aboard_people",{}):
+		var seat: Dictionary = Seating.seat(int(order.aboard_people[id]))
+		_must(ledger.position_supplier_occupant(id,str(order.id),Freight.to_world(order,seat.hip)))
 
 
 func _exit_passenger(order: Dictionary) -> void:
@@ -701,6 +777,7 @@ func _exit_passenger(order: Dictionary) -> void:
 		return # No free standing point: remain physically aboard.
 	var path: Array = _worker_path(origin, destination) if route.is_valid() else [origin, Vector2(20, 96), PERSONNEL]
 	_must(ledger.move_entity(id, "rear-lane", origin))
+	if order.has("aboard_people"): order.aboard_people.erase(id)
 	_walks.append({"order_id": order.id, "person_id": id, "path": path,
 		"started_at": _time, "ends_at": _time + _path_length(path) / 1.5})
 	order.people_exited += 1
@@ -722,6 +799,7 @@ func start_shared_unload(id: String) -> bool:
 func _start_worker_job(id: String) -> bool:
 	for order in _orders:
 		if order.kind != "Freight" or order.state != "Berthed": continue
+		if not order.packet_manifest.is_empty() and not freight.can_unload(order): continue
 		var slot: int = order.slot
 		var berth: Dictionary = freight_berths[slot]
 		var active := 0
@@ -737,11 +815,16 @@ func _start_worker_job(id: String) -> bool:
 				supplier_state_changed.emit()
 			continue
 		for source_id in order.stock_ids:
+			if not freight.accessible(order,str(source_id)): continue
+			var actual_packet: Dictionary = freight.packet(order,str(source_id))
+			if actual_packet.get("code","") == "M04":
+				order.storage_warning = "Timber requires two actual handlers"
+				continue # Joint custody is connected in the next planned phase.
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
 			if quantity <= 0:
 				continue
 			var origin: Vector2 = ledger.inspect_entity(id).position
-			var pickup_at: Vector2 = work_point.call(id,order.id) if work_point.is_valid() else berth.berth
+			var pickup_at: Vector2 = Freight.to_world(order,Vector3(0,0,Freight.REAR_Z)) if not order.packet_manifest.is_empty() else work_point.call(id,order.id) if work_point.is_valid() else berth.berth
 			if not pickup_at.is_finite(): continue
 			var approach: Array = _worker_path(origin,pickup_at)
 			if approach.is_empty(): continue
@@ -778,14 +861,32 @@ func _start_worker_job(id: String) -> bool:
 					job.path = _worker_path(origin,storage.point)
 					job.ends_at = _time+_path_length(job.path)/1.5
 			_workers[id].job = job
+			if not order.packet_manifest.is_empty() and (storage.is_empty() or not storage.prepare): _approach_truck(id,job)
 			_event("Reserved source and destination before walking to pickup", claim_id)
+			worker_activity_changed.emit(id)
 			return true
 	return false
 
 
 func _finish_worker_phase(id: String) -> void:
 	var job: Dictionary = _workers[id].job
+	var previous_phase: String = str(job.phase)
 	match job.phase:
+		"Source access": _approach_truck(id,job)
+		"Source queue":
+			job.path = []
+			job.phase = "Source access"
+			job.ends_at = INF
+			_approach_truck(id,job)
+		"Truck egress", "Truck return":
+			var order: Dictionary = _find_order(str(job.order_id))
+			ledger.register_handling_point(str(order.id),id,Freight.to_world(order,Vector3(0,0,Freight.REAR_Z)))
+			_must(ledger.release_supplier_access(id,str(order.id)))
+			ledger.release_handling_points(id,str(order.id))
+			freight.release_aisle(order)
+			if job.phase == "Truck return": _workers[id].job = {}
+			else: _carry_from_rear(id,job)
+		"Carry blocked": _carry_from_rear(id,job)
 		"Storage approach", "Storage blocked":
 			job.path = []
 			var prepared: Dictionary = warehouse.begin_preparation(str(job.storage))
@@ -831,8 +932,9 @@ func _finish_worker_phase(id: String) -> void:
 				job.ends_at = _time+PASSENGER_EXIT_SECONDS
 				return # Keep claim at the truck until a real safe path/point exists.
 			_must(ledger.begin_carry(id, job.source_id, job.quantity, job.claim_id))
-			job.phase = "Carry"
-			job.path = path
+			var order: Dictionary = _find_order(str(job.order_id))
+			job.phase = "Truck egress" if not order.packet_manifest.is_empty() else "Carry"
+			job.path = freight.egress(order,origin) if not order.packet_manifest.is_empty() else path
 			job.started_at = _time
 			job.ends_at = _time + _path_length(job.path) / 1.2
 		"Carry":
@@ -849,9 +951,57 @@ func _finish_worker_phase(id: String) -> void:
 			_must(ledger.release_claim(job.claim_id))
 			_workers[id].job = {}
 			_event("Actual carried stock deposited; destination reservation consumed once", id)
+	if _workers.has(id) and str(_workers[id].job.get("phase","")) != previous_phase: worker_activity_changed.emit(id)
+
+func _carry_from_rear(id: String, job: Dictionary) -> void:
+	var origin: Vector2 = ledger.inspect_person_status(id).position
+	var target: Vector2 = warehouse.destination_point(str(job.storage)) if job.has("storage") else freight_berths[int(job.slot)].receiving_position
+	var path: Array = _worker_path(origin,target) if target.is_finite() else []
+	job.path = path
+	job.phase = "Carry" if not path.is_empty() else "Carry blocked"
+	job.started_at = _time
+	job.ends_at = _time+_path_length(path)/1.2 if not path.is_empty() else INF
+
+func _queue_at_source(id: String, job: Dictionary) -> void:
+	# Cell capacity remains promised, but a worker waiting for another resource
+	# must not hold its warehouse service face or physically stand across it.
+	if warehouse != null: warehouse.release_point(id)
+	ledger.release_handling_points(id,"receiving")
+	job.phase = "Source access"
+	job.path = []
+	job.ends_at = INF
+	if job.get("queued",false) or not work_point.is_valid(): return
+	var point: Vector2 = work_point.call(id,str(job.order_id))
+	var origin: Vector2 = ledger.inspect_person_status(id).position
+	var path: Array = _worker_path(origin,point) if point.is_finite() else []
+	if path.is_empty(): return
+	job.queued = true
+	job.phase = "Source queue"
+	job.path = path
+	job.started_at = _time
+	job.ends_at = _time+_path_length(path)/1.5
 
 func _approach_truck(id: String, job: Dictionary) -> void:
 	var order: Dictionary = _find_order(job.order_id)
+	if not order.packet_manifest.is_empty():
+		var origin: Vector2 = ledger.inspect_person_status(id).position
+		var route_in: Array = freight.ingress(order,str(job.source_id),origin)
+		if route_in.is_empty() or not freight.reserve_aisle(order,[id]):
+			_queue_at_source(id,job)
+			return
+		var retained: Dictionary = ledger.retain_supplier_access(id,str(order.id))
+		if not retained.ok:
+			freight.release_aisle(order)
+			job.phase = "Source access"
+			job.path = []
+			job.ends_at = INF
+			return
+		ledger.register_handling_point(str(order.id),id,freight.pickup_point(order,str(job.source_id)))
+		job.phase = "Approach"
+		job.path = route_in
+		job.started_at = _time
+		job.ends_at = _time+_path_length(route_in)/1.5
+		return
 	var pickup: Vector2 = work_point.call(id,order.id) if work_point.is_valid() else freight_berths[job.slot].berth
 	var origin: Vector2 = ledger.inspect_entity(id,{},false).position
 	var path: Array = _worker_path(origin,pickup) if pickup.is_finite() else []
@@ -873,9 +1023,20 @@ func _sync_workers() -> void:
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
 		if _workers[id].get("shared",false): still_assigned = person.assignment == "Rear Labour" and person.duty_id == "hauling" and not job.is_empty()
-		if not job.is_empty() and job.phase in ["Carry", "Drop"]:
+		if not job.is_empty() and job.phase in ["Carry", "Drop","Truck egress","Carry blocked","Truck return"]:
 			continue # G01 retains the old duty until the carried freight is deposited.
 		if not still_assigned or person.pending_assignment != "None":
+			if not job.is_empty() and not str(person.get("supplier_access_id","")).is_empty():
+				_must(ledger.release_claim(str(job.claim_id)))
+				if job.has("storage"):
+					warehouse.release(str(job.storage))
+					job.erase("storage")
+				job.phase = "Truck return"
+				job.path = freight.egress(_find_order(str(job.order_id)),person.position)
+				job.started_at = _time
+				job.ends_at = _time+_path_length(job.path)/1.5
+				worker_activity_changed.emit(id)
+				continue
 			if not job.is_empty():
 				_must(ledger.release_claim(job.claim_id))
 				if job.has("storage"): warehouse.release(str(job.storage))
@@ -885,7 +1046,15 @@ func _sync_workers() -> void:
 func _move_activities() -> void:
 	for order in _orders:
 		if not order.motion.is_empty():
-			_must(ledger.move_entity(order.id, "supplier-transit" if order.state == "Incoming" else "rear-lane", _motion_position(order.motion)))
+			var previous: Vector2 = order.world_position if development_convoys else ledger._world_position(str(order.id))
+			order.world_position = _motion_position(order.motion)
+			_must(ledger.move_entity(order.id, "supplier-transit" if order.state == "Incoming" else "rear-lane", order.world_position))
+			var travel: Vector2 = Vector2(order.world_position)-previous
+			if development_convoys and travel.length_squared() > 0.000001:
+				var facing := rad_to_deg(travel.angle())
+				if not is_equal_approx(facing,float(order.get("facing_degrees",0.0))):
+					order.facing_degrees = facing
+					_position_supplier_occupants(order)
 	for walk in _walks:
 		_must(ledger.move_entity(walk.person_id, "rear-lane", _motion_position(walk)))
 	for id in _workers:
@@ -895,17 +1064,24 @@ func _move_activities() -> void:
 
 
 func _start_vehicle_motion(order: Dictionary, state: String, destination: Vector2) -> void:
-	var origin: Vector2 = ledger.inspect_entity(order.id).position
-	_set_state(order, state)
-	order.next_at = _time + origin.distance_to(destination) / _speed(order)
-	order.motion = {"path": [origin, destination], "started_at": _time, "ends_at": order.next_at}
+	var origin: Vector2 = order.world_position if development_convoys else ledger.inspect_entity(order.id).position
+	var path: Array = road.plan(order,destination) if development_convoys else [origin,destination]
+	if path.is_empty():
+		order.traffic_resume = {"state":state,"destination":destination}
+		order.motion = {}
+		order.next_at = INF
+		_set_state(order,"Traffic hold")
+		return
+	order.next_at = _time + _path_length(path) / _speed(order)
+	order.motion = {"path":path,"started_at":_time,"ends_at":order.next_at}
+	_set_state(order,state)
 
 
 func _slot_for(kind: String) -> int:
 	if development_convoys:
 		for order: Dictionary in _active_suppliers.values():
-			if order.state in ["Incoming","Berthing","Berthed","Disembarking"]: return -1
-		return 0 # One shared apron; empty departing trucks no longer occupy it.
+			if order.kind == kind and (order.state in ["Berthing","Berthed","Disembarking"] or (order.state == "Traffic hold" and order.get("traffic_resume",{}).get("state","") == "Berthing")): return -1
+		return 0 # Separate actual material/personnel stops, one carrier each.
 	var count := freight_berths.size() if kind == "Freight" else 2
 	for slot in range(count):
 		var occupied := false
@@ -936,6 +1112,7 @@ func _order_blocker(order: Dictionary) -> String:
 			if order.people_exited < order.passenger_ids.size(): return "Passengers exit one per second from this stopped vehicle, then walk; no unloading worker is required"
 			return "All passengers exited; remaining walks to Personnel still reserve incoming places"
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
+		"Traffic hold": return "Road blocked — waiting for actual vehicle or person clearance"
 		"Berthed":
 			if warehouse != null and not str(order.get("storage_warning","")).is_empty(): return str(order.storage_warning)
 			if _workers.is_empty(): return "Waiting for free hauling/unloading workers, a safe route, or higher-priority work to finish"
@@ -961,25 +1138,33 @@ func _find_order(id: String) -> Dictionary:
 
 
 func _set_state(order: Dictionary, state: String) -> void:
+	if development_convoys and str(order.state) != state: road.invalidate()
 	order.state = state
+	if state == "Departing": order.departure_started = true
 	if warehouse != null: _storage_warning_dirty = true
 	order.state_entered_at = _time
 	if development_convoys:
-		if state in ["Departing","Complete","Cancelled"] and _convoy_pending.has(order.id):
-			_convoy_pending.erase(order.id)
-			if _convoy_pending.is_empty(): convoy_changed.emit()
+		_update_convoy_gate(order)
 		if state in ["Complete","Cancelled"]: _active_suppliers.erase(order.id)
 		supplier_state_changed.emit()
 
 
+func _update_convoy_gate(order: Dictionary) -> void:
+	if not development_convoys or not _convoy_pending.has(order.id): return
+	var handed_over: bool = _freight_finished(order) if order.kind == "Freight" else int(order.people_arrived) == int(order.expected_people)
+	if order.state != "Cancelled" and not (handed_over and order.get("departure_started",false)): return
+	_convoy_pending.erase(order.id)
+	if _convoy_pending.is_empty(): convoy_changed.emit()
+
+
 func _gate(order: Dictionary) -> Vector2:
-	if development_convoys: return Vector2(96-float(order.get("convoy_index",0))*8,ROAD_Y)
+	if development_convoys: return Vector2(96-float(order.get("convoy_index",0))*20,ROAD_Y)
 	if supply_table_access: return Vector2(0,receiving_position.y-10 if order.kind == "Freight" else personnel_position.y+10)
 	return FREIGHT_GATE if order.kind == "Freight" else Vector2(0, 100)
 
 
 func _berth(order: Dictionary) -> Vector2:
-	if development_convoys: return DROP_OFF
+	if development_convoys: return Vector2(132 if order.kind == "Freight" else 112,ROAD_Y)
 	if supply_table_access and order.kind != "Freight": return personnel_position+Vector2(6+order.slot*8,10)
 	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 

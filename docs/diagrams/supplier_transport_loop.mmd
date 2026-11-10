@@ -1,0 +1,36 @@
+flowchart TD
+  Cart[Supply Table cart edit] --> Quote[Cached pure spatial plan / existing prices / actual package envelopes]
+  Quote --> Confirm[Show truck count and complete fee before one Confirm]
+  Confirm --> Ledger[Receiving creates actual trucks / drivers / packet stock / same eight people]
+  Ledger --> Traffic[Owned supplier route / real body and handling clearance]
+  Traffic --> Berths[Separate materials and passenger stops]
+  Berths --> Open[Stopped material truck / existing door then ramp clips]
+  Open --> Ready[Reserve exact accessible packet / actual worker and shelf cell]
+  Ready -->|fixture needed| Prepare[Existing real worker visit / shelf smoke / ready event]
+  Prepare --> Rear[Walk to rear / actual aisle and ramp route]
+  Prepare -->|truck aisle busy| Queue[Release shelf standing face but retain package cell / walk to distinct outside wait point]
+  Queue -->|actual aisle-release event| Rear
+  Rear --> Access[Ledger retains actual supplier access until physical rear exit]
+  Access --> Lift
+  Access --> Cancel[Before lift: release uncollected claim / safe rear exit / pending duty applies]
+  Ready -->|ready shelf| Rear
+  Rear --> Lift{Timber?}
+  Lift -->|no| Single[One actual worker / existing25kg allowance]
+  Lift -->|yes| Pair[Two actual workers / one jointly owned stock carry]
+  Single --> Carry[Physical package extraction and carry]
+  Pair --> Carry
+  Carry --> Deposit[One actual warehouse deposit / consume reserved cell]
+  Ready -->|no storage or partner| Hold[Cargo stays aboard / specific event-woken warning]
+  Deposit --> Clear[Release actual source access / exact stock handover]
+  Clear --> Close[Last carry clears rear / ramp stow / door close]
+  Berths --> Passengers[Actual seated IDs / rear-to-front clearance / stand-walk-crouch-jump-land]
+  Passengers --> Walk[Same passenger walks to actual arrival point]
+  Passengers --> PassengerClear[Last passenger landed and rear clear]
+  Walk --> Arrived[Arrival converts reserved population once]
+  Close --> Departure[Actual clear departure or bypass / otherwise event-wait]
+  PassengerClear --> Departure
+  Arrived --> Gate[Convoy gate requires every actual handover and departure start]
+  Clear --> Gate
+  Departure --> Gate
+  Motion[Committed movement and activity facts] --> View[Artist models / packages / occupants / clips / wheels / sway / exhaust]
+  View -.-> NoAuthority[Presentation never creates stock / people / fuel / time]

@@ -1,7 +1,7 @@
 extends RefCounted
 ## Internal records. The ledger returns detached inspection snapshots, never these objects.
 
-enum Kind { PLACE, CARRIER, PERSON, STOCK, WEAPON, HEAVY_OBJECT }
+enum Kind { PLACE, CARRIER, PERSON, STOCK, WEAPON, HEAVY_OBJECT, JOINT_CARRY }
 enum Assignment {
 	AVAILABLE, REAR_LABOUR, TRAINING, STRATEGIC_CREW, AWAITING_DEPLOYMENT,
 	PASSENGER, HQ_RESERVE, HQ_DUTY, FORMATION_DUTY, WOUNDED, RECOVERY, DEAD,
@@ -57,6 +57,8 @@ class Person extends Entity:
 	var qualification := "None"
 	var crew_station := ""
 	var construction_truck_id := "" # Scoped exclusive rear utility trip, never a qualification.
+	var supplier_access_id := "" # Actual supplier aisle/ramp access; release only at physical rear exit.
+	var joint_carry_id := "" # One shared load; never a duplicated personal stock pointer.
 	var morale: int = 60
 	var suppression: int = 0
 	var service_seconds: float = 0.0

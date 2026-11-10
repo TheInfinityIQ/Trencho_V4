@@ -1,0 +1,12 @@
+flowchart TD
+  Request[Incoming queue / material berth132,200 / personnel berth112,200 / east exit] --> Plan[Bounded straight or smooth south bypass route]
+  Plan --> Clearance[Actual supplier bodies and protected rear work zones / moving route times / external bodies]
+  Clearance -->|clear| Motion[Receiving owns timed route and actual position]
+  Clearance -->|blocked| Hold[Retain berth and exact destination / no motion or travel fuel]
+  State[Actual supplier state changes] --> Retry[Mark route work dirty]
+  Player[Actual manager pose change] --> Retry
+  Vehicle[Actual owned vehicle movement] --> Retry
+  Retry --> Hold
+  Hold -->|relevant clearance event| Plan
+  Motion --> View[Wheels / steering / sway / exhaust from committed route]
+  View -.-> NoPolling[No per-frame inventory or route search]
