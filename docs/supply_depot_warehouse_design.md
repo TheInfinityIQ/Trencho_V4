@@ -40,6 +40,14 @@ When a package has no compatible receiving space, retain it on the same truck. S
 
 Do not deposit blocked cargo on an unplanned floor pile, create stock at the Table, remove packages visually before pickup or complete the order early. The player may free space, reassign labour or build an expansion; delivery continues through physical work when the real blocker clears. Existing money, admission and convoy rules still govern purchases. Shipment arrival does not promise immediate unloading, and all actual handover conditions must still finish before the convoy ordering gate releases.
 
+## Explicit debug supply exception
+
+Preserve Dawson's existing free raw-resource shortcut for quick prototype testing. Each successful explicit Instant Resources action supplies exactly 1,000 kg of each of the nine raw materials immediately and free, with another batch on another successful click. It does not require warehouse expansion. Explosives and Building Materials remain outside that grant.
+
+Deliver this batch to a clearly labelled debug supply cache, retaining the existing debug-use marker. This is an explicit acquisition and storage bypass, separate from a normally packed warehouse receipt. Keep the cache accessible without obstructing roads, doors or the supplier bypass. It must not enlarge normal warehouse capacity, make ordinary shelf fixtures appear, or become a destination for normal incoming freight or automatic overflow. Workers may physically collect its goods in that debug-marked session; the grant is not evidence that the normal supply chain worked.
+
+The new batch is all or nothing. A failed command leaves actual stock, existing paid orders, normal fixtures and reservations unchanged, without a partial grant or abandoned free order. Successful feedback identifies the free debug batch and storage bypass explicitly. Ordinary full-warehouse deliveries retain their cargo and warning. Only explicit debug commands may use this exception; this preserves the earlier testing convenience rather than quietly weakening normal storage rules.
+
 ## Building spacing and joined expansion
 
 The current placement grid is **1 m**. Use a **two-cell, 2 m minimum clear gap** between ordinary building footprints, including between an ordinary building and a warehouse. Preserve existing road, entrance and working-access requirements as well.
