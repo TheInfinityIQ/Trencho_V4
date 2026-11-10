@@ -1,0 +1,848 @@
+{
+  "version": 1,
+  "date": "2026-11-10",
+  "status": "Static artist handoff; human appearance approval and game integration remain separate.",
+  "new_animation_authoring": "PAUSED by Dawson; no new pickup clip. Future paired timber pickup uses synchronized bending, subject to measured contact clearance.",
+  "source": {
+    "file": "shared_material_packages_v01.blend",
+    "bytes": 195727,
+    "sha256": "5b79892d1e7d529cac202844642b4fa25a33887b40f0a951dd37c5a30f8db88f"
+  },
+  "source_check": {
+    "pass": true,
+    "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages/shared_material_packages_v01.blend",
+    "scenes": 1,
+    "actions": 0
+  },
+  "axes": "Metres; Godot +Y up; native X=L, Z=D. Front=-Z. Deliberately rotate for longitudinal truck packing when needed.",
+  "packing_corner_rule": "Packing_Min/Max are exported opposite corners converted from Blender axes. Z order reverses on export; take componentwise minimum/maximum of both corners, not their names, for an AABB.",
+  "stock_rule": "Shared warehouse/truck visuals, not new stock. One stock unit=1kg. One material per package. Runtime labels show material and actual net kg/capacity, including partial packages. Decorative bars/boards are not separate inventory items.",
+  "grip_rule": "All grip empties are provisional references only; no posed hand, glove, gait, extraction, strength or ergonomic approval.",
+  "collisions": "Visual GLBs contain no collision proxies. Lead owns matching runtime collision and routing.",
+  "timber_limits": {
+    "actual_visual_LDH_m": [
+      2.0,
+      0.32,
+      0.162
+    ],
+    "packing_LDH_m": [
+      2.0,
+      0.32,
+      0.24
+    ],
+    "boards_visual_only_m": [
+      2.0,
+      0.15,
+      0.05
+    ],
+    "undergrip_y_m": -0.018,
+    "clearance": "References 18mm below mesh base, 22mm below wood bottoms require actual external clearance/support. Bare-ground pickup is unverified. Fixed rack saddles are not travelling bundle geometry."
+  },
+  "can_limits": {
+    "packing_height_m": 0.42,
+    "nominal_handle_opening_WH_m": [
+      0.15,
+      0.075
+    ],
+    "central_clearance_above_body_m": 0.0675,
+    "grip_fit": "Unposed; nominal rounded opening is not a full rectangular glove envelope.",
+    "capacity_rule": "20kg game contents; 30L-class scale reference, no 20L=20kg or liquid-volume conversion."
+  },
+  "warning_acceptance": "Separate closed mounted components retain documented coincident vertices/back-to-back internal contact faces. No open boundaries, nonmanifold edges, degenerate faces or inconsistent normals were reported; source reports preserve exact counts. Hidden contact faces can be optimized later if profiling justifies it.",
+  "provenance": "Artist-authored static geometry, existing project construction palette/helpers; no external mesh or texture copied. Can scale reference: SCHUETZ SC1 30L 378x280x400mm. Timber scale reference: NIBIO pine density illustration only; package stock kg is a game rule.",
+  "references": [
+    "https://www.schuetz-packaging.net/schuetz-germany-hq/en/jerrycans/",
+    "https://www.nibio.no/en/subjects/forest/use-of-wood/timber-species-in-norway/pine"
+  ],
+  "verification": {
+    "roundtrip": {
+      "pass": true,
+      "assets": [
+        {
+          "file": "metal_stock_v01.glb",
+          "bounds_error_m": 0.0
+        },
+        {
+          "file": "closed_keg_v01.glb",
+          "bounds_error_m": 0.0
+        },
+        {
+          "file": "timber_bundle_v01.glb",
+          "bounds_error_m": 0.0
+        },
+        {
+          "file": "textile_bale_v01.glb",
+          "bounds_error_m": 0.0
+        },
+        {
+          "file": "fuel_can_v01.glb",
+          "bounds_error_m": 0.0
+        }
+      ]
+    },
+    "actual_export_images_reviewed": true,
+    "local_godot_run": false,
+    "gameplay_or_performance_acceptance": false,
+    "untested": "Game import/render, collision, package ledger, shelf packing, character contacts and carrying animation remain Lead/human integration work."
+  },
+  "assets": [
+    {
+      "file": "metal_stock_v01.glb",
+      "bytes": 107060,
+      "sha256": "480546528e9f7c16df60f4982179266c4eaadacf330c010ace321bbd90b0cdb7",
+      "material_code": "M01",
+      "root": "Metal_Stock",
+      "net_capacity_kg": 25,
+      "packing_envelope_LDH_m": [
+        0.6,
+        0.2,
+        0.06
+      ],
+      "actual_visual_dimensions_LDH_m": [
+        0.6000000238418579,
+        0.20000000298023224,
+        0.05999999865889549
+      ],
+      "summary": {
+        "bytes": 107060,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 1528,
+        "vertices_per_mesh_resource": 2648,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "nodes": [
+        {
+          "name": "Grip_Reference_Left",
+          "translation": [
+            -0.2199999988079071,
+            0.029999999329447746,
+            -0.10000000149011612
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Left"
+          }
+        },
+        {
+          "name": "Grip_Reference_Right",
+          "translation": [
+            0.2199999988079071,
+            0.029999999329447746,
+            -0.10000000149011612
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Right"
+          }
+        },
+        {
+          "name": "Packing_Max",
+          "translation": [
+            0.30000001192092896,
+            0.05999999865889549,
+            -0.10000000149011612
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Max"
+          }
+        },
+        {
+          "name": "Packing_Min",
+          "translation": [
+            -0.30000001192092896,
+            0,
+            0.10000000149011612
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Min"
+          }
+        },
+        {
+          "name": "Quantity_Label_Back",
+          "translation": [
+            0,
+            0.029999999329447746,
+            0.10100000351667404
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Back"
+          }
+        },
+        {
+          "name": "Quantity_Label_Front",
+          "translation": [
+            0,
+            0.029999999329447746,
+            -0.10100000351667404
+          ],
+          "rotation": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Front"
+          }
+        },
+        {
+          "name": "SM_Metal_Stock",
+          "mesh": 0
+        },
+        {
+          "name": "Metal_Stock",
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "extras": {
+            "material_code": "M01",
+            "net_capacity_kg": 25,
+            "packing_envelope_LDH_m": [
+              0.6,
+              0.2,
+              0.06
+            ],
+            "quantity_policy": "Runtime material+actualnetkg/capacity; sharedassetnotnewstock. Gripreferences provisional, noanimation/posedcontactclaim.",
+            "visual_stock": "Ninehollowrectangularprofiles;4mmnominalwalls. Generic25kg gamepackage, notseparatelycountedtubes. Envelopeunchanged."
+          }
+        }
+      ],
+      "format_check": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "mesh_check": {
+        "pass": true,
+        "accepted_warnings": [
+          "SM_Metal_Stock: duplicate verts=24 loose verts=0",
+          "hidden back-to-back faces: SM_Metal_Stock (72 pairs) - delete to save tris"
+        ]
+      },
+      "actual_export_views": [
+        "metal_stock_three_quarter.png",
+        "metal_stock_back.png",
+        "metal_stock_side.png",
+        "metal_stock_wire.png"
+      ]
+    },
+    {
+      "file": "closed_keg_v01.glb",
+      "bytes": 42260,
+      "sha256": "6c57c1886c88885cd8d7d43558a880d0ac92eb09705d3250e1efff6e3c8a81b0",
+      "material_code": "M03",
+      "root": "Closed_Keg",
+      "net_capacity_kg": 25,
+      "packing_envelope_LDH_m": [
+        0.4,
+        0.4,
+        0.5
+      ],
+      "actual_visual_dimensions_LDH_m": [
+        0.4000000059604645,
+        0.4000000059604645,
+        0.5
+      ],
+      "summary": {
+        "bytes": 42260,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 600,
+        "vertices_per_mesh_resource": 1008,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "nodes": [
+        {
+          "name": "Grip_Reference_Left",
+          "translation": [
+            -0.18000000715255737,
+            0.2800000011920929,
+            -0.05999999865889549
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Left"
+          }
+        },
+        {
+          "name": "Grip_Reference_Right",
+          "translation": [
+            0.18000000715255737,
+            0.2800000011920929,
+            -0.05999999865889549
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Right"
+          }
+        },
+        {
+          "name": "Packing_Max",
+          "translation": [
+            0.20000000298023224,
+            0.5,
+            -0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Max"
+          }
+        },
+        {
+          "name": "Packing_Min",
+          "translation": [
+            -0.20000000298023224,
+            0,
+            0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Min"
+          }
+        },
+        {
+          "name": "Quantity_Label_Back",
+          "translation": [
+            0,
+            0.25999999046325684,
+            0.20100000500679016
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Back"
+          }
+        },
+        {
+          "name": "Quantity_Label_Front",
+          "translation": [
+            0,
+            0.25999999046325684,
+            -0.20100000500679016
+          ],
+          "rotation": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Front"
+          }
+        },
+        {
+          "name": "SM_Closed_Keg",
+          "mesh": 0
+        },
+        {
+          "name": "Closed_Keg",
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "extras": {
+            "material_code": "M03",
+            "net_capacity_kg": 25,
+            "packing_envelope_LDH_m": [
+              0.4,
+              0.4,
+              0.5
+            ],
+            "quantity_policy": "Runtime material+actualnetkg/capacity; sharedassetnotnewstock. Gripreferences provisional, noanimation/posedcontactclaim."
+          }
+        }
+      ],
+      "format_check": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "mesh_check": {
+        "pass": true,
+        "accepted_warnings": [
+          "hidden back-to-back faces: SM_Closed_Keg (56 pairs) - delete to save tris"
+        ]
+      },
+      "actual_export_views": [
+        "closed_keg_three_quarter.png",
+        "closed_keg_back.png",
+        "closed_keg_side.png",
+        "closed_keg_wire.png"
+      ]
+    },
+    {
+      "file": "timber_bundle_v01.glb",
+      "bytes": 52340,
+      "sha256": "ccaf98efca7b8a37e3c27c9ea84a775d7fdb257c7f3597813fd685912dc9ce2e",
+      "material_code": "M04",
+      "root": "Timber_Bundle",
+      "net_capacity_kg": 50,
+      "packing_envelope_LDH_m": [
+        2,
+        0.32,
+        0.24
+      ],
+      "actual_visual_dimensions_LDH_m": [
+        2.0,
+        0.3199999928474426,
+        0.16200000047683716
+      ],
+      "summary": {
+        "bytes": 52340,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 736,
+        "vertices_per_mesh_resource": 1247,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "nodes": [
+        {
+          "name": "Packing_Max",
+          "translation": [
+            1,
+            0.23999999463558197,
+            -0.1599999964237213
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Max"
+          }
+        },
+        {
+          "name": "Packing_Min",
+          "translation": [
+            -1,
+            0,
+            0.1599999964237213
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Min"
+          }
+        },
+        {
+          "name": "Quantity_Label_Back",
+          "translation": [
+            0,
+            0.02800000086426735,
+            0.16099999845027924
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Back"
+          }
+        },
+        {
+          "name": "Quantity_Label_Front",
+          "translation": [
+            0,
+            0.02800000086426735,
+            -0.16099999845027924
+          ],
+          "rotation": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Front"
+          }
+        },
+        {
+          "name": "SM_Timber_Bundle",
+          "mesh": 0
+        },
+        {
+          "name": "Undergrip_Reference_1",
+          "translation": [
+            -0.8299999833106995,
+            -0.017999999225139618,
+            -0.14000000059604645
+          ],
+          "extras": {
+            "export_marker_name": "Undergrip_Reference_1"
+          }
+        },
+        {
+          "name": "Undergrip_Reference_2",
+          "translation": [
+            -0.4699999988079071,
+            -0.017999999225139618,
+            -0.14000000059604645
+          ],
+          "extras": {
+            "export_marker_name": "Undergrip_Reference_2"
+          }
+        },
+        {
+          "name": "Undergrip_Reference_3",
+          "translation": [
+            0.4699999988079071,
+            -0.017999999225139618,
+            -0.14000000059604645
+          ],
+          "extras": {
+            "export_marker_name": "Undergrip_Reference_3"
+          }
+        },
+        {
+          "name": "Undergrip_Reference_4",
+          "translation": [
+            0.8299999833106995,
+            -0.017999999225139618,
+            -0.14000000059604645
+          ],
+          "extras": {
+            "export_marker_name": "Undergrip_Reference_4"
+          }
+        },
+        {
+          "name": "Timber_Bundle",
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "extras": {
+            "timber_visual_policy": "Six2mx.15x.05boards are visualguidance only. No board-countinventory conversion. Actualvisualheight~.162m fits conservative.24m travellingpackingheight;fixedracksaddlesexcluded.",
+            "grip_limit": "Undergrip references18mmbelowmeshbase needrealexternal clearance/support. Notvalidbare-groundcontacts, notauthoredanimations.",
+            "material_code": "M04",
+            "net_capacity_kg": 50,
+            "packing_envelope_LDH_m": [
+              2.0,
+              0.32,
+              0.24
+            ],
+            "quantity_policy": "Runtime material+actualnetkg/capacity; sharedassetnotnewstock. Gripreferences provisional, noanimation/posedcontactclaim."
+          }
+        }
+      ],
+      "format_check": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "mesh_check": {
+        "pass": true,
+        "accepted_warnings": [
+          "hidden back-to-back faces: SM_Timber_Bundle (58 pairs) - delete to save tris"
+        ]
+      },
+      "actual_export_views": [
+        "timber_bundle_three_quarter.png",
+        "timber_bundle_back.png",
+        "timber_bundle_side.png",
+        "timber_bundle_wire.png"
+      ]
+    },
+    {
+      "file": "textile_bale_v01.glb",
+      "bytes": 42228,
+      "sha256": "4a5290c667eca57d7d5d3abd621624d4313530c8fd696c58554205eb26a53d85",
+      "material_code": "M05",
+      "root": "Textile_Bale",
+      "net_capacity_kg": 25,
+      "packing_envelope_LDH_m": [
+        0.6,
+        0.4,
+        0.4
+      ],
+      "actual_visual_dimensions_LDH_m": [
+        0.6000000238418579,
+        0.4000000059604645,
+        0.4000000059604645
+      ],
+      "summary": {
+        "bytes": 42228,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 564,
+        "vertices_per_mesh_resource": 1012,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "nodes": [
+        {
+          "name": "Grip_Reference_Left",
+          "translation": [
+            -0.20499999821186066,
+            0.2199999988079071,
+            -0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Left"
+          }
+        },
+        {
+          "name": "Grip_Reference_Right",
+          "translation": [
+            0.20499999821186066,
+            0.2199999988079071,
+            -0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Grip_Reference_Right"
+          }
+        },
+        {
+          "name": "Packing_Max",
+          "translation": [
+            0.30000001192092896,
+            0.4000000059604645,
+            -0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Max"
+          }
+        },
+        {
+          "name": "Packing_Min",
+          "translation": [
+            -0.30000001192092896,
+            0,
+            0.20000000298023224
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Min"
+          }
+        },
+        {
+          "name": "Quantity_Label_Back",
+          "translation": [
+            0,
+            0.2199999988079071,
+            0.20100000500679016
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Back"
+          }
+        },
+        {
+          "name": "Quantity_Label_Front",
+          "translation": [
+            0,
+            0.2199999988079071,
+            -0.20100000500679016
+          ],
+          "rotation": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Front"
+          }
+        },
+        {
+          "name": "SM_Textile_Bale",
+          "mesh": 0
+        },
+        {
+          "name": "Textile_Bale",
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "extras": {
+            "material_code": "M05",
+            "net_capacity_kg": 25,
+            "packing_envelope_LDH_m": [
+              0.6,
+              0.4,
+              0.4
+            ],
+            "quantity_policy": "Runtime material+actualnetkg/capacity; sharedassetnotnewstock. Gripreferences provisional, noanimation/posedcontactclaim."
+          }
+        }
+      ],
+      "format_check": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "mesh_check": {
+        "pass": true,
+        "accepted_warnings": [
+          "hidden back-to-back faces: SM_Textile_Bale (72 pairs) - delete to save tris"
+        ]
+      },
+      "actual_export_views": [
+        "textile_bale_three_quarter.png",
+        "textile_bale_back.png",
+        "textile_bale_side.png",
+        "textile_bale_wire.png"
+      ]
+    },
+    {
+      "file": "fuel_can_v01.glb",
+      "bytes": 59752,
+      "sha256": "7df5739bccbd8a71b162d7a00e8b68290dc18575df4b69a69a8452327b25f756",
+      "material_code": "M08",
+      "root": "Fuel_Can",
+      "net_capacity_kg": 20,
+      "packing_envelope_LDH_m": [
+        0.4,
+        0.3,
+        0.42
+      ],
+      "actual_visual_dimensions_LDH_m": [
+        0.4000000059604645,
+        0.30000001192092896,
+        0.41999998688697815
+      ],
+      "summary": {
+        "bytes": 59752,
+        "mesh_resources": 1,
+        "mesh_instances": 1,
+        "primitives": 1,
+        "materials": 1,
+        "triangles_per_mesh_resource": 828,
+        "vertices_per_mesh_resource": 1452,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "nodes": [
+        {
+          "name": "Handle_Grip_Reference",
+          "translation": [
+            0.054999999701976776,
+            0.40700000524520874,
+            0
+          ],
+          "extras": {
+            "export_marker_name": "Handle_Grip_Reference"
+          }
+        },
+        {
+          "name": "Packing_Max",
+          "translation": [
+            0.20000000298023224,
+            0.41999998688697815,
+            -0.15000000596046448
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Max"
+          }
+        },
+        {
+          "name": "Packing_Min",
+          "translation": [
+            -0.20000000298023224,
+            0,
+            0.15000000596046448
+          ],
+          "extras": {
+            "export_marker_name": "Packing_Min"
+          }
+        },
+        {
+          "name": "Quantity_Label_Back",
+          "translation": [
+            0,
+            0.1599999964237213,
+            0.1509999930858612
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Back"
+          }
+        },
+        {
+          "name": "Quantity_Label_Front",
+          "translation": [
+            0,
+            0.1599999964237213,
+            -0.1509999930858612
+          ],
+          "rotation": [
+            0,
+            -1,
+            0,
+            4.371138828673793e-08
+          ],
+          "extras": {
+            "export_marker_name": "Quantity_Label_Front"
+          }
+        },
+        {
+          "name": "SM_Fuel_Can",
+          "mesh": 0
+        },
+        {
+          "name": "Fuel_Can",
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "extras": {
+            "handle_opening_m": [
+              0.15,
+              0.075
+            ],
+            "fuel_scale": "30L-classmanufacturerreference, not20L=20kg. Actualgamecontents20kg; no liquidvolumeconversion.",
+            "material_code": "M08",
+            "net_capacity_kg": 20,
+            "packing_envelope_LDH_m": [
+              0.4,
+              0.3,
+              0.42
+            ],
+            "quantity_policy": "Runtime material+actualnetkg/capacity; sharedassetnotnewstock. Gripreferences provisional, noanimation/posedcontactclaim.",
+            "handle_clear_above_body_m": 0.0675,
+            "handle_fit_status": "Actual opening enlarged within unchanged.42m packingheight; no posedglove/animation acceptance."
+          }
+        }
+      ],
+      "format_check": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "mesh_check": {
+        "pass": true,
+        "accepted_warnings": [
+          "hidden back-to-back faces: SM_Fuel_Can (18 pairs) - delete to save tris"
+        ]
+      },
+      "actual_export_views": [
+        "fuel_can_three_quarter.png",
+        "fuel_can_back.png",
+        "fuel_can_side.png",
+        "fuel_can_wire.png"
+      ]
+    }
+  ]
+}

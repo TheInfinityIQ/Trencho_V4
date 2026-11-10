@@ -13,6 +13,7 @@ const Vehicles = preload("res://game/vehicles/vehicle_activity.gd")
 const Dispatch = preload("res://game/dispatch/dispatch_service.gd")
 const Hq = preload("res://game/hq/hq_logistics.gd")
 const Construction = preload("res://game/construction/construction_service.gd")
+const Warehouse = preload("res://game/warehousing/warehouse_service.gd")
 const Military = preload("res://game/military/organization.gd")
 const Combat = preload("res://game/combat/combat_service.gd")
 const VehicleCombat = preload("res://game/vehicle_combat/vehicle_combat_service.gd")
@@ -130,8 +131,13 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 	# Begin idle; the player sets staff, material orders and production targets.
 	for activity in rear._production_activities(): activity.set_mode("Stock target")
 	if empty_field:
-		var stock: Dictionary = rear.ledger.add_stock("start-supply-table-M11","M11",500,1.0,"receiving",rear.PLAYER)
-		assert(stock.ok,str(stock))
+		rear.warehouse = Warehouse.new(rear)
+		var warehouse_rear_ref: WeakRef = weakref(rear)
+		rear.warehouse.space_changed.connect(func() -> void:
+			var owner: RefCounted = warehouse_rear_ref.get_ref()
+			if owner != null: owner.warehouse_space_changed())
+		receiving.bind_warehouse(rear.warehouse)
+		rear.warehouse.initialize_opening()
 		for index in 4:
 			var person: Dictionary = rear.add_person("start-unloader-%02d" % (index+1),false,"None","duty-receiving")
 			assert(person.ok,str(person))

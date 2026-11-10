@@ -1,5 +1,13 @@
 # Foundation decisions
 
+The [physical warehouse](warehousing.md) keeps quantities/custody in the existing
+Ledger and composes one finite fixture/space owner with keyed scene presentation.
+Specific activity, movement-clearance and Area3D events wake work; no standing
+warehouse overlap/stock poll is added. Measured per-crate visibility-search cost
+justified Godot's native guarded planar grid and nearest-feasible warehouse
+pickup policy. Exact-source receipts and the remaining renderer/60FPS limits are
+recorded there; retained regression suites stay paused.
+
 Current engineering authority is [team workflow](team_workflow.md). Before shared changes identify state owner, valid transitions, affected callers and interaction coverage. Reuse existing ownership; repair concrete occupancy/activity and damage/movement weaknesses without speculative frameworks. Historical entry-scene reports below are not current delivery status.
 
 G24 adds scene-owned [vehicle destruction and recovery](g24_vehicle_recovery.md), synchronously resolving one ledger destruction outcome across armour, demolition and bridge collapse, with paid repairs and physical tow coupling on the common clock.

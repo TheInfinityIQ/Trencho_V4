@@ -39,7 +39,7 @@ const FACILITY_ART := {
 }
 const FACILITY_LABELS := {
 	"terminal":"Terminal", "personnel":"Personnel", "receiving":"Receiving Bay",
-	"depot":"Storage Depot", "workshop":"Workshop", "munitions":"Munitions Workshop",
+	"depot":"Supply Depot", "workshop":"Workshop", "munitions":"Munitions Workshop",
 	"materials":"Materials Plant", "training":"School", "dispatch":"Logistics Centre",
 	"support":"Support Workshop", "vehicle_works":"Vehicle Works",
 	"construction":"Construction Office", "park":"Vehicle Park",

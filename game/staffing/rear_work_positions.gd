@@ -57,6 +57,7 @@ func release(person: String) -> void:
 		_points[holder].erase(person)
 		if _points[holder].is_empty(): _points.erase(holder)
 	var rear: RefCounted = _rear_ref.get_ref()
+	if rear != null and rear.warehouse != null: rear.warehouse.release_point(person)
 	if rear != null: rear.ledger.release_handling_points(person)
 
 func _clear(at: Vector2) -> bool:
@@ -64,7 +65,11 @@ func _clear(at: Vector2) -> bool:
 	if not Rect2(0,0,240,210).grow(-RADIUS).has_point(at): return false
 	if Rect2(rear.SUPPLY_TABLE-Vector2(1.29,0.69),Vector2(2.58,1.38)).grow(RADIUS).has_point(at): return false
 	if rear.construction != null:
+		if rear.warehouse != null:
+			for obstacle: Rect2 in rear.warehouse.obstacles():
+				if obstacle.grow(RADIUS).has_point(at): return false
 		for site: Dictionary in rear.construction.instances.values():
 			if site.kind == "park" or site.state in ["Cancelled","Dismantled"]: continue
+			if rear.warehouse != null and rear.warehouse.modules.has(site.id): continue
 			if Rect2(site.center-site.size/2.0,site.size).grow(RADIUS).has_point(at): return false
 	return true

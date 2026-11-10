@@ -1,0 +1,53 @@
+{
+  "stage": "Static Artist exports copied and hash verified; engine integration unverified",
+  "files": [
+    {
+      "original_file": "warehouse_shell_v01.glb",
+      "runtime_file": "warehouse_shell.glb",
+      "sha256": "372df5e56071e4e63d903ed9b778006495790765c190253f36a399f156660675"
+    },
+    {
+      "original_file": "warehouse_crate_rack_v01.glb",
+      "runtime_file": "warehouse_crate_rack.glb",
+      "sha256": "6ca65fa822fa9c978d5a3cc6b250606e01365109cd6303d68e6f478bf6494727"
+    },
+    {
+      "original_file": "warehouse_long_stock_rack_v01.glb",
+      "runtime_file": "warehouse_long_stock_rack.glb",
+      "sha256": "d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189"
+    },
+    {
+      "original_file": "medium_crate_v01.glb",
+      "runtime_file": "medium_crate.glb",
+      "sha256": "f52f8e73e0c39f58588a323e026ef12c003018ff28af9789ecec07f1ddf43e95"
+    },
+    {
+      "original_file": "small_crate_v01.glb",
+      "runtime_file": "small_crate.glb",
+      "sha256": "2e37b5e0713a6f5202cd38f4e80e2362364d8eab77e6a0c81d4ceaf65d9701ac"
+    }
+  ],
+  "new_authored_animations": 0,
+  "human_appearance_approval": "pending",
+  "material_package_manifest": "material_packages_delivery_manifest_v01.json",
+  "material_package_source": "source/shared_material_packages.blend",
+  "material_package_source_sha256": "5b79892d1e7d529cac202844642b4fa25a33887b40f0a951dd37c5a30f8db88f",
+  "material_package_limits": [
+    "Static integration only; all new animation authoring paused.",
+    "Use model package envelopes from MaterialPackages, not visual AABB or decorative counts.",
+    "Timber:2.00x.32x.24m packing, .162m actual visual height; provisional undergrips need actual support clearance.",
+    "Labels use actual net kg/capacity, including partials; no kg/litre conversion.",
+    "Source stock remains IdentityLedger-owned; visuals never create inventory."
+  ],
+  "editable_warehouse_sources": [
+    "source/warehouse_shell_v01.blend",
+    "source/warehouse_fixtures_v01.blend"
+  ],
+  "source_import_policy": "Editable Blender sources are retained beneath source/.gdignore. Godot imports only exported GLBs; opening the game must not launch Blender or auto-convert source scenes.",
+  "import_evidence": {
+    "run_id": 42861751047,
+    "source_head": "b2bec5f4a9f1cc37ab5b507623295edddef59a37",
+    "asset_import": "All10actual warehouse/package GLBs imported by Godot4.7.2; source/sidecar hashes independently verified.",
+    "native_check": "Did not start: runner display/video tools missing. Native/default-scene/animation/FPS acceptance remains pending."
+  }
+}

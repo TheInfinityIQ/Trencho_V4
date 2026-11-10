@@ -1,0 +1,287 @@
+{
+  "access_blockers": {},
+  "access_departures": {},
+  "actors": {
+    "start-unloader-01": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-01",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-02": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-02",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-03": {
+      "blocked_since": -1.0,
+      "deadline": 1e99999,
+      "id": "start-unloader-03",
+      "load": {},
+      "motion": {},
+      "phase": "Idle"
+    },
+    "start-unloader-04": {
+      "blocked_since": -1.0,
+      "deadline": 182.961303452651,
+      "id": "start-unloader-04",
+      "load": {},
+      "motion": {
+        "path": [
+          "(123.93, 171.6)",
+          "(125.0, 171.5)",
+          "(125.0, 169.5)",
+          "(123.0, 162.1)"
+        ],
+        "speed": 1.5,
+        "started": 175.801194012165
+      },
+      "phase": "Clearing warehouse access"
+    }
+  },
+  "actual_speed": 1,
+  "advance_elapsed_usec": 89912,
+  "after": {
+    "contents": {
+      "M02": 288,
+      "M11": 500
+    },
+    "empty": 5,
+    "empty_crate_positions": 15,
+    "empty_timber_positions": 0,
+    "kg": 788,
+    "module_contents": {
+      "M02": 288,
+      "M11": 500
+    },
+    "module_kg": 788,
+    "modules": 1,
+    "packages": 33,
+    "preparing": 0,
+    "ready": 3,
+    "reserved": 0,
+    "scheduled": 0
+  },
+  "checks": [
+    "One actual starting warehouse module: PASS",
+    "Starting footprint12x16: PASS",
+    "Same500M11 in21packages on2ready racks: PASS",
+    "No duplicate starting material grant: PASS",
+    "Four real starting people preserved: PASS",
+    "One ordinary paid Components order accepted: PASS",
+    "Check remains at1x using explicit elapsed interval: PASS",
+    "Actual workers deposited all288Components: PASS",
+    "Exactly one additional rack handled overflow; concurrent workers reused pending shelf capacity: PASS",
+    "Worker physically reached reserved shelf site before appearance: initial-depot/bay-01: PASS",
+    "Finished deposits consumed their space promises: PASS",
+    "Exact actual resource totals retained: PASS",
+    "Ledger accounting remains consistent: PASS"
+  ],
+  "clearance_pending": {},
+  "failed": false,
+  "people": [
+    {
+      "assignment": "Rear Labour",
+      "carried_count": 0,
+      "carried_id": "",
+      "carried_type": "",
+      "duty_id": "hauling",
+      "health": 100,
+      "holder_kind": "PLACE",
+      "id": "start-unloader-01",
+      "owner": "army-blue",
+      "position": "(117.0, 162.1)",
+      "rear_place": "Occupied"
+    },
+    {
+      "assignment": "Rear Labour",
+      "carried_count": 0,
+      "carried_id": "",
+      "carried_type": "",
+      "duty_id": "hauling",
+      "health": 100,
+      "holder_kind": "PLACE",
+      "id": "start-unloader-02",
+      "owner": "army-blue",
+      "position": "(123.0, 175.9)",
+      "rear_place": "Occupied"
+    },
+    {
+      "assignment": "Rear Labour",
+      "carried_count": 0,
+      "carried_id": "",
+      "carried_type": "",
+      "duty_id": "hauling",
+      "health": 100,
+      "holder_kind": "PLACE",
+      "id": "start-unloader-03",
+      "owner": "army-blue",
+      "position": "(117.0, 175.9)",
+      "rear_place": "Occupied"
+    },
+    {
+      "assignment": "Rear Labour",
+      "carried_count": 0,
+      "carried_id": "",
+      "carried_type": "",
+      "duty_id": "hauling",
+      "health": 100,
+      "holder_kind": "PLACE",
+      "id": "start-unloader-04",
+      "owner": "army-blue",
+      "position": "(124.159, 166.3881)",
+      "rear_place": "Occupied"
+    }
+  ],
+  "points": {},
+  "prepared": {
+    "initial-depot/bay-01": {
+      "arrived": true,
+      "position": "(123.93, 171.6)",
+      "target": "(123.93, 171.6)",
+      "time": 128.830586691697,
+      "worker": "start-unloader-04"
+    }
+  },
+  "recent_events": [
+    {
+      "description": "Dispatched real external carrier, driver and cargo/passengers",
+      "id": "delivery-0001",
+      "time": 0.0
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0001",
+      "time": 11.0
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0002",
+      "time": 11.0
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0003",
+      "time": 11.0
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0004",
+      "time": 11.0
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-04",
+      "time": 43.5947403907776
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0005",
+      "time": 43.5947403907776
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-01",
+      "time": 46.2287132541339
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0006",
+      "time": 46.2287132541339
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-03",
+      "time": 48.5712950229645
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0007",
+      "time": 48.5712950229645
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-04",
+      "time": 82.8727030356725
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0008",
+      "time": 82.8727030356725
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-02",
+      "time": 83.7499710321426
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0009",
+      "time": 83.7499710321426
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-03",
+      "time": 91.9812099138896
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0010",
+      "time": 91.9812099138896
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-01",
+      "time": 120.352449337641
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0011",
+      "time": 120.352449337641
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-04",
+      "time": 124.795188844204
+    },
+    {
+      "description": "Reserved source and destination before walking to pickup",
+      "id": "receiving-job-0012",
+      "time": 124.795188844204
+    },
+    {
+      "description": "Real worker reached shelf site before fixture appearance",
+      "id": "start-unloader-04",
+      "time": 128.830586691697
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-03",
+      "time": 135.565422018369
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-02",
+      "time": 161.811760087808
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-01",
+      "time": 162.844022035599
+    },
+    {
+      "description": "Actual carried stock deposited; destination reservation consumed once",
+      "id": "start-unloader-04",
+      "time": 175.801194012165
+    }
+  ],
+  "reservations": {},
+  "scope": "Only the new warehouse receipt path using actual empty-opening services, one paid Components order and explicitly supplied elapsed time at1x. No renderer, native movement, wall-timeFPS, full-warehouse/expansion/return or regression acceptance.",
+  "simulation_seconds": 180.0,
+  "workers": {}
+}

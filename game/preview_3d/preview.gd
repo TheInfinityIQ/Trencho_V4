@@ -228,6 +228,7 @@ func _apply_view() -> void:
 	world.field_root.visible = battlefield_open
 	world.player_visual.visible = not first_person
 	var building: bool = _base._placing_building and not battlefield_open
+	if world.warehouse_view != null: world.warehouse_view.set_cutaway_enabled(building or not first_person)
 	world.build_camera.current = building
 	world.build_grid.visible = building and not management_open
 	world.first.current = not battlefield_open and not building and first_person
@@ -453,6 +454,10 @@ func _consume_workshop() -> void:
 				var panel_name: String = {"training":"Train","dispatch":"Dispatch","park":"Vehicles","receiving":"Info","depot":"Info","construction":"Build"}.get(str(row.kind),"Build")
 				_base.show_panel(panel_name,false)
 				if panel_name == "Info":
+					if row.kind == "depot" and _session.simulation.rear.warehouse != null:
+						var index: int = _session.simulation.rear.stores.keys().find("receiving")
+						_base.store.select(index)
+						_base._load_store()
 					for index in _base.store.item_count:
 						if _base.store.get_item_text(index) == site_id:
 							_base.store.select(index)

@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WAREHOUSE_SPACE_JOIN phase=opening
+WAREHOUSE_SPACE_JOIN phase=full_setup_complete
+WAREHOUSE_SPACE_JOIN phase=before_full_receipt
+WAREHOUSE_SPACE_JOIN phase=after_full_receipt
+WAREHOUSE_SPACE_JOIN phase=before_expansion_placement
+WAREHOUSE_ROUTE_PROFILE {"calls":32,"maximum_usec":5048,"total_usec":8411}
+WAREHOUSE_SPACE_JOIN phase=after_expansion_placement
+WAREHOUSE_ROUTE_PROFILE {"calls":64,"maximum_usec":5048,"total_usec":18825}
+WAREHOUSE_SPACE_JOIN phase=after_expansion_completion
+All128physical positions occupied: PASS
+Ordinary paid24kg Components shipment accepted: PASS
+Full warehouse retains actual truck at berth: PASS
+All24kg remain aboard with no floor/Table overflow: PASS
+Actual truck view carries full-storage warning: PASS
+Full storage grants no false destination or worker job: PASS
+Full matching north warehouse edge accepts expansion: PASS
+Unfinished blueprint grants no module capacity: PASS
+Unfinished neighbour removes no functioning wall: PASS
+Existing explicit Instant Build completes selected new-code site: PASS
+Completion adds exactly one module/eight finite bays: PASS
+Matching shared boundaries removed symmetrically: PASS
+Actual route geometry connects both interiors: PASS
+Expansion join duplicates no existing warehouse stock: PASS
+Ordinary building cannot use1m warehouse gap: PASS
+Ledger accounting consistent after admission and join: PASS

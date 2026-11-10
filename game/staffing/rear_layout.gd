@@ -3,7 +3,7 @@ extends RefCounted
 
 const FACILITIES: Dictionary = {
 	"receiving": ["F02", Vector2(45, 25), Vector2(16, 12), 4, Vector2(45, 18)],
-	"depot": ["F03", Vector2(80, 20), Vector2(20, 16), 0, Vector2(80, 11)],
+	"depot": ["F03", Vector2(80, 20), Vector2(12, 16), 0, Vector2(80, 11)],
 	"workshop": ["F04", Vector2(125, 25), Vector2(16, 12), 4, Vector2(125, 18)],
 	"munitions": ["F05", Vector2(125, 55), Vector2(16, 12), 4, Vector2(116, 55)],
 	"training": ["F06", Vector2(55, 110), Vector2(20, 16), 2, Vector2(44, 110)],

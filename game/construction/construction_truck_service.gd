@@ -4,6 +4,8 @@ const Layout = preload("res://game/staffing/rear_layout.gd")
 const EPS := 0.000001
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 var _rear_ref: WeakRef
+var _warehouse_dirty := true
+var _warehouse_obstacles: Array[Rect2] = []
 var trucks: Dictionary = {} # office ID -> actual truck/trip, retained even after retirement
 
 func _init(rear: RefCounted) -> void:
@@ -88,6 +90,47 @@ func _register(office: Dictionary) -> bool:
 	trucks[office.id] = {"id":id,"office":office.id,"home":home,"worker":"","phase":"Parked","deadline":INF,"motion":{},"blocker":"" if not curb.is_empty() else "No clear office roadside berth; using foot hauling.","recovering":false,"loaded":0,"delivered":0,"trips":0,"distance":0.0,"burned":0.0,"created":true}
 	return true
 
+func warehouse_access_changed() -> void:
+	_warehouse_dirty = true
+
+func _source_batch(stock: Dictionary, limit: int) -> Array[Dictionary]:
+	var rear := _rear()
+	var result: Array[Dictionary] = []
+	var candidates: Array = [stock]
+	var module_id: String = rear.warehouse.stock_module(stock.id) if rear.warehouse != null else ""
+	if not module_id.is_empty():
+		var connected: Dictionary = rear.warehouse.connected_modules(module_id)
+		for item: Dictionary in rear._stock_at(stock.holder_id,false):
+			if item.id != stock.id and item.design_type == stock.design_type and item.available > 0 and connected.has(rear.warehouse.stock_module(item.id)): candidates.append(item)
+	for item: Dictionary in candidates:
+		var count := mini(limit,int(item.available))
+		if count <= 0: continue
+		result.append({"stock":str(item.id),"count":count,"claim":""})
+		limit -= count
+		if limit <= 0: break
+	return result
+
+func _source_curb(stock: Dictionary, own: String) -> Dictionary:
+	var rear := _rear()
+	var module_id: String = rear.warehouse.stock_module(stock.id) if rear.warehouse != null else ""
+	if module_id.is_empty(): return _curb(stock.position,own)
+	for door: Vector2 in rear.warehouse.exterior_doors(module_id):
+		var curb := _curb(door,own)
+		if not curb.is_empty(): return curb
+	return {}
+
+func release_source_claims(actor: Dictionary) -> void:
+	var rear := _rear()
+	var released := {}
+	for part: Dictionary in actor.load.get("batch",[]):
+		if not str(part.claim).is_empty():
+			rear.ledger.release_claim(part.claim)
+			released[str(part.claim)] = true
+		part.claim = ""
+	if not str(actor.load.get("claim","")).is_empty() and not released.has(str(actor.load.claim)): rear.ledger.release_claim(actor.load.claim)
+	actor.load.claim = ""
+	if rear.warehouse != null: rear.warehouse.release_point(str(actor.id))
+
 func option(job: Dictionary, person: Dictionary, stock: Dictionary) -> Dictionary:
 	var rear := _rear()
 	var reason := "Foot haul: no completed Construction Office utility truck. "
@@ -111,7 +154,7 @@ func option(job: Dictionary, person: Dictionary, stock: Dictionary) -> Dictionar
 		for fuel_job in rear.vehicles.fuel_jobs.values():
 			if fuel_job.hull == row.id: fuel_pending = true
 		if fuel_pending: continue
-		var from := _curb(stock.position,row.id)
+		var from := _source_curb(stock,row.id)
 		var to := _curb(rear.ledger.inspect_entity(job.destination,{},false).position,row.id)
 		reason = "Foot haul: no clear construction-truck route/roadside handling point. "
 		if from.is_empty() or to.is_empty(): continue
@@ -123,14 +166,17 @@ func option(job: Dictionary, person: Dictionary, stock: Dictionary) -> Dictionar
 		var distance: float = Layout.length(first)+Layout.length(cargo)+Layout.length(back)
 		reason = "Foot haul: truck fuel insufficient; buy M08, then Vehicles > select construction truck > Carry purchased fuel into this tank using an available worker. "
 		if hull.fuel+EPS < distance/1000.0*rear.vehicles._fuel_rate("T01")*1.25: continue
-		var count: int = mini(stock.available,int(job.requested)-int(job.delivered)-rear._in_flight(job.id))
+		var count: int = int(job.requested)-int(job.delivered)-rear._in_flight(job.id)
 		count = mini(count,int(floor((float(hull.vehicle_spec.payload)-float(hull.contents_mass_kg))/float(stock.unit_mass_kg))))
 		count = mini(count,int(floor(rear._free_space(job.destination)/float(stock.unit_mass_kg))))
+		var batch := _source_batch(stock,count)
+		count = 0
+		for part: Dictionary in batch: count += int(part.count)
 		if count <= int(floor((25.0-float(worker.contents_mass_kg))/float(stock.unit_mass_kg))):
 			reason = "Foot haul: remaining available portion fits one personal carry, or bulk destination space is unavailable. "
 			continue
 		if not rear._valid_destination(job.destination,job.type,count*float(stock.unit_mass_kg)): continue
-		if best.is_empty() or distance < float(best.distance): best = {"job":job,"stock":stock,"count":count,"truck":row.office,"source_curb":from.position,"destination_curb":to.position,"first":first,"cargo_route":cargo,"back":back,"approach":approach,"distance":distance}
+		if best.is_empty() or distance < float(best.distance): best = {"job":job,"stock":stock,"count":count,"batch":batch,"truck":row.office,"source_curb":from.position,"destination_curb":to.position,"first":first,"cargo_route":cargo,"back":back,"approach":approach,"distance":distance}
 	return best if not best.is_empty() else {"reason":reason}
 
 func start(actor: Dictionary, selected: Dictionary) -> void:
@@ -151,6 +197,7 @@ func start(actor: Dictionary, selected: Dictionary) -> void:
 	row.cargo_route = selected.cargo_route
 	row.back = selected.back
 	row.loaded = 0
+	row.batch_index = 0
 	row.delivered = 0
 	row.recovering = false
 	row.blocker = ""
@@ -226,9 +273,7 @@ func _recover(row: Dictionary, reason: String) -> void:
 	if row.recovering: return
 	var rear := _rear()
 	var actor: Dictionary = rear.actors[row.worker]
-	if not str(actor.load.get("claim","")).is_empty():
-		rear.ledger.release_claim(actor.load.claim)
-		actor.load.claim = ""
+	release_source_claims(actor)
 	row.recovering = true
 	row.motion = {}
 	row.deadline = INF
@@ -265,6 +310,14 @@ func _recover(row: Dictionary, reason: String) -> void:
 func settle() -> bool:
 	var rear := _rear()
 	var changed := false
+	var access_changed := _warehouse_dirty
+	_warehouse_dirty = false
+	var geometry_changed := false
+	if access_changed and rear.warehouse != null:
+		var actual: Array[Rect2] = rear.warehouse.obstacles()
+		geometry_changed = actual != _warehouse_obstacles
+		if geometry_changed: _warehouse_obstacles = actual.duplicate()
+
 	for office in rear.construction.instances.values():
 		if office.kind == "construction" and office.state == "Complete" and (not trucks.has(office.id) or not trucks[office.id].get("created",false)):
 			var profile: bool = CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
@@ -296,7 +349,11 @@ func settle() -> bool:
 		if not row.motion.is_empty() and not row.motion.get("driving",false):
 			var remaining_path: Array = [person.position]
 			remaining_path.append_array(row.motion.path.slice(1))
+			if geometry_changed:
+				_walk(row,row.phase,row.target,float(row.speed))
+				changed = true
 			for site in rear.construction.instances.values():
+				if rear.warehouse != null and rear.warehouse.modules.has(site.id): continue
 				if site.kind == "park" or site.state in ["Cancelled","Dismantled"]: continue
 				if rear.construction._path_hits(remaining_path,Rect2(site.center-site.size/2.0,site.size).grow(0.25)):
 					_walk(row,row.phase,row.target,float(row.speed))
@@ -306,12 +363,16 @@ func settle() -> bool:
 		if not row.recovering and (not office_active or job.cancelled or person.pending_assignment != "None" or (int(actor.load.count)>0 and not destination_active) or not rear.stores[actor.load.source].accessible or not rear._valid_destination(actor.load.destination,actor.load.type,float(actor.load.mass),actor.id)):
 			_recover(row,"Construction truck stopped: office/site/worker/access changed; real cargo retained for safe unloading.")
 			changed = true
+		if row.phase == "Load access" and access_changed:
+			_next_load(row)
+			changed = row.phase != "Load access" or changed
 		if float(row.deadline) <= rear.time+EPS:
 			row.motion = {}
 			row.deadline = INF
 			_finish(row)
 			changed = true
 		elif row.motion.is_empty() and float(row.deadline) == INF and row.has("target") and row.phase in ["Approach truck","Load approach","Carry load","Carry unload","Unload return","Return cab","Recovery return","Recovery carry"]:
+			if rear.warehouse != null and not access_changed: continue
 			var path: Array = rear.walk_path(rear.ledger.inspect_entity(row.worker,{},false).position,row.target)
 			if not path.is_empty():
 				_walk(row,row.phase,row.target,float(row.speed))
@@ -336,11 +397,24 @@ func _next_load(row: Dictionary) -> void:
 	var rear := _rear()
 	var actor: Dictionary = rear.actors[row.worker]
 	if int(row.loaded) >= int(actor.load.count):
-		if not str(actor.load.claim).is_empty(): rear.ledger.release_claim(actor.load.claim)
-		actor.load.claim = ""
+		release_source_claims(actor)
 		_wait(row,"Board delivery",3.0)
-	else:
-		_walk(row,"Load approach",rear.ledger.inspect_entity(actor.load.stock,{},false).position,1.5)
+		return
+	if actor.load.has("batch"):
+		var part: Dictionary = actor.load.batch[int(row.batch_index)]
+		actor.load.stock = str(part.stock)
+		actor.load.claim = str(part.claim)
+	var stock: Dictionary = rear.ledger.inspect_entity(actor.load.stock,{},false)
+	var point: Vector2 = rear.stock_work_point(str(row.worker),stock,true) if rear.warehouse != null else stock.position
+	if not point.is_finite() or rear.walk_path(rear.ledger.inspect_entity(row.worker,{},false).position,point).is_empty():
+		row.phase = "Load access"
+		row.motion = {}
+		row.deadline = INF
+		row.blocker = "Waiting for the reserved shelf handling face; cargo remains on its shelf."
+		if rear.warehouse != null: rear.warehouse.release_point(str(row.worker))
+		return
+	row.blocker = ""
+	_walk(row,"Load approach",point,1.5)
 
 func _next_unload(row: Dictionary) -> void:
 	var rear := _rear()
@@ -369,9 +443,11 @@ func _finish(row: Dictionary) -> void:
 			var person: Dictionary = rear.ledger.inspect_entity(row.worker)
 			var stock: Dictionary = rear.ledger.inspect_entity(actor.load.stock)
 			var count: int = mini(int(actor.load.count)-int(row.loaded),int(floor((25.0-float(person.contents_mass_kg))/float(stock.unit_mass_kg))))
+			if actor.load.has("batch"): count = mini(count,int(actor.load.batch[int(row.batch_index)].count))
 			result = rear.ledger.begin_carry(row.worker,actor.load.stock,count,actor.load.claim)
 			if result.ok:
 				actor.load.carried = result.entity_id
+				if rear.warehouse != null: rear.warehouse.release_point(str(row.worker))
 				_walk(row,"Carry load",rear.ledger.inspect_entity(row.id,{},false).position,1.2)
 		"Carry load": _wait(row,"Load drop",2.0)
 		"Load drop":
@@ -379,6 +455,14 @@ func _finish(row: Dictionary) -> void:
 			result = rear.ledger.finish_carry_to_carrier(row.worker,row.id)
 			if result.ok:
 				row.loaded += int(carried.quantity)
+				if actor.load.has("batch"):
+					var part: Dictionary = actor.load.batch[int(row.batch_index)]
+					part.count -= int(carried.quantity)
+					if int(part.count) <= 0:
+						rear.ledger.release_claim(str(part.claim))
+						part.claim = ""
+						actor.load.claim = ""
+						row.batch_index += 1
 				actor.load.carried = ""
 				_next_load(row)
 		"Board delivery":
@@ -433,7 +517,7 @@ func _release(row: Dictionary) -> void:
 		_block(row,str(released.message))
 		return
 	var actor: Dictionary = rear.actors[worker]
-	if not str(actor.load.get("claim","")).is_empty(): rear.ledger.release_claim(actor.load.claim)
+	release_source_claims(actor)
 	actor.load = {}
 	actor.phase = "Idle"
 	actor.deadline = INF

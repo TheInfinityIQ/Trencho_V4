@@ -1,0 +1,350 @@
+{
+  "pass": true,
+  "floor_bounds": [
+    [
+      -6.0,
+      -8.0,
+      -0.20000000298023224
+    ],
+    [
+      6.0,
+      8.0,
+      0.0
+    ]
+  ],
+  "general_roof_solid_min_m": 4.700000286102295,
+  "lamp_solid_min_m": 4.5,
+  "light_anchor_emission_y_m": 4.45,
+  "light_anchor_note": "Empty emission point, not solid fixture underside. Actual solid min checked>=4.5m.",
+  "clear_portal_W_H_m": [
+    4,
+    4
+  ],
+  "portal_proxy_intrusions": [],
+  "collision_proxies": [
+    {
+      "name": "Floor_Collider-colonly",
+      "group": "Floor",
+      "bounds_blender_xyz_m": [
+        [
+          -6.0,
+          -8.0,
+          -0.20000000298023224
+        ],
+        [
+          6.0,
+          8.0,
+          0.0
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Column_Collider_-5.85_-7.85-colonly",
+      "group": "Shared_Frame",
+      "bounds_blender_xyz_m": [
+        [
+          -6.0,
+          -8.0,
+          0.0
+        ],
+        [
+          -5.699999809265137,
+          -7.699999809265137,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Column_Collider_-5.85_7.85-colonly",
+      "group": "Shared_Frame",
+      "bounds_blender_xyz_m": [
+        [
+          -6.0,
+          7.699999809265137,
+          0.0
+        ],
+        [
+          -5.699999809265137,
+          8.0,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Column_Collider_5.85_-7.85-colonly",
+      "group": "Shared_Frame",
+      "bounds_blender_xyz_m": [
+        [
+          5.699999809265137,
+          -8.0,
+          0.0
+        ],
+        [
+          6.0,
+          -7.699999809265137,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Column_Collider_5.85_7.85-colonly",
+      "group": "Shared_Frame",
+      "bounds_blender_xyz_m": [
+        [
+          5.699999809265137,
+          7.699999809265137,
+          0.0
+        ],
+        [
+          6.0,
+          8.0,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "North_Wall_Collider-colonly",
+      "group": "Boundary_Back",
+      "bounds_blender_xyz_m": [
+        [
+          -5.699999809265137,
+          -8.0,
+          0.0
+        ],
+        [
+          5.699999809265137,
+          -7.800000190734863,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Boundary_East_Wall_Collider-colonly",
+      "group": "Boundary_Right",
+      "bounds_blender_xyz_m": [
+        [
+          5.800000190734863,
+          -7.699999809265137,
+          0.0
+        ],
+        [
+          6.0,
+          7.699999809265137,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Boundary_West_Wall_Collider-colonly",
+      "group": "Boundary_Left",
+      "bounds_blender_xyz_m": [
+        [
+          -6.0,
+          -7.699999809265137,
+          0.0
+        ],
+        [
+          -5.800000190734863,
+          7.699999809265137,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Front_Wall_Collider_-1-colonly",
+      "group": "Boundary_Front",
+      "bounds_blender_xyz_m": [
+        [
+          -5.699999809265137,
+          7.800000190734863,
+          0.0
+        ],
+        [
+          -2.25,
+          8.0,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Portal_Jamb_Collider_-1-colonly",
+      "group": "Boundary_Front",
+      "bounds_blender_xyz_m": [
+        [
+          -2.25,
+          7.699999809265137,
+          0.0
+        ],
+        [
+          -2.0,
+          8.0,
+          4.0
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Front_Wall_Collider_1-colonly",
+      "group": "Boundary_Front",
+      "bounds_blender_xyz_m": [
+        [
+          2.25,
+          7.800000190734863,
+          0.0
+        ],
+        [
+          5.699999809265137,
+          8.0,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Portal_Jamb_Collider_1-colonly",
+      "group": "Boundary_Front",
+      "bounds_blender_xyz_m": [
+        [
+          2.0,
+          7.699999809265137,
+          0.0
+        ],
+        [
+          2.25,
+          8.0,
+          4.0
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Portal_Header_Collider-colonly",
+      "group": "Boundary_Front",
+      "bounds_blender_xyz_m": [
+        [
+          -2.25,
+          7.699999809265137,
+          3.999999761581421
+        ],
+        [
+          2.25,
+          8.0,
+          4.899999618530273
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Slope_0-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          -6.0,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          -2.299999952316284,
+          7.980000019073486,
+          5.699999809265137
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Return_0-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          -2.299999952316284,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          -2.0,
+          7.980000019073486,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Slope_1-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          -2.0,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          1.7000000476837158,
+          7.980000019073486,
+          5.699999809265137
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Return_1-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          1.7000000476837158,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          2.0,
+          7.980000019073486,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Slope_2-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          2.0,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          5.699999809265137,
+          7.980000019073486,
+          5.699999809265137
+        ]
+      ],
+      "exported": false
+    },
+    {
+      "name": "Roof_Return_2-colonly",
+      "group": "Roof",
+      "bounds_blender_xyz_m": [
+        [
+          5.699999809265137,
+          -7.980000019073486,
+          4.820000171661377
+        ],
+        [
+          6.0,
+          7.980000019073486,
+          4.900000095367432
+        ]
+      ],
+      "exported": false
+    }
+  ],
+  "collision_policy": "Source/reference geometry only, NOT exported; Lead owns actual runtime fixed-rectangle primitives. No whole-building hull."
+}

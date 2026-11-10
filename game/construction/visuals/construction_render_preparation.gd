@@ -3,6 +3,7 @@ extends CanvasLayer
 const Appearance = preload("res://game/construction/visuals/construction_appearance.gd")
 const Shells = preload("res://game/preview_3d/facility_shells.gd")
 const TruckArt = preload("res://game/preview_3d/t01_presentation.gd")
+const WarehouseAssets = preload("res://game/warehousing/warehouse_assets.gd")
 var elapsed_usec := 0
 var resources: Array[Resource] = []
 
@@ -60,7 +61,33 @@ func prepare(camera: Camera3D) -> void:
 	stage.add_child(truck)
 	truck.scale = Vector3.ONE*TruckArt.MODEL_SCALE
 	truck.position = Vector3(10,1,0)
+	_prepare_warehouse(stage)
 	await RenderingServer.frame_post_draw
 	elapsed_usec = Time.get_ticks_usec()-started
 	stage.queue_free()
 	queue_free()
+
+func _prepare_warehouse(stage: Node3D) -> void:
+	# Both real opaque/glass/emissive materials and construction variants are
+	# drawn behind the existing cover. No modules, fixtures or stock are granted.
+	for index in 2:
+		var exterior: Dictionary = WarehouseAssets.shell({"quarter_turn":false,"door":Vector2(0,9),"center":Vector2.ZERO})
+		if not exterior.ok: continue
+		var shell: Node3D = exterior.node
+		stage.add_child(shell)
+		shell.position = Vector3(-8.0+16.0*index,0,-8)
+		if index == 1:
+			var prepared: Dictionary = Appearance.prepare(stage,shell,exterior.bounds)
+			for material: ShaderMaterial in prepared.materials:
+				material.set_shader_parameter("progress",0.5)
+				resources.append(material)
+	for file: String in ["warehouse_crate_rack.glb","warehouse_long_stock_rack.glb","small_crate.glb","medium_crate.glb","metal_stock.glb","closed_keg.glb","timber_bundle.glb","textile_bale.glb","fuel_can.glb"]:
+		var model := WarehouseAssets.model(file)
+		if model == null: continue
+		stage.add_child(model)
+		model.position = Vector3(-10.0+2.5*float(model.get_index()%9),1,4)
+	var light := OmniLight3D.new()
+	stage.add_child(light)
+	light.position = Vector3(0,4,0)
+	light.omni_range = 20.0
+	light.shadow_enabled = false

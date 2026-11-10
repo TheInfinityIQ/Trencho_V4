@@ -7,6 +7,7 @@ signal supplier_state_changed
 const Ledger = preload("res://game/identity/identity_ledger.gd")
 const Records = preload("res://game/identity/identity_records.gd")
 const Catalog = preload("res://game/procurement/resource_catalog.gd")
+const Packages = preload("res://game/warehousing/material_packages.gd")
 const PLAYER := "army-blue"
 const SUPPLIER := "supplier"
 const FREIGHT_LIMIT: int = 11
@@ -48,6 +49,52 @@ var _orders: Array[Dictionary] = []
 var _workers: Dictionary[String, Dictionary] = {}
 var _walks: Array[Dictionary] = []
 var _events: Array[Dictionary] = []
+var warehouse: RefCounted
+var _storage_attempts: Dictionary = {}
+var _storage_warning_dirty := false
+
+func bind_warehouse(owner: RefCounted) -> void:
+	warehouse = owner
+	var service_ref: WeakRef = weakref(self)
+	warehouse.space_changed.connect(func() -> void:
+		var service: RefCounted = service_ref.get_ref()
+		if service != null: service._warehouse_changed())
+
+func _warehouse_changed() -> void:
+	# Queue a boundary; never run the simulation inside a Ledger/Area3D signal.
+	for worker: Dictionary in _workers.values():
+		var job: Dictionary = worker.job
+		if not job.is_empty() and job.phase in ["Storage blocked","Storage access"]: job.ends_at = _time
+	_storage_warning_dirty = true
+	supplier_state_changed.emit()
+
+func _refresh_storage_warnings() -> void:
+	for order: Dictionary in _active_suppliers.values():
+		if order.kind != "Freight" or order.state != "Berthed": continue
+		var preparing := false
+		var blocked := false
+		for worker: Dictionary in _workers.values():
+			var job: Dictionary = worker.job
+			if job.get("order_id","") != order.id: continue
+			if job.phase in ["Storage approach","Preparing storage","Storage settling"]: preparing = true
+			if job.phase == "Storage blocked": blocked = true
+		var has_cargo := false
+		var has_space := false
+		for source_id: String in order.stock_ids:
+			var available: int = ledger.available(source_id)
+			if available <= 0: continue
+			has_cargo = true
+			var code: String = str(ledger.inspect_entity(source_id,{},false).design_type)
+			var state: String = warehouse.physical_space_status(code,mini(available,Packages.capacity(code)))
+			if state in ["Ready","Unprepared"]: has_space = true
+			elif state == "Preparing": preparing = true
+		var message: String = str(order.get("storage_warning",""))
+		if preparing: message = "Preparing storage — haulers are preparing positions"
+		elif has_cargo and not has_space: message = "Warehouse full — free storage or expand"
+		elif not blocked and (not has_cargo or message.begins_with("Warehouse full") or message.begins_with("Preparing storage")): message = ""
+		if message != str(order.get("storage_warning","")):
+			order.storage_warning = message
+			supplier_state_changed.emit()
 
 
 func _init(shared_ledger: RefCounted = null) -> void:
@@ -124,7 +171,7 @@ func _begin_convoy(created: Array[Dictionary]) -> void:
 func supplier_vehicle_views() -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	for order: Dictionary in _active_suppliers.values():
-		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"position":ledger._world_position(order.id),"facing_degrees":0.0})
+		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"position":ledger._world_position(order.id),"facing_degrees":0.0,"storage_warning":str(order.get("storage_warning",""))})
 	return rows
 
 func requisition_balance() -> float:
@@ -419,6 +466,7 @@ func remove_freight_berth(site: String) -> Dictionary:
 	return _reject("NO_BERTH","No such physical Receiving berth.")
 
 func free_receiving_kg(slot: int = 0) -> int:
+	if warehouse != null: return int(warehouse.free_net_kg())
 	if slot < 0 or slot >= freight_berths.size(): return 0
 	var physical_room := STORAGE_KG - receiving_kg(slot) - reserved_storage_kg(slot)
 	if receiving_room.is_valid():
@@ -505,8 +553,13 @@ func audit() -> Array[String]:
 		failures.append("Vehicle admission overbooked")
 	if rear_population() + incoming_people() + _outside_rear_places() > REAR_LIMIT:
 		failures.append("Rear population overbooked")
-	for index in freight_berths.size():
-		if receiving_kg(index) + reserved_storage_kg(index) > STORAGE_KG: failures.append("Receiving storage overbooked")
+	if warehouse != null:
+		var promised := 0
+		for promise: Dictionary in warehouse.reservations.values(): promised += int(promise.quantity)
+		if int(ledger.loose_stock_mass_at("receiving"))+promised > int(warehouse.structural_capacity()): failures.append("Warehouse net stock capacity overbooked")
+	else:
+		for index in freight_berths.size():
+			if receiving_kg(index) + reserved_storage_kg(index) > STORAGE_KG: failures.append("Receiving storage overbooked")
 	if not is_equal_approx(_money, 2500.0 + _income - _spent + _refunds):
 		failures.append("Money does not reconcile")
 	var pending_recovery := 0
@@ -600,6 +653,9 @@ func _pump() -> void:
 		for id in _workers:
 			if not _workers[id].get("shared",false) and _workers[id].job.is_empty() and _start_worker_job(id):
 				again = true
+		if warehouse != null and _storage_warning_dirty:
+			_storage_warning_dirty = false
+			_refresh_storage_warnings()
 
 
 func _dispatch(order: Dictionary) -> void:
@@ -675,7 +731,11 @@ func _start_worker_job(id: String) -> bool:
 		var duty: String = ledger.inspect_entity(id).duty_id
 		if not _workers[id].get("shared",false) and duty != berth.duty and not (slot == 0 and duty == "Receiving"): continue
 		var room := free_receiving_kg(slot)
-		if room <= 0: continue
+		if room <= 0:
+			if warehouse != null and order.get("storage_warning","") != "Warehouse full — free storage or expand it":
+				order.storage_warning = "Warehouse full — free storage or expand it"
+				supplier_state_changed.emit()
+			continue
 		for source_id in order.stock_ids:
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
 			if quantity <= 0:
@@ -685,14 +745,38 @@ func _start_worker_job(id: String) -> bool:
 			if not pickup_at.is_finite(): continue
 			var approach: Array = _worker_path(origin,pickup_at)
 			if approach.is_empty(): continue
+			var storage := {}
+			if warehouse != null:
+				var attempt_key := "%s/%s/%s" % [id,order.id,source_id]
+				if int(_storage_attempts.get(attempt_key,-1)) == int(warehouse.revision): continue
+				var code: String = str(ledger.inspect_entity(source_id,{},false).design_type)
+				quantity = mini(quantity,Packages.capacity(code))
+				storage = warehouse.reserve(id,code,quantity,true,true)
+				if not storage.ok:
+					_storage_attempts[attempt_key] = warehouse.revision
+					if order.get("storage_warning","") != str(storage.message):
+						order.storage_warning = str(storage.message)
+						supplier_state_changed.emit()
+					continue
 			_job_sequence += 1
 			var claim_id := "receiving-job-%04d" % _job_sequence
-			_must(ledger.request_stock(claim_id, source_id, quantity, id, "Physical Receiving unload", PLAYER))
+			var claimed: Dictionary = ledger.request_stock(claim_id, source_id, quantity, id, "Physical Receiving unload", PLAYER)
+			if not claimed.ok:
+				if not storage.is_empty(): warehouse.release(str(storage.id))
+				continue
 			var job := {"order_id": order.id, "source_id": source_id, "quantity": quantity,
 				"code": ledger.inspect_entity(source_id).design_type, "claim_id": claim_id,
 				"phase": "Approach", "started_at": _time, "slot":slot,"destination":berth.store}
 			job.path = approach
 			job.ends_at = _time + _path_length(job.path) / 1.5
+			if not storage.is_empty():
+				job.storage = str(storage.id)
+				job.destination = "receiving"
+				order.storage_warning = "Preparing storage" if storage.prepare else ""
+				if storage.prepare:
+					job.phase = "Storage approach"
+					job.path = _worker_path(origin,storage.point)
+					job.ends_at = _time+_path_length(job.path)/1.5
 			_workers[id].job = job
 			_event("Reserved source and destination before walking to pickup", claim_id)
 			return true
@@ -702,14 +786,46 @@ func _start_worker_job(id: String) -> bool:
 func _finish_worker_phase(id: String) -> void:
 	var job: Dictionary = _workers[id].job
 	match job.phase:
+		"Storage approach", "Storage blocked":
+			job.path = []
+			var prepared: Dictionary = warehouse.begin_preparation(str(job.storage))
+			if not prepared.ok:
+				job.phase = "Storage blocked"
+				job.ends_at = INF
+				_find_order(job.order_id).storage_warning = str(prepared.message)
+			elif prepared.ready:
+				_approach_truck(id,job)
+			else:
+				job.phase = "Preparing storage"
+				job.started_at = _time
+				job.ends_at = _time+0.75
+			_event("Real worker reached shelf site before fixture appearance",id)
+		"Preparing storage":
+			if warehouse.reveal_preparation(str(job.storage)):
+				job.phase = "Storage settling"
+				job.ends_at = _time+0.75
+			else:
+				job.phase = "Storage blocked"
+				job.ends_at = INF
+		"Storage settling":
+			if warehouse.finish_preparation(str(job.storage)): _approach_truck(id,job)
+			else:
+				job.phase = "Storage blocked"
+				job.ends_at = INF
+				_find_order(job.order_id).storage_warning = "Shelf site occupied — waiting for clearance"
 		"Approach":
 			job.phase = "Pickup"
 			job.started_at = _time
 			job.ends_at = _time + 2.0
 			job.path = []
-		"Pickup":
+		"Pickup", "Storage access":
+			if job.has("storage") and not warehouse.acquire_access(str(job.storage)):
+				job.phase = "Storage access"
+				job.ends_at = INF
+				_find_order(job.order_id).storage_warning = "Waiting for clear shelf access"
+				return # Source claim stays aboard; no carry until a safe face is held.
 			var origin: Vector2 = ledger.inspect_entity(id,{},false).position
-			var destination: Vector2 = work_point.call(id,job.destination) if work_point.is_valid() else freight_berths[job.slot].receiving_position
+			var destination: Vector2 = warehouse.destination_point(str(job.storage)) if job.has("storage") else work_point.call(id,job.destination) if work_point.is_valid() else freight_berths[job.slot].receiving_position
 			var path: Array = _worker_path(origin,destination) if destination.is_finite() else []
 			if path.is_empty():
 				job.ends_at = _time+PASSENGER_EXIT_SECONDS
@@ -725,12 +841,30 @@ func _finish_worker_phase(id: String) -> void:
 			job.started_at = _time
 			job.ends_at = _time + 2.0
 		"Drop":
-			_must(ledger.finish_carry(id, job.destination))
+			var deposited: Dictionary = ledger.finish_carry(id, job.destination)
+			_must(deposited)
+			if job.has("storage"): _must(warehouse.commit(str(job.storage),str(deposited.entity_id)))
 			var order := _find_order(job.order_id)
 			order.unloaded[job.code] = order.unloaded.get(job.code, 0) + job.quantity
 			_must(ledger.release_claim(job.claim_id))
 			_workers[id].job = {}
 			_event("Actual carried stock deposited; destination reservation consumed once", id)
+
+func _approach_truck(id: String, job: Dictionary) -> void:
+	var order: Dictionary = _find_order(job.order_id)
+	var pickup: Vector2 = work_point.call(id,order.id) if work_point.is_valid() else freight_berths[job.slot].berth
+	var origin: Vector2 = ledger.inspect_entity(id,{},false).position
+	var path: Array = _worker_path(origin,pickup) if pickup.is_finite() else []
+	if path.is_empty():
+		job.phase = "Storage blocked"
+		job.ends_at = INF
+		order.storage_warning = "Route blocked"
+		return
+	job.phase = "Approach"
+	job.path = path
+	job.started_at = _time
+	job.ends_at = _time+_path_length(path)/1.5
+	order.storage_warning = ""
 
 
 func _sync_workers() -> void:
@@ -744,6 +878,7 @@ func _sync_workers() -> void:
 		if not still_assigned or person.pending_assignment != "None":
 			if not job.is_empty():
 				_must(ledger.release_claim(job.claim_id))
+				if job.has("storage"): warehouse.release(str(job.storage))
 			_workers.erase(id)
 
 
@@ -802,6 +937,7 @@ func _order_blocker(order: Dictionary) -> String:
 			return "All passengers exited; remaining walks to Personnel still reserve incoming places"
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"
 		"Berthed":
+			if warehouse != null and not str(order.get("storage_warning","")).is_empty(): return str(order.storage_warning)
 			if _workers.is_empty(): return "Waiting for free hauling/unloading workers, a safe route, or higher-priority work to finish"
 			if free_receiving_kg(order.slot) <= 0: return "Receiving storage full or reserved; remainder stays aboard"
 			return "Unloaders must approach, pick up, carry and deposit real freight"
@@ -826,6 +962,7 @@ func _find_order(id: String) -> Dictionary:
 
 func _set_state(order: Dictionary, state: String) -> void:
 	order.state = state
+	if warehouse != null: _storage_warning_dirty = true
 	order.state_entered_at = _time
 	if development_convoys:
 		if state in ["Departing","Complete","Cancelled"] and _convoy_pending.has(order.id):
@@ -888,6 +1025,7 @@ func _motion_position(motion: Dictionary) -> Vector2:
 
 func _event(description: String, id: String) -> void:
 	_events.append({"time": _time, "id": id, "description": description})
+	if warehouse != null: supplier_state_changed.emit()
 
 
 func _must(result: Dictionary) -> void:

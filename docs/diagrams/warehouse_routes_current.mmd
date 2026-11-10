@@ -1,0 +1,20 @@
+flowchart TD
+  Stock[Actual warehouse stock cells] --> Estimate[Pure geometric pick + delivery estimate]
+  Estimate --> Select[Try nearest estimated source first / stable IDs]
+  Select --> Clear{Actual availability / access / capacity valid?}
+  Clear -->|no| Select
+  Clear -->|yes| Route[Same current physical geometry]
+  Route --> Direct{Straight segment clear?}
+  Direct -->|yes| Use[Use first physically feasible warehouse source]
+  Direct -->|no| Cache{Exact endpoint query in unchanged geometry?}
+  Cache -->|yes| Detached[Detached previously guarded path]
+  Cache -->|no| Native[Godot native uniform0.5m jump search]
+  Native --> Guard[Exact endpoint and segment clearance]
+  Guard -->|valid| Save[Bounded geometry-query reuse / approved smoothing]
+  Guard -->|unsupported| Legacy[Existing conservative visibility fallback]
+  Detached --> Use
+  Save --> Use
+  Legacy --> Use
+  Use --> Claim[Actual final source/destination/worker reservation]
+  Changed[Actual geometry changes] --> Invalidate[Invalidate native mask/query reuse]
+  Invalidate --> Route

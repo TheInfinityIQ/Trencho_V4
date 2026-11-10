@@ -27,6 +27,7 @@ const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const ConstructionSiteVisual = preload("res://game/construction/visuals/construction_site_visual.gd")
+const WarehouseView = preload("res://game/warehousing/warehouse_view.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 var rear_workers: RearWorkers = RearWorkers.new()
 var utility_trucks: UtilityTrucks = UtilityTrucks.new()
@@ -63,6 +64,7 @@ var _site_snapshot: Dictionary = {}
 var _site_visuals: Dictionary = {}
 var _facility_shells: RefCounted = FacilityShells.new()
 var _character_speed := -1
+var warehouse_view: Node3D
 
 func build(model: RefCounted, pose: RefCounted) -> void:
 	simulation = model
@@ -121,6 +123,11 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_objectives.removing.connect(_field_objective_removing)
 	field_objectives.bind(model.rear.combat.world.ground)
 	rear_root.add_child(_collision_root)
+	if model.rear.warehouse != null:
+		_facility_shells.warehouse_enabled = true
+		warehouse_view = WarehouseView.new()
+		_collision_root.add_child(warehouse_view)
+		warehouse_view.bind(self,model)
 	footprint = _box(rear_root,Vector3.ZERO,Vector3.ONE,Color(0.3,0.9,0.65,0.45))
 	door = _box(rear_root,Vector3.ZERO,Vector3(1.5,0.15,1.5),Color("f4cd7c"))
 	clear_preview()
@@ -239,6 +246,7 @@ func _add_character(parent: Node3D, kind: String) -> Node3D:
 func sync_character_playback() -> void:
 	if _character_speed == simulation.speed: return
 	_character_speed = simulation.speed
+	if warehouse_view != null: warehouse_view.sync_speed()
 	rear_workers.sync_playback()
 	field_persons.sync_playback()
 	for visual: Node3D in _site_visuals.values():
@@ -342,8 +350,8 @@ func _build_terrain() -> void:
 func refresh_rear() -> bool:
 	var contents: Dictionary = simulation.rear.ledger.loose_stock_summary("receiving",simulation.rear.PLAYER).contents
 	var count: int = int(contents.get("M11",{}).get("quantity",0))
-	stock_label.text = "%d M11 · representative bundles" % count
-	for index in stock_visuals.size(): stock_visuals[index].visible = index < mini(5,ceili(float(count)/100.0))
+	stock_label.text = "%d Building Materials · stored in Supply Depot" % count if warehouse_view != null else "%d M11 · representative bundles" % count
+	for index in stock_visuals.size(): stock_visuals[index].visible = warehouse_view == null and index < mini(5,ceili(float(count)/100.0))
 	# Committed site geometry only; unrelated economy/combat events must not
 	# replace physics bodies or perpetually invalidate a stationary candidate.
 	var next: Dictionary = {}
@@ -352,6 +360,7 @@ func refresh_rear() -> bool:
 		# Earned work/completion do not change the reserved shape. The keyed
 		# site visual already receives those states without rebuilding colliders.
 		var geometry_state: String = str(row.state) if row.state in ["Cancelled","Dismantled","Clearing","Dismantling"] else "Reserved"
+		if simulation.rear.warehouse != null and simulation.rear.warehouse.modules.has(row.id): geometry_state = "Warehouse"
 		next[row.id] = [row.center,row.size,geometry_state,goods,row.kind,row.door,row.quarter_turn]
 	if next == _site_snapshot: return false
 	_site_snapshot = next
@@ -373,7 +382,8 @@ func refresh_rear() -> bool:
 				_label(_collision_root,"%s · %s · goods await hauling" % [row.id,row.state],Vector3(row.center.x,1.5,row.center.y),0.02)
 			continue
 		var exterior: Dictionary = _site_visuals[row.id].exterior if _site_visuals.has(row.id) else _facility_shells.build(row,true)
-		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),row.kind != "park")
+		var is_warehouse: bool = simulation.rear.warehouse != null and simulation.rear.warehouse.modules.has(row.id)
+		var reservation: MeshInstance3D = _box(_collision_root,Vector3(row.center.x,1.5,row.center.y),Vector3(row.size.x,3,row.size.y),Color("8a8b7b"),row.kind != "park" and not is_warehouse)
 		reservation.set_meta("site_id",str(row.id))
 		var label_at: Vector3 = Vector3(row.center.x,4.5,row.center.y)
 		var description: String = "provisional volume"
@@ -390,7 +400,8 @@ func refresh_rear() -> bool:
 				_site_visuals[row.id] = visual
 				_collision_root.add_child(visual)
 			else: _site_visuals[row.id].reconcile()
-			_mark_facility_approach(row,exterior.entrance)
+			if is_warehouse: warehouse_view._request_refresh(str(row.id))
+			else: _mark_facility_approach(row,exterior.entrance)
 			continue # The persistent visual owns its progress label and ceremony.
 		elif row.state == "Complete":
 			description += " · " + str(exterior.reason)

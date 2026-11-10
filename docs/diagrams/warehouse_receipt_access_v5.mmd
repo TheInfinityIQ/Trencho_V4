@@ -1,0 +1,12 @@
+flowchart TD
+  Claim[Reserve exact free cell + netkg + source claim] --> Ready{Fixture ready?}
+  Ready -->|no| Prepare[Real worker visit / clear site / reused smoke]
+  Prepare --> Pickup[Actual truck pickup boundary]
+  Ready -->|yes| Pickup
+  Pickup --> Access{Safe shelf service face available?}
+  Access -->|yes| Carry[Acquire face / actual Ledger pickup / walk and deposit]
+  Access -->|no| Wait[Wait before pickup / goods remain aboard / cell promise retained]
+  Event[Specific blocker clears / promise released / actual topology change] --> Wait
+  Wait -->|event schedules boundary| Access
+  Carry --> Commit[One real deposit / consume cell promise / release face]
+  Commit --> Event

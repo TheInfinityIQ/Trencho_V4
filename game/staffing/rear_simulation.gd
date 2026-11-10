@@ -9,6 +9,7 @@ const Layout = preload("res://game/staffing/rear_layout.gd")
 const Yard = preload("res://game/staffing/yard_activity.gd")
 const WorkPositions = preload("res://game/staffing/rear_work_positions.gd")
 const HaulingPolicy = preload("res://game/staffing/hauling_policy.gd")
+const Packages = preload("res://game/warehousing/material_packages.gd")
 const PRIORITIES: Array[String] = ["Low", "Normal", "High", "Emergency"]
 const PLAYER := "army-blue"
 const EPS := 0.000001
@@ -17,6 +18,7 @@ var ledger := Ledger.new()
 const SUPPLY_TABLE := Vector2(120,186)
 const SUPPLY_TABLE_ACCESS := SUPPLY_TABLE+WorkPositions.ACCESS_OFFSET
 var empty_field_opening := false
+var warehouse: RefCounted
 var work_positions: RefCounted
 var hauling_policy: RefCounted
 var yard: RefCounted
@@ -241,6 +243,8 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 
 
 func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
+	if warehouse != null and id == "receiving":
+		return _result(false,"Supply Depot storage comes from completed warehouse modules and usable shelves. Free space or build an expansion.")
 	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
 	if receiving != null and id == "receiving":
@@ -472,7 +476,32 @@ func walk_path(origin: Vector2, destination: Vector2) -> Array:
 	return Layout.path(origin,destination)
 
 func work_point(person: String, holder: String, reserve: bool = true) -> Vector2:
+	if warehouse != null and holder == "receiving":
+		var point: Vector2 = warehouse.work_point(person)
+		if point.is_finite(): return point
 	return work_positions.point(person,holder,reserve) if work_positions != null else ledger.inspect_entity(holder,{},false).position
+
+func stock_work_point(person: String, stock: Dictionary, reserve: bool = false) -> Vector2:
+	if warehouse != null and stock.holder_id == "receiving":
+		return warehouse.stock_point(str(stock.id),person,reserve)
+	return work_point(person,str(stock.holder_id),reserve)
+
+func warehouse_space_changed() -> void:
+	if vehicles != null: vehicles.warehouse_access_changed()
+	if construction != null: construction.trucks.warehouse_access_changed()
+	for actor: Dictionary in actors.values():
+		if actor.phase == "Warehouse wait": actor.deadline = time
+
+func _warehouse_approach_source(actor: Dictionary) -> void:
+	var stock: Dictionary = ledger.inspect_entity(actor.load.stock,{},false)
+	var point := stock_work_point(str(actor.id),stock,true)
+	var origin: Vector2 = ledger.inspect_entity(actor.id,{},false).position
+	var path: Array = walk_path(origin,point) if point.is_finite() else []
+	if path.is_empty():
+		actor.phase = "Warehouse wait"
+		actor.deadline = INF
+		_job(actor.load.job).blocker = "Route blocked; cargo remains at source"
+	else: _move(actor,"Approach",path,1.5)
 
 func _rebalance(player_edit: bool = false, fill_released: bool = true) -> void:
 	# Plan counts by priority/share/age using actual eligible people, then retain
@@ -751,6 +780,16 @@ func _sync_receiving_people() -> void:
 			added = true
 	for a in actors.values():
 		if a.phase == "Unloading" and not receiving._workers.has(a.id):
+			var status: Dictionary = ledger.inspect_person_status(a.id)
+			if warehouse != null and status.duty_id == "hauling" and status.pending_assignment == "None":
+				# A finished warehouse deposit is already a safe handoff. The
+				# same hauler can select work here instead of reporting to the
+				# distant Table between every truck-to-shelf trip.
+				if work_positions != null: work_positions.release(a.id)
+				a.phase = "Idle"
+				a.motion = {}
+				a.deadline = INF
+				continue
 			_report(a)
 			# Match hauling: a released Available person fills outstanding targets;
 			# a specific requested destination retains its direct handoff.
@@ -774,6 +813,30 @@ func _finish_phase(a: Dictionary) -> void:
 		ledger.move_entity(a.id, "rear", a.motion.path.back())
 	a.motion = {}
 	match a.phase:
+		"Clearing warehouse access":
+			a.phase = "Idle"
+		"Warehouse visit", "Warehouse wait":
+			var prepared: Dictionary = warehouse.begin_preparation(str(a.load.storage))
+			if not prepared.ok:
+				a.phase = "Warehouse wait"
+				a.deadline = INF
+				_job(a.load.job).blocker = str(prepared.message)
+			elif prepared.ready: _warehouse_approach_source(a)
+			else:
+				a.phase = "Warehouse smoke"
+				a.deadline = time+0.75
+		"Warehouse smoke":
+			if warehouse.reveal_preparation(str(a.load.storage)):
+				a.phase = "Warehouse settle"
+				a.deadline = time+0.75
+			else:
+				a.phase = "Warehouse wait"
+				a.deadline = INF
+		"Warehouse settle":
+			if warehouse.finish_preparation(str(a.load.storage)): _warehouse_approach_source(a)
+			else:
+				a.phase = "Warehouse wait"
+				a.deadline = INF
 		"Reporting":
 			if ledger.inspect_entity(a.id).duty_id == "yard":
 				var result: Dictionary = yard.board(a.id)
@@ -909,20 +972,40 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 	if best.is_empty():
 		return false
 	var job: Dictionary = best.job
-	var claim := "haul-claim-%04d" % _next()
-	var result: Dictionary = ledger.request_stock(claim, best.stock.id, best.count, a.id, job.id, PLAYER)
-	if not result.ok or ledger.inspect_claim(claim).reserved != best.count:
-		push_error("Atomic haul reservation failed: " + str(result))
-		return false
+	var storage := {}
+	if warehouse != null and job.destination == "receiving":
+		storage = warehouse.reserve(str(a.id),str(job.type),int(best.count))
+		if not storage.ok:
+			job.blocker = str(storage.message)
+			return false
+	var claim := ""
+	var batch: Array = best.get("batch",[{"stock":str(best.stock.id),"count":int(best.count),"claim":""}])
+	var admitted: Array[String] = []
+	for part: Dictionary in batch:
+		var reservation := "haul-claim-%04d" % _next()
+		var result: Dictionary = ledger.request_stock(reservation,part.stock,part.count,a.id,job.id,PLAYER)
+		if result.ok: admitted.append(reservation)
+		if not result.ok or ledger.inspect_claim(reservation).reserved != int(part.count):
+			for retained: String in admitted: ledger.release_claim(retained)
+			if not storage.is_empty(): warehouse.release(str(storage.id))
+			job.blocker = "Physical source changed before reservation; no partial trip admitted."
+			return false
+		part.claim = reservation
+		if claim.is_empty(): claim = reservation
 	a.load = {"job": job.id, "claim": claim, "stock": best.stock.id,
 		"source": best.stock.holder_id, "destination": job.destination,
 		"type": job.type, "count": best.count, "mass": best.count * best.stock.unit_mass_kg, "carried": ""}
+	if best.has("batch"): a.load.batch = batch
+	if not storage.is_empty(): a.load.storage = str(storage.id)
 	job.selected += 1
+	if not storage.is_empty() and storage.prepare:
+		_move(a,"Warehouse visit",walk_path(person.position,storage.point),1.5)
+		return true
 	if best.has("truck"):
 		construction.trucks.start(a,best)
 		return true
 	job.blocker = str(best.get("fallback",""))+"Approach/pickup/carry/deposit required; reservation is not local stock"
-	_move(a, "Approach", walk_path(person.position,work_point(a.id,best.stock.holder_id)) if work_positions != null else best.approach, 1.5)
+	_move(a, "Approach", walk_path(person.position,stock_work_point(a.id,best.stock,true)) if work_positions != null else best.approach, 1.5)
 	_events.append({"time": time, "person": a.id, "job": job.id, "priority": effective_priority(job), "description": "Selected real eligible haul"})
 	return true
 
@@ -939,27 +1022,46 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 	for source_id in source_ids:
 		if not stores.has(source_id) or not stores[source_id].accessible or source_id == job.destination:
 			continue
-		for stock in _stock_at(source_id,false):
+		var stock_options: Array = _stock_at(source_id,false)
+		var warehouse_drop := Vector2.INF
+		if warehouse != null and source_id == "receiving" and job.destination != "receiving":
+			warehouse_drop = work_point(str(person.id),str(job.destination),false)
+			if not warehouse_drop.is_finite(): continue
+			for stock: Dictionary in stock_options:
+				var at: Vector2 = warehouse.stock_service_point(str(stock.id))
+				if at.is_finite(): stock.warehouse_bound = person.position.distance_to(at)+at.distance_to(warehouse_drop)
+			stock_options.sort_custom(func(a: Dictionary,b: Dictionary) -> bool:
+				var first: float = float(a.get("warehouse_bound",INF))
+				var second: float = float(b.get("warehouse_bound",INF))
+				return str(a.id)<str(b.id) if is_equal_approx(first,second) else first<second)
+		var utility_considered := false
+		for stock in stock_options:
 			if stock.design_type != job.type or stock.available <= 0:
 				continue
-			if person.duty_id == "hauling" and construction != null and job.type == "M11" and construction.instances.has(job.destination):
+			if not utility_considered and person.duty_id == "hauling" and construction != null and job.type == "M11" and construction.instances.has(job.destination):
+				utility_considered = warehouse != null and source_id == "receiving"
 				var utility: Dictionary = construction.trucks.option(job,person,stock)
 				fallback = str(utility.get("reason",""))
 				if utility.has("stock"):
 					if best.is_empty() or not best.has("truck") or float(utility.distance) < float(best.distance): best = utility
 					continue
 			if best.has("truck"): continue
+			# The exact service point gives an admissible Euclidean lower bound.
+			# Skip only a candidate that cannot improve the best real walk route;
+			# never truncate the source list or reuse stale route/stock snapshots.
+			if best.has("distance") and stock.has("warehouse_bound") and float(stock.warehouse_bound) >= float(best.distance): continue
 			# A shortage needs no carried-mass traversal. Inspect fresh mass only
 			# once real freight is eligible; Emergency callers' detached adjusted
 			# mass remains intact, and every physical reservation still rechecks.
 			if not person.has("contents_mass_kg"): person = ledger.inspect_entity(person.id)
 			var count := mini(stock.available, job.requested - job.delivered - _in_flight(job.id))
+			if warehouse != null and Packages.TYPES.has(job.type): count = mini(count,Packages.capacity(job.type))
 			count = mini(count, int(floor((25.0 - person.contents_mass_kg) / stock.unit_mass_kg)))
 			count = mini(count, int(floor(_free_space(job.destination) / stock.unit_mass_kg)))
 			if count <= 0 or not _valid_destination(job.destination, job.type, count * stock.unit_mass_kg):
 				continue
-			var pickup: Vector2 = work_point(person.id,stock.holder_id,false) if work_positions != null else stock.position
-			var drop: Vector2 = work_point(person.id,job.destination,false)
+			var pickup: Vector2 = stock_work_point(person.id,stock,false) if work_positions != null else stock.position
+			var drop: Vector2 = warehouse.probe(person.id,job.type,count) if warehouse != null and job.destination == "receiving" else warehouse_drop if warehouse_drop.is_finite() else work_point(person.id,job.destination,false)
 			if not pickup.is_finite() or not drop.is_finite(): continue
 			var approach: Array = walk_path(person.position,pickup)
 			var carry: Array = walk_path(pickup,drop)
@@ -968,6 +1070,11 @@ func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
 			var distance := Layout.length(approach) + Layout.length(carry)
 			if best.is_empty() or distance < float(best.distance):
 				best = {"job": job, "stock": stock, "count": count, "approach": approach, "distance": distance, "fallback":fallback}
+			# Warehouse pickup policy is nearest feasible geometric estimate.
+			# Once a real source passes all physical checks, avoid routing every
+			# other crate to optimize a small walking difference. Other source
+			# stores still compete normally; no quantity or safety rule changes.
+			if warehouse_drop.is_finite() and stock.has("warehouse_bound"): break
 	if best.is_empty():
 		job.blocker = ("Source unreachable for 10 seconds; claim released, demand retained. " if job.has("source_release_at") else "") + "No accessible unreserved source, remaining personal allowance or accepting destination space"
 	return best
@@ -1022,7 +1129,7 @@ func _free_space(id: String, except_person: String = "") -> float:
 
 
 func _valid_destination(id: String, type: String, mass: float, except_person: String = "") -> bool:
-	return stores.has(id) and stores[id].accessible and (stores[id].filter.is_empty() or type in stores[id].filter) and _free_space(id, except_person) + EPS >= mass
+	return stores.has(id) and not stores[id].get("source_only",false) and stores[id].accessible and (stores[id].filter.is_empty() or type in stores[id].filter) and _free_space(id, except_person) + EPS >= mass
 
 
 func _nearest_storage(origin: Vector2, type: String, mass: float, excluded: String = "", person: String = "") -> String:
@@ -1031,7 +1138,8 @@ func _nearest_storage(origin: Vector2, type: String, mass: float, excluded: Stri
 	for id in stores:
 		if id == excluded or stores[id].pile or not _valid_destination(id, type, mass, person):
 			continue
-		var destination: Vector2 = work_point(person,id,false) if work_positions != null else ledger.inspect_entity(id).position
+		var destination: Vector2 = warehouse.probe(person,type,int(mass),false,origin) if warehouse != null and id == "receiving" else work_point(person,id,false) if work_positions != null else ledger.inspect_entity(id).position
+		if not destination.is_finite(): continue
 		if not destination.is_finite(): continue
 		var route: Array = walk_path(origin,destination)
 		if route.is_empty(): continue
@@ -1046,6 +1154,14 @@ func _reroute(a: Dictionary) -> void:
 	if a.load.is_empty(): return
 	var origin: Vector2 = ledger.inspect_entity(a.id).position
 	var destination := _nearest_storage(origin, a.load.type, a.load.mass, a.load.destination, a.id)
+	var storage := {}
+	if warehouse != null and destination == "receiving":
+		storage = warehouse.reserve(str(a.id),str(a.load.type),int(a.load.count),false)
+		if not storage.ok: destination = ""
+	if warehouse != null and a.load.has("storage"):
+		warehouse.release(str(a.load.storage))
+		a.load.erase("storage")
+	if not storage.is_empty() and storage.ok: a.load.storage = str(storage.id)
 	if destination.is_empty():
 		destination = "pile-%04d" % _next()
 		ledger.add_place(destination, "Marked recoverable temporary pile; real handling required", origin)
@@ -1064,6 +1180,10 @@ func _deposit(a: Dictionary) -> void:
 	if not result.ok:
 		push_error("Safe hauling deposit failed: " + str(result))
 		return
+	if load.has("storage"):
+		var stored: Dictionary = warehouse.commit(str(load.storage),str(result.entity_id))
+		assert(stored.ok,str(stored))
+	if warehouse != null: warehouse.release_point(str(a.id))
 	var job := _job(load.job)
 	if load.destination == job.destination and not job.cancelled:
 		job.delivered += load.count
@@ -1083,6 +1203,10 @@ func _deposit(a: Dictionary) -> void:
 
 
 func _release_load(a: Dictionary) -> void:
+	if a.load.has("batch") and construction != null: construction.trucks.release_source_claims(a)
+	if warehouse != null:
+		if a.load.has("storage"): warehouse.release(str(a.load.storage))
+		warehouse.release_point(str(a.id))
 	if not a.load.get("claim", "").is_empty():
 		ledger.release_claim(a.load.claim)
 	a.load = {}

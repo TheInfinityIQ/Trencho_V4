@@ -8,6 +8,7 @@ const Fixed = preload("res://game/production/fixed_production.gd")
 const Heavy = preload("res://game/production/heavy_production.gd")
 const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 const Trucks = preload("res://game/construction/construction_truck_service.gd")
+const WarehousePaths = preload("res://game/warehousing/warehouse_paths.gd")
 const EPS := 0.000001
 const BOUNDS := Rect2(Vector2.ZERO,Vector2(240,180))
 var _rear_ref: WeakRef
@@ -19,6 +20,8 @@ var office_members: Dictionary = {} # real person ID -> F12 office while serving
 var _syncing_offices := false
 var _transferring := false
 var _sequence := 0
+var _route_profile := {"calls":0,"total_usec":0,"maximum_usec":0}
+var _warehouse_paths: RefCounted
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
@@ -55,12 +58,15 @@ func _footprint_preview(kind: String, center: Vector2, quarter_turn: bool) -> Di
 		var at: Vector2 = rear.ledger.inspect_entity(truck.id,{},false).position
 		if footprint.grow(4.0).has_point(at): return _fail("Construction truck occupies this footprint/vehicle clearance. Let it return before placing here.")
 	var door := center-Vector2(size.x/2.0+1.0,0)
+	if kind == "depot" and rear.empty_field_opening:
+		door = center+Vector2(size.x/2.0+1.0,0) if quarter_turn else center+Vector2(0,size.y/2.0+1.0)
 	for row in instances.values():
 		if row.state in ["Dismantled","Cancelled"] and _rear_ref.get_ref().ledger.loose_stock_mass_at(row.id) <= EPS: continue
 		var other := Rect2(row.center-row.size/2.0,row.size)
-		if footprint.grow(0.25).intersects(other.grow(0.25)):
-			return _fail("Footprint overlaps actual %s %s." % [row.kind,row.id])
-		if other.grow(0.25).has_point(door): return _fail("Entrance obstructed by an existing building.")
+		var join_allowed: bool = kind == "depot" and row.kind == "depot" and row.state not in ["Clearing","Dismantling"] and rear.warehouse != null and rear.warehouse.joined({"center":center,"size":size},row)
+		if not join_allowed and footprint.grow(1.0-0.00001).intersects(other.grow(1.0-0.00001)):
+			return _fail("Keep two clear grid squares between buildings; only matching warehouse edges may touch (%s %s)." % [row.kind,row.id])
+		if not join_allowed and other.grow(0.25).has_point(door): return _fail("Entrance obstructed by an existing building.")
 	return {"ok":true,"kind":kind,"center":center,"size":size,"door":door,"footprint":footprint}
 
 func preview(kind: String, center: Vector2, quarter_turn: bool = false) -> Dictionary:
@@ -177,20 +183,32 @@ func walking_path(start: Vector2, goal: Vector2, candidate: Rect2 = Rect2()) -> 
 	return _clearance_path(start,goal,[],candidate,0.25)
 
 func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: Rect2, clearance: float) -> Array:
+	var profiling: bool = CallLog.enabled and OS.get_environment("TRENCHO_PROFILE_STAGES") == "1"
+	var started: int = Time.get_ticks_usec() if profiling else 0
 	var boxes: Array[Rect2] = []
 	var rear: RefCounted = _rear_ref.get_ref()
 	if rear.empty_field_opening and clearance < 1.0:
 		boxes.append(Rect2(rear.SUPPLY_TABLE-Vector2(1.29,0.69),Vector2(2.58,1.38)).grow(clearance))
 	for row in instances.values():
 		if row.id in ignored or row.kind == "park" or row.state in ["Cancelled","Dismantled"]: continue
+		if rear.warehouse != null and clearance < 1.0 and rear.warehouse.modules.has(row.id): continue
 		boxes.append(Rect2(row.center-row.size/2.0,row.size).grow(clearance))
+	if rear.warehouse != null and clearance < 1.0:
+		for obstacle: Rect2 in rear.warehouse.obstacles(): boxes.append(obstacle.grow(clearance))
 	if candidate.has_area():
 		var grown: Rect2 = candidate.grow(clearance)
 		if not grown.has_point(start) and not grown.has_point(goal): boxes.append(grown)
+	for box: Rect2 in boxes:
+		if box.has_point(start) or box.has_point(goal): return _route_result([],started,profiling)
 	# A clear segment is already the shortest legal route. Use the same fresh
 	# bounds/obstacle test as graph edges before constructing and searching the
 	# visibility graph, including during authoritative placement validation.
-	if _vehicle_segment_clear(start,goal,boxes,clearance): return [start,goal]
+	if _vehicle_segment_clear(start,goal,boxes,clearance): return _route_result([start,goal],started,profiling)
+	if rear.warehouse != null and clearance < 1.0:
+		if _warehouse_paths == null: _warehouse_paths = WarehousePaths.new()
+		var guarded: Callable = _vehicle_segment_clear.bind(boxes,clearance)
+		var native_path: Array = _warehouse_paths.find(start,goal,boxes,_access_bounds(clearance),guarded)
+		if not native_path.is_empty(): return _route_result(native_path,started,profiling)
 	var nodes: Array[Vector2] = [start,goal]
 	for box in boxes:
 		var outer: Rect2 = box.grow(0.5)
@@ -216,13 +234,24 @@ func _clearance_path(start: Vector2, goal: Vector2, ignored: Array, candidate: R
 			if candidate_distance < distances[index]:
 				distances[index] = candidate_distance
 				previous[index] = nearest
-	if distances[1] == INF: return []
+	if distances[1] == INF: return _route_result([],started,profiling)
 	var result: Array = [goal]
 	var cursor := 1
 	while cursor != 0:
 		cursor = previous[cursor]
 		result.push_front(nodes[cursor])
-	return result
+	return _route_result(result,started,profiling)
+
+func _route_result(path: Array, started: int, profiling: bool) -> Array:
+	if profiling:
+		var elapsed: int = Time.get_ticks_usec()-started
+		CallLog.record_duration(&"construction/visibility_route",elapsed)
+		_route_profile.calls += 1
+		_route_profile.total_usec += elapsed
+		_route_profile.maximum_usec = maxi(_route_profile.maximum_usec,elapsed)
+		if OS.get_environment("TRENCHO_WAREHOUSE_ROUTE_TRACE") == "1" and int(_route_profile.calls)%32 == 0:
+			print("WAREHOUSE_ROUTE_PROFILE ",JSON.stringify(_route_profile))
+	return path
 
 func _access_bounds(clearance: float) -> Rect2:
 	return Rect2(0,0,240,210).grow(-clearance) if _rear_ref.get_ref().empty_field_opening else BOUNDS.grow(-clearance)
@@ -526,6 +555,7 @@ func next_boundary() -> float:
 	var next: float = trucks.next_boundary()
 	for row in instances.values():
 		if (row.state == "Dismantling" and _workers(row) > 0) or (row.state in ["Awaiting M11","Building"] and _ready(row)):
+			if row.state == "Dismantling" and rear.warehouse != null and rear.warehouse.modules.has(row.id) and not rear.warehouse.can_remove(row.id): continue
 			var required: float = 20.0 if row.state == "Dismantling" else _material_ceiling(row)
 			next = minf(next,rear.time+(required-float(row.progress))/_workers(row))
 	return next
@@ -550,6 +580,7 @@ func advance_work(delta: float) -> void:
 			site_changed.emit(row.id)
 			continue
 		if row.state == "Dismantling" and _workers(row) > 0:
+			if rear.warehouse != null and rear.warehouse.modules.has(row.id) and not rear.warehouse.can_remove(row.id): continue
 			var required: float = 20.0 if row.state == "Dismantling" else float(row.work)
 			row.progress = minf(required,float(row.progress)+delta*_workers(row))
 			if (required-float(row.progress))/_workers(row) <= EPS: row.progress = required
@@ -585,6 +616,9 @@ func settle() -> bool:
 			_complete_site(row,rear)
 			changed = true
 		elif row.state == "Dismantling" and float(row.progress) >= 20.0-EPS:
+			if rear.warehouse != null and rear.warehouse.modules.has(row.id) and not rear.warehouse.can_remove(row.id):
+				row.blocker = "Clear people and warehouse access before dismantling can finish."
+				continue
 			row.state = "Dismantled"
 			for key in ["input_store","output_store"]:
 				var store_id: String = row.get(key,"")
@@ -662,6 +696,9 @@ func _activate(row: Dictionary, rear: RefCounted) -> void:
 			rear.requests[duty].positions = Layout.FACILITIES[row.kind][3]
 			rear.requests[duty].place = "duty-"+duty
 	for role in ["input","output"]:
+		if row.kind == "depot" and rear.warehouse != null:
+			row.warehouse_store = "receiving"
+			continue
 		var key: String = str(role)+"_kg"
 		if spec.has(key):
 			var store_id: String = row.id+"-"+role
@@ -723,6 +760,8 @@ func request_dismantle(id: String) -> Dictionary:
 	var rear: RefCounted = _rear_ref.get_ref()
 	if row.kind == "receiving" and (rear.receiving.berth_committed(id) or rear.receiving.freight_admitted() > rear.receiving.freight_limit()-1):
 		return _fail("This F02 berth is required by a committed supplier vehicle.")
+	if rear.warehouse != null and rear.warehouse.modules.has(id) and not rear.warehouse.can_remove(id):
+		return _fail("Clear this warehouse module's goods, incoming promises, people and connecting routes before dismantling.")
 	if row.kind == "training" and (rear.training.site_busy(id) or rear.training._unfinished().size() > rear.training.snapshot().student_places-12):
 		return _fail("Reserved or present students still need this F06 capacity.")
 	if row.kind == "dispatch" and rear.dispatch.site_committed(id):
@@ -756,6 +795,7 @@ func request_dismantle(id: String) -> Dictionary:
 	if row.kind == "park": rear.yard.retire_park(row.get("parking_slots",[]))
 	if row.kind == "construction": office_desired.erase(id)
 	row.state = "Clearing"
+	if rear.warehouse != null and rear.warehouse.modules.has(id): rear.warehouse.retire(id)
 	row.progress = 0.0
 	row.blocker = "Stored goods must be hauled out before twenty builder work seconds."
 	_queue_clearance(row,rear)
@@ -779,6 +819,7 @@ func _queue_clearance(row: Dictionary, rear: RefCounted) -> void:
 			if needed > 0: rear._queue_haul(store_id,"receiving" if rear.empty_field_opening else "depot",type,needed,1)
 
 func _cleared(row: Dictionary, rear: RefCounted) -> bool:
+	if rear.warehouse != null and rear.warehouse.modules.has(row.id) and not rear.warehouse.can_remove(row.id): return false
 	for key in ["input_store","output_store"]:
 		var store_id: String = row.get(key,"")
 		if store_id.is_empty(): continue
