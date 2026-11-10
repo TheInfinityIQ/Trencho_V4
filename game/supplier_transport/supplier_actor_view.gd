@@ -48,6 +48,9 @@ func bind(receiving: RefCounted, simulation: RefCounted, id: String, scene: Pack
 func has_clip(name: StringName) -> bool:
 	return _clips.has(name)
 
+func clip_duration(name: StringName) -> float:
+	return _animator.get_animation(_clips[name]).length if _animator != null and _clips.has(name) else 0.0
+
 func set_activity(name: StringName, started: float, duration: float, loop: bool = false) -> bool:
 	if not _clips.has(name) or not is_finite(started) or not is_finite(duration) or duration <= 0.0:
 		push_error("Missing supplier clip or invalid committed timing: %s / %s" % [person_id,name])

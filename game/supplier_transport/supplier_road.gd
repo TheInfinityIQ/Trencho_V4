@@ -1,6 +1,6 @@
 extends RefCounted
 ## Event-woken bounded supplier traffic; Receiving owns committed motion.
-const RADIUS := 3.7
+const RADIUS := 4.3 # Crew rear reachesZ3.98 from this asymmetric root; include sway.
 const GAP := 0.3
 const PASS_Y := 212.0
 var external: Dictionary = {}
@@ -93,7 +93,7 @@ func _clear(order: Dictionary, path: Array) -> bool:
 			var at: Vector2 = other.world_position
 			var protected := Rect2(at-Vector2(7.2,1.5),Vector2(10.2,3.0))
 			# Protect the whole rear ramp/person exit only while actually servicing.
-			if other.state not in ["Berthed","Disembarking"]: protected = Rect2(at-Vector2(3.7,1.5),Vector2(7.4,3.0))
+			if other.state not in ["Berthed","Disembarking"]: protected = Rect2(at-Vector2(4.3,1.5),Vector2(8.6,3.0))
 			protected = protected.grow(RADIUS+GAP)
 			for index in range(1,path.size()):
 				if _hits_box(path[index-1],path[index],protected): return false

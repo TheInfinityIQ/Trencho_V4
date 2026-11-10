@@ -75,7 +75,7 @@ func refresh(row: Dictionary) -> void:
 	var driver_action: StringName = &"supplier_driver_drive" if _moving else &"supplier_driver_idle"
 	if _driver != null and driver_action != _driver_action:
 		_driver_action = driver_action
-		_driver.set_activity(driver_action,float(row.get("state_started",_receiving._time)),2.0,true)
+		_driver.set_activity(driver_action,float(row.get("state_started",_receiving._time)),_driver.clip_duration(driver_action),true)
 	if not _moving:
 		_roll_target = 0.0
 		_pitch_target = 0.0

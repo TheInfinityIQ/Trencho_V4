@@ -89,5 +89,13 @@
   "marker_names": "Use accepted shelf root names, Deck_00 etc for actual support planes, and a handoff table of named handling/grip markers and transforms. Keep delivered Undergrip_Reference_1..4 as actual timber contacts after the deliberate quarter-turn. Artist proposes additional marker names/table; Lead freezes corresponding runtime identifiers before integration.",
   "animation_interface": "Preserve existing game worker/soldier rigs and required clips. Compare current construction_worker.glb skeleton and visual-root orientation before authoring additions; report an incompatible bone/root contract before changing it. Export explicitly named new clips and lengths/contact windows in a manifest. Root movement/custody belong to Lead, not animation method tracks. Existing mechanism clips remain2seconds each.",
   "crew_next": "Existing eight comfortable inward seats retained; investigate measured rear-to-front exit with genuine temporary feet-under-knees preparation. No permanently cramped anatomy. Return exact occupied-clearance conflict if it cannot fit before authoring the complete stand/walk/crouch/jump/land/walk-on sequence.",
-  "acceptance": "Scoped static/export/contact QA, editable source, exact export hashes/transforms, actual readiness and limitations. Complete visible videos with framing inspected before sharing. New authoring authorized only for these two supplier vehicles; no local Godot, new regression matrix or unrelated asset reset."
+  "acceptance": "Scoped static/export/contact QA, editable source, exact export hashes/transforms, actual readiness and limitations. Complete visible videos with framing inspected before sharing. New authoring authorized only for these two supplier vehicles; no local Godot, new regression matrix or unrelated asset reset.",
+  "driver_increment": {
+    "v01_export_sha256": "9de840b867f2d5eaa9823129c0bc79c63df175a63b1e3326b7b61e6957e68ed5",
+    "root": "Floor-relative; Driver_Seat+(0,-.407,0), raw visual PI correction exactly once. Driver remains supplier-owned.",
+    "video_v01_sha256": "55a703a5a3e61adacf00204402cec1bda51786b370796809da46fe53fd7455cb",
+    "video_status": "REJECTED as approval evidence: wide partly obscured driver and endpoint/hold sampling; no human appearance approval. Artist preparing versioned visible-motion correction.",
+    "runtime": "Source binding reads actual imported clip duration; v01s2seconds are not imposed on the replacement. Native integration pending."
+  },
+  "video_gate": "Complete visibly animated action at1x, fixed clear framing and disclosed cutaway; several cycles for short loops. Lead inspects actual encoded per-action25/50/75percent frames before sharing. Endpoints, channel counts, camera turns and static model reels do not establish action visibility."
 }
