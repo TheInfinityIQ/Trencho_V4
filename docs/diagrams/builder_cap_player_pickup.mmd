@@ -1,0 +1,18 @@
+flowchart TD
+  SiteUI[Set site builders / Workers reassignment] --> Staffing[RearSimulation targets / actual safe handoff]
+  Staffing --> Capacity[ConstructionService global2+4completed offices]
+  Office[Actual office completion / removal] --> Capacity
+  Capacity --> Workers[Existing exclusive real workforce / claims / reporting]
+  Workers --> Work[Actual site work / own-site material fetching]
+  E[ContextualE / first hit and actual reach] --> Seat[Personal pickup controller / same manager occupancy]
+  Keys[WASD / Space / V] --> Modes[Existing focus / pause / management / area ownership]
+  Modes --> Seat
+  Seat --> Physics[CharacterBody3D actual grounded motion / collisions]
+  Physics --> Pose[Session-owned pickup pose and canonical manager seat pose]
+  Physics --> Art[Artist wheel pivots / visual acceleration pitch and turn roll]
+  Pose --> Place[Actual dynamic footprint / construction preview and commit]
+  Exit[Ewhen stopped] --> Ground[Actual clear grounded exit query]
+  Ground --> Manager[Same manager resumes walking / no duplicated person]
+  Art --> Video[Complete actual animation video / pending Dawson approval]
+  Work --> Completion[Actual site completion / cosmetic smoke cut fall cleanup]
+  Completion --> Video
