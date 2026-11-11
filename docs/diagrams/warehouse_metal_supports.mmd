@@ -2,6 +2,10 @@ flowchart TD
   Concept[Accepted measured 2D warehouse concept] --> Model[Artist: separately versioned rack and removable metal cassettes]
   Model --> QA[Actual geometry: contacts, caps, locks, neighboring envelopes and static export QA]
   QA --> Candidate[Static delivery candidate; no runtime or all-cell acceptance]
+  Candidate --> RackView[Current static integration: crate-rack model selected by WarehouseView]
+  RackView --> Collision[Cached static mesh collision preserves actual rail opening and tray]
+  Collision --> Direct[Brief native import / opening / neighboring rail / intact tray check]
+  CassetteAssets[Separate cassette assets imported only; preparation/state connection pending] -.-> Candidate
   subgraph Planned_runtime_not_implemented
     Promise[WarehouseService: one finite cell promise] --> Compatible{Correct physical support and actual access ready?}
     Compatible -->|no| Prepare[Real worker prepares or changes item-specific support at empty cell]

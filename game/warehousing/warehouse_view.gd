@@ -163,8 +163,12 @@ func _refresh_bay(bay: Dictionary) -> void:
 		view.packages.erase(index)
 
 func _fixture(parent: Node3D, family: String) -> void:
-	var visual := Assets.model("warehouse_long_stock_rack.glb" if family == "timber" else "warehouse_crate_rack.glb")
-	if visual != null: parent.add_child(visual)
+	var visual := Assets.model("warehouse_long_stock_rack.glb" if family == "timber" else "warehouse_crate_rack_metal_access_v02.glb")
+	if visual != null:
+		parent.add_child(visual)
+		if family != "timber":
+			Assets.add_static_collision(visual)
+			return
 	for x: float in [-1.27,1.27]:
 		for z: float in [-0.47,0.47]:
 			if visual == null: _world._box(parent,Vector3(x,0.9,z),Vector3(0.06,1.8,0.06),Color("536363"))

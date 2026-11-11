@@ -3,6 +3,7 @@ extends RefCounted
 const ROOT := "res://game/warehousing/assets/"
 static var _palette: Dictionary = {}
 static var _scenes: Dictionary = {}
+static var _static_shapes: Dictionary = {}
 
 static func model(file: String) -> Node3D:
 	var path := ROOT+file
@@ -13,6 +14,22 @@ static func model(file: String) -> Node3D:
 	var node := scene.instantiate() as Node3D
 	prepare(node)
 	return node
+
+static func add_static_collision(node: Node3D) -> void:
+	# A whole-rack box/convex hull would fill the measured service opening.
+	# Generate this static-only surface once per retained mesh, never per frame.
+	var meshes: Array[Node] = node.find_children("*","MeshInstance3D",true,false)
+	if node is MeshInstance3D: meshes.push_front(node)
+	for child: Node in meshes:
+		var instance := child as MeshInstance3D
+		if instance.mesh == null: continue
+		if not _static_shapes.has(instance.mesh):
+			_static_shapes[instance.mesh] = instance.mesh.create_trimesh_shape()
+		var body := StaticBody3D.new()
+		var collision := CollisionShape3D.new()
+		collision.shape = _static_shapes[instance.mesh]
+		body.add_child(collision)
+		instance.add_child(body)
 
 static func prepare(node: Node3D) -> void:
 	var meshes: Array[Node] = node.find_children("*","MeshInstance3D",true,false)

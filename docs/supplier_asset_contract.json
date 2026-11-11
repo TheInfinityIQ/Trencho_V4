@@ -240,5 +240,16 @@
     "owner": "Existing WarehouseService owns finite cell promises and any per-cell removable support state; Receiving owns physical worker preparation/handling, Ledger owns actual stock.",
     "rule": "A metal-specific support must be ready at the actual cell before handoff. Other-material cells retain their original planes/envelopes. Preparing/changing a support requires the real worker and existing smoke/preparation semantics; no global clock or standing inventory poll.",
     "limits": "Static models and the two representative inner-cell witnesses do not establish all-cell contact or completed material handling."
+  },
+  "warehouse_metal_static_delivery": {
+    "receipt": "evidence/supplier_transport/warehouse_metal_static_manifest.json",
+    "stage": "Source integration of empty rack/collision and separate imported supports; native current-change check pending",
+    "runtime_limit": "Per-cell support preparation/installation, raised metal placement and real lift/deposit remain unconnected. Existing WarehouseService stock/capacity/claims untouched.",
+    "assets": [
+      "warehouse_crate_rack_metal_access_v02",
+      "warehouse_metal_lower_cassette_v01",
+      "warehouse_metal_upper_cassette_v01"
+    ],
+    "source_qa": "Artist representative3contacts×53samples on actual exports; not all-cell handling."
   }
 }
