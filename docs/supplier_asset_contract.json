@@ -169,7 +169,13 @@
     "ground_provisional_update": "Superseded by frozen46clip delivery. Stable actor0/fore and actor1/aft use distinct simultaneous turn clips; do not re-sort by world position. Starts/stops.8s/.12m, loops.8s/.24m at authored.3m/s,4s90degree turns need actual clear3m zone. Exact paired paths own worker/load synchronization; any retiming applies to both workers and payload together.",
     "ground_frozen_delivery": "evidence/supplier_transport/timber_ground_frozen_manifest.json; frozen46clip draft checked by Artist, file hashes and encoded phase sheets reviewed by Lead, shown for human appearance approval; not runtime bound.",
     "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
-    "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding."
+    "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding.",
+    "pause_replay_correction": {
+      "status": "Second post-restoration pause relay explicitly withdrawn by Artist; no active-state change",
+      "source": "Artist acknowledged no newer direct human turn/time/source after Lead resume call_9facb63e60f84b6ebbd046e1582fabfe. Erroneous relay occurred inside restored turn01a1ca56-12f1-7372-94a8-2e8996ae4fe0 immediately after compaction.",
+      "active": "Later human resume remains authoritative. Warehouse static modeling and measured S4 hardware concept remain active. Frozen files untouched; no new hauling clips authorized by this administrative correction.",
+      "prevention": "Artist updates existing compact active-work/restore header with actual resume authority and assignments; a replayed summary or new assistant relay is not a later human instruction."
+    }
   },
   "non_timber_geometry_decision": "evidence/supplier_transport/near_face_contact_recommendation_v01.md and frozen manifest supersede earlier partial geometry suggestions. Only a static2D warehouse metal-support/service-opening concept is authorized next; no mesh/other-item animation or runtime changes.",
   "s1_variant_constraint": {
