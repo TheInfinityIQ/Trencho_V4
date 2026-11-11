@@ -1,0 +1,11 @@
+{
+  "authority": "Dawson direct Lead message11November2026: great. I like it. Please have a worker lift up the shelf though. It should not happen by itself.",
+  "decision": "Mechanism/scenario liked subject to a real worker operating it. The self-moving rigid-only sequence is not final accepted use.",
+  "sequence": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first.",
+  "automatic_meaning": "Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost.",
+  "preserved": "Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
+  "art_authorization": "Scoped shelf-operator body/hand animation is authorized by the new human request. Reuse existing worker mesh/rig; this is not broad permission to replace timber synchronized pickup bend or author unrelated clips. Preserve rigid v02/source history. Passive assistance may remain, but worker visibly causes/controls motion.",
+  "timing": "Prior1.5s is rigid-clip reference only. Derive natural coordinated operator timing from actual grips/reach/clearance; retime worker and mechanism together.",
+  "implementation_plan": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
+  "next": "Artist supplies compact operator/root/grip/control/clearance plan before revised animation, then full normal-speed worker+mechanism review video. Native/runtime acceptance remains pending."
+}

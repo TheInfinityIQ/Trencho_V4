@@ -2,7 +2,7 @@ flowchart TD
   Scope[Designer accepted observable scope; hardware/implementation pending] --> Hardware[Actual closed and full-sweep retained-frame geometry gate]
   Hardware -->|first prototype failed| Revise[Fixed rear stop / non-bearing flange revision; preserve full padding]
   Revise --> Hardware
-  Hardware -->|v02 source/export passed| Art[Full rigid-mechanism video shown; human appearance approval pending]
+  Hardware -->|v02 source/export passed| Art[Mechanism liked; human requires real worker-operated revision]
   Art -. future runtime playback binding .-> View
   Hardware -->|must pass before clip/export| Manifest[Quote immutable actual packets and above-overlap dependencies]
   Manifest --> Source[Receiving selects actual lower M05 job at hauling priority]
@@ -12,13 +12,14 @@ flowchart TD
   Empty -->|yes| Clear{Actual mechanism/worker clearance ready?}
   Clear -->|no| Clearance[Wait for actual access event]
   Clearance --> Clear
-  Clear -->|yes| Prepare[Finite automatic unlock / fold / secure action]
+  Clear -->|yes| Worker[One actual assigned worker approaches / reserves exclusive operation]
+  Worker --> Prepare[Worker physically unlocks / lifts / latches shelf]
   Prepare --> Parked[Fully parked and latched; pickup may begin]
   Parked --> Pickup[Receiving actual lower-bale pickup / unchanged custody authority]
   Pickup --> Receipt[Actual carry and finite warehouse handoff]
   Pause[Global pause freezes activity time and mechanism] -.-> Prepare
   UpperPlacement[Any later upper loading] --> Closed{Pan closed and locked?}
-  Closed -->|no| Reject[No upper placement until actual close/lock completion]
+  Closed -->|no| Reject[Actual worker lowers/closes/locks before upper placement]
   Closed -->|yes| Support[Full retained bearing face and original capacity]
   View[Artist mechanism clip presents committed state; no stock authority] -.-> Prepare
   Note[Prospective design only: no runtime or native acceptance from diagram] -.-> Manifest

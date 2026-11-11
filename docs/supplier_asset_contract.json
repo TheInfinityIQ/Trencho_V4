@@ -224,23 +224,25 @@
     "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
   },
   "s4_fold_up_proposal": {
-    "stage": "Revised v02 rigid mechanism frozen/source-reviewed; full video shown for human appearance approval. Not runtime bound.",
+    "stage": "Human likes folding-shelf scenario/mechanism; real worker-operated revision required before final animation/runtime acceptance",
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Human S4 appearance approval, preserved separate restraint composition, actual generated quote/empty/lock/pause gates, moving collision and native current-change demonstration. Right-lane source contact alone is not all-source handling acceptance.",
+    "pending": "Artist measured operator plan and revised worker/mechanism clips/video, then actual worker/stock/lock/pause/moving-collision integration and brief current-change demonstration. No extra human clarification required to implement manual operation.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
-    "authority": "Game Designer Lead message11November2026, thread01a18e60-cd67-7b01-8047-a8768208b387, observed turn01a1ca56-21e0-7583-b50b-448f2c8fb8b1. Not final PR, dimensions, clearance, handling or human appearance approval.",
-    "observable_rules": "Unload actual upper stock first; only empty pan may unlock/fold/secure before lower-bale pickup. No overlapping fold/lift. Any later upper placement requires closed+locked pan. Automatic finite work inside unloading, no extra menu/purchase/resource cost; preserve priorities,quantities,support,footprint,geometric capacity. Pause freezes mechanism and handling.",
+    "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
+    "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
     "diagram": "diagrams/s4_bale_service.mmd",
-    "initial_reference_timing": "Lead reference1.5s total:unlock.25/fold1/latch.25. Exact hardware motion and shared playback timing remain to be accepted; no native timing claim.",
+    "initial_reference_timing": "Prior1.5s is rigid-clip reference only. Derive natural coordinated operator timing from actual grips/reach/clearance; retime worker and mechanism together.",
     "hardware_concept": "evidence/supplier_transport/s4_hardware_concept_manifest_v01.json",
     "failed_gate": "evidence/supplier_transport/s4_first_clearance_gate.json",
     "revision_plan": "evidence/supplier_transport/s4_guard_revision_plan.json",
     "delivery": "evidence/supplier_transport/s4_mechanism_delivery_v02.json",
     "restraints": "New mechanism is service configuration and excludes original separate Restraint_00/01. Lead independently read old GLB: both are actual separate mesh nodes (meshes0/1 of3), not markers. Preserve/compose their original transforms/geometry and removal conditions before replacing a transport shelf. No permanent restraint disappearance or new removal clip approved.",
     "original_failure": "s4_first_clearance_gate.json and revision plan preserved; the revised source gate success does not rewrite the failed first prototype.",
-    "appearance_status": "Still pending. The reply through the S4 question concerns timber workers and does not decide the rigid shelf animation."
+    "appearance_status": "Mechanism/scenario liked conditionally; self-moving v02 not final accepted operation. Revised visible worker sequence needs full review.",
+    "worker_operation_request": "evidence/supplier_transport/s4_worker_operation_request.json",
+    "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator."
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",
