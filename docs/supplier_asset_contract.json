@@ -159,6 +159,13 @@
       1.64117,
       1.88287
     ],
-    "authority": "Dawson reply request_user_input_async call_9facb63e60f84b6ebbd046e1582fabfe: Resume with that carrying layout. Artist acknowledged an older pause was replayed after restoration without evidence of a newer human pause; that replay does not supersede this reply."
+    "authority": "Dawson reply request_user_input_async call_9facb63e60f84b6ebbd046e1582fabfe: Resume with that carrying layout. Artist acknowledged an older pause was replayed after restoration without evidence of a newer human pause; that replay does not supersede this reply.",
+    "truck_frozen_delivery": "evidence/supplier_transport/timber_truck_frozen_manifest.json; exact checked truck-only draft, human appearance approval pending; not bound into runtime.",
+    "warehouse_with_50mm_insertion_lift_upper_interval_metres": [
+      1.64117,
+      1.83287
+    ],
+    "warehouse_provisional_update": "Artist reports separate2.10m high fixture at.60/1.75m supports passed216occupied source samples with the other3cells present. Full occupied/export checks and final fixture pending; this is not runtime or visual acceptance.",
+    "ground_provisional_update": "Draft only: anatomical forward+Z/back-Z/left+X/right-X; proposed.8s/.12m start-stop,.8s/.24m loops at.3m/s,4s90degree stepped turns in measured3m clearance. Exact exported paths, clip windows and footage remain pending; no runtime inference permitted."
   }
 }

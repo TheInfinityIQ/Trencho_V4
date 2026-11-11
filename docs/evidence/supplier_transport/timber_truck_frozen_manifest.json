@@ -1,0 +1,80 @@
+{
+  "readiness": "Checked truck-only art DRAFT for Lead integration review and Dawson appearance approval. Not integrated/approved as gameplay. Ground and warehouse separate.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.glb",
+      "bytes": 1397812,
+      "sha256": "69b63af4fe4e57c1eae907b8cc829e1b4e93961f3a0628844f9101a1c11d652d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.blend",
+      "bytes": 2883655,
+      "sha256": "a650198cfc1a5f4d8efb0518fdb887da1ca72a4cfa3a799acd172b311fb1158e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\truck_floor_root_and_load_paths_v01.json",
+      "bytes": 1078480,
+      "sha256": "b58e9fc25addb5ab4b80308f88f8d3b112fd3abed18c10aa009a951bffdee419"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\hand_grip_and_axis_contract_v01.json",
+      "bytes": 7833,
+      "sha256": "de151530376141325702efc7a53e43599301d66cf221483c2c80ca04690cf1f9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\timber_truck_full_motion_draft_v01.mp4",
+      "bytes": 9754324,
+      "sha256": "642ed976b3cbd41c8eccf9504eaa04fc548c7ef2a09cd6c614d3138b389380a8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s1_longstockrack_v03.glb",
+      "bytes": 142048,
+      "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4"
+    }
+  ],
+  "new_clips": [
+    "timber_remove_upper",
+    "timber_remove_lower",
+    "timber_ramp_fore",
+    "timber_ramp_aft"
+  ],
+  "preserved_existing_clips": 25,
+  "checks": {
+    "actual_exported_samples": 803,
+    "flagged": 0,
+    "maximum_grip_error_m": 1.538504302399195e-06,
+    "maximum_glove_timber_penetration_m": 5.459450185298087e-07,
+    "minimum_measured_sole_gap_m": -7.450580596923828e-07,
+    "maximum_authored_ik_clamp_m": 0
+  },
+  "video": {
+    "seconds": 45.833333333333336,
+    "fps": 30,
+    "frames": 1375,
+    "resolution": [
+      960,
+      720
+    ],
+    "artist_visual_review": "Actual encoded quarter/mid/three-quarter images inspected for every11phase segments, plus preview cameras; complete bodies, hands, feet and payload visible. Source/rack wall cutaway disclosed.",
+    "decoded_contact_sheets": [
+      "encoded_phase_sheet_1.png",
+      "encoded_phase_sheet_2.png",
+      "encoded_phase_sheet_3.png"
+    ]
+  },
+  "axis_contract": "hand_grip_and_axis_contract_v01.json",
+  "root_contract": "truck_floor_root_and_load_paths_v01.json",
+  "static_S1_relative_to_Cargo_Floor_godot_xyz": [
+    -0.665,
+    0,
+    -0.1676246215
+  ],
+  "limitations": [
+    "Finite30fps key samples are not a mathematical continuous collision proof.",
+    "No local Godot run; native integration and human approval remain Lead-owned.",
+    "S1 mechanical joins retain8duplicate vertices and56hidden back-to-back face pairs; worker retains2hidden back-to-back waist face pairs. No z-fighting errors in posed QA.",
+    "Ground cardinal gait package is still being checked; no generic forward walk should substitute for these finite lateral ramp steps."
+  ],
+  "lead_file_verification": "All six frozen files matched their supplied byte counts and SHA256. No local engine run, runtime binding or human appearance approval implied.",
+  "human_appearance_approval": "Pending existing Lead question; layout resumption alone is not approval."
+}
