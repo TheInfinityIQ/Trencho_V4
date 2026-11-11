@@ -506,7 +506,7 @@
     "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
     "status": "draft_published_not_merged_or_main_adopted",
     "evidence": "docs/evidence/supplier_transport/current_change_receipts.json",
-    "next": "Revised S4 rigid mechanism and full video delivered; human S4 appearance approval and runtime interlocks/restraint composition remain pending. Warehouse static rack/collision passed; per-cell supports/full metal handling unconnected. Three frozen timber appearance questions also remain pending.",
+    "next": "Artist prepares shoulder-carry transition/layout before revised timber animation; preserve2m/50kg/two actual workers/~1.3m spacing and original synchronized pickup bend. S4 appearance remains undecided; runtime unloading/support work remains incomplete.",
     "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
     "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
     "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
@@ -548,6 +548,7 @@
       "video_sha256": "834b9c2d6b970dea2642885ba8bd47eb33faf7cf6707a984cf49e588f3b1407d",
       "human_approval": "pending",
       "scope": "14s rigid shelf mechanism Artist preview, not native gameplay/worker unloading."
-    }
+    },
+    "timber_appearance_status": "Human revision required: actual palms at pickup, shoulder carry and restrained ramp gait. Earlier hand-carry drafts not approved."
   }
 }
