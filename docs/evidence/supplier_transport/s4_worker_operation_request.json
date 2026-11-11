@@ -7,5 +7,6 @@
   "art_authorization": "Scoped shelf-operator body/hand animation is authorized by the new human request. Reuse existing worker mesh/rig; this is not broad permission to replace timber synchronized pickup bend or author unrelated clips. Preserve rigid v02/source history. Passive assistance may remain, but worker visibly causes/controls motion.",
   "timing": "Prior1.5s is rigid-clip reference only. Derive natural coordinated operator timing from actual grips/reach/clearance; retime worker and mechanism together.",
   "implementation_plan": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
-  "next": "Artist supplies compact operator/root/grip/control/clearance plan before revised animation, then full normal-speed worker+mechanism review video. Native/runtime acceptance remains pending."
+  "next": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary.",
+  "layout_decision": "s4_operator_layout_manifest_v01.json"
 }

@@ -228,7 +228,7 @@
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Artist measured operator plan and revised worker/mechanism clips/video, then actual worker/stock/lock/pause/moving-collision integration and brief current-change demonstration. No extra human clarification required to implement manual operation.",
+    "pending": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary. Actual worker/stock/lock/pause/moving-collision integration and brief current-change demonstration remain pending.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
     "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
     "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
@@ -242,7 +242,17 @@
     "original_failure": "s4_first_clearance_gate.json and revision plan preserved; the revised source gate success does not rewrite the failed first prototype.",
     "appearance_status": "Mechanism/scenario liked conditionally; self-moving v02 not final accepted operation. Revised visible worker sequence needs full review.",
     "worker_operation_request": "evidence/supplier_transport/s4_worker_operation_request.json",
-    "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator."
+    "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
+    "operator_layout": {
+      "stage": "Lead accepted layout basis for actual anatomy/control fitting and coordinated authoring; not passed reach, clearance, human appearance or runtime acceptance",
+      "hardware": "Recessed manual paddles and fixed-frame linkage accepted as scoped revision within original footprint. Both corresponding end pins must have explicit release/engagement states, including hand transfer without accidental relocking.",
+      "body": "Actual worker uses genuine palm/finger edge grips, steps and hips/knees. The 715mm reach is not passed; no arm stretching or teleport. Check occupied bale, gloves, helmet, torso, feet, frame, truck and neighboring geometry through full motion.",
+      "timing": "Eight seconds each direction is a fitting reference, not final duration. No forced old 1.5-second rigid mechanism action.",
+      "ownership": "Receiving reserves one actual worker and module through approach, operation, latch and hands-clear. Pause freezes both. Animation does not grant stock or completion. No motion without operator contact/control; interruption cannot fabricate a latch.",
+      "preserved": "Existing support, padding, footprint, quantities, upper-empty and closed-before-upper-loading rules, M05-only insert, worker identity, original timber pickup bend and v02 source history.",
+      "next": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary.",
+      "receipt": "evidence/supplier_transport/s4_operator_layout_manifest_v01.json"
+    }
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",

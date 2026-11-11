@@ -13,8 +13,10 @@ flowchart TD
   Clear -->|no| Clearance[Wait for actual access event]
   Clearance --> Clear
   Clear -->|yes| Worker[One actual assigned worker approaches / reserves exclusive operation]
-  Worker --> Prepare[Worker physically unlocks / lifts / latches shelf]
-  Prepare --> Parked[Fully parked and latched; pickup may begin]
+  Worker --> Grips[Actual support contact and manual lock release]
+  Grips --> Prepare[Controlled worker lift / real pins engage at parked seats]
+  Prepare --> HandsClear[Latch confirmed / worker releases and withdraws]
+  HandsClear --> Parked[Fully parked and latched; pickup may begin]
   Parked --> Pickup[Receiving actual lower-bale pickup / unchanged custody authority]
   Pickup --> Receipt[Actual carry and finite warehouse handoff]
   Pause[Global pause freezes activity time and mechanism] -.-> Prepare
