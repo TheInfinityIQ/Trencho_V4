@@ -10,17 +10,17 @@
   "seconds_by_phase": {
     "planning": 40869.634132,
     "implementation": 40300.702849,
-    "direct_check": 141.406072,
+    "direct_check": 435.83927,
     "repair": 6516.849217,
     "late_handling": 0,
     "review": 348.987538,
     "release": 48.782236,
-    "waiting": 3533.3616979999997,
+    "waiting": 22461.761695,
     "paused": 0,
     "workflow_overhead": 1764.351747
   },
   "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
-  "active_phase": "waiting",
+  "active_phase": "release",
   "observation_scope": [
     {
       "recorded_at": "2026-11-10T16:16:25.906626+00:00",
@@ -57,6 +57,14 @@
     {
       "recorded_at": "2026-11-11T06:19:41.002050+00:00",
       "note": "Actor clip-window/current ground motion passed42971327265 at a8b090e. Earlier42970722408/42971028034 observation failures retained; no production change required. First failure alone did not establish a gameplay defect. Paired source integration and final animation approval remain open."
+    },
+    {
+      "recorded_at": "2026-11-11T11:21:27.542469+00:00",
+      "note": "Accepted one static warehouse metal-support concept after visual/source review; S4 folding-pan mechanism sent to Designer before hardware authoring. No local engine, new fixtures/clips or gameplay checks from this concept review. Active waiting interval includes asynchronous art handoff reviews; do not present it as focused waiting/programming hours."
+    },
+    {
+      "recorded_at": "2026-11-11T11:30:04.815508+00:00",
+      "note": "Verified a repeated Artist pause relay against actual human chronology; no new pause existed. Artist corrected and was instructed to update existing restore header. No new gate, user confirmation, asset/source change or gameplay check."
     }
   ],
   "incidents": [
@@ -281,6 +289,24 @@
       "severity": "low",
       "planning_assessment": "possible",
       "lesson": "Compare actual human instruction chronology; a new assistant relay or restored summary does not create a new human instruction.",
+      "focused_repair_seconds": null,
+      "recurrences": [
+        {
+          "recorded_at": "2026-11-11T11:30:04.815508+00:00",
+          "source_turn": "01a1ca56-12f1-7372-94a8-2e8996ae4fe0",
+          "evidence": "Artist explicitly withdrew post-compaction pause relay: no newer human instruction after recorded resume. State remained active.",
+          "repair_seconds": null
+        }
+      ]
+    },
+    {
+      "id": "s1-variant-placement-review-error",
+      "recorded_at": "2026-11-11T11:21:27.542457+00:00",
+      "kind": "workflow_error",
+      "summary": "S2/S3/S4 left-PI rule was applied to asymmetric S1 in Artist support report and accepted too early by Lead. Side-specific support claim withdrawn and corrected at9d8b5a3 before runtime/asset changes.",
+      "severity": "low",
+      "planning_assessment": "possible",
+      "lesson": "File integrity proves provenance, not coordinate assumptions. Verify variant-specific placement before promoting geometric measurements to an integration fact.",
       "focused_repair_seconds": null
     }
   ],
@@ -291,7 +317,7 @@
     "planning_discovery": 1,
     "pre_existing": 0,
     "infrastructure": 1,
-    "workflow_error": 7,
+    "workflow_error": 8,
     "scope_change": 0
   },
   "confirmed_planning_gap_count": 4,
@@ -312,25 +338,26 @@
     "supplier-offscreen-probe-coordinate-frame": 0,
     "supplier-capture-deadline-overhead": 0,
     "supplier-passenger-jump-mechanics": 0,
-    "supplier-timber-stale-pause-replay": 0
+    "supplier-timber-stale-pause-replay": 0,
+    "s1-variant-placement-review-error": 0
   },
   "tokens": {
     "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
     "complete_recorded_interval_total": {
-      "input_tokens": 214791114,
-      "cached_input_tokens": 212918400,
-      "output_tokens": 1139652,
-      "reasoning_output_tokens": 728300,
-      "total_tokens": 215930766,
-      "uncached_input_tokens": 1872714
+      "input_tokens": 231980714,
+      "cached_input_tokens": 229996672,
+      "output_tokens": 1201427,
+      "reasoning_output_tokens": 758429,
+      "total_tokens": 233182141,
+      "uncached_input_tokens": 1984042
     },
     "known_interval_subtotal": {
-      "input_tokens": 214791114,
-      "cached_input_tokens": 212918400,
-      "output_tokens": 1139652,
-      "reasoning_output_tokens": 728300,
-      "total_tokens": 215930766,
-      "uncached_input_tokens": 1872714
+      "input_tokens": 231980714,
+      "cached_input_tokens": 229996672,
+      "output_tokens": 1201427,
+      "reasoning_output_tokens": 758429,
+      "total_tokens": 233182141,
+      "uncached_input_tokens": 1984042
     },
     "unknown_intervals": 0,
     "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
@@ -663,6 +690,36 @@
           "reasoning_output_tokens": 5087,
           "total_tokens": 4655496,
           "uncached_input_tokens": 34505
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-11T06:32:23.355578+00:00",
+        "ended_at": "2026-11-11T11:47:51.755575+00:00",
+        "receipt_start": "2026-11-11T06:31:51.394Z",
+        "receipt_end": "2026-11-11T11:47:32.096Z",
+        "usage_delta": {
+          "input_tokens": 15390994,
+          "cached_input_tokens": 15286912,
+          "output_tokens": 52633,
+          "reasoning_output_tokens": 24380,
+          "total_tokens": 15443627,
+          "uncached_input_tokens": 104082
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-11T11:47:51.755575+00:00",
+        "ended_at": "2026-11-11T11:52:46.188773+00:00",
+        "receipt_start": "2026-11-11T11:47:32.096Z",
+        "receipt_end": "2026-11-11T11:52:42.974Z",
+        "usage_delta": {
+          "input_tokens": 1798606,
+          "cached_input_tokens": 1791360,
+          "output_tokens": 9142,
+          "reasoning_output_tokens": 5749,
+          "total_tokens": 1807748,
+          "uncached_input_tokens": 7246
         }
       }
     ]

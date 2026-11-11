@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "Exact source checkpoint: PASS",
+    "Actual crate fixture selects the versioned Artist rack: PASS",
+    "Actual fixture has one static surface collider preserving concavity: PASS",
+    "Measured service opening is physically clear: PASS",
+    "Retained rail beside the opening remains solid: PASS",
+    "Full upper tray above the opening remains solid: PASS",
+    "Separate lower cassette imports: PASS",
+    "Imported lower bearing/pivot preserves explicit2mm registration: PASS",
+    "Separate upper cassette imports: PASS",
+    "Imported upper bearing/pivot preserves explicit2mm registration: PASS"
+  ],
+  "failed": false,
+  "scope": "Only newly selected static rack, actual collision gap/neighbor rail/intact pan and separate cassette import/registration. No stock, preparation, hauling, full scene or FPS demonstration.",
+  "source": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
+  "run": 43014853905,
+  "required_run": 43014846365,
+  "artifact_sha256": "9e4d775b3640c3f7eeed98e900bb76486a37cc3d119ad433aa94a7ae84909ff7",
+  "import_sidecars": "Three actual Godot-generated GLB sidecars retained from this same verified artifact; no local import/cache editing."
+}

@@ -506,12 +506,12 @@
     "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
     "status": "draft_published_not_merged_or_main_adopted",
     "evidence": "docs/evidence/supplier_transport/current_change_receipts.json",
-    "next": "Artist models accepted warehouse metal-support concept. Designer accepted bounded empty-only S4 folding-pan gameplay scope; measured hardware concept precedes modeling. Three frozen timber appearance questions remain pending. No new material runtime or all-cell acceptance.",
+    "next": "New crate rack view/collision and separate support imports verified. Per-cell metal support preparation/real handling remain pending; Artist builds accepted narrow-gap S4 mechanism prototype. Three frozen timber appearance questions remain pending.",
     "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
     "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
     "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
     "item_hauling": "RESUMED by Dawson selecting Resume with that carrying layout: existing2m planks/50kg maximum bundle, roughly1.3m worker separation. Reuse synchronized existing bend, no new pickup clip. Artist fits actual grips and checks clearance, then provides full video for human approval.",
-    "source_current": "10719d1cc1e1089b3176dd51802d2f331e6593d9",
+    "source_current": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
     "pr": 146,
     "pr_url": "https://github.com/TheInfinityIQ/Trencho_V4/pull/146",
     "passenger_approval": "Dawson approved v02 supported push-off/landing; source integrated. Native aec2dae receipt passed; subsequent hierarchy check separately recorded.",
@@ -536,6 +536,13 @@
       "sha256": "6f025b8c1da9392eba86689a4b3fd2043a04ae470035c1e3011aff37e3854e71",
       "human_approval": "pending",
       "scope": "28.4s warehouse-only Artist preview; corrected58clip export and9files verified,6encoded phase sheets inspected; not native integration."
+    },
+    "source_current_scope": "Latest checked production checkpoint; subsequent evidence/sidecar/concept-only commits do not imply another gameplay run.",
+    "warehouse_static_receipt": {
+      "run": 43014853905,
+      "source": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
+      "result": "pass",
+      "scope": "Only newly selected static rack, actual collision gap/neighbor rail/intact pan and separate cassette import/registration. No stock, preparation, hauling, full scene or FPS demonstration."
     }
   }
 }
