@@ -1066,7 +1066,11 @@ func _move_activities() -> void:
 					order.facing_degrees = facing
 					_position_supplier_occupants(order)
 	for walk in _walks:
-		_must(ledger.move_entity(walk.person_id, "rear-lane", _motion_position(walk)))
+		var at := _motion_position(walk)
+		var direction: Vector2 = at-Vector2(walk.get("position",at))
+		if not direction.is_zero_approx(): walk.facing = atan2(direction.x,direction.y)
+		walk.position = at
+		_must(ledger.move_entity(walk.person_id, "rear-lane", at))
 	if development_convoys: passengers.advance_poses()
 	for id in _workers:
 		var job: Dictionary = _workers[id].job

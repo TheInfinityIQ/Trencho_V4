@@ -14,6 +14,7 @@ func bind(model: RefCounted, convoys: Node3D) -> void:
 	_service = model.receiving.passengers
 	_scene = load(ART) as PackedScene
 	_service.changed.connect(_changed)
+	_service.root_changed.connect(_root_changed)
 	_model.receiving.ledger.entity_moved.connect(_moved)
 	for id: String in _service.rows: _changed(id)
 
@@ -58,12 +59,16 @@ func sync_speed() -> void:
 func _moved(id: String, _from: Vector2, _to: Vector2) -> void:
 	# Supported occupants inherit the real hull's physics-synchronized transform.
 	# Detached people still follow actual motion when skeletal playback is hidden.
-	if actors.has(id):
+	if actors.has(id) and int(_service.rows[id].index) == 11:
 		actors[id].refresh_root()
 		return
 
+func _root_changed(id: String) -> void:
+	if actors.has(id): actors[id].refresh_root()
+
 func _exit_tree() -> void:
 	if _service != null and _service.changed.is_connected(_changed): _service.changed.disconnect(_changed)
+	if _service != null and _service.root_changed.is_connected(_root_changed): _service.root_changed.disconnect(_root_changed)
 	if _model != null and _model.receiving.ledger.entity_moved.is_connected(_moved): _model.receiving.ledger.entity_moved.disconnect(_moved)
 	_service = null
 	_model = null

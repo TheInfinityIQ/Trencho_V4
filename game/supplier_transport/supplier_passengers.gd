@@ -1,6 +1,7 @@
 extends RefCounted
 ## Real passenger activities; animation and custody share committed boundaries.
 signal changed(person_id: String)
+signal root_changed(person_id: String)
 const Seating = preload("res://game/supplier_transport/supplier_seating.gd")
 const PATHS = preload("res://game/supplier_transport/assets/passenger_paths_v02.tres")
 static var _paths: Dictionary = {}
@@ -84,7 +85,11 @@ func _phase(row: Dictionary, index: int) -> void:
 func _start_arrival(row: Dictionary) -> void:
 	var receiving: RefCounted = _owner.get_ref()
 	var path: Array = row.arrival_path
-	row.walk = {"order_id":row.order.id,"person_id":row.id,"path":path,"started_at":receiving._time,"ends_at":float(receiving._time)+maxf(0.001,receiving._path_length(path)/1.5)}
+	var direction := Vector2.ZERO
+	for index in range(1,path.size()):
+		direction = Vector2(path[index])-Vector2(path[index-1])
+		if not direction.is_zero_approx(): break
+	row.walk = {"order_id":row.order.id,"person_id":row.id,"path":path,"position":Vector2(path[0]),"facing":atan2(direction.x,direction.y),"started_at":receiving._time,"ends_at":float(receiving._time)+maxf(0.001,receiving._path_length(path)/1.5)}
 	receiving._walks.append(row.walk)
 	row.index = 11
 	row.started = float(receiving._time)
@@ -109,20 +114,23 @@ func advance_poses() -> void:
 		# Transit occupants move with their hull; standing/exit roots need actual
 		# planar positions as well as the read-only visual support height.
 		if int(row.index) < 3 or int(row.index) == 11: continue
-		var at := pose(id).origin
+		var next_pose := pose(id)
+		var at := next_pose.origin
 		if row.order.aboard_people.has(id):
 			receiving._must(receiving.ledger.position_supplier_occupant(id,str(row.order.id),Vector2(at.x,at.z)))
 		else: receiving._must(receiving.ledger.move_entity(id,"rear-lane",Vector2(at.x,at.z)))
+		# Yaw/height can change without a planar Ledger move. Publish actual
+		# three-dimensional activity motion, never sample roots from rendering.
+		if row.get("published_pose",Transform3D.IDENTITY) != next_pose:
+			row.published_pose = next_pose
+			root_changed.emit(id)
 
 func pose(id: String, attached_frame: Transform3D = Transform3D.IDENTITY) -> Transform3D:
 	var row: Dictionary = rows[id]
 	var receiving: RefCounted = _owner.get_ref()
 	if int(row.index) == 11:
-		var at: Vector2 = receiving._motion_position(row.walk)
-		var path: Array = row.walk.path
-		var direction: Vector2 = Vector2(path[-1])-at
-		if direction.is_zero_approx(): direction = Vector2(path[-1])-Vector2(path[maxi(0,path.size()-2)])
-		return Transform3D(Basis(Vector3.UP,atan2(direction.x,direction.y)),Vector3(at.x,0,at.y))
+		var at: Vector2 = row.walk.position
+		return Transform3D(Basis(Vector3.UP,float(row.walk.facing)),Vector3(at.x,0,at.y))
 	var samples: Array = row.phases[int(row.index)].samples
 	var seconds := maxf(0.0,float(receiving._time)-float(row.started))
 	if int(row.index) in [0,2]: seconds = fposmod(seconds,float(row.duration))

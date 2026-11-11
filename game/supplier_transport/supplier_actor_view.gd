@@ -12,6 +12,7 @@ var _duration := 0.0
 var _loop := false
 var _on_screen := false
 var root_sampler: Callable
+var _clip_window := Vector2.ZERO
 
 func bind(receiving: RefCounted, simulation: RefCounted, id: String, scene: PackedScene) -> bool:
 	if _animator != null or id.is_empty() or scene == null: return false
@@ -52,16 +53,23 @@ func has_clip(name: StringName) -> bool:
 func clip_duration(name: StringName) -> float:
 	return _animator.get_animation(_clips[name]).length if _animator != null and _clips.has(name) else 0.0
 
-func set_activity(name: StringName, started: float, duration: float, loop: bool = false) -> bool:
-	if not _clips.has(name) or not is_finite(started) or not is_finite(duration) or duration <= 0.0:
+func set_activity(name: StringName, started: float, duration: float, loop: bool = false, clip_from: float = 0.0, clip_to: float = -1.0) -> bool:
+	if not _clips.has(name) or not is_finite(started) or not is_finite(duration) or duration <= 0.0 or not is_finite(clip_from) or not is_finite(clip_to):
 		push_error("Missing supplier clip or invalid committed timing: %s / %s" % [person_id,name])
 		return false
+	var length := clip_duration(name)
+	var end := length if clip_to < 0.0 else clip_to
+	if clip_from < 0.0 or clip_from > length+0.00001 or end < clip_from-0.00001 or end > length+0.00001:
+		push_error("Supplier clip window lies outside the authored action: %s / %s" % [person_id,name])
+		return false
+	_clip_window = Vector2(minf(clip_from,length),minf(end,length))
 	_clip = name
 	_started = started
 	_duration = duration
 	_loop = loop
 	var selected: StringName = _clips[name]
 	if _animator.current_animation != selected: _animator.play(selected)
+	refresh_root()
 	_render_pose() # Establish the correct paused/offscreen first pose once.
 	sync_speed()
 	return true
@@ -83,13 +91,11 @@ func _process(_delta: float) -> void:
 
 func _render_pose() -> void:
 	if _animator == null or _clip.is_empty(): return
-	refresh_root()
-	var clip: Animation = _animator.get_animation(_clips[_clip])
 	var elapsed := maxf(0.0,float(_receiving._time)-_started)
 	var phase := fposmod(elapsed,_duration)/_duration if _loop else clampf(elapsed/_duration,0.0,1.0)
 	# Update-only seeking skips authored method/audio callbacks. Clips never
 	# create stock, move real people or decide that a handover completed.
-	_animator.seek(phase*clip.length,true,true)
+	_animator.seek(lerpf(_clip_window.x,_clip_window.y,phase),true,true)
 	if not _loop and phase >= 1.0: set_process(false)
 
 func _screen_entered() -> void:

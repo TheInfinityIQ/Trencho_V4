@@ -2,6 +2,7 @@
   "stage": "Planned before coordinator implementation; Artist contact/path handoff still required",
   "authority": "Dawson resumed the existing2m plank/50kg maximum bundle, roughly1.3m worker separation. Existing pickup/bend must be synchronized; no new pickup clip.",
   "diagram": "docs/diagrams/paired_supplier_unloading.mmd",
+  "clip_windows": "Reuse the exact original pickup interval, such as0→.6s, then the Artist's fitted hauling fragment. ActorView accepts explicit clip-from/to seconds without speeding the whole pickup to fit a fragment. Activity/movement events update spatial roots; only joint pose evaluation runs on visible frames.",
   "ownership": {
     "selection": "HaulingPolicy visits the shared category order across currently idle eligible haulers. Higher categories commit their real workers first; unloading receives only remaining actual offers. An unmatched worker continues to lower categories, rather than waiting indefinitely or borrowing someone else's worker.",
     "activity": "Receiving composes one paired-unload coordinator. One operation owns two worker-job handles, one source claim and one warehouse cell promise. Individual worker handlers skip coordinator-owned jobs.",
