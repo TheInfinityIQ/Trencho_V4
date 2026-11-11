@@ -59,3 +59,15 @@ The Artist is checking a separate1.75m upper/.60m lower warehouse fixture,
 at most2.2m tall with the same2.6×1m footprint/four cells. Original fixtures
 remain unchanged; no extra access-order rule has been accepted. A contact pose alone is not full occupied-access
 or movement proof. See the [prospective coordinator plan](feature_plans/paired_supplier_unloading.json).
+
+Truck-only draft integration review: the Artist's finite ramp action ends with
+worker roots at localZ6.35/7.65m and payloadZ7m. These are not the existing
+single-worker rear pointZ6.685249243. Register each actual reached exit point
+before releasing its supplier commitment; do not send either carrier back onto
+the ramp merely to satisfy that old point. The protected rear work envelope
+must include the aft worker and load during this operation, beyond the old
+7.2m service rectangle. Final dimensions follow the frozen exported contract.
+The raw GLB forward axis is+Z and supplied yaw is already the effective visual
+yaw; apply the legacy rear-worker child correction only once. Ramp clips are
+finite lateral steps, not generic ground locomotion. Actual ground turns need
+their own measured swept clearance and direction-matching clips.

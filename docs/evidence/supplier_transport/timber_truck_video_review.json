@@ -1,0 +1,19 @@
+{
+  "stage": "Artist truck-only draft reviewed by Lead and shown to Dawson; appearance approval pending",
+  "sha256": "642ed976b3cbd41c8eccf9504eaa04fc548c7ef2a09cd6c614d3138b389380a8",
+  "file": "game/supplier_transport/assets/source/timber_truck_full_motion_draft_v01.mp4",
+  "frames": 1375,
+  "fps": 30,
+  "seconds": 45.833333333333336,
+  "scope": "Complete upper and lower timber pickup/contact/lift/withdrawal and coupled ramp exit. Not warehouse delivery or native Godot gameplay.",
+  "display_cutaway": "Near wall/roof/outer rack brace removed only for visibility. Artist contact checks retain full geometry.",
+  "lead_review": "Viewed encoded_phase_sheet_1,2,3: all phase25/50/75percent frames, including actual lower raise and both ramp sequences. Read source and encoded frame/timing manifests.",
+  "human_approval": "Pending Lead async question shown with the full video; layout resumption is not animation approval.",
+  "required_source_validation": {
+    "source": "10719d1cc1e1089b3176dd51802d2f331e6593d9",
+    "run": 42972358761,
+    "result": "pass",
+    "limits": "Worker selection source parse only; connected pair action remains pending."
+  },
+  "preservation": "Original assets unchanged. New truck animation draft not bound into runtime by this archive."
+}
