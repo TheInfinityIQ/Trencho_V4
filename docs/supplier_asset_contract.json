@@ -223,17 +223,19 @@
     "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
   },
   "s4_fold_up_proposal": {
-    "stage": "Designer observable scope approved; Lead accepted measuredY690 hardware concept for separately versioned prototype under explicit narrow-gap checks",
+    "stage": "First source gate failed before export/clip; revised fixed-rear-stop/non-bearing flange concept required before continuation",
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Actual prototype hardware/occupied clearance, finite mechanism clips and full review video. Actual generated quote/interlock demonstration follows changed implementation. Human appearance and final exact-head PR approval remain separate.",
+    "pending": "Update measured concept to explicit rear fixed stop and5.5mm non-bearing wall-flange trim, then same early actual source gate. Only after it passes may remaining hardware/occupied clearance checks and mechanism clips/export proceed. No whole-system acceptance from parked endpoint.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
     "authority": "Game Designer Lead message11November2026, thread01a18e60-cd67-7b01-8047-a8768208b387, observed turn01a1ca56-21e0-7583-b50b-448f2c8fb8b1. Not final PR, dimensions, clearance, handling or human appearance approval.",
     "observable_rules": "Unload actual upper stock first; only empty pan may unlock/fold/secure before lower-bale pickup. No overlapping fold/lift. Any later upper placement requires closed+locked pan. Automatic finite work inside unloading, no extra menu/purchase/resource cost; preserve priorities,quantities,support,footprint,geometric capacity. Pause freezes mechanism and handling.",
     "diagram": "diagrams/s4_bale_service.mmd",
     "initial_reference_timing": "Lead reference1.5s total:unlock.25/fold1/latch.25. Exact hardware motion and shared playback timing remain to be accepted; no native timing claim.",
-    "hardware_concept": "evidence/supplier_transport/s4_hardware_concept_manifest_v01.json"
+    "hardware_concept": "evidence/supplier_transport/s4_hardware_concept_manifest_v01.json",
+    "failed_gate": "evidence/supplier_transport/s4_first_clearance_gate.json",
+    "revision_plan": "evidence/supplier_transport/s4_guard_revision_plan.json"
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",

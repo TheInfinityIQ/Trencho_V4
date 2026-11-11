@@ -12,15 +12,15 @@
     "implementation": 40300.702849,
     "direct_check": 435.83927,
     "repair": 6516.849217,
-    "late_handling": 0,
+    "late_handling": 153.607654,
     "review": 348.987538,
-    "release": 48.782236,
+    "release": 575.3647090000001,
     "waiting": 22461.761695,
     "paused": 0,
     "workflow_overhead": 1764.351747
   },
   "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
-  "active_phase": "release",
+  "active_phase": "waiting",
   "observation_scope": [
     {
       "recorded_at": "2026-11-10T16:16:25.906626+00:00",
@@ -308,19 +308,32 @@
       "planning_assessment": "possible",
       "lesson": "File integrity proves provenance, not coordinate assumptions. Verify variant-specific placement before promoting geometric measurements to an integration fact.",
       "focused_repair_seconds": null
+    },
+    {
+      "id": "s4-concept-closed-and-swept-conflict",
+      "recorded_at": "2026-11-11T12:01:32.707372+00:00",
+      "kind": "planning_discovery",
+      "summary": "Accepted prototype concept rear moving guard overlaps retained back panel in closed pose and wall rail during fold; early source gate stopped before export/clip/native.",
+      "severity": "medium",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Concept retained back-panel innerX.252 and rail innerX.240, but moving guard envelope extended toX.260. Full structure/clear path was required.",
+      "omitted_assumption": "Closed and full swept moving-assembly envelopes were not first intersected with retained shell; parked gaps were considered independently.",
+      "assessment_rationale": "The closed guard/back-panel AABB overlap was derivable from the supplied concept dimensions before modeling. Actual mesh/containment gate caught it before runtime integration.",
+      "lesson": "Reject closed-pose AABB conflicts first, then derive full-angle envelope before modeling/posing. Endpoint clearance is insufficient; containment matters as well as triangle crossing.",
+      "focused_repair_seconds": null
     }
   ],
   "unique_incidents_by_kind": {
     "regression": 0,
     "candidate_regression": 0,
     "feature_defect": 8,
-    "planning_discovery": 1,
+    "planning_discovery": 2,
     "pre_existing": 0,
     "infrastructure": 1,
     "workflow_error": 8,
     "scope_change": 0
   },
-  "confirmed_planning_gap_count": 4,
+  "confirmed_planning_gap_count": 5,
   "tracked_repair_seconds_by_incident": {
     "warehouse-partial-package-cell-sharing": 0,
     "warehouse-concurrent-rack-sprawl": 1149.116808,
@@ -339,25 +352,26 @@
     "supplier-capture-deadline-overhead": 0,
     "supplier-passenger-jump-mechanics": 0,
     "supplier-timber-stale-pause-replay": 0,
-    "s1-variant-placement-review-error": 0
+    "s1-variant-placement-review-error": 0,
+    "s4-concept-closed-and-swept-conflict": 153.607654
   },
   "tokens": {
     "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
     "complete_recorded_interval_total": {
-      "input_tokens": 231980714,
-      "cached_input_tokens": 229996672,
-      "output_tokens": 1201427,
-      "reasoning_output_tokens": 758429,
-      "total_tokens": 233182141,
-      "uncached_input_tokens": 1984042
+      "input_tokens": 235367509,
+      "cached_input_tokens": 233372928,
+      "output_tokens": 1213648,
+      "reasoning_output_tokens": 766271,
+      "total_tokens": 236581157,
+      "uncached_input_tokens": 1994581
     },
     "known_interval_subtotal": {
-      "input_tokens": 231980714,
-      "cached_input_tokens": 229996672,
-      "output_tokens": 1201427,
-      "reasoning_output_tokens": 758429,
-      "total_tokens": 233182141,
-      "uncached_input_tokens": 1984042
+      "input_tokens": 235367509,
+      "cached_input_tokens": 233372928,
+      "output_tokens": 1213648,
+      "reasoning_output_tokens": 766271,
+      "total_tokens": 236581157,
+      "uncached_input_tokens": 1994581
     },
     "unknown_intervals": 0,
     "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
@@ -720,6 +734,36 @@
           "reasoning_output_tokens": 5749,
           "total_tokens": 1807748,
           "uncached_input_tokens": 7246
+        }
+      },
+      {
+        "phase": "release",
+        "started_at": "2026-11-11T11:52:46.188773+00:00",
+        "ended_at": "2026-11-11T12:01:32.771246+00:00",
+        "receipt_start": "2026-11-11T11:52:42.974Z",
+        "receipt_end": "2026-11-11T11:57:53.290Z",
+        "usage_delta": {
+          "input_tokens": 2229171,
+          "cached_input_tokens": 2226048,
+          "output_tokens": 2837,
+          "reasoning_output_tokens": 1467,
+          "total_tokens": 2232008,
+          "uncached_input_tokens": 3123
+        }
+      },
+      {
+        "phase": "late_handling",
+        "started_at": "2026-11-11T12:01:32.771246+00:00",
+        "ended_at": "2026-11-11T12:04:06.378900+00:00",
+        "receipt_start": "2026-11-11T11:57:53.290Z",
+        "receipt_end": "2026-11-11T12:02:58.598Z",
+        "usage_delta": {
+          "input_tokens": 1157624,
+          "cached_input_tokens": 1150208,
+          "output_tokens": 9384,
+          "reasoning_output_tokens": 6375,
+          "total_tokens": 1167008,
+          "uncached_input_tokens": 7416
         }
       }
     ]

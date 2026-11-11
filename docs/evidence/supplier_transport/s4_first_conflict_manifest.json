@@ -1,0 +1,258 @@
+{
+  "readiness": "Failed first source cabinet self-clearance gate; partial diagnostic only. No GLB/clip/video/exported socket or native acceptance.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\check_first_gate.py",
+      "bytes": 7673,
+      "sha256": "af765304b9d1159e98bd7c0c90c0d044312bf15cafcf71b9da1326cb8ec3abbd"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\complete.json",
+      "bytes": 102,
+      "sha256": "52c2568f1c16546da58199cca1dbf3c9cff1b18e9848264cd4d29c332427f0e8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\CONFLICT_HANDOFF.md",
+      "bytes": 4533,
+      "sha256": "3262be69abf0970305a2208fc84e3a6a3652e506450a18260849433f92a0716c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\draw_gate.py",
+      "bytes": 3751,
+      "sha256": "55aa2beac6710a6c99eaeb7b3374244d74cad16e2b5f1e454e54db67f8221c34"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\environment.json",
+      "bytes": 984,
+      "sha256": "6a853127fc79d5df4aa67001ccd27bf98a42c4cc4661c8bb3435aaeb8a75a47c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\first_clearance_gate.json",
+      "bytes": 50585,
+      "sha256": "4853ccd95a019422120e9783fd73dd429b03abfc0b574f7ee68e145c28f1b367"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\freeze_conflict.py",
+      "bytes": 1756,
+      "sha256": "2a97a52e5edf4e451057cc6cad85737af7992789a6850a2689f0e39f49a4a6e6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\new_source_piece_qa.json",
+      "bytes": 5259,
+      "sha256": "3bcc91a6fcad2c20c0f2117c7077cf4e4e8d771f7dc3ea11b9de849ba99b4328"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\s4_diagnostic_closed.png",
+      "bytes": 752340,
+      "sha256": "6258d55a7e3c1b36a405a2d5968f01e36b4381074e7f676821e1a39e9d923ca5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\s4_failed_first_gate_diagnostic_v01.blend",
+      "bytes": 115387,
+      "sha256": "b7754a98db5971a3e28cbc607288e8b14dde01e7c550685d8c552c601c8a864a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\s4_first_gate_conflict_v01.png",
+      "bytes": 295255,
+      "sha256": "b0263f74174c11f84a63d98b943486ef9edf362b58ab46db6c0ba3617e10dde1"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\materials_shelves_ready_v01.blend",
+      "sha256": "d8eae6846ff95fb8e0f96dd95436674ca7b2d4628c1cf5fe8bf469e4567787f5",
+      "bytes": 283795
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s4_protectedcargo_v01.glb",
+      "sha256": "75a7444d180393f783c6aba0648e5113e062b6556b079b93467565c4ecaec442",
+      "bytes": 270316
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\concept_manifest.json",
+      "sha256": "e7888507ed3d5611a5eea9785e3fca02d3b40566a439c3a3b9421c6d576bc075",
+      "bytes": 1318
+    }
+  ],
+  "preserved_prior_evidence_and_timber": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\worker\\construction_worker_animated_v01.blend",
+      "sha256": "7a17bf831ae110a1b70a09e19b48b0cd11a409fa83fc6fdf85e0c9afd2b438f0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_fixtures_v01.blend",
+      "sha256": "e7c4547d00ec34b24bf5a3667d0c2864a579eb1e33feb318a1e02e962308eb0a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_crate_rack_v01.glb",
+      "sha256": "6ca65fa822fa9c978d5a3cc6b250606e01365109cd6303d68e6f478bf6494727"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\small_crate_v01.glb",
+      "sha256": "2e37b5e0713a6f5202cd38f4e80e2362364d8eab77e6a0c81d4ceaf65d9701ac"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\medium_crate_v01.glb",
+      "sha256": "f52f8e73e0c39f58588a323e026ef12c003018ff28af9789ecec07f1ddf43e95"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\metal_stock_v01.glb",
+      "sha256": "480546528e9f7c16df60f4982179266c4eaadacf330c010ace321bbd90b0cdb7"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\textile_bale_v01.glb",
+      "sha256": "4a5290c667eca57d7d5d3abd621624d4313530c8fd696c58554205eb26a53d85"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s1_longstockrack_v02.glb",
+      "sha256": "82fc0b91a59c0ea0d583a71b7ee7d8180bb86102a8ce17792ff6879995d6c673"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s4_protectedcargo_v01.glb",
+      "sha256": "75a7444d180393f783c6aba0648e5113e062b6556b079b93467565c4ecaec442"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.glb",
+      "sha256": "69b63af4fe4e57c1eae907b8cc829e1b4e93961f3a0628844f9101a1c11d652d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.blend",
+      "sha256": "a650198cfc1a5f4d8efb0518fdb887da1ca72a4cfa3a799acd172b311fb1158e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\truck_floor_root_and_load_paths_v01.json",
+      "sha256": "b58e9fc25addb5ab4b80308f88f8d3b112fd3abed18c10aa009a951bffdee419"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\hand_grip_and_axis_contract_v01.json",
+      "sha256": "de151530376141325702efc7a53e43599301d66cf221483c2c80ca04690cf1f9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\timber_truck_full_motion_draft_v01.mp4",
+      "sha256": "642ed976b3cbd41c8eccf9504eaa04fc548c7ef2a09cd6c614d3138b389380a8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s1_longstockrack_v03.glb",
+      "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.glb",
+      "sha256": "be2a3b5f90bd903357ec2e8726c0cfe0d875e955b6c480b16f2d30c548b9ae4d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.blend",
+      "sha256": "fcd19eb3f0cb02fc5e4c3333c8b1d3a5720503b022ebd3f406fe046f4ac947cc"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\ground_pair_root_and_load_paths_v01.json",
+      "sha256": "0607a02418583212ae5dfcbb4c24fd6c5be20eb2c3282aecccba8fea98751024"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\timber_ground_full_motion_draft_v01.mp4",
+      "sha256": "b253417b0b5eed256cc054f712514a5e11065490082fddd70f68550f75e5e3f2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\construction_worker_timber_warehouse_draft_v01.glb",
+      "sha256": "6030dcdfc37db5d4caac81f57bdcbfec49709333156eed04c28005b6f1d2aa9b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\construction_worker_timber_warehouse_draft_v01.blend",
+      "sha256": "aa53a3e21d959160c99d57e8636d0ccf57da3ffe1e8d0ff4aa0f8cd337e086e8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\warehouse_pair_root_and_load_paths_v01.json",
+      "sha256": "c0f222a6719a59cd1f4ca340c5cba9ee4baee69f0d60781dbf6c14b8b8ed170b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\timber_warehouse_full_motion_draft_v01.mp4",
+      "sha256": "6f025b8c1da9392eba86689a4b3fd2043a04ae470035c1e3011aff37e3854e71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_long_stock_rack_v04.glb",
+      "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_long_stock_rack_v04.blend",
+      "sha256": "ca2923fd140c5b2deb9a0f24faed8f5b07b5db2de6b108a996eb70422ae129c3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\original_bend_and_join_check_v01.json",
+      "sha256": "8adcd986fea5525eac334b3f89967d6ec0fa587633ca664cd14087aebe5ca588"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\preservation_check.json",
+      "sha256": "9da4ba4c7ce26b04253d10e1d45999127cff6e1b27c37d5b78b62f2cbf82939d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\video_manifest.json",
+      "sha256": "5b4b17d03cfee253c8b132648ad3e64176746ff8fd4f2534ac5204b711f26e52"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\near_face_contact_recommendation_v01.md",
+      "sha256": "da65649f97790de6d96c5705026504673c77c0543022bc3984e54afd6b2e53a6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\bounded_contact_results.json",
+      "sha256": "5a9fc44378d4dc89d92f67c3e775d1e4e78a802dbaf4eb27154d327790da7056"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\metal_rail_window_choice.json",
+      "sha256": "5b4b50a3193fdcd8332cbd2bca1d35c6d4060c99afcc9f5ca5993677408192a4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\warehouse_upper_metal_contact.json",
+      "sha256": "c0103fc49c9dfeef50e795e1e6e2b16559aecbbc52206443b2d9a0f84d5cc3bc"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\actual_surface_frames.json",
+      "sha256": "ad90aaa32e5fb18286f67e6438aeb5ecb9a102032e21ecc20e1b9bd83cbb951c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\actual_palm_vertical_bounds.json",
+      "sha256": "4b2ecdbf7ff16cc7dda1b097c225cfc7d5a1f28f55a94fc5ce1be86724f0765e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\hand_calibration.json",
+      "sha256": "9f613b3e1caca461c0d26e8c6e1769fae0b6c2e246b1e74a027d961a3bc073b9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\metal_cradle_contact_concept.json",
+      "sha256": "c8bc024dbbffa55626584bded753d826de5ec5a9303cf3f233801f3c89881949"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\s1_metal_corrected_support_projection.json",
+      "sha256": "a3e83b98bdc379fc5fe4e340bf7ae3202504aaa7694743af6aa37ef07855fb8a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\warehouse_bale_station_interval.json",
+      "sha256": "4f0303ec495a89e84a618818cf64a0ec4d2af36eeff54d49c65dece7fb932d71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\warehouse_back_bale_static.png",
+      "sha256": "60a33e461360007ed36717d2d798d2aea94aab5567b8ee8a3a92beb1508f0dca"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\warehouse_back_bale_hands.png",
+      "sha256": "8832c60a4c152b8e8e8d17a9650e4f567420beb3ca89331ce266f024bf1e6ece"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\upper_metal_isolated_contact.png",
+      "sha256": "bc78194fdf855cb2163d615b3899ceb262a341f47ceb53783cbbad3e3d76308e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\upper_metal_palm_closeup.png",
+      "sha256": "e2129c42d342157be5543f67c7157b444e131a11e489f8943302a1fd5d9750da"
+    }
+  ],
+  "warehouse_delivery_unchanged": true,
+  "worker_pose_changes": 0,
+  "exports": 0,
+  "clips": 0,
+  "lead_disposition": {
+    "verified_manifest_files": 14,
+    "scope": "Early failed source prototype only; no GLB/mechanism clip/video/native export or completed downstream checks. Failed diagnostic Blender file stays in preserved Artist workspace; not a runtime asset.",
+    "review": "Read concrete mesh intersections/containment report and actual-section diagram. Closed-pose and intermediate fold conflicts confirmed in supplied evidence; nonpenetrating boundary contacts kept separate.",
+    "revision": "Bounded fixed rear stop and5.5mm non-bearing flange revision, preserving entire source padding and full support, documented in s4_guard_revision_plan.json before renewed modeling. Same early actual gate must pass before remaining checks.",
+    "source_report_original_sha256": "3262be69abf0970305a2208fc84e3a6a3652e506450a18260849433f92a0716c"
+  }
+}
