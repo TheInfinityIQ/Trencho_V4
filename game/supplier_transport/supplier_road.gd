@@ -38,8 +38,8 @@ func settle() -> bool:
 	var service: RefCounted = _receiving_ref.get_ref()
 	var changed := false
 	for order: Dictionary in service._active_suppliers.values():
-		if not order.motion.is_empty() and not _clear(order,_remaining(order.motion)):
-			order.traffic_resume = {"state":str(order.state),"destination":Vector2(order.motion.path.back())}
+		if not order.motion.is_empty() and not _clear(order,_remaining(order.motion),float(order.motion.get("speed",service._speed(order)))):
+			order.traffic_resume = {"state":str(order.state),"destination":Vector2(order.motion.path.back()),"path":_remaining(order.motion),"speed":float(order.motion.get("speed",service._speed(order)))}
 			order.motion = {}
 			order.next_at = INF
 			service._set_state(order,"Traffic hold")
@@ -47,8 +47,11 @@ func settle() -> bool:
 	for order: Dictionary in service._active_suppliers.values():
 		if order.state != "Traffic hold": continue
 		var resume: Dictionary = order.traffic_resume
-		if not plan(order,Vector2(resume.destination)).is_empty():
-			service._start_vehicle_motion(order,str(resume.state),Vector2(resume.destination))
+		var path: Array = resume.get("path",[])
+		if path.is_empty(): path = plan(order,Vector2(resume.destination))
+		var speed: float = float(resume.get("speed",speed_for(order,path)))
+		if not path.is_empty() and _clear(order,path,speed):
+			service._start_vehicle_motion(order,str(resume.state),Vector2(resume.destination),path,speed)
 			changed = true
 	return changed
 
@@ -59,30 +62,35 @@ func plan(order: Dictionary, destination: Vector2) -> Array:
 	if destination.x < start.x+20.0: return []
 	# Smooth lateral arcs stay outside the protected rear work zone. The
 	# body-circle test covers every intermediate straight segment and bend.
-	for run: float in [10.0,16.0]:
+	for run: float in [26.0,32.0]:
 		if destination.x-start.x < run*2.0+6.0: continue
 		var path: Array = [start,start+Vector2(2,0)]
-		for step in range(1,7):
-			var t := float(step)/6.0
+		for step in range(1,13):
+			var t := float(step)/12.0
 			var blend := t*t*(3.0-2.0*t)
 			path.append(Vector2(start.x+2.0+run*t,lerpf(start.y,PASS_Y,blend)))
 		path.append(Vector2(destination.x-4.0-run,PASS_Y))
-		for step in range(1,7):
-			var t := float(step)/6.0
+		for step in range(1,13):
+			var t := float(step)/12.0
 			var blend := t*t*(3.0-2.0*t)
 			path.append(Vector2(destination.x-4.0-run+run*t,lerpf(PASS_Y,destination.y,blend)))
 		path.append(destination) # Finish aligned with the actual rear-access frame.
 		if _clear(order,path): return path
 	return []
 
-func _clear(order: Dictionary, path: Array) -> bool:
+func speed_for(order: Dictionary, path: Array) -> float:
+	for point: Vector2 in path:
+		if point.y > 206.0: return 4.0
+	return float(_receiving_ref.get_ref()._speed(order))
+
+func _clear(order: Dictionary, path: Array, speed: float = -1.0) -> bool:
 	var service: RefCounted = _receiving_ref.get_ref()
 	if not _external_clear(path,Vector2(path[0])): return false
-	var proposed := _segments(path,float(service._time),float(service._speed(order)))
+	var proposed := _segments(path,float(service._time),speed if speed > 0.0 else speed_for(order,path))
 	for other: Dictionary in service._active_suppliers.values():
 		if other.id == order.id: continue
 		if not other.motion.is_empty():
-			var moving := _segments(_remaining(other.motion),float(service._time),float(service._speed(other)))
+			var moving := _segments(_remaining(other.motion),float(service._time),float(other.motion.get("speed",service._speed(other))))
 			if not moving.is_empty():
 				var last: Dictionary = moving.back()
 				moving.append({"at":Vector2(other.motion.path.back()),"velocity":Vector2.ZERO,"start":float(last.end),"end":INF,"radius":7.5})

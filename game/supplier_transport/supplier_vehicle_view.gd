@@ -29,6 +29,7 @@ var _exhaust: CPUParticles3D
 var _driver: ActorView
 var _driver_action: StringName = &""
 var _driver_speed := -1.0
+var _wheelbase := 3.0
 
 static func model(file: String) -> Node3D:
 	var path := ROOT+file
@@ -54,6 +55,7 @@ func bind(receiving: RefCounted, simulation: RefCounted, row: Dictionary) -> voi
 	for suffix: String in ["FL","FR","ML","MR","RL","RR"]:
 		_spins.append(_art.find_child("Spin_"+suffix,true,false) as Node3D)
 	for suffix: String in ["FL","FR"]: _steers.append(_art.find_child("Steer_"+suffix,true,false) as Node3D)
+	_wheelbase = _spins[0].global_position.distance_to(_spins[4].global_position)
 	var shape := CollisionShape3D.new()
 	shape.name = "SupplierHull"
 	var box := BoxShape3D.new()
@@ -70,11 +72,13 @@ func bind(receiving: RefCounted, simulation: RefCounted, row: Dictionary) -> voi
 	_create_exhaust()
 	_bind_driver(str(row.driver_id))
 	_last_position = row.position
+	_last_heading = deg_to_rad(float(row.get("facing_degrees",0.0)))
 	_last_time = float(_receiving._time)
 	apply_pose(row.position)
 	refresh(row)
 
 func refresh(row: Dictionary) -> void:
+	var was_moving := _moving
 	_moving = bool(row.get("moving",false))
 	var driver_action: StringName = &"supplier_driver_drive" if _moving else &"supplier_driver_idle"
 	if _driver != null and driver_action != _driver_action:
@@ -82,7 +86,9 @@ func refresh(row: Dictionary) -> void:
 		_driver.set_activity(driver_action,float(row.get("state_started",_receiving._time)),_driver.clip_duration(driver_action),true)
 	if not _moving:
 		_roll_target = 0.0
-		_pitch_target = 0.0
+		if was_moving:
+			_pitch_target = clampf(_pitch_target-_last_speed*0.004,-0.04,0.04)
+			_last_speed = 0.0
 	var phase: String = str(row.get("mechanism",""))
 	if phase != _mechanism:
 		_mechanism = phase
@@ -163,10 +169,11 @@ func apply_pose(at: Vector2) -> void:
 		var heading := atan2(delta.y,delta.x)
 		var yaw := angle_difference(_last_heading,heading)
 		var speed: float = distance/elapsed if elapsed > 0.000001 else _last_speed
-		_roll_target = clampf(-yaw*speed*0.10,-0.07,0.07)
-		_pitch_target = clampf((speed-_last_speed)*0.004,-0.04,0.04)
+		var curvature := yaw/distance
+		_roll_target = clampf(-curvature*speed*speed*0.035,-0.07,0.07)
+		_pitch_target = clampf(_pitch_target+(speed-_last_speed)*0.004,-0.04,0.04)
 		for spin: Node3D in _spins: spin.rotation.x -= distance/0.43
-		for steer: Node3D in _steers: steer.rotation.y = clampf(-yaw*4.0,-0.45,0.45)
+		for steer: Node3D in _steers: steer.rotation.y = clampf(-atan(_wheelbase*curvature),-0.45,0.45)
 		_last_heading = heading
 		_last_speed = speed
 	global_transform = Transform3D(Basis(Vector3.UP,-PI/2.0-_last_heading),Vector3(at.x,0,at.y))
@@ -194,7 +201,7 @@ func sync_speed() -> void:
 	if _exhaust != null:
 		_exhaust.speed_scale = speed
 		_exhaust.emitting = _moving and speed > 0.0
-	set_process(speed > 0.0 and (_moving or _mechanism in ["door_open","ramp_deploy","ramp_stow","door_close"] or absf(_pivot.rotation.x)+absf(_pivot.rotation.z)>0.0001))
+	set_process(speed > 0.0 and (_moving or _mechanism in ["door_open","ramp_deploy","ramp_stow","door_close"] or absf(_pitch_target)+absf(_pivot.rotation.x)+absf(_pivot.rotation.z)>0.0001))
 
 func _process(delta: float) -> void:
 	# Only active cosmetic work runs here; no source/worker/route inspection.
@@ -202,6 +209,7 @@ func _process(delta: float) -> void:
 	var weight := 1.0-exp(-7.0*delta*float(_model.speed))
 	_pivot.rotation.x = lerpf(_pivot.rotation.x,_pitch_target,weight)
 	_pivot.rotation.z = lerpf(_pivot.rotation.z,_roll_target,weight)
+	_pitch_target = lerpf(_pitch_target,0.0,1.0-exp(-3.0*delta*float(_model.speed)))
 	sync_speed()
 
 func _create_exhaust() -> void:

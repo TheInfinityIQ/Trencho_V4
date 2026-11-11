@@ -745,7 +745,7 @@ func _dispatch(order: Dictionary) -> void:
 			order.passenger_ids.append(person_id)
 			order.aboard_people[person_id] = index
 	var gate := _gate(order)
-	var origin := Vector2(-12-float(order.get("convoy_index",0))*20,ROAD_Y) if development_convoys else gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
+	var origin := Vector2(-12-float(order.get("convoy_index",0))*30,ROAD_Y) if development_convoys else gate - Vector2(_speed(order) * (order.arrival_at - _time), 0)
 	if development_convoys:
 		order.arrival_at = _time+origin.distance_to(gate)/_speed(order)
 		_active_suppliers[order.id] = order
@@ -1074,17 +1074,18 @@ func _move_activities() -> void:
 			_must(ledger.move_entity(id, "rear-lane", _motion_position(job)))
 
 
-func _start_vehicle_motion(order: Dictionary, state: String, destination: Vector2) -> void:
+func _start_vehicle_motion(order: Dictionary, state: String, destination: Vector2, planned_path: Array = [], planned_speed: float = -1.0) -> void:
 	var origin: Vector2 = order.world_position if development_convoys else ledger.inspect_entity(order.id).position
-	var path: Array = road.plan(order,destination) if development_convoys else [origin,destination]
+	var path: Array = planned_path if not planned_path.is_empty() else road.plan(order,destination) if development_convoys else [origin,destination]
 	if path.is_empty():
 		order.traffic_resume = {"state":state,"destination":destination}
 		order.motion = {}
 		order.next_at = INF
 		_set_state(order,"Traffic hold")
 		return
-	order.next_at = _time + _path_length(path) / _speed(order)
-	order.motion = {"path":path,"started_at":_time,"ends_at":order.next_at}
+	var speed: float = planned_speed if planned_speed > 0.0 else road.speed_for(order,path) if development_convoys else _speed(order)
+	order.next_at = _time + _path_length(path) / speed
+	order.motion = {"path":path,"started_at":_time,"ends_at":order.next_at,"speed":speed}
 	_set_state(order,state)
 
 
@@ -1170,13 +1171,13 @@ func _update_convoy_gate(order: Dictionary) -> void:
 
 
 func _gate(order: Dictionary) -> Vector2:
-	if development_convoys: return Vector2(96-float(order.get("convoy_index",0))*20,ROAD_Y)
+	if development_convoys: return Vector2(96-float(order.get("convoy_index",0))*30,ROAD_Y)
 	if supply_table_access: return Vector2(0,receiving_position.y-10 if order.kind == "Freight" else personnel_position.y+10)
 	return FREIGHT_GATE if order.kind == "Freight" else Vector2(0, 100)
 
 
 func _berth(order: Dictionary) -> Vector2:
-	if development_convoys: return Vector2(132 if order.kind == "Freight" else 112,ROAD_Y)
+	if development_convoys: return Vector2(132 if order.kind == "Freight" else 100,ROAD_Y)
 	if supply_table_access and order.kind != "Freight": return personnel_position+Vector2(6+order.slot*8,10)
 	return freight_berths[order.slot].berth if order.kind == "Freight" else Vector2(16 + order.slot * 8, 100)
 
