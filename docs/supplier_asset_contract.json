@@ -171,7 +171,7 @@
     "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
     "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding."
   },
-  "non_timber_geometry_decision": "evidence/supplier_transport/actual_cargo_geometry_v01.md contains a prominent S1 orientation erratum. Only unaffected necessary reach/capacity facts remain applicable. Correct side-specific support before choosing a metal support remedy; actual mesh contact fitting remains scoped, with no fixture/animation authoring.",
+  "non_timber_geometry_decision": "evidence/supplier_transport/near_face_contact_recommendation_v01.md and frozen manifest supersede earlier partial geometry suggestions. Only a static2D warehouse metal-support/service-opening concept is authorized next; no mesh/other-item animation or runtime changes.",
   "s1_variant_constraint": {
     "stage": "Artist actual-family geometry assessment; runtime unchanged",
     "decision": "Do not apply revised timber S1 .60/.95 supports and1.50m packing ceiling to metal as a capacity-preserving shared rack. Timber and metal need separate measured variants. Preserve original metal support spacing/usable stack envelope until full contact/mount/overhead contract is accepted.",
@@ -182,7 +182,8 @@
     },
     "orientation": "Actual Metal quarter_turn+PI/2; other package placements follow actual packing, not static Packet marker yaw. Fixture side orientation and global package yaw are distinct.",
     "next": "First recompute support with explicit S1 left-identity/right-PI transforms and actual packet placement; then fit real undergrips. Do not author a support insert from the withdrawn side count. Preserve old metal planes/stacking envelope and frozen timber.",
-    "support_defect": "WITHDRAWN pending corrected S1 placement measurement. The four LEFT zero-support conclusion is withdrawn. Artist applied the general S2/S3/S4 left-PI rule to S1 without establishing its separate orientation. Frozen LEFT timber S1 uses identity; S1 is excluded from current runtime shelf binding. Corrected proposed wall-side S1Metal placement is left identity/rightPI, with exact support/hand clearance still being measured. No actual-side support defect or insert requirement is established by the earlier count. Pure90-to72 rack arithmetic and actual package yaw are unaffected."
+    "support_defect": "Earlier four-LEFT claim withdrawn. Corrected proposed S1Metal leftIDENTITY/rightPI projection has0zero-area left/4right under THAT proposal, not current runtime (S1 remains excluded). Full actor/stock access and any support remedy remain unaccepted.",
+    "registration_choice": "Prefer explicit+2mm metal-only bearing shim for concept; preserve nominal packet roots/planes and full stack envelope. Not permission to shift all materials or author an unverified rack."
   },
   "non_timber_static_contact_candidates": {
     "warehouse_back_bale": {
@@ -197,5 +198,14 @@
       "body": "Original pickup1.0s unchanged",
       "next": "Retain for eventual complete handling contract; actual load-supporting grasp/lift/release/occupied motion/native integration remain unverified. Other cases still unresolved; no generalized offset or fixture change."
     }
+  },
+  "warehouse_metal_concept_brief": {
+    "verified_manifest_files": 23,
+    "original_report_sha256": "da65649f97790de6d96c5705026504673c77c0543022bc3984e54afd6b2e53a6",
+    "repository_lf_report_sha256": "e5f53a32667ddb0b126a93c5a2eb71608763bc3e85a671859011c6e67ead4a3e",
+    "next_authorized": "One measured static2D warehouse metal-support/service-opening concept before mesh authoring: preserve footprint,16cells,tray planes; removable item-specific lower537mm/upper105mm centre cassettes, properly supported600mm service opening, unchanged non-metal cells/envelopes. Back-bale existing contact retained.",
+    "s1_registration": "For the S1Metal concept prefer explicit+2mm bearing shim, retaining nominal packet roots, original planes and stacking envelope. Actual support/actor fit and modeling remain unapproved.",
+    "held": "No S2/S4 guessed riser, tray cut, unsupported20mm overhang, capacity change, new pickup or further pose sweep. Need one quantified full-support/access variant proposal after warehouse concept.",
+    "limits": "Physical surface targets/native Blender hand calibration are not exported Godot bone-local sockets. Static witness and source-part equivalence are not delivered fixture structure, full animation, native gameplay or human appearance approval."
   }
 }
