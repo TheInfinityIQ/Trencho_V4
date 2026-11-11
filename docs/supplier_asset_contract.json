@@ -171,7 +171,7 @@
     "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
     "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding."
   },
-  "non_timber_geometry_decision": "evidence/supplier_transport/non_timber_contact_preflight.json; actual family mapping governs further contact work. Existing meshes/dimensions/cargo unchanged pending measured recommendation.",
+  "non_timber_geometry_decision": "evidence/supplier_transport/actual_cargo_geometry_v01.md and exact-source manifest. Lead authorizes bounded static near-face contact fitting using actual package surfaces/yaw/body/approach; no other-item animations or fixture authoring yet. Whole-glove necessary bounds and partial body witnesses do not approve a universal mounting offset.",
   "s1_variant_constraint": {
     "stage": "Artist actual-family geometry assessment; runtime unchanged",
     "decision": "Do not apply revised timber S1 .60/.95 supports and1.50m packing ceiling to metal as a capacity-preserving shared rack. Timber and metal need separate measured variants. Preserve original metal support spacing/usable stack envelope until full contact/mount/overhead contract is accepted.",
@@ -181,6 +181,7 @@
       "scope": "Artist source-derived pure-rack packing calculation only, retaining current order/rotations/stacking/release. Not final shipment vehicle count or cost; full quotes also enforce payload/grouping/fees."
     },
     "orientation": "Actual Metal quarter_turn+PI/2; other package placements follow actual packing, not static Packet marker yaw. Fixture side orientation and global package yaw are distinct.",
-    "next": "Finish measured contact/mount intervals before any other-item authoring; no arbitrary riser or silent capacity change."
+    "next": "Fit actual mesh contacts and co-design physical support clearance before modeling; any irreducible footprint/capacity/doorway compromise returns as a quantified choice. No midpoint chosen from necessary intervals.",
+    "support_defect": "Artist exact top-triangle clipping found zero support beneath four front left metal base positions in original S1v02. Translating the rack cannot fix this. Separate S1Metal support needs measured hand clearance at old .425/.85 planes; frozen timber unchanged."
   }
 }
