@@ -506,7 +506,7 @@
     "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
     "status": "draft_published_not_merged_or_main_adopted",
     "evidence": "docs/evidence/supplier_transport/current_change_receipts.json",
-    "next": "Artist authors fitted real-worker S4 operation from accepted operator layout and revised tandem shoulder timber carrying. Final human animation approval and runtime unloading integration remain pending.",
+    "next": "Artist revises rejected S4 full-body motion and separately authorized timber shoulder carrying. Lead preserves rejected evidence and original assets. No S4v03 integration; human appearance approval and unloading runtime remain pending.",
     "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
     "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
     "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
@@ -545,9 +545,9 @@
       "scope": "Only newly selected static rack, actual collision gap/neighbor rail/intact pan and separate cassette import/registration. No stock, preparation, hauling, full scene or FPS demonstration."
     },
     "s4_animation_review": {
-      "status": "Mechanism/scenario liked; worker-operated revision required by direct human instruction",
-      "reference_video_sha256": "834b9c2d6b970dea2642885ba8bd47eb33faf7cf6707a984cf49e588f3b1407d",
-      "scope": "Rigid-only v02 retained as reference, not final worker-operated approval."
+      "video_sha256": "7cc21f53bbecadbbc8438a9f133d982976824f86042c7eb831305e7807c0c24e",
+      "human_approval": "rejected",
+      "scope": "36s actual worker-operated shelf preview; arms overlap torso and hands spin unnaturally; not runtime bound"
     },
     "timber_appearance_status": "Human revision required: actual palms at pickup, shoulder carry and restrained ramp gait. Earlier hand-carry drafts not approved."
   }

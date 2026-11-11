@@ -69,6 +69,30 @@
     {
       "recorded_at": "2026-11-11T12:50:15.354657+00:00",
       "note": "S4v02 frozen delivery received and82manifest records verified; four actual encoded phase sheets inspected and14s video shown for appearance approval. Existing Restraint_00/01 confirmed actual separate old GLB mesh nodes; composition remains an integration precondition. Source/export gate now passes per Artist, but no Godot/runtime/interlock check or new source shelf binding. Current waiting interval includes this resumed asset review, not focused waiting hours; Artist costs/repair time remain unknown."
+    },
+    {
+      "recorded_at": "2026-11-11T16:21:41.831056+00:00",
+      "note": "Dawson likes S4 shelf scenario but requires actual worker lift instead of self-actuation. This is a human scope refinement, not a reported runtime regression. Artist and Designer informed; scoped operator clips explicitly authorized; prior1.5s no longer forced onto human motion. Diagram/contract updated before implementation; no local engine or gameplay check."
+    },
+    {
+      "recorded_at": "2026-11-11T16:35:24.273360+00:00",
+      "note": "Reviewed source-measured shoulder layout and full2Dconcept, verified manifest identities, accepted basis for anatomy/transition fitting then revised motion. No final posed clearance/clip/native or human appearance claim. Runtime packing height.24 preserved despite physical mesh.162. Previous frozen hand-carry references remain unapproved; no engine or new gameplay tests."
+    },
+    {
+      "recorded_at": "2026-11-11T19:34:24.389751+00:00",
+      "note": "User asked to proceed. Artist had completed separate skill-installation work; explicitly resumed accepted actual-worker shelf deliverable. Reviewed real Receiving/Freight/Packing/View callers and recorded exact integration boundaries and interruption/debug cleanup before code. No production change, native check or regression run. Final root/contact/lock export and human appearance approval still pending; elapsed mixed waiting period is not focused implementation time."
+    },
+    {
+      "recorded_at": "2026-11-11T19:49:16.045361+00:00",
+      "note": "Artist actual pre-animation fit discovered narrow S4 end-post control/glove interference. Lead reviewed measured118.55mm shared-finger strip versus20mm recess and actual closeup, accepted bounded wider flush fixed control revision before keys/export. Planning discovery, not observed runtime regression. Original failure retained; Artist repair time/tokens unknown and not invented."
+    },
+    {
+      "recorded_at": "2026-11-11T20:03:14.457794+00:00",
+      "note": "Actual wider S4 control has clear static presses but failed full source sequence: B housing intersects shoulder/chest,241samples/89failed including separate approach/hand-transfer reach. Lead inspected actual full-body image and measured solid overlap, accepted around.90m waist B relocation as fit candidate. Source failures retained before animation/export or engine code; no runtime regression claim. Artist correction time/tokens unknown."
+    },
+    {
+      "recorded_at": "2026-11-11T20:37:35.378957+00:00",
+      "note": "Dawson rejected exact S4v03 video for arms merging into torso and unnatural hand spins; no integration. Lead missed this in sampled encoded-frame review. Full-body revision dispatched; final export contact/matrix strict failures disclosed separately. Scope remains same S4 operator, no global pause. Artist time/tokens and focused repair duration unknown."
     }
   ],
   "incidents": [
@@ -325,19 +349,33 @@
       "assessment_rationale": "The closed guard/back-panel AABB overlap was derivable from the supplied concept dimensions before modeling. Actual mesh/containment gate caught it before runtime integration.",
       "lesson": "Reject closed-pose AABB conflicts first, then derive full-angle envelope before modeling/posing. Endpoint clearance is insufficient; containment matters as well as triangle crossing.",
       "focused_repair_seconds": null
+    },
+    {
+      "recorded_at": "2026-11-11T20:37:35.494034+00:00",
+      "id": "s4-v03-worker-self-collision-and-hand-spin",
+      "kind": "feature_defect",
+      "summary": "Human rejected new shelf operator animation for arm/torso self-intersection and unnatural hands; Lead review missed them before presentation",
+      "severity": "major appearance failure; integration withheld",
+      "evidence": "Direct Dawson rejection of exact36s video7cc21f53; retained docs/evidence/supplier_transport/s4_operator_motion_rejection_v03.json; author_operation.py place_hand/gate inspection",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Actual complete normal-speed human body/hand motion review, plausible anatomy and existing requirement to prevent body overlap before acceptance",
+      "omitted_assumption": "Environmental collision/reach checks and sampled phase-sheet review were allowed to stand in for continuous anatomical/self-collision review",
+      "assessment_rationale": "Source gate does not check worker self-collision; independent absolute hand orientation is not validated as an anatomical arm chain. Human observed obvious missing quality coverage before integration.",
+      "repair_time": "Unknown; do not infer focused Artist time from mixed wall time or label this an observed game regression",
+      "lesson": "Review coherent opaque full-body motion early, including elbows/torso and wrist orientation, before expensive final exports/videos; numerical format/environment gates have separate scopes"
     }
   ],
   "unique_incidents_by_kind": {
     "regression": 0,
     "candidate_regression": 0,
-    "feature_defect": 8,
+    "feature_defect": 9,
     "planning_discovery": 2,
     "pre_existing": 0,
     "infrastructure": 1,
     "workflow_error": 8,
     "scope_change": 0
   },
-  "confirmed_planning_gap_count": 5,
+  "confirmed_planning_gap_count": 6,
   "tracked_repair_seconds_by_incident": {
     "warehouse-partial-package-cell-sharing": 0,
     "warehouse-concurrent-rack-sprawl": 1149.116808,
@@ -357,7 +395,8 @@
     "supplier-passenger-jump-mechanics": 0,
     "supplier-timber-stale-pause-replay": 0,
     "s1-variant-placement-review-error": 0,
-    "s4-concept-closed-and-swept-conflict": 153.607654
+    "s4-concept-closed-and-swept-conflict": 153.607654,
+    "s4-v03-worker-self-collision-and-hand-spin": 0
   },
   "tokens": {
     "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",

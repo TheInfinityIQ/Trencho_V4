@@ -1,0 +1,51 @@
+{
+  "controls": {
+    "A": {
+      "node": "SM_Manual_Paddle_A",
+      "front_rest_godot": [
+        -0.264,
+        0.7799999713897705,
+        -0.2375
+      ],
+      "stroke_axis_godot": [
+        1,
+        0,
+        0
+      ],
+      "stroke_m": 0.003,
+      "face_height_width_m": [
+        0.04,
+        0.14
+      ],
+      "housing_rear_x": -0.257
+    },
+    "B": {
+      "node": "SM_Manual_Paddle_B",
+      "front_rest_godot": [
+        -0.264,
+        0.8550000190734863,
+        -0.2375
+      ],
+      "stroke_axis_godot": [
+        1,
+        0,
+        0
+      ],
+      "stroke_m": 0.003,
+      "face_height_width_m": [
+        0.04,
+        0.14
+      ],
+      "housing_rear_x": -0.257
+    }
+  },
+  "states": "Paired pins held retracted by retained push-push detent while hand transfers. Second manual press releases detent only at the matching seated stop. Empty upper and restraint removal required before operation.",
+  "linkage": "Sealed fixed-frame post/end/back routes; no crossing cargo volume or moving gap",
+  "passive_assistance": "Can reduce holding effort, cannot move shelf before grip or replace worker control",
+  "dimensions_unchanged": true,
+  "upper_lower_nominal_planes_m": [
+    0.7,
+    0.1
+  ],
+  "M05_insert_m": 0.08
+}

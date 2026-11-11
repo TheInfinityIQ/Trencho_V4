@@ -224,11 +224,11 @@
     "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
   },
   "s4_fold_up_proposal": {
-    "stage": "Human likes folding-shelf scenario/mechanism; real worker-operated revision required before final animation/runtime acceptance",
+    "stage": "Human rejected worker-operated v03 motion: arm/torso merging and unnatural hand spins; full-body revision required, no runtime integration",
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary. Actual worker/stock/lock/pause/moving-collision integration and brief current-change demonstration remain pending.",
+    "pending": "Artist diagnoses full anatomical chain and revises shoulder/elbow/wrist arcs and actual limb self-collision, stable palms, footwork, load support and pacing. Review natural opaque continuous motion from readable views before another finished preview; wireframe supplemental. No request for Dawson to enumerate all other defects. Final human appearance approval and actual worker/stock/lock/pause/moving-collision runtime connection remain pending.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
     "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
     "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
@@ -240,7 +240,7 @@
     "delivery": "evidence/supplier_transport/s4_mechanism_delivery_v02.json",
     "restraints": "New mechanism is service configuration and excludes original separate Restraint_00/01. Lead independently read old GLB: both are actual separate mesh nodes (meshes0/1 of3), not markers. Preserve/compose their original transforms/geometry and removal conditions before replacing a transport shelf. No permanent restraint disappearance or new removal clip approved.",
     "original_failure": "s4_first_clearance_gate.json and revision plan preserved; the revised source gate success does not rewrite the failed first prototype.",
-    "appearance_status": "Mechanism/scenario liked conditionally; self-moving v02 not final accepted operation. Revised visible worker sequence needs full review.",
+    "appearance_status": "REJECTED v03; scenario still liked but actual animation must be revised and approved",
     "worker_operation_request": "evidence/supplier_transport/s4_worker_operation_request.json",
     "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
     "operator_layout": {
@@ -259,7 +259,7 @@
       "activity": "ReceivingSimulation._start_worker_job retains the existing actual worker, stock claim and finite warehouse promise. _approach_truck acquires existing supplier aisle/access, then routes to the measured operator position before any shelf actuation. Shelf preparation stays in that actual worker job; it is not a second helper or detached automatic timer.",
       "authority": "SupplierFreight owns per-order/per-rack committed mechanism state and checks indexed aboard_packets for the relevant upper pan on stock change. Receiving owns the actual operator activity deadlines. Ledger remains the only stock/custody owner. Require empty upper pan, actual operator access/contact, valid pins and module exclusivity before starting.",
       "completion": "ReceivingSimulation._finish_worker_phase advances authored contact/release/lift/latch/hands-clear boundaries from the delivered export contract. Only parked-and-latched plus hands-clear admits lower pickup. Existing Pickup begin_carry boundary is retained after preparation, not triggered by AnimationPlayer callbacks.",
-      "roots": "ReceivingSimulation._move_activities and existing ledger movement events update actual worker positions from delivered root samples. SupplierActorView renders the matching clip at committed time; worker identity stays unchanged and normal worker presentation is restored after the operator activity.",
+      "roots": "ReceivingSimulation._move_activities and existing ledger movement events update actual worker positions from delivered root samples. SupplierActorView renders the matching clip at committed time; worker identity stays unchanged and normal worker presentation is restored after the operator activity. While supported aboard, actual actor presentation must inherit the real truck hull/pivot transform, as with corrected passengers, including when offscreen. Apply delivered model-local root once; hide only the same actual person’s normal presentation during this ownership, never duplicate a worker.",
       "view": "SupplierVehicleView._sync_racks must select the exact revised variant, preserve separately authored transport restraints, and show committed rack state. Remove restraints according to actual upper/lower handling conditions, not merely the global unloading phase. Use appropriate moving collision, never the static warehouse triangle helper for the moving pan.",
       "pause": "Reuse ReceivingSimulation._time/next_boundary and existing pause semantics. One activity timeline drives worker and shelf. No independent wall-clock timer, stock poll or frame-based availability search.",
       "interruption": "ReceivingSimulation._sync_workers must recognize active shelf operation before generic Truck return cleanup. Keep the worker exclusive until a physically safe supported/latched state and real exit, or hold work if the operator is unavailable. Never erase a job while leaving an unsupported moving pan or release its aisle under the worker.",
@@ -332,7 +332,8 @@
         }
       ],
       "receipt": "evidence/supplier_transport/s4_waist_control_revision.json"
-    }
+    },
+    "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json"
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",

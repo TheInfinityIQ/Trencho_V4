@@ -1,0 +1,73 @@
+{
+  "stage": "REJECTED by Dawson; historical candidate only, never active runtime or appearance approved",
+  "human_feedback": "The arms bend in and crunch into the torse (overlap/merge) and the hands spin unnaturally. THere's a lot more wrong that I'm also not mentioning but this is not good",
+  "video_sha256": "7cc21f53bbecadbbc8438a9f133d982976824f86042c7eb831305e7807c0c24e",
+  "video": {
+    "seconds": 36,
+    "frames": 1080,
+    "fps": 30,
+    "kind": "Artist actual exported animation preview, not game capture"
+  },
+  "lead_review_limitation": "Lead inspected all five encoded phase sheets and presented the full video, but failed to catch the reported arm/torso self-intersection and unnatural hand rotation. Sampled interior frames and environmental clearance were insufficient human-motion review.",
+  "technical_diagnosis": "Source gate checks worker against props/environment but not arm/hand against its own torso. Same fixed arm pole is passed for both sides, then absolute wrist orientation is imposed separately from arm solving. These are concrete audit targets, not a proven sole cause; reach equality and shortest quaternion interpolation alone do not establish anatomical motion.",
+  "additional_disclosure": "Artist final actual-export contact report pass_=false: left palm boundary offset3.060811mm at5.75s and B fingertip arrival gap2.149215mm at6.15s. No solid external-body clash per Artist; this excludes the decisive untested worker self-collision. Strict matrix max3.373623e-5 exceeds1e-5. No all-checks-passed handoff.",
+  "preserved": "Exact rejected video, candidate worker/mechanism/source, original seven clips and existing production assets. Source candidates below .gdignore; no runtime replacement or local engine run.",
+  "next": "Artist diagnoses full anatomical chain and revises shoulder/elbow/wrist arcs and actual limb self-collision, stable palms, footwork, load support and pacing. Review natural opaque continuous motion from readable views before another finished preview; wireframe supplemental. No request for Dawson to enumerate all other defects.",
+  "scope": "Same authorized S4 worker operation. Not a general animation pause or permission to change original timber bend, remesh the character or alter unrelated gameplay.",
+  "files": [
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\construction_worker_s4_operator_v03.glb",
+      "repository": "game/supplier_transport/assets/source/construction_worker_s4_operator_v03_rejected.glb",
+      "bytes": 1057160,
+      "original_sha256": "ab687c15168da1d310ac5e0775454d2a484bd02a4d50823a572c51452e107d8c"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\s4_manual_protected_cargo_v03.glb",
+      "repository": "game/supplier_transport/assets/source/s4_manual_protected_cargo_v03_rejected.glb",
+      "bytes": 487804,
+      "original_sha256": "54198bc533fe74f140b7611b32285da3f24a028d1376ea9bcd0723d631f688f6"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\s4_worker_operation_v03.blend",
+      "repository": "game/supplier_transport/assets/source/s4_worker_operation_v03_rejected.blend",
+      "bytes": 1317962,
+      "original_sha256": "b756a52d040a084072eece3fc8bab4a26975598865f1c29f84e0f06ac9ada217"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\video\\s4_worker_operation_review_v03.mp4",
+      "repository": "game/supplier_transport/assets/source/s4_worker_operation_review_v03_rejected.mp4",
+      "bytes": 4556033,
+      "original_sha256": "7cc21f53bbecadbbc8438a9f133d982976824f86042c7eb831305e7807c0c24e"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\exported_transform_contract.json",
+      "repository": "game/supplier_transport/assets/source/s4_operator_export_contract_v03_rejected.json",
+      "bytes": 23995,
+      "original_sha256": "4ac5a01f71809a73b133a2f3ea412a41a75de0a30e15f9afeb4371bb37fd7c73"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\worker_model_local_root_paths.json",
+      "repository": "game/supplier_transport/assets/source/s4_operator_root_paths_v03_rejected.json",
+      "bytes": 84607,
+      "original_sha256": "031177dd2bb341cd71e6981f7e64109f31a15edde1ceb2deca8dc72ade2c9adc"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\actual_export_check.json",
+      "repository": "game/supplier_transport/assets/source/s4_operator_export_check_v03_rejected.json",
+      "bytes": 1455,
+      "original_sha256": "2c63484f1993d49dad16b8c031cd78682f0da455a60fbe6a5702aac50c8fc52e"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\actual_export_contacts.json",
+      "repository": "game/supplier_transport/assets/source/s4_operator_export_contacts_v03_rejected.json",
+      "bytes": 244560,
+      "original_sha256": "c55668accd60afa73e3f108b3779973ca53d4c1fd9d87f58ac0a580a09ae4473"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\manual_control_contract.json",
+      "repository": "game/supplier_transport/assets/source/s4_operator_controls_v03_rejected.json",
+      "bytes": 1304,
+      "original_sha256": "26c3b21625b72526501cc88f728b53c1119f9b0224ab25653d356f5f75dc9e58"
+    }
+  ]
+}
