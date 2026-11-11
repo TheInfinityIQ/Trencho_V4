@@ -58,6 +58,7 @@ var _storage_attempts: Dictionary = {}
 var _storage_warning_dirty := false
 var freight: RefCounted
 var road: RefCounted
+var passengers: RefCounted
 var _packing_key := ""
 var _packing_quote: Dictionary = {}
 
@@ -117,6 +118,7 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	personnel_position = ledger.inspect_entity("personnel").position
 	freight = Freight.new(self)
 	road = preload("res://game/supplier_transport/supplier_road.gd").new(self)
+	passengers = preload("res://game/supplier_transport/supplier_passengers.gd").new(self)
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
 	_must(ledger.add_place("supplier-transit", "Off-map external supply leg", Vector2.ZERO))
 
@@ -324,7 +326,7 @@ func debug_deliver_people() -> Dictionary:
 	var ids: Array[String] = []
 	var arrived := 0
 	for order in _orders:
-		if order.kind != "Personnel" or order.state in ["Cancelled","Complete"]: continue
+		if order.kind != "Personnel" or order.state == "Cancelled" or (order.state == "Complete" and int(order.people_arrived) == int(order.expected_people)): continue
 		if order.state == "Ordered": _dispatch(order)
 		for person_id in order.passenger_ids:
 			var person: Dictionary = ledger.inspect_person_status(person_id)
@@ -343,6 +345,7 @@ func debug_deliver_people() -> Dictionary:
 			arrived += 1
 		if order.people_arrived != order.expected_people:
 			return _reject("INCOMPLETE_DEBUG_ARRIVAL","Personnel arrival counts do not match the actual purchased passengers.")
+		if development_convoys: passengers.debug_clear(order)
 		var moved: Dictionary = ledger.move_entity(order.id,"supplier-transit",_exit(order))
 		if not moved.ok: return moved
 		order.people_exited = order.expected_people
@@ -667,7 +670,8 @@ func _pump() -> void:
 					if order.kind == "Personnel":
 						_disembark(order)
 				"Disembarking":
-					_exit_passenger(order)
+					if development_convoys: passengers.settle(order)
+					else: _exit_passenger(order)
 				"Departing":
 					order.motion = {}
 					order.next_at = INF
@@ -681,6 +685,7 @@ func _pump() -> void:
 		for walk in _walks.duplicate():
 			if walk.ends_at <= _time:
 				var order := _find_order(walk.order_id)
+				if development_convoys: passengers.finish(str(walk.person_id))
 				_must(ledger.complete_person_arrival(walk.person_id, "personnel", PLAYER))
 				order.people_reserved -= 1
 				order.people_arrived += 1
@@ -704,7 +709,7 @@ func _pump() -> void:
 					_start_vehicle_motion(order, "Departing", _exit(order))
 					again = true
 				else: again = freight.close(order) or again
-			if order.state == "Disembarking" and order.people_arrived == order.expected_people:
+			if order.state == "Disembarking" and (bool(order.get("rear_cleared",false)) if development_convoys else order.people_arrived == order.expected_people):
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
 		for id in _workers:
@@ -748,6 +753,7 @@ func _dispatch(order: Dictionary) -> void:
 	_must(ledger.move_entity(order.id, "supplier-transit", origin))
 	if development_convoys:
 		_position_supplier_occupants(order)
+		if order.kind == "Personnel": passengers.register(order)
 	order.motion = {"path": [origin, gate], "started_at": _time, "ends_at": order.arrival_at}
 	order.next_at = order.arrival_at
 	_set_state(order, "Incoming")
@@ -756,6 +762,10 @@ func _dispatch(order: Dictionary) -> void:
 
 func _disembark(order: Dictionary) -> void:
 	_set_state(order, "Disembarking")
+	if development_convoys:
+		passengers.begin(order)
+		_event("Stopped; passengers prepare their feet, then exit rear-to-front through the approved push-off and landing",order.id)
+		return
 	order.next_at = _time + PASSENGER_EXIT_SECONDS
 	_event("Stopped; one passenger exit per second, independently for this vehicle", order.id)
 
@@ -1057,6 +1067,7 @@ func _move_activities() -> void:
 					_position_supplier_occupants(order)
 	for walk in _walks:
 		_must(ledger.move_entity(walk.person_id, "rear-lane", _motion_position(walk)))
+	if development_convoys: passengers.advance_poses()
 	for id in _workers:
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and not job.path.is_empty():
@@ -1109,6 +1120,7 @@ func _order_blocker(order: Dictionary) -> String:
 		"Waiting": return "Waiting for physical berth/pull-off clearance"
 		"Berthing": return "Vehicle is physically approaching its reserved place"
 		"Disembarking":
+			if development_convoys: return "Passengers prepare, stand, walk and jump from the rear one at a time; actual arrival still reserves their places"
 			if order.people_exited < order.passenger_ids.size(): return "Passengers exit one per second from this stopped vehicle, then walk; no unloading worker is required"
 			return "All passengers exited; remaining walks to Personnel still reserve incoming places"
 		"Departing": return "Supplier vehicle still clearing; admission remains occupied"

@@ -114,5 +114,20 @@
   "video_gate": "Complete visibly animated action at1x, fixed clear framing and disclosed cutaway; several cycles for short loops. Lead inspects actual encoded per-action25/50/75percent frames before sharing. Endpoints, channel counts, camera turns and static model reels do not establish action visibility. Set capture/import frame rate before animation import or sample by actual imported action span and source clip seconds; encoded FPS alone does not prove1x motion.",
   "item_hauling_pause": "Artist reports Dawson paused item-hauling animation/contact finalization for a dimension discussion. Honor this narrower pause; preserve studies and reuse existing synchronized bend for eventual two-person pickup. Driver and passenger exit remain separate authorized work. No new item pickup clip.",
   "passenger_route_agreement": "Lead accepts X0/floor1.02 toRear_StandZ3.46 andLeft04,Right04,...Left01,Right01. Comfortable transit; temporarily prepare remaining occupants feet to.20m only at stopped service.306corridor samples are not sole support/rise/turn/bumper/landing proof. Timings/root/contact samples pending complete Artist handoff.",
-  "static_shelf_integration": "S2/S3/S4 ready static exports: bottom-centre root, localXdepth/localZlength, right side identity, left side deliberate180degreeY placement. Cargo_Floor is alreadyY1.02. Use actual .644x.474 solid deck footprints (.628x.458 S4 padding), full50mm release and existing support tops. No worker grip/route acceptance, S1 excluded."
+  "static_shelf_integration": "S2/S3/S4 ready static exports: bottom-centre root, localXdepth/localZlength, right side identity, left side deliberate180degreeY placement. Cargo_Floor is alreadyY1.02. Use actual .644x.474 solid deck footprints (.628x.458 S4 padding), full50mm release and existing support tops. No worker grip/route acceptance, S1 excluded.",
+  "passenger_approved_v02": {
+    "stage": "Dawson visually approved passenger exit revision v02; native integration verification pending",
+    "authority": "Lead chat, 10 November 2026: That looks better. Approved—please integrate it into the game and continue with the materials truck and warehouse unloading.",
+    "approved_files": {
+      "supplier_passenger.glb": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10",
+      "passenger_paths_v02.json": "1d7bea0f07daee06753dc5a124463927c02269dfbbfa1eec6215387fbedb2af5"
+    },
+    "rejected": "Passenger v01 jump remains rejected; previous driver timing corrections preserved",
+    "limits": "Human animation approval is not native gameplay, full-loop or FPS acceptance. Item-hauling contact/animation finalization remains separately paused.",
+    "sources": [
+      "revision_manifest_v02.json",
+      "mechanics_summary_v02.json",
+      "runtime_actor_paths_proposal_v02.json"
+    ]
+  }
 }

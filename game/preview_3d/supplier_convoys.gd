@@ -8,6 +8,7 @@ var _receiving: RefCounted
 var _ledger: RefCounted
 var _pending := false
 var _model: RefCounted
+var _passengers: Node3D
 
 func bind(receiving: RefCounted, simulation: RefCounted = null) -> void:
 	_receiving = receiving
@@ -15,6 +16,10 @@ func bind(receiving: RefCounted, simulation: RefCounted = null) -> void:
 	_ledger = receiving.ledger
 	_receiving.supplier_state_changed.connect(_request_refresh)
 	_ledger.entity_moved.connect(_moved)
+	if _receiving.development_convoys and _model != null:
+		_passengers = preload("res://game/supplier_transport/supplier_passengers_view.gd").new()
+		add_child(_passengers)
+		_passengers.bind(_model,self)
 	_request_refresh()
 
 func _request_refresh() -> void:
@@ -74,6 +79,7 @@ func _moved(id: String, _start: Vector2, finish: Vector2) -> void:
 	body.transform = Transform3D(Basis(Vector3.UP,PI/2.0),Vector3(finish.x,0,finish.y))
 
 func sync_speed() -> void:
+	if _passengers != null: _passengers.sync_speed()
 	for body: Node3D in bodies.values():
 		if body is SupplierView: (body as SupplierView).sync_speed()
 

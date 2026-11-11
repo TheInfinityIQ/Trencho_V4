@@ -1,0 +1,14 @@
+{
+  "approval": "Dawson approved passenger revision v02 in Lead chat on 10 November 2026; v01 remains rejected.",
+  "diagram": "docs/diagrams/supplier_passengers.mmd",
+  "ownership": "Receiving owns activity deadlines; SupplierPassengers composes the approved path/clip sequence; IdentityLedger owns actual people; read-only presenters sample the same committed activity time.",
+  "acceptance": [
+    "Preserve all eight real passenger IDs and the separate supplier driver; rear-to-front sequential exit after simultaneous stopped feet preparation.",
+    "Use approved v02 support/push-off/flight/landing samples and actual clip durations without duplicate animation root motion.",
+    "Detach custody at actual landing; begin ground arrival walk after rear clearance; departure may begin after last rear clearance, while incoming places remain reserved until actual arrival.",
+    "Pause freezes movement and clips; hidden views do not stop domain progress; no animation callback can grant people or inventory.",
+    "Force Deliver resolves the same actual passengers even if their carrier has already departed.",
+    "One brief current-change GitHub episode and actual imported clip verification; no local engine or regression suite."
+  ],
+  "limits": "Approved reference is a stopped level 1.02m deck over flat ground. One midpoint sole discrepancy of 1.891mm remains in the artist's draft measurement record; no claim of perfect 1mm support. Separate timber hauling animation/contact work remains paused."
+}

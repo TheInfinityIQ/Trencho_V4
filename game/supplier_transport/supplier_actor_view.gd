@@ -11,6 +11,7 @@ var _started := 0.0
 var _duration := 0.0
 var _loop := false
 var _on_screen := false
+var root_sampler: Callable
 
 func bind(receiving: RefCounted, simulation: RefCounted, id: String, scene: PackedScene) -> bool:
 	if _animator != null or id.is_empty() or scene == null: return false
@@ -79,6 +80,7 @@ func _process(_delta: float) -> void:
 
 func _render_pose() -> void:
 	if _animator == null or _clip.is_empty(): return
+	if root_sampler.is_valid(): global_transform = root_sampler.call()
 	var clip: Animation = _animator.get_animation(_clips[_clip])
 	var elapsed := maxf(0.0,float(_receiving._time)-_started)
 	var phase := fposmod(elapsed,_duration)/_duration if _loop else clampf(elapsed/_duration,0.0,1.0)
