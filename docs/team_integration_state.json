@@ -506,7 +506,7 @@
     "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
     "status": "draft_published_not_merged_or_main_adopted",
     "evidence": "docs/evidence/supplier_transport/current_change_receipts.json",
-    "next": "Truck and ground full animations shown for separate human appearance approvals. Artist corrects warehouse upper standing body before freezing final warehouse package. Paired runtime coordinator/storage handoff remains pending; no current58clip warehouse draft integration.",
+    "next": "Truck, ground and corrected warehouse full animations shown for separate human approvals. Frozen corrected58clip warehouse package is ready for integration review; before_standing_fix files superseded. Artist derives actual non-timber contact geometry using runtime family mapping. Paired runtime coordinator/storage handoff remains pending.",
     "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
     "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
     "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
@@ -531,6 +531,11 @@
       "sha256": "b253417b0b5eed256cc054f712514a5e11065490082fddd70f68550f75e5e3f2",
       "human_approval": "pending",
       "scope": "29.6s ground-only Artist preview; frozen46clips, four file hashes and encoded phase sheets checked; not native integration."
+    },
+    "warehouse_animation_review": {
+      "sha256": "6f025b8c1da9392eba86689a4b3fd2043a04ae470035c1e3011aff37e3854e71",
+      "human_approval": "pending",
+      "scope": "28.4s warehouse-only Artist preview; corrected58clip export and9files verified,6encoded phase sheets inspected; not native integration."
     }
   }
 }

@@ -165,9 +165,11 @@
       1.64117,
       1.83287
     ],
-    "warehouse_provisional_update": "Artist reports separate2.10m high fixture at.60/1.75m supports passed216occupied source samples with the other3cells present. Full occupied/export checks and final fixture pending; this is not runtime or visual acceptance.",
+    "warehouse_provisional_update": "Superseded by frozen corrected58clip handoff and exact static v04 SHA4fb62795:2.6x1x2.10m, four cells,.60/1.75 supports. Artist818exported occupied samples passed. This remains art QA, not human/native gameplay acceptance.",
     "ground_provisional_update": "Superseded by frozen46clip delivery. Stable actor0/fore and actor1/aft use distinct simultaneous turn clips; do not re-sort by world position. Starts/stops.8s/.12m, loops.8s/.24m at authored.3m/s,4s90degree turns need actual clear3m zone. Exact paired paths own worker/load synchronization; any retiming applies to both workers and payload together.",
     "ground_frozen_delivery": "evidence/supplier_transport/timber_ground_frozen_manifest.json; frozen46clip draft checked by Artist, file hashes and encoded phase sheets reviewed by Lead, shown for human appearance approval; not runtime bound.",
-    "warehouse_current_animation_limit": "Artist reports final static v04 fixture2.6x1x2.10m and762source/818exported occupied samples passed, but explicit original-body comparison found small upper standing hip/leg differences. Offline correction still underway; current58clip warehouse draft MUST NOT be integrated. Truck/ground frozen packages unaffected."
-  }
+    "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
+    "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding."
+  },
+  "non_timber_geometry_decision": "evidence/supplier_transport/non_timber_contact_preflight.json; actual family mapping governs further contact work. Existing meshes/dimensions/cargo unchanged pending measured recommendation."
 }
