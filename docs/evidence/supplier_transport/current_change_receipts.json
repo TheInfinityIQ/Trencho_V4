@@ -175,5 +175,37 @@
       "scope": "Only changed offscreen spatial inheritance, actual supported first passenger exit/takeoff detachment and landing; actual physics/render boundary observed. Approved preloaded path Resource loaded. No repeated full material receipt or recording."
     },
     "limits": "All checks brief/GitHub-only. Existing regression suites preserved/unrun. No raised limits; no local Godot, complete gameplay or60FPS acceptance. Exact final source review/Designer approval remain pending."
-  }
+  },
+  "actor_clip_window_check": {
+    "actual_time": 22.3666666666667,
+    "checks": [
+      "Same paid mixed shipment and eight real people created: PASS",
+      "Incoming passenger starts outside the service camera: PASS",
+      "Offscreen seated actor follows actual incoming hull movement before any phase change: PASS",
+      "Offscreen actor seeks the supplied clean pickup window rather than compressing the full clip: PASS",
+      "Supported actor inherits the actual truck pivot before takeoff: PASS",
+      "Actual takeoff detaches the actor into the approved level frame and reaches its real landing: PASS",
+      "First passenger actually completes rear clearance before the ground-walk observation: PASS",
+      "Actual ground movement events update the complete actor root while offscreen: PASS",
+      "Actual walking heading follows the current travelled segment: PASS"
+    ],
+    "failed": false,
+    "scope": "One changed-action observation: actual offscreen incoming hull, explicit0\u2013.6s pickup clip window, first passenger exit/landing/rear clearance, then actual ground movement and travelled-segment heading. Explicit1x simulation steps; no full material receipt or recording.",
+    "source": "a8b090e6401dddfe1556f9e8edd99817bf3cd25f",
+    "run": 42971327265,
+    "required_run": 42970702042,
+    "artifact_sha256": "e6c5585aa42b7c2522fe9101c0d3f15692b55f551dfee7518c17fe431cd7e95f"
+  },
+  "actor_clip_window_retained_failures": [
+    {
+      "run": 42970722408,
+      "artifact_sha256": "46ae5e0b1cec7eb6007bde7760aaf8395cdc5e1ecb8745677e5f88ed9b20d3b2",
+      "scope": "Clip-window and incoming/landing checks passed. Ground assertion stopped during rear-clearance phase10, before actual walking."
+    },
+    {
+      "run": 42971028034,
+      "artifact_sha256": "5136140c3b755269148d2a27fc58219c41e5353a31dff16fd32275c8237addfc",
+      "scope": "Actual/expected full transforms matched. Phase10 confirmed epsilon deadline stepping stopped before walking. Changed only observation to ordinary frame-sized clearance steps; production code unchanged, no limits increased."
+    }
+  ]
 }

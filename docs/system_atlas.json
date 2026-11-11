@@ -1,16 +1,16 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "bcf40ec15ad4e9e40c41ee2d9f3d4c63b3f38857",
+  "reviewed_baseline": "1f16a13f6a348a50a320eabcc28f9f23969a0467",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "8f4fef8280233ca50713673865d45655bd30befdb2ba2f698d99af41ea4a40d0",
+  "source_fingerprint": "d31a836fea9940d9a08afebb10dade17fd5b3845130bf5064368dc7d08bd274b",
   "totals": {
     "systems": 51,
     "game_scripts": 241,
     "non_test_scripts": 147,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3671,
+    "functions_in_inventory": 3674,
     "diagram_function_links": 298
   },
   "systems": [
@@ -3377,7 +3377,7 @@
           "label": "Finish timed actor phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 815
+          "line": 816
         },
         {
           "id": "n4",
@@ -3523,7 +3523,7 @@
         },
         {
           "path": "game/staffing/rear_simulation.gd",
-          "sha256": "c2b5e67985131b42908b5ead2bd126e572ca1b6d17439c74c0f4a0a91605e179",
+          "sha256": "5dcb22612cc7093d8a09d76b948a43ed970d5055cbe8a2d40f06953f77361f1b",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -3827,16 +3827,16 @@
               "id": "game/staffing/rear_simulation.gd::_settle",
               "name": "_settle",
               "line": 692,
-              "end_line": 776,
+              "end_line": 777,
               "kind": "method",
-              "purpose": "Reconcile the existing finite physical boundaries/services and common hauling; allow an idle empty-field builder to fetch only its own missing site material without contributing simultaneous work.",
+              "purpose": "Settle finite due domain boundaries and physical storage/intent constraints before category-wide idle-hauler selection, legacy hauling, builder supply and production staffing; publish state after convergence.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_people",
               "name": "_sync_receiving_people",
-              "line": 779,
-              "end_line": 802,
+              "line": 780,
+              "end_line": 803,
               "kind": "method",
               "purpose": "Add newly arrived people and finish safe unloading handoffs; unchanged warehouse Hauling workers continue locally instead of returning to the Table.",
               "purpose_origin": "reviewed"
@@ -3844,8 +3844,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_sync_receiving_staff",
               "name": "_sync_receiving_staff",
-              "line": 805,
-              "end_line": 812,
+              "line": 806,
+              "end_line": 813,
               "kind": "method",
               "purpose": "Synchronize actual rear staffing with receiving workers and pump newly eligible receiving work.",
               "purpose_origin": "reviewed"
@@ -3853,8 +3853,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_finish_phase",
               "name": "_finish_phase",
-              "line": 815,
-              "end_line": 897,
+              "line": 816,
+              "end_line": 898,
               "kind": "method",
               "purpose": "Complete actual reporting/handling/vehicle phases, preserving custody and safe handoffs; a default worker becoming idle at reporting completion retries existing starter staffing intent. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3862,8 +3862,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_factory_hauls",
               "name": "_reconcile_factory_hauls",
-              "line": 900,
-              "end_line": 951,
+              "line": 901,
+              "end_line": 952,
               "kind": "method",
               "purpose": "Group live explicitly tagged factory jobs and current captured actor loads once at the admission boundary. Query enduring input intent once per affected actual owner, deduct other/manual promises and own captured portions once, allocate only needed old unselected portions and shrink requested targets no lower than delivered plus captured floor. Preserve all claims/carry/deposit fields and untagged/cancelled/manual/relocation work; retain no demand/history cache.",
               "purpose_origin": "reviewed"
@@ -3871,8 +3871,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::set_hauling_priorities",
               "name": "set_hauling_priorities",
-              "line": 954,
-              "end_line": 959,
+              "line": 955,
+              "end_line": 960,
               "kind": "method",
               "purpose": "Validate a category-order command through the scene-owned policy and settle/notify actual owners only after a real preference change.",
               "purpose_origin": "reviewed"
@@ -3880,8 +3880,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_start_job",
               "name": "_start_job",
-              "line": 962,
-              "end_line": 1015,
+              "line": 963,
+              "end_line": 1016,
               "kind": "method",
               "purpose": "Choose eligible real hauling work, atomically reserve each actual source package with full rollback, retain exact trip/destination promises and start the existing walking or utility-truck owner.",
               "purpose_origin": "reviewed"
@@ -3889,8 +3889,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job_option",
               "name": "_job_option",
-              "line": 1018,
-              "end_line": 1085,
+              "line": 1019,
+              "end_line": 1086,
               "kind": "method",
               "purpose": "Compare eligible physical sources and accepting destinations; consider warehouse utility batching once per source, otherwise choose the nearest actually feasible bounded personal package haul.",
               "purpose_origin": "reviewed"
@@ -3898,8 +3898,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job_option/<lambda#1>",
               "name": "_job_option/<lambda#1>",
-              "line": 1038,
-              "end_line": 1041,
+              "line": 1039,
+              "end_line": 1042,
               "kind": "lambda",
               "purpose": "Order current warehouse candidates by pure geometric pick/delivery estimate with deterministic stock-ID ties; no custody or route promise is created.",
               "purpose_origin": "reviewed"
@@ -3907,8 +3907,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job_before",
               "name": "_job_before",
-              "line": 1088,
-              "end_line": 1093,
+              "line": 1089,
+              "end_line": 1094,
               "kind": "method",
               "purpose": "Compare viable haul choices by effective priority, stable job order and approach distance.",
               "purpose_origin": "reviewed"
@@ -3916,8 +3916,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_in_flight",
               "name": "_in_flight",
-              "line": 1096,
-              "end_line": 1100,
+              "line": 1097,
+              "end_line": 1101,
               "kind": "method",
               "purpose": "Count the quantity currently committed/carried for a hauling job.",
               "purpose_origin": "reviewed"
@@ -3925,8 +3925,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reserved_space",
               "name": "_reserved_space",
-              "line": 1103,
-              "end_line": 1111,
+              "line": 1104,
+              "end_line": 1112,
               "kind": "method",
               "purpose": "Sum inbound carry/output/receiving capacity promises for a destination, optionally excluding one person.",
               "purpose_origin": "reviewed"
@@ -3934,8 +3934,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::reserve_output_space",
               "name": "reserve_output_space",
-              "line": 1114,
-              "end_line": 1118,
+              "line": 1115,
+              "end_line": 1119,
               "kind": "method",
               "purpose": "Validate and apply reserve output space in rear simulation. Successful outcomes: Full output capacity promised to ",
               "purpose_origin": "implementation_derived"
@@ -3943,8 +3943,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::release_output_space",
               "name": "release_output_space",
-              "line": 1121,
-              "end_line": 1122,
+              "line": 1122,
+              "end_line": 1123,
               "kind": "method",
               "purpose": "Release output space for rear simulation. Implementation: calls _output_promises.erase.",
               "purpose_origin": "implementation_derived"
@@ -3952,8 +3952,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::output_space_valid",
               "name": "output_space_valid",
-              "line": 1125,
-              "end_line": 1129,
+              "line": 1126,
+              "end_line": 1130,
               "kind": "method",
               "purpose": "Output space valid for rear simulation. Implementation: calls _output_promises.has, store.filter.is_empty, ledger.loose_stock_mass_at, _reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -3961,8 +3961,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_free_space",
               "name": "_free_space",
-              "line": 1132,
-              "end_line": 1133,
+              "line": 1133,
+              "end_line": 1134,
               "kind": "method",
               "purpose": "Subtract physical loose-stock mass and inbound promises from a store's capacity.",
               "purpose_origin": "reviewed"
@@ -3970,8 +3970,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_valid_destination",
               "name": "_valid_destination",
-              "line": 1136,
-              "end_line": 1137,
+              "line": 1137,
+              "end_line": 1138,
               "kind": "method",
               "purpose": "Require an existing accessible store whose filter accepts the goods and whose unpromised capacity fits the load. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3979,8 +3979,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_nearest_storage",
               "name": "_nearest_storage",
-              "line": 1140,
-              "end_line": 1155,
+              "line": 1141,
+              "end_line": 1156,
               "kind": "method",
               "purpose": "Select nearest accepting reachable storage using the same person's unreserved work-point preview and stable tie-break, excluding piles and the former destination. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3988,8 +3988,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reroute",
               "name": "_reroute",
-              "line": 1158,
-              "end_line": 1176,
+              "line": 1159,
+              "end_line": 1177,
               "kind": "method",
               "purpose": "Retain actual carried goods and demand while selecting safe alternative storage or a recoverable pile, then physically carry to its reserved work point. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -3997,8 +3997,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_deposit",
               "name": "_deposit",
-              "line": 1179,
-              "end_line": 1207,
+              "line": 1180,
+              "end_line": 1208,
               "kind": "method",
               "purpose": "Commit a carry into physical storage, update its job and release/report the actor or reroute an invalid destination. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -4006,8 +4006,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_release_load",
               "name": "_release_load",
-              "line": 1210,
-              "end_line": 1221,
+              "line": 1211,
+              "end_line": 1222,
               "kind": "method",
               "purpose": "Release actual package batch and storage/service-face claims before clearing an uncarried actor activity; quantities remain Ledger-owned.",
               "purpose_origin": "reviewed"
@@ -4015,8 +4015,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at",
               "name": "_stock_at",
-              "line": 1224,
-              "end_line": 1225,
+              "line": 1225,
+              "end_line": 1226,
               "kind": "method",
               "purpose": "Return the player's positive stock inspections at one holder, optionally omitting mass.",
               "purpose_origin": "reviewed"
@@ -4024,8 +4024,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at/<lambda#1>",
               "name": "_stock_at/<lambda#1>",
-              "line": 1225,
-              "end_line": 1225,
+              "line": 1226,
+              "end_line": 1226,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns e.owner == PLAYER and e.quantity > 0.",
               "purpose_origin": "implementation_derived"
@@ -4033,8 +4033,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_relocation",
               "name": "_reconcile_relocation",
-              "line": 1228,
-              "end_line": 1259,
+              "line": 1229,
+              "end_line": 1260,
               "kind": "method",
               "purpose": "Reconcile one relocation job with current quantity and any active actor commitment.",
               "purpose_origin": "reviewed"
@@ -4042,8 +4042,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::workforce_snapshot",
               "name": "workforce_snapshot",
-              "line": 1262,
-              "end_line": 1288,
+              "line": 1263,
+              "end_line": 1289,
               "kind": "method",
               "purpose": "Inspect rear people and requested duties to report actual, pending, present and unfilled workforce positions.",
               "purpose_origin": "reviewed"
@@ -4051,8 +4051,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::hauling_snapshot",
               "name": "hauling_snapshot",
-              "line": 1290,
-              "end_line": 1299,
+              "line": 1291,
+              "end_line": 1300,
               "kind": "method",
               "purpose": "Clone actual haul jobs and annotate current age, effective priority, in-flight quantity and Emergency contention/starvation without exporting the full rear or mutating jobs.",
               "purpose_origin": "reviewed"
@@ -4060,8 +4060,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::snapshot",
               "name": "snapshot",
-              "line": 1302,
-              "end_line": 1334,
+              "line": 1303,
+              "end_line": 1335,
               "kind": "method",
               "purpose": "Build the broad rear staffing, people, store, service/event and optional audit/ledger inspection, reusing the current detached hauling-job view.",
               "purpose_origin": "reviewed"
@@ -4069,8 +4069,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_refresh_contention",
               "name": "_refresh_contention",
-              "line": 1337,
-              "end_line": 1343,
+              "line": 1338,
+              "end_line": 1344,
               "kind": "method",
               "purpose": "Update whether waiting haul demands are blocked by competing viable work.",
               "purpose_origin": "reviewed"
@@ -4078,8 +4078,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_waiting_job_viable",
               "name": "_waiting_job_viable",
-              "line": 1346,
-              "end_line": 1363,
+              "line": 1347,
+              "end_line": 1364,
               "kind": "method",
               "purpose": "Check whether a waiting job can be served by an eligible actor under current reservations and routes.",
               "purpose_origin": "reviewed"
@@ -4087,8 +4087,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::audit",
               "name": "audit",
-              "line": 1366,
-              "end_line": 1386,
+              "line": 1367,
+              "end_line": 1387,
               "kind": "method",
               "purpose": "Preserve ordinary25kg actor/load invariants; distinguish truck-owned bulk destination promises from actual personal carried mass, whose25kg check remains intact.",
               "purpose_origin": "reviewed"
@@ -4096,8 +4096,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_assigned",
               "name": "_assigned",
-              "line": 1389,
-              "end_line": 1393,
+              "line": 1390,
+              "end_line": 1394,
               "kind": "method",
               "purpose": "Count rear actors whose authoritative current duty equals the requested duty.",
               "purpose_origin": "reviewed"
@@ -4105,8 +4105,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_committed",
               "name": "_committed",
-              "line": 1396,
-              "end_line": 1400,
+              "line": 1397,
+              "end_line": 1401,
               "kind": "method",
               "purpose": "Count current and pending assignments committed to a duty using narrow duty reads.",
               "purpose_origin": "reviewed"
@@ -4114,8 +4114,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_pending_in",
               "name": "_pending_in",
-              "line": 1403,
-              "end_line": 1408,
+              "line": 1404,
+              "end_line": 1409,
               "kind": "method",
               "purpose": "Count actors with a pending assignment into the requested duty.",
               "purpose_origin": "reviewed"
@@ -4123,8 +4123,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_retaining",
               "name": "_retaining",
-              "line": 1411,
-              "end_line": 1416,
+              "line": 1412,
+              "end_line": 1417,
               "kind": "method",
               "purpose": "Count actors currently assigned to the duty who are not pending a transfer away.",
               "purpose_origin": "reviewed"
@@ -4132,8 +4132,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_present",
               "name": "_present",
-              "line": 1419,
-              "end_line": 1423,
+              "line": 1420,
+              "end_line": 1424,
               "kind": "method",
               "purpose": "Count currently assigned actors physically idle/unloading at the duty.",
               "purpose_origin": "reviewed"
@@ -4141,8 +4141,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job",
               "name": "_job",
-              "line": 1426,
-              "end_line": 1429,
+              "line": 1427,
+              "end_line": 1430,
               "kind": "method",
               "purpose": "Find a hauling job dictionary by ID, returning an empty dictionary when absent.",
               "purpose_origin": "reviewed"
@@ -4150,8 +4150,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_next",
               "name": "_next",
-              "line": 1432,
-              "end_line": 1434,
+              "line": 1433,
+              "end_line": 1435,
               "kind": "method",
               "purpose": "Increment and return the shared rear identifier/order sequence.",
               "purpose_origin": "reviewed"
@@ -4159,8 +4159,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_result",
               "name": "_result",
-              "line": 1437,
-              "end_line": 1438,
+              "line": 1438,
+              "end_line": 1439,
               "kind": "method",
               "purpose": "Return a rear command result containing success and message.",
               "purpose_origin": "reviewed"
@@ -4889,7 +4889,7 @@
           "label": "Select eligible idle hauler/job",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_start_job",
-          "line": 962
+          "line": 963
         },
         {
           "id": "n2",
@@ -4903,7 +4903,7 @@
           "label": "Finish timed carry phase",
           "file": "game/staffing/rear_simulation.gd",
           "function": "_finish_phase",
-          "line": 815
+          "line": 816
         },
         {
           "id": "n4",
@@ -4997,7 +4997,7 @@
       "files": [
         {
           "path": "game/staffing/hauling_policy.gd",
-          "sha256": "a4c59f77dd9526c352dbb5219ac6adfe36e6cef23bc76268a3f4a24c000d9cab",
+          "sha256": "49f243d29176eb754f7a139fdd08850c02a1196afe6f5d5883c340beeb76484f",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -5031,9 +5031,36 @@
               "id": "game/staffing/hauling_policy.gd::start",
               "name": "start",
               "line": 33,
-              "end_line": 53,
+              "end_line": 34,
               "kind": "method",
-              "purpose": "For an exclusive idle Hauling actor without a pending handoff, try the committed category order through Receiving, ordinary Dispatch and existing haul owners; skip blocked categories and start at most one real task. After a real finished warehouse deposit, clear a blocked service face only when no eligible next job starts.",
+              "purpose": "Apply the shared category selection to one actual idle worker for existing single-worker callers.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/staffing/hauling_policy.gd::start_available",
+              "name": "start_available",
+              "line": 36,
+              "end_line": 52,
+              "kind": "method",
+              "purpose": "Visit shared hauling categories across the actual idle eligible pool, committing higher-priority work before remaining workers reach unloading and allowing unmatched people to continue lower categories.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/staffing/hauling_policy.gd::_start_task",
+              "name": "_start_task",
+              "line": 54,
+              "end_line": 60,
+              "kind": "method",
+              "purpose": "Offer one actual worker to the existing unloading, dispatch or category-specific hauling owner without taking over custody or timing.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/staffing/hauling_policy.gd::_clear_access",
+              "name": "_clear_access",
+              "line": 62,
+              "end_line": 74,
+              "kind": "method",
+              "purpose": "Move a still-unassigned worker away from their actual previous warehouse service position using the existing clearance path and movement owner.",
               "purpose_origin": "reviewed"
             }
           ]

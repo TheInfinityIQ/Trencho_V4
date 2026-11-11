@@ -1,5 +1,5 @@
 {
-  "scope": "Candidate atlas generated against sourcebcf40ec on codex/supplier-transport-loop; not main adoption or runtime acceptance.",
+  "scope": "Candidate atlas generated against source1f16a13 on codex/supplier-transport-loop; not main adoption or runtime acceptance.",
   "checks": {
     "generation": "system_map.py --update, explicit changed-function purpose review, system_atlas.py through the supplier catalog update, and ui_function_map.py --update --diagram-only completed.",
     "game_script_inventory": {
@@ -9,13 +9,13 @@
     },
     "atlas": {
       "systems": 51,
-      "functions_in_inventory": 3671,
+      "functions_in_inventory": 3674,
       "diagram_function_links": 298
     },
     "function_map": {
-      "files": 1247,
-      "functions": 3894,
-      "named": 3528,
+      "files": 1249,
+      "functions": 3897,
+      "named": 3531,
       "anonymous": 366,
       "purpose_reviews_required": 0
     },

@@ -30,6 +30,12 @@ Reuse the existing synchronized bend; no new pickup/bend clip. Artist fits
 actual arm/hand contacts, validates reachable separate shelf revisions and
 provides a full normal-speed video before human appearance approval.
 
+When restoring a chat, compare actual human instruction chronology. An old
+pause repeated in a summary or relayed later by another role is not a new
+human pause. For this timber layout the resumption is Lead reply
+`request_user_input_async call_9facb63e60f84b6ebbd046e1582fabfe`; no later
+human pause was established when the older instruction was replayed.
+
 [Process diagram](diagrams/asset_reference_workflow.mmd).
 
 1. **Artist asks Lead first:** supply the new asset's purpose, accepted dimensions
