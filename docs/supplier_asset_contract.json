@@ -228,7 +228,7 @@
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Artist diagnoses full anatomical chain and revises shoulder/elbow/wrist arcs and actual limb self-collision, stable palms, footwork, load support and pacing. Review natural opaque continuous motion from readable views before another finished preview; wireframe supplemental. No request for Dawson to enumerate all other defects. Final human appearance approval and actual worker/stock/lock/pause/moving-collision runtime connection remain pending.",
+    "pending": "Re-block shoulders/body to keep hands in front of torso, use distinct chest-relative lateral elbow planes and a coherent elbow/forearm-roll/hand chain. Reject infeasible joint requests rather than forcing Cartesian contacts. Actual torso/limb self-contact and stable anatomical motion are required in the changed action. Readable opaque front/side blocking poses, then early actual continuous opaque motion with body/hands/feet readable, before expensive export/video polish. Wireframe is supplemental. All original production assets, rig and seven clips remain; no general character remesh or original timber bend changes. Final human appearance approval and runtime integration remain pending.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
     "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
     "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
@@ -333,7 +333,8 @@
       ],
       "receipt": "evidence/supplier_transport/s4_waist_control_revision.json"
     },
-    "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json"
+    "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json",
+    "anatomical_revision": "evidence/supplier_transport/s4_anatomical_revision_plan_v04.json"
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",
