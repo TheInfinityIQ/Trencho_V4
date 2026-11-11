@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "1f16a13f6a348a50a320eabcc28f9f23969a0467",
+  "reviewed_baseline": "8d0ef1208506978f863c6238d2bd7677589fbd6e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -4088,6 +4088,18 @@
           "label": "Actual access events wake existing work",
           "file": "game/staffing/rear_simulation.gd",
           "function": "warehouse_space_changed"
+        },
+        {
+          "id": "metal_static_fixture",
+          "label": "Versioned crate rack / current static view",
+          "file": "game/warehousing/warehouse_view.gd",
+          "function": "_fixture"
+        },
+        {
+          "id": "metal_static_collision",
+          "label": "Cached static collision / measured access opening",
+          "file": "game/warehousing/warehouse_assets.gd",
+          "function": "add_static_collision"
         }
       ],
       "edges": [
@@ -4175,6 +4187,11 @@
           "from": "fuel",
           "to": "routes",
           "label": "actual shelf service face"
+        },
+        {
+          "from": "metal_static_fixture",
+          "to": "metal_static_collision",
+          "label": "fixture creation only; no inventory authority"
         }
       ],
       "related": [
@@ -4195,7 +4212,7 @@
         "game/warehousing/warehouse_service.gd",
         "game/warehousing/warehouse_view.gd"
       ],
-      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization."
+      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization. Versioned metal-access crate rack is source-bound with cached opening-preserving static collision. Separate removable cassettes are imported but not installed by storage preparation; full metal handling remains pending."
     },
     {
       "id": "supplier_transport",
@@ -4828,11 +4845,11 @@
     "game/construction/visuals/construction_appearance.gd": "51addcc31278935e1cfeae1d4598312168811be688ffbe4c58ee5b56b461addb",
     "game/construction/visuals/construction_render_preparation.gd": "647a2af4be5b076d50ac217757266620182823b614b0edbae2a595570d81bc4b",
     "game/warehousing/material_packages.gd": "70128b0c201c00c1242e5cbb20e2cc199a4c28922cddd71ee6afdf281d42ab2b",
-    "game/warehousing/warehouse_assets.gd": "3a836b021e46128f866298ad110a805ff40e6c8e156c47e4a18aed399bf2a1ac",
+    "game/warehousing/warehouse_assets.gd": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
     "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
-    "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
+    "game/warehousing/warehouse_view.gd": "c098d5d0a19818740734a335cd7033f10043849ddfa91c8f676ade9d7d8ed2cb",
     "game/supplier_transport/cargo_packing.gd": "72681cea8b1c15522b709c4258115a891c1db9adc49dd25b228e798374d196b8",
     "game/supplier_transport/supplier_freight.gd": "fee0602de35f03ba723668f793ab819418e8af2a59661af3d2ffff58addbb70e",
     "game/supplier_transport/supplier_road.gd": "6487237dc067d2b42d7c08bcd3b169f4413509dd5a296e68d3dcdafc724d020b",

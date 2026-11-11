@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "1f16a13f6a348a50a320eabcc28f9f23969a0467",
+  "reviewed_baseline": "8d0ef1208506978f863c6238d2bd7677589fbd6e",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "d31a836fea9940d9a08afebb10dade17fd5b3845130bf5064368dc7d08bd274b",
+  "source_fingerprint": "3158db0ae36dcf54ff041ffe8eb8946c3dcce702581578601699c1b8d8137c99",
   "totals": {
     "systems": 51,
     "game_scripts": 241,
     "non_test_scripts": 147,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3674,
-    "diagram_function_links": 298
+    "functions_in_inventory": 3675,
+    "diagram_function_links": 300
   },
   "systems": [
     {
@@ -37540,6 +37540,20 @@
           "file": "game/staffing/rear_simulation.gd",
           "function": "warehouse_space_changed",
           "line": 492
+        },
+        {
+          "id": "metal_static_fixture",
+          "label": "Versioned crate rack / current static view",
+          "file": "game/warehousing/warehouse_view.gd",
+          "function": "_fixture",
+          "line": 165
+        },
+        {
+          "id": "metal_static_collision",
+          "label": "Cached static collision / measured access opening",
+          "file": "game/warehousing/warehouse_assets.gd",
+          "function": "add_static_collision",
+          "line": 18
         }
       ],
       "edges": [
@@ -37627,6 +37641,11 @@
           "from": "fuel",
           "to": "routes",
           "label": "actual shelf service face"
+        },
+        {
+          "from": "metal_static_fixture",
+          "to": "metal_static_collision",
+          "label": "fixture creation only; no inventory authority"
         }
       ],
       "related": [
@@ -37647,7 +37666,7 @@
         "game/warehousing/warehouse_service.gd",
         "game/warehousing/warehouse_view.gd"
       ],
-      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization.",
+      "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization. Versioned metal-access crate rack is source-bound with cached opening-preserving static collision. Separate removable cassettes are imported but not installed by storage preparation; full metal handling remains pending.",
       "files": [
         {
           "path": "game/warehousing/material_packages.gd",
@@ -37703,23 +37722,32 @@
         },
         {
           "path": "game/warehousing/warehouse_assets.gd",
-          "sha256": "3a836b021e46128f866298ad110a805ff40e6c8e156c47e4a18aed399bf2a1ac",
+          "sha256": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/warehousing/warehouse_assets.gd::model",
               "name": "model",
-              "line": 7,
-              "end_line": 15,
+              "line": 8,
+              "end_line": 16,
               "kind": "method",
               "purpose": "Instantiate a retained imported GLB scene and apply the shared faceted material recipe; return null for a missing export.",
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/warehousing/warehouse_assets.gd::add_static_collision",
+              "name": "add_static_collision",
+              "line": 18,
+              "end_line": 32,
+              "kind": "method",
+              "purpose": "Attach a direct static-body triangle collider in each imported mesh frame, sharing the generated shape across retained mesh instances so the measured service opening stays clear without per-frame reconstruction.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/warehousing/warehouse_assets.gd::prepare",
               "name": "prepare",
-              "line": 17,
-              "end_line": 32,
+              "line": 34,
+              "end_line": 49,
               "kind": "method",
               "purpose": "Reuse duplicated vertex-colour materials while preserving the original glass, emission and PBR properties.",
               "purpose_origin": "reviewed"
@@ -37727,8 +37755,8 @@
             {
               "id": "game/warehousing/warehouse_assets.gd::shell",
               "name": "shell",
-              "line": 34,
-              "end_line": 55,
+              "line": 51,
+              "end_line": 72,
               "kind": "method",
               "purpose": "Build the metric warehouse exterior with the actual module orientation, bounds and door anchors; bias only the rendered floor.",
               "purpose_origin": "reviewed"
@@ -37736,8 +37764,8 @@
             {
               "id": "game/warehousing/warehouse_assets.gd::_bounds",
               "name": "_bounds",
-              "line": 57,
-              "end_line": 62,
+              "line": 74,
+              "end_line": 79,
               "kind": "method",
               "purpose": "Accumulate mesh bounds through the actual nested node transforms to measure the exported exterior.",
               "purpose_origin": "reviewed"
@@ -38279,7 +38307,7 @@
         },
         {
           "path": "game/warehousing/warehouse_view.gd",
-          "sha256": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
+          "sha256": "c098d5d0a19818740734a335cd7033f10043849ddfa91c8f676ade9d7d8ed2cb",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -38349,16 +38377,16 @@
               "id": "game/warehousing/warehouse_view.gd::_fixture",
               "name": "_fixture",
               "line": 165,
-              "end_line": 183,
+              "end_line": 187,
               "kind": "method",
-              "purpose": "Instantiate the appropriate crate rack or open timber saddles and their measured post/deck/support colliders.",
+              "purpose": "Select the separately versioned metal-access crate rack with opening-preserving static collision; retain existing timber and missing-asset primitive presentation without installing unprepared metal supports.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_view.gd::_shape",
               "name": "_shape",
-              "line": 185,
-              "end_line": 191,
+              "line": 189,
+              "end_line": 195,
               "kind": "method",
               "purpose": "Attach one box collision proxy with explicit local dimensions and placement to its owning body.",
               "purpose_origin": "reviewed"
@@ -38366,8 +38394,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke",
               "name": "_smoke",
-              "line": 193,
-              "end_line": 206,
+              "line": 197,
+              "end_line": 210,
               "kind": "method",
               "purpose": "Reuse the existing low-poly construction smoke for one finite1.5-second shelf appearance; author no new animation clip.",
               "purpose_origin": "reviewed"
@@ -38375,8 +38403,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke_alpha",
               "name": "_smoke_alpha",
-              "line": 208,
-              "end_line": 212,
+              "line": 212,
+              "end_line": 216,
               "kind": "method",
               "purpose": "Fade only the temporary smoke material copies through the existing effect tween.",
               "purpose_origin": "reviewed"
@@ -38384,8 +38412,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::sync_speed",
               "name": "sync_speed",
-              "line": 214,
-              "end_line": 223,
+              "line": 218,
+              "end_line": 227,
               "kind": "method",
               "purpose": "Pause or retime only currently active finite smoke tweens after an actual simulation-speed command.",
               "purpose_origin": "reviewed"
@@ -38393,8 +38421,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_slot_body",
               "name": "_slot_body",
-              "line": 225,
-              "end_line": 226,
+              "line": 229,
+              "end_line": 230,
               "kind": "method",
               "purpose": "Forward the actual body enter/exit event to that fixture site's occupancy owner.",
               "purpose_origin": "reviewed"
@@ -38402,8 +38430,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_module_body",
               "name": "_module_body",
-              "line": 228,
-              "end_line": 233,
+              "line": 232,
+              "end_line": 237,
               "kind": "method",
               "purpose": "Track actual module entry/exit for safe removal and roof cutaway, preserving wall collisions.",
               "purpose_origin": "reviewed"
@@ -38411,8 +38439,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::set_cutaway_enabled",
               "name": "set_cutaway_enabled",
-              "line": 235,
-              "end_line": 238,
+              "line": 239,
+              "end_line": 242,
               "kind": "method",
               "purpose": "Apply an actual camera-mode command once and reconcile current modules so first person retains the ceiling while occupied third/overhead views may cut it away.",
               "purpose_origin": "reviewed"
@@ -38420,8 +38448,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_reconcile_shell",
               "name": "_reconcile_shell",
-              "line": 240,
-              "end_line": 269,
+              "line": 244,
+              "end_line": 273,
               "kind": "method",
               "purpose": "Hide only joined boundaries and interior roof as appropriate, preserve real walls/colliders and create bounded shadow-free lights at authored anchors once.",
               "purpose_origin": "reviewed"
@@ -38429,8 +38457,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 271,
-              "end_line": 272,
+              "line": 275,
+              "end_line": 276,
               "kind": "method",
               "purpose": "Disconnect the warehouse change signal when this presenter leaves its scene.",
               "purpose_origin": "reviewed"
