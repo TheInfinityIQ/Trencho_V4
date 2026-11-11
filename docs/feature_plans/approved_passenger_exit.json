@@ -2,6 +2,7 @@
   "approval": "Dawson approved passenger revision v02 in Lead chat on 10 November 2026; v01 remains rejected.",
   "diagram": "docs/diagrams/supplier_passengers.mmd",
   "ownership": "Receiving owns activity deadlines; SupplierPassengers composes the approved path/clip sequence; IdentityLedger owns actual people; read-only presenters sample the same committed activity time.",
+  "runtime_resource": "Preserve the approved source JSON byte-for-byte; preload the same seat samples as a Godot Resource dependency so game export includes its movement data.",
   "acceptance": [
     "Preserve all eight real passenger IDs and the separate supplier driver; rear-to-front sequential exit after simultaneous stopped feet preparation.",
     "Use approved v02 support/push-off/flight/landing samples and actual clip durations without duplicate animation root motion.",

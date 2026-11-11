@@ -32,8 +32,18 @@ func _changed(id: String) -> void:
 		actor.root_sampler = _pose.bind(id)
 		actors[id] = actor
 	var actor: ActorView = actors[id]
+	if int(row.index) >= 8 and actor.get_parent() != self: actor.reparent(self,false)
 	var clip: StringName = &"walk" if int(row.index) == 11 else StringName(row.phases[int(row.index)].clip)
 	actor.set_activity(clip,float(row.started),float(row.duration),int(row.index) in [0,2,11])
+
+func attach_hull(id: String, pivot: Node3D) -> void:
+	var order: Dictionary = _model.receiving._active_suppliers.get(id,{})
+	for person: String in order.get("aboard_people",{}):
+		if not actors.has(person) or int(_service.rows[person].index) >= 8: continue
+		var actor: ActorView = actors[person]
+		if actor.get_parent() == pivot: continue
+		actor.reparent(pivot,false)
+		actor.refresh_root()
 
 func _pose(id: String) -> Transform3D:
 	var order: Dictionary = _service.rows[id].order
@@ -46,14 +56,11 @@ func sync_speed() -> void:
 	for actor: ActorView in actors.values(): actor.sync_speed()
 
 func _moved(id: String, _from: Vector2, _to: Vector2) -> void:
-	# Spatial following must work while invisible, otherwise the visibility
-	# notifier remains at the offscreen spawn and never discovers the passenger.
+	# Supported occupants inherit the real hull's physics-synchronized transform.
+	# Detached people still follow actual motion when skeletal playback is hidden.
 	if actors.has(id):
 		actors[id].refresh_root()
 		return
-	var order: Dictionary = _model.receiving._active_suppliers.get(id,{})
-	for person: String in order.get("aboard_people",{}):
-		if actors.has(person): actors[person].refresh_root()
 
 func _exit_tree() -> void:
 	if _service != null and _service.changed.is_connected(_changed): _service.changed.disconnect(_changed)

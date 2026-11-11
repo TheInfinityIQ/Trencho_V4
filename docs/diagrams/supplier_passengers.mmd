@@ -16,5 +16,6 @@ flowchart LR
   Clock -.-> Push
   Clock -.-> Jump
   Pause[Pause freezes activity time and pose / hidden view keeps domain progressing] -.-> Clock
-  Seats --> Pose[Actual hull and person movement events update actor roots even offscreen]
+  Seats --> Pose[Supported actors inherit the actual truck pivot / flight detaches into level service frame]
+  Pose --> Ground[Actual person movement events update detached roots even offscreen]
   Pose --> Visible[Visibility gates skeletal animation only / never spatial following]

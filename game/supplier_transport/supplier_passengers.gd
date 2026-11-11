@@ -2,7 +2,7 @@ extends RefCounted
 ## Real passenger activities; animation and custody share committed boundaries.
 signal changed(person_id: String)
 const Seating = preload("res://game/supplier_transport/supplier_seating.gd")
-const PATHS := "res://game/supplier_transport/assets/passenger_paths_v02.json"
+const PATHS = preload("res://game/supplier_transport/assets/passenger_paths_v02.tres")
 static var _paths: Dictionary = {}
 var rows: Dictionary = {}
 var _owner: WeakRef
@@ -11,7 +11,7 @@ var _waiting: Dictionary = {}
 func _init(receiving: RefCounted) -> void:
 	_owner = weakref(receiving)
 	if _paths.is_empty():
-		_paths = JSON.parse_string(FileAccess.get_file_as_string(PATHS)).seats
+		_paths = PATHS.get_meta("seats")
 	receiving.ledger.entity_moved.connect(_access_changed)
 
 func register(order: Dictionary) -> void:

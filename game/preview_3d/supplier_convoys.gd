@@ -39,6 +39,7 @@ func _refresh() -> void:
 				add_child(supplier)
 				supplier.bind(_receiving,_model,row)
 				bodies[row.id] = supplier
+				if _passengers != null: _passengers.attach_hull(str(row.id),supplier._pivot)
 			else:
 				var freight: bool = row.kind == "Freight"
 				var scene: PackedScene = load(Freight.MODEL_PATH if freight else Personnel.MODEL_PATH)
