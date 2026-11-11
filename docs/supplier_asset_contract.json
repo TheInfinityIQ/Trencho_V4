@@ -171,5 +171,16 @@
     "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
     "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding."
   },
-  "non_timber_geometry_decision": "evidence/supplier_transport/non_timber_contact_preflight.json; actual family mapping governs further contact work. Existing meshes/dimensions/cargo unchanged pending measured recommendation."
+  "non_timber_geometry_decision": "evidence/supplier_transport/non_timber_contact_preflight.json; actual family mapping governs further contact work. Existing meshes/dimensions/cargo unchanged pending measured recommendation.",
+  "s1_variant_constraint": {
+    "stage": "Artist actual-family geometry assessment; runtime unchanged",
+    "decision": "Do not apply revised timber S1 .60/.95 supports and1.50m packing ceiling to metal as a capacity-preserving shared rack. Timber and metal need separate measured variants. Preserve original metal support spacing/usable stack envelope until full contact/mount/overhead contract is accepted.",
+    "reported_geometric_capacity": {
+      "original_homogeneous_metal_packets": 90,
+      "timber_revision_homogeneous_metal_packets": 72,
+      "scope": "Artist source-derived pure-rack packing calculation only, retaining current order/rotations/stacking/release. Not final shipment vehicle count or cost; full quotes also enforce payload/grouping/fees."
+    },
+    "orientation": "Actual Metal quarter_turn+PI/2; other package placements follow actual packing, not static Packet marker yaw. Fixture side orientation and global package yaw are distinct.",
+    "next": "Finish measured contact/mount intervals before any other-item authoring; no arbitrary riser or silent capacity change."
+  }
 }
