@@ -1,39 +1,44 @@
 {
   "stage": "Lead reviewed actual rejected-v03 source diagnosis; revised anatomical blocking approach accepted for authoring, no new animation approved",
-  "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\rejected_motion_diagnosis.json",
-  "source_sha256": "e3b9ff8f0470048797e06b8e405c576e0748fb1c23f727a92afe9468cefaafe1",
+  "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\rejected_motion_diagnosis_corrected.json",
+  "source_sha256": "4796237f343a3396ca267be00beecdf20b5d57bf1647f8f41b930cc2413d9517",
   "samples": 241,
-  "scope": "Rejected v03 source; arm/hand versus non-arm torso surfaces excluding first80mm shoulder junction. Surface intersections are localized evidence, not watertight Boolean volume.",
+  "scope": "CORRECTED shared rig/mesh frame; rejected v03 source. Arm/hand versus non-arm torso surfaces excluding first80mm shoulder junction. Surface intersections are localized evidence, not watertight Boolean volume. Previous unshared-frame self-contact counts are invalid.",
   "worst_collision": {
-    "t": 2.2333333333333334,
+    "t": 2.3,
     "hands": {
       "Left": {
-        "torso_triangle_pairs": 153,
+        "torso_triangle_pairs": 269,
         "intersection_groups": {
-          "LeftForeArm": 153
+          "LeftArm": 50,
+          "LeftForeArm": 181,
+          "LeftHand": 38
         },
-        "elbow_flexion_deg_zero_straight": 62.77961431815008,
-        "wrist_combined_deviation_from_neutral_deg": 171.833020651006,
-        "wrist_relative_angular_speed_deg_s": 748.3860347000096,
+        "elbow_flexion_deg_zero_straight": 54.814084155241666,
+        "wrist_combined_deviation_from_neutral_deg": 146.2806560968818,
+        "wrist_relative_angular_speed_deg_s": 710.7259033815094,
         "shoulder": [
           -0.27630215883255005,
           1.0131425857543945,
           -0.23401246964931488
         ],
         "elbow": [
-          -0.5061958432197571,
-          0.8716177940368652,
-          -0.231146439909935
+          -0.49329227209091187,
+          0.8526308536529541,
+          -0.22770002484321594
         ],
         "wrist": [
-          -0.4870089292526245,
-          0.6224104762077332,
-          -0.22609978914260864
+          -0.48750582337379456,
+          0.6028950810432434,
+          -0.21787887811660767
         ]
       },
       "Right": {
-        "torso_triangle_pairs": 0,
-        "intersection_groups": {},
+        "torso_triangle_pairs": 126,
+        "intersection_groups": {
+          "RightArm": 50,
+          "RightForeArm": 76
+        },
         "elbow_flexion_deg_zero_straight": 87.10656792222171,
         "wrist_combined_deviation_from_neutral_deg": 130.98400495269547,
         "wrist_relative_angular_speed_deg_s": 0.0,
@@ -59,8 +64,11 @@
     "t": 4.0,
     "hands": {
       "Left": {
-        "torso_triangle_pairs": 0,
-        "intersection_groups": {},
+        "torso_triangle_pairs": 94,
+        "intersection_groups": {
+          "LeftForeArm": 59,
+          "LeftArm": 35
+        },
         "elbow_flexion_deg_zero_straight": 123.42091394438819,
         "wrist_combined_deviation_from_neutral_deg": 179.393108334789,
         "wrist_relative_angular_speed_deg_s": 135.12194155685992,
@@ -81,8 +89,11 @@
         ]
       },
       "Right": {
-        "torso_triangle_pairs": 0,
-        "intersection_groups": {},
+        "torso_triangle_pairs": 125,
+        "intersection_groups": {
+          "RightForeArm": 86,
+          "RightArm": 39
+        },
         "elbow_flexion_deg_zero_straight": 135.7425000381134,
         "wrist_combined_deviation_from_neutral_deg": 174.88879711292523,
         "wrist_relative_angular_speed_deg_s": 160.47557465816638,
@@ -111,8 +122,140 @@
     "Old environmental gate omitted actual worker self-contact"
   ],
   "interpretation": "Surface intersection pair counts are not solid penetration volumes. Combined wrist deviation is a rig-relative orientation metric, not a clinical single-axis wrist angle. Source report is not an engine observation.",
-  "diagnostic_picture_issue": "Lead inspected rejected_self_contact_front.png and rejected_wrist_side.png: dramatically stretched/detached worker geometry differs from the encoded rejected preview. Artist must reconcile skinned mesh/rig shared transform and diagnostic studio/render path before treating those images as faithful pose evidence. Static helper normalization is an unconfirmed hypothesis; no diagnosed root cause claimed yet.",
+  "diagnostic_picture_issue": "RESOLVED: caller moved rig while unparented skin stayed in another object frame. Static render helper did not mutate rig/mesh transforms. Previous renderer-mutation hypothesis withdrawn. Corrected shared-frame opaque front image inspected by Lead and consistent with rejected encoded preview.",
   "accepted_revision": "Re-block shoulders/body to keep hands in front of torso, use distinct chest-relative lateral elbow planes and a coherent elbow/forearm-roll/hand chain. Reject infeasible joint requests rather than forcing Cartesian contacts. Actual torso/limb self-contact and stable anatomical motion are required in the changed action.",
   "review_order": "Readable opaque front/side blocking poses, then early actual continuous opaque motion with body/hands/feet readable, before expensive export/video polish. Wireframe is supplemental. All original production assets, rig and seven clips remain; no general character remesh or original timber bend changes.",
-  "integration": "Receiving ownership, real worker identity, stock/pause/locks and existing runtime diagram remain. Rejectedv03 is not integrated. New final appearance approval remains required."
+  "integration": "Receiving ownership, real worker identity, stock/pause/locks and existing runtime diagram remain. Rejectedv03 is not integrated. New final appearance approval remains required.",
+  "invalid_diagnostic_history": {
+    "validity": "INVALID self-contact counts and stretched images from mismatched rig/skin frame; do not cite as actual character intersections",
+    "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\rejected_motion_diagnosis.json",
+    "source_sha256": "e3b9ff8f0470048797e06b8e405c576e0748fb1c23f727a92afe9468cefaafe1",
+    "scope": "Rejected v03 source; arm/hand versus non-arm torso surfaces excluding first80mm shoulder junction. Surface intersections are localized evidence, not watertight Boolean volume.",
+    "worst_collision": {
+      "t": 2.2333333333333334,
+      "hands": {
+        "Left": {
+          "torso_triangle_pairs": 153,
+          "intersection_groups": {
+            "LeftForeArm": 153
+          },
+          "elbow_flexion_deg_zero_straight": 62.77961431815008,
+          "wrist_combined_deviation_from_neutral_deg": 171.833020651006,
+          "wrist_relative_angular_speed_deg_s": 748.3860347000096,
+          "shoulder": [
+            -0.27630215883255005,
+            1.0131425857543945,
+            -0.23401246964931488
+          ],
+          "elbow": [
+            -0.5061958432197571,
+            0.8716177940368652,
+            -0.231146439909935
+          ],
+          "wrist": [
+            -0.4870089292526245,
+            0.6224104762077332,
+            -0.22609978914260864
+          ]
+        },
+        "Right": {
+          "torso_triangle_pairs": 0,
+          "intersection_groups": {},
+          "elbow_flexion_deg_zero_straight": 87.10656792222171,
+          "wrist_combined_deviation_from_neutral_deg": 130.98400495269547,
+          "wrist_relative_angular_speed_deg_s": 0.0,
+          "shoulder": [
+            -0.27630239725112915,
+            1.0131425857543945,
+            0.20601244270801544
+          ],
+          "elbow": [
+            -0.471743643283844,
+            0.8285022974014282,
+            0.18153198063373566
+          ],
+          "wrist": [
+            -0.3086290955543518,
+            0.6406954526901245,
+            0.15663188695907593
+          ]
+        }
+      }
+    },
+    "worst_wrist": {
+      "t": 4.0,
+      "hands": {
+        "Left": {
+          "torso_triangle_pairs": 0,
+          "intersection_groups": {},
+          "elbow_flexion_deg_zero_straight": 123.42091394438819,
+          "wrist_combined_deviation_from_neutral_deg": 179.393108334789,
+          "wrist_relative_angular_speed_deg_s": 135.12194155685992,
+          "shoulder": [
+            -0.279123455286026,
+            1.1285276412963867,
+            -0.23401248455047607
+          ],
+          "elbow": [
+            -0.4866333603858948,
+            0.9961640238761902,
+            -0.12307057529687881
+          ],
+          "wrist": [
+            -0.24731868505477905,
+            0.9407583475112915,
+            -0.07663188129663467
+          ]
+        },
+        "Right": {
+          "torso_triangle_pairs": 0,
+          "intersection_groups": {},
+          "elbow_flexion_deg_zero_straight": 135.7425000381134,
+          "wrist_combined_deviation_from_neutral_deg": 174.88879711292523,
+          "wrist_relative_angular_speed_deg_s": 160.47557465816638,
+          "shoulder": [
+            -0.2791236937046051,
+            1.1285275220870972,
+            0.20601242780685425
+          ],
+          "elbow": [
+            -0.49521735310554504,
+            0.972009539604187,
+            0.1648504137992859
+          ],
+          "wrist": [
+            -0.24731893837451935,
+            0.9407582879066467,
+            0.15663202106952667
+          ]
+        }
+      }
+    },
+    "diagnostic_picture_issue": "Lead inspected rejected_self_contact_front.png and rejected_wrist_side.png: dramatically stretched/detached worker geometry differs from the encoded rejected preview. Artist must reconcile skinned mesh/rig shared transform and diagnostic studio/render path before treating those images as faithful pose evidence. Static helper normalization is an unconfirmed hypothesis; no diagnosed root cause claimed yet."
+  },
+  "native_export_frame_proof": [
+    {
+      "t": 0.0,
+      "max_raw_vertex_to_native_point_distance_m": 1.7598815702513093e-06
+    },
+    {
+      "t": 2.2333333333333334,
+      "max_raw_vertex_to_native_point_distance_m": 1.903375505207805e-06
+    },
+    {
+      "t": 4.0,
+      "max_raw_vertex_to_native_point_distance_m": 1.7388807691531838e-06
+    },
+    {
+      "t": 8.0,
+      "max_raw_vertex_to_native_point_distance_m": 1.7598815702513093e-06
+    }
+  ],
+  "frame_correction": {
+    "report": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\DIAGNOSTIC_FRAME_CORRECTION.md",
+    "report_sha256": "a833505f0c21088dda5f7d5c1dcee5144ea582367d0aebadbfd5e3955ae37cea",
+    "retracted": "Initial153left-pair self-collision claim and stretched initial stills are invalid. Initial local-bone wrist metric recomputed in corrected audit.",
+    "corrected_observation": "At2.3s269left and126right arm/forearm/hand torso surface pairs. Maximum combined wrist-relative deviation179.39deg. These are rejected-v03 source measurements, not a new approved motion.",
+    "verification": "Artist shared-frame native skin matches frozen GLB point clouds at0,2.233333,4,8s with max1.9034e-6m nearest-point distance; render calls assert unchanged transforms. Lead read proof and viewed corrected opaque front image. No local Godot/new gameplay check."
+  }
 }

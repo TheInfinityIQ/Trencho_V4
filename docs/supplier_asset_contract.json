@@ -334,7 +334,8 @@
       "receipt": "evidence/supplier_transport/s4_waist_control_revision.json"
     },
     "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json",
-    "anatomical_revision": "evidence/supplier_transport/s4_anatomical_revision_plan_v04.json"
+    "anatomical_revision": "evidence/supplier_transport/s4_anatomical_revision_plan_v04.json",
+    "diagnostic_frame_status": "Initial native diagnostic rig/skin-frame error corrected; old153-pair claim and stretched images retracted. Corrected shared-frame source/GLB comparison supports remaining actual self-contact/wrist defects. Anatomical revision still in progress, no new animation approved."
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",
