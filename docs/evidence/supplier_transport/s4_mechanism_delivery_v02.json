@@ -1,0 +1,462 @@
+{
+  "readiness": "Rigid source/occupied/retained worker checks, export/format/Artist visual+encoded video review passed. Human appearance/native/game acceptance pending.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\actual_export_welded_review_qa.json",
+      "bytes": 6144,
+      "sha256": "879c2296af468ffb87e5de8f04f7af2698d97bb8e9d4d6b318eb347c1508f6c0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\bearing_registration.json",
+      "bytes": 820,
+      "sha256": "4b0f1910c1fffe0cfa91cc93bf53d1e87cb36dd1ef9c042ad07bf077172a76fb"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\complete.json",
+      "bytes": 101,
+      "sha256": "051bba34677431d5f95ebc1ebadcdb619cbf6f86f64cc6a467a83542a411702d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\environment.json",
+      "bytes": 984,
+      "sha256": "6a853127fc79d5df4aa67001ccd27bf98a42c4cc4661c8bb3435aaeb8a75a47c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\export_receipt.json",
+      "bytes": 943,
+      "sha256": "260357310d144e693cae427ec6e53018ec3f10547059588eac6e7dfeaa98f5fb"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\exported_transform_contract.json",
+      "bytes": 32156,
+      "sha256": "ee516e1ea9db538864e20a9c52562c8349519c82b1aca00ba93e1e707fd25b32"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\first_clearance_gate.json",
+      "bytes": 59222,
+      "sha256": "fc3f36554fe7b31d2536dc7ba612f130d91a5740104af15a74a10e1f5bcee0bd"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\fixed_stop_attachment.json",
+      "bytes": 702,
+      "sha256": "e545fd011d92b6926ad69f582d0f45ad03c5141b1f929cdefdfed76e84704700"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\fixed_stop_rail_qa.json",
+      "bytes": 787,
+      "sha256": "3948ce8ecb89574292c268b9f3d8f5b68b3b5a41d023b3c7cd37c0bdd84adf89"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\HANDOFF.md",
+      "bytes": 9296,
+      "sha256": "7b570f75ac79ff653c2b1b73a067eb30cb4fe96258c394124f17dfd33aad0b9d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\hardware_build.json",
+      "bytes": 351,
+      "sha256": "0b2c72cb94bedd51b732b3ebff4dedaf6dc28dff8e5b5a9b0ca7512574f60f49"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\hardware_edge_diagnostic.json",
+      "bytes": 31,
+      "sha256": "62e980a9e74cd72868de5303965ec0f7e8fb20fe94b59090a79642d75c1576cf"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\hardware_mesh_qa.json",
+      "bytes": 6146,
+      "sha256": "2bf182e763d87c412e1623a64a1a7807bd397d15173c7c780ab7ffe29756562c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\hardware_source_gate.json",
+      "bytes": 67606,
+      "sha256": "d7361337a1270268ab7ebce1ac3790230e27843faab6da5ab57b11e66867320b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\new_source_piece_qa.json",
+      "bytes": 3517,
+      "sha256": "4b6b59d4323bc09a3403b12ffa2bf4054841e2f39960156e59cc97f290b50971"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\official_roundtrip_check.json",
+      "bytes": 11988,
+      "sha256": "02bb74c3a6796714f9b6dfe2032414faa0ece18d6e1f07e81ea26257e7a1ac22"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\opposing_face_warning_review.json",
+      "bytes": 53997,
+      "sha256": "d904e622dbbbfc3bcf2787326ae69e257ace7df2f627fd805d56c0b52db189de"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\original_padding_measurement.json",
+      "bytes": 2159,
+      "sha256": "4ebcb435079b1745c5a400e2833098267ff026e5b87ccbc60536a0dc6f0f37d3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\preview_complete.json",
+      "bytes": 47,
+      "sha256": "e52b6f0e6087ccb408311a496d1087a8b96d5f6075cf0e779b91653e1f5df902"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\actual_palm_vertical_bounds.json",
+      "bytes": 3463,
+      "sha256": "4b2ecdbf7ff16cc7dda1b097c225cfc7d5a1f28f55a94fc5ce1be86724f0765e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\actual_surface_frames.json",
+      "bytes": 25007,
+      "sha256": "ad90aaa32e5fb18286f67e6438aeb5ecb9a102032e21ecc20e1b9bd83cbb951c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\complete.json",
+      "bytes": 76,
+      "sha256": "6ea14aa28c0a5774ac4f744865b983e5256310a0529fd3bcb08a2ecd8f5a0afa"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\hand_calibration.json",
+      "bytes": 22214,
+      "sha256": "9f613b3e1caca461c0d26e8c6e1769fae0b6c2e246b1e74a027d961a3bc073b9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\static_contact_results.json",
+      "bytes": 3997,
+      "sha256": "73c5e9c4ad3584ab7aced361bee31790e2825d6b4f09af5e2798fb0b50a80046"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker\\warehouse_bale_station_interval.json",
+      "bytes": 199,
+      "sha256": "4f0303ec495a89e84a618818cf64a0ec4d2af36eeff54d49c65dece7fb932d71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker_50mm_lift.json",
+      "bytes": 3828,
+      "sha256": "867be2868ad7fa12bda5252dded91ef0de8e3d47211134f6d0795015b7cf4541"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker_contact.json",
+      "bytes": 20336,
+      "sha256": "892014015ed49b033079bcd6a76a56268d84204bfb747b8cdb4efda1670e5c3e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\retained_worker_gate.json",
+      "bytes": 1036,
+      "sha256": "e8ff16ac66788a8fe07f85e6a3610251b58083018d8cf2bdfd2a3e6b48ad9fd0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review.png",
+      "bytes": 524655,
+      "sha256": "598ee85afb9388da941fb8151c3837b77d3c69d1ba412bc890d97f98235ca94b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_back.png",
+      "bytes": 91703,
+      "sha256": "b6174b226ff83737f7a166a5d4d5cda80b5584588a90a463618a2df7f695566f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_front.png",
+      "bytes": 91839,
+      "sha256": "9285223f77484f6014870403a0d11cfa227563404e7b4cd4e0f876f78d06a617"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_left.png",
+      "bytes": 98142,
+      "sha256": "6aa690eb23b5486511e56b47df05b0e0f1f84e6bcc63fe23419e83c536171f98"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_right.png",
+      "bytes": 97699,
+      "sha256": "41c4946af2f17166e1b3c079a861b7e8631f5a1a18072b6cc1e86f9ef79c97df"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_three_quarter.png",
+      "bytes": 109114,
+      "sha256": "af129b2e3e9be5146d52694cbde04eade1461adbfa89a26633891193ef08f771"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_material_review_top.png",
+      "bytes": 70886,
+      "sha256": "8cdc39b740c179f4a3f13f63fd089ab871425302af5ec026a3c4610714db1649"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review.png",
+      "bytes": 656656,
+      "sha256": "8144147d2c7b930e4832dfe1ebfe9fa99f982d196ce3644f6c258a5a5d385d82"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_back.png",
+      "bytes": 110184,
+      "sha256": "a0ef9cd8a13d405ad7e8d509bb24f951d748a668aaee91b489ccd01840276ef4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_front.png",
+      "bytes": 109954,
+      "sha256": "f245ce77e579e84bc4c883ff4856dd7615828a013bb73619c1b41f980691d8e3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_left.png",
+      "bytes": 120910,
+      "sha256": "149600ba98092d0bb6fc97a227f015cf7333a0f21c10563c697541e88221b49e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_right.png",
+      "bytes": 114620,
+      "sha256": "f3eb5e418f5aa87c0ef8c8175502cfef39c06f68ab044ad9463182015808d67e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_three_quarter.png",
+      "bytes": 125812,
+      "sha256": "f0f64ffc01430fef809022cee09d7f9272b728d7a6d115c89b9a9164c1c76945"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_closed_wire_review_top.png",
+      "bytes": 83932,
+      "sha256": "4d8c0c898b9c67262abe5778c073431d885cf6d66376294ee121aace976bb124"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_diagnostic_closed.png",
+      "bytes": 752338,
+      "sha256": "51f64e5e37346bef1d6dde23d2ceb70587cc06e2e526a97b0b5fe28ed6a6e242"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_folding_protected_cargo_v02.glb",
+      "bytes": 434820,
+      "sha256": "c54254af943c8132184877f88e46dba55929ec31b42749bbe078dc0ed864a948"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_folding_protected_cargo_v02.glb.validation.json",
+      "bytes": 2795,
+      "sha256": "b36813fb97282807bd8bc1281812ef5919841dfab1432a71df74dc3c7f40c0f9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_m05_lower_insert_v02.glb",
+      "bytes": 11760,
+      "sha256": "f0c02e5edd3fca1d205c4d3ecae75653329a3698bacadfbf9d7e3bddfde61090"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_m05_lower_insert_v02.glb.validation.json",
+      "bytes": 1027,
+      "sha256": "1bf76eb0116b3d1f95681676169ac659f474f0d168b6214b470bf7f8b414bd5b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_mechanism_animated_v02.blend",
+      "bytes": 313254,
+      "sha256": "584be7024b44015bb28d892e68f143a6acab1aeb2815c7bf1507971944ca1065"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_mechanism_source_v02.blend",
+      "bytes": 317744,
+      "sha256": "5ba98309b92047a4dbde62ea6e0ab47e55bd8e4dc21b298a97fffe1b98e3e284"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review.png",
+      "bytes": 524937,
+      "sha256": "d0f0cb6136df4ec91a7ae2ce50039d35c1cd4545a1a61ecff480ebe05231b680"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_back.png",
+      "bytes": 91703,
+      "sha256": "856bcc761505e3578c868e913cc3a4c8f59f62aa0bd7136cec5686ab3ff74b7f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_front.png",
+      "bytes": 91794,
+      "sha256": "924b3ef32838a2c157903f00dc384f87359a347946bb30e2b60478b51db02040"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_left.png",
+      "bytes": 98184,
+      "sha256": "3b4ee79c4717d317d6cc7b5d063985039a3f699f087b1546cadc34942757a4ea"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_right.png",
+      "bytes": 97699,
+      "sha256": "41c4946af2f17166e1b3c079a861b7e8631f5a1a18072b6cc1e86f9ef79c97df"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_three_quarter.png",
+      "bytes": 109117,
+      "sha256": "4abd957c0b0ef63cbd1f9c670c09db5528e183d599c09ab150164964c5b7f884"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_material_review_top.png",
+      "bytes": 70679,
+      "sha256": "da19b57b02121ff690b273a7c3381df061e8e0844cd9ba7b162b00a13f785387"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review.png",
+      "bytes": 656072,
+      "sha256": "df8b7f4efbd5737f464ac12ba7c727f93d847593ef8998d60641223e443d6567"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_back.png",
+      "bytes": 110217,
+      "sha256": "f8c3197959e0e3c60f946bc54aebaed9139a7956b9711eeb0b283a97da4c1aec"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_front.png",
+      "bytes": 109953,
+      "sha256": "76194afd064a32635727cd39c67557abc49def9bacf9341c661fb56387ae3600"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_left.png",
+      "bytes": 120098,
+      "sha256": "5e5184b85d50f36421769bda2df28172d2052d200d684bfb56f1600e115bd709"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_right.png",
+      "bytes": 114620,
+      "sha256": "f3eb5e418f5aa87c0ef8c8175502cfef39c06f68ab044ad9463182015808d67e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_three_quarter.png",
+      "bytes": 125833,
+      "sha256": "0c4ba6a1a8dafe1d1d82dffd008c249d8ada85ad903a41e68f4d23be6b081043"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_parked_wire_review_top.png",
+      "bytes": 83865,
+      "sha256": "e21ddf5671adf540f8d76d0e80f44bb4361bd9df6d0d53b7cb78e723843b2ce3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\s4_revised_early_gate_v02.blend",
+      "bytes": 122101,
+      "sha256": "d2a4f56f1a143ddc06fbc44976d1def4d950e2fa78268aa0bf4f1f4642070aa6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\encoded_phase_sheet_1.png",
+      "bytes": 966464,
+      "sha256": "f580e1ebfd06508e709a9a1e8003f7b1ccbf62a582c8cdf4556e98cbe0d0206f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\encoded_phase_sheet_2.png",
+      "bytes": 1047637,
+      "sha256": "6de1dcaf25529d6dc417214acf20f12f2a97c062302b20d346632b7dac7c02a4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\encoded_phase_sheet_3.png",
+      "bytes": 1315760,
+      "sha256": "ca16d8a4bc5ded9193711e5f947bc756fa0283e9b5ae003264c21c49b910493a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\encoded_phase_sheet_4.png",
+      "bytes": 214570,
+      "sha256": "a90ad29f4308fd391c775bfce31d0423ed4bcd21c286adb1ce6efd9f6266b644"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_aisle_closed.png",
+      "bytes": 749668,
+      "sha256": "96264ed30a9addfc59aacd3fe3d7f22a8115d821f1cc28f82765e77f33e74e10"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_aisle_mid.png",
+      "bytes": 749110,
+      "sha256": "ed5487337f1b797427bdbfe085da7802f103cf6b88af1ef162acef4a2c72b0b8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_aisle_parked.png",
+      "bytes": 750756,
+      "sha256": "cf1899b625a0d2d8966c3e54b7375994d7a183103d6275b729b38ae4dbda939f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_joint_closed.png",
+      "bytes": 849794,
+      "sha256": "32bdd045fff3d79e19dc6fa9a747ffcbef47d810f617750220cec83b5b175cca"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_joint_mid.png",
+      "bytes": 827116,
+      "sha256": "bac97c1fedc17965c479d40c7b1664e002208435e4f27b53bbd324993b7816a4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_joint_parked.png",
+      "bytes": 818477,
+      "sha256": "9dccfa460ba28f56253f9dad89527e52c0521a2e4cd3cb9798de8154c7419c93"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_whole_closed.png",
+      "bytes": 761521,
+      "sha256": "35aa46676b5396e6a2c24e10d0421335e88c5bbb348f6d66509f0392b057a5e7"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_whole_mid.png",
+      "bytes": 763214,
+      "sha256": "fbb14cfd29197c3ec5d72cded8c2a4de652e074cc7cb4962a8b09920250b1fb6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\preview_whole_parked.png",
+      "bytes": 759180,
+      "sha256": "6f42a3102abc3f1a7da81f185265834a2ad9cacfeb541fa68cf556873ebf7142"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\s4_mechanism_review_v02.mp4",
+      "bytes": 1274254,
+      "sha256": "834b9c2d6b970dea2642885ba8bd47eb33faf7cf6707a984cf49e588f3b1407d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\s4_mechanism_review_v02.mp4.check.json",
+      "bytes": 997,
+      "sha256": "9a343aaa0c1c52bffc4c195e4233655ab1bcdb7123d610194542508378d4c1b2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video\\video_manifest.json",
+      "bytes": 16954,
+      "sha256": "5d4cc0ecf0014ba87b6094d3f3c7364f5a1ebaf6b11608abf6b18f2a1ffa9ca7"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video_complete.json",
+      "bytes": 1066,
+      "sha256": "5d61492ac9a317c9c34d4a2afabc2643179c8d0fb22e834c1d0007288b4d33e2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_revision_v02\\video_progress.json",
+      "bytes": 56,
+      "sha256": "bc3b79abdaa9dace79e3015fed624f10239aa47568c29740f92756cd4aea17c4"
+    }
+  ],
+  "preserved": [
+    {
+      "manifest": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_prototype_v01\\conflict_manifest.json",
+      "sha256": "67c8f0bd1039f08588e099d8ef8060905778723eb12bdcbcac70d56f8f9b31df",
+      "checked_files": 11
+    },
+    {
+      "manifest": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\delivery_manifest.json",
+      "sha256": "923f433e94157b5c680ed1e60af27b1b3f7b8f80ed2e18e0fb61e882531896bc",
+      "checked_files": 89
+    },
+    {
+      "manifest": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\concept_manifest.json",
+      "sha256": "e7888507ed3d5611a5eea9785e3fca02d3b40566a439c3a3b9421c6d576bc075",
+      "checked_files": 4
+    },
+    {
+      "manifest": "Old inputs/contact/timber evidence",
+      "checked_files": 42
+    }
+  ],
+  "animations": [
+    "S4_unlock_fold_park",
+    "S4_close_lock"
+  ],
+  "clip_seconds": 1.5,
+  "worker_clips_created": 0,
+  "source_scope": "One right-lane source S4 at truck(.665,1.02,2.2)",
+  "optional_insert": "M05-only separate GLB; ordinary planes unchanged",
+  "lead_review": {
+    "stage": "Frozen rigid S4 mechanism reviewed/shown; human appearance approval pending; source archive only, no runtime binding",
+    "lead_visual": "Inspected all4actual encoded phase sheets covering16segments, read full handoff and transform/composition rules. Full14s normal-speed video shown with review-only cargo lift disclosed.",
+    "verified_manifest_files": 82,
+    "clips": [
+      "S4_unlock_fold_park",
+      "S4_close_lock"
+    ],
+    "clip_seconds": 1.5,
+    "native_status": "No Godot import, pause/interlock, moving-collision or generated-quote check performed for this S4 delivery.",
+    "scope": "Source handling witness is actual right-lane mount(.665,1.02,2.2), retained worker root(-.625,0,-.014),yawPI/2. Not every rack location/side or complete carry.",
+    "restraint_composition": "New mechanism is service configuration and excludes original separate Restraint_00/01. Lead independently read old GLB: both are actual separate mesh nodes (meshes0/1 of3), not markers. Preserve/compose their original transforms/geometry and removal conditions before replacing a transport shelf. No permanent restraint disappearance or new removal clip approved.",
+    "placement": "Optional80mm M05 insert is separate, rooted at contact plane0 and seated(0,.1,0). Keep absent for ordinary cargo; no blanket ordinary-plane offset.",
+    "contract_source_sha256": "ee516e1ea9db538864e20a9c52562c8349519c82b1aca00ba93e1e707fd25b32",
+    "contract_repository_lf_sha256": "93aece13c63af891efe6fd9611e9083323f4d78b646fb1073f1fb933b57effa1",
+    "appearance": "Pending existing S4-only question; Designer scope approval is not human animation approval.",
+    "limits": "Original assets/failure evidence retained. New GLBs are archived below .gdignore; no default source shelf/handling changed."
+  }
+}
