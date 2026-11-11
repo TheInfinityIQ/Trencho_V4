@@ -166,6 +166,8 @@
       1.83287
     ],
     "warehouse_provisional_update": "Artist reports separate2.10m high fixture at.60/1.75m supports passed216occupied source samples with the other3cells present. Full occupied/export checks and final fixture pending; this is not runtime or visual acceptance.",
-    "ground_provisional_update": "Draft only: anatomical forward+Z/back-Z/left+X/right-X; proposed.8s/.12m start-stop,.8s/.24m loops at.3m/s,4s90degree stepped turns in measured3m clearance. Exact exported paths, clip windows and footage remain pending; no runtime inference permitted."
+    "ground_provisional_update": "Superseded by frozen46clip delivery. Stable actor0/fore and actor1/aft use distinct simultaneous turn clips; do not re-sort by world position. Starts/stops.8s/.12m, loops.8s/.24m at authored.3m/s,4s90degree turns need actual clear3m zone. Exact paired paths own worker/load synchronization; any retiming applies to both workers and payload together.",
+    "ground_frozen_delivery": "evidence/supplier_transport/timber_ground_frozen_manifest.json; frozen46clip draft checked by Artist, file hashes and encoded phase sheets reviewed by Lead, shown for human appearance approval; not runtime bound.",
+    "warehouse_current_animation_limit": "Artist reports final static v04 fixture2.6x1x2.10m and762source/818exported occupied samples passed, but explicit original-body comparison found small upper standing hip/leg differences. Offline correction still underway; current58clip warehouse draft MUST NOT be integrated. Truck/ground frozen packages unaffected."
   }
 }
