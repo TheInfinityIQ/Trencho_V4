@@ -245,7 +245,7 @@
     "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
     "operator_layout": {
       "stage": "Lead accepted layout basis for actual anatomy/control fitting and coordinated authoring; not passed reach, clearance, human appearance or runtime acceptance",
-      "hardware": "Initial narrow recessed controls failed actual glove fit. Wider flush fixed mount accepted for fitting under s4_control_mount_revision.json; actual full stroke/neighbor/cargo/sweep clearance still required.",
+      "hardware": "Initial narrow control failed glove fit; wider flush static press fit passed per Artist, but B housing atY1.10 overlaps actual torso sweep. B aroundY.90 accepted as fitting candidate only; complete movement and remaining entry/transfer reach paths still require correction.",
       "body": "Actual worker uses genuine palm/finger edge grips, steps and hips/knees. The 715mm reach is not passed; no arm stretching or teleport. Check occupied bale, gloves, helmet, torso, feet, frame, truck and neighboring geometry through full motion.",
       "timing": "Eight seconds each direction is a fitting reference, not final duration. No forced old 1.5-second rigid mechanism action.",
       "ownership": "Receiving reserves one actual worker and module through approach, operation, latch and hands-clear. Pause freezes both. Animation does not grant stock or completion. No motion without operator contact/control; interruption cannot fabricate a latch.",
@@ -297,6 +297,41 @@
       ],
       "validation": "Lead inspected actual glove/control closeup and source measurement report. No Godot or gameplay check; no animation keys/export delivered at this gate.",
       "receipt": "evidence/supplier_transport/s4_control_mount_revision.json"
+    },
+    "operator_control_waist_revision": {
+      "stage": "Wider control static press fit passed per Artist, but complete candidate operation failed before keys/export; waist relocation accepted only as next fitting basis",
+      "actual_conflict": "B housing atY1.10 intersects actual left shoulder and upper chest during lift. At4.266667seconds source Boolean overlap4.91351e-6m3 liesX[-.264,-.257],Y[1.078,1.122],Z[-.2351,-.1600]. Source opening241samples/89failed; independent approach/hand-transfer reach failures remain.",
+      "decision": "Fit B aroundY.90m front waist-access region, keeping wider flush face and within-module Z placement. A may remainY.78 if actual clearance remains. Artist may tune exact waist-height mount from full measured sweep without another routine approval gate.",
+      "required": "Check whole actual body/arms/pan/occupied cargo through opening and closing, control full strokes and approach/withdrawal. Keep controls distinct for real broad gloves. No geometry shrink, arm clamp/stretch, contact tolerance hiding solid overlap or removal of structural/bearing support.",
+      "separate_path_defect": "Correct actual approach and hand-transfer reach paths independently with natural steps/hip motion. Relocated hardware alone cannot establish full-action success.",
+      "delivery_gate": "Only after actual changed-operation source fit clears: coordinated worker/mechanism actions, verified export, full normal-speed opening/closing video for human approval. No active runtime asset binding or Godot acceptance.",
+      "records": [
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\CONFLICT_HANDOFF.md",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_conflict.md",
+          "bytes": 4648,
+          "original_sha256": "989251348e6c9317ac0ae3779e7e41473cc6be98a193e969bac2b4f1fdeb0001"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\remaining_motion_conflict.json",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_conflict.json",
+          "bytes": 2772,
+          "original_sha256": "470098962a11e04fea974aaa84888a531248b367a515f951e87ae92ebf7f446f"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\source_operation_gate.json",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_operation_gate.json",
+          "bytes": 229150,
+          "original_sha256": "84495ecec1822c256274ca156809dd5da0ef95d82963dc9d49d9407c20497956"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\remaining_motion_conflict_2.png",
+          "repository": "game/supplier_transport/assets/source/s4_upper_control_conflict.png",
+          "bytes": 736641,
+          "original_sha256": "8fa4e75fdc1959d0fcfce65bad2aa8384508dcf8f6fea7d7dc4a4f891a7f69ec"
+        }
+      ],
+      "receipt": "evidence/supplier_transport/s4_waist_control_revision.json"
     }
   },
   "warehouse_metal_runtime_plan": {

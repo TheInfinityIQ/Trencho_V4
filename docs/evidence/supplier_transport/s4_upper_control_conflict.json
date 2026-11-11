@@ -1,0 +1,106 @@
+{
+  "reports": [
+    {
+      "time": 3.2333333333333334,
+      "theta_deg": 6.2555864197530875,
+      "source": {
+        "time": 3.2333333333333334,
+        "u": 0.0695065157750343,
+        "root": [
+          -0.6177018158436214,
+          0,
+          -0.014
+        ],
+        "yaw": 1.5707963267948966,
+        "max_arm_fit_clamp": 0,
+        "max_leg_clamp": 0,
+        "max_sole_error": 1.903497974225371e-07,
+        "left_control": null,
+        "hits": {
+          "lower_bale": 0,
+          "S3_envelope": 0,
+          "S2_envelope": 0,
+          "S1_opposite_envelope": 0,
+          "truck_above_bearing_floor": 0,
+          "fixed_frame": 33,
+          "nonhand_pan": 0
+        },
+        "hand_inside_pan_depth": {
+          "Left": 0,
+          "Right": 0
+        },
+        "pan_surface_pairs": 6,
+        "pass_": false
+      },
+      "body_groups": {
+        "LeftShoulder": 33
+      },
+      "triangle_intersection_bounds_godot": [
+        [
+          -0.2640000283718109,
+          1.0780000686645508,
+          -0.23451967537403107
+        ],
+        [
+          -0.259011447429657,
+          1.1151678562164307,
+          -0.1655000001192093
+        ]
+      ],
+      "actual_boolean_volume_m3": 2.2064514279829183e-08
+    },
+    {
+      "time": 4.266666666666667,
+      "theta_deg": 45.74996913580246,
+      "source": {
+        "time": 4.266666666666667,
+        "u": 0.5083329903978051,
+        "root": [
+          -0.5716250360082304,
+          0,
+          -0.014
+        ],
+        "yaw": 1.5707963267948966,
+        "max_arm_fit_clamp": 0,
+        "max_leg_clamp": 0,
+        "max_sole_error": 3.0696583053213544e-09,
+        "left_control": null,
+        "hits": {
+          "lower_bale": 0,
+          "S3_envelope": 0,
+          "S2_envelope": 0,
+          "S1_opposite_envelope": 0,
+          "truck_above_bearing_floor": 0,
+          "fixed_frame": 376,
+          "nonhand_pan": 0
+        },
+        "hand_inside_pan_depth": {
+          "Left": 0,
+          "Right": 0
+        },
+        "pan_surface_pairs": 12,
+        "pass_": false
+      },
+      "body_groups": {
+        "LeftArm": 247,
+        "UpperChest": 129
+      },
+      "triangle_intersection_bounds_godot": [
+        [
+          -0.2640000283718109,
+          1.0780000686645508,
+          -0.23510630428791046
+        ],
+        [
+          -0.25699999928474426,
+          1.121999979019165,
+          -0.1599999964237213
+        ]
+      ],
+      "actual_boolean_volume_m3": 4.913505567561189e-06
+    }
+  ],
+  "new_actions": 0,
+  "new_exports": 0,
+  "scope": "Current full source motion conflict after the accepted wide-control revision; no animation delivery claimed."
+}
