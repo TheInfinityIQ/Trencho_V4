@@ -47,5 +47,6 @@
     "s4_decision": "Single folding-pan proposal sent to Game Designer for bounded observable mechanism scope. No S4 hardware/guard/seat modeling or animation approved yet. Source above-overlap blockers suggest the required unload order; actual quote/interlock demonstration remains pending changed implementation.",
     "s4_original_report_sha256": "8fd0765975e54dfdcab7a571ef59e7f587eb85eb8dce90647f40ae7d32a154b2",
     "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
-  }
+  },
+  "subsequent_s4_scope_decision": "Designer accepted bounded observable folding-shelf scope after the original concept review. The earlier unapproved status above is historical. Hardware concept/dimensions/clearance/modeling/handling/native/appearance/final PR approval remain separate; active rules are in supplier_asset_contract.json and diagrams/s4_bale_service.mmd."
 }
