@@ -224,11 +224,11 @@
     "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
   },
   "s4_fold_up_proposal": {
-    "stage": "Human rejected worker-operated v03 motion: arm/torso merging and unnatural hand spins; full-body revision required, no runtime integration",
+    "stage": "Early opaque anatomical block accepted for continued full-operation fitting; rejectedv03 remains excluded. Full shelf/contact/closing revision incomplete.",
     "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
     "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
     "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
-    "pending": "Re-block shoulders/body to keep hands in front of torso, use distinct chest-relative lateral elbow planes and a coherent elbow/forearm-roll/hand chain. Reject infeasible joint requests rather than forcing Cartesian contacts. Actual torso/limb self-contact and stable anatomical motion are required in the changed action. Readable opaque front/side blocking poses, then early actual continuous opaque motion with body/hands/feet readable, before expensive export/video polish. Wireframe is supplemental. All original production assets, rig and seven clips remain; no general character remesh or original timber bend changes. Final human appearance approval and runtime integration remain pending.",
+    "pending": "Classify upper-arm/vest intersections around natural shoulder seam versus real torso penetration; refit actual pan/palms/control strokes, one-hand load support, seats/pins, root/steps, approach/withdrawal and complete closing. Preserve coherent anatomical chain instead of forcing Cartesian hand contacts. Artist continues full S4 operation without another routine approval gate. Finished preview must show actual shelf plus readable opaque body/hands continuously. Human approval and runtime connection remain pending.",
     "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
     "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
     "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
@@ -335,7 +335,17 @@
     },
     "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json",
     "anatomical_revision": "evidence/supplier_transport/s4_anatomical_revision_plan_v04.json",
-    "diagnostic_frame_status": "Initial native diagnostic rig/skin-frame error corrected; old153-pair claim and stretched images retracted. Corrected shared-frame source/GLB comparison supports remaining actual self-contact/wrist defects. Anatomical revision still in progress, no new animation approved."
+    "diagnostic_frame_status": "Initial native diagnostic rig/skin-frame error corrected; old153-pair claim and stretched images retracted. Corrected shared-frame source/GLB comparison supports remaining actual self-contact/wrist defects. Anatomical revision still in progress, no new animation approved.",
+    "early_body_blocking": {
+      "stage": "Lead accepted early anatomical basis for continued actual shelf fitting, not finished human approval or runtime integration",
+      "review": "Lead inspected handoff, all12 actual encoded interior frames in opaque front/side sheet and manifest identities. Arms stay visibly in front of torso in the shown body block; full prop/contact sequence remains absent.",
+      "scope": "Fixed-root planted-foot squat/rise/reach and provisional coherent elbow/forearm/palm orientation. Cabinet/pan omitted and labelled. No new game action keys/exports.",
+      "limited_measurement": "Artist sampled forearm/hand-to-torso pairs0, maximum combined wrist-relative deviation46.079deg and relative angular speed44.768deg/s. These do not establish universal anatomical limits or all-body/prop clearance.",
+      "remaining": "Classify upper-arm/vest intersections around natural shoulder seam versus real torso penetration; refit actual pan/palms/control strokes, one-hand load support, seats/pins, root/steps, approach/withdrawal and complete closing. Preserve coherent anatomical chain instead of forcing Cartesian hand contacts.",
+      "next": "Artist continues full S4 operation without another routine approval gate. Finished preview must show actual shelf plus readable opaque body/hands continuously. Human approval and runtime connection remain pending.",
+      "preserved": "Original rig/seven clips, successful shelf support/footprint/capacity, actual assigned worker, rejectedv03/invalid diagnostic history and original timber pickup bend.",
+      "receipt": "evidence/supplier_transport/s4_early_body_blocking_v04.json"
+    }
   },
   "warehouse_metal_runtime_plan": {
     "diagram": "diagrams/warehouse_metal_supports.mmd",

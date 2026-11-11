@@ -1,0 +1,41 @@
+{
+  "status": "early anatomical blocking only; full S4 revision remains incomplete",
+  "new_action_keys": 0,
+  "new_game_exports": 0,
+  "files": [
+    {
+      "file": "EARLY_BLOCKING_HANDOFF.md",
+      "bytes": 4384,
+      "sha256": "bf055b51f043c3eca6408b08f3768804fe413c9e18da31cf40f3c35de3cf6e8f"
+    },
+    {
+      "file": "body_blocking_motion.json",
+      "bytes": 152792,
+      "sha256": "cccd32b344dbc78bb0fa1ad866782ff2085e204fdde177708972a2a45677c0f9"
+    },
+    {
+      "file": "rejected_motion_diagnosis_corrected.json",
+      "bytes": 410462,
+      "sha256": "4796237f343a3396ca267be00beecdf20b5d57bf1647f8f41b930cc2413d9517"
+    },
+    {
+      "file": "body_blocking_video/s4_opaque_body_blocking_v04.mp4",
+      "bytes": 1897542,
+      "sha256": "f3e0e7db3a54946c9805e4efcd270dabe1ea3b592cb9db69a36a95ffc54f5a70"
+    },
+    {
+      "file": "body_blocking_video/encoded_blocking_interior_sheet.png",
+      "bytes": 1403026,
+      "sha256": "7a105e806de06c21e0de10a7b4a54fe1a8fc40590142d52d6c738b7433349671"
+    }
+  ],
+  "lead_review": {
+    "stage": "Lead accepted early anatomical basis for continued actual shelf fitting, not finished human approval or runtime integration",
+    "review": "Lead inspected handoff, all12 actual encoded interior frames in opaque front/side sheet and manifest identities. Arms stay visibly in front of torso in the shown body block; full prop/contact sequence remains absent.",
+    "scope": "Fixed-root planted-foot squat/rise/reach and provisional coherent elbow/forearm/palm orientation. Cabinet/pan omitted and labelled. No new game action keys/exports.",
+    "limited_measurement": "Artist sampled forearm/hand-to-torso pairs0, maximum combined wrist-relative deviation46.079deg and relative angular speed44.768deg/s. These do not establish universal anatomical limits or all-body/prop clearance.",
+    "remaining": "Classify upper-arm/vest intersections around natural shoulder seam versus real torso penetration; refit actual pan/palms/control strokes, one-hand load support, seats/pins, root/steps, approach/withdrawal and complete closing. Preserve coherent anatomical chain instead of forcing Cartesian hand contacts.",
+    "next": "Artist continues full S4 operation without another routine approval gate. Finished preview must show actual shelf plus readable opaque body/hands continuously. Human approval and runtime connection remain pending.",
+    "preserved": "Original rig/seven clips, successful shelf support/footprint/capacity, actual assigned worker, rejectedv03/invalid diagnostic history and original timber pickup bend."
+  }
+}
