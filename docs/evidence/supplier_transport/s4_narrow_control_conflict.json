@@ -1,0 +1,146 @@
+{
+  "scope": "Actual parked-control fitted glove vs newly cut frame recess, not export/runtime acceptance",
+  "finger_strip_bounds_godot": [
+    [
+      -0.3019595146179199,
+      1.0581471920013428,
+      -0.40019339323043823
+    ],
+    [
+      -0.26100000739097595,
+      1.100324034690857,
+      -0.28164395689964294
+    ]
+  ],
+  "finger_strip_cross_z_span_m": 0.11854943633079529,
+  "recess_width_z_m": 0.02,
+  "paddle_face_width_z_m": 0.018,
+  "control_z": -0.3375,
+  "neighbor_boundary_z": -0.35,
+  "center_to_neighbor_boundary_m": 0.0125,
+  "vertices_inside_frame": [],
+  "max_sampled_vertex_inside_frame_m": 0,
+  "collision_source": "manual_hardware_fit.json; explicit source BVH surface intersections + signed nearest-face vertex depths; no claim these prove all possible hand poses impossible",
+  "qa": {
+    "SM_S4_Fixed_Mechanism": {
+      "ok": true,
+      "pass": true,
+      "errors": [],
+      "warnings": [
+        "hidden back-to-back faces: SM_S4_Fixed_Mechanism (174 pairs) - delete to save tris"
+      ],
+      "ground_z": 0.0,
+      "zfighting": [],
+      "floating": [],
+      "back_to_back": [
+        {
+          "where": "SM_S4_Fixed_Mechanism",
+          "tri_pairs": 174
+        }
+      ],
+      "enclosed": [],
+      "objects": {
+        "SM_S4_Fixed_Mechanism": {
+          "verts": 2107,
+          "faces": 4298,
+          "tris": 4298,
+          "ngons": 0,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "wire_edges": 0,
+          "loose_verts": 0,
+          "degenerate_faces": 0,
+          "zero_length_edges": 0,
+          "inconsistent_normals_edges": 0,
+          "duplicate_verts": 0,
+          "islands": 1,
+          "inside_out_islands": 0,
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "materials": 1
+        }
+      }
+    },
+    "SM_Manual_Paddle_A": {
+      "ok": true,
+      "pass": true,
+      "errors": [],
+      "warnings": [
+        "asset lowest point z=0.76 (not resting on ground plane z=0)"
+      ],
+      "ground_z": 0.76,
+      "zfighting": [],
+      "floating": [],
+      "back_to_back": [],
+      "enclosed": [],
+      "objects": {
+        "SM_Manual_Paddle_A": {
+          "verts": 24,
+          "faces": 26,
+          "tris": 44,
+          "ngons": 0,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "wire_edges": 0,
+          "loose_verts": 0,
+          "degenerate_faces": 0,
+          "zero_length_edges": 0,
+          "inconsistent_normals_edges": 0,
+          "duplicate_verts": 0,
+          "islands": 1,
+          "inside_out_islands": 0,
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "materials": 1
+        }
+      }
+    },
+    "SM_Manual_Paddle_B": {
+      "ok": true,
+      "pass": true,
+      "errors": [],
+      "warnings": [
+        "asset lowest point z=1.08 (not resting on ground plane z=0)"
+      ],
+      "ground_z": 1.08,
+      "zfighting": [],
+      "floating": [],
+      "back_to_back": [],
+      "enclosed": [],
+      "objects": {
+        "SM_Manual_Paddle_B": {
+          "verts": 24,
+          "faces": 26,
+          "tris": 44,
+          "ngons": 0,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "wire_edges": 0,
+          "loose_verts": 0,
+          "degenerate_faces": 0,
+          "zero_length_edges": 0,
+          "inconsistent_normals_edges": 0,
+          "duplicate_verts": 0,
+          "islands": 1,
+          "inside_out_islands": 0,
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "materials": 1
+        }
+      }
+    }
+  },
+  "closeup_note": "Actual posed glove and actual fixed frame/control. Rest of worker omitted for readable glove closeup; no frame/pocket cutaway. Prior full-body figures retained.",
+  "new_animation_keys": 0,
+  "new_exports": 0,
+  "decision_needed": "The accepted 18mm recessed end-post control has not passed real glove fit. Prefer a flush/wider control on a short fixed bracket displaced about0.10m into this module opening, preserving footprint/support/cargo rules; Lead must resolve any changed mounting/access contract before authoring. Alternatively separately articulate/remodel individual fingers, which is a more costly character change."
+}

@@ -245,7 +245,7 @@
     "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
     "operator_layout": {
       "stage": "Lead accepted layout basis for actual anatomy/control fitting and coordinated authoring; not passed reach, clearance, human appearance or runtime acceptance",
-      "hardware": "Recessed manual paddles and fixed-frame linkage accepted as scoped revision within original footprint. Both corresponding end pins must have explicit release/engagement states, including hand transfer without accidental relocking.",
+      "hardware": "Initial narrow recessed controls failed actual glove fit. Wider flush fixed mount accepted for fitting under s4_control_mount_revision.json; actual full stroke/neighbor/cargo/sweep clearance still required.",
       "body": "Actual worker uses genuine palm/finger edge grips, steps and hips/knees. The 715mm reach is not passed; no arm stretching or teleport. Check occupied bale, gloves, helmet, torso, feet, frame, truck and neighboring geometry through full motion.",
       "timing": "Eight seconds each direction is a fitting reference, not final duration. No forced old 1.5-second rigid mechanism action.",
       "ownership": "Receiving reserves one actual worker and module through approach, operation, latch and hands-clear. Pause freezes both. Animation does not grant stock or completion. No motion without operator contact/control; interruption cannot fabricate a latch.",
@@ -266,6 +266,37 @@
       "debug_delivery": "ReceivingSimulation.debug_deliver_resources must resolve any actual shelf-operator job/access/promise once and restore a declared safe mechanism state; no animation may continue as if an operator remained. Its exact semantics must be implemented with the new activity, not assumed from current generic cleanup.",
       "remaining_art_contract": "Final actual root/contact samples, control-to-pin transitions including release across hand transfer, opening/closing clip names and durations, latch/seat contacts, occupied full-sweep clearance and human-approved full-motion video. Existing 8-second estimate is not a runtime constant.",
       "direct_check": "After actual implementation, one short GitHub-only changed-action demonstration: actual assigned worker, empty upper pan, physical operator sequence and authoritative parked/hands-clear gate before lower pickup. Check the new connected action only; no regression suite/local engine or FPS claim."
+    },
+    "operator_control_revision": {
+      "stage": "Source fitting discovery before animation/export; accepted scoped hardware revision, not final clearance or appearance",
+      "conflict": "Actual posed shared glove finger strip spans118.55mm alongZ against20mm recess and18mm face at end-postZ-.3375, only12.5mm from neighbor boundary. BVH surface intersection remains relevant even when sampled vertex penetration is zero. No claim all possible hand poses are impossible.",
+      "revision": "Use wider flush fixed control mount, moving both centers approximately100mm along+Z toward-.2375 within the same module. Fit actual glove width and modest clearance, no individually remodeled fingers. Original20mm slot/18mm face are superseded for this revision.",
+      "constraints": "Entire bracket/control stays within original footprint, outside cargo/padding/pan swept volume and neighbor bay. Retain structural/bearing support. Check full press stroke and hand entry/withdrawal with occupied geometry.",
+      "pins": "Paired pins use retained push-push release detent through hand transfer. Worker re-engages only at matching actual seated stop; no unsupported self-actuation.",
+      "continuation": "Artist may fit revision and proceed to coordinated worker/mechanism animation if actual source fit clears, without another routine dimension approval gate. Return concrete remaining conflict or completed full-motion/export handoff.",
+      "preserved": "Narrow-control failure/source history, original worker mesh/rig, actual worker identity, upper-empty/lock/hands-clear gates, full shelf support/padding/footprint/cargo capacity, synchronized original timber pickup bend.",
+      "records": [
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\control_blocker_measurement.json",
+          "repository": "docs/evidence/supplier_transport/s4_narrow_control_conflict.json",
+          "bytes": 4439,
+          "original_sha256": "3c4edc466617d999db6e6d3f2bdf240a74467579905df678b769ebafcfc4600c"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\manual_hardware_fit.json",
+          "repository": "docs/evidence/supplier_transport/s4_narrow_control_hardware_fit.json",
+          "bytes": 6554,
+          "original_sha256": "227e9b7499927a167c04f593609829c0bc849b9879906567584b985c77746000"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\control_clearance_closeup.png",
+          "repository": "game/supplier_transport/assets/source/s4_narrow_control_conflict.png",
+          "bytes": 756311,
+          "original_sha256": "76b35552e86adeb8e1b69a4636b7535fdceb445d490c9e3af5ef834e1ad9c79e"
+        }
+      ],
+      "validation": "Lead inspected actual glove/control closeup and source measurement report. No Godot or gameplay check; no animation keys/export delivered at this gate.",
+      "receipt": "evidence/supplier_transport/s4_control_mount_revision.json"
     }
   },
   "warehouse_metal_runtime_plan": {
