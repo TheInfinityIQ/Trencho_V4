@@ -71,6 +71,9 @@ func set_root(pose: Transform3D) -> void:
 	# root orientation. Never derive an authoritative path from an animation.
 	transform = pose
 
+func refresh_root() -> void:
+	if root_sampler.is_valid(): global_transform = root_sampler.call()
+
 func sync_speed() -> void:
 	if _animator == null or _simulation == null: return
 	set_process(not _clip.is_empty() and _on_screen and is_visible_in_tree() and int(_simulation.speed) > 0)
@@ -80,7 +83,7 @@ func _process(_delta: float) -> void:
 
 func _render_pose() -> void:
 	if _animator == null or _clip.is_empty(): return
-	if root_sampler.is_valid(): global_transform = root_sampler.call()
+	refresh_root()
 	var clip: Animation = _animator.get_animation(_clips[_clip])
 	var elapsed := maxf(0.0,float(_receiving._time)-_started)
 	var phase := fposmod(elapsed,_duration)/_duration if _loop else clampf(elapsed/_duration,0.0,1.0)

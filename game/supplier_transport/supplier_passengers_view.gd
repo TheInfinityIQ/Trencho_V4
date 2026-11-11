@@ -14,6 +14,7 @@ func bind(model: RefCounted, convoys: Node3D) -> void:
 	_service = model.receiving.passengers
 	_scene = load(ART) as PackedScene
 	_service.changed.connect(_changed)
+	_model.receiving.ledger.entity_moved.connect(_moved)
 	for id: String in _service.rows: _changed(id)
 
 func _changed(id: String) -> void:
@@ -44,8 +45,19 @@ func _pose(id: String) -> Transform3D:
 func sync_speed() -> void:
 	for actor: ActorView in actors.values(): actor.sync_speed()
 
+func _moved(id: String, _from: Vector2, _to: Vector2) -> void:
+	# Spatial following must work while invisible, otherwise the visibility
+	# notifier remains at the offscreen spawn and never discovers the passenger.
+	if actors.has(id):
+		actors[id].refresh_root()
+		return
+	var order: Dictionary = _model.receiving._active_suppliers.get(id,{})
+	for person: String in order.get("aboard_people",{}):
+		if actors.has(person): actors[person].refresh_root()
+
 func _exit_tree() -> void:
 	if _service != null and _service.changed.is_connected(_changed): _service.changed.disconnect(_changed)
+	if _model != null and _model.receiving.ledger.entity_moved.is_connected(_moved): _model.receiving.ledger.entity_moved.disconnect(_moved)
 	_service = null
 	_model = null
 	_convoys = null
