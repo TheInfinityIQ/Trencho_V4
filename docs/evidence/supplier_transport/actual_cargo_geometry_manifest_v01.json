@@ -130,7 +130,14 @@
     "report_original_sha256": "8a655a8da98bd6aded12597744f4ff01fe77a5e17167c2a2ff3be40a7c48bd30",
     "report_repository_lf_sha256": "d62fdae4da304d042c60be0e3c5b9ae93bd605acb102905c2561728779fffbac",
     "verified_manifest_files": 24,
-    "accepted_next_step": "Actual near-face static palm/handle fitting at real package orientations, including full frame/stock/approach geometry. Co-design the separate S1Metal physical support with hand clearance before modeling.",
+    "accepted_next_step": "Correct variant-specific S1 side transforms/support before choosing any support remedy; then fit actual near-face contacts. Earlier insert requirement is unconfirmed.",
     "readiness": "Necessary spans/body-only witnesses are not final mounting/contact approval. No universal riser, capacity/economic change, new pickup, other-item animation or fixture authoring approved."
+  },
+  "lead_correction": {
+    "status": "Earlier support-side conclusion withdrawn; original source report/input hashes retained as historical provenance",
+    "artist_correction": "The four LEFT zero-support conclusion is withdrawn. Artist applied the general S2/S3/S4 left-PI rule to S1 without establishing its separate orientation. Frozen LEFT timber S1 uses identity; S1 is excluded from current runtime shelf binding. Corrected proposed wall-side S1Metal placement is left identity/rightPI, with exact support/hand clearance still being measured. No actual-side support defect or insert requirement is established by the earlier count. Pure90-to72 rack arithmetic and actual package yaw are unaffected.",
+    "lead_lesson": "Matching file hashes establishes provenance, not the correctness of an asset-coordinate assumption. Verify variant-specific transforms before promoting measurements to integration facts.",
+    "new_repository_report": "Adds a prominent erratum above the unchanged historical report. The earlier report_repository_lf_sha256 refers only to the original report body.",
+    "next": "Correct explicit side transforms/support before determining whether an insert is required; no authoring or capacity change."
   }
 }
