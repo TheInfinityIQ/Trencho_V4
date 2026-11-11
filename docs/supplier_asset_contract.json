@@ -207,5 +207,32 @@
     "s1_registration": "For the S1Metal concept prefer explicit+2mm bearing shim, retaining nominal packet roots, original planes and stacking envelope. Actual support/actor fit and modeling remain unapproved.",
     "held": "No S2/S4 guessed riser, tray cut, unsupported20mm overhang, capacity change, new pickup or further pose sweep. Need one quantified full-support/access variant proposal after warehouse concept.",
     "limits": "Physical surface targets/native Blender hand calibration are not exported Godot bone-local sockets. Static witness and source-part equivalence are not delivered fixture structure, full animation, native gameplay or human appearance approval."
+  },
+  "warehouse_metal_concept_acceptance": {
+    "verified_manifest_files": 6,
+    "visual": "Inspected complete four-panel PNG: faceted mixed rack, end section, reinforced opening/load path, sixteen-cell allocation and cassette footprint.",
+    "warehouse_decision": "Accepted for bounded STATIC modeling only. Preserve original rack, create separately versioned empty rack with measured opening and properly capped/reinforced ends within retained envelope. Separate removable lower537mm/upper105mm80x200mm cassettes, rooted at tray contact. No baked cargo/workers or permanent cradles in ordinary cells. Actual new geometry must retain representative contacts/neighbor envelopes/back-bale approach before export; no all-cell handling or native claim.",
+    "s4_decision": "Single folding-pan proposal sent to Game Designer for bounded observable mechanism scope. No S4 hardware/guard/seat modeling or animation approved yet. Source above-overlap blockers suggest the required unload order; actual quote/interlock demonstration remains pending changed implementation.",
+    "s4_original_report_sha256": "8fd0765975e54dfdcab7a571ef59e7f587eb85eb8dce90647f40ae7d32a154b2",
+    "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
+  },
+  "s4_fold_up_proposal": {
+    "stage": "Designer accepted bounded gameplay scope; measured mechanism concept requested before modeling",
+    "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
+    "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
+    "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
+    "pending": "One measured closed/folded faceted hardware concept, then bounded static/mechanism authoring after Lead acceptance. Actual quote/interlock/worker clearance gets one brief current-change demonstration when implemented. Full animation approval and final exact-head PR review remain separate.",
+    "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
+    "authority": "Game Designer Lead message11November2026, thread01a18e60-cd67-7b01-8047-a8768208b387, observed turn01a1ca56-21e0-7583-b50b-448f2c8fb8b1. Not final PR, dimensions, clearance, handling or human appearance approval.",
+    "observable_rules": "Unload actual upper stock first; only empty pan may unlock/fold/secure before lower-bale pickup. No overlapping fold/lift. Any later upper placement requires closed+locked pan. Automatic finite work inside unloading, no extra menu/purchase/resource cost; preserve priorities,quantities,support,footprint,geometric capacity. Pause freezes mechanism and handling.",
+    "diagram": "diagrams/s4_bale_service.mmd",
+    "initial_reference_timing": "Lead reference1.5s total:unlock.25/fold1/latch.25. Exact hardware motion and shared playback timing remain to be accepted; no native timing claim."
+  },
+  "warehouse_metal_runtime_plan": {
+    "diagram": "diagrams/warehouse_metal_supports.mmd",
+    "stage": "Prospective only, before runtime implementation",
+    "owner": "Existing WarehouseService owns finite cell promises and any per-cell removable support state; Receiving owns physical worker preparation/handling, Ledger owns actual stock.",
+    "rule": "A metal-specific support must be ready at the actual cell before handoff. Other-material cells retain their original planes/envelopes. Preparing/changing a support requires the real worker and existing smoke/preparation semantics; no global clock or standing inventory poll.",
+    "limits": "Static models and the two representative inner-cell witnesses do not establish all-cell contact or completed material handling."
   }
 }

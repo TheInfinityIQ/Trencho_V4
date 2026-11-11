@@ -1,0 +1,51 @@
+{
+  "stage": "Frozen2D concept and ONE S4 proposal, no model/animation authoring",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\warehouse_metal_supports_concept_v01.png",
+      "bytes": 655692,
+      "sha256": "a2954f3ff543aaebfcae82b65787bb65c019bd8c1043cfa5797150dbeea4044a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\warehouse_metal_supports_concept_v01.svg",
+      "bytes": 75431,
+      "sha256": "aa383591612d7260d2fe92fe7558699f891a94b0933f10cd4bb3a145f9480853"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\warehouse_concept_dimensions_v01.json",
+      "bytes": 2078,
+      "sha256": "12c0b7e28d4ccbdd6af410e73a42727745b72ab9846c6802e378aa1882402306"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\warehouse_concept_handoff_v01.md",
+      "bytes": 2712,
+      "sha256": "7085c37d26e036f1ad857b19d215e8ceb9febf8a58fac6a8d5999c6174f1b085"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\s4_fold_up_full_support_proposal_v01.md",
+      "bytes": 5367,
+      "sha256": "8fd0765975e54dfdcab7a571ef59e7f587eb85eb8dce90647f40ae7d32a154b2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\warehouse_metal_concept_v01\\s4_fold_up_proposal_dimensions_v01.json",
+      "bytes": 1527,
+      "sha256": "53e838f3eaf4b9cc7d3f683d96d60ed348f5d1db0ee8ecf0b7796296f393f4bf"
+    }
+  ],
+  "visual_review": "Final full PNG inspected for dimensions, labels, both inserts, intact load surface, capped rail ends and16-cell mixed allocation.",
+  "new_construction_details": "Conceptual; source/model checks after approval. Representative inner-cell contact is not all-cell acceptance.",
+  "s1_registration": "Lead decision: nominal roots/spacing/stack envelope preserved, explicit+2mm metal-only bearing shim preferred; no S1 authoring.",
+  "warehouse_back_bale": "Existing accepted static contact unchanged.",
+  "assets_3d_authored": 0,
+  "clips_authored": 0,
+  "local_engine_runs": 0,
+  "new_pose_sweeps": 0,
+  "lead_review": {
+    "verified_manifest_files": 6,
+    "visual": "Inspected complete four-panel PNG: faceted mixed rack, end section, reinforced opening/load path, sixteen-cell allocation and cassette footprint.",
+    "warehouse_decision": "Accepted for bounded STATIC modeling only. Preserve original rack, create separately versioned empty rack with measured opening and properly capped/reinforced ends within retained envelope. Separate removable lower537mm/upper105mm80x200mm cassettes, rooted at tray contact. No baked cargo/workers or permanent cradles in ordinary cells. Actual new geometry must retain representative contacts/neighbor envelopes/back-bale approach before export; no all-cell handling or native claim.",
+    "s4_decision": "Single folding-pan proposal sent to Game Designer for bounded observable mechanism scope. No S4 hardware/guard/seat modeling or animation approved yet. Source above-overlap blockers suggest the required unload order; actual quote/interlock demonstration remains pending changed implementation.",
+    "s4_original_report_sha256": "8fd0765975e54dfdcab7a571ef59e7f587eb85eb8dce90647f40ae7d32a154b2",
+    "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
+  }
+}
