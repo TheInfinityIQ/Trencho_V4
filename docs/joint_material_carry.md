@@ -34,6 +34,14 @@ operation. The load retains a fixed world orientation on the ground; use the
 actual2m bundle and both roots in an asymmetric swept footprint, reusing the
 existing native warehouse path search. Do not rotate a box through a wall.
 
+Preparatory selection now visits each hauling category across the real idle
+pool before moving to the next category. Higher-priority jobs commit first;
+selected workers cannot be offered twice in that pass. Unmatched workers still
+reach lower categories and existing warehouse-access clearance. This is source
+integration of the selection boundary; it does not yet connect paired pickup.
+Only local syntax was checked for this selection change. The brief actual
+pair-selection demonstration remains pending the connected coordinator.
+
 Provisional fixed-orientation warehouse access/path helpers were withdrawn
 before connection: actual Artist evidence proves the original face rails block
 the proposed put-down. A separate revised timber fixture and actual engagement

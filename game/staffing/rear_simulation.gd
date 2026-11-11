@@ -759,9 +759,10 @@ func _settle() -> void:
 		changed = _reconcile_factory_hauls() or changed
 		if profile_stages: CallLog.record_duration(&"staffing/rear_simulation.gd::_settle/actors_stores",Time.get_ticks_usec()-stage_started)
 		if profile_stages: stage_started = Time.get_ticks_usec()
+		if empty_field_opening: changed = hauling_policy.start_available(actors.values()) or changed
 		for a in actors.values():
 			if a.phase == "Idle" and ledger.person_has_duty(a.id,"hauling"):
-				changed = (hauling_policy.start(a) if empty_field_opening else _start_job(a)) or changed
+				if not empty_field_opening: changed = _start_job(a) or changed
 			elif empty_field_opening and a.phase == "Idle" and construction != null:
 				changed = construction.start_builder_supply(a) or changed
 		if receiving != null: _sync_receiving_staff()

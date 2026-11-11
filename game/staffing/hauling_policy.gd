@@ -31,15 +31,36 @@ func category(job: Dictionary) -> String:
 	return "other"
 
 func start(actor: Dictionary) -> bool:
+	return start_available([actor])
+
+func start_available(actors: Array) -> bool:
+	# Visit categories across the real idle pool. This is the selection boundary
+	# where unloading can match two offers without borrowing a worker whose
+	# higher-priority task has not yet had a chance to commit.
 	var rear: RefCounted = _rear_ref.get_ref()
-	if actor.phase != "Idle" or not rear.ledger.person_has_duty(actor.id,"hauling"): return false
-	if rear.ledger.inspect_person_status(actor.id).pending_assignment != "None": return false
+	var available: Array[Dictionary] = []
+	for actor: Dictionary in actors:
+		if actor.phase != "Idle" or not rear.ledger.person_has_duty(actor.id,"hauling"): continue
+		if rear.ledger.inspect_person_status(actor.id).pending_assignment == "None": available.append(actor)
+	var selected: Dictionary = {}
 	for task: String in order:
-		if task == "unloading" and rear.receiving != null and rear.receiving.start_shared_unload(actor.id):
-			actor.phase = "Unloading"
-			return true
-		if task == "dispatch" and rear.dispatch != null and rear.dispatch.start_shared_preparation(actor.id): return true
-		if task != "unloading" and not rear.jobs.is_empty() and rear._start_job(actor,task): return true
+		for actor: Dictionary in available:
+			if selected.has(actor.id) or actor.phase != "Idle": continue
+			if _start_task(actor,task): selected[actor.id] = true
+	for actor: Dictionary in available:
+		if not selected.has(actor.id) and actor.phase == "Idle" and _clear_access(actor): selected[actor.id] = true
+	return not selected.is_empty()
+
+func _start_task(actor: Dictionary, task: String) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
+	if task == "unloading" and rear.receiving != null and rear.receiving.start_shared_unload(actor.id):
+		actor.phase = "Unloading"
+		return true
+	if task == "dispatch" and rear.dispatch != null and rear.dispatch.start_shared_preparation(actor.id): return true
+	return task != "unloading" and not rear.jobs.is_empty() and rear._start_job(actor,task)
+
+func _clear_access(actor: Dictionary) -> bool:
+	var rear: RefCounted = _rear_ref.get_ref()
 	if rear.warehouse != null:
 		var previous: Vector2 = rear.warehouse.take_clearance(str(actor.id))
 		if previous.is_finite():
