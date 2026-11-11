@@ -1,0 +1,804 @@
+{
+  "stage": "Static back-row bale contact candidate; not frozen authored motion/native gameplay/appearance approval",
+  "artist_source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\near_face_contacts_v01\\bounded_contact_results.json",
+  "artist_source_sha256_at_read": "5a9fc44378d4dc89d92f67c3e775d1e4e78a802dbaf4eb27154d327790da7056",
+  "lead_review": "Inspected original-rack full-body and hand close-up images and exact result. This verifies the reported scope, not continuous motion or lifting grip strength.",
+  "unchanged": "Original .25/.95m crate-rack supports, package yaw0, original pickup body at1s; no mesh/clip/capacity/runtime change.",
+  "limits": [
+    "53finite original-bend/70mm bent-entry/hand-access samples only.",
+    "Reachable palm contact alone is not a complete grasp, lift, release or route contract.",
+    "Work+1.1m remains staging; measured actual root depth1.030m is this candidate only and must not be generalized."
+  ],
+  "result": {
+    "family": "Warehouse",
+    "package": "bale",
+    "side": 1,
+    "packet": {
+      "id": "wh_bale",
+      "position": [
+        -0.31,
+        0.25,
+        0.25
+      ],
+      "turn": false,
+      "size": [
+        0.6,
+        0.4,
+        0.4
+      ],
+      "support": "deck"
+    },
+    "base": 0,
+    "payload_lift": 0,
+    "root": [
+      -0.31,
+      0.0,
+      1.03
+    ],
+    "yaw": 3.141592653589793,
+    "original_pickup_seconds": 1.0,
+    "clearance_elbows": false,
+    "body_matrix_error": 0.0,
+    "arm_checks": [
+      {
+        "clamped_m": 0,
+        "target_error_m": 1.7881393432617188e-07,
+        "ankle": [
+          0.20716074109077454,
+          -0.5552183985710144,
+          0.6304425597190857
+        ],
+        "knee": [
+          0.25100016593933105,
+          -0.4145258665084839,
+          0.8323870301246643
+        ]
+      },
+      {
+        "clamped_m": 0,
+        "target_error_m": 2.5981062314156735e-07,
+        "ankle": [
+          -0.20716066658496857,
+          -0.5552182793617249,
+          0.63044273853302
+        ],
+        "knee": [
+          -0.25100061297416687,
+          -0.4145256578922272,
+          0.8323867917060852
+        ]
+      }
+    ],
+    "counts": {
+      "rack": 0,
+      "other_stock": 0,
+      "conservative_surroundings": 0,
+      "nonhand_target": 0,
+      "own_gloves": 0
+    },
+    "hand_penetration": {
+      "Left": {
+        "vertices_inside": 0,
+        "max_depth_m": 0
+      },
+      "Right": {
+        "vertices_inside": 0,
+        "max_depth_m": 0
+      }
+    },
+    "palm_contact": [
+      {
+        "hand": "Left",
+        "pad_error_m": 1.999200562387517e-07,
+        "palm_face_area_m2": 0.0009603558540684046
+      },
+      {
+        "hand": "Right",
+        "pad_error_m": 2.1542358837725164e-07,
+        "palm_face_area_m2": 0.0009603583819212824
+      }
+    ],
+    "frames": [
+      {
+        "hand": "Left",
+        "point": [
+          -0.49000000953674316,
+          0.5981464385986328,
+          0.45000001788139343
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "finger_direction": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "rotation_rows": [
+          [
+            -0.9995437264442444,
+            -0.030203884467482567,
+            2.9103826987286752e-11
+          ],
+          [
+            0.00032820284832268953,
+            -0.010861288756132126,
+            -0.9999410510063171
+          ],
+          [
+            0.030202101916074753,
+            -0.9994847178459167,
+            0.01086624525487423
+          ]
+        ],
+        "wrist": [
+          -0.5171607136726379,
+          0.6304425001144409,
+          0.4747815728187561
+        ],
+        "source": "BVH ray on actual package mesh; no reflected marker",
+        "mode": "bale_side"
+      },
+      {
+        "hand": "Right",
+        "point": [
+          -0.12999999523162842,
+          0.5981463193893433,
+          0.44999998807907104
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "finger_direction": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "rotation_rows": [
+          [
+            -0.9995437264442444,
+            0.030203884467482567,
+            -2.9103826987286752e-11
+          ],
+          [
+            -0.00032820197520777583,
+            -0.010861259885132313,
+            -0.9999410510063171
+          ],
+          [
+            -0.030202101916074753,
+            -0.9994847178459167,
+            0.010866216383874416
+          ]
+        ],
+        "wrist": [
+          -0.10283933579921722,
+          0.63044273853302,
+          0.47478187084198
+        ],
+        "source": "BVH ray on actual package mesh; no reflected marker",
+        "mode": "bale_side"
+      }
+    ],
+    "rack_conflict_detail": {},
+    "pass_": true,
+    "approach": {
+      "samples": 53,
+      "flagged": 0,
+      "rows": [
+        {
+          "stage": "original_bend",
+          "frame": 0,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 1,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 2,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 3,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 4,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 5,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 6,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 7,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 8,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 9,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 10,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 11,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 12,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 13,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 14,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 15,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 16,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 17,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 18,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 19,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 20,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 21,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 22,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 23,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 24,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 25,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 26,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 27,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 28,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 29,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "original_bend",
+          "frame": 30,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.0,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.125,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.25,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.375,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.5,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.625,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.75,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 0.875,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "bent_entry",
+          "u": 1.0,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "payload": 0
+          },
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.0,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.08333333333333333,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.16666666666666666,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.25,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.3333333333333333,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.41666666666666663,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.5,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.5833333333333333,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.6666666666666666,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.75,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.8333333333333333,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 0.9166666666666666,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        },
+        {
+          "stage": "hand_access",
+          "u": 1.0,
+          "counts": {
+            "rack": 0,
+            "other_stock": 0,
+            "conservative_surroundings": 0,
+            "nonhand_payload": 0
+          },
+          "max_penetration_m": 0,
+          "max_clamp": 0
+        }
+      ],
+      "arms_parked_from_exact_initial_standing_pose": false,
+      "limits": "Finite static approach/hand-sweep evidence, not authored walking/pickup/animation. Floor access and existing original body retained; clearance cases fit only arms/hands offline."
+    }
+  },
+  "review_images": [
+    {
+      "file": "warehouse_back_bale_static.png",
+      "sha256": "60a33e461360007ed36717d2d798d2aea94aab5567b8ee8a3a92beb1508f0dca"
+    },
+    {
+      "file": "warehouse_back_bale_hands.png",
+      "sha256": "8832c60a4c152b8e8e8d17a9650e4f567420beb3ca89331ce266f024bf1e6ece"
+    }
+  ]
+}

@@ -183,5 +183,19 @@
     "orientation": "Actual Metal quarter_turn+PI/2; other package placements follow actual packing, not static Packet marker yaw. Fixture side orientation and global package yaw are distinct.",
     "next": "First recompute support with explicit S1 left-identity/right-PI transforms and actual packet placement; then fit real undergrips. Do not author a support insert from the withdrawn side count. Preserve old metal planes/stacking envelope and frozen timber.",
     "support_defect": "WITHDRAWN pending corrected S1 placement measurement. The four LEFT zero-support conclusion is withdrawn. Artist applied the general S2/S3/S4 left-PI rule to S1 without establishing its separate orientation. Frozen LEFT timber S1 uses identity; S1 is excluded from current runtime shelf binding. Corrected proposed wall-side S1Metal placement is left identity/rightPI, with exact support/hand clearance still being measured. No actual-side support defect or insert requirement is established by the earlier count. Pure90-to72 rack arithmetic and actual package yaw are unaffected."
+  },
+  "non_timber_static_contact_candidates": {
+    "warehouse_back_bale": {
+      "receipt": "evidence/supplier_transport/warehouse_back_bale_static_contact.json",
+      "stage": "Source static candidate only; retains original shelf height and cargo orientation",
+      "root_fixture_local": [
+        -0.31,
+        0,
+        1.03
+      ],
+      "effective_yaw": "PI",
+      "body": "Original pickup1.0s unchanged",
+      "next": "Retain for eventual complete handling contract; actual load-supporting grasp/lift/release/occupied motion/native integration remain unverified. Other cases still unresolved; no generalized offset or fixture change."
+    }
   }
 }
