@@ -1,0 +1,23 @@
+flowchart TD
+  Priority[Shared hauling category order / commit higher-priority work first] --> Offers[Actual remaining idle eligible workers]
+  Offers --> Match{Two real workers and finite storage?}
+  Match -->|no| Other[Continue lower-priority feasible work]
+  Match -->|yes| Promise[One source claim / one warehouse cell promise / two worker handles]
+  Promise --> Shelf[Real worker prepares compatible shelf / smoke]
+  Shelf --> Queue[Release warehouse standing faces / distinct outside source points]
+  Queue --> Aisle[Exclusive aisle / front worker enters before rear worker]
+  Aisle --> Ready[Actual grips plus reserved destination stations and long-load route]
+  Ready --> Bend[Synchronized existing bend / approved contact window]
+  Bend --> Lift[One Ledger JointCarry / one source stock transfer]
+  Lift --> Ramp[Measured coupled withdrawal / both workers and load leave ramp]
+  Ramp --> Carry[Release aisle only after both clear / retain exclusive joint carry]
+  Carry --> Drop[Actual row/deck engagement and put-down]
+  Drop --> Receipt[One warehouse deposit and promise consumption]
+  Receipt --> Clear[Both workers physically clear / pending duties apply safely]
+  Ready -->|reassignment before lift| Exit[Release source claim / rear worker exits first if aboard]
+  Carry -->|reassignment| Retain[Finish safe handoff before changing jobs]
+  Retain --> Drop
+  Carry -->|lost participant| Ground[One retained ground stock / no fabricated receipt]
+  Event[Actual intent, stock or access event wakes blocked operation] -.-> Queue
+  Event -.-> Ready
+  View[Two actual-ID actor views / one shared payload / no inventory authority] -.-> Lift

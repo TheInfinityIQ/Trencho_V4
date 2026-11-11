@@ -1,0 +1,45 @@
+{
+  "stage": "Planned before coordinator implementation; Artist contact/path handoff still required",
+  "authority": "Dawson resumed the existing2m plank/50kg maximum bundle, roughly1.3m worker separation. Existing pickup/bend must be synchronized; no new pickup clip.",
+  "diagram": "docs/diagrams/paired_supplier_unloading.mmd",
+  "ownership": {
+    "selection": "HaulingPolicy visits the shared category order across currently idle eligible haulers. Higher categories commit their real workers first; unloading receives only remaining actual offers. An unmatched worker continues to lower categories, rather than waiting indefinitely or borrowing someone else's worker.",
+    "activity": "Receiving composes one paired-unload coordinator. One operation owns two worker-job handles, one source claim and one warehouse cell promise. Individual worker handlers skip coordinator-owned jobs.",
+    "custody": "Existing Ledger JointMaterialCarry atomically transfers one stock portion, both actual worker endpoints and one shared payload endpoint. Never assign duplicate personal cargo.",
+    "storage": "WarehouseService owns finite cell capacity, compatible fixture preparation, both actual service stations and guarded routes; no provisional point is treated as a real grip.",
+    "presentation": "Two actual-ID actor views and exactly one shared payload view present the committed operation. Normal worker cargo/body presentation is suppressed for that active view ownership and restored at the safe handoff. No animation method changes stock."
+  },
+  "sequence": [
+    "Validate two eligible idle offers at the unloading priority, exact source quantity and a finite compatible warehouse promise before committing the pair.",
+    "Prepare an actual warehouse fixture behind the existing smoke. Preserve the existing rack versions; new reachable timber supports target.60/.95m, pending actual Artist clearance.",
+    "Release warehouse standing faces while travelling/waiting for the source aisle; retain only the cell promise. Approach distinct outside points, then enter the narrow aisle front worker first and rear worker second.",
+    "Both workers reach the measured source grips. Acquire actual destination stations and a complete long-load route before lift; blocked access wakes on actual clearance events.",
+    "Synchronize the unchanged bend. At the approved contact boundary, begin one JointCarry and remove the real source packet once. Apply measured coupled withdrawal and rear-ramp samples, with no cargo-only or hidden worker shift.",
+    "Both actual workers clear the ramp before releasing aisle commitments. Retain both exclusive carry commitments along the validated ground route.",
+    "Use measured warehouse engagement/put-down samples for the actual row and deck. Commit one warehouse deposit, release one promise, then clear both physical service stations and honor pending duties."
+  ],
+  "intent_and_failure_rules": [
+    "Typed actual person-intent/health changes mark affected operations dirty; no new per-frame person-status or inventory polling. Movement presentation follows actual movement, not menu refreshes.",
+    "Before lift, reassignment releases the source claim and performs a real safe exit if aboard; rear worker exits first so the front worker cannot pass through them. Outside workers can release at their actual safe positions.",
+    "After lift, reassignment waits for safe deposit. A lost participant uses existing one-stock ground put-down; no receipt is fabricated and no claim that unimplemented ground pickup is complete.",
+    "Force Deliver resolves one active shared load once, releases both real access/station commitments and the cell promise; it must not count the same quantity through both worker handles.",
+    "Source work envelopes include the actual two-person retreat while occupied; road route invalidation occurs on envelope/state changes, not repeated inventory scans.",
+    "No new global scheduler, duplicate clock, general formation navigation or procedural posture framework. Reuse the existing activity deadlines and bounded native warehouse search."
+  ],
+  "required_before_route_freeze": [
+    "Artist exact source and destination grip/root/load samples, support/release windows, clip segments and support correction for the real wood bottom",
+    "Actual S1 and warehouse fixture collider proxies/undersides for the separate reachable shelf versions",
+    "Both warehouse rows and decks, coupled ramp clearance, grounded locomotion direction and any necessary bounded turn/engagement sequence; no assumed mirroring or sideways walking slide"
+  ],
+  "verification": "Only a brief direct current-change GitHub demonstration of real50kg paired pickup/receipt and changed normal handoff actions. No local Godot, new regression tests, suites, failure injection or expanded performance limits. Full visible animation video needs Dawson approval separately.",
+  "ground_route_design": {
+    "owner": "PairedGroundPath; pure fixed-orientation ground translation, not a character controller or generic formation framework",
+    "shape": "Actual measured payload and two worker footprint rectangles relative to a payload reference, preserving asymmetric offsets. Minkowski-expanded obstacles guard the whole formation; no global worker shrinking.",
+    "navigation": "Godot AStarGrid2D, cardinal travel/Manhattan heuristic, unchanged0.5m ground grid; exact guarded endpoint connectors and segments. Turns/engagement are separate measured activities, not rotations hidden in route corners.",
+    "readiness": "Source capability pending coordinator and measured Artist poses; syntax only until the brief actual paired-receipt check. No invented warehouse grips or provisional APIs restored.",
+    "sources": [
+      "https://docs.godotengine.org/en/4.5/classes/class_astargrid2d.html",
+      "https://docs.godotengine.org/en/stable/classes/class_node.html#class-node-method-reparent"
+    ]
+  }
+}
