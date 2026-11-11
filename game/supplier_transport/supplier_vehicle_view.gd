@@ -130,7 +130,7 @@ func _sync_racks(rows: Array) -> void:
 		# Static restraints are prepared once access is unlocked, before pickup;
 		# they are not an invented worker animation or an inventory authority.
 		var secured: bool = _mechanism not in ["unloading","ramp_stow","door_close","closed"]
-		if _racks[id].get_meta("secured",null) == secured: continue
+		if _racks[id].has_meta("secured") and bool(_racks[id].get_meta("secured")) == secured: continue
 		_racks[id].set_meta("secured",secured)
 		for child: Node in _racks[id].find_children("Restraint_*","",true,false):
 			if child is Node3D: child.visible = secured
