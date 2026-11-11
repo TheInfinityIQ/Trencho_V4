@@ -102,5 +102,78 @@
     "Cancellation, casualty, external intrusion or failure matrices",
     "60FPS, render/frame time and broader game-loop acceptance",
     "Final published feature head; source overlays apply only to their exact listed scripts"
-  ]
+  ],
+  "published_candidate": {
+    "pr": 146,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/pull/146",
+    "branch": "codex/supplier-transport-loop",
+    "latest_source": "dbf2ea41bb06200b16aff10fba8dd4b7060a32d9",
+    "status": "draft; not merged/main adopted; timber handling resumed with approved carrying layout, measured asset handoff pending"
+  },
+  "approved_passenger_follow_up": {
+    "approval": "Dawson visually approved passenger revision v02 on10November2026. v01 remains rejected.",
+    "required_parsing": [
+      {
+        "run": 42957742885,
+        "source": "830d85062fedf4885e5f1cfd1573685de3715348",
+        "result": "pass"
+      },
+      {
+        "run": 42958816449,
+        "source": "aec2dae69777e8e63ad53cbbf049463c4ae3cc78",
+        "result": "pass"
+      },
+      {
+        "run": 42959596923,
+        "source": "986ed414561307fa6bdeeb473e04eff92f4a159e",
+        "result": "pass"
+      },
+      {
+        "run": 42960961101,
+        "source": "dbf2ea41bb06200b16aff10fba8dd4b7060a32d9",
+        "result": "pass"
+      }
+    ],
+    "direct_receipts": [
+      {
+        "run": 42958332229,
+        "source": "32e0e425966273809d91fe60272c05b0d42002fa",
+        "artifact_sha256": "fdc752f2411fe3dee1a49165f40c105f425ac4a89d1a0214e810bf30fcaa8f0d",
+        "result": "pass",
+        "scope": "Same paid48M02+21M08+8workers, approved passenger domain phases, early departure, exact warehouse receipt/gate/accounting at159simulated seconds; no rendering/FPS acceptance."
+      },
+      {
+        "run": 42959035573,
+        "source": "aec2dae69777e8e63ad53cbbf049463c4ae3cc78",
+        "artifact_sha256": "09dbe6c4a4144be9872d38e26979a0fe3ed5c9bccb4b162e57ad33fece50a5cb",
+        "result": "pass",
+        "scope": "Actual imported vehicles/driver/racks/passenger clips;4.5s push-off/flight/landing/clearance and separate3s slower passing at1x; exact mixed receipt/all8arrivals, finite stock/gate/cost and audit. Warehouse scenery/haulers omitted. No full-loop, user-input orFPS claim."
+      }
+    ],
+    "retained_failures": [
+      {
+        "run": 42957866241,
+        "artifact_sha256": "f8b04e7b31482c2681ca3098c43729c59b41261a0be8f897277a090ef79c5afc",
+        "scope": "Native import/clip timing/phase capture/pause observed, but missing shelf metadata errors and28second child deadline reached after264frames. Fixed metadata32e0e42; shorter focused capture passed without raising limits."
+      },
+      {
+        "run": 42959597742,
+        "artifact_sha256": "84ceb1e3afc3e1dda42975e8d52400284535d6914f3f5350e4d0be4833cb711e",
+        "scope": "Offscreen-following comparison failed; expected flat domain frame ignored visual truck pivot."
+      },
+      {
+        "run": 42960104437,
+        "artifact_sha256": "e612df6547b01913a133dba2f2902eb1c3f65a9ec6126a501016b15867e267b2",
+        "scope": "Revised offscreen check still failed immediate pre-physics displacement. Supported actors now inherit actual hull pivot and detach at takeoff; final check explicitly observes the physics/render boundary."
+      }
+    ],
+    "current_hierarchy_check": {
+      "run": 42960993401,
+      "source": "dbf2ea41bb06200b16aff10fba8dd4b7060a32d9",
+      "artifact_sha256": "072534289ba9033af14d4e34b53a32a721752b647377ebd7da8f02dbb6ff2fe2",
+      "result": "pass",
+      "scope": "Only changed offscreen spatial inheritance, actual supported first passenger exit/takeoff detachment and landing; actual physics/render boundary observed. Approved preloaded path Resource loaded. No repeated full material receipt or recording."
+    },
+    "limits": "All checks brief/GitHub-only. Existing regression suites preserved/unrun. No raised limits; no local Godot, complete gameplay or60FPS acceptance. Exact final source review/Designer approval remain pending."
+  }
 }

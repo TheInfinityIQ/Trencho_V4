@@ -1,6 +1,23 @@
 # Gameplay developer team
 
-## Current working agreement — 9 November 2026
+## Current working agreement — 10 November 2026
+
+Dawson explicitly authorized consolidation on 10 November; see
+[authority and coordination](team_workflow.md#current-ownership-and-coordination--10-november-2026)
+and [transferred UI decisions](team_handoff.md). Lead owns routine UI/UX as well
+as sole programming/integration. The separate UI/UX role is retired after handoff;
+do not contact it for more tasks. Designer handles material gameplay decisions
+and required exact-current-head approval, not routine implementation/status work.
+Artist retains bounded 3D/authorized 2D work that may progress in parallel.
+Developers A/B/C and original 2D Artist remain inactive; C's handoff is complete.
+
+Lead, Designer and Artist have requested defaults GPT-6.1 Sol / Medium / Standard
+speed, not independently verified live settings. Models stay fixed. The later
+10 November authorization permits only the on-demand fixed-Luna asset scout and
+bounded next-task reasoning choices in [team workflow](team_workflow.md); no
+automatic Extra High/Max/Ultra, standing workers or controllers. Use one feature brief/asset contract and existing state;
+communicate changed outputs, decisions, required reviews or real blockers only.
+No acknowledgement loops, blanket serial gate or routine Dawson approval is added.
 
 The Lead is the only programmer. The Lead performs technical review and owns
 implementation, validation, publication and merges. The Game Designer approves
@@ -10,9 +27,9 @@ not a routine work/PR/merge blocker. Scope a genuine external permission refusal
 to the affected action and continue independent authorized work.
 
 **Trencho — 3D Artist** creates/finds free3D assets and can create2D assets;
-the original2D Artist is retired and must no longer be consulted. Consult UI/UX
-only when a menu update is needed. Existing controls reused by a world
-interaction do not create a standing menu-review gate. Artists/designers
+the original2D Artist is retired and must no longer be consulted. The Lead now
+owns routine UI/UX; the former menu-consultation rule is superseded. Existing
+controls reused by a world interaction create no extra review gate. Artists/designers
 coordinate content and design with the Lead; other developer chats stay inactive.
 
 The movement/Strategy and broad-settlement architecture assessment is recorded
@@ -20,7 +37,11 @@ in [deferred architecture](deferred_architecture.json) for later. It does not
 block current gameplay delivery or authorize an immediate refactor/benchmark.
 Earlier conflicting roster/assignment text is historical.
 
-## Current ownership — 8 November 2026
+## Historical ownership and developer charter — 8 November 2026
+
+The roster, per-developer assignments and peer/controller conventions below are
+retained provenance, not authority to reactivate developers or the UI/UX role.
+The 10 November agreement and current team state govern all active work.
 
 Dawson returned implementation to the Lead as the only developer. Developer C
 finishes only the current bounded Workshop handoff, then stops; no successor or
@@ -82,8 +103,9 @@ Current shared-account signoffs are COMMENT reviews, not native GitHub APPROVED.
 No developer self-merges. Lead integrates; Designer reviews the lead's PR too.
 
 Dawson authorizes direct coordination with lead for delegation/technical review and
-Designer for gameplay clarification/design review. UI/UX and Artist retain their
-consultant roles. Communicate meaningful progress/handoffs without acknowledgement
+Designer for gameplay clarification/design review. Historical UI/UX consultation
+is superseded by Lead ownership; Artist retains bounded asset ownership.
+Communicate meaningful progress/handoffs without acknowledgement
 loops. Use feature-level Objective / Outcome / Next task briefings. Request the next
 bounded task after handoff; the lead must dispatch its next owner under the
 completion protocol in team_workflow.md, rather than wait for a generic human

@@ -6,6 +6,8 @@
 - Read `docs/design_brief.md` for accepted design facts, `docs/team_workflow.md` for current ownership, and `docs/playable_delivery.md` for the active outcome. Engineering decisions remain in `docs/foundation.md`.
 - The Game Designer directs gameplay scope; the Lead Developer owns engineering assignments, integration and PR merges. Do not infer gameplay requirements from the project name.
 - Use GDScript by default. Propose C#, GDExtension, or plugins when a concrete requirement justifies them.
+- For Blender and AI-assisted asset work, follow `docs/3d_asset_workflow.md`; keep concept, static, animated and integrated readiness distinct. The faceted soldier brief is `docs/art/faceted_soldier/brief.md`.
+- Only on-demand `asset_scout` delegation is authorized for accepted art briefs after coherent faceted concepts: fixed `gpt-6-luna`, High for reference searches or Low for exact catalogue lookups. Use `.codex/agents/asset_scout.toml`; when custom-role loading is unavailable, pass its instructions with explicit Luna/effort and `fork_turns="none"`. References are viewing-only; no mesh/texture reuse, licensing research, paid downloads or purchases. No standing chat/controller; retired developers stay inactive.
 
 ## Implementation
 

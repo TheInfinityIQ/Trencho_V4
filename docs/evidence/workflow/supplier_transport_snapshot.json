@@ -1,0 +1,585 @@
+{
+  "schema": 1,
+  "feature": "materials-civilian-transport",
+  "workflow": "graph-first-v1",
+  "plan": "docs/feature_plans/materials_civilian_transport_v1.json",
+  "source_revision": "1d7ae006e123861c6138ac0ec2ee0cfdd967acea",
+  "started_at": "2026-11-10T04:33:39.280089+00:00",
+  "status": "recording",
+  "ended_at": null,
+  "seconds_by_phase": {
+    "planning": 36572.184964,
+    "implementation": 39655.602112,
+    "direct_check": 0,
+    "repair": 6516.849217,
+    "late_handling": 0,
+    "review": 348.987538,
+    "release": 48.782236,
+    "waiting": 3416.1750899999997,
+    "paused": 0,
+    "workflow_overhead": 1764.351747
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": "planning",
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-10T16:16:25.906626+00:00",
+      "note": "Warehouse receipt42852556683 PASS: same288M02/180 explicit sim seconds at1x and45/35/28 process limits; exactly1new rack, actual500M11 retained, no promises, ledger audit clear. Prior failure receipts retained. Final fix separates cell promise and transient access, safe duty handoff and idle apron. ArtifactSHA5c5af7ad0fb41bc72ff79662af4b2cd3b04c0439df1587173ca4e2dc3dc0f6b1. Not rendered/FPS/full/join acceptance."
+    },
+    {
+      "recorded_at": "2026-11-10T17:24:39.642676+00:00",
+      "note": "Earlier route-repair-labelled wall interval also includes documentation/publication and native infrastructure work after functional passes; do not treat it as focused repair effort. No retrospective duration precision claimed. Native first attempt imported10GLBs but did not start due missing runner tools; setup now separate from unchanged gameplay watchdog."
+    },
+    {
+      "recorded_at": "2026-11-10T18:40:51.610663+00:00",
+      "note": "Release preflight forwarehouse438dca7: requiredCI42877343281PASS. BothDesigner notes match approvedbytes and incomingblobs;20unrelated dirty humanfiles havezero incomingcollisions. Actualvideo640x360/60frames passed; software-renderer presentation doesnot establish60FPS. Await actualDesigner samehead review; no human question or routineplaytest permission requested."
+    },
+    {
+      "recorded_at": "2026-11-10T18:52:02.452320+00:00",
+      "note": "Camera artifact follow-up42878866565PASS state/native assertions but own retainedframe inspection caught nearbyManager label/avatar obscuring stagedrack. Not shared as replacement. Sameincident: capture-only hideworldlabels/manager visual, preserve actualwarehouse/stagedworker/fixture/smoke; rerun onlycorrectedpresentation atapproved438dca7 withunchangedlimits. Productionmain remainsa2d182f; no source defect/FPS/regression claim."
+    },
+    {
+      "recorded_at": "2026-11-10T18:53:54.001131+00:00",
+      "note": "Correctedpreview42879412735at438dca7PASS; artifact13793526320SHA761950c8a0719a3270a9e603739769ad965988ac49f0f7cc3c1e9db9e11152af verified. Lead personally inspected retainedframe0/25/46: actualstagedworker, reusedsmoke and emptytimberfixture fullyvisible. Capture-only labels/nearManageravatar hidden; productiongeometry/source unchanged. Firstobscuredreels are superseded, noDawson animationapproval claimed."
+    },
+    {
+      "recorded_at": "2026-11-10T20:51:51.113612+00:00",
+      "note": "Resumed supplier implementation is isolated at logs/supplier-transport-worktree from a2d182f. Source graph/contract precede modules. GitHub-only focused checks: packing PASS42891206496 (single mixed quote939microseconds, not FPS), exact non-timber receipt PASS42894421224 at158simulated seconds, joint custody positive PASS42897422532. Failed attempts retained. Focused repair minutes were not separately timed and are unknown; do not infer them from wall-clock gaps. Current implementation interval overlaps remote checks and Artist collaboration. New native models, paired warehouse route and new passenger animations remain unverified."
+    },
+    {
+      "recorded_at": "2026-11-11T04:18:42.024373+00:00",
+      "note": "Dawson approved passenger revision v02; integrated on830d850, published consolidated draft PR146. Required parsing42957742885 passed. Native demonstration42957866241 imported models and showed push-off/flight/land/walk with correct clip timing and pause, but logged missing shelf metadata and exceeded28second child deadline after capture. Fix32e0e42 published; same delivery is being traced without recording overhead. No full-receipt or FPS claim from the partial native recording. Focused retrospective implementation/repair minutes unavailable."
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "note": "Passenger source dbf2ea4 and required42960961101/current-change42960993401 passed. Earlier native42959035573 is explicitly scoped to aec2dae. Dawson resumed timber2m/50kg/~1.3m layout; reachable separate.60/.95m rack targets are with Artist. Prior interval mixes implementation, review, waiting and checks; focused repair/late-planning minutes were not recorded retroactively. Zero tracked incident seconds means no attributed interval, not zero effort. Token counters remain actual Lead metadata only; Artist totals unknown."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-10T15:14:29.742213+00:00",
+      "id": "warehouse-partial-package-cell-sharing",
+      "kind": "feature_defect",
+      "summary": "Source review caught separate partly filled crates being allowed to share a physical shelf position by summing kg. Corrected to one incoming package/reservation per full-envelope cell.",
+      "severity": "medium",
+      "evidence": [
+        "Unpublished warehouse_service.gd::_free_cells originally accepted occupied same-code cell when quantities summed below package capacity. Example20kg M11crate +new4kg crate accepted in one600x400 position.",
+        "Corrected _free_cells rejects occupied or already-promised cells regardless of unused net capacity; commit also rejects occupied destination.",
+        "No engine result or prior-good/current-bad gameplay pair; this is not a confirmed regression."
+      ],
+      "planning_assessment": "no",
+      "assessment_rationale": "The existing dimension proposal already required partial packages to retain their full outer envelope. Implementation violated that recorded rule; review caught it before any engine run/publication.",
+      "discovery_stage": "implementation_source_review",
+      "introducing_revision": "Uncommitted codex/materials-warehouse-loop after4b91ae1",
+      "fixing_revision": "Uncommitted same feature branch; runtime direct check pending"
+    },
+    {
+      "recorded_at": "2026-11-10T17:58:56.299289+00:00",
+      "id": "warehouse-concurrent-rack-sprawl",
+      "kind": "feature_defect",
+      "summary": "First actual warehouse receipt created three new racks instead of reusing one pending rack and clearing finished worker positions. Initial assertion allowed unnecessary racks.",
+      "severity": "medium",
+      "evidence": [
+        "GitHub42847412353 receipt:500M11+288M02,33packages,5ready racks and3prepared bays. Exact totals/audit passed.",
+        "Strengthened same episode to require3ready racks and exactly1prepared bay; no performance limit raised.",
+        "42865605820: optional clear-face-first allocation delayed final24kg beyond the unchanged180sim-second receipt endpoint (actual carry due184.468s).",
+        "Removed only the optional reordering, restoring the same service source as the passed conversion episode; affected normal receipt42869108745 passed. No threshold raised."
+      ],
+      "planning_assessment": "possible",
+      "assessment_rationale": "Reuse-ready-fixtures rule existed, but pending-rack sharing and idle-worker exit were not explicitly enumerated. No earlier accepted warehouse behavior exists; not a confirmed regression.",
+      "history": [
+        {
+          "recorded_at": "2026-11-10T15:57:16.793206+00:00",
+          "id": "warehouse-concurrent-rack-sprawl",
+          "kind": "feature_defect",
+          "summary": "First actual warehouse receipt created three new racks instead of reusing one pending rack and clearing finished worker positions. Initial assertion allowed unnecessary racks.",
+          "severity": "medium",
+          "evidence": [
+            "GitHub42847412353 receipt:500M11+288M02,33packages,5ready racks and3prepared bays. Exact totals/audit passed.",
+            "Strengthened same episode to require3ready racks and exactly1prepared bay; no performance limit raised."
+          ],
+          "planning_assessment": "possible",
+          "assessment_rationale": "Reuse-ready-fixtures rule existed, but pending-rack sharing and idle-worker exit were not explicitly enumerated. No earlier accepted warehouse behavior exists; not a confirmed regression."
+        }
+      ]
+    },
+    {
+      "recorded_at": "2026-11-10T16:31:41.126878+00:00",
+      "id": "warehouse-expansion-route-enumeration",
+      "kind": "feature_defect",
+      "summary": "A stocked warehouse expansion triggers per-package GDScript visibility searches and exceeds the28-second current-change watchdog.",
+      "severity": "high",
+      "evidence": [
+        "42853299501/42853709620: full setup and paid blocked receipt returned; placement did not return before unchanged28s watchdog.",
+        "42854233894 opt-in existing duration profiler:736visibility queries,26483204usec cumulative,46279usec max before interruption; exact source overlay/artifact retained."
+      ],
+      "planning_assessment": "possible",
+      "assessment_rationale": "Plan traced physical pickup positions but did not bound the cost of enumerating128packages against detailed wall/rack geometry. This is a new feature defect; no prior-good/current-bad accepted warehouse version exists.",
+      "fix_plan": "Pre-code v6/v7: pure exact stock service coordinates/admissible source lower bound plus Godot native guarded pedestrian grid search. Actual result pending."
+    },
+    {
+      "recorded_at": "2026-11-10T17:05:31.869924+00:00",
+      "id": "warehouse-published-console-eof",
+      "kind": "workflow_error",
+      "summary": "First consolidated PR selection failed git diff --check before engine startup because two newly added console transcript copies ended with extra blank lines.",
+      "severity": "low",
+      "evidence": [
+        "PR145 source3d3d2b6 run42860686208 failed change-selection; Godot/import/parse steps skipped.",
+        "Local base-to-head diffcheck identifies only the two new docs/evidence/warehousing/*-direct.txt EOF lines.",
+        "Original verified artifact bytes/digests preserved; only derived documentation trailing blank lines normalized."
+      ],
+      "planning_assessment": "no",
+      "assessment_rationale": "Existing publication care required whitespace validation. The pre-add working diff missed untracked new files; staged/base-to-head diffcheck is now required before push. Native demonstration explicitly loads all23changed production scripts so metadata-only required PASS cannot hide the skipped source parse."
+    },
+    {
+      "recorded_at": "2026-11-10T17:24:39.544033+00:00",
+      "id": "warehouse-empty-fixture-family-lock",
+      "kind": "feature_defect",
+      "summary": "Designer review found all eight Ready crate fixtures could remain unusable for Timber even when empty, because no worker-driven wrong-family reconfiguration existed.",
+      "severity": "medium",
+      "evidence": [
+        "Designer exact-source review PR145 b2bec5f: reserve/probe accepted only Empty or matching Ready fixtures; physical_space_status reportedFull for all-empty wrong-family racks.",
+        "Pre-code warehouse_v10 and lifecycle diagram now specify actual worker visit, old-fixture retention through opaque reveal and cancellation rollback; production implementation awaiting direct check."
+      ],
+      "planning_assessment": "no",
+      "assessment_rationale": "Accepted warehouse plan v2 and Designer note already required empty/unreserved replacement. Initial implementation omitted that planned requirement; not a confirmed regression of an accepted warehouse release."
+    },
+    {
+      "recorded_at": "2026-11-10T18:49:23.870543+00:00",
+      "id": "warehouse-preview-camera-occlusion",
+      "kind": "workflow_error",
+      "summary": "A successfully encoded staged shelf preview was shared before representative frames were inspected; its outside camera viewed an opaque warehouse side wall.",
+      "severity": "low",
+      "evidence": "Game Designer decoded0.000/0.750/1.250/1.900s frames from run42875874141; logs/designer-warehouse-review/shelf-fragments.png shows the obstruction. Lead independently inspected the contact sheet. Source/native still approvals remain bounded and unaffected.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Dawson requested a fully visible animation video for review. The warehouse deliberately retains solid side walls during the occupied roof cutaway.",
+      "omitted_assumption": "Capture camera was placed outside beside a rack, assuming the roof cutaway also cleared the side-wall view; no representative recording frames were inspected before delivery.",
+      "assessment_rationale": "The known physical shell and preview purpose made this preventable before capture. Encoding success and activity assertions cannot establish what the camera sees.",
+      "repair": "Ignored capture script now uses the actual central aisle below the roof and retains frames0/25/46 for direct visual inspection. Same approved production head, unchanged game/capture deadlines and no new animation. Earlier correction work was within release bookkeeping; no retrospective focused repair duration is claimed.",
+      "lesson": "For a new animation preview, inspect beginning/reveal/end frames for clear subject visibility before sharing the video; do not infer visual acceptance from successful encoding or state assertions."
+    },
+    {
+      "recorded_at": "2026-11-10T20:51:50.771544+00:00",
+      "id": "supplier-overlay-python-c",
+      "kind": "infrastructure",
+      "summary": "First GitHub wrapper omitted Python -c; no production GDScript ran. Fixed argument and repeated identical bounded packing episode.",
+      "severity": "low",
+      "evidence": "GitHub42890971924 failed;42891206496 passed; retained artifact digests and source snapshots in logs/materials-civilian-transport.",
+      "planning_assessment": "no"
+    },
+    {
+      "recorded_at": "2026-11-10T20:51:50.855630+00:00",
+      "id": "supplier-source-face-deadlock",
+      "kind": "feature_defect",
+      "summary": "Workers waiting for the single truck aisle retained warehouse standing faces, blocking the active carrier destination. Retain package cell but release the face and queue at distinct outside points; wake on actual aisle release.",
+      "severity": "high",
+      "evidence": "GitHub42892996002 failed at300simulated seconds; same bounded receipt42894421224 passed at158simulated seconds, digest2f202b5868802595c570ca56c0516428436474b5e18abdd94e02bc9ae6afe922.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Single supplier aisle and exclusive warehouse handling positions were known before implementation.",
+      "omitted_assumption": "Source-waiting workers must not hold a destination standing face or remain physically across it.",
+      "assessment_rationale": "The initial plan reserved complete destinations without tracing the resource acquisition order. The deadlock was preventable by tracing the wait-for graph before coding."
+    },
+    {
+      "recorded_at": "2026-11-10T20:51:50.942593+00:00",
+      "id": "joint-demo-initial-duty",
+      "kind": "workflow_error",
+      "summary": "The first positive custody demonstration initialized people directly as Rear Labour although Ledger requires Available then an assignment request. Corrected only the demonstration setup.",
+      "severity": "low",
+      "evidence": "GitHub42897214825 failed;42897422532 passed with unchanged production custody source and unchanged28/45second bounds.",
+      "planning_assessment": "no"
+    },
+    {
+      "recorded_at": "2026-11-10T20:51:51.029678+00:00",
+      "id": "s1-lower-contact-discovery",
+      "kind": "planning_discovery",
+      "summary": "Actual pre-integration lower timber fit at.25m failed reach/body clearance. Raised new shelf support study target to.425m; fixed upper saddles also require coupled sideways withdrawal before lift. No truck, package or worker resizing.",
+      "severity": "medium",
+      "evidence": "Artist lower_timber_fit_v01 and subsequent measured lower425mm contact/withdrawal handoffs; supplier_asset_contract.json records conditional targets, not completed animation acceptance.",
+      "planning_assessment": "no"
+    },
+    {
+      "recorded_at": "2026-11-10T22:28:14.782857+00:00",
+      "id": "supplier-video-visible-motion-and-clock",
+      "kind": "workflow_error",
+      "summary": "Driver approval reels obscured subpixel-small movement and sampled loop endpoints. The visible v02 replacement also imported4s animations at24fps/96frames but sampled them at30fps, making1.25x motion plushold under a1x title. Lead source review found the clock mismatch; Artist confirmed and corrected only rendering.",
+      "severity": "high",
+      "evidence": "Dawson Lead complaint10Nov; actual v01/v02 image review; Artist fresh_import_timing.json and delivery_manifest_timing_v03.json. Corrected video SHA202808a38eba837c7b0fb980b52a29324f4f83b945a969d42cfa1ae3bbb32cc1; actual six encoded interior phases viewed by Lead.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Complete visibly animated action at normal speed for human approval was already required.",
+      "omitted_assumption": "Endpoint/hold sampling and encoded frame count were treated as sufficient; actual framing, legible movement and animation-import sampling clock were not verified before sharing.",
+      "assessment_rationale": "A per-action interior-frame and source-clock review before publication would have caught both issues. New gate requires unobstructed fixed framing, per-action25/50/75percent encoded checks and import/sample clock agreement.",
+      "repair_timing": "Initial diagnosis and parallel collaboration were not separately timed; no focused repair duration is inferred from message gaps.",
+      "regression_scope": "Review-media defect; no main-game source adoption or regression claim."
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "id": "supplier-rack-missing-metadata",
+      "kind": "feature_defect",
+      "summary": "New shelf presenter read missing secured metadata with a null default; native Godot emitted errors. Fixed with has_meta before read in32e0e42.",
+      "severity": "low",
+      "evidence": "Native42957866241 direct.log; corrected presentation passed42959035573.",
+      "planning_assessment": "possible",
+      "lesson": "Source syntax does not establish engine API behavior. Initialize optional view metadata explicitly.",
+      "focused_repair_seconds": null
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "id": "supplier-offscreen-spatial-following",
+      "kind": "feature_defect",
+      "summary": "World-root passenger actors gated by visibility could retain stale incoming positions. Initial event-following correction was insufficient around the physics-synchronized hull; supported actors now inherit the actual pivot and detach at takeoff.",
+      "severity": "medium",
+      "evidence": "Source986ed41; failed42959597742/42960104437; corrected dbf2ea4 actual incoming/takeoff/landing passed42960993401.",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Approved passenger plan requires hidden-view domain progression and actual supported hull positions.",
+      "omitted_assumption": "Visibility notifier needs correct spatial following before it can enable skeletal playback; hull presentation is synchronized to physics.",
+      "assessment_rationale": "Plan covered offscreen simulation but did not establish spatial parent ownership separately from visibility-gated pose evaluation.",
+      "lesson": "Use scene hierarchy for supported occupants. Observe actual physics/render boundary when checking visual transforms.",
+      "focused_repair_seconds": null
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "id": "supplier-offscreen-probe-coordinate-frame",
+      "kind": "workflow_error",
+      "summary": "Initial offscreen check expected a flat domain pose instead of the visual truck pivot and evaluated displacement before a physics/render boundary.",
+      "severity": "low",
+      "evidence": "42959597742/42960104437 logs;42960993401 ROOT DIAGNOSTIC actual and expected both(-33.06002,.983853,199.27), prior(-45.06,1.02,199.27).",
+      "planning_assessment": "possible",
+      "lesson": "Derive fixture expectations from the actual coordinate/clock contract and retain values as well as pass/fail.",
+      "focused_repair_seconds": null
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "id": "supplier-capture-deadline-overhead",
+      "kind": "workflow_error",
+      "summary": "264PNG native capture completed its animation observations but reached the unchanged28second child deadline before full receipt/encoding.",
+      "severity": "low",
+      "evidence": "42957866241; isolated receipt42958332229 and shorter focused native42959035573 both passed. No deadline or performance limit raised.",
+      "planning_assessment": "possible",
+      "lesson": "Separate required motion evidence from capture overhead; after a failure trace the same action rather than replaying unrelated scenarios.",
+      "focused_repair_seconds": null
+    },
+    {
+      "recorded_at": "2026-11-11T05:05:42.137970+00:00",
+      "id": "supplier-passenger-jump-mechanics",
+      "kind": "feature_defect",
+      "summary": "Dawson rejected v01 crouched upward pop. Artist v02 added supported leg extension/push-off and natural landing; Dawson approved that revision before integration.",
+      "severity": "medium",
+      "evidence": "Lead user rejection and subsequent approval; passenger_approval_v02.json; unchanged v02 GLB SHA7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10.",
+      "planning_assessment": "possible",
+      "lesson": "Contact/path continuity checks do not prove believable movement. Inspect force-producing leg extension before airborne root movement.",
+      "focused_repair_seconds": null
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 8,
+    "planning_discovery": 1,
+    "pre_existing": 0,
+    "infrastructure": 1,
+    "workflow_error": 6,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 4,
+  "tracked_repair_seconds_by_incident": {
+    "warehouse-partial-package-cell-sharing": 0,
+    "warehouse-concurrent-rack-sprawl": 1149.116808,
+    "warehouse-expansion-route-enumeration": 3178.51604,
+    "warehouse-published-console-eof": 0,
+    "warehouse-empty-fixture-family-lock": 1919.079843,
+    "warehouse-preview-camera-occlusion": 270.136526,
+    "supplier-overlay-python-c": 0,
+    "supplier-source-face-deadlock": 0,
+    "joint-demo-initial-duty": 0,
+    "s1-lower-contact-discovery": 0,
+    "supplier-video-visible-motion-and-clock": 0,
+    "supplier-rack-missing-metadata": 0,
+    "supplier-offscreen-spatial-following": 0,
+    "supplier-offscreen-probe-coordinate-frame": 0,
+    "supplier-capture-deadline-overhead": 0,
+    "supplier-passenger-jump-mechanics": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 191480306,
+      "cached_input_tokens": 189815424,
+      "output_tokens": 1018154,
+      "reasoning_output_tokens": 640548,
+      "total_tokens": 192498460,
+      "uncached_input_tokens": 1664882
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 191480306,
+      "cached_input_tokens": 189815424,
+      "output_tokens": 1018154,
+      "reasoning_output_tokens": 640548,
+      "total_tokens": 192498460,
+      "uncached_input_tokens": 1664882
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-10T04:33:39.280089+00:00",
+        "ended_at": "2026-11-10T14:22:53.297733+00:00",
+        "receipt_start": "2026-11-10T04:33:23.133Z",
+        "receipt_end": "2026-11-10T14:21:47.647Z",
+        "usage_delta": {
+          "input_tokens": 21175888,
+          "cached_input_tokens": 20911104,
+          "output_tokens": 112099,
+          "reasoning_output_tokens": 74920,
+          "total_tokens": 21287987,
+          "uncached_input_tokens": 264784
+        }
+      },
+      {
+        "phase": "planning",
+        "started_at": "2026-11-10T14:22:53.297733+00:00",
+        "ended_at": "2026-11-10T14:33:39.283800+00:00",
+        "receipt_start": "2026-11-10T14:21:47.647Z",
+        "receipt_end": "2026-11-10T14:31:59.631Z",
+        "usage_delta": {
+          "input_tokens": 3167822,
+          "cached_input_tokens": 3144064,
+          "output_tokens": 16170,
+          "reasoning_output_tokens": 8013,
+          "total_tokens": 3183992,
+          "uncached_input_tokens": 23758
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-10T14:33:39.283800+00:00",
+        "ended_at": "2026-11-10T15:57:16.877351+00:00",
+        "receipt_start": "2026-11-10T14:31:59.631Z",
+        "receipt_end": "2026-11-10T15:56:56.717Z",
+        "usage_delta": {
+          "input_tokens": 32957317,
+          "cached_input_tokens": 32476288,
+          "output_tokens": 147421,
+          "reasoning_output_tokens": 92312,
+          "total_tokens": 33104738,
+          "uncached_input_tokens": 481029
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-10T15:57:16.877351+00:00",
+        "ended_at": "2026-11-10T16:16:25.994159+00:00",
+        "receipt_start": "2026-11-10T15:56:56.717Z",
+        "receipt_end": "2026-11-10T16:15:47.318Z",
+        "usage_delta": {
+          "input_tokens": 5801433,
+          "cached_input_tokens": 5732864,
+          "output_tokens": 30724,
+          "reasoning_output_tokens": 12773,
+          "total_tokens": 5832157,
+          "uncached_input_tokens": 68569
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-10T16:16:25.994159+00:00",
+        "ended_at": "2026-11-10T16:31:41.216511+00:00",
+        "receipt_start": "2026-11-10T16:15:47.318Z",
+        "receipt_end": "2026-11-10T16:31:13.576Z",
+        "usage_delta": {
+          "input_tokens": 5255428,
+          "cached_input_tokens": 5214976,
+          "output_tokens": 27733,
+          "reasoning_output_tokens": 13027,
+          "total_tokens": 5283161,
+          "uncached_input_tokens": 40452
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-10T16:31:41.216511+00:00",
+        "ended_at": "2026-11-10T17:24:39.732551+00:00",
+        "receipt_start": "2026-11-10T16:31:13.576Z",
+        "receipt_end": "2026-11-10T17:22:38.965Z",
+        "usage_delta": {
+          "input_tokens": 16393814,
+          "cached_input_tokens": 16357632,
+          "output_tokens": 85295,
+          "reasoning_output_tokens": 55957,
+          "total_tokens": 16479109,
+          "uncached_input_tokens": 36182
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-10T17:24:39.732551+00:00",
+        "ended_at": "2026-11-10T17:56:38.812394+00:00",
+        "receipt_start": "2026-11-10T17:22:38.965Z",
+        "receipt_end": "2026-11-10T17:54:54.173Z",
+        "usage_delta": {
+          "input_tokens": 6346544,
+          "cached_input_tokens": 6330112,
+          "output_tokens": 49309,
+          "reasoning_output_tokens": 42425,
+          "total_tokens": 6395853,
+          "uncached_input_tokens": 16432
+        }
+      },
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-10T17:56:38.812394+00:00",
+        "ended_at": "2026-11-10T18:26:03.164141+00:00",
+        "receipt_start": "2026-11-10T17:54:54.173Z",
+        "receipt_end": "2026-11-10T18:25:52.738Z",
+        "usage_delta": {
+          "input_tokens": 4642500,
+          "cached_input_tokens": 4557952,
+          "output_tokens": 39091,
+          "reasoning_output_tokens": 32605,
+          "total_tokens": 4681591,
+          "uncached_input_tokens": 84548
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-10T18:26:03.164141+00:00",
+        "ended_at": "2026-11-10T18:39:22.529096+00:00",
+        "receipt_start": "2026-11-10T18:25:52.738Z",
+        "receipt_end": "2026-11-10T18:38:59.613Z",
+        "usage_delta": {
+          "input_tokens": 4819237,
+          "cached_input_tokens": 4765696,
+          "output_tokens": 22656,
+          "reasoning_output_tokens": 4577,
+          "total_tokens": 4841893,
+          "uncached_input_tokens": 53541
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-10T18:39:22.529096+00:00",
+        "ended_at": "2026-11-10T18:45:11.516634+00:00",
+        "receipt_start": "2026-11-10T18:38:59.613Z",
+        "receipt_end": "2026-11-10T18:44:56.935Z",
+        "usage_delta": {
+          "input_tokens": 2243795,
+          "cached_input_tokens": 2225792,
+          "output_tokens": 6458,
+          "reasoning_output_tokens": 2858,
+          "total_tokens": 2250253,
+          "uncached_input_tokens": 18003
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-10T18:45:11.516634+00:00",
+        "ended_at": "2026-11-10T18:48:35.168401+00:00",
+        "receipt_start": "2026-11-10T18:44:56.935Z",
+        "receipt_end": "2026-11-10T18:48:12.609Z",
+        "usage_delta": {
+          "input_tokens": 1123561,
+          "cached_input_tokens": 1120384,
+          "output_tokens": 3949,
+          "reasoning_output_tokens": 2195,
+          "total_tokens": 1127510,
+          "uncached_input_tokens": 3177
+        }
+      },
+      {
+        "phase": "release",
+        "started_at": "2026-11-10T18:48:35.168401+00:00",
+        "ended_at": "2026-11-10T18:49:23.950637+00:00",
+        "receipt_start": "2026-11-10T18:48:12.609Z",
+        "receipt_end": "2026-11-10T18:49:04.109Z",
+        "usage_delta": {
+          "input_tokens": 387207,
+          "cached_input_tokens": 384640,
+          "output_tokens": 1348,
+          "reasoning_output_tokens": 546,
+          "total_tokens": 388555,
+          "uncached_input_tokens": 2567
+        }
+      },
+      {
+        "phase": "repair",
+        "started_at": "2026-11-10T18:49:23.950637+00:00",
+        "ended_at": "2026-11-10T18:53:54.087163+00:00",
+        "receipt_start": "2026-11-10T18:49:04.109Z",
+        "receipt_end": "2026-11-10T18:53:23.397Z",
+        "usage_delta": {
+          "input_tokens": 2017933,
+          "cached_input_tokens": 2011264,
+          "output_tokens": 6285,
+          "reasoning_output_tokens": 3885,
+          "total_tokens": 2024218,
+          "uncached_input_tokens": 6669
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-10T18:53:54.087163+00:00",
+        "ended_at": "2026-11-10T19:47:26.610486+00:00",
+        "receipt_start": "2026-11-10T18:53:23.397Z",
+        "receipt_end": "2026-11-10T19:46:09.152Z",
+        "usage_delta": {
+          "input_tokens": 8535183,
+          "cached_input_tokens": 8453376,
+          "output_tokens": 32330,
+          "reasoning_output_tokens": 13173,
+          "total_tokens": 8567513,
+          "uncached_input_tokens": 81807
+        }
+      },
+      {
+        "phase": "planning",
+        "started_at": "2026-11-10T19:47:26.610486+00:00",
+        "ended_at": "2026-11-10T19:56:58.791739+00:00",
+        "receipt_start": "2026-11-10T19:46:09.152Z",
+        "receipt_end": "2026-11-10T19:56:25.479Z",
+        "usage_delta": {
+          "input_tokens": 3002085,
+          "cached_input_tokens": 2980992,
+          "output_tokens": 18078,
+          "reasoning_output_tokens": 10614,
+          "total_tokens": 3020163,
+          "uncached_input_tokens": 21093
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-10T19:56:58.791739+00:00",
+        "ended_at": "2026-11-10T20:51:51.193823+00:00",
+        "receipt_start": "2026-11-10T19:56:25.479Z",
+        "receipt_end": "2026-11-10T20:51:26.548Z",
+        "usage_delta": {
+          "input_tokens": 19324626,
+          "cached_input_tokens": 19174144,
+          "output_tokens": 105046,
+          "reasoning_output_tokens": 51371,
+          "total_tokens": 19429672,
+          "uncached_input_tokens": 150482
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-10T20:51:51.193823+00:00",
+        "ended_at": "2026-11-11T05:05:42.212993+00:00",
+        "receipt_start": "2026-11-10T20:51:26.548Z",
+        "receipt_end": "2026-11-11T05:04:15.912Z",
+        "usage_delta": {
+          "input_tokens": 54285933,
+          "cached_input_tokens": 53974144,
+          "output_tokens": 314162,
+          "reasoning_output_tokens": 219297,
+          "total_tokens": 54600095,
+          "uncached_input_tokens": 311789
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

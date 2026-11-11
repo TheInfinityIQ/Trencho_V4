@@ -1,0 +1,13 @@
+{
+  "actual_time": 19.3333333333333,
+  "checks": [
+    "Same paid mixed shipment and eight real people created: PASS",
+    "Incoming passenger starts outside the service camera: PASS",
+    "Offscreen seated actor follows actual incoming hull movement before any phase change: PASS",
+    "Supported actor inherits the actual truck pivot before takeoff: PASS",
+    "Actual takeoff detaches the actor into the approved level frame and reaches its real landing: PASS"
+  ],
+  "failed": false,
+  "scope": "Changed passenger root inheritance: one actual second incoming while offscreen, then the first supported exit through takeoff and landing. Expected seated root uses the actual visual pivot and a physics draw boundary. Approved path Resource loaded; no repeated full material receipt or recording.",
+  "source": "dbf2ea41bb06200b16aff10fba8dd4b7060a32d9"
+}

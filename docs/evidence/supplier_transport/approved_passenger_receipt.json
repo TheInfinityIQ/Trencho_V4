@@ -1,0 +1,14 @@
+{
+  "arrived": 8,
+  "audit": [],
+  "early_departure": true,
+  "material": "Complete",
+  "ok": true,
+  "people": "Complete",
+  "scope": "Same current-change paid mixed material receipt and approved eight-person activity sequence; no rendering, regression suite or FPS claim.",
+  "time": 159.0,
+  "unloaded": {
+    "M02": 48,
+    "M08": 21
+  }
+}

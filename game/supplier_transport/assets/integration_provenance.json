@@ -143,6 +143,13 @@
       "sha256": "852f6d6e33d7c201cd159d6cdd8bc5555cb13b9a0e70a5f0bf5e4c6c8891e38f",
       "bytes": 2390496,
       "stage": "Dawson visually approved passenger exit revision v02; native integration verification pending"
+    },
+    {
+      "runtime_or_source": "game/supplier_transport/assets/passenger_paths_v02.tres",
+      "sha256": "576d05d209eeab7d726444aa301bd745773850acb4e3bed01a00172b5d58e1c2",
+      "bytes": 426024,
+      "stage": "Godot Resource packaging of unchanged approved JSON seats metadata; preload dependency includes paths in exports.",
+      "text_normalization": "LF; identical to the resource already loaded by42960993401"
     }
   ]
 }

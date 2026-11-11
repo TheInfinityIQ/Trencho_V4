@@ -15,7 +15,8 @@ stock, without deleting it or completing receipt. The activity releases its
 own reservations and schedules survivors. The distinct holder is excluded
 from vehicle, map and fleet lists. This adds no second inventory or scheduler.
 
-The supplier pair has1.3m proposed root separation. Artist is measuring a
+The supplier pair has roughly1.3m root separation approved by Dawson, with2m
+planks and50kg maximum bundles. Artist is measuring a
 coupled lateral withdrawal from fixed saddles, not an independent cargo shift.
 Warehouse pair stations and long-load routes must be validated and reserved
 before pickup. Actual contacts remain separate Artist evidence; this custody
@@ -42,3 +43,11 @@ until deposit/individual clearance. A truck-access waiter retains its cell,
 not the warehouse standing face. Before-lift reassignment exits the rear worker
 first; after-lift reassignment waits for deposit. Interrupted ground loads stay
 recoverable and block order completion, never count as receipt.
+
+The resumed reach study rejects the old.425m lower support with the unchanged
+bend. Separate truck targets are.60/.95m. Warehouse.60/.95m contacts fit empty
+space, but occupied upper timber intersects the lower worker posture. The measured safe/reachable upper-support interval is1.64117–1.88287m.
+The Artist is checking a separate1.75m upper/.60m lower warehouse fixture,
+at most2.2m tall with the same2.6×1m footprint/four cells. Original fixtures
+remain unchanged; no extra access-order rule has been accepted. A contact pose alone is not full occupied-access
+or movement proof. See the [prospective coordinator plan](feature_plans/paired_supplier_unloading.json).
