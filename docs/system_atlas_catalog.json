@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "9056ee5",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-follow-soldier-worktree",
+  "reviewed_baseline": "d63529b",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-friendly-shot-cue-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3685,7 +3685,7 @@
       "title": "3D RTS markers, units, vehicles and objectives",
       "group": "Presentation",
       "owner": "FieldPersons / FieldT01Trucks / FieldObjectives + cached cue overlays",
-      "summary": "Scene-owned presenters reconcile permitted rows; keyed changes update actual poses and cached screen anchors. Cue projection/picking is separate from domain combat.",
+      "summary": "Scene-owned presenters reconcile permitted rows; keyed changes update actual poses and cached screen anchors. Cue projection/picking is separate from domain combat. A single brief undirected UI cue marks only the latest actual visible permitted friendly shooter, without target or hit data.",
       "nodes": [
         {
           "id": "n0",
@@ -3716,6 +3716,18 @@
           "label": "Pick actual current projected marker",
           "file": "game/preview_3d/preview.gd",
           "function": "_select_marker"
+        },
+        {
+          "id": "friendly_shot",
+          "label": "Actual permitted friendly fired-round event",
+          "file": "game/preview_3d/field_persons.gd",
+          "function": "_on_shot"
+        },
+        {
+          "id": "shot_cue",
+          "label": "Latest visible shooter and shared UI expiry",
+          "file": "game/preview_3d/field_person_cues.gd",
+          "function": "_on_shot_fired"
         }
       ],
       "edges": [
@@ -3748,6 +3760,16 @@
           "from": "n3",
           "to": "n4",
           "label": "cached cue"
+        },
+        {
+          "from": "n1",
+          "to": "friendly_shot",
+          "label": "admitted friendly body only"
+        },
+        {
+          "from": "friendly_shot",
+          "to": "shot_cue",
+          "label": "same real shooter ID; no target"
         }
       ],
       "related": [
@@ -4779,8 +4801,8 @@
     "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
     "game/preview_3d/t01_presentation.gd": "f03c89b76313136d0c4770039576e7b521158b1324624dbb747bef16bce7d1a0",
     "game/preview_3d/t02_presentation.gd": "345bc2f10909b6be66fee144c85c14f265d74c912837b3f4f3df7c4225f322f4",
-    "game/preview_3d/field_persons.gd": "edf170f596e798cb9b3b16137f7f4462e1adbd8800ba43bdfd6592b091338249",
-    "game/preview_3d/field_person_cues.gd": "f9033097ee9b8d6162db2cf0e2b8da737adc6dde93778cfd64d51a6d6713d3f5",
+    "game/preview_3d/field_persons.gd": "f695782d6e86683efb6cfeb651c5689f59fa1de02621b24118818c0505efd882",
+    "game/preview_3d/field_person_cues.gd": "ed8605c80726ee00bc3583d0698ae47b0d5cc855e69ca17d621af2a58cd7d43c",
     "game/preview_3d/field_t01_trucks.gd": "62c5552105132b1243316acd15c2a40376cecdb61c7f2571cdf7bd640d4e02bb",
     "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
     "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",

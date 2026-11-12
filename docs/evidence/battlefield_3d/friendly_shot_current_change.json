@@ -1,0 +1,11 @@
+{
+  "source_revision": "d63529b28f2b13ee50f24bef4fa93d94244fbfad",
+  "workflow_run": 43267234814,
+  "artifact_id": 13965374605,
+  "artifact_sha256": "4b09d6d8608b32d45503efe677c57aeb1a2f24df01d920e0c0bdb034d0fd669c",
+  "demonstration_sha256": "065659bc9d5b74e8abe509f473e653ada9ac744715cbaf9805ba0ff31266d0a4",
+  "fixture": "Normal main/Farmland session with an explicitly arranged camera and a direct real loaded-round release from an existing permitted friendly shooter; no enemy, target, hit or combat outcome is claimed.",
+  "result": "PASS: one actual loaded round produced the same permitted friendly shooter cue and the shared timer cleared it.",
+  "scope": "One actual consumed round, same admitted shooter ID and expiration of one shared cosmetic UI timer. Only the latest observed shot is shown.",
+  "limitations": ["Rendered appearance, hidden/removing/rebind/offscreen paths and native input were not exercised.", "No full encounter, combat outcome or FPS acceptance is claimed."]
+}

@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "9056ee5",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-follow-soldier-worktree",
+  "reviewed_baseline": "d63529b",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-friendly-shot-cue-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "1d350c5b3c6ac9f10b1a30ec4479bbc71e5c9192bc122c4b6ed4484262a9cc71",
+  "source_fingerprint": "8806de7e852f34e85a5c645b7274738c408730d31a91d9c5d6fd1e78640e78ed",
   "totals": {
     "systems": 50,
     "game_scripts": 236,
     "non_test_scripts": 142,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3610,
-    "diagram_function_links": 301
+    "functions_in_inventory": 3613,
+    "diagram_function_links": 303
   },
   "systems": [
     {
@@ -31519,7 +31519,7 @@
       "title": "3D RTS markers, units, vehicles and objectives",
       "group": "Presentation",
       "owner": "FieldPersons / FieldT01Trucks / FieldObjectives + cached cue overlays",
-      "summary": "Scene-owned presenters reconcile permitted rows; keyed changes update actual poses and cached screen anchors. Cue projection/picking is separate from domain combat.",
+      "summary": "Scene-owned presenters reconcile permitted rows; keyed changes update actual poses and cached screen anchors. Cue projection/picking is separate from domain combat. A single brief undirected UI cue marks only the latest actual visible permitted friendly shooter, without target or hit data.",
       "nodes": [
         {
           "id": "n0",
@@ -31533,7 +31533,7 @@
           "label": "Admit actual friendly people",
           "file": "game/preview_3d/field_persons.gd",
           "function": "reconcile",
-          "line": 31
+          "line": 32
         },
         {
           "id": "n2",
@@ -31555,6 +31555,20 @@
           "file": "game/preview_3d/preview.gd",
           "function": "_select_marker",
           "line": 655
+        },
+        {
+          "id": "friendly_shot",
+          "label": "Actual permitted friendly fired-round event",
+          "file": "game/preview_3d/field_persons.gd",
+          "function": "_on_shot",
+          "line": 96
+        },
+        {
+          "id": "shot_cue",
+          "label": "Latest visible shooter and shared UI expiry",
+          "file": "game/preview_3d/field_person_cues.gd",
+          "function": "_on_shot_fired",
+          "line": 79
         }
       ],
       "edges": [
@@ -31587,6 +31601,16 @@
           "from": "n3",
           "to": "n4",
           "label": "cached cue"
+        },
+        {
+          "from": "n1",
+          "to": "friendly_shot",
+          "label": "admitted friendly body only"
+        },
+        {
+          "from": "friendly_shot",
+          "to": "shot_cue",
+          "label": "same real shooter ID; no target"
         }
       ],
       "related": [
@@ -31765,32 +31789,32 @@
         },
         {
           "path": "game/preview_3d/field_person_cues.gd",
-          "sha256": "f9033097ee9b8d6162db2cf0e2b8da737adc6dde93778cfd64d51a6d6713d3f5",
+          "sha256": "ed8605c80726ee00bc3583d0698ae47b0d5cc855e69ca17d621af2a58cd7d43c",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/preview_3d/field_person_cues.gd::_ready",
               "name": "_ready",
-              "line": 19,
-              "end_line": 21,
+              "line": 22,
+              "end_line": 31,
               "kind": "method",
-              "purpose": "Configure the strategic cue canvas to fill the current view while ignoring mouse input.",
+              "purpose": "Initialize the existing person cue control and its single cosmetic one-shot expiry timer.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::bind",
               "name": "bind",
-              "line": 23,
-              "end_line": 39,
+              "line": 33,
+              "end_line": 52,
               "kind": "method",
-              "purpose": "Release previous subscriptions and cached points, bind the current permitted presenter/camera, initialize cached hollow-near mode at size<=40 and invalidate projection without retaining the previous world.",
+              "purpose": "Disconnect and clear prior person cues, then bind the new admitted presenter and camera once.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::set_selected",
               "name": "set_selected",
-              "line": 41,
-              "end_line": 44,
+              "line": 54,
+              "end_line": 57,
               "kind": "method",
               "purpose": "Update only changed actual selected identity and schedule its cached strategic highlight.",
               "purpose_origin": "reviewed"
@@ -31798,26 +31822,53 @@
             {
               "id": "game/preview_3d/field_person_cues.gd::_on_changed",
               "name": "_on_changed",
-              "line": 46,
-              "end_line": 55,
+              "line": 59,
+              "end_line": 69,
               "kind": "method",
-              "purpose": "Project only the affected current person anchor/status and avoid work for unchanged actual facts; read no ledger or holder chains.",
+              "purpose": "Update one permitted person projection and clear its latest-shot cue if no longer projected.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::_on_removing",
               "name": "_on_removing",
-              "line": 57,
-              "end_line": 61,
+              "line": 71,
+              "end_line": 76,
               "kind": "method",
-              "purpose": "Erase cached points/status for a removed actual identity before its scene node is freed.",
+              "purpose": "Remove a departing admitted anchor and clear its latest-shot cue if it owns one.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/field_person_cues.gd::_on_shot_fired",
+              "name": "_on_shot_fired",
+              "line": 79,
+              "end_line": 85,
+              "kind": "method",
+              "purpose": "Display only the latest actual admitted shooter when the existing cue and current projection are visible.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/field_person_cues.gd::_clear_shot",
+              "name": "_clear_shot",
+              "line": 87,
+              "end_line": 91,
+              "kind": "method",
+              "purpose": "Stop the shared cosmetic timer and clear the last shot cue without changing simulation state.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/field_person_cues.gd::_on_visibility_changed",
+              "name": "_on_visibility_changed",
+              "line": 93,
+              "end_line": 94,
+              "kind": "method",
+              "purpose": "Clear the ephemeral shot cue when the person cue becomes hidden.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::request_projection",
               "name": "request_projection",
-              "line": 63,
-              "end_line": 66,
+              "line": 96,
+              "end_line": 99,
               "kind": "method",
               "purpose": "Coalesce camera/view/viewport invalidations into one deferred cached-anchor reprojection.",
               "purpose_origin": "reviewed"
@@ -31825,8 +31876,8 @@
             {
               "id": "game/preview_3d/field_person_cues.gd::flush_projection",
               "name": "flush_projection",
-              "line": 68,
-              "end_line": 70,
+              "line": 101,
+              "end_line": 103,
               "kind": "method",
               "purpose": "Synchronize the same current-camera visibility/projection cache at the existing selection boundary so invisible edge cues cannot be selected.",
               "purpose_origin": "reviewed"
@@ -31834,17 +31885,17 @@
             {
               "id": "game/preview_3d/field_person_cues.gd::_refresh_projection",
               "name": "_refresh_projection",
-              "line": 72,
-              "end_line": 85,
+              "line": 105,
+              "end_line": 119,
               "kind": "method",
-              "purpose": "Reproject cached permitted anchors only when the current camera transform, projection or viewport changes; cache near mode at size<=40 and queue redraw without ledger reads or a new polling loop.",
+              "purpose": "Refresh existing camera projections and discard a shot cue whose admitted anchor leaves view.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::_project",
               "name": "_project",
-              "line": 87,
-              "end_line": 93,
+              "line": 121,
+              "end_line": 127,
               "kind": "method",
               "purpose": "Cache an actual permitted anchor only when its current-camera projection is finite, in front and inside the viewport; drawing and PERSON picking share that point.",
               "purpose_origin": "reviewed"
@@ -31852,17 +31903,17 @@
             {
               "id": "game/preview_3d/field_person_cues.gd::_draw",
               "name": "_draw",
-              "line": 95,
-              "end_line": 114,
+              "line": 129,
+              "end_line": 149,
               "kind": "method",
-              "purpose": "Draw cached6px cues and unchanged actual-ID selection/state colours; use hollow outlines for near size<=40 or actual DEAD while preserving far live strategic fill and existing selection ring.",
+              "purpose": "Draw permitted person markers and at most one brief undirected latest-shot ring, without target or hit facts.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_person_cues.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 116,
-              "end_line": 117,
+              "line": 151,
+              "end_line": 152,
               "kind": "method",
               "purpose": "Release presenter/camera references and cached cue subscriptions when the canvas owner exits.",
               "purpose_origin": "reviewed"
@@ -31871,14 +31922,14 @@
         },
         {
           "path": "game/preview_3d/field_persons.gd",
-          "sha256": "edf170f596e798cb9b3b16137f7f4462e1adbd8800ba43bdfd6592b091338249",
+          "sha256": "f695782d6e86683efb6cfeb651c5689f59fa1de02621b24118818c0505efd882",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/preview_3d/field_persons.gd::bind",
               "name": "bind",
-              "line": 19,
-              "end_line": 29,
+              "line": 20,
+              "end_line": 30,
               "kind": "method",
               "purpose": "Disconnect the old ledger/model, clear former anchors and bind current permitted-person movement, state and actual-shot events to the injected visual factory.",
               "purpose_origin": "reviewed"
@@ -31886,8 +31937,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::reconcile",
               "name": "reconcile",
-              "line": 31,
-              "end_line": 48,
+              "line": 32,
+              "end_line": 49,
               "kind": "method",
               "purpose": "Admit only the supplied permitted dismounted people, share batched armament/current reload facts and remove visuals no longer in that policy result.",
               "purpose_origin": "reviewed"
@@ -31895,8 +31946,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_refresh",
               "name": "_refresh",
-              "line": 50,
-              "end_line": 93,
+              "line": 51,
+              "end_line": 94,
               "kind": "method",
               "purpose": "Refresh one permitted person's grounded pose, facing, actual motion/reload/casualty facts and imported animation/weapon presentation while preserving ancestry dependencies.",
               "purpose_origin": "reviewed"
@@ -31904,17 +31955,17 @@
             {
               "id": "game/preview_3d/field_persons.gd::_on_shot",
               "name": "_on_shot",
-              "line": 95,
-              "end_line": 96,
+              "line": 96,
+              "end_line": 99,
               "kind": "method",
-              "purpose": "Forward actual round release only to an already-admitted current character visual, without discovering or exposing new identities.",
+              "purpose": "Preserve existing recoil and emit the same admitted friendly identity only on the real fired-round event.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/field_persons.gd::sync_playback",
               "name": "sync_playback",
-              "line": 98,
-              "end_line": 99,
+              "line": 101,
+              "end_line": 102,
               "kind": "method",
               "purpose": "Apply a changed session playback state to cached field character adapters without querying their inventories.",
               "purpose_origin": "reviewed"
@@ -31922,8 +31973,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::set_animation_detail",
               "name": "set_animation_detail",
-              "line": 101,
-              "end_line": 106,
+              "line": 104,
+              "end_line": 109,
               "kind": "method",
               "purpose": "Toggle cached field skeletal evaluation only when the existing RTS projection crosses the detail threshold; leave gameplay progress intact.",
               "purpose_origin": "reviewed"
@@ -31931,8 +31982,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_replace_dependencies",
               "name": "_replace_dependencies",
-              "line": 108,
-              "end_line": 114,
+              "line": 111,
+              "end_line": 117,
               "kind": "method",
               "purpose": "Update cached reverse holder/ancestor links only when this actual person's dependency chain changed.",
               "purpose_origin": "reviewed"
@@ -31940,8 +31991,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_clear_dependencies",
               "name": "_clear_dependencies",
-              "line": 116,
-              "end_line": 120,
+              "line": 119,
+              "end_line": 123,
               "kind": "method",
               "purpose": "Remove one person from its cached parent dependency sets without scanning any ledger fleet or occupant roster.",
               "purpose_origin": "reviewed"
@@ -31949,8 +32000,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_on_entity_moved",
               "name": "_on_entity_moved",
-              "line": 122,
-              "end_line": 127,
+              "line": 125,
+              "end_line": 130,
               "kind": "method",
               "purpose": "Refresh the affected represented person and only cached dependents of a moved parent, using current actual facts instead of a timed all-person holder loop.",
               "purpose_origin": "reviewed"
@@ -31958,8 +32009,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_on_person_changed",
               "name": "_on_person_changed",
-              "line": 129,
-              "end_line": 131,
+              "line": 132,
+              "end_line": 134,
               "kind": "method",
               "purpose": "Refresh an already represented person at actual holder/position changes; leave uncached membership admission to the existing coalesced Policy boundary.",
               "purpose_origin": "reviewed"
@@ -31967,8 +32018,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_remove",
               "name": "_remove",
-              "line": 133,
-              "end_line": 141,
+              "line": 136,
+              "end_line": 144,
               "kind": "method",
               "purpose": "Notify dependent world/cue references before removing one character anchor, animation body, cached view and ancestor links.",
               "purpose_origin": "reviewed"
@@ -31976,8 +32027,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_disconnect_ledger",
               "name": "_disconnect_ledger",
-              "line": 143,
-              "end_line": 149,
+              "line": 146,
+              "end_line": 152,
               "kind": "method",
               "purpose": "Disconnect current person/position/shot subscriptions and release the injected model reference before rebinding or exit.",
               "purpose_origin": "reviewed"
@@ -31985,8 +32036,8 @@
             {
               "id": "game/preview_3d/field_persons.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 151,
-              "end_line": 162,
+              "line": 154,
+              "end_line": 165,
               "kind": "method",
               "purpose": "Disconnect the old model and clear all field anchors, bodies, activity caches and presentation callables during teardown.",
               "purpose_origin": "reviewed"
@@ -37764,7 +37815,7 @@
           "label": "Update only permitted current soldier facts",
           "file": "game/preview_3d/field_persons.gd",
           "function": "_refresh",
-          "line": 50
+          "line": 51
         },
         {
           "id": "state",
