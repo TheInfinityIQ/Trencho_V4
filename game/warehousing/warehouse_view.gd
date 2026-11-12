@@ -15,6 +15,7 @@ var _topology := -1
 var _smoke_tweens: Dictionary = {}
 var _inside: Dictionary = {}
 var _cutaway_enabled := true
+var _staging: Node3D
 
 func bind(world: Node3D, model: RefCounted) -> void:
 	_world = world
@@ -47,6 +48,13 @@ func _refresh() -> void:
 			_rebuild_walls(id)
 	for id: String in _service.bays:
 		var bay: Dictionary = _service.bays[id]
+		if bay.get("staging",false) and not _bays.has(id):
+			_staging = Node3D.new()
+			_staging.name = "RecoveryStaging"
+			add_child(_staging)
+			_world._box(_staging,Vector3(bay.center.x,0.01,bay.center.y),Vector3(6,0.02,4),Color("847b57"))
+			_world._label(_staging,"TEMPORARY STORAGE",Vector3(bay.center.x,0.1,bay.center.y+1.8),0.006)
+			_create_bay(bay,_staging)
 		if all or pending.has(bay.module): _refresh_bay(bay)
 
 func _create_module(module: Dictionary) -> void:

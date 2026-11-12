@@ -263,6 +263,7 @@ func debug_order_raw_resources() -> Dictionary:
 
 
 func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary:
+	if warehouse != null and destination == warehouse.recovery.STORE: return _reject("FINITE_STAGING","Recovery staging only accepts its explicitly reserved bay batch.")
 	if ledger.entity_kind(destination) != "PLACE":
 		return _reject("INVALID_DEBUG_STORAGE","Debug delivery needs an existing rear storage place.")
 	var pending := {}

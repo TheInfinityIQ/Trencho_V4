@@ -150,6 +150,7 @@ func set_target(id: String, count: int, priority: int = 1) -> Dictionary:
 func request_haul(source: String, destination: String, type: String, count: int, priority: int = 1, alternative_sources: Array = [], automatic_factory: RefCounted = null) -> Dictionary:
 	if not stores.has(source) or not stores.has(destination) or source == destination or type.is_empty() or count <= 0 or priority < 0 or priority > 3:
 		return _result(false, "Hauling needs distinct actual stores, one type, positive count and priority.")
+	if stores[destination].get("source_only",false): return _result(false,"This is source-only storage, not an ordinary hauling destination.")
 	if automatic_factory != null and (automatic_factory not in _production_activities() or automatic_factory._spec.input_store != destination or not automatic_factory._spec.inputs.has(type)):
 		return _result(false,"Automatic input hauling needs its current actual production owner and ingredient store/type.")
 	var result := _queue_haul(source, destination, type, count, priority)
@@ -184,6 +185,7 @@ func cancel_job(id: String) -> Dictionary:
 	var job := _job(id)
 	if job.is_empty() or job.cancelled:
 		return _result(false, "No active demand to cancel.")
+	if job.has("warehouse_recovery"): return warehouse.recovery.stop()
 	job.cancelled = true
 	for actor in actors.values():
 		if actor.load.get("job") == id:
@@ -248,6 +250,8 @@ func reassign_person(id: String, destination: String) -> Dictionary:
 func set_store(id: String, accessible: bool, capacity: float = -1.0, filter: Variant = null) -> Dictionary:
 	if warehouse != null and id == "receiving":
 		return _result(false,"Supply Depot storage comes from completed warehouse modules and usable shelves. Free space or build an expansion.")
+	if warehouse != null and id == warehouse.recovery.STORE:
+		return _result(false,"Recovery staging is finite source-only space; clear it by physically collecting its goods.")
 	if not stores.has(id) or not is_finite(capacity) or (filter != null and not filter is Array):
 		return _result(false, "An actual store and finite capacity are required.")
 	if receiving != null and id == "receiving":
@@ -479,13 +483,13 @@ func walk_path(origin: Vector2, destination: Vector2) -> Array:
 	return Layout.path(origin,destination)
 
 func work_point(person: String, holder: String, reserve: bool = true) -> Vector2:
-	if warehouse != null and holder == "receiving":
+	if warehouse != null and holder in ["receiving",warehouse.recovery.STORE]:
 		var point: Vector2 = warehouse.work_point(person)
 		if point.is_finite(): return point
 	return work_positions.point(person,holder,reserve) if work_positions != null else ledger.inspect_entity(holder,{},false).position
 
 func stock_work_point(person: String, stock: Dictionary, reserve: bool = false) -> Vector2:
-	if warehouse != null and stock.holder_id == "receiving":
+	if warehouse != null and stock.holder_id in ["receiving",warehouse.recovery.STORE]:
 		return warehouse.stock_point(str(stock.id),person,reserve)
 	return work_point(person,str(stock.holder_id),reserve)
 
@@ -493,7 +497,7 @@ func warehouse_space_changed() -> void:
 	if vehicles != null: vehicles.warehouse_access_changed()
 	if construction != null: construction.trucks.warehouse_access_changed()
 	for actor: Dictionary in actors.values():
-		if actor.phase == "Warehouse wait": actor.deadline = time
+		if actor.phase in ["Warehouse wait","Warehouse destination wait"]: actor.deadline = time
 
 func _warehouse_approach_source(actor: Dictionary) -> void:
 	var stock: Dictionary = ledger.inspect_entity(actor.load.stock,{},false)
@@ -878,15 +882,27 @@ func _finish_phase(a: Dictionary) -> void:
 		"Approach":
 			a.phase = "Pickup"
 			a.deadline = time + 2.0
-		"Pickup":
-			var result: Dictionary = ledger.begin_carry(a.id, a.load.stock, a.load.count, a.load.claim)
+		"Pickup", "Warehouse destination wait":
+			if a.load.has("storage") and not warehouse.acquire_access(str(a.load.storage)):
+				a.phase = "Warehouse destination wait"
+				a.deadline = INF
+				_job(a.load.job).blocker = "Waiting for clear reserved shelf access; package stays at source"
+				return
+			var destination: Vector2 = work_point(a.id,a.load.destination)
+			var path: Array = walk_path(ledger.inspect_person_status(a.id).position,destination) if destination.is_finite() else []
+			if a.load.has("storage") and path.is_empty():
+				a.phase = "Warehouse destination wait"
+				a.deadline = INF
+				_job(a.load.job).blocker = "Reserved storage route blocked; package stays at source"
+				return
+			var result: Dictionary = ledger.begin_carry(a.id, a.load.stock, a.load.count, a.load.claim,a.load.has("warehouse_recovery"))
 			if not result.ok:
 				_job(a.load.job).blocker = result.message
 				_release_load(a)
 			else:
 				a.load.carried = result.entity_id
 				a.load.claim = ""
-				_move(a, "Carry", walk_path(ledger.inspect_entity(a.id).position, work_point(a.id,a.load.destination)), 1.2)
+				_move(a, "Carry", path, 1.2)
 		"Carry":
 			a.phase = "Drop"
 			a.deadline = time + 2.0
@@ -979,7 +995,12 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 		return false
 	var job: Dictionary = best.job
 	var storage := {}
-	if warehouse != null and job.destination == "receiving":
+	if job.has("warehouse_recovery"):
+		storage = warehouse.recovery.reserve_destination(str(a.id),best)
+		if not storage.ok:
+			job.blocker = str(storage.message)
+			return false
+	elif warehouse != null and job.destination == "receiving":
 		storage = warehouse.reserve(str(a.id),str(job.type),int(best.count))
 		if not storage.ok:
 			job.blocker = str(storage.message)
@@ -988,6 +1009,10 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 	var batch: Array = best.get("batch",[{"stock":str(best.stock.id),"count":int(best.count),"claim":""}])
 	var admitted: Array[String] = []
 	for part: Dictionary in batch:
+		if job.has("warehouse_recovery"):
+			claim = str(best.claim)
+			part.claim = claim
+			continue
 		var reservation := "haul-claim-%04d" % _next()
 		var result: Dictionary = ledger.request_stock(reservation,part.stock,part.count,a.id,job.id,PLAYER)
 		if result.ok: admitted.append(reservation)
@@ -1002,6 +1027,7 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 		"source": best.stock.holder_id, "destination": job.destination,
 		"type": job.type, "count": best.count, "mass": best.count * best.stock.unit_mass_kg, "carried": ""}
 	if best.has("batch"): a.load.batch = batch
+	if job.has("warehouse_recovery"): a.load.warehouse_recovery = job.warehouse_recovery
 	if not storage.is_empty(): a.load.storage = str(storage.id)
 	job.selected += 1
 	if not storage.is_empty() and storage.prepare:
@@ -1017,6 +1043,7 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 
 
 func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
+	if job.has("warehouse_recovery"): return warehouse.recovery.option(job,person)
 	if not stores.has(job.destination) or not stores[job.destination].accessible:
 		job.blocker = "Destination inaccessible; demand retained"
 		return {}
@@ -1135,6 +1162,8 @@ func _free_space(id: String, except_person: String = "") -> float:
 
 
 func _valid_destination(id: String, type: String, mass: float, except_person: String = "") -> bool:
+	if warehouse != null and id == warehouse.recovery.STORE:
+		return warehouse.recovery.accepts(except_person,type,mass)
 	return stores.has(id) and not stores[id].get("source_only",false) and stores[id].accessible and (stores[id].filter.is_empty() or type in stores[id].filter) and _free_space(id, except_person) + EPS >= mass
 
 
@@ -1182,7 +1211,7 @@ func _deposit(a: Dictionary) -> void:
 		_reroute(a)
 		return
 	var load: Dictionary = a.load.duplicate(true)
-	var result: Dictionary = ledger.finish_carry(a.id, load.destination)
+	var result: Dictionary = ledger.finish_carry(a.id, load.destination,load.has("warehouse_recovery"))
 	if not result.ok:
 		push_error("Safe hauling deposit failed: " + str(result))
 		return
@@ -1198,6 +1227,7 @@ func _deposit(a: Dictionary) -> void:
 		job.recovery_sources.append(load.destination)
 	_events.append({"time": time, "person": a.id, "job": load.job, "destination": load.destination, "count": load.count, "description": "Physical deposit"})
 	a.load = {}
+	if load.has("warehouse_recovery"): warehouse.recovery.deposited(str(result.entity_id))
 	var person: Dictionary = ledger.inspect_entity(a.id)
 	if person.duty_id != "hauling":
 		_report(a)
@@ -1213,7 +1243,7 @@ func _release_load(a: Dictionary) -> void:
 	if warehouse != null:
 		if a.load.has("storage"): warehouse.release(str(a.load.storage))
 		warehouse.release_point(str(a.id))
-	if not a.load.get("claim", "").is_empty():
+	if not a.load.get("claim", "").is_empty() and not a.load.has("warehouse_recovery"):
 		ledger.release_claim(a.load.claim)
 	a.load = {}
 	a.phase = "Idle"

@@ -87,6 +87,15 @@ var delivery_return_button: Button
 var delivery_return_reason: Label
 var _supplier_return_dialog: ConfirmationDialog
 var _supplier_return_request: Dictionary = {}
+var _recovery_box: VBoxContainer
+var _recovery_bay: OptionButton
+var _recovery_clear: Button
+var _recovery_stop: Button
+var _recovery_status: Label
+var _recovery_dialog: ConfirmationDialog
+var _recovery_request: Dictionary = {}
+var _recovery_quote_key := ""
+var _recovery_offer: Dictionary = {}
 var army_request_type: OptionButton
 var army_request_count: SpinBox
 var army_request_rows: ItemList
@@ -530,6 +539,8 @@ func _bind_started_session(refresh_rear_ui: bool) -> void:
 	_keep_batch_cancel()
 	_keep_construction_cancel()
 	_keep_supplier_delivery()
+	_keep_warehouse_bay()
+	_recovery_quote_key = ""
 	session.replace_simulation(simulation)
 	_displayed_time = -INF
 	_haul_draft_dirty = false
@@ -1149,6 +1160,22 @@ func _inspect_panel(box: VBoxContainer) -> void:
 		if id == "receiving" and capacity.value < simulation.receiving.receiving_kg() + simulation.rear._reserved_space(id):
 			_result({"ok": false, "message": "Receiving capacity must retain deposited goods and all promised inbound loads."})
 		else: _result(simulation.rear.set_store(id, accessible.button_pressed, capacity.value)))
+	_recovery_box = _section(box,"Clear a warehouse bay","Move one bay's whole packages to finite temporary storage. Uses Other hauling priority; goods remain available for physical collection.")
+	_recovery_bay = _option(_recovery_box,"Source bay",[])
+	_recovery_bay.item_selected.connect(func(_index: int) -> void: _recovery_quote_key = ""; _warehouse_recovery_controls())
+	_recovery_status = _label(_recovery_box,"")
+	_recovery_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_recovery_clear = _button(_recovery_box,"Clear selected bay…",_request_warehouse_clearance)
+	_recovery_stop = _button(_recovery_box,"Stop clearing after safe deposits",func() -> void: _result(simulation.rear.warehouse.recovery.stop()))
+	_recovery_dialog = ConfirmationDialog.new()
+	_recovery_dialog.name = "WarehouseBayClearance"
+	_recovery_dialog.min_size = Vector2i(620,260)
+	_recovery_dialog.dialog_autowrap = true
+	_recovery_dialog.ok_button_text = "Confirm bay clearance"
+	_recovery_dialog.cancel_button_text = "Keep bay"
+	_recovery_dialog.confirmed.connect(_confirm_warehouse_clearance)
+	_recovery_dialog.canceled.connect(_keep_warehouse_bay)
+	add_child(_recovery_dialog)
 
 func _construction_panel(box: VBoxContainer) -> void:
 	var parent := box
@@ -1608,7 +1635,7 @@ func _load_store() -> void:
 
 func _warehouse_store_controls() -> void:
 	var warehouse_context: bool = simulation.rear.warehouse != null and _selected_kind == "site" and simulation.rear.warehouse.modules.has(_selected_id)
-	var warehouse_store: bool = simulation.rear.warehouse != null and store.get_item_text(store.selected) == "receiving"
+	var warehouse_store: bool = simulation.rear.warehouse != null and store.get_item_text(store.selected) in ["receiving",simulation.rear.warehouse.recovery.STORE]
 	(store.get_parent() as Control).visible = not warehouse_context
 	(capacity.get_parent() as Control).visible = not warehouse_context
 	accessible.visible = not warehouse_context
@@ -1616,6 +1643,70 @@ func _warehouse_store_controls() -> void:
 	capacity.editable = not warehouse_store
 	accessible.disabled = warehouse_store
 	store_apply.disabled = warehouse_store
+	_warehouse_recovery_controls()
+
+func _warehouse_recovery_controls() -> void:
+	if _recovery_box == null: return
+	var warehouse: RefCounted = simulation.rear.warehouse
+	var context: bool = warehouse != null and _selected_kind == "site" and warehouse.modules.has(_selected_id)
+	(_recovery_box.get_parent() as Control).visible = context
+	if not context: return
+	var connected: Dictionary = warehouse.connected_modules(_selected_id)
+	var ids: Array[String] = []
+	for bay: Dictionary in warehouse.bays.values():
+		if connected.has(str(bay.module)): ids.append(str(bay.id))
+	ids.sort()
+	var selected := str(_recovery_bay.get_item_metadata(_recovery_bay.selected)) if _recovery_bay.selected >= 0 else ""
+	var selected_index := -1
+	for index in ids.size():
+		if index >= _recovery_bay.item_count: _recovery_bay.add_item(ids[index])
+		else: _recovery_bay.set_item_text(index,ids[index])
+		_recovery_bay.set_item_metadata(index,ids[index])
+		if ids[index] == selected: selected_index = index
+	while _recovery_bay.item_count > ids.size(): _recovery_bay.remove_item(_recovery_bay.item_count-1)
+	_recovery_bay.select(selected_index if selected_index >= 0 else 0 if not ids.is_empty() else -1)
+	var id := str(_recovery_bay.get_item_metadata(_recovery_bay.selected)) if _recovery_bay.selected >= 0 else ""
+	var key := "%s:%s:%s" % [warehouse.get_instance_id(),warehouse.revision,id]
+	if key != _recovery_quote_key:
+		_recovery_offer = warehouse.recovery.quote(id)
+		_recovery_quote_key = key
+	var state: Dictionary = warehouse.recovery.status()
+	_recovery_clear.disabled = not bool(_recovery_offer.get("eligible",false))
+	_recovery_stop.disabled = not bool(state.active)
+	_recovery_status.text = str(state.message)+"\nStaged: %d packages · %d kg" % [int(state.packages),int(state.kg)]
+	if _recovery_offer.get("eligible",false): _recovery_status.text += "\nSelected bay: %d packages · %s" % [int(_recovery_offer.packages),_named_quantities(_recovery_offer.contents)]
+	else: _recovery_status.text += "\n"+str(_recovery_offer.get("message","Select a bay."))
+
+func _request_warehouse_clearance() -> void:
+	_keep_warehouse_bay()
+	if _recovery_bay.selected < 0: return
+	var id := str(_recovery_bay.get_item_metadata(_recovery_bay.selected))
+	var service: RefCounted = simulation.rear.warehouse.recovery
+	var offer: Dictionary = service.quote(id)
+	if not offer.eligible:
+		_result({"ok":false,"message":offer.message})
+		return
+	_recovery_request = {"session":session,"simulation":simulation,"service":service,"site":_selected_id,"bay":id,"fingerprint":offer.fingerprint}
+	_recovery_dialog.title = "Clear %s?" % id
+	_recovery_dialog.dialog_text = "Move %d whole packages (%s) to the6×4m temporary staging area?\n\nThe entire matching shelf layout is reserved first. Real haulers prepare shelving and move the goods; no space is freed instantly. This bay stops accepting deposits during clearance. Another batch cannot start until staging is actually empty. No goods are discarded and there is no refund." % [int(offer.packages),_named_quantities(offer.contents)]
+	_recovery_dialog.popup_centered_clamped(Vector2i(660,300))
+	_recovery_dialog.get_cancel_button().grab_focus()
+
+func _confirm_warehouse_clearance() -> void:
+	var request := _recovery_request
+	_keep_warehouse_bay()
+	if request.is_empty(): return
+	if not is_instance_valid(session) or session != request.session or simulation != request.simulation or session.simulation != request.simulation or simulation.rear.warehouse == null or simulation.rear.warehouse.recovery != request.service or _selected_kind != "site" or _selected_id != request.site:
+		_result({"ok":false,"message":"The warehouse or session changed. No bay was cleared."})
+		return
+	if _recovery_bay.selected < 0 or str(_recovery_bay.get_item_metadata(_recovery_bay.selected)) != request.bay:
+		_result({"ok":false,"message":"The selected bay changed. Review it before confirming."})
+		return
+	_result(request.service.confirm(str(request.bay),str(request.fingerprint)))
+
+func _keep_warehouse_bay() -> void:
+	_recovery_request = {}
+	if is_instance_valid(_recovery_dialog): _recovery_dialog.hide()
 
 func _build_construction_cancel_dialog() -> void:
 	_construction_cancel_dialog = ConfirmationDialog.new()

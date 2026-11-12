@@ -1087,7 +1087,7 @@ func cancel_assignment_request(person_id: String) -> Dictionary:
 	return _ok("Pending request cancelled; current duty and carried goods are unchanged.", person_id)
 
 
-func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: String = "") -> Dictionary:
+func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: String = "", preserve_package: bool = false) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or not (person.assignment == Records.Assignment.REAR_LABOUR or (person.assignment == Records.Assignment.HQ_DUTY and person.duty_id == "fixed-hq")):
 		return _reject("NOT_LABOUR", "An actual rear or HQ logistics worker is required for this carry.")
@@ -1096,6 +1096,18 @@ func begin_carry(person_id: String, stock_id: String, quantity: int, claim_id: S
 	var stock := _stock(stock_id)
 	if stock != null and stock.unit_mass_kg * quantity + _contents_mass(person.id) > 25.0:
 		return _reject("CARRY_TOO_HEAVY", "An ordinary carry is limited to 25 kg of one item type (GDD section 4).")
+	if preserve_package:
+		var invalid := _check_transfer(stock,quantity,person_id,claim_id)
+		if not invalid.is_empty(): return invalid
+		if quantity != stock.quantity or _is_active_carry(stock_id): return _reject("WHOLE_PACKAGE_REQUIRED","Only an entire inactive package can retain its identity during a carry.")
+		stock.holder_id = person_id
+		stock.position = Vector2.ZERO
+		person.carrying_stock_id = stock_id
+		if not claim_id.is_empty():
+			_claims[claim_id].reserved -= quantity
+			_claims[claim_id].fulfilled += quantity
+		stock_changed.emit(stock_id)
+		return _ok("Same whole package picked up by actual worker.",stock_id)
 	var result := transfer_stock(stock_id, quantity, person_id, claim_id)
 	if result.ok:
 		person.carrying_stock_id = result.entity_id
@@ -1220,7 +1232,7 @@ func burn_vehicle_fuel(carrier_id: String, amount: float) -> Dictionary:
 	return _ok("Actual fractional travel fuel burned.", carrier_id)
 
 
-func finish_carry(person_id: String, safe_place_id: String) -> Dictionary:
+func finish_carry(person_id: String, safe_place_id: String, preserve_package: bool = false) -> Dictionary:
 	var person := _person(person_id)
 	if person == null or person.carrying_stock_id.is_empty():
 		return _reject("NO_CARRY", "This person has no active carry to finish.")
@@ -1230,12 +1242,45 @@ func finish_carry(person_id: String, safe_place_id: String) -> Dictionary:
 	var invalid := _check_transfer(carried, carried.quantity, safe_place_id, "")
 	if not invalid.is_empty():
 		return invalid
-	var deposited := _split_stock(carried, carried.quantity, safe_place_id)
+	var deposited: Records.Entity
+	if preserve_package:
+		carried.holder_id = safe_place_id
+		carried.position = Vector2.ZERO
+		deposited = carried
+	else: deposited = _split_stock(carried, carried.quantity, safe_place_id)
 	_event("Carry physically deposited into safe storage", deposited.id)
 	person.carrying_stock_id = ""
 	if person.pending_assignment != -1 and person.construction_truck_id.is_empty():
 		_set_assignment(person, person.pending_assignment, person.pending_duty)
+	if preserve_package: stock_changed.emit(deposited.id)
 	return _ok("Goods deposited once; safe duty handoff completed.", deposited.id)
+
+
+func request_whole_package_batch(prefix: String, sources: Array, claimant: String, purpose: String, holder: String, owner: String) -> Dictionary:
+	var receipt: Array[Dictionary] = []
+	var seen := {}
+	if sources.is_empty() or claimant.is_empty() or purpose.is_empty(): return _reject("EMPTY_BATCH","Select an actual whole-package batch.")
+	for index in sources.size():
+		var id := str(sources[index])
+		var stock := _stock(id)
+		var claim_id := "%s-%03d" % [prefix,index]
+		if seen.has(id) or not _free_id(claim_id) or stock == null or stock.owner != owner or stock.holder_id != holder or stock.quantity <= 0 or available(id) != stock.quantity or _is_active_carry(id):
+			return _reject("BATCH_CHANGED","Every original package must still be present and wholly unreserved. Nothing changed.")
+		seen[id] = true
+		receipt.append({"id":id,"claim":claim_id,"quantity":stock.quantity})
+	# No callbacks or awaits between validation and committing every claim.
+	for row: Dictionary in receipt:
+		var claim := Records.Claim.new()
+		claim.id = row.claim
+		claim.source_id = row.id
+		claim.claimant = claimant
+		claim.purpose = purpose
+		claim.requested = row.quantity
+		claim.reserved = row.quantity
+		claim.created_at = _time
+		_claims[claim.id] = claim
+	_event("Whole physical package batch reserved atomically",claimant)
+	return {"ok":true,"receipt":receipt,"message":"Whole batch reserved without moving goods."}
 
 
 func request_stock(id: String, source_id: String, quantity: int, claimant: String,

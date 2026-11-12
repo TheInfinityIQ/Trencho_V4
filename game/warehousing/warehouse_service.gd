@@ -29,12 +29,14 @@ var _clearance_pending: Dictionary = {}
 var _access_departures: Dictionary = {}
 var _access_blockers: Dictionary = {}
 var _sequence := 0
+var recovery: RefCounted
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	rear.ledger.stock_changed.connect(_stock_changed)
 	rear.ledger.entity_moved.connect(_entity_moved)
 	rear.construction.site_changed.connect(_site_changed)
+	recovery = preload("res://game/warehousing/warehouse_recovery.gd").new(self,rear)
 
 func initialize_opening() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -91,6 +93,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 	var ready_position_blocked := false
 	var pending_room := false
 	for pending: Dictionary in bays.values():
+		if pending.get("staging",false) or pending.get("clearing",false): continue
 		if modules[pending.module].retiring or pending.state in ["Empty","Ready"] or pending.family != family: continue
 		if not _free_cells(pending.id,pending.cells,code,quantity).is_empty(): pending_room = true
 	for bay: Dictionary in candidates:
@@ -158,7 +161,7 @@ func probe(person: String, code: String, quantity: int, allow_prepare: bool = tr
 	return Vector2.INF
 
 func _candidate_bays(family: String) -> Array:
-	var result: Array = bays.values()
+	var result: Array = bays.values().filter(func(bay: Dictionary) -> bool: return not bay.get("staging",false) and not bay.get("clearing",false))
 	result.sort_custom(func(a: Dictionary,b: Dictionary) -> bool:
 		var first := 0 if a.state == "Ready" and a.family == family else 1 if a.state == "Empty" else 2
 		var second := 0 if b.state == "Ready" and b.family == family else 1 if b.state == "Empty" else 2
@@ -166,6 +169,7 @@ func _candidate_bays(family: String) -> Array:
 	return result
 
 func _can_reconfigure(bay: Dictionary) -> bool:
+	if bay.get("staging",false) or bay.get("clearing",false): return false
 	if bay.state != "Ready" or modules[bay.module].retiring: return false
 	for cell: Dictionary in bay.cells:
 		if not cell.stocks.is_empty(): return false
@@ -238,8 +242,9 @@ func acquire_access(token: String) -> bool:
 	if not at.is_finite(): return false
 	promise.point = at
 	promise.queued = false
-	_work_points[promise.person] = {"holder":STORE,"point":at,"bay":str(bay.id)}
-	rear.ledger.register_handling_point(STORE,str(promise.person),at)
+	var holder := str(bay.get("store",STORE))
+	_work_points[promise.person] = {"holder":holder,"point":at,"bay":str(bay.id)}
+	rear.ledger.register_handling_point(holder,str(promise.person),at)
 	return true
 
 func commit(token: String, stock_id: String) -> Dictionary:
@@ -247,9 +252,9 @@ func commit(token: String, stock_id: String) -> Dictionary:
 	var promise: Dictionary = reservations[token]
 	var rear: RefCounted = _rear_ref.get_ref()
 	var stock: Dictionary = rear.ledger.inspect_entity(stock_id,{},false)
-	if stock.get("holder_id","") != STORE or stock.get("design_type","") != promise.code or int(stock.get("quantity",0)) != int(promise.quantity):
-		return _reject("DEPOSIT_MISMATCH","Only the exact actual deposited stock consumes this storage promise.")
 	var bay: Dictionary = bays[promise.bay]
+	if stock.get("holder_id","") != str(bay.get("store",STORE)) or stock.get("design_type","") != promise.code or int(stock.get("quantity",0)) != int(promise.quantity):
+		return _reject("DEPOSIT_MISMATCH","Only the exact actual deposited stock consumes this storage promise.")
 	if not bay.cells[int(promise.cell)].stocks.is_empty(): return _reject("POSITION_OCCUPIED","A physical crate already occupies this shelf position.")
 	_attach_stock(bay,int(promise.cell),stock_id,str(promise.code))
 	_clearance_pending[promise.person] = promise.point
@@ -294,6 +299,7 @@ func physical_space_status(code: String, quantity: int) -> String:
 	var preparing := false
 	var empty_site := false
 	for bay: Dictionary in bays.values():
+		if bay.get("staging",false) or bay.get("clearing",false): continue
 		if modules[bay.module].retiring: continue
 		if bay.state == "Empty":
 			empty_site = true
@@ -383,8 +389,9 @@ func stock_point(stock_id: String, person: String, keep: bool = false) -> Vector
 	var origin: Vector2 = rear.ledger.inspect_entity(person,{},false).position
 	var point := _choose_point(bay,person,origin,bay.cells[int(_stock_cells[stock_id].cell)])
 	if point.is_finite() and keep:
-		_work_points[person] = {"holder":STORE,"point":point,"bay":str(bay.id)}
-		rear.ledger.register_handling_point(STORE,person,point)
+		var holder := str(bay.get("store",STORE))
+		_work_points[person] = {"holder":holder,"point":point,"bay":str(bay.id)}
+		rear.ledger.register_handling_point(holder,person,point)
 	return point
 
 func release_point(person: String) -> void:
@@ -565,7 +572,7 @@ func _attach_stock(bay: Dictionary, cell_index: int, stock_id: String, code: Str
 	var local: Vector3 = cell.offset
 	var at: Vector2 = bay.center+Vector2(local.x,local.z).rotated(float(bay.rotation))
 	var rear: RefCounted = _rear_ref.get_ref()
-	var result: Dictionary = rear.ledger.position_stored_stock(stock_id,STORE,at)
+	var result: Dictionary = rear.ledger.position_stored_stock(stock_id,str(bay.get("store",STORE)),at)
 	assert(result.ok,str(result))
 
 func _cell_service_point(bay: Dictionary, cell: Dictionary) -> Vector2:
@@ -605,7 +612,7 @@ func _stock_changed(id: String) -> void:
 	var stock: Dictionary = rear.ledger.inspect_entity(id,{},false)
 	var address: Dictionary = _stock_cells[id]
 	var bay: Dictionary = bays[address.bay]
-	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != STORE:
+	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != str(bay.get("store",STORE)):
 		bay.cells[int(address.cell)].stocks.erase(id)
 		_stock_cells.erase(id)
 	_touch(bay.module)
