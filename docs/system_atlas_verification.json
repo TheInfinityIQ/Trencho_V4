@@ -1,5 +1,5 @@
 {
-  "scope": "Warehouse bay-clearance source checkpoint18fbfda; candidate PR146 only, scoped engine/action verification pending. Prior cargo-return receipts retain their exact checked heads.",
+  "scope": "Warehouse bay-clearance source18fbfda; required/direct scoped checks passed at2d61539. Candidate PR146 only; no main adoption/native-player/full-loop acceptance.",
   "checks": {
     "generation": "system_map.py --update, explicit changed-function purpose review, system_atlas.py through the supplier catalog update, and ui_function_map.py --update --diagram-only completed.",
     "game_script_inventory": {
@@ -13,7 +13,7 @@
       "diagram_function_links": 313
     },
     "function_map": {
-      "files": 1346,
+      "files": 1348,
       "functions": 3932,
       "named": 3562,
       "anonymous": 370,
@@ -33,5 +33,6 @@
     "Full loop, every material/contact, human F5 controls and60FPS acceptance remain open."
   ],
   "static_warehouse_receipt": "43014853905 passed atc7dd490: actual versioned rack/import, open service gap, retained neighbor rail/tray and cassette bearing registration only. No storage preparation/hauling acceptance.",
-  "cargo_return_receipt": "evidence/supplier_transport/supplier_cargo_return.json"
+  "cargo_return_receipt": "evidence/supplier_transport/supplier_cargo_return.json",
+  "warehouse_clearance_receipt": "evidence/supplier_transport/warehouse_bay_clearance.json"
 }

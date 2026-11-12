@@ -123,7 +123,7 @@ and makes no change to the human editor or mouse.
   review and required checks govern publication; human F5 acceptance is separate.
 - Remaining aboard-cargo returns have a scoped actual-exit refund receipt.
   Finite non-timber bay-clearance staging now has source implementation on PR146,
-  with its focused current-action check pending. Warehouse reload remains separate;
+  with its focused clearance/recollection episode passed at2d61539. Warehouse reload remains separate;
   no native menu/full-loop acceptance is inferred.
 - Implement genuine paired timber custody/handling; current legacy single-person
   receipt is not acceptance of the requested two-worker timber transport.

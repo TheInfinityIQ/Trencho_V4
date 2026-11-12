@@ -1,4 +1,5 @@
 flowchart TD
+  %% Mixed roadmap: aboard return and non-timber finite staging implemented onPR146; warehouse reload and paired timber remain future.
   Full[No compatible physical warehouse space] --> Hold[Goods remain aboard / truck warning]
   Hold --> Return[Player confirms return on same present truck]
   Return --> Stop[Stop new unloading / release uncollected claims]
@@ -12,7 +13,7 @@ flowchart TD
   Depart --> Exit[Actual truck exit]
   Exit --> Refund[Goods-only refund once / transport fee retained]
   Exit --> Gate[Resolve only this convoy member]
-  Gate --> Recovery[Player selects one warehouse bay to clear]
+  Hold --> Recovery[Player selects one supported non-timber warehouse bay to clear]
   Recovery --> Stage[Reserve whole supported batch in finite6x4m staging]
   Stage --> Locked[Close source bay to new deposits]
   Locked --> Visit[Real Hauling worker prepares temporary supports]

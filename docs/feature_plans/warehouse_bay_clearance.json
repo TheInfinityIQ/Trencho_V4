@@ -47,5 +47,7 @@
   "sources": [
     "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
     "https://docs.godotengine.org/en/stable/classes/class_area3d.html"
-  ]
+  ],
+  "status": "Source implemented in existing draft PR146; required43232986324 and one current-action43232975407 passed at2d61539. Native menu/rendering and full-loop acceptance remain open.",
+  "receipt": "evidence/supplier_transport/warehouse_bay_clearance.json"
 }

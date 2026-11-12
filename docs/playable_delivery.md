@@ -7,7 +7,7 @@ imported rendering, native entrance and camera ceiling have scoped receipts;
 publication/adoption status is tracked in PR145.
 Remaining aboard-cargo return now has source implementation on the supplier
 feature branch; a scoped safe-withdrawal/actual-exit refund episode passed at4992164. Finite non-timber bay-clearance staging now has source implementation with its
-focused current-action check pending. Warehouse reload and paired timber
+focused clearance/recollection episode passed at2d61539. Warehouse reload and paired timber
 transport remain separately planned; this does not mark stages1/2 or full-game60FPS accepted.
 
 [Construction follow-up](construction_delivery_completion.md): builders can fetch
