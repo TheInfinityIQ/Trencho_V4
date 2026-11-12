@@ -64,6 +64,7 @@ var rear_ground: StaticBody3D
 var supply_table_body: StaticBody3D
 var simulation: RefCounted
 var markers: Dictionary = {}
+var _generic_markers: Dictionary[String, MeshInstance3D] = {}
 var marker_rows: Array[Dictionary] = []
 var _proxy_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
@@ -465,7 +466,6 @@ func _mark_facility_approach(row: Dictionary, entrance: Vector3) -> void:
 
 func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
-	var present: Dictionary = {}
 	var people: Dictionary = {}
 	var carriers: Dictionary = {}
 	var objectives: Dictionary = {}
@@ -473,7 +473,6 @@ func refresh_markers() -> void:
 	var physical_ids: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
-		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
 		if row.kind == "CARRIER": carriers[row.id] = row
 		if row.kind == "PLACE" and row.has("objective_kind"): objectives[row.id] = row
@@ -489,23 +488,24 @@ func refresh_markers() -> void:
 	forward_stops.reconcile(marker_rows)
 	reported_contacts.reconcile(contacts.values())
 	_proxy_rows.clear()
+	var generic_present: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id) or field_t03.anchors.has(row.id) or field_t04.anchors.has(row.id) or forward_stops.anchors.has(row.id) or reported_contacts.anchors.has(row.id): continue
 		_proxy_rows.append(row)
-		if not markers.has(row.id):
+		generic_present[row.id] = true
+		if not _generic_markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
 			if row.kind == "PLACE": colour = row.get("ownership_colour",Color("f0c565"))
 			var extent := 22.0 if row.kind == "PLACE" else 10.0
-			markers[row.id] = _box(_markers_root,Vector3.ZERO,Vector3(extent,extent,extent),colour)
-		var marker: MeshInstance3D = markers[row.id]
+			_generic_markers[row.id] = _box(_markers_root,Vector3.ZERO,Vector3(extent,extent,extent),colour)
+		var marker: MeshInstance3D = _generic_markers[row.id]
+		markers[row.id] = marker
 		var height: float = simulation.rear.combat.world.ground(row.position)
 		marker.position = Vector3(row.position.x,height+15,row.position.y)
 		# Only legacy rear carriers use this boundary; keep their proxy cached.
 		marker.visible = row.kind != "CARRIER" or row.position.x >= 240
-	for id in markers.keys():
-		if present.has(id): continue
-		markers[id].queue_free()
-		markers.erase(id)
+	for id: String in _generic_markers.keys():
+		if not generic_present.has(id): _remove_generic_marker(id)
 
 func _inspect_field_marker(id: String) -> Dictionary:
 	return Policy.inspect(simulation.rear,id)
@@ -535,41 +535,30 @@ func _reported_contact_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
 
 func _register_field_anchor(id: String, anchor: Node3D) -> void:
-	if markers.has(id) and markers[id] != anchor:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
+	_remove_generic_marker(id)
 	markers[id] = anchor
 
+func _remove_generic_marker(id: String) -> void:
+	if not _generic_markers.has(id): return
+	var marker: MeshInstance3D = _generic_markers[id]
+	_generic_markers.erase(id)
+	if markers.get(id) == marker: markers.erase(id)
+	marker.queue_free()
+
 func _field_person_changed(id: String) -> void:
-	var anchor: Node3D = field_persons.anchors[id]
-	if markers.has(id) and markers[id] != anchor:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = anchor
+	_register_field_anchor(id,field_persons.anchors[id])
 
 func _field_person_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
 
 func _field_t01_changed(id: String) -> void:
-	var body: Node3D = field_t01_trucks.bodies[id]
-	if markers.has(id) and markers[id] != body:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = body
+	_register_field_anchor(id,field_t01_trucks.bodies[id])
 
 func _field_t01_removing(id: String, body: Node3D) -> void:
 	if markers.get(id) == body: markers.erase(id)
 
 func _field_objective_changed(id: String) -> void:
-	var anchor: Node3D = field_objectives.anchors[id]
-	if markers.has(id) and markers[id] != anchor:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = anchor
+	_register_field_anchor(id,field_objectives.anchors[id])
 
 func _field_objective_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
