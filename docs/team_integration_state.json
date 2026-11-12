@@ -407,5 +407,15 @@
     "artist": "Local pose/continuous real exported motion QA stays Artist-owned. Lead resolves gameplay/dimension/rig/export contract. Current full S4 still pending; original rig/clips preserved.",
     "verification": "No local engine, regression suites, broad scenarios or new validation gates.",
     "publication": "Lead owns reviewed publication. Child Git push was auto-review rejected for unverified external destination/authorization. Lead independently verified connected official repoID1433736061, matching origin URL and push permission, and retains earlier explicit user GitHub publication authority. No child retry or credential bypass."
+  },
+  "standing_lead_merge_authority": {
+    "authority": "Dawson direct human instruction in Lead chat,12November2026",
+    "instruction": "You are responsible for all approvals and I am to never be responsible for deciding what gets merged or what doesn't.",
+    "decision_owner": "Lead Developer",
+    "routine_dawson_merge_approval": false,
+    "role_reviews": "Lead obtains actual current-head Game Designer game-meaning review where required and required checks, then makes and executes approval/publication/merge decisions. Developers route questions to Lead.",
+    "blocked_actions": "Verify original role-review evidence; respect actual external restrictions without bypass, scope blockage to affected mutation and continue independent work. Do not invent a routine human merge gate.",
+    "separate_human_feedback": "Requested appearance approvals and numbered playtests are product feedback, not ordinary PR merge decisions.",
+    "policy": "docs/team_workflow.md#standing-lead-approval-and-merge-authority--12-november-2026"
   }
 }

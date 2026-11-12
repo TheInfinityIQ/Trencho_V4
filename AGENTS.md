@@ -5,6 +5,7 @@
 - Godot 4.7.2 standard edition; root `project.godot`; entry scene `game/main/main.tscn`.
 - Read `docs/design_brief.md` for accepted design facts, `docs/team_workflow.md` for current ownership, and `docs/playable_delivery.md` for the active outcome. Engineering decisions remain in `docs/foundation.md`.
 - The Game Designer directs gameplay scope; the Lead Developer owns engineering assignments, integration and PR merges. Do not infer gameplay requirements from the project name.
+- Dawson explicitly delegates all PR approval and merge decisions to the Lead. Obtain the actual Game Designer review where required and satisfy required checks; the Lead decides and executes approval/publication/merge. Do not ask Dawson to approve PR submission, publication or merging, or use him as a substitute reviewer. See `docs/team_workflow.md` for the standing authority and blocked-action routing.
 - Use GDScript by default. Propose C#, GDExtension, or plugins when a concrete requirement justifies them.
 
 - Under Dawson's 12 November two-developer authorization, Lead owns logistics/shared state/entry/UI/integration; Battlefield Developer owns agreed battlefield 3D presentation in an isolated branch. See current team workflow; retired developers stay inactive.

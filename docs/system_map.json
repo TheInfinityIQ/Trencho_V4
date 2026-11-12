@@ -26,7 +26,7 @@
     ]},
     ".godot-version": {"role":"configuration","system":"project","sha256":"964bf9b089d1e1c9474f4baab1c909ee2affc1fea9464eceaf5d3b8d2ce555f4","lines":1,"purpose":"Supply .godot-version project settings or repository metadata.","functions":[
     ]},
-    "AGENTS.md": {"role":"documentation","system":"project","sha256":"67d6e884ffe4250802f0a19122dfae42b3afa4a71188163243511b0927045fdd","lines":35,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
+    "AGENTS.md": {"role":"documentation","system":"project","sha256":"505715ea47838382e5c5a645b13238ca2ef5e7ac3e370e1ab53ec5cd2e013945","lines":36,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
     ]},
     "Open Trencho (Recovery).cmd": {"role":"launcher","system":"project","sha256":"127ade169d35c784998aa717d61f124fba27a80a96f03789157bbcc1232a5040","lines":11,"purpose":"Provide a double-click Windows entry point: setlocal set \"TRENCHO_GODOT=%ProgramFiles(x86)%\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe\" if not exist \"%TRENCHO_GODOT%\" ( echo Godot….","functions":[
     ]},
@@ -1060,9 +1060,9 @@
     ]},
     "docs/team_handoff.md": {"role":"documentation","system":"docs","sha256":"3dd859fb64803ef702e7151745fb318ce1f8b7f6e33a6a42cb7f589279c4bedc","lines":31,"purpose":"Document Team transition handoff.","functions":[
     ]},
-    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"2ac07ae3fef9e1aee5bf8339231b263ff59f9f737a60c714e74540033ffd052f","lines":411,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
+    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"69b6d6bec7fb834f4fb0b95cfae9295a99fc486dfed0ab5550fffc5f94779dfa","lines":421,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
-    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"fb7704ca9d988d396658d33dd1997f79814bd462ca1da596f02b10b57656a588","lines":312,"purpose":"Document Team workflow.","functions":[
+    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"c46a97ad473c6500247d532127948ce62ecc49ae1d8f8e1dabf2f223919aa617","lines":322,"purpose":"Document Team workflow.","functions":[
     ]},
     "docs/testing.md": {"role":"documentation","system":"docs","sha256":"3cabfdb23750b6904782eedcd7039b69c6e81d45dbb0ae61cd8288d4647367f2","lines":122,"purpose":"Document Automated checks and GdUnit4 pilot.","functions":[
     ]},
