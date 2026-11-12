@@ -1,0 +1,20 @@
+{
+  "feature": "Return remaining supplier cargo",
+  "date": "2026-11-12",
+  "basis": ["warehouse_recovery_menu.md", "feature_plans/warehouse_v4.json", "diagrams/warehouse_recovery_v4.mmd"],
+  "scope": "Same present freight truck returns its original remaining aboard goods. Warehouse reload and staging are separate future increments.",
+  "acceptance": [
+    "Delivery details quote actual aboard quantities, original paid goods prices and retained transport fee; explicit confirm defaults to Keep delivery.",
+    "Confirm revalidates session, same truck and exact quote before any mutation.",
+    "Ledger atomically releases only this service's uncollected claims and reserves original aboard stock for return; foreign claims reject without partial mutation.",
+    "New unloading stops; collected loads deposit normally; uncollected onboard workers physically reverse their committed ingress corridor to the rear exit.",
+    "Existing door/ramp closure and road traffic move the same carrier out; actual exit transfers ownership of the same cargo identities and awards goods-only refund once.",
+    "Free/debug goods never generate a refund; debug delivery explicitly abandons pending return without refund.",
+    "Convoy member clears only after returned vehicle exits. No new polling, animation or local engine run."
+  ],
+  "owners": {"command_and_money": "Receiving", "return_activity": "Receiving-owned SupplierReturns RefCounted with weak owner", "stock_and_claims": "IdentityLedger", "mechanism_and_aboard_index": "SupplierFreight", "traffic": "SupplierRoad", "confirmation": "existing delivery panel"},
+  "regression_planning": ["carried stock is split from original source and must not be refunded", "reverse actually traversed ingress rather than inventing a blocked route or teleporting", "do not release aisle owned by a different worker", "stock locks and original-price receipt prevent double use or repricing", "late dialog/new session/stale quote reject", "return and ordinary completion use distinct convoy conditions", "debug cleanup cancels return claims before deposit"],
+  "verification": "Source parse plus one brief GitHub current-change return episode; no regression suite or local engine. Native UI appearance, full gameplay and FPS remain unverified.",
+  "sources": ["https://docs.godotengine.org/en/stable/classes/class_refcounted.html", "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html"],
+  "rationale": "Compose a bounded transaction/activity under the existing owner; keep physical identity and conservation in the ledger and use existing event/boundary scheduling. Weak reference avoids a reference-counted ownership cycle."
+}

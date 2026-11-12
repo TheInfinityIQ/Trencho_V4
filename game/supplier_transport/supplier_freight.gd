@@ -16,10 +16,15 @@ func _init(receiving: RefCounted) -> void:
 func register(order: Dictionary) -> void:
 	order.packet_by_stock = {}
 	order.aboard_packets = {}
+	order.source_codes = {}
 	for row: Dictionary in order.get("packet_manifest",[]):
 		order.packet_by_stock[row.stock] = row
-		order.aboard_packets[row.stock] = int(row.quantity)
-		_packet_orders[row.stock] = order
+	var service: RefCounted = _receiving_ref.get_ref()
+	for id: String in order.stock_ids:
+		var stock: Dictionary = service.ledger.inspect_entity(id,{},false)
+		order.source_codes[id] = str(stock.design_type)
+		order.aboard_packets[id] = int(stock.quantity)
+		_packet_orders[id] = order
 
 func _stock_changed(stock_id: String) -> void:
 	if not _packet_orders.has(stock_id): return
@@ -27,7 +32,7 @@ func _stock_changed(stock_id: String) -> void:
 	if service == null: return
 	var order: Dictionary = _packet_orders[stock_id]
 	var stock: Dictionary = service.ledger.inspect_entity(stock_id,{},false)
-	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != order.id:
+	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != order.id or stock.get("owner","") != service.PLAYER:
 		order.aboard_packets.erase(stock_id)
 		_packet_orders.erase(stock_id)
 	else: order.aboard_packets[stock_id] = int(stock.quantity)

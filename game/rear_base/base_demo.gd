@@ -83,6 +83,10 @@ var delivery_status: Label
 var delivery_progress: ProgressBar
 var delivery_cancel_button: Button
 var delivery_cancel_reason: Label
+var delivery_return_button: Button
+var delivery_return_reason: Label
+var _supplier_return_dialog: ConfirmationDialog
+var _supplier_return_request: Dictionary = {}
 var army_request_type: OptionButton
 var army_request_count: SpinBox
 var army_request_rows: ItemList
@@ -458,6 +462,19 @@ func _orders_panel(box: VBoxContainer) -> void:
 		if not orders.get_selected_items().is_empty(): _result(simulation.receiving.cancel_order(_order_ids[orders.get_selected_items()[0]])))
 	delivery_cancel_reason = _label(deliveries,"")
 	delivery_cancel_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	delivery_return_button = _button(deliveries,"Return remaining cargo…",_request_supplier_return)
+	delivery_return_reason = _label(deliveries,"")
+	delivery_return_reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_supplier_return_dialog = ConfirmationDialog.new()
+	_supplier_return_dialog.name = "SupplierCargoReturn"
+	_supplier_return_dialog.title = "Return remaining cargo?"
+	_supplier_return_dialog.min_size = Vector2i(600,250)
+	_supplier_return_dialog.dialog_autowrap = true
+	_supplier_return_dialog.ok_button_text = "Confirm return"
+	_supplier_return_dialog.cancel_button_text = "Keep delivery"
+	_supplier_return_dialog.confirmed.connect(_confirm_supplier_return)
+	_supplier_return_dialog.canceled.connect(_keep_supplier_delivery)
+	add_child(_supplier_return_dialog)
 	var catalogue: VBoxContainer = _section(purchase,"Raw supplies","Whole kg · price per kg")
 	var catalogue_scroll := ScrollContainer.new()
 	_purchase_catalogue_scroll = catalogue_scroll
@@ -512,6 +529,7 @@ func start_empty_field_session(refresh_rear_ui: bool = true) -> void:
 func _bind_started_session(refresh_rear_ui: bool) -> void:
 	_keep_batch_cancel()
 	_keep_construction_cancel()
+	_keep_supplier_delivery()
 	session.replace_simulation(simulation)
 	_displayed_time = -INF
 	_haul_draft_dirty = false
@@ -630,6 +648,8 @@ func _order_summary(order: Dictionary) -> String:
 func _refresh_delivery_status(receiving: Dictionary) -> void:
 	orders.visible = not receiving.orders.is_empty()
 	delivery_cancel_button.disabled = true
+	delivery_return_button.disabled = true
+	delivery_return_reason.text = "Select a stopped materials truck to return its remaining cargo."
 	delivery_cancel_reason.text = "Select a booked order. Only its first five undispatched seconds allow a full refund."
 	var selected := ""
 	if not orders.get_selected_items().is_empty(): selected = _order_ids[orders.get_selected_items()[0]]
@@ -647,7 +667,10 @@ func _refresh_delivery_status(receiving: Dictionary) -> void:
 	if current.id == selected:
 		var cancellable: bool = current.state == "Ordered" and float(receiving.time) < float(current.purchased_at)+5.0
 		delivery_cancel_button.disabled = not cancellable
-		delivery_cancel_reason.text = "Full refund available before dispatch." if cancellable else "This order has dispatched or closed; it can no longer be refunded."
+		delivery_cancel_reason.text = "Full refund available before dispatch." if cancellable else "Full-order cancellation is no longer available after dispatch."
+		var offer: Dictionary = current.get("return_info",{})
+		delivery_return_button.disabled = not bool(offer.get("eligible",false))
+		delivery_return_reason.text = str(offer.get("message",""))
 	var detail: String = _order_summary(current)
 	if current.state == "Incoming":
 		var duration: float = float(current.arrival_at)-float(current.state_entered_at)
@@ -676,6 +699,39 @@ func _refresh_delivery_status(receiving: Dictionary) -> void:
 				delivery_progress.show()
 			detail += "\n%d / %d joined the worker pool · %d disembarked" % [current.people_arrived,expected,current.people_exited]
 	delivery_status.text = detail+"\n"+str(current.blocked_reason)
+	if current.get("return_requested",false): delivery_status.text += "\n"+str(current.return_info.message)
+
+func _request_supplier_return() -> void:
+	_keep_supplier_delivery()
+	if orders.get_selected_items().is_empty(): return
+	var id: String = _order_ids[orders.get_selected_items()[0]]
+	var service: RefCounted = simulation.receiving
+	var order: Dictionary = service._find_order(id)
+	if order.is_empty(): return
+	var offer: Dictionary = service.returns.quote(order)
+	if not offer.eligible:
+		_result({"ok":false,"message":offer.message})
+		return
+	_supplier_return_request = {"session":session,"simulation":simulation,"service":service,"id":id,"fingerprint":offer.fingerprint}
+	_supplier_return_dialog.dialog_text = "Still aboard: %s.\nEstimated goods refund: %d requisition, paid only when this truck exits. Transport fee retained: %d.\n\nNew unloading stops. Workers already carrying goods finish their deposits; other workers leave the truck safely. Returned cargo leaves on this same truck." % [_named_quantities(offer.quantities),int(offer.refund),int(offer.fee)]
+	_supplier_return_dialog.popup_centered_clamped(Vector2i(650,290))
+	_supplier_return_dialog.get_cancel_button().grab_focus()
+
+func _confirm_supplier_return() -> void:
+	var request := _supplier_return_request
+	_keep_supplier_delivery()
+	if request.is_empty(): return
+	if not is_instance_valid(session) or session != request.session or simulation != request.simulation or session.simulation != request.simulation or simulation.receiving != request.service:
+		_result({"ok":false,"message":"The session changed. No cargo was returned."})
+		return
+	if orders.get_selected_items().is_empty() or _order_ids[orders.get_selected_items()[0]] != request.id:
+		_result({"ok":false,"message":"The selected delivery changed. Review it before confirming a return."})
+		return
+	_result(request.service.returns.confirm(str(request.id),str(request.fingerprint)))
+
+func _keep_supplier_delivery() -> void:
+	_supplier_return_request = {}
+	if is_instance_valid(_supplier_return_dialog): _supplier_return_dialog.hide()
 
 func _refresh_core_ui(view: Dictionary) -> void:
 	workforce_panel.refresh(view)

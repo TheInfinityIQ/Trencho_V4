@@ -1,0 +1,15 @@
+flowchart TD
+  A[Delivery details: original goods still aboard] --> B[Quote original paid prices and retained fee]
+  B --> C{Confirm same session truck and quote?}
+  C -->|Keep or stale| D[No mutation]
+  C -->|Confirm| E[Ledger atomic release uncollected claims and lock return stock]
+  E --> F[Stop new unloading admissions]
+  F --> G[Carrying workers finish real storage deposits]
+  F --> H[Uncollected workers withdraw along actual ingress corridor]
+  G --> I{No jobs or aisle users remain?}
+  H --> I
+  I --> J[Existing ramp stow and door close]
+  J --> K[Same truck drives through existing traffic routing]
+  K --> L[Actual exit: same stock identities become supplier owned]
+  L --> M[Original paid goods-only refund once]
+  M --> N[Resolve this convoy member]

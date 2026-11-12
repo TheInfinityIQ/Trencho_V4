@@ -59,6 +59,7 @@ var _storage_warning_dirty := false
 var freight: RefCounted
 var road: RefCounted
 var passengers: RefCounted
+var returns: RefCounted
 var _packing_key := ""
 var _packing_quote: Dictionary = {}
 
@@ -117,6 +118,7 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	freight_berths[0].receiving_position = receiving_position
 	personnel_position = ledger.inspect_entity("personnel").position
 	freight = Freight.new(self)
+	returns = preload("res://game/supplier_transport/supplier_returns.gd").new(self)
 	road = preload("res://game/supplier_transport/supplier_road.gd").new(self)
 	passengers = preload("res://game/supplier_transport/supplier_passengers.gd").new(self)
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
@@ -271,12 +273,14 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 		var job: Dictionary = _workers[person_id].job
 		if not job.is_empty() and pending.has(job.order_id) and not str(ledger.inspect_person_status(person_id).get("joint_carry_id","")).is_empty():
 			return _reject("JOINT_HANDOFF_REQUIRED","Finish the actual shared timber handoff before this debug delivery; nothing changed.")
+	for order: Dictionary in pending.values(): returns.abandon_for_debug(order)
 	# Release reserved source portions before transferring any remaining cargo.
 	for worker in _workers.values():
 		var job: Dictionary = worker.job
 		if job.is_empty() or not pending.has(job.order_id): continue
-		var released: Dictionary = ledger.release_claim(job.claim_id)
-		if not released.ok: return released
+		if not ledger.inspect_claim(str(job.claim_id)).get("cancelled",true):
+			var released: Dictionary = ledger.release_claim(job.claim_id)
+			if not released.ok: return released
 	for person_id in _workers:
 		var job: Dictionary = _workers[person_id].job
 		if job.is_empty() or not pending.has(job.order_id): continue
@@ -574,7 +578,7 @@ func resource_counts(code: String) -> Dictionary:
 			result.ordered += order.cargo.get(code, 0)
 		for source_id in order.stock_ids:
 			var stock := ledger.inspect_entity(source_id)
-			if stock.design_type == code:
+			if stock.design_type == code and stock.owner == PLAYER:
 				if order.state == "Incoming":
 					result.incoming += stock.quantity
 				else:
@@ -592,6 +596,7 @@ func snapshot(include_diagnostics: bool = true) -> Dictionary:
 	for order in _orders:
 		var view := order.duplicate(true)
 		view.blocked_reason = _order_blocker(order)
+		view.return_info = returns.quote(order)
 		orders.append(view)
 	return {"time": _time, "money": _money, "income": _income, "spent": _spent, "refunds": _refunds,
 		"orders": orders, "workers": _workers.duplicate(true), "walks": _walks.duplicate(true),
@@ -642,6 +647,14 @@ func _new_order(kind: String, cost: int, cargo: Dictionary, layout: Dictionary =
 		"next_at": _time + 5.0, "motion": {}}
 	order.packet_manifest = layout.get("packages",[]).duplicate(true)
 	order.rack_manifest = layout.get("racks",[]).duplicate(true)
+	# Preserve the purchase receipt; returns never reprice or refund free/debug goods.
+	order.paid_prices = {}
+	var goods_cost := 0
+	if kind == "Freight":
+		for code: String in cargo: goods_cost += int(cargo[code])*int(Catalog.MATERIALS.get(code,{}).get("price",0))
+		if cost > 0 and cost >= goods_cost:
+			for code: String in cargo: order.paid_prices[code] = int(Catalog.MATERIALS.get(code,{}).get("price",0))
+	order.transport_paid = maxi(0,cost-goods_cost) if not order.paid_prices.is_empty() else 0
 	_orders.append(order)
 	return order
 
@@ -675,9 +688,14 @@ func _pump() -> void:
 				"Departing":
 					order.motion = {}
 					order.next_at = INF
+					_must(ledger.move_entity(order.id, "supplier-transit", _exit(order)))
+					var returned: Dictionary = returns.complete(order)
+					if not returned.ok:
+						order.return_error = str(returned.message)
+						supplier_state_changed.emit()
+						continue # Do not release admission or pay for a failed custody handover.
 					order.admission = false
 					_set_state(order, "Complete")
-					_must(ledger.move_entity(order.id, "supplier-transit", _exit(order)))
 					_event("Supplier vehicle physically cleared; its one admission released", order.id)
 				_:
 					continue
@@ -704,7 +722,7 @@ func _pump() -> void:
 				order.slot = _slot_for(order.kind)
 				_start_vehicle_motion(order, "Berthing", _berth(order))
 				again = true
-			if order.state == "Berthed" and _freight_finished(order):
+			if order.state == "Berthed" and (_freight_finished(order) or returns.ready(order)):
 				if order.packet_manifest.is_empty() or order.get("mechanism","") == "closed":
 					_start_vehicle_motion(order, "Departing", _exit(order))
 					again = true
@@ -731,12 +749,12 @@ func _dispatch(order: Dictionary) -> void:
 				_must(ledger.add_stock(stock_id,str(packet.code),int(packet.quantity),1.0,str(order.id),PLAYER))
 				packet.stock = stock_id
 				order.stock_ids.append(stock_id)
-			freight.register(order)
 		else:
 			for code in order.cargo:
 				var stock_id: String = order.id + "-" + code
 				_must(ledger.add_stock(stock_id, code, order.cargo[code], 1.0, order.id, PLAYER))
 				order.stock_ids.append(stock_id)
+		freight.register(order)
 	else:
 		order.aboard_people = {}
 		for index in range(order.expected_people):
@@ -808,7 +826,7 @@ func start_shared_unload(id: String) -> bool:
 
 func _start_worker_job(id: String) -> bool:
 	for order in _orders:
-		if order.kind != "Freight" or order.state != "Berthed": continue
+		if order.kind != "Freight" or order.state != "Berthed" or order.get("return_requested",false): continue
 		if not order.packet_manifest.is_empty() and not freight.can_unload(order): continue
 		var slot: int = order.slot
 		var berth: Dictionary = freight_berths[slot]
@@ -890,7 +908,7 @@ func _finish_worker_phase(id: String) -> void:
 			_approach_truck(id,job)
 		"Truck egress", "Truck return":
 			var order: Dictionary = _find_order(str(job.order_id))
-			ledger.register_handling_point(str(order.id),id,Freight.to_world(order,Vector3(0,0,Freight.REAR_Z)))
+			ledger.register_handling_point(str(order.id),id,job.get("return_exit_point",Freight.to_world(order,Vector3(0,0,Freight.REAR_Z))))
 			_must(ledger.release_supplier_access(id,str(order.id)))
 			ledger.release_handling_points(id,str(order.id))
 			freight.release_aisle(order)
@@ -1119,6 +1137,7 @@ func _freight_finished(order: Dictionary) -> bool:
 
 
 func _order_blocker(order: Dictionary) -> String:
+	if order.get("return_requested",false): return str(returns.quote(order).message)
 	match order.state:
 		"Ordered": return "Dispatch at five seconds; full refund is still available"
 		"Incoming": return "Supplier still travelling; local stock/people unavailable"
@@ -1169,6 +1188,7 @@ func _set_state(order: Dictionary, state: String) -> void:
 func _update_convoy_gate(order: Dictionary) -> void:
 	if not development_convoys or not _convoy_pending.has(order.id): return
 	var handed_over: bool = _freight_finished(order) if order.kind == "Freight" else int(order.people_arrived) == int(order.expected_people)
+	if order.get("return_requested",false): handed_over = bool(order.get("return_completed",false))
 	if order.state != "Cancelled" and not (handed_over and order.get("departure_started",false)): return
 	_convoy_pending.erase(order.id)
 	if _convoy_pending.is_empty(): convoy_changed.emit()

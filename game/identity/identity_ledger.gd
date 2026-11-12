@@ -1260,6 +1260,85 @@ func request_stock(id: String, source_id: String, quantity: int, claimant: Strin
 	return _ok("Claim recorded; any unfilled demand remains visible.", id)
 
 
+func reserve_supplier_return(carrier_id: String, source_ids: Array, release_claims: Dictionary, owner: String) -> Dictionary:
+	# Validate the whole withdrawal before cancelling any worker reservation.
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.owner != "supplier":
+		return _reject("INVALID_SUPPLIER", "Return requires the original supplier carrier.")
+	var released_by_source := {}
+	for id: String in release_claims:
+		var claim: Records.Claim = _claims.get(id)
+		if claim == null or claim.claimant != str(release_claims[id]) or claim.purpose != "Physical Receiving unload" or claim.source_id not in source_ids:
+			return _reject("INVALID_RETURN_CLAIM", "Only this delivery's actual unloading claims may be withdrawn.")
+		released_by_source[claim.source_id] = int(released_by_source.get(claim.source_id,0))+claim.reserved
+	var portions: Array[Dictionary] = []
+	var seen := {}
+	for id: String in source_ids:
+		var source := _stock(id)
+		if seen.has(id) or source == null or source.holder_id != carrier_id or source.origin_id != id or source.owner != owner or _is_active_carry(id):
+			return _reject("INVALID_RETURN_SOURCE", "Only original player-owned goods still aboard this truck can return.")
+		seen[id] = true
+		if reserved(id)-int(released_by_source.get(id,0)) != 0:
+			return _reject("RETURN_STOCK_COMMITTED", "Another activity has reserved the cargo. Nothing was changed.")
+		if source.quantity <= 0: continue
+		var claim_id := "supplier-return-"+id
+		if not _free_id(claim_id): return _reject("RETURN_ALREADY_RESERVED", "This return has already been reserved.")
+		portions.append({"id":id,"claim":claim_id,"quantity":source.quantity,"type":source.design_type})
+	if portions.is_empty(): return _reject("NO_RETURN_CARGO", "No original goods remain aboard.")
+	for id: String in release_claims:
+		_claims[id].reserved = 0
+		_claims[id].cancelled = true
+	var ids: Array[String] = []
+	for row: Dictionary in portions:
+		var claim := Records.Claim.new()
+		claim.id = row.claim
+		claim.source_id = row.id
+		claim.claimant = carrier_id
+		claim.purpose = "Supplier return"
+		claim.requested = row.quantity
+		claim.reserved = row.quantity
+		claim.created_at = _time
+		_claims[claim.id] = claim
+		ids.append(claim.id)
+	_event("Original aboard cargo atomically reserved for supplier return",carrier_id)
+	return {"ok":true,"claims":ids,"receipt":portions,"message":"Remaining aboard cargo reserved; carried goods stay with their workers."}
+
+
+func return_supplier_cargo(carrier_id: String, claim_ids: Array, exit_point: Vector2, owner: String) -> Dictionary:
+	var carrier: Records.Entity = _entities.get(carrier_id)
+	if carrier == null or carrier.kind != Records.Kind.CARRIER or carrier.owner != "supplier" or carrier.holder_id != "supplier-transit" or not exit_point.is_finite() or carrier.position.distance_to(exit_point) > 0.001:
+		return _reject("SUPPLIER_EXIT_REQUIRED", "The actual truck must reach its supplier exit before handover.")
+	for entity: Records.Entity in _entities.values():
+		var person := entity as Records.Person
+		if person != null and person.supplier_access_id == carrier_id:
+			return _reject("SUPPLIER_STILL_OCCUPIED", "A worker still has physical access to this truck.")
+	var receipt: Array[Dictionary] = []
+	var seen := {}
+	for id: String in claim_ids:
+		var claim: Records.Claim = _claims.get(id)
+		if seen.has(id) or claim == null or claim.cancelled or claim.claimant != carrier_id or claim.purpose != "Supplier return" or claim.reserved <= 0:
+			return _reject("INVALID_RETURN_CLAIM", "Return needs each unique active cargo claim.")
+		seen[id] = true
+		var source := _stock(claim.source_id)
+		if source == null or source.owner != owner or source.holder_id != carrier_id or source.origin_id != source.id or source.quantity != claim.reserved or reserved(source.id) != claim.reserved or _is_active_carry(source.id):
+			return _reject("RETURN_CARGO_CHANGED", "Reserved original cargo must remain aboard until actual exit.")
+		receipt.append({"id":source.id,"claim":id,"quantity":source.quantity,"type":source.design_type})
+	if receipt.is_empty(): return _reject("NO_RETURN_CARGO", "No reserved return cargo remains.")
+	# Identity and conservation remain intact: ownership changes, nothing is consumed.
+	for row: Dictionary in receipt:
+		var source := _stock(str(row.id))
+		source.owner = carrier.owner
+		source.controller = carrier.controller
+		source.state = "Returned to supplier"
+		source.state_entered_at = _time
+		_claims[row.claim].fulfilled += int(row.quantity)
+		_claims[row.claim].reserved = 0
+		_claims[row.claim].cancelled = true
+	for row: Dictionary in receipt: stock_changed.emit(str(row.id))
+	_event("Same cargo identities returned at actual supplier exit",carrier_id)
+	return {"ok":true,"receipt":receipt,"message":"Original remaining goods returned at the actual exit."}
+
+
 func release_claim(id: String) -> Dictionary:
 	if not _claims.has(id) or _claims[id].cancelled:
 		return _reject("NO_ACTIVE_CLAIM", "There is no active claim to release.")
