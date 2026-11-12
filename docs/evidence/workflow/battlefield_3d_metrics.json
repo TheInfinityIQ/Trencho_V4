@@ -114,5 +114,13 @@
     "repair_seconds": null,
     "repair_token_usage": null,
     "qualification": "No recorded repair boundaries; no invented values or production-regression attribution."
+  },
+  "facing_correction": {
+    "source_revision": "47bfecd",
+    "kind": "feature_defect",
+    "summary": "Source review found initial marker rows omit facing; actual admitted carrier is now inspected once on reconciliation and missing facing is rejected. Scoped arranged 37-degree opening assertion passed on GitHub.",
+    "repair_seconds": null,
+    "repair_token_usage": null,
+    "qualification": "Actual feature source defect identified before adoption, not observed production regression; repair timing/tokens were not recorded."
   }
 }

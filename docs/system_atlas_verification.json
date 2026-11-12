@@ -1,5 +1,5 @@
 {
-  "scope": "Battlefield observer source9ab4e8d, engine/current-action checks passed atbbd57d0. Isolated candidate based on maina2d182f; source/diagram success is not full-game/native/FPS acceptance.",
+  "scope": "Battlefield observer source and scoped facing/report checks passed at 47bfecd. Isolated candidate based on main a2d182f; source/diagram success is not full-game/native/FPS acceptance.",
   "checks": {
     "generation": "Current system_map with30 explicit reviewed function purposes, system_atlas and UI diagram regenerated without game execution.",
     "game_script_inventory": {
@@ -19,7 +19,7 @@
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Actual candidate VSCode hint points at isolated battlefield working copy; source-code checkpoint9ab4e8d. No external editor or browser interaction tested."
+    "links": "Actual candidate VSCode hint points at isolated battlefield working copy; reviewed source checkpoint 47bfecd. No external editor/browser interaction tested."
   },
   "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [

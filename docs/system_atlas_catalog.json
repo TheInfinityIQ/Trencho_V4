@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "9ab4e8d",
+  "reviewed_baseline": "47bfecd",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -4685,7 +4685,7 @@
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
     "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
     "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
-    "game/battlefield/presentation_3d/field_t03.gd": "94d69cd942ca8b328ec705d1857018283cbb5cefa084e82ace8db5020aacfa83",
+    "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
     "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4"
   }
 }
