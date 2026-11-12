@@ -25,8 +25,11 @@ func reconcile(permitted: Array) -> void:
 	for row: Dictionary in permitted:
 		if not _eligible(row): continue
 		var id := str(row.id)
+		if not _inspect.is_valid(): continue
+		var current: Dictionary = _inspect.call(id)
+		if not _eligible(current) or str(current.get("id", "")) != id or not current.has("facing_degrees"): continue
 		present[id] = true
-		_refresh(row)
+		_refresh(current)
 	for id: String in anchors.keys():
 		if not present.has(id): _remove(id)
 
@@ -36,7 +39,7 @@ func _eligible(row: Dictionary) -> bool:
 func _refresh(row: Dictionary) -> void:
 	var id := str(row.id)
 	var at: Vector2 = row.get("position", Vector2.INF)
-	var facing := float(row.get("facing_degrees", 0.0))
+	var facing := float(row.get("facing_degrees", NAN))
 	if not at.is_finite() or not is_finite(facing) or not _ground.is_valid():
 		if anchors.has(id): _remove(id)
 		return
