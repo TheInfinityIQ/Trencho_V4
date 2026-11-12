@@ -1,0 +1,14 @@
+{
+  "source_revision": "f0f4ad87f89cf96e234487ec0a66a5ae5fd208fb",
+  "workflow_run": 43325446452,
+  "artifact_id": 13991204818,
+  "artifact_sha256": "ea2af41a6202965ab1dc6b6a111b98b546a0e86c04acfaf67011e4bd23e90e69",
+  "demonstration_sha256": "f8b7ad85f457dc7958e994224ec6b8d2d7183d3ca3bba934e8dc46535c28272a",
+  "fixture": "Actual normal Farmland world paused at time zero, with an explicitly synthetic permitted report followed by an explicitly arranged same-ID actual T04.",
+  "result": "PASS: the report owner removes its own anchor after the physical carrier takes precedence, and the physical marker survives deferred cleanup.",
+  "limitations": [
+    "Generic proxy cleanup and the person, T01 and objective callback paths were source-reviewed only.",
+    "No native input, rendered appearance, full lifecycle or FPS acceptance is established.",
+    "This source-derived conditional defect is not a claimed ordinary-player reproduction."
+  ]
+}

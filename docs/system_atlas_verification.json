@@ -1,7 +1,7 @@
 {
-  "scope": "Selected engagement reviewed at 8d76560; one actual arranged five-round issue passed GitHub run 43269292209. Movement, reload, full encounter, native input and FPS are unverified.",
+  "scope": "Battlefield marker lifetime repair at f0f4ad8; GitHub run 43325446452 passed one explicitly arranged same-ID report-to-T04 transition.",
   "checks": {
-    "generation": "System map with four reviewed selected-engagement function purposes and source-validated atlas regenerated without local engine execution.",
+    "generation": "System map with six reviewed marker lifetime function purposes and source-validated atlas regenerated without local engine execution.",
     "game_script_inventory": {
       "total": 237,
       "non_test": 143,
@@ -9,24 +9,24 @@
     },
     "atlas": {
       "systems": 50,
-      "functions_in_inventory": 3615,
+      "functions_in_inventory": 3616,
       "diagram_function_links": 305
     },
     "function_map": {
-      "files": 1196,
-      "functions": 3838,
-      "named": 3475,
+      "files": 1200,
+      "functions": 3839,
+      "named": 3476,
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Workspace hint points to isolated battlefield-selected-engagement-worktree; reviewed source checkpoint 8d76560. No external editor/browser interaction tested."
+    "links": "Workspace hint points to isolated battlefield-marker-lifetime-worktree; reviewed source checkpoint f0f4ad8."
   },
-  "browser_preview": "Blocked: the browser tool URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
+  "browser_preview": "Not performed.",
   "unverified": [
-    "Movement and reload paths, rendered appearance and native input were not exercised.",
-    "No full encounter or FPS observation.",
+    "Generic proxy cleanup and the person, T01 and objective callbacks were source-reviewed only.",
+    "No native input, rendered appearance, full lifecycle or FPS acceptance.",
     "No local Godot or regression suite.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/selected_engagement_current_change.json"
+  "runtime_evidence": "evidence/battlefield_3d/marker_lifetime_current_change.json"
 }
