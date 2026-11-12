@@ -51,7 +51,7 @@
     }
   ],
   "current_work": "Approved passenger v02 is integrated and has scoped native/hierarchy receipts. Lead continues the materials-to-warehouse block in draft PR146; Artist resumes the accepted two-worker timber layout and separate reachable shelf versions. No main adoption or full-loop/FPS acceptance is claimed.",
-  "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. New animation authoring remains paused outside explicitly resumed supplier vehicles, the approved item-hauling layout and the bounded Director-led art pilot; see docs/art_workflow_pilot.md. Numbered human-playtest and appearance-approval limits remain separate. Item-hauling pause was subsequently lifted for the approved2m/50kg/~1.3m carrying layout; see supplier_transport_candidate for the bounded resumption.",
+  "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. Animation authoring remains paused outside explicitly resumed supplier vehicles and the approved2m/50kg/~1.3m item-hauling layout. The bounded Director pilot changes delegation only: every trial must use actual already-authorized ready work, and it does not resume unrelated paused animation scope. Numbered human-playtest and appearance approvals remain separate; see docs/art_workflow_pilot.md.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
     "branch": "main",
@@ -173,7 +173,7 @@
       "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
-    "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs, with actual Designer review and required checks. No blanket serial or small-commit gate, extra standing roles or retired-developer reactivation. Delegation is limited to the on-demand fixed-Luna asset scout and bounded Director-led art pilot under current authority.",
+    "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs with actual Designer review and required checks. The sole additional programmer is the explicitly authorized Battlefield Developer under the current two-developer boundary; retired developers stay inactive. Art delegation is limited to the bounded Director pilot and on-demand fixed-Luna scout. No blanket serial/small-commit gate, extra standing role or unrelated animation resumption is introduced.",
     "reviewed_prs": [
       {
         "pr": 93,
@@ -618,7 +618,7 @@
     "workers": "Maximum3 short-lived independent ready assignments; explicit fixed Luna/Terra dispatch; no recursive delegation or standing chats",
     "existing_models": "Keep current Director/Lead/Developer model choices",
     "preserve": "In-flight S4, approved concepts/assets, pauses, Steam/resource/verification restrictions and separate live files/processes",
-    "readiness": "Assignments under review; no dispatch or worker quality/cost result claimed by this policy",
+    "readiness": "Policy authorization only; operational dispatch/results stay with Director. No final art, integration or quality/cost conclusion is claimed here.",
     "owner": "Director briefs/results/internal review; Lead policy/engineering/integration",
     "comparison": "Different tasks confound model/workflow cost; record actual scope, effort/corrections/Director overhead and available tokens; unknown cost remains unknown",
     "policy": "docs/art_workflow_pilot.md"

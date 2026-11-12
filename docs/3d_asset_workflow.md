@@ -1,5 +1,7 @@
 # AI-assisted 3D asset workflow
 
+The [bounded Director-led pilot](art_workflow_pilot.md), authorized12November, changes delegation only: Lead art coordination uses the existing Director, who may use the three scoped workers. Existing concepts/assets, in-flight S4 and animation pauses stay in force; a trial must be actual already-authorized ready work. This exception does not reopen unrelated animation or acquisition scope.
+
 Updated 10 November 2026 under Dawson's explicit request in Workflow Master
 chat `01a1b3e9-a21c-7e62-855a-8d369f305b83`, human turn
 `01a1c6f0-38b2-79f3-93b7-54aabbd090c5`, verified by Lead readback.

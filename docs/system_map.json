@@ -56,7 +56,7 @@
     ]},
     "docs/.gdignore": {"role":"configuration","system":"docs","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","lines":0,"purpose":"Supply .gdignore project settings or repository metadata.","functions":[
     ]},
-    "docs/3d_asset_workflow.md": {"role":"documentation","system":"docs","sha256":"ed1d4f1c1b2251f74a0a19cd7e06e657aa63bfed9a0a57f769af3032ce58ec54","lines":257,"purpose":"Document AI-assisted 3D asset workflow.","functions":[
+    "docs/3d_asset_workflow.md": {"role":"documentation","system":"docs","sha256":"52b2a4cf021a894b07cac26b74df89b4ff36f40988abc9904771bee9e6c77c15","lines":259,"purpose":"Document AI-assisted 3D asset workflow.","functions":[
     ]},
     "docs/3d_construction_commands.md": {"role":"documentation","system":"docs","sha256":"be1f91d9bdac5d2d89cf08ea1699941d51fddb4f8a3d675306bfa1033a5de1b5","lines":76,"purpose":"Document 3D-03A: actual rear construction commands.","functions":[
     ]},
@@ -1188,7 +1188,7 @@
     ]},
     "docs/routes_fuel_load.md": {"role":"documentation","system":"docs","sha256":"8071bfd9ab0b416f1e8086620980e35841310873d18ff3777108d774ad965c3b","lines":13,"purpose":"Document G13 measured routes, fuel and gross load.","functions":[
     ]},
-    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"64537ec2f6d42aebf9ba4ba153834665ea845d229f44179755d954c4944a2986","lines":490,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
+    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"3ef134f1e2373e38056b8ee1a31949bde3f7e5323b5f2d3e5c798e7dddb7b195","lines":538,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
     ]},
     "docs/supplier_road.md": {"role":"documentation","system":"docs","sha256":"2e2f5562465fd1b507c33073a2cabfe6fa906498fa694e4b7b9ff8207668ee1e","lines":38,"purpose":"Document Supplier road ownership.","functions":[
     ]},
@@ -1206,7 +1206,7 @@
     ]},
     "docs/system_atlas_plan.md": {"role":"documentation","system":"docs","sha256":"b010a1c2a960ac7e6215744dab548c87e80b6d5b845d80e914d71462ee3d31af","lines":26,"purpose":"Document Current implementation atlas contract.","functions":[
     ]},
-    "docs/system_atlas_verification.json": {"role":"data","system":"docs","sha256":"895ef713c9392badf62f7ca36afb2ee5a77ecc298ff430c68d5a81fd06ae5d9b","lines":30,"purpose":"Supply structured settings, dependency pins or catalogue data for system atlas verification.","functions":[
+    "docs/system_atlas_verification.json": {"role":"data","system":"docs","sha256":"cafbedd680d92ef08951ce3e695986c8d45f4896a0d5e49887ade547796e42ac","lines":36,"purpose":"Supply structured settings, dependency pins or catalogue data for system atlas verification.","functions":[
     ]},
     "docs/system_map.json": {"role":"generated_map","system":"docs","purpose":"Store this generated file inventory, per-function purpose/facts and static system connections.","functions":[
     ]},
@@ -1216,7 +1216,7 @@
     ]},
     "docs/team_handoff.md": {"role":"documentation","system":"docs","sha256":"e98c4fbb9049603515c75f117994ac181461208d656380e9018c47ac24a1e67c","lines":92,"purpose":"Document Team transition handoff.","functions":[
     ]},
-    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"a9e3f289eeac18e10bc19cb6957452610da9484f1553b96285141c432a72a195","lines":626,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
+    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"625bbcf3712b2939e15fec79b41836b5720250ceb5b5efd9d0651abc75b2edbc","lines":626,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
     "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"b2c55ab7c5a53401cde35911dcc1d043c4542f8e29b5b499b73005d2f3aa9866","lines":413,"purpose":"Document Team workflow.","functions":[
     ]},

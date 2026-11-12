@@ -449,7 +449,7 @@
   "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
   "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment.",
   "s4_b_control_lever_study": {
-    "stage": "Lead-authorized versioned local geometry/contact study, not final art/export/runtime acceptance",
+    "stage": "Original upward lever retained as rejected operator-fit study/history. Active authorized study is clocked_revision; no final art/export/runtime acceptance.",
     "reason": "Actual LeftHandIndex1/2 crossed the parked control post even after39mm supported retreat; control placement is brittle, not proof no human pose exists. Move grip inboard rather than contort worker.",
     "proposal": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_worker_operation_v05/b_control_proposal_v01/proposal.json",
     "pivot_godot_m": [
@@ -485,6 +485,54 @@
     "analytical_only": "Declared bounds fit existing cage with1.5mm minimumZmargin; nominal17.5mm remaining post depth is not actual mesh/sweep/structural proof.",
     "unchanged": "cage,cargo/M05/support/capacity,originalrig/sevenclips,approved8s lift/reverse,manual actual worker service and custody ownership",
     "acceptance": "Actual complete assembly/lever/post sweep, worker reach/palm/finger/continuous opposite-hand support/feet,cargo/truck/neighbors; then paced full source/export readback and visibly complete normal-speed review. Candidate may compose after passing without another routine permission round.",
-    "scope": "No new gameplay resource cost,player button,forced timing or partial human approval gate"
+    "scope": "No new gameplay resource cost,player button,forced timing or partial human approval gate",
+    "clocked_revision": {
+      "stage": "Lead-authorized clocked v02 geometry/operator study; not adopted final art or runtime",
+      "reason": "Upward lever passed geometry/9controlposes but intersects actual free-hand transfer; lower grip orientation addresses the obstruction without contorting operator. Failed endpoint/interpolation routes remain rejected.",
+      "decision_source": "Artist b_control_proposal_v02/decision.md reviewed by Lead; direct Lead authorization recorded in Director chat",
+      "pivot_godot_m": [
+        -0.264,
+        1.15,
+        -0.3375
+      ],
+      "native_x_travel_degrees": [
+        0,
+        45
+      ],
+      "released_grip_centre_m": [
+        -0.264,
+        1.15,
+        -0.2925
+      ],
+      "locked_grip_centre_m": [
+        -0.264,
+        1.11818,
+        -0.30568
+      ],
+      "proposed_bounds_m": {
+        "min": [
+          -0.265,
+          1.10918,
+          -0.3485
+        ],
+        "max": [
+          -0.254,
+          1.161,
+          -0.2835
+        ]
+      },
+      "unchanged": "45mm lever,18mm face2mm thick,frontX-.265;shaftbore/rear reinforcement/positivepins; cage/cargo/M05/support/capacity/rig/sevenclips/approved8s lift+reverse/truck",
+      "relief": "Rebuild original post, REPLACE priorquadrantcut with newly oriented sameR18mm/depth2.5mm relief. Never combinecuts or silentlyenlarge.",
+      "gates": "Actualwholelever/poststroke plus continuousoperatorroute/palm/contact/oppositehandsupport/feet/cargo/truck/neighbors before composition. Analyticalbounds/isolatedposes are not actualroute proof. If gates pass proceed fullpacedsource/export/video without another permissionround.",
+      "prior_upward_study": "Retain geometry pass as history; rejected for continuousoperator fit, not integrated."
+    },
+    "current_revision": "clocked_revision"
+  },
+  "s4_service_pacing": {
+    "authority": "Game Designer guidance12November2026; Lead timing/integration responsibility",
+    "status": "No fixed totalservice duration approved; diagnostic76/121.4s are not forced gameplay delays.",
+    "rules": "Preserve approved8s lift/reverse unless explicitly revised; no blanket speedup,teleport or skipped support. Diagnostic sample density/dwell is not gameplay work. Keep valid parkedhands-clear state across actual lowerhandling; do not add diagnostic hold on top or replay fullopenclose perpackage.",
+    "handoff": "Artist supplies exact openready/parkedlockedhandsclear/serviceclear/return/closedlocked/gripstowed phasebounds and actualsource/export durations. Lead owns actorpaths,cargo custody and timing; no animation callback grants stock.",
+    "acceptance": "Practical pacing and natural fullmotion need review; source contact/joint statistics do not establish appearance or fullgame acceptance."
   }
 }
