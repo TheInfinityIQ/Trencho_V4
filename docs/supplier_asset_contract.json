@@ -446,5 +446,6 @@
     "diagram": "diagrams/timber_shoulder_carry.mmd",
     "receipt": "evidence/supplier_transport/timber_shoulder_layout_manifest_v01.json"
   },
-  "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json"
+  "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
+  "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment."
 }

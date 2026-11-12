@@ -28,7 +28,7 @@
     ]},
     ".godot-version": {"role":"configuration","system":"project","sha256":"964bf9b089d1e1c9474f4baab1c909ee2affc1fea9464eceaf5d3b8d2ce555f4","lines":1,"purpose":"Supply .godot-version project settings or repository metadata.","functions":[
     ]},
-    "AGENTS.md": {"role":"documentation","system":"project","sha256":"e697662fab7ec270ecb1019d51e8daada6471f7045c8b0df363e3000f81aabac","lines":34,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
+    "AGENTS.md": {"role":"documentation","system":"project","sha256":"6ca5fb4128840303526d397aa2aa19cdd43f8193ac45d4574773dfcda4b9a663","lines":35,"purpose":"Require future code changes to refresh and review this system map before reporting completion.","functions":[
     ]},
     "Open Trencho (Recovery).cmd": {"role":"launcher","system":"project","sha256":"127ade169d35c784998aa717d61f124fba27a80a96f03789157bbcc1232a5040","lines":11,"purpose":"Provide a double-click Windows entry point: setlocal set \"TRENCHO_GODOT=%ProgramFiles(x86)%\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe\" if not exist \"%TRENCHO_GODOT%\" ( echo Godot….","functions":[
     ]},
@@ -162,7 +162,7 @@
     ]},
     "docs/deferred_architecture.json": {"role":"data","system":"docs","sha256":"cd5680f9a7b5b4409ba1c26789b5958544206b2b8242af4153056f952a3b72f9","lines":38,"purpose":"Supply structured settings, dependency pins or catalogue data for deferred architecture.","functions":[
     ]},
-    "docs/design_brief.md": {"role":"documentation","system":"docs","sha256":"ea329d279b7251f18e5c8d4ec2a184aaec9730ecd773fffe3820464a6b93b9fb","lines":96,"purpose":"Document Design brief.","functions":[
+    "docs/design_brief.md": {"role":"documentation","system":"docs","sha256":"5c792d60a723bd12ddf6edff93554c36211d11e397efc6b8692a623cd806c33b","lines":96,"purpose":"Document Design brief.","functions":[
     ]},
     "docs/design_decisions.md": {"role":"documentation","system":"docs","sha256":"cd65ac96e31cc15276e0279e02b1158fe808955dea53f3fd239ed83c969b175e","lines":68,"purpose":"Document Design decisions and readiness gates.","functions":[
     ]},
@@ -836,7 +836,7 @@
     ]},
     "docs/evidence/supplier_transport/s4_operator_motion_rejection_v03.json": {"role":"data","system":"docs","sha256":"4b988f9b97c927792d01d1bbfab9d4b37cb04fe5e1616afcbcb5d2de9a83bcde","lines":73,"purpose":"Supply structured settings, dependency pins or catalogue data for s4 operator motion rejection v03.","functions":[
     ]},
-    "docs/evidence/supplier_transport/s4_parked_grip_retention_decision.json": {"role":"data","system":"docs","sha256":"97cd9cc456fc4be31d4612d389a77b2d93b53b53ef0f44bea7a4504faee98240","lines":97,"purpose":"Supply structured settings, dependency pins or catalogue data for s4 parked grip retention decision.","functions":[
+    "docs/evidence/supplier_transport/s4_parked_grip_retention_decision.json": {"role":"data","system":"docs","sha256":"5f9442cde640a04ea0c0c5007ef18715cccb046bbf6f9ddd1b1f1aae10341206","lines":147,"purpose":"Supply structured settings, dependency pins or catalogue data for s4 parked grip retention decision.","functions":[
     ]},
     "docs/evidence/supplier_transport/s4_service_grip_mechanical_v04.json": {"role":"data","system":"docs","sha256":"1272026c2b3401ec4b01d104a7f607589aaff716cef7f309685d39b4f39e132f","lines":1400,"purpose":"Supply structured settings, dependency pins or catalogue data for s4 service grip mechanical v04.","functions":[
     ]},
@@ -1134,7 +1134,7 @@
     ]},
     "docs/routes_fuel_load.md": {"role":"documentation","system":"docs","sha256":"8071bfd9ab0b416f1e8086620980e35841310873d18ff3777108d774ad965c3b","lines":13,"purpose":"Document G13 measured routes, fuel and gross load.","functions":[
     ]},
-    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"cb328718420787ce9e789d1d43ac01156f24466c8bd674512b35697f302a01d6","lines":450,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
+    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"aab6be9031f0ffb00e103d10ec6dea6fcc1fe0809a6f1584699b87dc702139c6","lines":451,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
     ]},
     "docs/supplier_road.md": {"role":"documentation","system":"docs","sha256":"2e2f5562465fd1b507c33073a2cabfe6fa906498fa694e4b7b9ff8207668ee1e","lines":38,"purpose":"Document Supplier road ownership.","functions":[
     ]},
@@ -1162,9 +1162,9 @@
     ]},
     "docs/team_handoff.md": {"role":"documentation","system":"docs","sha256":"e98c4fbb9049603515c75f117994ac181461208d656380e9018c47ac24a1e67c","lines":92,"purpose":"Document Team transition handoff.","functions":[
     ]},
-    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"666db9f6f927934852c72b91a542d94fd69937edbd011436463aa4d203eca29d","lines":554,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
+    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"1e8b32a15b400d1c978dd740b4435d82481b1b763f20a8c37261747af7d49cd1","lines":599,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
-    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"e71d9ce77fad5d76da8c92209520becc6ca768c70879f4d108e49c3e2f13b789","lines":359,"purpose":"Document Team workflow.","functions":[
+    "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"a4bed056ee920f6d00c9d07fae7f58e5e6b73ead171debe503330d17e16100c0","lines":398,"purpose":"Document Team workflow.","functions":[
     ]},
     "docs/testing.md": {"role":"documentation","system":"docs","sha256":"3cabfdb23750b6904782eedcd7039b69c6e81d45dbb0ae61cd8288d4647367f2","lines":122,"purpose":"Document Automated checks and GdUnit4 pilot.","functions":[
     ]},

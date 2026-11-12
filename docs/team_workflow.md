@@ -1,6 +1,44 @@
 # Team workflow
 
-## Current ownership and coordination — 10 November 2026
+## Two developers and shared interfaces —12November2026
+
+Dawson explicitly authorized a battlefield developer in Workflow Master
+`01a1b3e9-a21c-7e62-855a-8d369f305b83`, human turn
+`01a1d059-1b9c-7070-91a2-e8e45983c141`, verified directly by Lead.
+This supersedes the sole-programmer rule only for this two-developer arrangement.
+
+- Lead `01a199a0-f08e-7f23-947f-62655a9ed233` owns logistics, shared authoritative
+  state/interfaces, entry/session/UI adapters, global maps/team docs and final integration.
+- Battlefield Developer `01a1d05a-1647-7923-ab40-ed05fc0d2498` owns new
+  `game/battlefield/presentation_3d/` and agreed battlefield-only
+  `game/preview_3d/field_*` plus bounded feature plans/diagrams/evidence.
+  Existing3D presentation is extended, not replaced by a duplicate simulation.
+- Use separate working copies/branches. Human root stays on main with its dirty
+  work protected. Lead supplier copy is `logs/supplier-transport-worktree` on
+  `codex/supplier-transport-loop`; proposed battlefield copy is
+  `logs/battlefield-presentation-worktree` on `codex/battlefield-3d-presentation`.
+  Do not switch/reset/stash the shared human checkout or stage another owner's files.
+- Both views consume the existing Ledger/entity IDs, ownership, observations and
+  supply handovers. Reuse current timing owners and shared pause/speed semantics;
+  no duplicate clock, mirror inventory, replacement people or forced outcome.
+  Both areas continue applicable hidden progression. This is not a timing overhaul.
+- Changed shared interfaces go to Lead before dependent edits. Lead may authorize
+  bounded battlefield-only adapter changes in `world_presenter.gd` on the isolated
+  battlefield branch, retaining technical review/ownership and protecting all rear,
+  entry, session, timing and inspection semantics. Battlefield work
+  targets main independently of pending logistics art. Lead technical review,
+  actual exact-head Designer approval and required current-change checks govern merge.
+  Existing no-local-engine/no-regression-suite rules are unchanged.
+- Artist owns local pose refinement, anatomy, palm/finger support, load path,
+  stable feet, continuous contact/release and actual source/export motion review.
+  Collision-free isolated poses or joint-limit numbers do not establish believable
+  movement. Gameplay/dimension/rig/export-contract changes go to Lead; no new
+  animation scope or model changes are authorized by this team revision.
+- Designer keeps gameplay authority. UI remains Lead-owned. Developers A/B/C,
+  original2D Artist and retired UI/UX stay inactive. No extra controllers/agents.
+  Fixed-model/Medium-default policy remains; requested settings are not observed UI proof.
+
+## Historical consolidation —10November2026; superseded above
 
 Dawson explicitly accepted the consolidation recommendation in adviser chat
 `01a1b3e9-a21c-7e62-855a-8d369f305b83`, human turn
@@ -10,7 +48,8 @@ need to be at.” This supersedes the earlier observation-only restriction for
 this bounded transition and all conflicting active UI consultation instructions.
 The adviser returns to observation-only monitoring afterward.
 
-The Lead remains the sole programmer and integration owner and now owns routine
+At that transition the Lead became the sole programmer; the12November two-developer
+arrangement above now governs. The Lead retains integration and routine
 UI/UX design and implementation. The separate UI/UX role has completed its
 handoff and is retired; do not assign it further work. Retain its accepted
 interaction decisions and source pointers in [team handoff](team_handoff.md).

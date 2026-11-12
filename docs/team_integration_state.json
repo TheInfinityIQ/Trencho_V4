@@ -1,12 +1,12 @@
 {
-  "updated_date": "2026-11-10",
+  "updated_date": "2026-11-12",
   "authority": "Dawson human authorization, 10 November 2026, adviser chat 01a1b3e9-a21c-7e62-855a-8d369f305b83, turn 01a1c6de-2e95-7312-bc28-cd14c7add017; verified directly by Lead read_thread. Supersedes conflicting active UI consultation and earlier observation-only restriction for this bounded administrative transition; adviser returns to observation-only afterward.",
   "lead": {
     "title": "Trencho V4 Developer",
     "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
     "host_id": "local",
     "owns": [
-      "Authoritative gameplay implementation",
+      "Logistics implementation and shared authoritative state/interfaces; agreed battlefield presentation is delegated to the new Battlefield Developer",
       "Technical choices",
       "Final integration",
       "Published review revisions",
@@ -140,6 +140,29 @@
         "current_assignment": "COMPLETED local Workshop source/proposal handoff at 6d9ce4ec6b4d46842525207971205da7cf021280. STOPPED; no successor, fixes, publication, checks or integration assigned. Lead owns all further engineering.",
         "previous_assignment": "C performs final read-only feedback/guard review of A current-demand exact implementation. Latest lead decision retains existing Complete request lifecycle and guards; the proposed Covered-state UI patch is withdrawn and is not composed.",
         "status": "stopped_no_successor"
+      },
+      {
+        "title": "Trencho — Battlefield Developer",
+        "thread_id": "01a1d05a-1647-7923-ab40-ed05fc0d2498",
+        "host_id": "local",
+        "status": "active_authorized_battlefield_3d",
+        "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
+        "branch": "codex/battlefield-3d-presentation",
+        "worktree_status": "Developer confirmed isolated copy based on main/origin-main a2d182f; local31b8356 has T03/report components, integrated adapter in progress.",
+        "current_assignment": "Complete permitted T03 and reported-contact3D observer slice, including explicitly authorized field-only world_presenter adapter; Lead reviews/publishes integrated head.",
+        "owns": [
+          "new game/battlefield/presentation_3d/**",
+          "agreed battlefield-only game/preview_3d/field_*",
+          "own bounded feature plans/diagrams/receipts"
+        ],
+        "shared_file_owner": "Lead owns preview.gd/world_presenter.gd/session/entry/UI/state/global maps/team docs",
+        "requested_settings": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "speed": "standard"
+        },
+        "observed_runtime_ui_settings": null,
+        "scoped_shared_file_permission": "Lead authorized only new field preloads/components/bind/reconcile/ID callbacks and generic-cube suppression in world_presenter.gd. No rear/session/entry/timing/permission changes."
       }
     ],
     "review_policy": {
@@ -245,7 +268,14 @@
     "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work",
     "status": "Lead sole programmer, integrator and routine UI/UX owner. Designer handles material gameplay decisions and required current-head review; Artist retains bounded parallel asset ownership. UI role retired after handoff; A/B/C and original 2D Artist inactive.",
     "requested_speed": "standard",
-    "settings_qualification": "Sol model remains fixed for the existing active roles, Medium default/Standard speed. Bounded Low/High next-task effort policy and the separate fixed-Luna scout are documented in model_policy; no live settings were changed or inferred in this turn."
+    "settings_qualification": "Sol model remains fixed for the existing active roles, Medium default/Standard speed. Bounded Low/High next-task effort policy and the separate fixed-Luna scout are documented in model_policy; no live settings were changed or inferred in this turn.",
+    "current_authority": {
+      "date": "2026-11-12",
+      "user_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+      "human_turn": "01a1d059-1b9c-7070-91a2-e8e45983c141",
+      "verified": "Lead read actual human turn before changing policy",
+      "scope": "Add one battlefield developer and start existing battlefield3D conversion; preserve logistics and review Artist handling workflow. No other retired developer/controller/model change."
+    }
   },
   "repository_cleanup": {
     "authority": "Dawson explicit repository ownership/cleanup instruction2026-11-05",
@@ -550,5 +580,20 @@
       "scope": "36s actual worker-operated shelf preview; arms overlap torso and hands spin unnaturally; not runtime bound"
     },
     "timber_appearance_status": "Human revision required: actual palms at pickup, shoulder carry and restrained ramp gait. Earlier hand-carry drafts not approved."
+  },
+  "two_developer_authority": {
+    "date": "2026-11-12",
+    "user_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+    "human_turn": "01a1d059-1b9c-7070-91a2-e8e45983c141",
+    "verified": "Lead read actual human turn before changing policy",
+    "scope": "Add one battlefield developer and start existing battlefield3D conversion; preserve logistics and review Artist handling workflow. No other retired developer/controller/model change."
+  },
+  "shared_developer_contract": {
+    "state": "Existing authoritative Ledger/entities/observations/ownership and exact-once physical supply handovers; no mirrors/duplicates.",
+    "timing": "Reuse actual current timing owners and pause/speed; preserve applicable hidden progression. No timing rewrite.",
+    "integration": "Separate working copies; explicit shared-interface requests; Lead technical approval + actual exact-head Designer approval + required current-change checks.",
+    "artist": "Local pose/continuous real exported motion QA stays Artist-owned. Lead resolves gameplay/dimension/rig/export contract. Current full S4 still pending; original rig/clips preserved.",
+    "verification": "No local engine, regression suites, broad scenarios or new validation gates.",
+    "publication": "Lead owns reviewed publication. Child Git push was auto-review rejected for unverified external destination/authorization. Lead independently verified connected official repoID1433736061, matching origin URL and push permission, and retains earlier explicit user GitHub publication authority. No child retry or credential bypass."
   }
 }

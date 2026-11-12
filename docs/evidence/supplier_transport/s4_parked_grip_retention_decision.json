@@ -93,5 +93,55 @@
       "sha256": "8877c60e0677fe3fe3cfacd2789db8108be6c2b2c77fbb2f05fb8d831af6c532"
     }
   ],
-  "next": "Artist finishes reachable manual controls, deployment, supported lift, parked pin/detent contact, hands-clear lower access, actual lowering/retraction/closing/locking and withdrawal; provide one full normal-speed opaque preview/export. Existing original clips and approved assets remain preserved."
+  "next": "Artist finishes reachable manual controls, deployment, supported lift, parked pin/detent contact, hands-clear lower access, actual lowering/retraction/closing/locking and withdrawal; provide one full normal-speed opaque preview/export. Existing original clips and approved assets remain preserved.",
+  "spring_deployment_amendment": {
+    "date": "2026-11-12",
+    "authority": "Lead resolves the Artist's concrete handle-deployment fit question during Dawson-authorized follow-up until full animation delivery. No cargo or gameplay scope change.",
+    "accepted": "Captive passive spring may extend only the service grip100mm after the real worker presses its front release. Controlled/damped travel, actual pin withdrawal, hand guidance and visible positive extended-stop engagement are required.",
+    "retained_rules": "Pan remains entirely manually supported/lifted/lowered. Retain extended grip while parked. After actual lowering and closed pan lock engagement, worker releases and manually pushes grip back to secured travel position. No unexplained shelf motion, hand insertion into the narrow stowed pinch gap or runtime force simulator.",
+    "rationale": "Separates narrow-gap grip deployment from load-bearing pan support without contorting the original worker or changing cargo/support geometry. Existing manual large-pan requirement is preserved.",
+    "artist_fit_report": {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v05\\detent_fit.json",
+      "sha256": "d29770041f1e72130f5a4cbab5102cfb01af69e554addaf6183b17ff1253597b",
+      "scope": "New passive slide-retention assembly direct checks; not a full operator cycle.",
+      "seated": [
+        {
+          "state": "closed",
+          "bounds": [
+            [
+              -0.24729998409748077,
+              0.6127499938011169,
+              -0.3199999928474426
+            ],
+            [
+              -0.03499998152256012,
+              0.675000011920929,
+              0.3199999928474426
+            ]
+          ],
+          "inside_cage": true
+        },
+        {
+          "state": "parked",
+          "bounds": [
+            [
+              0.1377500295639038,
+              0.9599999785423279,
+              -0.3199999928474426
+            ],
+            [
+              0.20000001788139343,
+              1.2523000240325928,
+              0.3199999928474426
+            ]
+          ],
+          "inside_cage": true
+        }
+      ],
+      "stroke_flags": [],
+      "approved_lift_new_hardware_flags": [],
+      "limitations": "Guide mounts intentionally attach into pan. This direct hardware report does not establish complete hand choreography, animation appearance or runtime integration."
+    },
+    "delivery": "v05 full operator cycle still in progress; no final clip approval or game binding."
+  }
 }
