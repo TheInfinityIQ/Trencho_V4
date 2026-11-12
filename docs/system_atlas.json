@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "a9fc00a",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-forward-stop-worktree",
+  "reviewed_baseline": "622d9aa",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-supply-visibility-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "648c1b9a7ed2b7bb16a678cc01f872a62587e6f8316f8d3c0ab395d5046be21f",
+  "source_fingerprint": "7b6fa7c1eea98800033a66a631fcda75f2dbf9e3bfcd4dcf55b28ada27e83096",
   "totals": {
     "systems": 50,
     "game_scripts": 235,
     "non_test_scripts": 141,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3597,
-    "diagram_function_links": 295
+    "functions_in_inventory": 3600,
+    "diagram_function_links": 298
   },
   "systems": [
     {
@@ -18358,35 +18358,35 @@
           "label": "Register actual forward stop",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "register_delivery_stop",
-          "line": 28
+          "line": 31
         },
         {
           "id": "n1",
           "label": "Request local issue to actual person",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "start_issue",
-          "line": 113
+          "line": 150
         },
         {
           "id": "n2",
           "label": "Finish physical pickup",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_finish_pickup",
-          "line": 253
+          "line": 291
         },
         {
           "id": "n3",
           "label": "Advance timed local handling",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "advance_to",
-          "line": 210
+          "line": 248
         },
         {
           "id": "n4",
           "label": "Complete recipient handoff",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_finish_drop",
-          "line": 278
+          "line": 316
         }
       ],
       "edges": [
@@ -18730,14 +18730,14 @@
         },
         {
           "path": "game/forward_supply/forward_supply.gd",
-          "sha256": "3b822b77d8c9223d044577942f707fc7ec7e002a9fb5368d8cadf296b5208cb3",
+          "sha256": "e70d9868d5612e141810eb8028f81029149a7b7b13d395dfa198c60c50974d94",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/forward_supply/forward_supply.gd::_init",
               "name": "_init",
-              "line": 19,
-              "end_line": 22,
+              "line": 22,
+              "end_line": 25,
               "kind": "method",
               "purpose": "Initialize forward supply state and retain its supplied dependencies. Implementation: calls weakref, ForwardTransport.new, VehicleRackIssue.new; updates _rear_ref, rack_issue, transport.",
               "purpose_origin": "implementation_derived"
@@ -18745,8 +18745,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::request_vehicle_rack_issue",
               "name": "request_vehicle_rack_issue",
-              "line": 24,
-              "end_line": 25,
+              "line": 27,
+              "end_line": 28,
               "kind": "method",
               "purpose": "Return rack_issue.request(stock_id,hull_id,handler_id,quantity,stop_id) for forward supply. Implementation: calls rack_issue.request.",
               "purpose_origin": "implementation_derived"
@@ -18754,26 +18754,53 @@
             {
               "id": "game/forward_supply/forward_supply.gd::register_delivery_stop",
               "name": "register_delivery_stop",
-              "line": 28,
-              "end_line": 44,
+              "line": 31,
+              "end_line": 47,
               "kind": "method",
               "purpose": "Register an actual forward place and route, with explicit optional observer entitlement defaulting to undisclosed.",
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/forward_supply/forward_supply.gd::_observation_set",
+              "name": "_observation_set",
+              "line": 50,
+              "end_line": 58,
+              "kind": "method",
+              "purpose": "Maintain per-stop presentation membership for a real accepted or unresolved job without owning its physical work.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/forward_supply/forward_supply.gd::_observation_receipt",
+              "name": "_observation_receipt",
+              "line": 60,
+              "end_line": 65,
+              "kind": "method",
+              "purpose": "Replace the bounded latest per-kind stop receipt only after an actual issue transfer succeeds.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/forward_supply/forward_supply.gd::_observation_friendly",
+              "name": "_observation_friendly",
+              "line": 67,
+              "end_line": 71,
+              "kind": "method",
+              "purpose": "Check the current actor identity against owner, carrier control and the existing hidden-person boundary.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/forward_supply/forward_supply.gd::observe_stop",
               "name": "observe_stop",
-              "line": 47,
-              "end_line": 78,
+              "line": 73,
+              "end_line": 115,
               "kind": "method",
-              "purpose": "Recheck player entitlement and project direct loose stock plus current opening-owned pending and issue facts without scanning retained job history.",
+              "purpose": "Authorize the player stop before projecting current active IDs, permitted actors, exact carried custody and bounded latest receipts.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_supply.gd::request_delivery",
               "name": "request_delivery",
-              "line": 81,
-              "end_line": 83,
+              "line": 118,
+              "end_line": 120,
               "kind": "method",
               "purpose": "Return transport.request_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.request_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18781,8 +18808,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::preview_delivery",
               "name": "preview_delivery",
-              "line": 86,
-              "end_line": 88,
+              "line": 123,
+              "end_line": 125,
               "kind": "method",
               "purpose": "Return transport.preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.preview_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18790,8 +18817,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::request_delivery_type",
               "name": "request_delivery_type",
-              "line": 91,
-              "end_line": 93,
+              "line": 128,
+              "end_line": 130,
               "kind": "method",
               "purpose": "Return transport.request_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.request_delivery_type.",
               "purpose_origin": "implementation_derived"
@@ -18799,8 +18826,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::preview_delivery_type",
               "name": "preview_delivery_type",
-              "line": 96,
-              "end_line": 98,
+              "line": 133,
+              "end_line": 135,
               "kind": "method",
               "purpose": "Return transport.preview_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.preview_delivery_type.",
               "purpose_origin": "implementation_derived"
@@ -18808,8 +18835,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::resume_delivery",
               "name": "resume_delivery",
-              "line": 101,
-              "end_line": 102,
+              "line": 138,
+              "end_line": 139,
               "kind": "method",
               "purpose": "Return transport.resume_delivery(id,outbound_points,return_points) for forward supply. Implementation: calls transport.resume_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18817,8 +18844,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::interrupt_delivery",
               "name": "interrupt_delivery",
-              "line": 105,
-              "end_line": 106,
+              "line": 142,
+              "end_line": 143,
               "kind": "method",
               "purpose": "Return transport.interrupt_delivery(id) for forward supply. Implementation: calls transport.interrupt_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18826,8 +18853,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::hull_committed",
               "name": "hull_committed",
-              "line": 109,
-              "end_line": 110,
+              "line": 146,
+              "end_line": 147,
               "kind": "method",
               "purpose": "Return transport.hull_committed(id) or rack_issue.hull_committed(id) for forward supply. Implementation: calls transport.hull_committed, rack_issue.hull_committed.",
               "purpose_origin": "implementation_derived"
@@ -18835,17 +18862,17 @@
             {
               "id": "game/forward_supply/forward_supply.gd::start_issue",
               "name": "start_issue",
-              "line": 113,
-              "end_line": 152,
+              "line": 150,
+              "end_line": 190,
               "kind": "method",
-              "purpose": "Start issue for forward supply. Implementation: calls _rear, ledger.inspect_entity, stop.get, stock.get; updates _sequence, jobs[id].",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Admit a real local issue only after existing eligibility and claim checks, then index that same job for observation.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_supply.gd::interrupt",
               "name": "interrupt",
-              "line": 155,
-              "end_line": 160,
+              "line": 193,
+              "end_line": 198,
               "kind": "method",
               "purpose": "Interrupt for forward supply. Implementation: calls jobs.get, row.is_empty, _fail, _interrupt_row.",
               "purpose_origin": "implementation_derived"
@@ -18853,8 +18880,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::resume_issue",
               "name": "resume_issue",
-              "line": 163,
-              "end_line": 186,
+              "line": 201,
+              "end_line": 224,
               "kind": "method",
               "purpose": "Resume issue for forward supply. Implementation: calls jobs.get, row.is_empty, _fail, _rear.",
               "purpose_origin": "implementation_derived"
@@ -18862,8 +18889,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::person_committed",
               "name": "person_committed",
-              "line": 189,
-              "end_line": 196,
+              "line": 227,
+              "end_line": 234,
               "kind": "method",
               "purpose": "Person committed for forward supply. Implementation: calls rack_issue.person_committed, transport.person_committed, jobs.values, _rear().ledger.inspect_entity(row.carried_stock).get.",
               "purpose_origin": "implementation_derived"
@@ -18871,8 +18898,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::handler_committed",
               "name": "handler_committed",
-              "line": 199,
-              "end_line": 200,
+              "line": 237,
+              "end_line": 238,
               "kind": "method",
               "purpose": "Return person_committed(person_id) for forward supply. Implementation: calls person_committed.",
               "purpose_origin": "implementation_derived"
@@ -18880,8 +18907,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::next_boundary",
               "name": "next_boundary",
-              "line": 203,
-              "end_line": 207,
+              "line": 241,
+              "end_line": 245,
               "kind": "method",
               "purpose": "Return the next scheduled forward supply event time for the shared scheduler. Implementation: calls minf, transport.next_boundary, rack_issue.next_boundary, jobs.values; updates next.",
               "purpose_origin": "implementation_derived"
@@ -18889,8 +18916,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::advance_to",
               "name": "advance_to",
-              "line": 210,
-              "end_line": 223,
+              "line": 248,
+              "end_line": 261,
               "kind": "method",
               "purpose": "Advance scheduled forward supply work to the supplied simulation time. Implementation: calls transport.advance_to, rack_issue.advance_to, jobs.values, _rear().ledger.inspect_entity; updates row.expected.",
               "purpose_origin": "implementation_derived"
@@ -18898,8 +18925,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::settle",
               "name": "settle",
-              "line": 226,
-              "end_line": 250,
+              "line": 264,
+              "end_line": 288,
               "kind": "method",
               "purpose": "Resolve immediately eligible forward supply transitions and report whether state changed. Implementation: calls _rear, transport.settle, rack_issue.settle, jobs.values; updates changed.",
               "purpose_origin": "implementation_derived"
@@ -18907,8 +18934,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_finish_pickup",
               "name": "_finish_pickup",
-              "line": 253,
-              "end_line": 275,
+              "line": 291,
+              "end_line": 313,
               "kind": "method",
               "purpose": "Finish pickup for forward supply. Implementation: calls _rear, rear.ledger.inspect_entity, _at_stop, handler.position.distance_to; updates row.carried_stock.",
               "purpose_origin": "implementation_derived"
@@ -18916,17 +18943,17 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_finish_drop",
               "name": "_finish_drop",
-              "line": 278,
-              "end_line": 297,
+              "line": 316,
+              "end_line": 337,
               "kind": "method",
-              "purpose": "Finish drop for forward supply. Implementation: calls _rear, rear.ledger.inspect_entity, carried.get, _on_foot; updates row.blocker, row.deadline, row.issued_stock, row.state.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Complete the existing physical transfer to the recipient and update the latest receipt and active membership only after success.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_supply.gd::_begin",
               "name": "_begin",
-              "line": 300,
-              "end_line": 308,
+              "line": 340,
+              "end_line": 348,
               "kind": "method",
               "purpose": "Begin for forward supply. Implementation: calls _rear().ledger.inspect_entity, _rear; updates row.blocker, row.deadline, row.expected, row.from.",
               "purpose_origin": "implementation_derived"
@@ -18934,17 +18961,17 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_interrupt_row",
               "name": "_interrupt_row",
-              "line": 311,
-              "end_line": 315,
+              "line": 351,
+              "end_line": 356,
               "kind": "method",
-              "purpose": "Interrupt row for forward supply. Implementation: calls _release_claim, str(row.carried_stock).is_empty, str; updates row.blocker, row.deadline, row.state.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Release existing claims and retain only unresolved carried work in the presentation membership.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_supply.gd::_release_claim",
               "name": "_release_claim",
-              "line": 318,
-              "end_line": 320,
+              "line": 359,
+              "end_line": 361,
               "kind": "method",
               "purpose": "Release claim for forward supply. Implementation: calls _rear().ledger.inspect_claim, _rear, claim.is_empty, _rear().ledger.release_claim.",
               "purpose_origin": "implementation_derived"
@@ -18952,8 +18979,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_at_stop",
               "name": "_at_stop",
-              "line": 323,
-              "end_line": 329,
+              "line": 364,
+              "end_line": 370,
               "kind": "method",
               "purpose": "At stop for forward supply. Implementation: calls stock.get, stop.get, _rear().ledger.inspect_entity, _rear.",
               "purpose_origin": "implementation_derived"
@@ -18961,8 +18988,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_active_member",
               "name": "_active_member",
-              "line": 332,
-              "end_line": 338,
+              "line": 373,
+              "end_line": 379,
               "kind": "method",
               "purpose": "Active member for forward supply. Implementation: calls _rear, rear.ledger.inspect_entity, person.get, rear.military.squads.values.",
               "purpose_origin": "implementation_derived"
@@ -18970,8 +18997,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_on_foot",
               "name": "_on_foot",
-              "line": 341,
-              "end_line": 343,
+              "line": 382,
+              "end_line": 384,
               "kind": "method",
               "purpose": "Handle foot events for forward supply. Implementation: calls person.get, person.crew_station.is_empty, person.carrying_stock_id.is_empty, person.carrying_weapon_id.is_empty.",
               "purpose_origin": "implementation_derived"
@@ -18979,8 +19006,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_other_busy",
               "name": "_other_busy",
-              "line": 346,
-              "end_line": 358,
+              "line": 387,
+              "end_line": 399,
               "kind": "method",
               "purpose": "Other busy for forward supply. Implementation: calls _rear, rear.combat.reloads.values, rear.combat.care.values, row.get.",
               "purpose_origin": "implementation_derived"
@@ -18988,8 +19015,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_leg",
               "name": "_leg",
-              "line": 361,
-              "end_line": 365,
+              "line": 402,
+              "end_line": 406,
               "kind": "method",
               "purpose": "Leg for forward supply. Implementation: calls person.position.distance_to, _rear().combat.world.route, _rear, (destination-person.position).angle.",
               "purpose_origin": "implementation_derived"
@@ -18997,8 +19024,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::snapshot",
               "name": "snapshot",
-              "line": 368,
-              "end_line": 371,
+              "line": 409,
+              "end_line": 412,
               "kind": "method",
               "purpose": "Export the current forward supply state as a detached inspection dictionary. Implementation: calls jobs.values, rows.append, row.duplicate, transport.snapshot.",
               "purpose_origin": "implementation_derived"
@@ -19006,8 +19033,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::audit",
               "name": "audit",
-              "line": 374,
-              "end_line": 383,
+              "line": 415,
+              "end_line": 424,
               "kind": "method",
               "purpose": "Audit for forward supply. Implementation: calls transport.audit, errors.append_array, rack_issue.audit, jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -19015,8 +19042,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_rear",
               "name": "_rear",
-              "line": 386,
-              "end_line": 387,
+              "line": 427,
+              "end_line": 428,
               "kind": "method",
               "purpose": "Return _rear_ref.get_ref() for forward supply. Implementation: calls _rear_ref.get_ref.",
               "purpose_origin": "implementation_derived"
@@ -19024,8 +19051,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_fail",
               "name": "_fail",
-              "line": 390,
-              "end_line": 391,
+              "line": 431,
+              "end_line": 432,
               "kind": "method",
               "purpose": "Return a failed forward supply command result with the supplied explanation.",
               "purpose_origin": "implementation_derived"
@@ -19153,21 +19180,21 @@
           "label": "Load actual portions",
           "file": "game/forward_supply/forward_transport.gd",
           "function": "_finish_load",
-          "line": 464
+          "line": 465
         },
         {
           "id": "n4",
           "label": "Advance route / fuel",
           "file": "game/forward_supply/forward_transport.gd",
           "function": "_advance_route",
-          "line": 636
+          "line": 637
         },
         {
           "id": "n5",
           "label": "Unload actual stock at stop",
           "file": "game/forward_supply/forward_transport.gd",
           "function": "_finish_unload",
-          "line": 533
+          "line": 534
         }
       ],
       "edges": [
@@ -19211,7 +19238,7 @@
       "files": [
         {
           "path": "game/forward_supply/forward_transport.gd",
-          "sha256": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
+          "sha256": "e18b40f75fbb37d49ee130dc3974a1de21a36783d579742bba0627ea379b9b98",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -19353,16 +19380,16 @@
               "id": "game/forward_supply/forward_transport.gd::_request_delivery",
               "name": "_request_delivery",
               "line": 242,
-              "end_line": 269,
+              "end_line": 270,
               "kind": "method",
-              "purpose": "Validate the current physical delivery preview, reserve exact fresh HQ source portions atomically with rollback on failure, and create one actual loading/travel/unloading/return job.",
+              "purpose": "Admit an actual claimed forward delivery and index the existing job for bounded observation.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_transport.gd::preview_delivery",
               "name": "preview_delivery",
-              "line": 272,
-              "end_line": 274,
+              "line": 273,
+              "end_line": 275,
               "kind": "method",
               "purpose": "Return _preview_delivery(hull_id,_plan_sources(\"\",quantity,stock_id),stop_id,outbound_points,return_points,loader_id,unloader_id,false) for forward transport. Implementation: calls _preview_delivery, _plan_sources.",
               "purpose_origin": "implementation_derived"
@@ -19370,8 +19397,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::preview_delivery_type",
               "name": "preview_delivery_type",
-              "line": 277,
-              "end_line": 279,
+              "line": 278,
+              "end_line": 280,
               "kind": "method",
               "purpose": "Return _preview_delivery(hull_id,_plan_sources(type,quantity),stop_id,outbound_points,return_points,loader_id,unloader_id,false) for forward transport. Implementation: calls _preview_delivery, _plan_sources.",
               "purpose_origin": "implementation_derived"
@@ -19379,8 +19406,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_preview_delivery",
               "name": "_preview_delivery",
-              "line": 282,
-              "end_line": 324,
+              "line": 283,
+              "end_line": 325,
               "kind": "method",
               "purpose": "Read actual military T01, handlers, source freight, endpoints, threat and fuel readiness; accept prepared geometry only after fresh proof checks, otherwise retain synchronous route calculation for explicit callers.",
               "purpose_origin": "reviewed"
@@ -19388,8 +19415,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_dispatch_blocker",
               "name": "_dispatch_blocker",
-              "line": 327,
-              "end_line": 338,
+              "line": 328,
+              "end_line": 339,
               "kind": "method",
               "purpose": "Dispatch blocker for forward transport. Implementation: calls _rear, hull_committed, rear.military.hull_committed, _hq_hull_blocker.",
               "purpose_origin": "implementation_derived"
@@ -19397,8 +19424,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::interrupt_delivery",
               "name": "interrupt_delivery",
-              "line": 341,
-              "end_line": 356,
+              "line": 342,
+              "end_line": 357,
               "kind": "method",
               "purpose": "Pause an active physical delivery or its pending departure, retaining cargo, carries and remaining handling time; cancel only the corresponding private route work.",
               "purpose_origin": "reviewed"
@@ -19406,8 +19433,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::resume_delivery",
               "name": "resume_delivery",
-              "line": 359,
-              "end_line": 391,
+              "line": 360,
+              "end_line": 392,
               "kind": "method",
               "purpose": "Resume the same paused handling or prepare an explicit route from the actual stopped hull, retaining its owned freight and handlers rather than recreating goods.",
               "purpose_origin": "reviewed"
@@ -19415,8 +19442,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::hull_committed",
               "name": "hull_committed",
-              "line": 394,
-              "end_line": 397,
+              "line": 395,
+              "end_line": 398,
               "kind": "method",
               "purpose": "Hull committed for forward transport. Implementation: calls jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -19424,8 +19451,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::person_committed",
               "name": "person_committed",
-              "line": 400,
-              "end_line": 405,
+              "line": 401,
+              "end_line": 406,
               "kind": "method",
               "purpose": "Person committed for forward transport. Implementation: calls jobs.values, task.is_empty, task.get, str(task.get(\"carry\",\"\")).is_empty.",
               "purpose_origin": "implementation_derived"
@@ -19433,8 +19460,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::next_boundary",
               "name": "next_boundary",
-              "line": 408,
-              "end_line": 413,
+              "line": 409,
+              "end_line": 414,
               "kind": "method",
               "purpose": "Return the next scheduled forward transport event time for the shared scheduler. Implementation: calls jobs.values, minf, float, _rear; updates next.",
               "purpose_origin": "implementation_derived"
@@ -19442,8 +19469,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::advance_to",
               "name": "advance_to",
-              "line": 416,
-              "end_line": 419,
+              "line": 417,
+              "end_line": 420,
               "kind": "method",
               "purpose": "Advance scheduled forward transport work to the supplied simulation time. Implementation: calls jobs.values, _advance_route, row.task.get, _advance_unloader.",
               "purpose_origin": "implementation_derived"
@@ -19451,8 +19478,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::settle",
               "name": "settle",
-              "line": 422,
-              "end_line": 434,
+              "line": 423,
+              "end_line": 435,
               "kind": "method",
               "purpose": "Resolve immediately eligible forward transport transitions and report whether state changed. Implementation: calls jobs.values, row.task.is_empty, _schedule_load, float; updates changed.",
               "purpose_origin": "implementation_derived"
@@ -19460,8 +19487,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_schedule_load",
               "name": "_schedule_load",
-              "line": 437,
-              "end_line": 461,
+              "line": 438,
+              "end_line": 462,
               "kind": "method",
               "purpose": "Schedule load for forward transport. Implementation: calls _rear().ledger.release_claim, _rear, _begin_route, _loader_free; updates index, row.blocker, row.task.",
               "purpose_origin": "implementation_derived"
@@ -19469,8 +19496,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_finish_load",
               "name": "_finish_load",
-              "line": 464,
-              "end_line": 492,
+              "line": 465,
+              "end_line": 493,
               "kind": "method",
               "purpose": "Finish load for forward transport. Implementation: calls _rear, rear.ledger.inspect_entity, hull.position.is_equal_approx, _pause_task; updates row.blocker, row.loaded, row.task, source.loaded.",
               "purpose_origin": "implementation_derived"
@@ -19478,8 +19505,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_source_matches",
               "name": "_source_matches",
-              "line": 495,
-              "end_line": 496,
+              "line": 496,
+              "end_line": 497,
               "kind": "method",
               "purpose": "Return stock.get(\"kind\",\"\") == \"STOCK\" and stock.holder_id == \"hq-stock\" and stock.owner == _rear().PLAYER and stock.design_type == type and stock.unit_mass_kg == source.unit_mass_kg and… for forward transport. Implementation: calls stock.get, _rear.",
               "purpose_origin": "implementation_derived"
@@ -19487,8 +19514,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_schedule_unload",
               "name": "_schedule_unload",
-              "line": 499,
-              "end_line": 530,
+              "line": 500,
+              "end_line": 531,
               "kind": "method",
               "purpose": "Schedule unload for forward transport. Implementation: calls _begin_route, _rear().ledger.inspect_entity, _rear, hull.position.is_equal_approx; updates row.blocker, row.task, source.",
               "purpose_origin": "implementation_derived"
@@ -19496,8 +19523,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_finish_unload",
               "name": "_finish_unload",
-              "line": 533,
-              "end_line": 563,
+              "line": 534,
+              "end_line": 564,
               "kind": "method",
               "purpose": "Finish unload for forward transport. Implementation: calls _rear, rear.ledger.inspect_entity, _active_member, _on_foot; updates row.blocker, row.task, row.unloaded, task.carry.",
               "purpose_origin": "implementation_derived"
@@ -19505,8 +19532,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_advance_unloader",
               "name": "_advance_unloader",
-              "line": 566,
-              "end_line": 576,
+              "line": 567,
+              "end_line": 577,
               "kind": "method",
               "purpose": "Advance unloader for forward transport. Implementation: calls _rear().ledger.inspect_entity, _rear, _active_member, _on_foot; updates task.expected.",
               "purpose_origin": "implementation_derived"
@@ -19514,8 +19541,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_queue_departure",
               "name": "_queue_departure",
-              "line": 579,
-              "end_line": 595,
+              "line": 580,
+              "end_line": 596,
               "kind": "method",
               "purpose": "Queue fresh private route work for the same loaded or returning physical delivery, mark it waiting at its actual stop and retain its manifest/custody.",
               "purpose_origin": "reviewed"
@@ -19523,8 +19550,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_begin_route",
               "name": "_begin_route",
-              "line": 597,
-              "end_line": 633,
+              "line": 598,
+              "end_line": 634,
               "kind": "method",
               "purpose": "Validate a physical departure, queue bounded preparation in live mode or use fresh validated prepared/synchronous geometry, and start actual travel only with current hazards, fuel reserve and route facts.",
               "purpose_origin": "reviewed"
@@ -19532,8 +19559,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_advance_route",
               "name": "_advance_route",
-              "line": 636,
-              "end_line": 666,
+              "line": 637,
+              "end_line": 667,
               "kind": "method",
               "purpose": "Advance route for forward transport. Implementation: calls _rear, rear.ledger.inspect_entity, _movement_blocker, hull.position.is_equal_approx; updates blocker, fraction, row.route_distance, row.route_expected.",
               "purpose_origin": "implementation_derived"
@@ -19541,17 +19568,17 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_finish_route",
               "name": "_finish_route",
-              "line": 669,
-              "end_line": 687,
+              "line": 670,
+              "end_line": 689,
               "kind": "method",
-              "purpose": "Finish route for forward transport. Implementation: calls _rear, float, _block_route, rear.ledger.move_entity; updates row.blocker, row.return_completed, row.route_deadline, row.route_expected.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Advance the actual forward trip on arrival, removing its observation membership only on completed HQ return.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/forward_transport.gd::_route_progress",
               "name": "_route_progress",
-              "line": 690,
-              "end_line": 704,
+              "line": 692,
+              "end_line": 706,
               "kind": "method",
               "purpose": "Route progress for forward transport. Implementation: calls float, clampf, maxf, part.from.lerp; updates point, time_left, total_distance, total_fuel.",
               "purpose_origin": "implementation_derived"
@@ -19559,8 +19586,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_remaining_parts",
               "name": "_remaining_parts",
-              "line": 707,
-              "end_line": 713,
+              "line": 709,
+              "end_line": 715,
               "kind": "method",
               "purpose": "Remaining parts for forward transport. Implementation: calls float, result.append; updates passed.",
               "purpose_origin": "implementation_derived"
@@ -19568,8 +19595,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_block_route",
               "name": "_block_route",
-              "line": 716,
-              "end_line": 720,
+              "line": 718,
+              "end_line": 722,
               "kind": "method",
               "purpose": "Block route for forward transport. Implementation: updates row.blocker, row.route_deadline, row.state, row.stopped_phase.",
               "purpose_origin": "implementation_derived"
@@ -19577,8 +19604,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_pause_task",
               "name": "_pause_task",
-              "line": 723,
-              "end_line": 728,
+              "line": 725,
+              "end_line": 730,
               "kind": "method",
               "purpose": "Pause task for forward transport. Implementation: updates row.blocker, row.paused_state, row.state, row.task.deadline.",
               "purpose_origin": "implementation_derived"
@@ -19586,8 +19613,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_hq_hull_blocker",
               "name": "_hq_hull_blocker",
-              "line": 731,
-              "end_line": 738,
+              "line": 733,
+              "end_line": 740,
               "kind": "method",
               "purpose": "Hq hull blocker for forward transport. Implementation: calls _rear, hull.get, rear.dispatch.military_hulls.has, rear.military.vehicles.has.",
               "purpose_origin": "implementation_derived"
@@ -19595,8 +19622,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_movement_blocker",
               "name": "_movement_blocker",
-              "line": 741,
-              "end_line": 749,
+              "line": 743,
+              "end_line": 751,
               "kind": "method",
               "purpose": "Movement blocker for forward transport. Implementation: calls _rear, hull.is_empty, hull.get, float.",
               "purpose_origin": "implementation_derived"
@@ -19604,8 +19631,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_empty_freight_hull",
               "name": "_empty_freight_hull",
-              "line": 752,
-              "end_line": 755,
+              "line": 754,
+              "end_line": 757,
               "kind": "method",
               "purpose": "Empty freight hull for forward transport. Implementation: calls _rear().ledger.entities_at, _rear.",
               "purpose_origin": "implementation_derived"
@@ -19613,8 +19640,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_loader_free",
               "name": "_loader_free",
-              "line": 758,
-              "end_line": 759,
+              "line": 760,
+              "end_line": 761,
               "kind": "method",
               "purpose": "Return id in _rear().dispatch.free_hq_handlers(4,true) for forward transport. Implementation: calls _rear().dispatch.free_hq_handlers, _rear.",
               "purpose_origin": "implementation_derived"
@@ -19622,8 +19649,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_active_member",
               "name": "_active_member",
-              "line": 762,
-              "end_line": 767,
+              "line": 764,
+              "end_line": 769,
               "kind": "method",
               "purpose": "Active member for forward transport. Implementation: calls _rear().ledger.inspect_entity, _rear, person.get, _rear().military.squads.values.",
               "purpose_origin": "implementation_derived"
@@ -19631,8 +19658,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_on_foot",
               "name": "_on_foot",
-              "line": 770,
-              "end_line": 772,
+              "line": 772,
+              "end_line": 774,
               "kind": "method",
               "purpose": "Handle foot events for forward transport. Implementation: calls person.get, str(person.crew_station).is_empty, str, _rear().ledger.inspect_entity(person.holder_id).get.",
               "purpose_origin": "implementation_derived"
@@ -19640,8 +19667,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_task_actor_valid",
               "name": "_task_actor_valid",
-              "line": 775,
-              "end_line": 780,
+              "line": 777,
+              "end_line": 782,
               "kind": "method",
               "purpose": "Task actor valid for forward transport. Implementation: calls _rear().ledger.inspect_entity, _rear, person.get, str(task.get(\"carry\",\"\")).is_empty.",
               "purpose_origin": "implementation_derived"
@@ -19649,8 +19676,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_other_work",
               "name": "_other_work",
-              "line": 783,
-              "end_line": 784,
+              "line": 785,
+              "end_line": 786,
               "kind": "method",
               "purpose": "Return _rear().forward_supply._other_busy(id) for forward transport. Implementation: calls _rear().forward_supply._other_busy, _rear.",
               "purpose_origin": "implementation_derived"
@@ -19658,8 +19685,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_foot_leg",
               "name": "_foot_leg",
-              "line": 787,
-              "end_line": 791,
+              "line": 789,
+              "end_line": 793,
               "kind": "method",
               "purpose": "Foot leg for forward transport. Implementation: calls person.position.distance_to, _rear().combat.world.route, _rear, (destination-person.position).angle.",
               "purpose_origin": "implementation_derived"
@@ -19667,8 +19694,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_validate_points",
               "name": "_validate_points",
-              "line": 794,
-              "end_line": 800,
+              "line": 796,
+              "end_line": 802,
               "kind": "method",
               "purpose": "Validate points for forward transport. Implementation: calls points.size, typeof, (point as Vector2).is_finite, (points[0] as Vector2).is_equal_approx.",
               "purpose_origin": "implementation_derived"
@@ -19676,8 +19703,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_known_route_danger",
               "name": "_known_route_danger",
-              "line": 803,
-              "end_line": 820,
+              "line": 805,
+              "end_line": 822,
               "kind": "method",
               "purpose": "Known route danger for forward transport. Implementation: calls _rear, str, rear.military.platoons.has, rear.orders.contacts.get.",
               "purpose_origin": "implementation_derived"
@@ -19685,8 +19712,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::snapshot",
               "name": "snapshot",
-              "line": 823,
-              "end_line": 826,
+              "line": 825,
+              "end_line": 828,
               "kind": "method",
               "purpose": "Export the current forward transport state as a detached inspection dictionary. Implementation: calls jobs.values, rows.append, row.duplicate.",
               "purpose_origin": "implementation_derived"
@@ -19694,8 +19721,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::audit",
               "name": "audit",
-              "line": 829,
-              "end_line": 843,
+              "line": 831,
+              "end_line": 845,
               "kind": "method",
               "purpose": "Audit for forward transport. Implementation: calls jobs.values, int, errors.append; updates loaded, planned.",
               "purpose_origin": "implementation_derived"
@@ -19703,8 +19730,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_rear",
               "name": "_rear",
-              "line": 846,
-              "end_line": 847,
+              "line": 848,
+              "end_line": 849,
               "kind": "method",
               "purpose": "Return _rear_ref.get_ref() for forward transport. Implementation: calls _rear_ref.get_ref.",
               "purpose_origin": "implementation_derived"
@@ -19712,8 +19739,8 @@
             {
               "id": "game/forward_supply/forward_transport.gd::_fail",
               "name": "_fail",
-              "line": 850,
-              "end_line": 851,
+              "line": 852,
+              "end_line": 853,
               "kind": "method",
               "purpose": "Return a failed forward transport command result with the supplied explanation.",
               "purpose_origin": "implementation_derived"
@@ -19741,21 +19768,21 @@
           "label": "Validate hull and current station readiness",
           "file": "game/forward_supply/vehicle_rack_issue.gd",
           "function": "_hull_error",
-          "line": 155
+          "line": 159
         },
         {
           "id": "n2",
           "label": "Advance physical handling",
           "file": "game/forward_supply/vehicle_rack_issue.gd",
           "function": "advance_to",
-          "line": 94
+          "line": 96
         },
         {
           "id": "n3",
           "label": "Complete due issue phases",
           "file": "game/forward_supply/vehicle_rack_issue.gd",
           "function": "settle",
-          "line": 106
+          "line": 108
         }
       ],
       "edges": [
@@ -19788,7 +19815,7 @@
       "files": [
         {
           "path": "game/forward_supply/vehicle_rack_issue.gd",
-          "sha256": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
+          "sha256": "4e656298cc649588f5045c158dad7137ed8c6022359c75b75d9714d1f3755a8d",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -19813,16 +19840,16 @@
               "id": "game/forward_supply/vehicle_rack_issue.gd::request",
               "name": "request",
               "line": 16,
-              "end_line": 41,
+              "end_line": 42,
               "kind": "method",
-              "purpose": "Request for vehicle rack issue. Implementation: calls _rear, rear.ledger.inspect_entity, rear.forward_supply.delivery_stops.has, stop.get; updates _sequence, error, jobs[id].",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Admit a valid actual vehicle rack issue and add its ID to current stop observation.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::hull_committed",
               "name": "hull_committed",
-              "line": 43,
-              "end_line": 46,
+              "line": 44,
+              "end_line": 47,
               "kind": "method",
               "purpose": "Hull committed for vehicle rack issue. Implementation: calls jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -19830,8 +19857,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::person_committed",
               "name": "person_committed",
-              "line": 48,
-              "end_line": 51,
+              "line": 49,
+              "end_line": 52,
               "kind": "method",
               "purpose": "Person committed for vehicle rack issue. Implementation: calls jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -19839,8 +19866,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::interrupt",
               "name": "interrupt",
-              "line": 53,
-              "end_line": 56,
+              "line": 54,
+              "end_line": 57,
               "kind": "method",
               "purpose": "Interrupt for vehicle rack issue. Implementation: calls jobs.has, _fail, _stop.",
               "purpose_origin": "implementation_derived"
@@ -19848,17 +19875,17 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::resume",
               "name": "resume",
-              "line": 58,
-              "end_line": 86,
+              "line": 59,
+              "end_line": 88,
               "kind": "method",
-              "purpose": "Resume for vehicle rack issue. Implementation: calls jobs.get, row.is_empty, _fail, jobs.values; updates _sequence, error, row.blocker, row.claim.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Resume the same validated physical rack job and restore its observation membership only after successful admission.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::next_boundary",
               "name": "next_boundary",
-              "line": 88,
-              "end_line": 92,
+              "line": 90,
+              "end_line": 94,
               "kind": "method",
               "purpose": "Return the next scheduled vehicle rack issue event time for the shared scheduler. Implementation: calls jobs.values, _active, minf, float; updates next.",
               "purpose_origin": "implementation_derived"
@@ -19866,8 +19893,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::advance_to",
               "name": "advance_to",
-              "line": 94,
-              "end_line": 104,
+              "line": 96,
+              "end_line": 106,
               "kind": "method",
               "purpose": "Advance scheduled vehicle rack issue work to the supplied simulation time. Implementation: calls jobs.values, _active, _valid, error.is_empty; updates row.expected.",
               "purpose_origin": "implementation_derived"
@@ -19875,8 +19902,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::settle",
               "name": "settle",
-              "line": 106,
-              "end_line": 118,
+              "line": 108,
+              "end_line": 120,
               "kind": "method",
               "purpose": "Resolve immediately eligible vehicle rack issue transitions and report whether state changed. Implementation: calls jobs.values, _active, float, _rear; updates changed.",
               "purpose_origin": "implementation_derived"
@@ -19884,8 +19911,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_pickup",
               "name": "_pickup",
-              "line": 120,
-              "end_line": 132,
+              "line": 122,
+              "end_line": 134,
               "kind": "method",
               "purpose": "Pickup for vehicle rack issue. Implementation: calls _rear, rear.ledger.inspect_entity, source.get, rear.forward_supply._at_stop; updates row.carry, row.portion.",
               "purpose_origin": "implementation_derived"
@@ -19893,17 +19920,17 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_drop",
               "name": "_drop",
-              "line": 134,
-              "end_line": 153,
+              "line": 136,
+              "end_line": 157,
               "kind": "method",
-              "purpose": "Drop for vehicle rack issue. Implementation: calls _rear, rear.ledger.inspect_entity, carried.get, person.position.distance_to; updates row.carry, row.deadline, row.issued, row.state.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Transfer an actual rack portion, record that successful portion as the latest receipt, and remove completed work from current membership.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_hull_error",
               "name": "_hull_error",
-              "line": 155,
-              "end_line": 165,
+              "line": 159,
+              "end_line": 169,
               "kind": "method",
               "purpose": "Hull error for vehicle rack issue. Implementation: calls _rear, rear.ledger.inspect_entity, hull.get, rear.military.vehicles.has.",
               "purpose_origin": "implementation_derived"
@@ -19911,8 +19938,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_handler_error",
               "name": "_handler_error",
-              "line": 167,
-              "end_line": 172,
+              "line": 171,
+              "end_line": 176,
               "kind": "method",
               "purpose": "Handler error for vehicle rack issue. Implementation: calls _rear, rear.ledger.inspect_entity, rear.forward_supply._active_member, str(person.crew_station).is_empty.",
               "purpose_origin": "implementation_derived"
@@ -19920,8 +19947,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_valid",
               "name": "_valid",
-              "line": 174,
-              "end_line": 180,
+              "line": 178,
+              "end_line": 184,
               "kind": "method",
               "purpose": "Valid for vehicle rack issue. Implementation: calls _hull_error, error.is_empty, _handler_error, _rear; updates error.",
               "purpose_origin": "implementation_derived"
@@ -19929,8 +19956,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_begin",
               "name": "_begin",
-              "line": 182,
-              "end_line": 189,
+              "line": 186,
+              "end_line": 193,
               "kind": "method",
               "purpose": "Begin for vehicle rack issue. Implementation: calls _rear().ledger.inspect_entity, _rear; updates row.deadline, row.expected, row.from, row.revision.",
               "purpose_origin": "implementation_derived"
@@ -19938,17 +19965,17 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_stop",
               "name": "_stop",
-              "line": 191,
-              "end_line": 198,
+              "line": 195,
+              "end_line": 204,
               "kind": "method",
-              "purpose": "Stop for vehicle rack issue. Implementation: calls _rear().ledger.release_claim, _rear, _rear().ledger.inspect_entity, carry.get; updates row.blocker, row.carry, row.deadline, row.state.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Stop actual rack handling, preserving carried custody and indexing only the unresolved carried state.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_active",
               "name": "_active",
-              "line": 200,
-              "end_line": 201,
+              "line": 206,
+              "end_line": 207,
               "kind": "method",
               "purpose": "Return row.state in [\"Walking Source\",\"Pickup\",\"Walking Hull\",\"Drop\"] for vehicle rack issue.",
               "purpose_origin": "implementation_derived"
@@ -19956,8 +19983,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::snapshot",
               "name": "snapshot",
-              "line": 203,
-              "end_line": 207,
+              "line": 209,
+              "end_line": 213,
               "kind": "method",
               "purpose": "Export the current vehicle rack issue state as a detached inspection dictionary. Implementation: calls jobs.values, rows.append, row.duplicate.",
               "purpose_origin": "implementation_derived"
@@ -19965,8 +19992,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::audit",
               "name": "audit",
-              "line": 209,
-              "end_line": 216,
+              "line": 215,
+              "end_line": 222,
               "kind": "method",
               "purpose": "Audit for vehicle rack issue. Implementation: calls jobs.values, errors.append, _rear().ledger.inspect_entity, _rear.",
               "purpose_origin": "implementation_derived"
@@ -19974,8 +20001,8 @@
             {
               "id": "game/forward_supply/vehicle_rack_issue.gd::_fail",
               "name": "_fail",
-              "line": 218,
-              "end_line": 219,
+              "line": 224,
+              "end_line": 225,
               "kind": "method",
               "purpose": "Return a failed vehicle rack issue command result with the supplied explanation.",
               "purpose_origin": "implementation_derived"
@@ -29118,7 +29145,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; transit and other issue history remain unavailable.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable.",
       "nodes": [
         {
           "id": "n0",
@@ -29209,7 +29236,7 @@
           "label": "Explicit friendly stop entitlement",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "register_delivery_stop",
-          "line": 28
+          "line": 31
         },
         {
           "id": "stop_cue",
@@ -29223,7 +29250,7 @@
           "label": "Authorized loose stock and opening issue view",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "observe_stop",
-          "line": 47
+          "line": 73
         },
         {
           "id": "stop_cache",
@@ -29231,6 +29258,27 @@
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_on_stop_stock_changed",
           "line": 348
+        },
+        {
+          "id": "delivery_index",
+          "label": "Active actual delivery membership",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_request_delivery",
+          "line": 242
+        },
+        {
+          "id": "issue_receipt",
+          "label": "Bounded latest successful transfer",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_receipt",
+          "line": 60
+        },
+        {
+          "id": "actor_permission",
+          "label": "Current actor and hidden-person boundary",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_friendly",
+          "line": 67
         }
       ],
       "edges": [
@@ -29323,6 +29371,21 @@
           "from": "stop_cache",
           "to": "stop_read",
           "label": "refresh only on selection or stock invalidation"
+        },
+        {
+          "from": "delivery_index",
+          "to": "stop_read",
+          "label": "actual active IDs only"
+        },
+        {
+          "from": "issue_receipt",
+          "to": "stop_read",
+          "label": "latest historical transfer"
+        },
+        {
+          "from": "actor_permission",
+          "to": "stop_read",
+          "label": "current disclosure check"
         }
       ],
       "related": [
@@ -29413,7 +29476,7 @@
         },
         {
           "path": "game/battlefield/battlefield_view.gd",
-          "sha256": "0295acc866d014ad35bf59cefb8269c804fb5d7ee624d79821eb6db7a6910eed",
+          "sha256": "67d2467664138493f3b02d4150fefdd2663095f6ea582cfcf0107df442cd9e75",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -29618,16 +29681,16 @@
               "id": "game/battlefield/battlefield_view.gd::_forward_stop_detail",
               "name": "_forward_stop_detail",
               "line": 358,
-              "end_line": 384,
+              "end_line": 391,
               "kind": "method",
-              "purpose": "Recheck stop permission and format actual loose stock and bounded opening-owned issue facts, marking unsupported stages unavailable.",
+              "purpose": "Recheck stop permission and format actual loose stock, bounded active delivery and issue facts, and latest confirmed historical transfers without claiming present custody.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/battlefield/battlefield_view.gd::_activity_label",
               "name": "_activity_label",
-              "line": 387,
-              "end_line": 408,
+              "line": 394,
+              "end_line": 415,
               "kind": "method",
               "purpose": "Activity label for battlefield view. Implementation: calls person.get, str, rear.military.troop_transport.jobs.values, rear.forward_supply.transport.jobs.values.",
               "purpose_origin": "implementation_derived"

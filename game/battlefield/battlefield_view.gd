@@ -367,20 +367,27 @@ func _forward_stop_detail(rear: RefCounted, id: String) -> String:
 	if _stop_stock.is_empty(): lines.append("No friendly loose stock directly held at this stop.")
 	else:
 		for type in _stop_stock: lines.append("%s: %d" % [type,int(_stop_stock[type].quantity)])
-	lines.append("In-transit freight: unavailable in this view.")
 	if not view.opening_available:
-		lines.append("Opening supply activity: unavailable.")
+		lines.append("Opening freight planning: unavailable.")
+	elif view.pending_freight.is_empty(): lines.append("No pending opening freight plan.")
+	else: lines.append("Opening freight plan: %s" % str(view.pending_freight.get("message","Status unavailable.")))
+	if view.deliveries.is_empty(): lines.append("No active indexed forward delivery at this stop.")
 	else:
-		if view.pending_freight.is_empty(): lines.append("No pending opening freight plan; current transit is not tracked here.")
-		else: lines.append("Opening freight plan: %s" % str(view.pending_freight.get("message","Status unavailable.")))
-		if view.issues.is_empty(): lines.append("No tracked opening issue.")
-		else:
-			for issue: Dictionary in view.issues:
-				var text := "%s issue · %s · %d %s" % [issue.kind,issue.state,issue.quantity,issue.type]
-				if issue.has("issued"): text += " · %d transferred" % int(issue.issued)
-				if not str(issue.blocker).is_empty(): text += "\n"+str(issue.blocker)
-				lines.append(text)
-	lines.append("Other issue history: unavailable; arrival alone does not arm a recipient.")
+		for delivery: Dictionary in view.deliveries:
+			var text := "Delivery · %s · %d %s requested\nCumulative loaded: %d · unloaded: %d" % [delivery.state,delivery.quantity,delivery.type,delivery.loaded,delivery.unloaded]
+			if not str(delivery.blocker).is_empty(): text += "\n"+str(delivery.blocker)
+			lines.append(text)
+	if view.issues.is_empty(): lines.append("No active indexed local issue at this stop.")
+	else:
+		for issue: Dictionary in view.issues:
+			var text := "%s issue · %s · %d %s requested" % [issue.kind,issue.state,issue.quantity,issue.type]
+			if issue.has("issued"): text += " · %d transferred so far" % int(issue.issued)
+			if issue.has("custody"): text += " · "+str(issue.custody)
+			if not str(issue.blocker).is_empty(): text += "\n"+str(issue.blocker)
+			lines.append(text)
+	for receipt: Dictionary in view.receipts:
+		lines.append("Latest %s transfer · %d %s at %.1f s (job %s, cumulative %d)" % [receipt.kind,receipt.quantity,receipt.type,receipt.at,receipt.job,receipt.count])
+	lines.append("Transfers are past events, not current possession or loaded ammunition. Untracked interrupted rack work and earlier history are unavailable.")
 	return "\n".join(lines)
 
 

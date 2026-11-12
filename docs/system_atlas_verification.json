@@ -1,7 +1,7 @@
 {
-  "scope": "Authorized forward-stop observation reviewed at a9fc00a; arranged Farmland stop marker, loose-stock refresh and undisclosed-stop omission passed GitHub run 43260148518. This is not shipment, issue-completion, visual or FPS acceptance.",
+  "scope": "Supply-visibility source reviewed at 622d9aa; one explicitly arranged real Farmland local issue and selected receipt passed GitHub run 43263298765. No transport, rack, visual or FPS acceptance is established.",
   "checks": {
-    "generation": "System map with 20 reviewed forward-stop function purposes and source-validated atlas regenerated without local engine execution.",
+    "generation": "System map with 14 reviewed supply-visibility function purposes and source-validated atlas regenerated without local engine execution.",
     "game_script_inventory": {
       "total": 235,
       "non_test": 141,
@@ -9,24 +9,24 @@
     },
     "atlas": {
       "systems": 50,
-      "functions_in_inventory": 3597,
-      "diagram_function_links": 295
+      "functions_in_inventory": 3600,
+      "diagram_function_links": 298
     },
     "function_map": {
-      "files": 1180,
-      "functions": 3820,
-      "named": 3457,
+      "files": 1183,
+      "functions": 3823,
+      "named": 3460,
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Workspace hint points to isolated battlefield-forward-stop-worktree; reviewed source checkpoint a9fc00a. No external editor/browser interaction tested."
+    "links": "Workspace hint points to isolated battlefield-supply-visibility-worktree; reviewed source checkpoint 622d9aa. No external editor/browser interaction tested."
   },
   "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [
-    "No shipment or completed local issue was demonstrated.",
-    "No native click, rendered appearance, hidden-area progression or FPS observation.",
+    "No transport, rack, interruption, resume or restore action was demonstrated.",
+    "No native input, rendered appearance, hidden-area progression or FPS observation.",
     "No local Godot or regression suite.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/forward_stop_current_change.json"
+  "runtime_evidence": "evidence/battlefield_3d/supply_visibility_current_change.json"
 }
