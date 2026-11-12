@@ -50,3 +50,5 @@ The existing current view's stop-held loose-stock cache and permission check rem
 ## Accepted implementation boundary
 
 Lead authorized this bounded design on 12 November. Keep each real work owner authoritative, add only per-stop observation indexes at accepted/terminal hooks and one latest confirmed transfer receipt per issue kind. Empty index does not claim no earlier work or prove all interrupted rack work is tracked. Current actor and stop permission is rechecked before projection. Existing simulations create services fresh; restore/backfill compatibility has not been established. The single planned direct action is one real local issue and its observed receipt, with unpermitted-stop omission; it does not establish transport, rack, interruption, native input, visual, restore or FPS behavior.
+
+Observation indexes update at the existing semantic admission, interruption and successful-transfer/return events. The existing selected inspector cadence reads only the bounded projection; this block adds no observation signal or new tick listener. Person disclosure also preserves the existing hidden `rear_place == Occupied` boundary.

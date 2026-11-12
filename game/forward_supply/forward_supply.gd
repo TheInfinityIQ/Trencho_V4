@@ -67,6 +67,7 @@ func _observation_receipt(kind: String, row: Dictionary, quantity: int, cumulati
 func _observation_friendly(id: String, observer: String, kind: String) -> bool:
 	var entity: Dictionary = _rear().ledger.inspect_entity(id,{},false)
 	if entity.get("kind","") != kind or entity.get("owner","") != observer: return false
+	if kind == "PERSON" and entity.get("rear_place","") == "Occupied": return false
 	return kind != "CARRIER" or str(entity.get("controller","")).trim_suffix("-hq") == observer
 
 func observe_stop(stop_id: String, observer: String, include_stock: bool = true) -> Dictionary:
