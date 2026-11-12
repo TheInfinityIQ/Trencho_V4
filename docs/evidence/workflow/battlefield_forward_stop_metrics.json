@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "feature": "Next observed-field loop discovery",
+  "workflow": "Linked continuation of closed t04_metrics.json using existing workflow_metrics.py",
+  "plan": "Source-only battlefield loop and movement notification review",
+  "source_revision": "0fadd51",
+  "started_at": "2026-11-12T16:22:20.312264+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T16:36:28.976714+00:00",
+  "seconds_by_phase": {
+    "planning": 309.123539,
+    "implementation": 314.30372500000004,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 108.923514,
+    "release": 0,
+    "waiting": 116.313672,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T16:36:28.863786+00:00",
+      "note": "GitHub direct run 43260148518 passed authorized stop marker, explicit fixture stock/invalidation and undisclosed-stop omission; no shipment, issue completion, visual or FPS verification."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-12T16:34:07.424941+00:00",
+      "id": "stock-refresh-label-review",
+      "kind": "planning_discovery",
+      "summary": "Lead review identified global stock changes requesting an unnecessary inspector refresh and an overbroad stock label; corrected to selected-stop refresh and explicit loose-stock wording.",
+      "severity": "review finding",
+      "evidence": "Source review of 4a18d94 and correction a9fc00a; no runtime or performance regression established.",
+      "planning_assessment": "possible"
+    },
+    {
+      "recorded_at": "2026-11-12T16:36:28.745349+00:00",
+      "id": "retained-history-review",
+      "kind": "planning_discovery",
+      "summary": "Forward job dictionaries retain history and the opening pending key clears after admission, so the selected-stop view cannot identify all transit or past issue without an unbounded history scan or new index.",
+      "severity": "scope decision",
+      "evidence": "Source inspection of ForwardTransport.jobs, OpeningResupply._freight_request and active owned issue sets; Lead chose bounded Option A before implementation. No production regression established.",
+      "planning_assessment": "possible"
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 2,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "stock-refresh-label-review": 0,
+    "retained-history-review": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 14060526,
+      "cached_input_tokens": 14006912,
+      "output_tokens": 24930,
+      "reasoning_output_tokens": 5110,
+      "total_tokens": 14085456,
+      "uncached_input_tokens": 53614
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 14060526,
+      "cached_input_tokens": 14006912,
+      "output_tokens": 24930,
+      "reasoning_output_tokens": 5110,
+      "total_tokens": 14085456,
+      "uncached_input_tokens": 53614
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-12T16:22:20.312264+00:00",
+        "ended_at": "2026-11-12T16:27:29.435803+00:00",
+        "receipt_start": "2026-11-12T16:22:07.735Z",
+        "receipt_end": "2026-11-12T16:27:04.942Z",
+        "usage_delta": {
+          "input_tokens": 5690381,
+          "cached_input_tokens": 5652608,
+          "output_tokens": 6902,
+          "reasoning_output_tokens": 1469,
+          "total_tokens": 5697283,
+          "uncached_input_tokens": 37773
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T16:27:29.435803+00:00",
+        "ended_at": "2026-11-12T16:32:17.576936+00:00",
+        "receipt_start": "2026-11-12T16:27:04.942Z",
+        "receipt_end": "2026-11-12T16:32:11.756Z",
+        "usage_delta": {
+          "input_tokens": 4349118,
+          "cached_input_tokens": 4339456,
+          "output_tokens": 13138,
+          "reasoning_output_tokens": 3209,
+          "total_tokens": 4362256,
+          "uncached_input_tokens": 9662
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T16:32:17.576936+00:00",
+        "ended_at": "2026-11-12T16:33:41.361384+00:00",
+        "receipt_start": "2026-11-12T16:32:11.756Z",
+        "receipt_end": "2026-11-12T16:33:27.507Z",
+        "usage_delta": {
+          "input_tokens": 794939,
+          "cached_input_tokens": 793728,
+          "output_tokens": 495,
+          "reasoning_output_tokens": 112,
+          "total_tokens": 795434,
+          "uncached_input_tokens": 1211
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T16:33:41.361384+00:00",
+        "ended_at": "2026-11-12T16:34:07.523976+00:00",
+        "receipt_start": "2026-11-12T16:33:27.507Z",
+        "receipt_end": "2026-11-12T16:33:59.030Z",
+        "usage_delta": {
+          "input_tokens": 800570,
+          "cached_input_tokens": 799232,
+          "output_tokens": 1007,
+          "reasoning_output_tokens": 61,
+          "total_tokens": 801577,
+          "uncached_input_tokens": 1338
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T16:34:07.523976+00:00",
+        "ended_at": "2026-11-12T16:34:40.053200+00:00",
+        "receipt_start": "2026-11-12T16:33:59.030Z",
+        "receipt_end": "2026-11-12T16:34:31.824Z",
+        "usage_delta": {
+          "input_tokens": 535509,
+          "cached_input_tokens": 534912,
+          "output_tokens": 473,
+          "reasoning_output_tokens": 31,
+          "total_tokens": 535982,
+          "uncached_input_tokens": 597
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-12T16:34:40.053200+00:00",
+        "ended_at": "2026-11-12T16:36:28.976714+00:00",
+        "receipt_start": "2026-11-12T16:34:31.824Z",
+        "receipt_end": "2026-11-12T16:36:10.144Z",
+        "usage_delta": {
+          "input_tokens": 1890009,
+          "cached_input_tokens": 1886976,
+          "output_tokens": 2915,
+          "reasoning_output_tokens": 228,
+          "total_tokens": 1892924,
+          "uncached_input_tokens": 3033
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}
