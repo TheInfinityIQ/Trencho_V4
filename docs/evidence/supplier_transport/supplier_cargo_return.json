@@ -1,0 +1,68 @@
+{
+  "feature": "Remaining aboard supplier cargo return",
+  "revision": "499216473b3f4cad7ec777aab3f82b0aeaa84956",
+  "production_checkpoint": "a26fec110e7d3b3aae6e63e3cdf5f83cc46ebad3",
+  "required_check": {
+    "run": 43164971515,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43164971515",
+    "conclusion": "success",
+    "scope": "Changed production scripts compile; no gameplay suite."
+  },
+  "direct_check": {
+    "run": 43164987127,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43164987127",
+    "conclusion": "success",
+    "artifact_id": 13919970720,
+    "artifact_sha256": "44031314a0f34b6d68702bcc3a19ea84a8f224a3a43af6f798a1106e38a41880",
+    "scope": "One current-change supplier return episode, two arranged real workers and direct clear routes, 0.1s explicit simulation steps at 1x. No native input, warehouse fixtures, rendering, failure matrix, regression suite or FPS claim.",
+    "checks": [
+      "PASS Actual storage place",
+      "PASS Actual worker handler-a",
+      "PASS Actual worker handler-b",
+      "PASS Assign two real unloaders",
+      "PASS Buy 48kg Components with one retained transport fee",
+      "PASS One actual carried load and another actual worker on the ramp",
+      "PASS Quote only original 24kg aboard, goods refund96, fee20 retained",
+      "PASS Confirm return during actual ramp approach",
+      "PASS No early refund or convoy release",
+      "PASS Remaining aboard goods locked against new use",
+      "PASS Actual ramp corridor withdrawal scheduled",
+      "PASS Safe carry deposit and actual worker exit precede truck departure; no early payment",
+      "PASS Withdrawal walks at committed 1.5m/s without teleporting",
+      "PASS Same carrier reaches actual exit and completes return",
+      "PASS Same remaining cargo identities and quantities belong to supplier aboard same truck",
+      "PASS Exactly96 goods refund; only actual deposited24kg marked unloaded",
+      "PASS This convoy member and admission release after actual exit",
+      "PASS Completed return does not pay again on later time boundary",
+      "PASS Current return episode retains stock, claims and money conservation"
+    ],
+    "simulated_seconds": 62.7000000000006,
+    "max_withdrawal_step_m": 0.150001525878906,
+    "episode": {
+      "ordered_kg": 48,
+      "physically_deposited_kg": 24,
+      "returned_kg": 24,
+      "refund_requisition": 96,
+      "retained_transport_fee": 20,
+      "mechanism_at_exit": "closed"
+    }
+  },
+  "production_source_sha256": {
+    "game/identity/identity_ledger.gd": "dbaa8bc9a1d543da6ef94198291dae2cd5f4ab3a3fb1cb4931ded2e7f2c6ebd4",
+    "game/procurement/receiving_simulation.gd": "cd69f543544ef86f0fb964a303aa80b5e2c8f35477284831a82e2f0dd10b3428",
+    "game/rear_base/base_demo.gd": "1a90e0a20256c83a007db6b9d1a09cd2271e074c827e635846c1b188f629368c",
+    "game/supplier_transport/supplier_freight.gd": "61a530f1fa31d19d122bed7cb2e6cb5ea0a4d529cef59e99854fe3e1946f543d",
+    "game/supplier_transport/supplier_returns.gd": "7a2b14d063b166e2322d412137f150129a222d3aaa93656aa75b72a1eaef39c2"
+  },
+  "unverified": [
+    "Native delivery-menu input and appearance",
+    "Warehouse-specific fixture preparation cancellation and blocked carried deposits",
+    "Other materials, foreign-claim refusals, debug bypass and late dialog branches were source-reviewed but not exercised",
+    "Reload from warehouse and staging remain unimplemented",
+    "Full supplier game-loop block, human stage acceptance and60FPS remain open"
+  ],
+  "review": {
+    "lead": "Scoped return source review completed; no new source defect observed in this episode. This is not final technical approval of unfinished PR146.",
+    "designer": "Final current-head review of complete supplier PR remains required before merge."
+  }
+}

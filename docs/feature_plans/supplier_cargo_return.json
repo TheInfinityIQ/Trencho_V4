@@ -1,7 +1,11 @@
 {
   "feature": "Return remaining supplier cargo",
   "date": "2026-11-12",
-  "basis": ["warehouse_recovery_menu.md", "feature_plans/warehouse_v4.json", "diagrams/warehouse_recovery_v4.mmd"],
+  "basis": [
+    "warehouse_recovery_menu.md",
+    "feature_plans/warehouse_v4.json",
+    "diagrams/warehouse_recovery_v4.mmd"
+  ],
   "scope": "Same present freight truck returns its original remaining aboard goods. Warehouse reload and staging are separate future increments.",
   "acceptance": [
     "Delivery details quote actual aboard quantities, original paid goods prices and retained transport fee; explicit confirm defaults to Keep delivery.",
@@ -12,9 +16,29 @@
     "Free/debug goods never generate a refund; debug delivery explicitly abandons pending return without refund.",
     "Convoy member clears only after returned vehicle exits. No new polling, animation or local engine run."
   ],
-  "owners": {"command_and_money": "Receiving", "return_activity": "Receiving-owned SupplierReturns RefCounted with weak owner", "stock_and_claims": "IdentityLedger", "mechanism_and_aboard_index": "SupplierFreight", "traffic": "SupplierRoad", "confirmation": "existing delivery panel"},
-  "regression_planning": ["carried stock is split from original source and must not be refunded", "reverse actually traversed ingress rather than inventing a blocked route or teleporting", "do not release aisle owned by a different worker", "stock locks and original-price receipt prevent double use or repricing", "late dialog/new session/stale quote reject", "return and ordinary completion use distinct convoy conditions", "debug cleanup cancels return claims before deposit"],
+  "owners": {
+    "command_and_money": "Receiving",
+    "return_activity": "Receiving-owned SupplierReturns RefCounted with weak owner",
+    "stock_and_claims": "IdentityLedger",
+    "mechanism_and_aboard_index": "SupplierFreight",
+    "traffic": "SupplierRoad",
+    "confirmation": "existing delivery panel"
+  },
+  "regression_planning": [
+    "carried stock is split from original source and must not be refunded",
+    "reverse actually traversed ingress rather than inventing a blocked route or teleporting",
+    "do not release aisle owned by a different worker",
+    "stock locks and original-price receipt prevent double use or repricing",
+    "late dialog/new session/stale quote reject",
+    "return and ordinary completion use distinct convoy conditions",
+    "debug cleanup cancels return claims before deposit"
+  ],
   "verification": "Source parse plus one brief GitHub current-change return episode; no regression suite or local engine. Native UI appearance, full gameplay and FPS remain unverified.",
-  "sources": ["https://docs.godotengine.org/en/stable/classes/class_refcounted.html", "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html"],
-  "rationale": "Compose a bounded transaction/activity under the existing owner; keep physical identity and conservation in the ledger and use existing event/boundary scheduling. Weak reference avoids a reference-counted ownership cycle."
+  "sources": [
+    "https://docs.godotengine.org/en/stable/classes/class_refcounted.html",
+    "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html"
+  ],
+  "rationale": "Compose a bounded transaction/activity under the existing owner; keep physical identity and conservation in the ledger and use existing event/boundary scheduling. Weak reference avoids a reference-counted ownership cycle.",
+  "status": "Source implemented in existing supplier draft PR146; scoped required and one current-action check passed at4992164. Native UI/player/full-loop acceptance remains open.",
+  "receipt": "evidence/supplier_transport/supplier_cargo_return.json"
 }

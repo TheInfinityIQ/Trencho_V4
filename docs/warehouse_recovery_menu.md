@@ -1,7 +1,7 @@
 # Warehouse recovery menu proposal
 
 UI/UX consultation,10November2026. The original proposal is retained below. Remaining aboard-cargo return now has
-source implementation on the supplier feature branch, with direct validation pending.
+source implementation on the supplier feature branch, with one safe-withdrawal/actual-exit refund episode passed at4992164. Native menu and full-loop acceptance remain open.
 Warehouse reload and Clear bay staging remain proposed only. This introduces no
 new developer, screen framework, art, animation or approval gate.
 
