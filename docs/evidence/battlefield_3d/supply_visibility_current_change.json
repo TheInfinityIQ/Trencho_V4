@@ -1,0 +1,11 @@
+{
+  "source_revision": "622d9aa54531f3b59b9a29cc68010086be748be8",
+  "workflow_run": 43263298765,
+  "artifact_id": 13964752153,
+  "artifact_sha256": "f70e4aae9b539c2244f4925f1699bfd3252005748047a06bfbc72892cce530b2",
+  "demonstration_sha256": "307f774b9c4d2b28d52913e2bdb8b49fe69b901a6bdf3a6b5be70e0f0350c740",
+  "fixture": "Real normal Farmland session with two explicitly repositioned existing friendly soldiers and an explicitly arranged five-round stock portion at the authorized stop; the ordinary opening does not grant these arrangements.",
+  "result": "PASS: actual local issue moved five rounds to the recipient and updated the selected authorized stop receipt; undisclosed stop remains hidden.",
+  "scope": "One real local issue using five explicitly advanced shared-clock seconds, actual recipient custody, the selected-stop receipt and undisclosed-stop omission.",
+  "limitations": ["Transport, rack issue, interruption, resume and restore were not exercised.", "Five explicit simulated seconds are not native input, rendered appearance or live FPS evidence.", "Latest receipts are past successful transfer events, not current possession, weapon loading, lifetime totals or proof of completed broader gameplay.", "No historical backfill or restore compatibility has been established; untracked interrupted rack work remains unavailable."]
+}

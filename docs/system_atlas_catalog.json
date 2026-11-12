@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "a9fc00a",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-forward-stop-worktree",
+  "reviewed_baseline": "622d9aa",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-supply-visibility-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3268,7 +3268,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; transit and other issue history remain unavailable.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable.",
       "nodes": [
         {
           "id": "n0",
@@ -3365,6 +3365,24 @@
           "label": "Stock invalidation for selected cached stop",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_on_stop_stock_changed"
+        },
+        {
+          "id": "delivery_index",
+          "label": "Active actual delivery membership",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_request_delivery"
+        },
+        {
+          "id": "issue_receipt",
+          "label": "Bounded latest successful transfer",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_receipt"
+        },
+        {
+          "id": "actor_permission",
+          "label": "Current actor and hidden-person boundary",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_friendly"
         }
       ],
       "edges": [
@@ -3457,6 +3475,21 @@
           "from": "stop_cache",
           "to": "stop_read",
           "label": "refresh only on selection or stock invalidation"
+        },
+        {
+          "from": "delivery_index",
+          "to": "stop_read",
+          "label": "actual active IDs only"
+        },
+        {
+          "from": "issue_receipt",
+          "to": "stop_read",
+          "label": "latest historical transfer"
+        },
+        {
+          "from": "actor_permission",
+          "to": "stop_read",
+          "label": "current disclosure check"
         }
       ],
       "related": [
@@ -4671,10 +4704,10 @@
     "game/battlefield/resource_operations.gd": "92d7317edb5eb8a858ce1332f258c2493dcdf7dad344933acf01a5bb3180018f",
     "game/battlefield/vehicle_deployment.gd": "a7a7cd8fcfef3e105974a7b9d915ae86e5e4c8dfa1f8b4e7dc12888aa905d9fd",
     "game/battlefield/rifle_supply_travel.gd": "a01e811f3c97d43fe933014906f3211355380638561d48b2af0492d1772d5c84",
-    "game/forward_supply/forward_supply.gd": "3b822b77d8c9223d044577942f707fc7ec7e002a9fb5368d8cadf296b5208cb3",
+    "game/forward_supply/forward_supply.gd": "e70d9868d5612e141810eb8028f81029149a7b7b13d395dfa198c60c50974d94",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
-    "game/forward_supply/forward_transport.gd": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
-    "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
+    "game/forward_supply/forward_transport.gd": "e18b40f75fbb37d49ee130dc3974a1de21a36783d579742bba0627ea379b9b98",
+    "game/forward_supply/vehicle_rack_issue.gd": "4e656298cc649588f5045c158dad7137ed8c6022359c75b75d9714d1f3755a8d",
     "game/combat/combat_service.gd": "3b3b71cf7799b5628fc147e4413b589b52431c96b97b7dff0ff6df3d22dcf317",
     "game/vehicle_combat/vehicle_combat_service.gd": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
     "game/vehicle_recovery/recovery_service.gd": "f7d9eadec3ebc34fcda8c52da6b4e3daad7ae49f7975b889810b021331a486b8",
@@ -4702,7 +4735,7 @@
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "2d1d1a412b8b77547b723a222da5a7aeee7dcac73040e25f4b6bd5b10030c3a9",
-    "game/battlefield/battlefield_view.gd": "0295acc866d014ad35bf59cefb8269c804fb5d7ee624d79821eb6db7a6910eed",
+    "game/battlefield/battlefield_view.gd": "67d2467664138493f3b02d4150fefdd2663095f6ea582cfcf0107df442cd9e75",
     "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
     "game/preview_3d/world_presenter.gd": "f11842319b3050e3d7e11827600d98fab832a86e4a2d1b7856e76bcf03b33aad",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
