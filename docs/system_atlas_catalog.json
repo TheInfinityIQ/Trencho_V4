@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "8d0ef1208506978f863c6238d2bd7677589fbd6e",
+  "reviewed_baseline": "a26fec110e7d3b3aae6e63e3cdf5f83cc46ebad3",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -4218,8 +4218,8 @@
       "id": "supplier_transport",
       "title": "Supplier vehicles, spatial freight and independent service road",
       "group": "Rear economy",
-      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody",
-      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending.",
+      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration",
+      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate.",
       "nodes": [
         {
           "id": "quote",
@@ -4277,7 +4277,7 @@
         },
         {
           "id": "gate",
-          "label": "Actual handovers plus departure start",
+          "label": "Normal handover/departure or actual return exit",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_update_convoy_gate"
         },
@@ -4310,6 +4310,36 @@
           "label": "Planned pair ground-routing component / not connected yet",
           "file": "game/supplier_transport/paired_ground_path.gd",
           "function": "find"
+        },
+        {
+          "id": "return_quote",
+          "label": "Actual aboard quote and original prices",
+          "file": "game/supplier_transport/supplier_returns.gd",
+          "function": "quote"
+        },
+        {
+          "id": "return_confirm",
+          "label": "Same-session confirmation",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_confirm_supplier_return"
+        },
+        {
+          "id": "return_lock",
+          "label": "Atomic original-cargo return reservation",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "reserve_supplier_return"
+        },
+        {
+          "id": "return_workers",
+          "label": "Safe carried deposits and real withdrawal",
+          "file": "game/supplier_transport/supplier_returns.gd",
+          "function": "confirm"
+        },
+        {
+          "id": "return_exit",
+          "label": "Actual exit ownership and once-only refund",
+          "file": "game/supplier_transport/supplier_returns.gd",
+          "function": "complete"
         }
       ],
       "edges": [
@@ -4392,6 +4422,41 @@
           "from": "pair",
           "to": "ground_capability",
           "label": "prospective connection after measured contacts; not an active route"
+        },
+        {
+          "from": "dispatch",
+          "to": "return_quote",
+          "label": "indexed stock-change events"
+        },
+        {
+          "from": "return_quote",
+          "to": "return_confirm",
+          "label": "explicit player decision"
+        },
+        {
+          "from": "return_confirm",
+          "to": "return_lock",
+          "label": "same truck and exact quote"
+        },
+        {
+          "from": "return_lock",
+          "to": "return_workers",
+          "label": "no new unloading; safe existing work"
+        },
+        {
+          "from": "return_workers",
+          "to": "mechanism",
+          "label": "all jobs and aisle users cleared"
+        },
+        {
+          "from": "road",
+          "to": "return_exit",
+          "label": "same carrier actual exit"
+        },
+        {
+          "from": "return_exit",
+          "to": "gate",
+          "label": "returned member resolves only after exit"
         }
       ],
       "related": [
@@ -4411,7 +4476,8 @@
         "game/supplier_transport/supplier_actor_view.gd",
         "game/supplier_transport/supplier_passengers.gd",
         "game/supplier_transport/supplier_passengers_view.gd",
-        "game/supplier_transport/paired_ground_path.gd"
+        "game/supplier_transport/paired_ground_path.gd",
+        "game/supplier_transport/supplier_returns.gd"
       ],
       "notes": "Draft PR146. Native current-change42959035573 at aec2dae showed approved push-off/flight/land/clearance, slower passing and exact mixed warehouse receipt/all8arrivals. Subsequent hierarchy/resource check42960993401 passed at dbf2ea4. Warehouse scenery/haulers omitted from the native component recording; no full-loop or60FPS acceptance. Timber work resumes on the approved carrying layout and versioned reachable shelves."
     }
@@ -4710,18 +4776,19 @@
     "game/supplier_transport/supplier_actor_view.gd": "supplier_transport",
     "game/supplier_transport/supplier_passengers.gd": "supplier_transport",
     "game/supplier_transport/supplier_passengers_view.gd": "supplier_transport",
-    "game/supplier_transport/paired_ground_path.gd": "supplier_transport"
+    "game/supplier_transport/paired_ground_path.gd": "supplier_transport",
+    "game/supplier_transport/supplier_returns.gd": "supplier_transport"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
     "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
     "game/rear_base/base_simulation.gd": "7983a2b2178d4275a60daa6520649d487cebe5b54c85ebb95eafbe420c3faa7a",
-    "game/identity/identity_ledger.gd": "0cff94f77cf977b26324dad3eaa32952d98940bfaf5d4f8de4e6c2b525a64e88",
+    "game/identity/identity_ledger.gd": "dbaa8bc9a1d543da6ef94198291dae2cd5f4ab3a3fb1cb4931ded2e7f2c6ebd4",
     "game/identity/identity_records.gd": "d44aaf36ba405361dd423af438a8d3af16b9d0204daa51014b247a2a8216cc7d",
     "game/staffing/rear_simulation.gd": "5dcb22612cc7093d8a09d76b948a43ed970d5055cbe8a2d40f06953f77361f1b",
     "game/staffing/rear_layout.gd": "9813a0caeea2c2a5347768807b905e4a9b1f3b4296f1af03871b36f6d6421851",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "47f5af97dda7997a5783df293c9ca57a1d9378a2d22b482e22785380d3e77b81",
+    "game/procurement/receiving_simulation.gd": "cd69f543544ef86f0fb964a303aa80b5e2c8f35477284831a82e2f0dd10b3428",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
     "game/construction/construction_service.gd": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
@@ -4772,7 +4839,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "82b6f37719d403757bf3d07831c689348cd83843831e22b18c986ec8392b6a9e",
+    "game/rear_base/base_demo.gd": "1a90e0a20256c83a007db6b9d1a09cd2271e074c827e635846c1b188f629368c",
     "game/rear_base/base_map.gd": "9bbafa6ceda346b796711842deffe74fee0981eb118d1671945c5fab14ab6a41",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4851,7 +4918,7 @@
     "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
     "game/warehousing/warehouse_view.gd": "c098d5d0a19818740734a335cd7033f10043849ddfa91c8f676ade9d7d8ed2cb",
     "game/supplier_transport/cargo_packing.gd": "72681cea8b1c15522b709c4258115a891c1db9adc49dd25b228e798374d196b8",
-    "game/supplier_transport/supplier_freight.gd": "fee0602de35f03ba723668f793ab819418e8af2a59661af3d2ffff58addbb70e",
+    "game/supplier_transport/supplier_freight.gd": "61a530f1fa31d19d122bed7cb2e6cb5ea0a4d529cef59e99854fe3e1946f543d",
     "game/supplier_transport/supplier_road.gd": "6487237dc067d2b42d7c08bcd3b169f4413509dd5a296e68d3dcdafc724d020b",
     "game/supplier_transport/supplier_vehicle_view.gd": "bc20bef74c778b1737a5d2efedb8a582e68a6b01a17cd957817d367b0b9664e6",
     "game/staffing/joint_material_carry.gd": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
@@ -4859,6 +4926,7 @@
     "game/supplier_transport/supplier_actor_view.gd": "09287d87ff782e9a494b2666f2d4876397bfbb82f045d165f81e9ed3186e0040",
     "game/supplier_transport/supplier_passengers.gd": "4a71de0d3d6d61044113f1a57bfa5c42ebe0428455895f44826167111e372a50",
     "game/supplier_transport/supplier_passengers_view.gd": "b2f9b81f16a530beb91984ab1493080bc459f1a0d930765426e756d6c1ae180f",
-    "game/supplier_transport/paired_ground_path.gd": "87975e6e5c5a64bc53b46f343c26687114c3c036509bfc1328f2bd7a7cf1e372"
+    "game/supplier_transport/paired_ground_path.gd": "87975e6e5c5a64bc53b46f343c26687114c3c036509bfc1328f2bd7a7cf1e372",
+    "game/supplier_transport/supplier_returns.gd": "7a2b14d063b166e2322d412137f150129a222d3aaa93656aa75b72a1eaef39c2"
   }
 }

@@ -5,8 +5,9 @@ starting12×16m depot, finite packages, worker-prepared fixtures, held-truck
 warnings and completed full-edge joins have scoped domain receipts. Actual
 imported rendering, native entrance and camera ceiling have scoped receipts;
 publication/adoption status is tracked in PR145.
-Ordinary return/staging recovery and paired timber transport are separately
-planned; this does not mark stages1/2 or full-game60FPS accepted.
+Remaining aboard-cargo return now has source implementation on the supplier
+feature branch; scoped verification is pending. Warehouse reload/staging and
+paired timber transport remain separately planned; this does not mark stages1/2 or full-game60FPS accepted.
 
 [Construction follow-up](construction_delivery_completion.md): builders can fetch
 actual materials for their own starved site. The site menu shows actual delivery,

@@ -1,27 +1,28 @@
 {
-  "scope": "Candidate atlas links generated against source8d0ef12; file inventory refreshed after the scoped static-native receipt atc7dd490. No main adoption or full runtime acceptance.",
+  "scope": "Supplier cargo-return source checkpoint a26fec1; candidate branch only. Runtime verification pending.",
   "checks": {
     "generation": "system_map.py --update, explicit changed-function purpose review, system_atlas.py through the supplier catalog update, and ui_function_map.py --update --diagram-only completed.",
     "game_script_inventory": {
-      "total": 241,
-      "non_test": 147,
+      "total": 242,
+      "non_test": 148,
       "retained_tests": 94
     },
     "atlas": {
       "systems": 51,
-      "functions_in_inventory": 3675,
-      "diagram_function_links": 300
+      "functions_in_inventory": 3688,
+      "diagram_function_links": 305
     },
     "function_map": {
-      "files": 1282,
-      "functions": 3898,
-      "named": 3532,
+      "files": 1339,
+      "functions": 3911,
+      "named": 3545,
       "anonymous": 366,
       "purpose_reviews_required": 0
     },
     "links": "Generator resolves actual named method anchors/source fingerprints. Candidate VS Code default points at the actual isolated worktree; GitHub links use the source checkpoint. Reset local hint on eventual main adoption.",
     "viewer": "Existing viewer/template source unchanged; generated source/UI diagrams refreshed. No browser interaction or external VS Code launch was run.",
-    "ground_component": "New fixed-formation ground routing is a planned source capability, not yet connected or runtime-proven. Its prospective diagram edge is labelled accordingly."
+    "ground_component": "New fixed-formation ground routing is a planned source capability, not yet connected or runtime-proven. Its prospective diagram edge is labelled accordingly.",
+    "cargo_return": "Original aboard goods only; new return methods, exact confirmation and actual-exit ownership/refund links. Warehouse reload and staging remain separate."
   },
   "runtime_evidence": "Separate exact source/scoped GitHub receipts are in evidence/supplier_transport/current_change_receipts.json; they do not establish diagram/UI interaction or full-game correctness.",
   "unverified": [
