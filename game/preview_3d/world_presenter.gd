@@ -24,6 +24,8 @@ const RearT01Trucks = preload("res://game/preview_3d/rear_t01_trucks.gd")
 const FieldPersons = preload("res://game/preview_3d/field_persons.gd")
 const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
+const FieldT03 = preload("res://game/battlefield/presentation_3d/field_t03.gd")
+const ReportedContacts = preload("res://game/battlefield/presentation_3d/reported_contacts.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const ConstructionSiteVisual = preload("res://game/construction/visuals/construction_site_visual.gd")
@@ -35,6 +37,8 @@ var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
 var field_persons: FieldPersons = FieldPersons.new()
 var field_t01_trucks: FieldT01Trucks = FieldT01Trucks.new()
 var field_objectives: FieldObjectives = FieldObjectives.new()
+var field_t03: FieldT03 = FieldT03.new()
+var reported_contacts: ReportedContacts = ReportedContacts.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -122,6 +126,14 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_objectives.changed.connect(_field_objective_changed)
 	field_objectives.removing.connect(_field_objective_removing)
 	field_objectives.bind(model.rear.combat.world.ground)
+	_markers_root.add_child(field_t03)
+	field_t03.changed.connect(_field_t03_changed)
+	field_t03.removing.connect(_field_t03_removing)
+	field_t03.bind(model.rear.ledger,model.rear.combat.world.ground,_inspect_field_marker)
+	_markers_root.add_child(reported_contacts)
+	reported_contacts.changed.connect(_reported_contact_changed)
+	reported_contacts.removing.connect(_reported_contact_removing)
+	reported_contacts.bind(model.rear.combat.world.ground)
 	rear_root.add_child(_collision_root)
 	if model.rear.warehouse != null:
 		_facility_shells.warehouse_enabled = true
@@ -445,19 +457,26 @@ func refresh_markers() -> void:
 	var people: Dictionary = {}
 	var carriers: Dictionary = {}
 	var objectives: Dictionary = {}
+	var contacts: Dictionary = {}
+	var physical_ids: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
 		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
-		else: people.erase(row.id)
 		if row.kind == "CARRIER": carriers[row.id] = row
 		if row.kind == "PLACE" and row.has("objective_kind"): objectives[row.id] = row
+		if row.kind == "CONTACT": contacts[row.id] = row
+		else: physical_ids[row.id] = true
+	# Match the policy inspector: a permitted physical entity wins a shared ID.
+	for id in physical_ids: contacts.erase(id)
 	field_persons.reconcile(people.values())
 	field_t01_trucks.reconcile(carriers.values())
 	field_objectives.reconcile(objectives.values())
+	field_t03.reconcile(carriers.values())
+	reported_contacts.reconcile(contacts.values())
 	_proxy_rows.clear()
 	for row in marker_rows:
-		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id): continue
+		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id) or field_t03.anchors.has(row.id) or reported_contacts.anchors.has(row.id): continue
 		_proxy_rows.append(row)
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
@@ -473,6 +492,28 @@ func refresh_markers() -> void:
 		if present.has(id): continue
 		markers[id].queue_free()
 		markers.erase(id)
+
+func _inspect_field_marker(id: String) -> Dictionary:
+	return Policy.inspect(simulation.rear,id)
+
+func _field_t03_changed(id: String) -> void:
+	_register_field_anchor(id,field_t03.anchors[id])
+
+func _field_t03_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _reported_contact_changed(id: String) -> void:
+	_register_field_anchor(id,reported_contacts.anchors[id])
+
+func _reported_contact_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _register_field_anchor(id: String, anchor: Node3D) -> void:
+	if markers.has(id) and markers[id] != anchor:
+		var old: Node3D = markers[id]
+		old.get_parent().remove_child(old)
+		old.queue_free()
+	markers[id] = anchor
 
 func _field_person_changed(id: String) -> void:
 	var anchor: Node3D = field_persons.anchors[id]
@@ -534,6 +575,9 @@ func refresh_marker_positions() -> void:
 	# PERSON poses are affected-event owned. Other cached proxies keep the
 	# existing adapter; contacts use reports, never the true enemy ledger pose.
 	var rear: RefCounted = simulation.rear
+	# The policy supplies each report's logical expiry; ordinary time updates
+	# need only a deadline check until one of the admitted reports is due.
+	reported_contacts.refresh_due(rear.time,_inspect_field_marker)
 	for row in _proxy_rows:
 		if not markers.has(row.id): continue
 		if row.kind == "CONTACT":

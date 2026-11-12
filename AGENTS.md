@@ -7,6 +7,9 @@
 - The Game Designer directs gameplay scope; the Lead Developer owns engineering assignments, integration and PR merges. Do not infer gameplay requirements from the project name.
 - Use GDScript by default. Propose C#, GDExtension, or plugins when a concrete requirement justifies them.
 
+- Under Dawson's 12 November two-developer authorization, Lead owns logistics/shared state/entry/UI/integration; Battlefield Developer owns agreed battlefield 3D presentation in an isolated branch. See current team workflow; retired developers stay inactive.
+- Other sub-agent delegation is limited to on-demand `asset_scout` for accepted art briefs after coherent faceted concepts: fixed `gpt-6-luna`, High for reference searches or Low for exact catalogue lookups. Use `.codex/agents/asset_scout.toml`; when custom-role loading is unavailable, pass its instructions with explicit Luna/effort and `fork_turns="none"`. References are viewing-only; no mesh/texture reuse, licensing research, paid downloads or purchases. No additional standing chat/controller; retired developers stay inactive.
+
 ## Implementation
 
 - Group each feature's scenes, scripts, resources, and assets under `game/<feature>/`.

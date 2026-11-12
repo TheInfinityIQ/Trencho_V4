@@ -22,7 +22,7 @@ Source-observed implementation and verification belong in [implemented features]
 
 ## Design and engineering responsibility
 
-The Game Designer owns vision, gameplay scope, meaningful choices and observable requisites. The Lead Developer is currently the sole developer and owns systems, technical decisions, UI implementation, checks, integration and publication. Earlier consultant or parallel-development assignments do not reactivate through this brief. Current ownership is recorded in [team workflow](team_workflow.md) and [team integration state](team_integration_state.json).
+The Game Designer owns vision, gameplay scope, meaningful choices and observable requisites. The Lead Developer owns logistics, shared state/interfaces, routine UI, technical integration, checks and publication. Under Dawson's12November authorization, the Battlefield Developer owns agreed battlefield3D presentation files in an isolated copy; Lead retains shared entry/session/UI adapters and explicitly grants bounded field adapter edits after interface agreement. This supersedes the sole-programmer rule only for these two developers; retired developers remain inactive. Earlier consultant or parallel-development assignments do not reactivate through this brief. Current ownership is recorded in [team workflow](team_workflow.md) and [team integration state](team_integration_state.json).
 
 The old detailed [v0.2 specification](reference/gameplay_specification_v0_2.md) preserves catalogue values and historical rationale. It is not the current GDD or an instruction to retain old clocks, manual routine dispatch, prebuilt starting assets or archived assignments. No numerical rebalance is made by this documentation revision.
 

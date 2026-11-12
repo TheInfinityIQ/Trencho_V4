@@ -44,7 +44,7 @@ static func _entity_marker(rear: RefCounted, entity: Dictionary) -> Dictionary:
 static func _contact_marker(rear: RefCounted, target_id: String) -> Dictionary:
 	var report: Dictionary = rear.orders.contact("army",target_id)
 	if report.is_empty() or report.confidence <= 0 or not report.position.is_finite() or report.get("class","") in ["Enemy HQ","Resource","Route Hub","Observation"]: return {}
-	return {"id":target_id,"kind":"CONTACT","position":report.position,"owner":"army-red","affiliation":"army-red","class":report.get("class","Unknown"),"age":report.age,"confidence":report.confidence,"uncertainty_m":report.uncertainty_m}
+	return {"id":target_id,"kind":"CONTACT","position":report.position,"owner":"army-red","affiliation":"army-red","class":report.get("class","Unknown"),"age":report.age,"confidence":report.confidence,"uncertainty_m":report.uncertainty_m,"expiry_at":report.expiry_at}
 
 static func ownership_label(owner: String, player: String = "army-blue") -> String:
 	if owner == player: return "Friendly"

@@ -1,0 +1,73 @@
+{
+  "scope": "First observed-field3D increment: provisional friendly T03 and permitted contact cue, existing shared observer/picking and deadline-driven expiry.",
+  "production_checkpoint": "47bfecd8f765b5b7a33326db66973320c4ed453c",
+  "readiness": "Reviewed source plus required compilation and one brief initial-facing/report demonstration passed at 47bfecd. Native appearance/input and wider conversion remain unverified.",
+  "verification_plan": "One supplied brief direct action: actual normal Farmland opening T03 with explicitly arranged 37-degree facing retains its selectable anchor and actual basis; explicitly synthetic permitted report appears then expires after fixture logical-time crossing. No gameplay tick/clock, native input/appearance, parent-only movement or FPS claim.",
+  "policy": "Existing player policy is authoritative; contacts remain reports, never actual enemy bodies. Physical represented IDs retain precedence.",
+  "diagram": [
+    "../../feature_plans/battlefield_3d_t03.md",
+    "../../feature_plans/battlefield_3d_contacts.md"
+  ],
+  "review_corrections": [
+    "Replaced repeated per-time-update contact Policy.inspect loop with canonical read-only expiry metadata and aggregate deadline guard.",
+    "Removed duplicate policy/entity lookups from already permitted synchronous marker rows.",
+    "Protected represented physical same-ID anchors from report cue replacement.",
+    "Initial lightweight marker rows omit facing: resolve admitted carrier ID once through permitted inspection during reconciliation, reject invalid/missing facing, and never silently assume zero orientation."
+  ],
+  "publication_authority": {
+    "human_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+    "human_turn": "01a1d059-1b9c-7070-91a2-e8e45983c141",
+    "standing_lead_repo_authority": "Dawson previously instructed Lead to push changes for Designer review and manage PRs/issues/project/merges.",
+    "verified_repo_id": "1433736061",
+    "repository": "TheInfinityIQ/Trencho_V4",
+    "configured_origin": "https://github.com/TheInfinityIQ/Trencho_V4.git",
+    "connected_repo_push_permission": true,
+    "qualification": "Child push was rejected for unverified destination/authority. Lead verified exact official connected repository and origin and reviewed the source before its own scoped authorized publication. No child retry or credential bypass."
+  },
+  "acceptance_limits": [
+    "Provisional procedural T03 shape, not approved art",
+    "Native camera/picking/readability not observed",
+    "Parent-held T03 movement and broader field content unverified",
+    "Full3D battlefield/game loop and60FPS not established"
+  ],
+  "required_check": {
+    "run": 43255093552,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43255093552",
+    "head": "47bfecd8f765b5b7a33326db66973320c4ed453c",
+    "conclusion": "success"
+  },
+  "direct_check": {
+    "run": 43255096304,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43255096304",
+    "head": "47bfecd8f765b5b7a33326db66973320c4ed453c",
+    "conclusion": "success",
+    "artifact_id": 13960238005,
+    "artifact_sha256": "8dbc6c8fbf923f24ad71345e29ed3aaaaeb2e40799310cb0d89e0c7366e91cad",
+    "script_sha256": "9f732dfb803b27b1dcf115c0c641087634c9bd902e8746ada141e5c14baa5ebc",
+    "observed": "PASS: opening T03 anchor uses actual facing; permitted report anchor appears and expires. Initial 37 degrees is explicitly arranged fixture state, not a claim about default opening orientation."
+  },
+  "initial_failed_check": {
+    "run": 43251840125,
+    "artifact_sha256": "a2f075cb2822457f32ac2c6c52c37e2a62b8b9bc1f5a0f82b72d35a5c6b2658b",
+    "observed": "Supplied Simulation.new(false,true) fixture lacked normal Farmland battlefield_operations; existing field_persons.motions access failed and opening T03 assertion failed.",
+    "correction": "Use actual farmland_session.create_empty_field(true) factory already used by normal3D entry; no production null guard or source change.",
+    "classification": "Incomplete demonstration setup; no evidence of production regression. Same action/deadline rerun only."
+  },
+  "production_source_sha256": {
+    "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
+    "game/preview_3d/world_presenter.gd": "67da279513cf093d207b50618dd5e554ae135aa434474e2f71201e79e21cfaaf",
+    "game/battlefield/battlefield_presentation.gd": "c2b63f25b835ca8e3c1e51bc4cb0cb35cae2dd13ab61d482a317c9c96345d23c",
+    "game/orders/order_service.gd": "b29519455ab3c1dd5676161d47a47176ee8519d72e837d178406c2f0dd5a1412"
+  },
+  "prior_direct_check": {
+    "run": 43252755065,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43252755065",
+    "head": "bbd57d01dff235bc4f7d5c9ed60f6a31d00ca526",
+    "conclusion": "success",
+    "artifact_id": 13959522555,
+    "artifact_sha256": "aa0b44ba14ccf84e0ad85b2d43071df5b319ac212f949737901721e93c2163e4",
+    "script_sha256": "380dfd53261d0446371d04929118b2d0d197c7520d9da531c44a0ccebd28115c",
+    "observed": "Actual normal Farmland empty-opening T03 has its retained selectable anchor; one explicitly synthetic permitted report has its own cue/inspection; cue disappears after fixture logical time crosses canonical expiry. No gameplay tick/native input/FPS claim."
+  }
+}
