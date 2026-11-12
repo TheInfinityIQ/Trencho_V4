@@ -1,0 +1,11 @@
+{
+  "source_revision": "9056ee5",
+  "direct_check_revision": "46d8f52fc6009ed5b49e494ed181c71a4958ead9",
+  "workflow_run": 43265454010,
+  "artifact_id": 13965392407,
+  "artifact_sha256": "fa7280a5128fed446e86ce5f3a886992faaf128050ae8d16d579406927bbc938",
+  "demonstration_sha256": "8ee6af302c871faf661089a0d2a3260b6ba8287d509700ed27785d7cfdbf88c1",
+  "fixture": "Normal main scene with one actual permitted opening friendly soldier; its ledger move is explicitly arranged and does not claim simulated travel.",
+  "result": "PASS: selected actual friendly soldier exposes squad detail, follows its real movement and releases on manual pan.",
+  "limitations": ["The later scripted-recipient-refocus stop at 9056ee5 is source-reviewed only and was not exercised by this check.", "Boarding, permission loss, same-ID replacement, model replacement, native input and rendered appearance were not exercised.", "Runtime counters enabled do not establish live FPS, full-game or gameplay acceptance."]
+}

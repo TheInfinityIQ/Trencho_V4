@@ -1,0 +1,188 @@
+{
+  "schema": 1,
+  "feature": "Forward delivery and confirmed issue visibility",
+  "workflow": "Linked continuation of closed battlefield_next_metrics.json using existing workflow_metrics.py",
+  "plan": "Read-only source lifecycle and bounded projection design",
+  "source_revision": "3cecdf98f39ecf00041f9cb0f811a02871d5dfff",
+  "started_at": "2026-11-12T16:39:12.334098+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T16:53:57.878611+00:00",
+  "seconds_by_phase": {
+    "planning": 145.874363,
+    "implementation": 243.71326399999998,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 0.324655,
+    "release": 0,
+    "waiting": 495.632231,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T16:53:57.746921+00:00",
+      "note": "Run 43263298765 passed one explicitly arranged real local issue, selected receipt and undisclosed-stop omission; transport, rack, interruption, restore, native input and FPS were not exercised."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-12T16:51:10.674519+00:00",
+      "id": "person-visibility-boundary",
+      "kind": "planning_discovery",
+      "summary": "Lead review found that owner-only person projection did not also enforce the existing Occupied rear-place information boundary.",
+      "severity": "review finding",
+      "evidence": "Source review of b1e2232 compared _observation_friendly with BattlefieldPresentation._entity_marker; corrected before integration. No runtime regression established.",
+      "planning_assessment": "possible"
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 1,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "person-visibility-boundary": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 17007932,
+      "cached_input_tokens": 16963712,
+      "output_tokens": 21449,
+      "reasoning_output_tokens": 5019,
+      "total_tokens": 17029381,
+      "uncached_input_tokens": 44220
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 17007932,
+      "cached_input_tokens": 16963712,
+      "output_tokens": 21449,
+      "reasoning_output_tokens": 5019,
+      "total_tokens": 17029381,
+      "uncached_input_tokens": 44220
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-12T16:39:12.334098+00:00",
+        "ended_at": "2026-11-12T16:41:38.208461+00:00",
+        "receipt_start": "2026-11-12T16:39:01.205Z",
+        "receipt_end": "2026-11-12T16:41:30.798Z",
+        "usage_delta": {
+          "input_tokens": 2631210,
+          "cached_input_tokens": 2615936,
+          "output_tokens": 4259,
+          "reasoning_output_tokens": 751,
+          "total_tokens": 2635469,
+          "uncached_input_tokens": 15274
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T16:41:38.208461+00:00",
+        "ended_at": "2026-11-12T16:46:00.034966+00:00",
+        "receipt_start": "2026-11-12T16:41:30.798Z",
+        "receipt_end": "2026-11-12T16:45:47.396Z",
+        "usage_delta": {
+          "input_tokens": 4549492,
+          "cached_input_tokens": 4535680,
+          "output_tokens": 3341,
+          "reasoning_output_tokens": 1429,
+          "total_tokens": 4552833,
+          "uncached_input_tokens": 13812
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T16:46:00.034966+00:00",
+        "ended_at": "2026-11-12T16:49:29.627772+00:00",
+        "receipt_start": "2026-11-12T16:45:47.396Z",
+        "receipt_end": "2026-11-12T16:49:23.862Z",
+        "usage_delta": {
+          "input_tokens": 3846306,
+          "cached_input_tokens": 3837824,
+          "output_tokens": 9304,
+          "reasoning_output_tokens": 2406,
+          "total_tokens": 3855610,
+          "uncached_input_tokens": 8482
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T16:49:29.627772+00:00",
+        "ended_at": "2026-11-12T16:51:00.216650+00:00",
+        "receipt_start": "2026-11-12T16:49:23.862Z",
+        "receipt_end": "2026-11-12T16:50:46.493Z",
+        "usage_delta": {
+          "input_tokens": 1314757,
+          "cached_input_tokens": 1313408,
+          "output_tokens": 645,
+          "reasoning_output_tokens": 229,
+          "total_tokens": 1315402,
+          "uncached_input_tokens": 1349
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T16:51:00.216650+00:00",
+        "ended_at": "2026-11-12T16:51:34.337108+00:00",
+        "receipt_start": "2026-11-12T16:50:46.493Z",
+        "receipt_end": "2026-11-12T16:51:29.036Z",
+        "usage_delta": {
+          "input_tokens": 1324519,
+          "cached_input_tokens": 1322752,
+          "output_tokens": 1307,
+          "reasoning_output_tokens": 55,
+          "total_tokens": 1325826,
+          "uncached_input_tokens": 1767
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T16:51:34.337108+00:00",
+        "ended_at": "2026-11-12T16:53:57.553956+00:00",
+        "receipt_start": "2026-11-12T16:51:29.036Z",
+        "receipt_end": "2026-11-12T16:53:41.212Z",
+        "usage_delta": {
+          "input_tokens": 3341648,
+          "cached_input_tokens": 3338112,
+          "output_tokens": 2593,
+          "reasoning_output_tokens": 149,
+          "total_tokens": 3344241,
+          "uncached_input_tokens": 3536
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-12T16:53:57.553956+00:00",
+        "ended_at": "2026-11-12T16:53:57.878611+00:00",
+        "receipt_start": "2026-11-12T16:53:41.212Z",
+        "receipt_end": "2026-11-12T16:53:41.212Z",
+        "usage_delta": {
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 0,
+          "uncached_input_tokens": 0
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

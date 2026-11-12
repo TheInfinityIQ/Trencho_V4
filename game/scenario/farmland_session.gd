@@ -30,7 +30,7 @@ static func _create(empty_field: bool, live: bool = false) -> RefCounted:
 	for squad in rear.military.squads: _must(rear.orders.watch(squad))
 	var points: Dictionary = Map.waypoints()
 	_must(rear.ledger.add_place("blue-delivery","Forward supply stop",points["blue-delivery"]))
-	_must(rear.forward_supply.register_delivery_stop("blue-delivery",points["blue-delivery-route"],points["blue-delivery-return"]))
+	_must(rear.forward_supply.register_delivery_stop("blue-delivery",points["blue-delivery-route"],points["blue-delivery-return"],rear.PLAYER))
 	rear.battlefield_operations = Execution.new(rear)
 	rear.battlefield_operations.policy = Opening.new(rear,armies,points)
 	if live:

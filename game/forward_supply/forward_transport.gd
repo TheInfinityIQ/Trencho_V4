@@ -266,6 +266,7 @@ func _request_delivery(hull_id: String, plan: Dictionary, quantity: int, stop_id
 		"route_started":INF,"route_deadline":INF,"route_distance":0.0,"route_fuel":0.0,
 		"route_expected":hull.position,"world_revision":rear.combat.world.revision,"paused_state":"","blocker":""}
 	jobs[id].return_completed = false
+	rear.forward_supply._observation_set("delivery",jobs[id],true)
 	return {"ok":true,"id":id,"message":"Named HQ stock reserved; real staff loading, route travel and local unloading still remain."}
 
 
@@ -682,6 +683,7 @@ func _finish_route(row: Dictionary) -> void:
 		if not home.ok: _block_route(row,"Returning",home.message); return
 		row.state = "Complete"
 		row.return_completed = true
+		rear.forward_supply._observation_set("delivery",row,false)
 		row.blocker = ""
 	row.route_deadline = INF
 	row.route_expected = rear.ledger.inspect_entity(row.hull).position

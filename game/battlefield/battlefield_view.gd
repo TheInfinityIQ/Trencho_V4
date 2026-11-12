@@ -4,6 +4,7 @@ const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 
 const WORLD_SIZE := Vector2(4000.0, 6000.0)
 const Presentation = preload("res://game/battlefield/battlefield_presentation.gd")
+const SelectedEngagement = preload("res://game/battlefield/selected_engagement.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 const TRUCK_ART: Texture2D = preload("res://game/test_art/tiny_battle/tile_0132.png")
 const PANEL_WIDTH := 350.0
@@ -18,9 +19,15 @@ var _displayed_time := -INF
 var _displayed_speed := -1
 var _displayed_planning_revision := -1
 var _inspector: Label
+var _stop_stock_ledger: RefCounted
+var _stop_stock_id := ""
+var _stop_selection_id := ""
+var _stop_stock_dirty := true
+var _stop_stock: Dictionary = {}
 
 func bind(next_simulation: RefCounted) -> void:
 	simulation = next_simulation
+	_bind_stop_stock()
 	if is_node_ready():
 		_request_refresh()
 		queue_redraw()
@@ -37,6 +44,7 @@ func _ready() -> void:
 		session.simulation_changed.connect(bind)
 		session.state_changed.connect(_request_refresh)
 		session.time_advanced.connect(_request_refresh)
+	_bind_stop_stock()
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	resized.connect(queue_redraw)
@@ -248,20 +256,33 @@ func inspection_text() -> String:
 	if selected.is_empty():
 		selected_id = _default_objective()
 		selected = Presentation.inspect(rear,selected_id)
+	if _stop_selection_id != selected_id:
+		_stop_selection_id = selected_id
+		_stop_stock_id = ""
+		_stop_stock.clear()
+		_stop_stock_dirty = true
 	var objective_id := selected_id if rear.objectives.objectives.has(selected_id) else _default_objective()
 	var objective: Dictionary = rear.objectives.inspect(objective_id)
 	var detail := ""
 	if not selected.is_empty():
 		var title: String = _site_label(selected.id) if selected.kind == "PLACE" else (_unit_label(selected) if selected.kind in ["PERSON","CARRIER"] else selected.id)
 		detail = "%s\nPosition: (%.0f, %.0f) m" % [title, selected.position.x, selected.position.y]
+		if selected.kind == "PLACE" and selected.get("friendly_forward_stop",false): detail += _forward_stop_detail(rear,selected.id)
 		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
-		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
+		elif selected.kind == "CARRIER": detail += "\n"+_activity_label(selected)
 		if selected.kind == "PERSON":
 			detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
-			var loaded := 0
-			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"],false):
-				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
-			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
+			detail += _own_squad_detail(rear,selected)
+			var held: Array = rear.ledger.entities_at(selected.id,["STOCK","WEAPON"],false)
+			var engagement: Dictionary = SelectedEngagement.project(rear,selected,held)
+			if not engagement.is_empty():
+				detail += "\nPersonal movement: %s\nPersonal reload: %s" % [engagement.motion,engagement.reload]
+				detail += "\nE02 directly held loose (including handled portions): %d · loaded in held weapons: %d" % [engagement.loose_e02,engagement.loaded_e02]
+				detail += "\nHandling/assignment: "+_activity_label(selected)
+				var receipt: Dictionary = engagement.receipt
+				if not receipt.is_empty(): detail += "\nLatest confirmed transfer to this person: %d %s at %.1f s (past event)." % [receipt.quantity,receipt.type,receipt.at]
+				else: detail += "\nLatest matching personal transfer: unavailable."
+			else: detail += "\nPersonal engagement details unavailable."
 			if rear.battlefield_operations != null:
 				var collection: Dictionary = rear.battlefield_operations.rifle_collection.get(selected.get("duty_id",""),{})
 				if not collection.is_empty():
@@ -320,6 +341,79 @@ func inspection_text() -> String:
 			if not str(deployment.get("supply_stop","")).is_empty(): text += "\nSupply rendezvous: "+_site_label(str(deployment.supply_stop))
 	return text
 
+
+
+
+func _own_squad_detail(rear: RefCounted, person: Dictionary) -> String:
+	if str(person.get("owner","")) != rear.PLAYER: return ""
+	var squad_id := str(person.get("duty_id",""))
+	var squad: Dictionary = rear.military.squads.get(squad_id,{})
+	if squad.is_empty() or str(squad.get("owner","")) != rear.PLAYER or person.id not in squad.get("roster",[]): return "\nSquad: unavailable."
+	var detail := "\nFriendly squad: %s · %s" % [squad_id,str(squad.get("kind","Unknown"))]
+	var intent: Dictionary = rear.orders.intents.get(squad_id,{})
+	if intent.get("state","") == "Acknowledged": detail += "\nAcknowledged squad intent: "+str(intent.get("action","Unavailable"))
+	else: detail += "\nAcknowledged squad intent: unavailable or not yet acknowledged."
+	var activity: String = str(rear.battlefield_operations.status.get(squad_id,"")) if rear.battlefield_operations != null else ""
+	detail += "\nCurrent squad activity: "+(activity if not activity.is_empty() else "Unavailable.")
+	return detail
+
+
+func _bind_stop_stock() -> void:
+	if _stop_stock_ledger != null and _stop_stock_ledger.stock_changed.is_connected(_on_stop_stock_changed):
+		_stop_stock_ledger.stock_changed.disconnect(_on_stop_stock_changed)
+	_stop_stock_ledger = simulation.rear.ledger if simulation != null else null
+	_stop_stock_id = ""
+	_stop_selection_id = ""
+	_stop_stock.clear()
+	_stop_stock_dirty = true
+	if _stop_stock_ledger != null: _stop_stock_ledger.stock_changed.connect(_on_stop_stock_changed)
+
+func _on_stop_stock_changed(_id: String) -> void:
+	_stop_stock_dirty = true
+	if not _stop_stock_id.is_empty() and selected_id == _stop_stock_id: _request_refresh()
+
+func _exit_tree() -> void:
+	if _stop_stock_ledger != null and _stop_stock_ledger.stock_changed.is_connected(_on_stop_stock_changed):
+		_stop_stock_ledger.stock_changed.disconnect(_on_stop_stock_changed)
+	_stop_stock_ledger = null
+
+
+func _forward_stop_detail(rear: RefCounted, id: String) -> String:
+	var refresh_stock := _stop_stock_dirty or _stop_stock_id != id
+	var view: Dictionary = rear.forward_supply.observe_stop(id,rear.PLAYER,refresh_stock)
+	if view.is_empty(): return "\nForward stop details unavailable."
+	if refresh_stock:
+		_stop_stock = view.get("stock",{}).duplicate(true)
+		_stop_stock_id = id
+		_stop_stock_dirty = false
+	var lines: Array[String] = ["", "FRIENDLY FORWARD SUPPLY", "Loose stock physically held at this stop:"]
+	if _stop_stock.is_empty(): lines.append("No friendly loose stock directly held at this stop.")
+	else:
+		for type in _stop_stock: lines.append("%s: %d" % [type,int(_stop_stock[type].quantity)])
+	if not view.opening_available:
+		lines.append("Opening freight planning: unavailable.")
+	elif view.pending_freight.is_empty(): lines.append("No pending opening freight plan.")
+	else: lines.append("Opening freight plan: %s" % str(view.pending_freight.get("message","Status unavailable.")))
+	if view.deliveries.is_empty(): lines.append("No active indexed forward delivery at this stop.")
+	else:
+		for delivery: Dictionary in view.deliveries:
+			var text := "Delivery · %s · %d %s requested\nCumulative loaded: %d · unloaded: %d" % [delivery.state,delivery.quantity,delivery.type,delivery.loaded,delivery.unloaded]
+			if not str(delivery.blocker).is_empty(): text += "\n"+str(delivery.blocker)
+			lines.append(text)
+	if view.issues.is_empty(): lines.append("No active indexed local issue at this stop.")
+	else:
+		for issue: Dictionary in view.issues:
+			var text := "%s issue · %s · %d %s requested" % [issue.kind,issue.state,issue.quantity,issue.type]
+			if issue.has("issued"): text += " · %d transferred so far" % int(issue.issued)
+			if issue.has("custody"): text += " · "+str(issue.custody)
+			if not str(issue.blocker).is_empty(): text += "\n"+str(issue.blocker)
+			lines.append(text)
+	for receipt: Dictionary in view.receipts:
+		lines.append("Latest %s transfer · %d %s at %.1f s (job %s, cumulative %d)" % [receipt.kind,receipt.quantity,receipt.type,receipt.at,receipt.job,receipt.count])
+	lines.append("Transfers are past events, not current possession or loaded ammunition. Untracked interrupted rack work and earlier history are unavailable.")
+	return "\n".join(lines)
+
+
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear
 	if person.kind == "PERSON":
@@ -340,5 +434,4 @@ func _activity_label(person: Dictionary) -> String:
 		if person.get("holder_id","") == job.hull and job.state != "Complete": return "Troop transport: "+str(job.state)
 		if person.id in job.people and job.state == "Boarding": return "Awaiting physical boarding"
 	if not str(person.get("crew_station","")).is_empty(): return "Vehicle crew: "+str(person.crew_station)
-	if rear.battlefield_operations != null and rear.battlefield_operations.status.has(person.get("duty_id","")): return str(rear.battlefield_operations.status[person.duty_id])
 	return "At HQ / staging" if str(person.get("holder_id","")).contains("stage") else str(person.get("assignment","Stationary"))

@@ -2,6 +2,7 @@ extends Node3D
 ## Permitted scene membership only. Ledger events update affected cached people.
 signal changed(id: String)
 signal removing(id: String, anchor: Node3D)
+signal shot_fired(id: String)
 var anchors: Dictionary[String,Node3D] = {}
 var views: Dictionary[String,Dictionary] = {}
 var bodies: Dictionary[String,Node3D] = {}
@@ -93,7 +94,9 @@ func _refresh(id: String) -> void:
 	changed.emit(id)
 
 func _on_shot(id: String) -> void:
-	if bodies.has(id): bodies[id].fire()
+	if not bodies.has(id): return
+	bodies[id].fire()
+	shot_fired.emit(id)
 
 func sync_playback() -> void:
 	for body: Node3D in bodies.values(): body.sync_playback()

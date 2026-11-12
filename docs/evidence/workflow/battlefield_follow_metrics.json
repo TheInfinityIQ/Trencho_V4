@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "feature": "Follow a friendly battlefield soldier",
+  "workflow": "Existing two-developer battlefield workflow",
+  "plan": "Actual permitted selected person follow and distinct friendly squad intent/status",
+  "source_revision": "e8d7fab",
+  "started_at": "2026-11-12T16:58:06.896135+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T17:06:52.906994+00:00",
+  "seconds_by_phase": {
+    "planning": 83.812035,
+    "implementation": 241.502768,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 88.247706,
+    "release": 0,
+    "waiting": 112.44835,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T17:06:52.820058+00:00",
+      "note": "Run 43265454010 passed actual selected-person follow, arranged ledger move, squad detail and manual-pan release at 46d8f52; later 9056ee5 scripted-refocus hook is source-reviewed only."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-12T17:04:54.343662+00:00",
+      "id": "scripted-camera-reframe",
+      "kind": "planning_discovery",
+      "summary": "Lead review found that an existing scripted recipient reframe could retain an outdated active-follow camera offset; stop follow before repositioning.",
+      "severity": "review finding",
+      "evidence": "Source inspection of 46d8f52 _observe_recipient and follow offset; correction is source-reviewed, not an observed runtime regression.",
+      "planning_assessment": "possible"
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 1,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "scripted-camera-reframe": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 13210674,
+      "cached_input_tokens": 13191936,
+      "output_tokens": 16858,
+      "reasoning_output_tokens": 4666,
+      "total_tokens": 13227532,
+      "uncached_input_tokens": 18738
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 13210674,
+      "cached_input_tokens": 13191936,
+      "output_tokens": 16858,
+      "reasoning_output_tokens": 4666,
+      "total_tokens": 13227532,
+      "uncached_input_tokens": 18738
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-12T16:58:06.896135+00:00",
+        "ended_at": "2026-11-12T16:59:30.708170+00:00",
+        "receipt_start": "2026-11-12T16:57:47.552Z",
+        "receipt_end": "2026-11-12T16:59:18.813Z",
+        "usage_delta": {
+          "input_tokens": 3275323,
+          "cached_input_tokens": 3266688,
+          "output_tokens": 3186,
+          "reasoning_output_tokens": 1013,
+          "total_tokens": 3278509,
+          "uncached_input_tokens": 8635
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T16:59:30.708170+00:00",
+        "ended_at": "2026-11-12T17:03:00.436552+00:00",
+        "receipt_start": "2026-11-12T16:59:18.813Z",
+        "receipt_end": "2026-11-12T17:02:55.006Z",
+        "usage_delta": {
+          "input_tokens": 4531094,
+          "cached_input_tokens": 4525696,
+          "output_tokens": 9325,
+          "reasoning_output_tokens": 3154,
+          "total_tokens": 4540419,
+          "uncached_input_tokens": 5398
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T17:03:00.436552+00:00",
+        "ended_at": "2026-11-12T17:04:52.884902+00:00",
+        "receipt_start": "2026-11-12T17:02:55.006Z",
+        "receipt_end": "2026-11-12T17:04:36.723Z",
+        "usage_delta": {
+          "input_tokens": 1918611,
+          "cached_input_tokens": 1916928,
+          "output_tokens": 918,
+          "reasoning_output_tokens": 409,
+          "total_tokens": 1919529,
+          "uncached_input_tokens": 1683
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T17:04:52.884902+00:00",
+        "ended_at": "2026-11-12T17:05:24.659288+00:00",
+        "receipt_start": "2026-11-12T17:04:36.723Z",
+        "receipt_end": "2026-11-12T17:05:12.324Z",
+        "usage_delta": {
+          "input_tokens": 1157359,
+          "cached_input_tokens": 1156224,
+          "output_tokens": 1130,
+          "reasoning_output_tokens": 48,
+          "total_tokens": 1158489,
+          "uncached_input_tokens": 1135
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-12T17:05:24.659288+00:00",
+        "ended_at": "2026-11-12T17:06:52.906994+00:00",
+        "receipt_start": "2026-11-12T17:05:12.324Z",
+        "receipt_end": "2026-11-12T17:06:39.780Z",
+        "usage_delta": {
+          "input_tokens": 2328287,
+          "cached_input_tokens": 2326400,
+          "output_tokens": 2299,
+          "reasoning_output_tokens": 42,
+          "total_tokens": 2330586,
+          "uncached_input_tokens": 1887
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

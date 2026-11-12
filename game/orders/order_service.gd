@@ -1,6 +1,7 @@
 extends RefCounted
 ## G17 command links and observations. Actual people, goods and terrain remain with G01/G08/G15/G16.
 const EPS := 0.000001
+const CONTACT_DECAY_PER_SECOND := 0.02
 const ACTIONS: Array[String] = ["Defend HQ","Hold Area","Seize Objective","Probe","Support Formation","Prepare Assault","Assault HQ","Move by Transport","Escort Convoy","Deliver Supply","Resupply","Regroup","Evacuate","Build Infrastructure","Secure Crossing","Clear Minefield","Deny Crossing","Recover Vehicle"]
 const REPORTS: Array[String] = ["Contact","Progress","Complete","Inability","Casualties","Lost Capability","Low Supply","Blocked Route","Mine Hazard","Threatened Crossing","Opportunity"]
 var _rear_ref: WeakRef
@@ -54,7 +55,9 @@ func contact(echelon_id: String, target_id: String) -> Dictionary:
 	if known.is_empty(): return {}
 	var result: Dictionary = known.duplicate(true)
 	result.age = maxf(0.0,_rear().time-float(result.observed_at))
-	result.confidence = clampf(1.0-0.02*float(result.age),0.0,1.0)
+	result.confidence = clampf(1.0-CONTACT_DECAY_PER_SECOND*float(result.age),0.0,1.0)
+	# Same confidence cutoff used below, exposed for presentation scheduling.
+	result.expiry_at = float(result.observed_at)+(1.0-EPS)/CONTACT_DECAY_PER_SECOND+0.000000001
 	result.uncertainty_m = float(result.age)*2.0
 	result.caution_strength = float(result.observed_strength)*1.25 if result.age > 10.0 else float(result.observed_strength)
 	if result.confidence <= EPS: result.position = Vector2.INF

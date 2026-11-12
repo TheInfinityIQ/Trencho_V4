@@ -21,8 +21,11 @@ static func inspect(rear: RefCounted, id: String) -> Dictionary:
 static func _entity_marker(rear: RefCounted, entity: Dictionary) -> Dictionary:
 	if entity.is_empty(): return {}
 	if entity.kind == "PLACE":
-		if entity.id != "hq-berth" and not rear.objectives.objectives.has(entity.id) and not rear.orders.objective_markers.has(entity.id): return {}
+		var stop: Dictionary = rear.forward_supply.delivery_stops.get(entity.id,{}) if rear.forward_supply != null else {}
+		var permitted_stop: bool = not stop.is_empty() and str(stop.get("observer_owner","")) == rear.PLAYER
+		if entity.id != "hq-berth" and not rear.objectives.objectives.has(entity.id) and not rear.orders.objective_markers.has(entity.id) and not permitted_stop: return {}
 		var row: Dictionary = entity.duplicate()
+		if permitted_stop: row["friendly_forward_stop"] = true
 		if rear.objectives.objectives.has(entity.id):
 			var objective: Dictionary = rear.objectives.objectives[entity.id]
 			var owner: String = str(objective.owner)
@@ -44,7 +47,7 @@ static func _entity_marker(rear: RefCounted, entity: Dictionary) -> Dictionary:
 static func _contact_marker(rear: RefCounted, target_id: String) -> Dictionary:
 	var report: Dictionary = rear.orders.contact("army",target_id)
 	if report.is_empty() or report.confidence <= 0 or not report.position.is_finite() or report.get("class","") in ["Enemy HQ","Resource","Route Hub","Observation"]: return {}
-	return {"id":target_id,"kind":"CONTACT","position":report.position,"owner":"army-red","affiliation":"army-red","class":report.get("class","Unknown"),"age":report.age,"confidence":report.confidence,"uncertainty_m":report.uncertainty_m}
+	return {"id":target_id,"kind":"CONTACT","position":report.position,"owner":"army-red","affiliation":"army-red","class":report.get("class","Unknown"),"age":report.age,"confidence":report.confidence,"uncertainty_m":report.uncertainty_m,"expiry_at":report.expiry_at}
 
 static func ownership_label(owner: String, player: String = "army-blue") -> String:
 	if owner == player: return "Friendly"

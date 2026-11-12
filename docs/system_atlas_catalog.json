@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "18fbfdaf95eb768acda76417a26d9002a3d9ef8b",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
+  "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3273,7 +3273,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity. Selected friendly engagement facts distinguish own-squad task and status, individual motion/reload and current E02 from any same-recipient historical transfer.",
       "nodes": [
         {
           "id": "n0",
@@ -3298,6 +3298,126 @@
           "label": "Select actual entity for observation",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "focus_entity"
+        },
+        {
+          "id": "t03_admit",
+          "label": "Permitted T03 identity/metric stand-in",
+          "file": "game/battlefield/presentation_3d/field_t03.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "t03_motion",
+          "label": "Affected actual hull events",
+          "file": "game/battlefield/presentation_3d/field_t03.gd",
+          "function": "_refresh_id"
+        },
+        {
+          "id": "report_admit",
+          "label": "Permitted report cue, not enemy body",
+          "file": "game/battlefield/presentation_3d/reported_contacts.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "report_deadline",
+          "label": "Canonical logical expiry",
+          "file": "game/orders/order_service.gd",
+          "function": "contact"
+        },
+        {
+          "id": "report_due",
+          "label": "Scalar deadline guard / due-only inspection",
+          "file": "game/battlefield/presentation_3d/reported_contacts.gd",
+          "function": "refresh_due"
+        },
+        {
+          "id": "field_anchor",
+          "label": "Same selection/inspection identity",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "_register_field_anchor"
+        },
+        {
+          "id": "t04_admit",
+          "label": "Permitted T04 vehicle identity",
+          "file": "game/battlefield/presentation_3d/field_t04.gd",
+          "function": "_eligible"
+        },
+        {
+          "id": "t04_shape",
+          "label": "Provisional 7.5 × 3 m T04 stand-in",
+          "file": "game/battlefield/presentation_3d/field_t04.gd",
+          "function": "_add_standin"
+        },
+        {
+          "id": "stop_auth",
+          "label": "Explicit friendly stop entitlement",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "register_delivery_stop"
+        },
+        {
+          "id": "stop_cue",
+          "label": "Permitted same-ID forward-stop cue",
+          "file": "game/battlefield/presentation_3d/forward_stop.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "stop_read",
+          "label": "Authorized loose stock and opening issue view",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "observe_stop"
+        },
+        {
+          "id": "stop_cache",
+          "label": "Stock invalidation for selected cached stop",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_on_stop_stock_changed"
+        },
+        {
+          "id": "delivery_index",
+          "label": "Active actual delivery membership",
+          "file": "game/forward_supply/forward_transport.gd",
+          "function": "_request_delivery"
+        },
+        {
+          "id": "issue_receipt",
+          "label": "Bounded latest successful transfer",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_receipt"
+        },
+        {
+          "id": "actor_permission",
+          "label": "Current actor and hidden-person boundary",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "_observation_friendly"
+        },
+        {
+          "id": "follow_start",
+          "label": "Follow a permitted friendly person",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "start"
+        },
+        {
+          "id": "follow_move",
+          "label": "Move only the observer camera on person change",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "_on_person_changed"
+        },
+        {
+          "id": "squad_detail",
+          "label": "Friendly squad intent and activity",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_own_squad_detail"
+        },
+        {
+          "id": "selected_engagement",
+          "label": "Actual selected friendly movement / reload / E02",
+          "file": "game/battlefield/selected_engagement.gd",
+          "function": "project"
+        },
+        {
+          "id": "selected_receipt",
+          "label": "Authorized exact-recipient latest transfer",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "observe_personal_receipt"
         }
       ],
       "edges": [
@@ -3315,6 +3435,126 @@
           "from": "n3",
           "to": "n1",
           "label": "focus current identity"
+        },
+        {
+          "from": "t03_admit",
+          "to": "t03_motion",
+          "label": "only admitted IDs"
+        },
+        {
+          "from": "t03_motion",
+          "to": "field_anchor",
+          "label": "retained actual pose"
+        },
+        {
+          "from": "report_deadline",
+          "to": "report_admit",
+          "label": "read-only permitted report metadata"
+        },
+        {
+          "from": "report_admit",
+          "to": "report_due",
+          "label": "no repeated contact/entity scan on ordinary time updates"
+        },
+        {
+          "from": "report_due",
+          "to": "field_anchor",
+          "label": "expiry removes only owned cue"
+        },
+        {
+          "from": "report_admit",
+          "to": "field_anchor",
+          "label": "same current permitted ID"
+        },
+        {
+          "from": "n0",
+          "to": "t04_admit",
+          "label": "permitted carrier rows"
+        },
+        {
+          "from": "t04_admit",
+          "to": "t04_shape",
+          "label": "reuses T03 identity/pose lifecycle"
+        },
+        {
+          "from": "t04_shape",
+          "to": "field_anchor",
+          "label": "same selectable actual ID"
+        },
+        {
+          "from": "stop_auth",
+          "to": "n0",
+          "label": "explicit observer only"
+        },
+        {
+          "from": "n0",
+          "to": "stop_cue",
+          "label": "permitted stop"
+        },
+        {
+          "from": "stop_cue",
+          "to": "field_anchor",
+          "label": "same actual stop ID"
+        },
+        {
+          "from": "stop_auth",
+          "to": "stop_read",
+          "label": "permission rechecked"
+        },
+        {
+          "from": "stop_read",
+          "to": "n2",
+          "label": "present stock and tracked facts only"
+        },
+        {
+          "from": "stop_cache",
+          "to": "stop_read",
+          "label": "refresh only on selection or stock invalidation"
+        },
+        {
+          "from": "delivery_index",
+          "to": "stop_read",
+          "label": "actual active IDs only"
+        },
+        {
+          "from": "issue_receipt",
+          "to": "stop_read",
+          "label": "latest historical transfer"
+        },
+        {
+          "from": "actor_permission",
+          "to": "stop_read",
+          "label": "current disclosure check"
+        },
+        {
+          "from": "n1",
+          "to": "follow_start",
+          "label": "explicit permitted selection"
+        },
+        {
+          "from": "follow_start",
+          "to": "follow_move",
+          "label": "same current anchor only"
+        },
+        {
+          "from": "follow_start",
+          "to": "squad_detail",
+          "label": "actual own squad facts"
+        },
+        {
+          "from": "n1",
+          "to": "selected_engagement",
+          "label": "already permitted selected person"
+        },
+        {
+          "from": "selected_receipt",
+          "to": "selected_engagement",
+          "label": "same recipient historical event only"
+        },
+        {
+          "from": "selected_engagement",
+          "to": "n2",
+          "label": "separate current facts and past receipt"
         }
       ],
       "related": [
@@ -3326,7 +3566,13 @@
       "notes": "Presentation reads do not issue military orders or grant knowledge. Snapshot/marker APIs are query layers, not independent simulation state owners.",
       "primary_files": [
         "game/battlefield/battlefield_presentation.gd",
-        "game/battlefield/battlefield_view.gd"
+        "game/battlefield/battlefield_view.gd",
+        "game/battlefield/presentation_3d/field_t03.gd",
+        "game/battlefield/presentation_3d/reported_contacts.gd",
+        "game/battlefield/presentation_3d/field_t04.gd",
+        "game/battlefield/presentation_3d/forward_stop.gd",
+        "game/battlefield/presentation_3d/follow_soldier.gd",
+        "game/battlefield/selected_engagement.gd"
       ]
     },
     {
@@ -3456,7 +3702,7 @@
         "warehousing",
         "supplier_transport"
       ],
-      "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS.",
+      "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS. Combined candidate preserves battlefield presenter-owned marker lifetimes and supplier convoy scene binding, playback and manager road reporting.",
       "primary_files": [
         "game/preview_3d/preview.gd",
         "game/preview_3d/world_presenter.gd",
@@ -4872,7 +5118,13 @@
     "game/supplier_transport/supplier_passengers_view.gd": "supplier_transport",
     "game/supplier_transport/paired_ground_path.gd": "supplier_transport",
     "game/supplier_transport/supplier_returns.gd": "supplier_transport",
-    "game/warehousing/warehouse_recovery.gd": "warehousing"
+    "game/warehousing/warehouse_recovery.gd": "warehousing",
+    "game/battlefield/presentation_3d/field_t03.gd": "battleview",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "battleview",
+    "game/battlefield/presentation_3d/field_t04.gd": "battleview",
+    "game/battlefield/presentation_3d/forward_stop.gd": "battleview",
+    "game/battlefield/presentation_3d/follow_soldier.gd": "battleview",
+    "game/battlefield/selected_engagement.gd": "battleview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4905,7 +5157,7 @@
     "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
     "game/military/organization.gd": "02ba5a766649f7d0c793a3a29d70b431648e58ac12bb1aa6eb1fdb4aa37c83f0",
     "game/military/troop_transport.gd": "28624403cf7fec1e5b5869e9bc63c85aef9746aa21293f1b1ba2d34d3bc6b1cf",
-    "game/orders/order_service.gd": "12a54591ffc11ef0679f0c05364c3f932afaf2f81ed8126bc12dc33571df0cbf",
+    "game/orders/order_service.gd": "b29519455ab3c1dd5676161d47a47176ee8519d72e837d178406c2f0dd5a1412",
     "game/battlefield/squad_execution.gd": "8ed604883a78a98a0942927804391c995bf13f194a695f2bafd014a1d95cb2ac",
     "game/battlefield/vehicle_execution.gd": "c7888a3bcc2aa0d4e331f9956269102d99f891c59c162b559e33d56ab8d3eb9b",
     "game/battlefield/opening_policy.gd": "35d407f7e329ac3d08fb37f9c6ebbfb1dcf2bd487bdb2af761282be5cbcaef3f",
@@ -4913,10 +5165,10 @@
     "game/battlefield/resource_operations.gd": "92d7317edb5eb8a858ce1332f258c2493dcdf7dad344933acf01a5bb3180018f",
     "game/battlefield/vehicle_deployment.gd": "a7a7cd8fcfef3e105974a7b9d915ae86e5e4c8dfa1f8b4e7dc12888aa905d9fd",
     "game/battlefield/rifle_supply_travel.gd": "a01e811f3c97d43fe933014906f3211355380638561d48b2af0492d1772d5c84",
-    "game/forward_supply/forward_supply.gd": "d09b12ef7e8b2d1c5e78da88fd73c663374a762388cc1cab9d887a4f129c1930",
+    "game/forward_supply/forward_supply.gd": "883b9bdae62883f941ad70e236341e0d20f67570e971324b1186df2b71d20dbf",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
-    "game/forward_supply/forward_transport.gd": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
-    "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
+    "game/forward_supply/forward_transport.gd": "e18b40f75fbb37d49ee130dc3974a1de21a36783d579742bba0627ea379b9b98",
+    "game/forward_supply/vehicle_rack_issue.gd": "4e656298cc649588f5045c158dad7137ed8c6022359c75b75d9714d1f3755a8d",
     "game/combat/combat_service.gd": "3b3b71cf7799b5628fc147e4413b589b52431c96b97b7dff0ff6df3d22dcf317",
     "game/vehicle_combat/vehicle_combat_service.gd": "d4cedf16940fc3a2f712fc954734bb2b11f93a7f332b9937aa4c927359b4a61f",
     "game/vehicle_recovery/recovery_service.gd": "f7d9eadec3ebc34fcda8c52da6b4e3daad7ae49f7975b889810b021331a486b8",
@@ -4943,24 +5195,24 @@
     "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
-    "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
-    "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
-    "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
-    "game/preview_3d/world_presenter.gd": "234426cd4e64a5a4db5e851ce28a188ac2e75b67336c88ad1fcb33a21aa7ee2d",
+    "game/battlefield/battlefield_presentation.gd": "2d1d1a412b8b77547b723a222da5a7aeee7dcac73040e25f4b6bd5b10030c3a9",
+    "game/battlefield/battlefield_view.gd": "4fecd5f798a26e2ab4d1f0851170b29c9b9aba0e74a992ab7b1a1ac2fdc93e6f",
+    "game/preview_3d/preview.gd": "33359597c63df3baec7a62451dbf73448fffe72b72b55d36019bf06aeec257be",
+    "game/preview_3d/world_presenter.gd": "c08454b2fb03fd43b132d6141c61506c0ff33fedf1ecb68e95ceae40464168d8",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "9193446dacc5961bc5c65a3a06f18a402ca438f3b688397ad80dae1347f2963f",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
     "game/preview_3d/rear_t01_trucks.gd": "0d7f64b4649936d577805d8951129fd38f21ed5110864c61be46e17a444493bf",
     "game/preview_3d/t01_presentation.gd": "f03c89b76313136d0c4770039576e7b521158b1324624dbb747bef16bce7d1a0",
     "game/preview_3d/t02_presentation.gd": "345bc2f10909b6be66fee144c85c14f265d74c912837b3f4f3df7c4225f322f4",
-    "game/preview_3d/field_persons.gd": "edf170f596e798cb9b3b16137f7f4462e1adbd8800ba43bdfd6592b091338249",
-    "game/preview_3d/field_person_cues.gd": "f9033097ee9b8d6162db2cf0e2b8da737adc6dde93778cfd64d51a6d6713d3f5",
+    "game/preview_3d/field_persons.gd": "f695782d6e86683efb6cfeb651c5689f59fa1de02621b24118818c0505efd882",
+    "game/preview_3d/field_person_cues.gd": "ed8605c80726ee00bc3583d0698ae47b0d5cc855e69ca17d621af2a58cd7d43c",
     "game/preview_3d/field_t01_trucks.gd": "62c5552105132b1243316acd15c2a40376cecdb61c7f2571cdf7bd640d4e02bb",
     "game/preview_3d/field_t01_cues.gd": "3504f3af815ed67813611b3ba0a29fccd6b27caea94fb9b70593cef04bc8f3f7",
     "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",
     "game/preview_3d/field_objective_cues.gd": "8b817c0779a7df9da91d3027c556422cef6a6fd4d0a00114f733eed12b137ea2",
     "game/preview_3d/manager_pose.gd": "31e22b220ec911a82d918d9d77e4b4bc3b1a484e709ff8cb2504bd283761ec13",
-    "game/scenario/farmland_session.gd": "c9907def6017d65501a5f9796a6101942b03a08ac4eecd3316cc510893c4d395",
+    "game/scenario/farmland_session.gd": "ebbb107338f16ba46e182614fce7ccb6f77b3bb0ec5ef3b127dbb34c7612e981",
     "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
     "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
     "game/battlefield/farmland_scenario.gd": "25f9c3684ead8176beebb2a083b9eba7d39b071f01db69491b27630137729fb9",
@@ -5023,6 +5275,12 @@
     "game/supplier_transport/supplier_passengers_view.gd": "b2f9b81f16a530beb91984ab1493080bc459f1a0d930765426e756d6c1ae180f",
     "game/supplier_transport/paired_ground_path.gd": "87975e6e5c5a64bc53b46f343c26687114c3c036509bfc1328f2bd7a7cf1e372",
     "game/supplier_transport/supplier_returns.gd": "7a2b14d063b166e2322d412137f150129a222d3aaa93656aa75b72a1eaef39c2",
-    "game/warehousing/warehouse_recovery.gd": "d385b2c431fbb7ed1848135464f18425bf29e4cdeddf2d4fb97224138bad1e33"
+    "game/warehousing/warehouse_recovery.gd": "d385b2c431fbb7ed1848135464f18425bf29e4cdeddf2d4fb97224138bad1e33",
+    "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
+    "game/battlefield/presentation_3d/field_t04.gd": "023faac625055c90eddd101d0cef6f5ecb45b72d761966619e532f28364c312b",
+    "game/battlefield/presentation_3d/forward_stop.gd": "365692679863e4c1fd86346c37e88968a30dfdf3af43c940c80706588ebd7052",
+    "game/battlefield/presentation_3d/follow_soldier.gd": "8991d5f9bed80b1e4482ed786df4d34417d5354115a192a145ccdcc333199faa",
+    "game/battlefield/selected_engagement.gd": "071c825469fbbfd7991b33e2427a9c9ede9b98fd17f97699296247ff8d11e1ad"
   }
 }

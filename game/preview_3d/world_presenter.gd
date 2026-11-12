@@ -24,6 +24,10 @@ const RearT01Trucks = preload("res://game/preview_3d/rear_t01_trucks.gd")
 const FieldPersons = preload("res://game/preview_3d/field_persons.gd")
 const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
+const FieldT03 = preload("res://game/battlefield/presentation_3d/field_t03.gd")
+const FieldT04 = preload("res://game/battlefield/presentation_3d/field_t04.gd")
+const ForwardStop = preload("res://game/battlefield/presentation_3d/forward_stop.gd")
+const ReportedContacts = preload("res://game/battlefield/presentation_3d/reported_contacts.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
 const ConstructionSiteVisual = preload("res://game/construction/visuals/construction_site_visual.gd")
@@ -35,6 +39,10 @@ var rear_t01_trucks: RearT01Trucks = RearT01Trucks.new()
 var field_persons: FieldPersons = FieldPersons.new()
 var field_t01_trucks: FieldT01Trucks = FieldT01Trucks.new()
 var field_objectives: FieldObjectives = FieldObjectives.new()
+var field_t03: FieldT03 = FieldT03.new()
+var field_t04: FieldT04 = FieldT04.new()
+var forward_stops: ForwardStop = ForwardStop.new()
+var reported_contacts: ReportedContacts = ReportedContacts.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
 var player := CharacterBody3D.new()
@@ -56,6 +64,7 @@ var rear_ground: StaticBody3D
 var supply_table_body: StaticBody3D
 var simulation: RefCounted
 var markers: Dictionary = {}
+var _generic_markers: Dictionary[String, MeshInstance3D] = {}
 var marker_rows: Array[Dictionary] = []
 var _proxy_rows: Array[Dictionary] = []
 var _markers_root := Node3D.new()
@@ -122,6 +131,22 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_objectives.changed.connect(_field_objective_changed)
 	field_objectives.removing.connect(_field_objective_removing)
 	field_objectives.bind(model.rear.combat.world.ground)
+	_markers_root.add_child(field_t03)
+	field_t03.changed.connect(_field_t03_changed)
+	field_t03.removing.connect(_field_t03_removing)
+	field_t03.bind(model.rear.ledger,model.rear.combat.world.ground,_inspect_field_marker)
+	_markers_root.add_child(field_t04)
+	field_t04.changed.connect(_field_t04_changed)
+	field_t04.removing.connect(_field_t04_removing)
+	field_t04.bind(model.rear.ledger,model.rear.combat.world.ground,_inspect_field_marker)
+	_markers_root.add_child(forward_stops)
+	forward_stops.changed.connect(_forward_stop_changed)
+	forward_stops.removing.connect(_forward_stop_removing)
+	forward_stops.bind(model.rear.combat.world.ground)
+	_markers_root.add_child(reported_contacts)
+	reported_contacts.changed.connect(_reported_contact_changed)
+	reported_contacts.removing.connect(_reported_contact_removing)
+	reported_contacts.bind(model.rear.combat.world.ground)
 	rear_root.add_child(_collision_root)
 	if model.rear.warehouse != null:
 		_facility_shells.warehouse_enabled = true
@@ -442,68 +467,99 @@ func _mark_facility_approach(row: Dictionary, entrance: Vector3) -> void:
 
 func refresh_markers() -> void:
 	marker_rows = Policy.markers(simulation.rear)
-	var present: Dictionary = {}
 	var people: Dictionary = {}
 	var carriers: Dictionary = {}
 	var objectives: Dictionary = {}
+	var contacts: Dictionary = {}
+	var physical_ids: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
-		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
-		else: people.erase(row.id)
 		if row.kind == "CARRIER": carriers[row.id] = row
 		if row.kind == "PLACE" and row.has("objective_kind"): objectives[row.id] = row
+		if row.kind == "CONTACT": contacts[row.id] = row
+		else: physical_ids[row.id] = true
+	# Match the policy inspector: a permitted physical entity wins a shared ID.
+	for id in physical_ids: contacts.erase(id)
 	field_persons.reconcile(people.values())
 	field_t01_trucks.reconcile(carriers.values())
 	field_objectives.reconcile(objectives.values())
+	field_t03.reconcile(carriers.values())
+	field_t04.reconcile(carriers.values())
+	forward_stops.reconcile(marker_rows)
+	reported_contacts.reconcile(contacts.values())
 	_proxy_rows.clear()
+	var generic_present: Dictionary = {}
 	for row in marker_rows:
-		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id): continue
+		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id) or field_t03.anchors.has(row.id) or field_t04.anchors.has(row.id) or forward_stops.anchors.has(row.id) or reported_contacts.anchors.has(row.id): continue
 		_proxy_rows.append(row)
-		if not markers.has(row.id):
+		generic_present[row.id] = true
+		if not _generic_markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
 			if row.kind == "PLACE": colour = row.get("ownership_colour",Color("f0c565"))
 			var extent := 22.0 if row.kind == "PLACE" else 10.0
-			markers[row.id] = _box(_markers_root,Vector3.ZERO,Vector3(extent,extent,extent),colour)
-		var marker: MeshInstance3D = markers[row.id]
+			_generic_markers[row.id] = _box(_markers_root,Vector3.ZERO,Vector3(extent,extent,extent),colour)
+		var marker: MeshInstance3D = _generic_markers[row.id]
+		markers[row.id] = marker
 		var height: float = simulation.rear.combat.world.ground(row.position)
 		marker.position = Vector3(row.position.x,height+15,row.position.y)
 		# Only legacy rear carriers use this boundary; keep their proxy cached.
 		marker.visible = row.kind != "CARRIER" or row.position.x >= 240
-	for id in markers.keys():
-		if present.has(id): continue
-		markers[id].queue_free()
-		markers.erase(id)
+	for id: String in _generic_markers.keys():
+		if not generic_present.has(id): _remove_generic_marker(id)
+
+func _inspect_field_marker(id: String) -> Dictionary:
+	return Policy.inspect(simulation.rear,id)
+
+func _field_t03_changed(id: String) -> void:
+	_register_field_anchor(id,field_t03.anchors[id])
+
+func _field_t03_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _field_t04_changed(id: String) -> void:
+	_register_field_anchor(id,field_t04.anchors[id])
+
+func _field_t04_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _forward_stop_changed(id: String) -> void:
+	_register_field_anchor(id,forward_stops.anchors[id])
+
+func _forward_stop_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _reported_contact_changed(id: String) -> void:
+	_register_field_anchor(id,reported_contacts.anchors[id])
+
+func _reported_contact_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _register_field_anchor(id: String, anchor: Node3D) -> void:
+	_remove_generic_marker(id)
+	markers[id] = anchor
+
+func _remove_generic_marker(id: String) -> void:
+	if not _generic_markers.has(id): return
+	var marker: MeshInstance3D = _generic_markers[id]
+	_generic_markers.erase(id)
+	if markers.get(id) == marker: markers.erase(id)
+	marker.queue_free()
 
 func _field_person_changed(id: String) -> void:
-	var anchor: Node3D = field_persons.anchors[id]
-	if markers.has(id) and markers[id] != anchor:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = anchor
+	_register_field_anchor(id,field_persons.anchors[id])
 
 func _field_person_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
 
 func _field_t01_changed(id: String) -> void:
-	var body: Node3D = field_t01_trucks.bodies[id]
-	if markers.has(id) and markers[id] != body:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = body
+	_register_field_anchor(id,field_t01_trucks.bodies[id])
 
 func _field_t01_removing(id: String, body: Node3D) -> void:
 	if markers.get(id) == body: markers.erase(id)
 
 func _field_objective_changed(id: String) -> void:
-	var anchor: Node3D = field_objectives.anchors[id]
-	if markers.has(id) and markers[id] != anchor:
-		var old: Node3D = markers[id]
-		old.get_parent().remove_child(old)
-		old.queue_free()
-	markers[id] = anchor
+	_register_field_anchor(id,field_objectives.anchors[id])
 
 func _field_objective_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
@@ -538,6 +594,9 @@ func refresh_marker_positions() -> void:
 	# PERSON poses are affected-event owned. Other cached proxies keep the
 	# existing adapter; contacts use reports, never the true enemy ledger pose.
 	var rear: RefCounted = simulation.rear
+	# The policy supplies each report's logical expiry; ordinary time updates
+	# need only a deadline check until one of the admitted reports is due.
+	reported_contacts.refresh_due(rear.time,_inspect_field_marker)
 	for row in _proxy_rows:
 		if not markers.has(row.id): continue
 		if row.kind == "CONTACT":
