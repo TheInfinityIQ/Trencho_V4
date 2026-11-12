@@ -115,6 +115,22 @@ func observe_stop(stop_id: String, observer: String, include_stock: bool = true)
 	return result
 
 
+func observe_personal_receipt(observer: String, selected: Dictionary) -> Dictionary:
+	# selected is the fresh row already admitted by BattlefieldPresentation.inspect.
+	var rear: RefCounted = _rear()
+	if observer != rear.PLAYER or selected.get("kind","") != "PERSON" or selected.get("owner","") != observer or selected.get("rear_place","") == "Occupied" or bool(selected.get("aboard",false)): return {}
+	if not _observation_friendly(str(selected.get("id","")),observer,"PERSON"): return {}
+	var operations: RefCounted = rear.battlefield_operations
+	if operations == null or operations.policy == null or operations.policy.resupply == null: return {}
+	var stop_id := str(operations.policy.resupply.stop_id)
+	var stop: Dictionary = delivery_stops.get(stop_id,{})
+	if stop.is_empty() or str(stop.get("observer_owner","")) != observer or rear.ledger.entity_kind(stop_id) != "PLACE": return {}
+	var receipt: Dictionary = _observation_latest.get(stop_id,{}).get("person",{})
+	if receipt.is_empty() or str(receipt.get("target","")) != str(selected.get("id","")): return {}
+	if not _observation_friendly(str(receipt.get("handler","")),observer,"PERSON"): return {}
+	return {"type":str(receipt.type),"quantity":int(receipt.quantity),"at":float(receipt.at)}
+
+
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
 		outbound_points: Array, return_points: Array, loader_id: String, unloader_id: String) -> Dictionary:
 	return transport.request_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id)
