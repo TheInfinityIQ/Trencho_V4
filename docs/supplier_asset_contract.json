@@ -449,7 +449,7 @@
   "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
   "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment.",
   "s4_b_control_lever_study": {
-    "stage": "Both upward and lower-clocked levers are rejected operator-fit studies retained as history. No lever variation is adopted. Active authoring study uses the original compact control and supported body choreography; no final art/export/runtime acceptance.",
+    "stage": "Both enlarged levers and torso-turn choreography are rejected studies retained as history. No lever variation is adopted. Active authorized study is the measured local inner-post notch with original compact control and supported route; no final art/export/runtime acceptance.",
     "reason": "Actual LeftHandIndex1/2 crossed the parked control post even after39mm supported retreat; control placement is brittle, not proof no human pose exists. Move grip inboard rather than contort worker.",
     "proposal": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_worker_operation_v05/b_control_proposal_v01/proposal.json",
     "pivot_godot_m": [
@@ -536,7 +536,20 @@
       "torso_turn_outcome": "First actual three-degree step remains blocked at frame 5: 54 bar overlap counts and 31.29 mm unsupported fitting error. Do not promote endpoint success or adopt this choreography.",
       "preconditions_and_lesson": "Final manifest must declare measured handle X -0.55 m, pan 90 degrees and unlocked pins before parked transfer. Measure saved state before attributing failure to setup."
     },
-    "current_revision": "original_control_choreography_study",
+    "current_revision": "local_post_notch_study",
+    "local_post_notch_study": {
+      "stage": "Lead-authorized versioned local geometry study; no final animation or runtime adoption",
+      "decision_source": "Artist post_notch_proposal_v01/decision.md and actual diagram reviewed by Lead, 12 November 2026",
+      "measured_basis": "Intended-state replay: two residual contacts, B segment 27 at u 0.625 and 0.6875. Deepest overlapping finger triangle extends 0.464785 mm past inner post face Z -0.325 m.",
+      "cutter_bounds_godot_m": {
+        "min": [-0.266, 1.139, -0.327],
+        "max": [-0.247, 1.154, -0.323]
+      },
+      "scope": "Rounded 19 by 15 mm mouth, at most 2 mm into existing material. Build from original fixture, no historical lever cuts combined and no added projection/cage change.",
+      "retained_geometry": "Rear reinforcement starts X -0.240 m, cutter stops -0.247 m. At least 5.5 mm material remains to shaft bore edge Z -0.3325 m; geometric accounting, not strength certification.",
+      "unchanged": "Original compact control, shaft, pins, supports, M05, capacity, cargo, truck, original rig/rest/weights/seven clips/31 limits and approved eight-second lift plus reverse.",
+      "gates": "Actual rounded mesh and continuous full-route clearance/support/feet/body/joints/cargo/truck/neighbors plus changed-mesh QA. If passing, proceed directly to paced whole source, actual export/readback and full normal-speed video with complementary hand coverage. Bounds alone are not proof; no silent wider cut or combined historical cuts."
+    },
     "original_control_choreography_study": {
       "stage": "Torso-turn study blocked; exact residual of earlier supported original-control route is under inspection, not accepted full animation",
       "approach": "Original compact control; modest 12-degree Chest axial turn during free-hand transfer only, with actual opposite-hand support refit and planted feet.",

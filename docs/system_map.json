@@ -1188,7 +1188,7 @@
     ]},
     "docs/routes_fuel_load.md": {"role":"documentation","system":"docs","sha256":"8071bfd9ab0b416f1e8086620980e35841310873d18ff3777108d774ad965c3b","lines":13,"purpose":"Document G13 measured routes, fuel and gross load.","functions":[
     ]},
-    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"ba571511acd06ec87366b254f1f1b932b3a79fad9340d523b004bdba7307f57a","lines":555,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
+    "docs/supplier_asset_contract.json": {"role":"data","system":"docs","sha256":"d7c4e41dd58d3d72a7c63479c025202cee1b0def5eca5227e594188bd2a1f47f","lines":568,"purpose":"Supply structured settings, dependency pins or catalogue data for supplier asset contract.","functions":[
     ]},
     "docs/supplier_road.md": {"role":"documentation","system":"docs","sha256":"2e2f5562465fd1b507c33073a2cabfe6fa906498fa694e4b7b9ff8207668ee1e","lines":38,"purpose":"Document Supplier road ownership.","functions":[
     ]},
