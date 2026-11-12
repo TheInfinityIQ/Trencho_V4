@@ -9,7 +9,8 @@
 - Use GDScript by default. Propose C#, GDExtension, or plugins when a concrete requirement justifies them.
 
 - Under Dawson's 12 November two-developer authorization, Lead owns logistics/shared state/entry/UI/integration; Battlefield Developer owns agreed battlefield 3D presentation in an isolated branch. See current team workflow; retired developers stay inactive.
-- Other sub-agent delegation is limited to on-demand `asset_scout` for accepted art briefs after coherent faceted concepts: fixed `gpt-6-luna`, High for reference searches or Low for exact catalogue lookups. Use `.codex/agents/asset_scout.toml`; when custom-role loading is unavailable, pass its instructions with explicit Luna/effort and `fork_turns="none"`. References are viewing-only; no mesh/texture reuse, licensing research, paid downloads or purchases. No additional standing chat/controller; retired developers stay inactive.
+- The bounded three-workflow art pilot permits the existing Artist Director to dispatch up to three short-lived fixed Luna/Terra workers for independent ready authorized assets/motions. Lead art coordination goes only through the Director; workers never delegate or share live Blender edits. Preserve in-flight S4 work and existing restrictions; see `docs/art_workflow_pilot.md`.
+- Outside that pilot, other sub-agent delegation is limited to on-demand `asset_scout` for accepted art briefs after coherent faceted concepts: fixed `gpt-6-luna`, High for reference searches or Low for exact catalogue lookups. Use `.codex/agents/asset_scout.toml`; when custom-role loading is unavailable, pass its instructions with explicit Luna/effort and `fork_turns="none"`. References are viewing-only; no mesh/texture reuse, licensing research, paid downloads or purchases. No additional standing chat/controller; retired developers stay inactive.
 
 ## Implementation
 
