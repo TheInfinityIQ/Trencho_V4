@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "622d9aa",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-supply-visibility-worktree",
+  "reviewed_baseline": "9056ee5",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-follow-soldier-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3268,7 +3268,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity.",
       "nodes": [
         {
           "id": "n0",
@@ -3383,6 +3383,24 @@
           "label": "Current actor and hidden-person boundary",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_observation_friendly"
+        },
+        {
+          "id": "follow_start",
+          "label": "Follow a permitted friendly person",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "start"
+        },
+        {
+          "id": "follow_move",
+          "label": "Move only the observer camera on person change",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "_on_person_changed"
+        },
+        {
+          "id": "squad_detail",
+          "label": "Friendly squad intent and activity",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_own_squad_detail"
         }
       ],
       "edges": [
@@ -3490,6 +3508,21 @@
           "from": "actor_permission",
           "to": "stop_read",
           "label": "current disclosure check"
+        },
+        {
+          "from": "n1",
+          "to": "follow_start",
+          "label": "explicit permitted selection"
+        },
+        {
+          "from": "follow_start",
+          "to": "follow_move",
+          "label": "same current anchor only"
+        },
+        {
+          "from": "follow_start",
+          "to": "squad_detail",
+          "label": "actual own squad facts"
         }
       ],
       "related": [
@@ -3505,7 +3538,8 @@
         "game/battlefield/presentation_3d/field_t03.gd",
         "game/battlefield/presentation_3d/reported_contacts.gd",
         "game/battlefield/presentation_3d/field_t04.gd",
-        "game/battlefield/presentation_3d/forward_stop.gd"
+        "game/battlefield/presentation_3d/forward_stop.gd",
+        "game/battlefield/presentation_3d/follow_soldier.gd"
       ]
     },
     {
@@ -4663,7 +4697,8 @@
     "game/battlefield/presentation_3d/field_t03.gd": "battleview",
     "game/battlefield/presentation_3d/reported_contacts.gd": "battleview",
     "game/battlefield/presentation_3d/field_t04.gd": "battleview",
-    "game/battlefield/presentation_3d/forward_stop.gd": "battleview"
+    "game/battlefield/presentation_3d/forward_stop.gd": "battleview",
+    "game/battlefield/presentation_3d/follow_soldier.gd": "battleview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4735,8 +4770,8 @@
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
     "game/battlefield/battlefield_presentation.gd": "2d1d1a412b8b77547b723a222da5a7aeee7dcac73040e25f4b6bd5b10030c3a9",
-    "game/battlefield/battlefield_view.gd": "67d2467664138493f3b02d4150fefdd2663095f6ea582cfcf0107df442cd9e75",
-    "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
+    "game/battlefield/battlefield_view.gd": "28efa1d4e03c60f07390a6a262cbc5a913ca8e1df6917744fd69790a232898d5",
+    "game/preview_3d/preview.gd": "33359597c63df3baec7a62451dbf73448fffe72b72b55d36019bf06aeec257be",
     "game/preview_3d/world_presenter.gd": "f11842319b3050e3d7e11827600d98fab832a86e4a2d1b7856e76bcf03b33aad",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
@@ -4806,6 +4841,7 @@
     "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
     "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
     "game/battlefield/presentation_3d/field_t04.gd": "023faac625055c90eddd101d0cef6f5ecb45b72d761966619e532f28364c312b",
-    "game/battlefield/presentation_3d/forward_stop.gd": "365692679863e4c1fd86346c37e88968a30dfdf3af43c940c80706588ebd7052"
+    "game/battlefield/presentation_3d/forward_stop.gd": "365692679863e4c1fd86346c37e88968a30dfdf3af43c940c80706588ebd7052",
+    "game/battlefield/presentation_3d/follow_soldier.gd": "8991d5f9bed80b1e4482ed786df4d34417d5354115a192a145ccdcc333199faa"
   }
 }
