@@ -449,7 +449,7 @@
   "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
   "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment.",
   "s4_b_control_lever_study": {
-    "stage": "Original upward lever retained as rejected operator-fit study/history. Active authorized study is clocked_revision; no final art/export/runtime acceptance.",
+    "stage": "Both upward and lower-clocked levers are rejected operator-fit studies retained as history. No lever variation is adopted. Active authoring study uses the original compact control and supported body choreography; no final art/export/runtime acceptance.",
     "reason": "Actual LeftHandIndex1/2 crossed the parked control post even after39mm supported retreat; control placement is brittle, not proof no human pose exists. Move grip inboard rather than contort worker.",
     "proposal": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_worker_operation_v05/b_control_proposal_v01/proposal.json",
     "pivot_godot_m": [
@@ -487,7 +487,7 @@
     "acceptance": "Actual complete assembly/lever/post sweep, worker reach/palm/finger/continuous opposite-hand support/feet,cargo/truck/neighbors; then paced full source/export readback and visibly complete normal-speed review. Candidate may compose after passing without another routine permission round.",
     "scope": "No new gameplay resource cost,player button,forced timing or partial human approval gate",
     "clocked_revision": {
-      "stage": "Lead-authorized clocked v02 geometry/operator study; not adopted final art or runtime",
+      "stage": "Rejected continuous operator-fit study; geometry/control-pose results remain scoped history, not adopted final art or runtime",
       "reason": "Upward lever passed geometry/9controlposes but intersects actual free-hand transfer; lower grip orientation addresses the obstruction without contorting operator. Failed endpoint/interpolation routes remain rejected.",
       "decision_source": "Artist b_control_proposal_v02/decision.md reviewed by Lead; direct Lead authorization recorded in Director chat",
       "pivot_godot_m": [
@@ -526,7 +526,21 @@
       "gates": "Actualwholelever/poststroke plus continuousoperatorroute/palm/contact/oppositehandsupport/feet/cargo/truck/neighbors before composition. Analyticalbounds/isolatedposes are not actualroute proof. If gates pass proceed fullpacedsource/export/video without another permissionround.",
       "prior_upward_study": "Retain geometry pass as history; rejected for continuousoperator fit, not integrated."
     },
-    "current_revision": "clocked_revision"
+    "clocked_operator_outcome": {
+      "source": "Artist Director report and s4_worker_operation_v05/clocked_b_route_v01_progress.json, 12 November 2026",
+      "scoped_geometry_result": "Director reports actual 91-position lever/post sweep and nine restricted thumb poses pass; this does not establish full operator clearance.",
+      "rejection": "Expanded control intersects the LeftArm transfer sweep. Key 13 corrected candidate still has 22 actual lever/LeftArm triangle pairs; original endpoint also remains blocked.",
+      "readiness": "Neither lever variation is adopted; preserve failed studies for diagnosis.",
+      "fixture_state_caveat": "Director subsequently found an isolated-study fixture saved with the handle stowed although worker poses expected it extended. Affected studies and support/path conclusions require explicit attribution and correction; do not infer conclusive operator infeasibility from that mismatch. Final manifest must declare operating-state preconditions."
+    },
+    "current_revision": "original_control_choreography_study",
+    "original_control_choreography_study": {
+      "stage": "Artist-owned bounded motion study, not accepted full animation",
+      "approach": "Original compact control; modest 12-degree Chest axial turn during free-hand transfer only, with actual opposite-hand support refit and planted feet.",
+      "unchanged": "Original rig, limits, mesh, rest pose, seven clips, approved eight-second lift and reverse, cargo and vehicle contracts.",
+      "gates": "Actual continuous mechanism/body clearance, joint limits, continuous contact/support and feet; then paced full-cycle source, actual export/readback and full normal-speed video review. No endpoint-only acceptance.",
+      "authority": "Lead acknowledged existing bounded authoring scope; proceed without another routine permission round. No changed mechanism handed for integration."
+    }
   },
   "s4_service_pacing": {
     "authority": "Game Designer guidance12November2026; Lead timing/integration responsibility",
