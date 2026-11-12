@@ -1,0 +1,13 @@
+{
+  "source_revision": "8d76560a69adab8b3da0171213b7fbe000dbc51d",
+  "workflow_run": 43269292209,
+  "artifact_id": 13967297686,
+  "artifact_sha256": "fa3fb461d9d0f5aced8a7283462a5802b8e382cc7e35069ef9e3d3f7bead8baf",
+  "demonstration_sha256": "3c0db9693dffa51570c37a8dd3930c3fb850f8fbb42290cb05a67eb644a35adb",
+  "fixture": "Normal Farmland session with two explicitly arranged existing friendly people at the actual friendly stop and five rounds of arranged stock, advanced five shared fixture seconds.",
+  "result": "PASS: an actual five-round issue increased the selected recipient\u2019s loose E02, left loaded E02 unchanged, displayed the matching historical receipt, and did not show it for the handler.",
+  "limitations": [
+    "Movement and reload paths, rendered appearance and native input were not exercised.",
+    "No full encounter or FPS acceptance is claimed."
+  ]
+}

@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "d63529b",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-friendly-shot-cue-worktree",
+  "reviewed_baseline": "8d76560",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-selected-engagement-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "8806de7e852f34e85a5c645b7274738c408730d31a91d9c5d6fd1e78640e78ed",
+  "source_fingerprint": "c0e9e8f525dd111c7c179ee9ad700c933aee5a29be46d626d2a3cd766f2afb55",
   "totals": {
     "systems": 50,
-    "game_scripts": 236,
-    "non_test_scripts": 142,
+    "game_scripts": 237,
+    "non_test_scripts": 143,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3613,
-    "diagram_function_links": 303
+    "functions_in_inventory": 3615,
+    "diagram_function_links": 305
   },
   "systems": [
     {
@@ -18365,28 +18365,28 @@
           "label": "Request local issue to actual person",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "start_issue",
-          "line": 150
+          "line": 166
         },
         {
           "id": "n2",
           "label": "Finish physical pickup",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_finish_pickup",
-          "line": 291
+          "line": 307
         },
         {
           "id": "n3",
           "label": "Advance timed local handling",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "advance_to",
-          "line": 248
+          "line": 264
         },
         {
           "id": "n4",
           "label": "Complete recipient handoff",
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_finish_drop",
-          "line": 316
+          "line": 332
         }
       ],
       "edges": [
@@ -18730,7 +18730,7 @@
         },
         {
           "path": "game/forward_supply/forward_supply.gd",
-          "sha256": "e70d9868d5612e141810eb8028f81029149a7b7b13d395dfa198c60c50974d94",
+          "sha256": "883b9bdae62883f941ad70e236341e0d20f67570e971324b1186df2b71d20dbf",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -18797,10 +18797,19 @@
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/forward_supply/forward_supply.gd::observe_personal_receipt",
+              "name": "observe_personal_receipt",
+              "line": 118,
+              "end_line": 131,
+              "kind": "method",
+              "purpose": "Return only the latest confirmed transfer matching the selected permitted person at the explicitly authorized opening stop after current actor checks.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/forward_supply/forward_supply.gd::request_delivery",
               "name": "request_delivery",
-              "line": 118,
-              "end_line": 120,
+              "line": 134,
+              "end_line": 136,
               "kind": "method",
               "purpose": "Return transport.request_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.request_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18808,8 +18817,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::preview_delivery",
               "name": "preview_delivery",
-              "line": 123,
-              "end_line": 125,
+              "line": 139,
+              "end_line": 141,
               "kind": "method",
               "purpose": "Return transport.preview_delivery(hull_id,stock_id,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.preview_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18817,8 +18826,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::request_delivery_type",
               "name": "request_delivery_type",
-              "line": 128,
-              "end_line": 130,
+              "line": 144,
+              "end_line": 146,
               "kind": "method",
               "purpose": "Return transport.request_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.request_delivery_type.",
               "purpose_origin": "implementation_derived"
@@ -18826,8 +18835,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::preview_delivery_type",
               "name": "preview_delivery_type",
-              "line": 133,
-              "end_line": 135,
+              "line": 149,
+              "end_line": 151,
               "kind": "method",
               "purpose": "Return transport.preview_delivery_type(hull_id,type,quantity,stop_id,outbound_points,return_points,loader_id,unloader_id) for forward supply. Implementation: calls transport.preview_delivery_type.",
               "purpose_origin": "implementation_derived"
@@ -18835,8 +18844,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::resume_delivery",
               "name": "resume_delivery",
-              "line": 138,
-              "end_line": 139,
+              "line": 154,
+              "end_line": 155,
               "kind": "method",
               "purpose": "Return transport.resume_delivery(id,outbound_points,return_points) for forward supply. Implementation: calls transport.resume_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18844,8 +18853,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::interrupt_delivery",
               "name": "interrupt_delivery",
-              "line": 142,
-              "end_line": 143,
+              "line": 158,
+              "end_line": 159,
               "kind": "method",
               "purpose": "Return transport.interrupt_delivery(id) for forward supply. Implementation: calls transport.interrupt_delivery.",
               "purpose_origin": "implementation_derived"
@@ -18853,8 +18862,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::hull_committed",
               "name": "hull_committed",
-              "line": 146,
-              "end_line": 147,
+              "line": 162,
+              "end_line": 163,
               "kind": "method",
               "purpose": "Return transport.hull_committed(id) or rack_issue.hull_committed(id) for forward supply. Implementation: calls transport.hull_committed, rack_issue.hull_committed.",
               "purpose_origin": "implementation_derived"
@@ -18862,8 +18871,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::start_issue",
               "name": "start_issue",
-              "line": 150,
-              "end_line": 190,
+              "line": 166,
+              "end_line": 206,
               "kind": "method",
               "purpose": "Admit a real local issue only after existing eligibility and claim checks, then index that same job for observation.",
               "purpose_origin": "reviewed"
@@ -18871,8 +18880,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::interrupt",
               "name": "interrupt",
-              "line": 193,
-              "end_line": 198,
+              "line": 209,
+              "end_line": 214,
               "kind": "method",
               "purpose": "Interrupt for forward supply. Implementation: calls jobs.get, row.is_empty, _fail, _interrupt_row.",
               "purpose_origin": "implementation_derived"
@@ -18880,8 +18889,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::resume_issue",
               "name": "resume_issue",
-              "line": 201,
-              "end_line": 224,
+              "line": 217,
+              "end_line": 240,
               "kind": "method",
               "purpose": "Resume issue for forward supply. Implementation: calls jobs.get, row.is_empty, _fail, _rear.",
               "purpose_origin": "implementation_derived"
@@ -18889,8 +18898,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::person_committed",
               "name": "person_committed",
-              "line": 227,
-              "end_line": 234,
+              "line": 243,
+              "end_line": 250,
               "kind": "method",
               "purpose": "Person committed for forward supply. Implementation: calls rack_issue.person_committed, transport.person_committed, jobs.values, _rear().ledger.inspect_entity(row.carried_stock).get.",
               "purpose_origin": "implementation_derived"
@@ -18898,8 +18907,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::handler_committed",
               "name": "handler_committed",
-              "line": 237,
-              "end_line": 238,
+              "line": 253,
+              "end_line": 254,
               "kind": "method",
               "purpose": "Return person_committed(person_id) for forward supply. Implementation: calls person_committed.",
               "purpose_origin": "implementation_derived"
@@ -18907,8 +18916,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::next_boundary",
               "name": "next_boundary",
-              "line": 241,
-              "end_line": 245,
+              "line": 257,
+              "end_line": 261,
               "kind": "method",
               "purpose": "Return the next scheduled forward supply event time for the shared scheduler. Implementation: calls minf, transport.next_boundary, rack_issue.next_boundary, jobs.values; updates next.",
               "purpose_origin": "implementation_derived"
@@ -18916,8 +18925,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::advance_to",
               "name": "advance_to",
-              "line": 248,
-              "end_line": 261,
+              "line": 264,
+              "end_line": 277,
               "kind": "method",
               "purpose": "Advance scheduled forward supply work to the supplied simulation time. Implementation: calls transport.advance_to, rack_issue.advance_to, jobs.values, _rear().ledger.inspect_entity; updates row.expected.",
               "purpose_origin": "implementation_derived"
@@ -18925,8 +18934,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::settle",
               "name": "settle",
-              "line": 264,
-              "end_line": 288,
+              "line": 280,
+              "end_line": 304,
               "kind": "method",
               "purpose": "Resolve immediately eligible forward supply transitions and report whether state changed. Implementation: calls _rear, transport.settle, rack_issue.settle, jobs.values; updates changed.",
               "purpose_origin": "implementation_derived"
@@ -18934,8 +18943,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_finish_pickup",
               "name": "_finish_pickup",
-              "line": 291,
-              "end_line": 313,
+              "line": 307,
+              "end_line": 329,
               "kind": "method",
               "purpose": "Finish pickup for forward supply. Implementation: calls _rear, rear.ledger.inspect_entity, _at_stop, handler.position.distance_to; updates row.carried_stock.",
               "purpose_origin": "implementation_derived"
@@ -18943,8 +18952,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_finish_drop",
               "name": "_finish_drop",
-              "line": 316,
-              "end_line": 337,
+              "line": 332,
+              "end_line": 353,
               "kind": "method",
               "purpose": "Complete the existing physical transfer to the recipient and update the latest receipt and active membership only after success.",
               "purpose_origin": "reviewed"
@@ -18952,8 +18961,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_begin",
               "name": "_begin",
-              "line": 340,
-              "end_line": 348,
+              "line": 356,
+              "end_line": 364,
               "kind": "method",
               "purpose": "Begin for forward supply. Implementation: calls _rear().ledger.inspect_entity, _rear; updates row.blocker, row.deadline, row.expected, row.from.",
               "purpose_origin": "implementation_derived"
@@ -18961,8 +18970,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_interrupt_row",
               "name": "_interrupt_row",
-              "line": 351,
-              "end_line": 356,
+              "line": 367,
+              "end_line": 372,
               "kind": "method",
               "purpose": "Release existing claims and retain only unresolved carried work in the presentation membership.",
               "purpose_origin": "reviewed"
@@ -18970,8 +18979,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_release_claim",
               "name": "_release_claim",
-              "line": 359,
-              "end_line": 361,
+              "line": 375,
+              "end_line": 377,
               "kind": "method",
               "purpose": "Release claim for forward supply. Implementation: calls _rear().ledger.inspect_claim, _rear, claim.is_empty, _rear().ledger.release_claim.",
               "purpose_origin": "implementation_derived"
@@ -18979,8 +18988,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_at_stop",
               "name": "_at_stop",
-              "line": 364,
-              "end_line": 370,
+              "line": 380,
+              "end_line": 386,
               "kind": "method",
               "purpose": "At stop for forward supply. Implementation: calls stock.get, stop.get, _rear().ledger.inspect_entity, _rear.",
               "purpose_origin": "implementation_derived"
@@ -18988,8 +18997,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_active_member",
               "name": "_active_member",
-              "line": 373,
-              "end_line": 379,
+              "line": 389,
+              "end_line": 395,
               "kind": "method",
               "purpose": "Active member for forward supply. Implementation: calls _rear, rear.ledger.inspect_entity, person.get, rear.military.squads.values.",
               "purpose_origin": "implementation_derived"
@@ -18997,8 +19006,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_on_foot",
               "name": "_on_foot",
-              "line": 382,
-              "end_line": 384,
+              "line": 398,
+              "end_line": 400,
               "kind": "method",
               "purpose": "Handle foot events for forward supply. Implementation: calls person.get, person.crew_station.is_empty, person.carrying_stock_id.is_empty, person.carrying_weapon_id.is_empty.",
               "purpose_origin": "implementation_derived"
@@ -19006,8 +19015,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_other_busy",
               "name": "_other_busy",
-              "line": 387,
-              "end_line": 399,
+              "line": 403,
+              "end_line": 415,
               "kind": "method",
               "purpose": "Other busy for forward supply. Implementation: calls _rear, rear.combat.reloads.values, rear.combat.care.values, row.get.",
               "purpose_origin": "implementation_derived"
@@ -19015,8 +19024,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_leg",
               "name": "_leg",
-              "line": 402,
-              "end_line": 406,
+              "line": 418,
+              "end_line": 422,
               "kind": "method",
               "purpose": "Leg for forward supply. Implementation: calls person.position.distance_to, _rear().combat.world.route, _rear, (destination-person.position).angle.",
               "purpose_origin": "implementation_derived"
@@ -19024,8 +19033,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::snapshot",
               "name": "snapshot",
-              "line": 409,
-              "end_line": 412,
+              "line": 425,
+              "end_line": 428,
               "kind": "method",
               "purpose": "Export the current forward supply state as a detached inspection dictionary. Implementation: calls jobs.values, rows.append, row.duplicate, transport.snapshot.",
               "purpose_origin": "implementation_derived"
@@ -19033,8 +19042,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::audit",
               "name": "audit",
-              "line": 415,
-              "end_line": 424,
+              "line": 431,
+              "end_line": 440,
               "kind": "method",
               "purpose": "Audit for forward supply. Implementation: calls transport.audit, errors.append_array, rack_issue.audit, jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -19042,8 +19051,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_rear",
               "name": "_rear",
-              "line": 427,
-              "end_line": 428,
+              "line": 443,
+              "end_line": 444,
               "kind": "method",
               "purpose": "Return _rear_ref.get_ref() for forward supply. Implementation: calls _rear_ref.get_ref.",
               "purpose_origin": "implementation_derived"
@@ -19051,8 +19060,8 @@
             {
               "id": "game/forward_supply/forward_supply.gd::_fail",
               "name": "_fail",
-              "line": 431,
-              "end_line": 432,
+              "line": 447,
+              "end_line": 448,
               "kind": "method",
               "purpose": "Return a failed forward supply command result with the supplied explanation.",
               "purpose_origin": "implementation_derived"
@@ -29145,7 +29154,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity. Selected friendly engagement facts distinguish own-squad task and status, individual motion/reload and current E02 from any same-recipient historical transfer.",
       "nodes": [
         {
           "id": "n0",
@@ -29166,14 +29175,14 @@
           "label": "Refresh visible battlefield UI",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_refresh",
-          "line": 236
+          "line": 237
         },
         {
           "id": "n3",
           "label": "Select actual entity for observation",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "focus_entity",
-          "line": 123
+          "line": 124
         },
         {
           "id": "t03_admit",
@@ -29257,7 +29266,7 @@
           "label": "Stock invalidation for selected cached stop",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_on_stop_stock_changed",
-          "line": 364
+          "line": 371
         },
         {
           "id": "delivery_index",
@@ -29299,7 +29308,21 @@
           "label": "Friendly squad intent and activity",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_own_squad_detail",
-          "line": 340
+          "line": 347
+        },
+        {
+          "id": "selected_engagement",
+          "label": "Actual selected friendly movement / reload / E02",
+          "file": "game/battlefield/selected_engagement.gd",
+          "function": "project",
+          "line": 4
+        },
+        {
+          "id": "selected_receipt",
+          "label": "Authorized exact-recipient latest transfer",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "observe_personal_receipt",
+          "line": 118
         }
       ],
       "edges": [
@@ -29422,6 +29445,21 @@
           "from": "follow_start",
           "to": "squad_detail",
           "label": "actual own squad facts"
+        },
+        {
+          "from": "n1",
+          "to": "selected_engagement",
+          "label": "already permitted selected person"
+        },
+        {
+          "from": "selected_receipt",
+          "to": "selected_engagement",
+          "label": "same recipient historical event only"
+        },
+        {
+          "from": "selected_engagement",
+          "to": "n2",
+          "label": "separate current facts and past receipt"
         }
       ],
       "related": [
@@ -29438,7 +29476,8 @@
         "game/battlefield/presentation_3d/reported_contacts.gd",
         "game/battlefield/presentation_3d/field_t04.gd",
         "game/battlefield/presentation_3d/forward_stop.gd",
-        "game/battlefield/presentation_3d/follow_soldier.gd"
+        "game/battlefield/presentation_3d/follow_soldier.gd",
+        "game/battlefield/selected_engagement.gd"
       ],
       "files": [
         {
@@ -29513,14 +29552,14 @@
         },
         {
           "path": "game/battlefield/battlefield_view.gd",
-          "sha256": "28efa1d4e03c60f07390a6a262cbc5a913ca8e1df6917744fd69790a232898d5",
+          "sha256": "4fecd5f798a26e2ab4d1f0851170b29c9b9aba0e74a992ab7b1a1ac2fdc93e6f",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/battlefield/battlefield_view.gd::bind",
               "name": "bind",
-              "line": 27,
-              "end_line": 32,
+              "line": 28,
+              "end_line": 33,
               "kind": "method",
               "purpose": "Bind the current shared simulation, reconnect selected-stop stock invalidation and request a visible refresh.",
               "purpose_origin": "reviewed"
@@ -29528,8 +29567,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_default_objective",
               "name": "_default_objective",
-              "line": 34,
-              "end_line": 38,
+              "line": 35,
+              "end_line": 39,
               "kind": "method",
               "purpose": "Default objective for battlefield view. Implementation: calls objectives.has, str, objectives.keys, objectives.is_empty.",
               "purpose_origin": "implementation_derived"
@@ -29537,8 +29576,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_ready",
               "name": "_ready",
-              "line": 40,
-              "end_line": 67,
+              "line": 41,
+              "end_line": 68,
               "kind": "method",
               "purpose": "Create the existing battlefield inspector and bind shared-session and stock-change notifications.",
               "purpose_origin": "reviewed"
@@ -29546,8 +29585,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_ready/<lambda#1>",
               "name": "_ready/<lambda#1>",
-              "line": 50,
-              "end_line": 51,
+              "line": 51,
+              "end_line": 52,
               "kind": "lambda",
               "purpose": "Provide an inline callback for battlefield view; invoke is_visible_in_tree, _request_refresh.",
               "purpose_origin": "implementation_derived"
@@ -29555,8 +29594,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_request_refresh",
               "name": "_request_refresh",
-              "line": 70,
-              "end_line": 74,
+              "line": 71,
+              "end_line": 75,
               "kind": "method",
               "purpose": "Request a visible battlefield view refresh, coalescing work when supported. Implementation: calls is_node_ready, is_visible_in_tree, _refresh.call_deferred; updates _refresh_queued.",
               "purpose_origin": "implementation_derived"
@@ -29564,8 +29603,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_map_rect",
               "name": "_map_rect",
-              "line": 77,
-              "end_line": 78,
+              "line": 78,
+              "end_line": 79,
               "kind": "method",
               "purpose": "Return Rect2(Vector2(12, 12), Vector2(maxf(300.0, size.x - PANEL_WIDTH - 24.0), maxf(200.0, size.y - 24.0))) for battlefield view. Implementation: calls Rect2, Vector2, maxf.",
               "purpose_origin": "implementation_derived"
@@ -29573,8 +29612,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_scale",
               "name": "_scale",
-              "line": 81,
-              "end_line": 83,
+              "line": 82,
+              "end_line": 84,
               "kind": "method",
               "purpose": "Return minf((area.size.x - 32.0) / WORLD_SIZE.x, (area.size.y - 72.0) / WORLD_SIZE.y) * zoom for battlefield view. Implementation: calls _map_rect, minf.",
               "purpose_origin": "implementation_derived"
@@ -29582,8 +29621,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_screen",
               "name": "_screen",
-              "line": 86,
-              "end_line": 88,
+              "line": 87,
+              "end_line": 89,
               "kind": "method",
               "purpose": "Return area.get_center() + (point - WORLD_SIZE / 2.0) * _scale() + pan for battlefield view. Implementation: calls _map_rect, area.get_center, _scale.",
               "purpose_origin": "implementation_derived"
@@ -29591,8 +29630,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_world",
               "name": "_world",
-              "line": 91,
-              "end_line": 92,
+              "line": 92,
+              "end_line": 93,
               "kind": "method",
               "purpose": "Return (point - _map_rect().get_center() - pan) / _scale() + WORLD_SIZE / 2.0 for battlefield view. Implementation: calls _map_rect().get_center, _map_rect, _scale.",
               "purpose_origin": "implementation_derived"
@@ -29600,8 +29639,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_gui_input",
               "name": "_gui_input",
-              "line": 95,
-              "end_line": 108,
+              "line": 96,
+              "end_line": 109,
               "kind": "method",
               "purpose": "Translate GUI input events into battlefield view selection or commands. Implementation: calls _world, clampf, _screen, queue_redraw; updates _dragging, pan, zoom.",
               "purpose_origin": "implementation_derived"
@@ -29609,8 +29648,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_select_nearest",
               "name": "_select_nearest",
-              "line": 111,
-              "end_line": 121,
+              "line": 112,
+              "end_line": 122,
               "kind": "method",
               "purpose": "Select nearest for battlefield view. Implementation: calls Presentation.markers, entity.get, _screen(entity.position).distance_to, _screen; updates distance, selected_id.",
               "purpose_origin": "implementation_derived"
@@ -29618,8 +29657,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::focus_entity",
               "name": "focus_entity",
-              "line": 123,
-              "end_line": 134,
+              "line": 124,
+              "end_line": 135,
               "kind": "method",
               "purpose": "Resolve one current player-visible friendly person and center observation on its finite position; select and redraw without creating a tactical order or changing physical state. Reject missing, enemy or non-person identities.",
               "purpose_origin": "reviewed"
@@ -29627,8 +29666,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_draw",
               "name": "_draw",
-              "line": 137,
-              "end_line": 193,
+              "line": 138,
+              "end_line": 194,
               "kind": "method",
               "purpose": "Preserve existing terrain/grid/visible Presentation markers and information filters; supply cached truck art only for own blue physical T01 carriers, retaining unknown reports, other units, people, overlays and all existing rendering instrumentation.",
               "purpose_origin": "reviewed"
@@ -29636,8 +29675,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_draw_marker",
               "name": "_draw_marker",
-              "line": 196,
-              "end_line": 212,
+              "line": 197,
+              "end_line": 213,
               "kind": "method",
               "purpose": "Retain existing screen transform/cull, marker fill, ownership/selection arcs and labels; optionally overlay cached T01 texture inside the existing carrier body before outline, never changing hit bounds or contact semantics.",
               "purpose_origin": "reviewed"
@@ -29645,8 +29684,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_site_label",
               "name": "_site_label",
-              "line": 214,
-              "end_line": 219,
+              "line": 215,
+              "end_line": 220,
               "kind": "method",
               "purpose": "Site label for battlefield view. Implementation: calls names.has, Farmland.OBJECTIVES.size.",
               "purpose_origin": "implementation_derived"
@@ -29654,8 +29693,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_unit_label",
               "name": "_unit_label",
-              "line": 221,
-              "end_line": 230,
+              "line": 222,
+              "end_line": 231,
               "kind": "method",
               "purpose": "Preserve existing authored vehicle/person numbering and other type labels, adding Personnel transport (T02) only for actual CARRIER design_typeT02 so current readable inspection identifies its existing role without changing facts or authority.",
               "purpose_origin": "reviewed"
@@ -29663,8 +29702,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_contact_label",
               "name": "_contact_label",
-              "line": 232,
-              "end_line": 233,
+              "line": 233,
+              "end_line": 234,
               "kind": "method",
               "purpose": "Return \"Reported \"+str(entity.get(\"class\",\"Unknown\")) if zoom >= 8 or entity.id == selected_id else \"\" for battlefield view. Implementation: calls str, entity.get.",
               "purpose_origin": "implementation_derived"
@@ -29672,8 +29711,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_refresh",
               "name": "_refresh",
-              "line": 236,
-              "end_line": 249,
+              "line": 237,
+              "end_line": 250,
               "kind": "method",
               "purpose": "Refresh the visible legacy battlefield presentation using shared permitted inspection text and existing clock metadata.",
               "purpose_origin": "reviewed"
@@ -29681,17 +29720,17 @@
             {
               "id": "game/battlefield/battlefield_view.gd::inspection_text",
               "name": "inspection_text",
-              "line": 251,
-              "end_line": 335,
+              "line": 252,
+              "end_line": 342,
               "kind": "method",
-              "purpose": "Format permitted selected battlefield details, separating a friendly squad’s acknowledged action from its current execution.",
+              "purpose": "Format the selected permitted person, separating actual individual motion, reload and E02 facts from acknowledged squad task, execution and matching past receipt.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/battlefield/battlefield_view.gd::_own_squad_detail",
               "name": "_own_squad_detail",
-              "line": 340,
-              "end_line": 351,
+              "line": 347,
+              "end_line": 358,
               "kind": "method",
               "purpose": "Read only the selected permitted friendly person’s actual squad and show acknowledged intent separately from current activity.",
               "purpose_origin": "reviewed"
@@ -29699,8 +29738,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_bind_stop_stock",
               "name": "_bind_stop_stock",
-              "line": 354,
-              "end_line": 362,
+              "line": 361,
+              "end_line": 369,
               "kind": "method",
               "purpose": "Replace the stock listener once for the current simulation and clear the selected-stop cache.",
               "purpose_origin": "reviewed"
@@ -29708,8 +29747,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_on_stop_stock_changed",
               "name": "_on_stop_stock_changed",
-              "line": 364,
-              "end_line": 366,
+              "line": 371,
+              "end_line": 373,
               "kind": "method",
               "purpose": "Dirty cached loose stock and request a refresh only when its populated stop remains selected.",
               "purpose_origin": "reviewed"
@@ -29717,8 +29756,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 368,
-              "end_line": 371,
+              "line": 375,
+              "end_line": 378,
               "kind": "method",
               "purpose": "Disconnect the stock invalidation listener when the battlefield inspector leaves the tree.",
               "purpose_origin": "reviewed"
@@ -29726,8 +29765,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_forward_stop_detail",
               "name": "_forward_stop_detail",
-              "line": 374,
-              "end_line": 407,
+              "line": 381,
+              "end_line": 414,
               "kind": "method",
               "purpose": "Recheck stop permission and format actual loose stock, bounded active delivery and issue facts, and latest confirmed historical transfers without claiming present custody.",
               "purpose_origin": "reviewed"
@@ -29735,11 +29774,11 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_activity_label",
               "name": "_activity_label",
-              "line": 410,
-              "end_line": 431,
+              "line": 417,
+              "end_line": 437,
               "kind": "method",
-              "purpose": "Activity label for battlefield view. Implementation: calls person.get, str, rear.military.troop_transport.jobs.values, rear.forward_supply.transport.jobs.values.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Describe current existing handling or assignment facts without substituting squad execution for a person’s physical activity.",
+              "purpose_origin": "reviewed"
             }
           ]
         },
@@ -30071,6 +30110,22 @@
               "end_line": 98,
               "kind": "method",
               "purpose": "Unregister report cues and release ground/deadline state on scene exit.",
+              "purpose_origin": "reviewed"
+            }
+          ]
+        },
+        {
+          "path": "game/battlefield/selected_engagement.gd",
+          "sha256": "071c825469fbbfd7991b33e2427a9c9ede9b98fd17f97699296247ff8d11e1ad",
+          "classification": "implementation / presentation / data",
+          "functions": [
+            {
+              "id": "game/battlefield/selected_engagement.gd::project",
+              "name": "project",
+              "line": 4,
+              "end_line": 29,
+              "kind": "method",
+              "purpose": "Project one already-permitted friendly on-foot person’s actual selected-inventory E02, current movement and reload facts and exact-recipient latest receipt.",
               "purpose_origin": "reviewed"
             }
           ]
