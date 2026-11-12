@@ -51,7 +51,7 @@
     }
   ],
   "current_work": "Approved passenger v02 is integrated and has scoped native/hierarchy receipts. Lead continues the materials-to-warehouse block in draft PR146; Artist resumes the accepted two-worker timber layout and separate reachable shelf versions. No main adoption or full-loop/FPS acceptance is claimed.",
-  "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. New animation authoring remains paused OUTSIDE the materials and troop supplier vehicles, which Dawson explicitly resumed. Numbered human-playtest and appearance-approval limits remain separate. Item-hauling pause was subsequently lifted for the approved2m/50kg/~1.3m carrying layout; see supplier_transport_candidate for the bounded resumption.",
+  "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. New animation authoring remains paused outside explicitly resumed supplier vehicles, the approved item-hauling layout and the bounded Director-led art pilot; see docs/art_workflow_pilot.md. Numbered human-playtest and appearance-approval limits remain separate. Item-hauling pause was subsequently lifted for the approved2m/50kg/~1.3m carrying layout; see supplier_transport_candidate for the bounded resumption.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
     "branch": "main",
@@ -173,7 +173,7 @@
       "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
-    "lifecycle": "During normal development Lead continues accepted ready work autonomously, integrates Artist handoffs and obtains actual Designer current-head approval with technical approval and required checks. No new workers/controllers or blanket serial/small-commit gate. This administrative turn does not resume gameplay. The only new delegation exception is the on-demand fixed-Luna asset_scout, not another programmer or standing role.",
+    "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs, with actual Designer review and required checks. No blanket serial or small-commit gate, extra standing roles or retired-developer reactivation. Delegation is limited to the on-demand fixed-Luna asset scout and bounded Director-led art pilot under current authority.",
     "reviewed_prs": [
       {
         "pr": 93,

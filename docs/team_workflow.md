@@ -49,7 +49,8 @@ This supersedes the sole-programmer rule only for this two-developer arrangement
   movement. Gameplay/dimension/rig/export-contract changes go to Lead; no new
   animation scope or model changes are authorized by this team revision.
 - Designer keeps gameplay authority. UI remains Lead-owned. Developers A/B/C,
-  original2D Artist and retired UI/UX stay inactive. No extra controllers/agents.
+  original2D Artist and retired UI/UX stay inactive. No extra standing controllers;
+  only the bounded Artist Director pilot and on-demand scout exceptions above apply.
   Fixed-model/Medium-default policy remains; requested settings are not observed UI proof.
 
 ## Historical consolidation —10November2026; superseded above
