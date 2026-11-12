@@ -531,11 +531,14 @@
       "scoped_geometry_result": "Director reports actual 91-position lever/post sweep and nine restricted thumb poses pass; this does not establish full operator clearance.",
       "rejection": "Expanded control intersects the LeftArm transfer sweep. Key 13 corrected candidate still has 22 actual lever/LeftArm triangle pairs; original endpoint also remains blocked.",
       "readiness": "Neither lever variation is adopted; preserve failed studies for diagnosis.",
-      "fixture_state_caveat": "Director subsequently found an isolated-study fixture saved with the handle stowed although worker poses expected it extended. Affected studies and support/path conclusions require explicit attribution and correction; do not infer conclusive operator infeasibility from that mismatch. Final manifest must declare operating-state preconditions."
+      "fixture_state_diagnosis_withdrawn": "Director measured torso_turn_fixture_preflight.json: saved slide X -0.550000012 m and actual RightC/bar error 80.33 micrometres before and after correction. Suspected stowed-state mismatch was an unmeasured inference and is disproved; earlier reports are not invalidated on this basis.",
+      "current_residual": "Director reports original compact control with supported 39 mm route remains the best measured study: 1411 samples, two residual Index1/2 post contacts. Exact overlap extent and local structural boundary are under inspection; no accepted full animation.",
+      "torso_turn_outcome": "First actual three-degree step remains blocked at frame 5: 54 bar overlap counts and 31.29 mm unsupported fitting error. Do not promote endpoint success or adopt this choreography.",
+      "preconditions_and_lesson": "Final manifest must declare measured handle X -0.55 m, pan 90 degrees and unlocked pins before parked transfer. Measure saved state before attributing failure to setup."
     },
     "current_revision": "original_control_choreography_study",
     "original_control_choreography_study": {
-      "stage": "Artist-owned bounded motion study, not accepted full animation",
+      "stage": "Torso-turn study blocked; exact residual of earlier supported original-control route is under inspection, not accepted full animation",
       "approach": "Original compact control; modest 12-degree Chest axial turn during free-hand transfer only, with actual opposite-hand support refit and planted feet.",
       "unchanged": "Original rig, limits, mesh, rest pose, seven clips, approved eight-second lift and reverse, cargo and vehicle contracts.",
       "gates": "Actual continuous mechanism/body clearance, joint limits, continuous contact/support and feet; then paced full-cycle source, actual export/readback and full normal-speed video review. No endpoint-only acceptance.",
