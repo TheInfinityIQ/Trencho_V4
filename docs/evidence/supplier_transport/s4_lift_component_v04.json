@@ -1,0 +1,63 @@
+{
+  "stage": "Internal actual-shelf lift/lower component reviewed and shown as work in progress; not a finished Dawson approval candidate or runtime asset",
+  "video": {
+    "seconds": 34,
+    "frames": 510,
+    "fps": 15,
+    "resolution": [
+      960,
+      720
+    ],
+    "sha256": "481f539839ce0e20c9a02826dda26a8713b90cd2b886bfc7037baaf11aa7e1df"
+  },
+  "lead_review": "Inspected both actual encoded16-frame sheets (32interior views), checked source/video/cached-hardware identities against Artist disclosure. Opaque actual worker/shelf/grip/bale visible from both sides. Improved squat/rise, elbow and wrist paths accepted as basis for continuing the full sequence; no blanket final appearance claim.",
+  "exact_component": "Already uses shortened overall640mm bar and cached121-pose hardware recheck. Complete actual mesh/endcap/rod extent640.0000mm vs649.9999mm measured post opening gives4.99997mm per side;108vertices/212triangles per Artist mechanical report.",
+  "omissions": "Pins remain released throughout; actual M05 insert/bale visible. Rectangular thumb-pad study is visible but not operated; newly authorized rotary cams are not in this exact video. Grip deployment/stow, real controls/locks, approach/withdrawal, complete operation timing, game clips/export and runtime are absent.",
+  "corrected_metrics": "Artist sign-safe relative wrist maxima72.785deg/s Left and63.352deg/s Right; prior5395deg/s quaternion-sign result invalidated. Cached121 source poses had no worker/torso/truck/bale/neighbor/guide flags; shortened hardware recheck zero flags. These are source studies, not game/FPS acceptance.",
+  "remaining": "Complete actual thumb-cam turns and continuous support, rod/guide clearance near retraction, physical grip deployment/stow, approach/withdrawal and true closing sequence, then actual export/full normal-speed preview and human approval. Two possible control/frame tangencies reported<=.104micrometres are not the old3mm push penetration, but remain explicitly disclosed.",
+  "human_status": "Shown as labelled progress only; no approval question asked, no approval inferred. Rejectedv03 remains rejected.",
+  "files": [
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\lift_fit_review_v01\\s4_lift_fit_v01.mp4",
+      "repository": "game/supplier_transport/assets/source/s4_lift_component_v04.mp4",
+      "bytes": 4521999,
+      "source_sha256": "481f539839ce0e20c9a02826dda26a8713b90cd2b886bfc7037baaf11aa7e1df",
+      "repository_sha256": "481f539839ce0e20c9a02826dda26a8713b90cd2b886bfc7037baaf11aa7e1df"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\lift_review_source_v01.blend",
+      "repository": "game/supplier_transport/assets/source/s4_lift_component_v04.blend",
+      "bytes": 777274,
+      "source_sha256": "253222061fbbd98dd2a62c3c5cdde938a569fe5af98814be8edb897de066b62e",
+      "repository_sha256": "253222061fbbd98dd2a62c3c5cdde938a569fe5af98814be8edb897de066b62e"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\lift_fit_review_v01\\encoded_lift_sheet_1.png",
+      "repository": "game/supplier_transport/assets/source/s4_lift_component_v04_sheet_1.png",
+      "bytes": 2579394,
+      "source_sha256": "bfcd14533b9c594e5996c80bbe5cc430126b47e8cda124a3ecdd660294339b7d",
+      "repository_sha256": "bfcd14533b9c594e5996c80bbe5cc430126b47e8cda124a3ecdd660294339b7d"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\lift_fit_review_v01\\encoded_lift_sheet_2.png",
+      "repository": "game/supplier_transport/assets/source/s4_lift_component_v04_sheet_2.png",
+      "bytes": 2444569,
+      "source_sha256": "d4df0020677129e5aa620a0e5d6ba7ef0813c76a81256054b5164e857dfa3c49",
+      "repository_sha256": "d4df0020677129e5aa620a0e5d6ba7ef0813c76a81256054b5164e857dfa3c49"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\shortened_grip_cache_check.json",
+      "repository": "docs/evidence/supplier_transport/s4_shortened_grip_cache_v04.json",
+      "bytes": 69099,
+      "source_sha256": "be1965b1f11aee2f63e0d2349f9a038d0051dbf908030dadbec5d0c9c7238651",
+      "repository_sha256": "be1965b1f11aee2f63e0d2349f9a038d0051dbf908030dadbec5d0c9c7238651"
+    },
+    {
+      "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\service_grip_mechanical_fit.json",
+      "repository": "docs/evidence/supplier_transport/s4_service_grip_mechanical_v04.json",
+      "bytes": 32887,
+      "source_sha256": "467e7c292d9c94e9be461e31d448c1eb6bde7f0753524eba4bbed352b926576a",
+      "repository_sha256": "467e7c292d9c94e9be461e31d448c1eb6bde7f0753524eba4bbed352b926576a"
+    }
+  ]
+}

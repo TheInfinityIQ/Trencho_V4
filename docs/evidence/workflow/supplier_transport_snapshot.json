@@ -15,7 +15,7 @@
     "late_handling": 153.607654,
     "review": 348.987538,
     "release": 575.3647090000001,
-    "waiting": 22461.761695,
+    "waiting": 62593.617151,
     "paused": 0,
     "workflow_overhead": 1764.351747
   },
@@ -93,6 +93,30 @@
     {
       "recorded_at": "2026-11-11T20:37:35.378957+00:00",
       "note": "Dawson rejected exact S4v03 video for arms merging into torso and unnatural hand spins; no integration. Lead missed this in sampled encoded-frame review. Full-body revision dispatched; final export contact/matrix strict failures disclosed separately. Scope remains same S4 operator, no global pause. Artist time/tokens and focused repair duration unknown."
+    },
+    {
+      "recorded_at": "2026-11-11T21:00:20.441754+00:00",
+      "note": "Artist corrected caller rig/unparented-skin frame after Lead noticed stretched diagnostic images. Old153pair self-contact claim invalid and retracted; static renderer mutation hypothesis withdrawn. Corrected native skin matches frozen export at four phases and still reveals actual self-contact/extreme combined wrist orientation. Accepted anatomical blocking continues; no new appearance/runtime acceptance."
+    },
+    {
+      "recorded_at": "2026-11-11T21:21:30.468079+00:00",
+      "note": "Reviewed all12 actual encoded opaque front/side early-body frames and verified all5 manifest identities. Accepted limited anatomical basis for continued actual S4 fitting, not a human appearance candidate. Upper-arm/vest classification, pan/control/support/root/full reverse remain incomplete; no new exports or engine/game checks. Artist time/tokens unknown."
+    },
+    {
+      "recorded_at": "2026-11-11T23:33:53.940165+00:00",
+      "note": "Artist actual fit found flat-to-pan palm requirement still forces unnatural wrist rotation. Lead authorized bounded underside grip hardware revision preserving support/footprint/cargo capacity, superseding prior no-extra-handle assumption before further final export. Exact hand/handle lower-bale/swept clearance still required. Scope refinement/source planning, not observed game regression; no new engine run."
+    },
+    {
+      "recorded_at": "2026-11-11T23:58:57.725954+00:00",
+      "note": "Artist concrete service grip study13poses clears bar/glove/bale/pan but actual arm chain/frame/vest failures remain. Requested High for bounded difficult arm-basis fitting under existing team policy, fixed model unchanged; not verified UI/model state or dollar usage. Permitted temporary non-exported native IK/FK controls baked to original skeleton rather than persisting with faulty custom basis. No new game source/export/native run; Artist costs unknown."
+    },
+    {
+      "recorded_at": "2026-11-12T00:50:57.933307+00:00",
+      "note": "Artist dense121 source lift samples clear worker/torso/surroundings but new hardware check found660mm bar ends strike650mm opening after35deg. Revised overall640mm extent requires cached-pose proof including endcaps/rods. Invalid5395deg/s quaternion-sign metric explicitly withdrawn, correct metric pending. Lead authorized flush45deg manual thumb cams to avoid rigid inward push/rim collision. No source integration, game run or full-operation acceptance."
+    },
+    {
+      "recorded_at": "2026-11-12T01:01:43.853735+00:00",
+      "note": "Reviewed both32-interior-frame opaque actual-shelf lift sheets and verified exact34s video/source/cached121hardware SHA identities. Artist confirms shortened640mm overall bar, true5mm end clearances and corrected sign-safe wrist metrics. Shown as work-in-progress only, no approval requested/inferred. Full controls/stow/approach/export remain unfinished. Source collision inspection found existing whole supplier hull already blocks player; no speculative extra collider requirement. No engine/game/FPS check."
     }
   ],
   "incidents": [
@@ -363,6 +387,20 @@
       "assessment_rationale": "Source gate does not check worker self-collision; independent absolute hand orientation is not validated as an anatomical arm chain. Human observed obvious missing quality coverage before integration.",
       "repair_time": "Unknown; do not infer focused Artist time from mixed wall time or label this an observed game regression",
       "lesson": "Review coherent opaque full-body motion early, including elbows/torso and wrist orientation, before expensive final exports/videos; numerical format/environment gates have separate scopes"
+    },
+    {
+      "recorded_at": "2026-11-11T21:00:20.530773+00:00",
+      "id": "s4-diagnostic-shared-frame-error",
+      "kind": "workflow_error",
+      "summary": "Initial native self-contact diagnostic moved rig independently of unparented skin, producing invalid intersections/stretched images",
+      "severity": "invalid diagnostic evidence; corrected before accepting revised motion",
+      "evidence": "DIAGNOSTIC_FRAME_CORRECTION.md, corrected native/frozen-GLB point-cloud comparisons at four phases, initial distorted stills noticed by Lead; active s4_anatomical_revision_plan_v04.json retains retraction/history",
+      "planning_assessment": "confirmed",
+      "preavailable_requirement": "Source and exported actor/skin use one shared coordinate frame; exact original GLB and root contract available before diagnosis",
+      "omitted_assumption": "Moving the source armature object was assumed to move its unparented skin consistently before interpreting world-space collision metrics",
+      "assessment_rationale": "Corrected shared frame matches frozen exported skin within1.9034e-6m at four phases; old153-pair count and exploded renders withdrawn. Visual mismatch exposed missing coordinate-frame proof.",
+      "lesson": "Verify transformed source skin against frozen export at representative phases before interpreting diagnostic metrics; do not blame static renderer without observing transform mutation",
+      "repair_time": "Unknown Artist correction time/tokens; no observed game regression or source-production modification"
     }
   ],
   "unique_incidents_by_kind": {
@@ -372,10 +410,10 @@
     "planning_discovery": 2,
     "pre_existing": 0,
     "infrastructure": 1,
-    "workflow_error": 8,
+    "workflow_error": 9,
     "scope_change": 0
   },
-  "confirmed_planning_gap_count": 6,
+  "confirmed_planning_gap_count": 7,
   "tracked_repair_seconds_by_incident": {
     "warehouse-partial-package-cell-sharing": 0,
     "warehouse-concurrent-rack-sprawl": 1149.116808,
@@ -396,25 +434,26 @@
     "supplier-timber-stale-pause-replay": 0,
     "s1-variant-placement-review-error": 0,
     "s4-concept-closed-and-swept-conflict": 153.607654,
-    "s4-v03-worker-self-collision-and-hand-spin": 0
+    "s4-v03-worker-self-collision-and-hand-spin": 0,
+    "s4-diagnostic-shared-frame-error": 0
   },
   "tokens": {
     "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
     "complete_recorded_interval_total": {
-      "input_tokens": 235367509,
-      "cached_input_tokens": 233372928,
-      "output_tokens": 1213648,
-      "reasoning_output_tokens": 766271,
-      "total_tokens": 236581157,
-      "uncached_input_tokens": 1994581
+      "input_tokens": 277547548,
+      "cached_input_tokens": 274897792,
+      "output_tokens": 1313936,
+      "reasoning_output_tokens": 813908,
+      "total_tokens": 278861484,
+      "uncached_input_tokens": 2649756
     },
     "known_interval_subtotal": {
-      "input_tokens": 235367509,
-      "cached_input_tokens": 233372928,
-      "output_tokens": 1213648,
-      "reasoning_output_tokens": 766271,
-      "total_tokens": 236581157,
-      "uncached_input_tokens": 1994581
+      "input_tokens": 277547548,
+      "cached_input_tokens": 274897792,
+      "output_tokens": 1313936,
+      "reasoning_output_tokens": 813908,
+      "total_tokens": 278861484,
+      "uncached_input_tokens": 2649756
     },
     "unknown_intervals": 0,
     "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
@@ -807,6 +846,21 @@
           "reasoning_output_tokens": 6375,
           "total_tokens": 1167008,
           "uncached_input_tokens": 7416
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-11T12:04:06.378900+00:00",
+        "ended_at": "2026-11-11T23:12:58.234356+00:00",
+        "receipt_start": "2026-11-11T12:02:58.598Z",
+        "receipt_end": "2026-11-11T23:12:38.186Z",
+        "usage_delta": {
+          "input_tokens": 42180039,
+          "cached_input_tokens": 41524864,
+          "output_tokens": 100288,
+          "reasoning_output_tokens": 47637,
+          "total_tokens": 42280327,
+          "uncached_input_tokens": 655175
         }
       }
     ]
