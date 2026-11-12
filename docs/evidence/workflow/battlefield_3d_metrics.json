@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "feature": "Battlefield T03 and contact presentation",
+  "workflow": "Existing shared-session 3D field presentation",
+  "plan": "T03 and permitted contact cues with field adapter",
+  "source_revision": "9ab4e8d",
+  "started_at": "2026-11-12T15:42:48.387941+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T15:42:48.777204+00:00",
+  "seconds_by_phase": {
+    "planning": 0,
+    "implementation": 0,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 0,
+    "release": 0,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 0.389263
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T15:42:48.685592+00:00",
+      "note": "Prior phase timing and token deltas unknown; no runtime or FPS claim; syntax parser and diff check passed; direct engine check pending."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-12T15:42:48.490431+00:00",
+      "id": "contact-polling",
+      "kind": "planning_discovery",
+      "summary": "Review identified repeated contact policy and ledger reads on each time update; revised to a cached policy-derived expiry deadline and due-only refresh.",
+      "severity": "review finding",
+      "evidence": "Lead technical review of 40142de; local revision 2f22614. No runtime or profiler measurement.",
+      "planning_assessment": "possible"
+    },
+    {
+      "recorded_at": "2026-11-12T15:42:48.588527+00:00",
+      "id": "shared-id-precedence",
+      "kind": "planning_discovery",
+      "summary": "Adapter review identified the need to preserve physical-entity precedence where permitted physical and contact rows share an ID.",
+      "severity": "review finding",
+      "evidence": "Source inspection of Policy.inspect and field anchor ownership; local revision 9ab4e8d. No observed runtime regression.",
+      "planning_assessment": "possible"
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 2,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "contact-polling": 0,
+    "shared-id-precedence": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0,
+      "uncached_input_tokens": 0
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0,
+      "uncached_input_tokens": 0
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "workflow_overhead",
+        "started_at": "2026-11-12T15:42:48.387941+00:00",
+        "ended_at": "2026-11-12T15:42:48.777204+00:00",
+        "receipt_start": "2026-11-12T15:42:32.597Z",
+        "receipt_end": "2026-11-12T15:42:32.597Z",
+        "usage_delta": {
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 0,
+          "uncached_input_tokens": 0
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ],
+  "feature_measurement_qualification": "Developer did not record development phase boundaries. Development/repair duration and feature token usage are UNKNOWN. The late0.389s interval/zero counter delta only cover bookkeeping, not the feature; no workflow-efficiency or cost conclusion. Review discoveries are not proven runtime regressions."
+}

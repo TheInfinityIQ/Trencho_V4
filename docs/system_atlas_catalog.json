@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "5fdd5561f3337896b85eef4ebb942bfdeb75101e",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
+  "reviewed_baseline": "9ab4e8d",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3268,7 +3268,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim.",
       "nodes": [
         {
           "id": "n0",
@@ -3293,6 +3293,42 @@
           "label": "Select actual entity for observation",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "focus_entity"
+        },
+        {
+          "id": "t03_admit",
+          "label": "Permitted T03 identity/metric stand-in",
+          "file": "game/battlefield/presentation_3d/field_t03.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "t03_motion",
+          "label": "Affected actual hull events",
+          "file": "game/battlefield/presentation_3d/field_t03.gd",
+          "function": "_refresh_id"
+        },
+        {
+          "id": "report_admit",
+          "label": "Permitted report cue, not enemy body",
+          "file": "game/battlefield/presentation_3d/reported_contacts.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "report_deadline",
+          "label": "Canonical logical expiry",
+          "file": "game/orders/order_service.gd",
+          "function": "contact"
+        },
+        {
+          "id": "report_due",
+          "label": "Scalar deadline guard / due-only inspection",
+          "file": "game/battlefield/presentation_3d/reported_contacts.gd",
+          "function": "refresh_due"
+        },
+        {
+          "id": "field_anchor",
+          "label": "Same selection/inspection identity",
+          "file": "game/preview_3d/world_presenter.gd",
+          "function": "_register_field_anchor"
         }
       ],
       "edges": [
@@ -3310,6 +3346,36 @@
           "from": "n3",
           "to": "n1",
           "label": "focus current identity"
+        },
+        {
+          "from": "t03_admit",
+          "to": "t03_motion",
+          "label": "only admitted IDs"
+        },
+        {
+          "from": "t03_motion",
+          "to": "field_anchor",
+          "label": "retained actual pose"
+        },
+        {
+          "from": "report_deadline",
+          "to": "report_admit",
+          "label": "read-only permitted report metadata"
+        },
+        {
+          "from": "report_admit",
+          "to": "report_due",
+          "label": "no repeated contact/entity scan on ordinary time updates"
+        },
+        {
+          "from": "report_due",
+          "to": "field_anchor",
+          "label": "expiry removes only owned cue"
+        },
+        {
+          "from": "report_admit",
+          "to": "field_anchor",
+          "label": "same current permitted ID"
         }
       ],
       "related": [
@@ -3321,7 +3387,9 @@
       "notes": "Presentation reads do not issue military orders or grant knowledge. Snapshot/marker APIs are query layers, not independent simulation state owners.",
       "primary_files": [
         "game/battlefield/battlefield_presentation.gd",
-        "game/battlefield/battlefield_view.gd"
+        "game/battlefield/battlefield_view.gd",
+        "game/battlefield/presentation_3d/field_t03.gd",
+        "game/battlefield/presentation_3d/reported_contacts.gd"
       ]
     },
     {
@@ -4475,7 +4543,9 @@
     "game/warehousing/warehouse_collision.gd": "warehousing",
     "game/warehousing/warehouse_paths.gd": "warehousing",
     "game/warehousing/warehouse_service.gd": "warehousing",
-    "game/warehousing/warehouse_view.gd": "warehousing"
+    "game/warehousing/warehouse_view.gd": "warehousing",
+    "game/battlefield/presentation_3d/field_t03.gd": "battleview",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "battleview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4508,7 +4578,7 @@
     "game/logistics/army_supply_panel.gd": "18b6b69c458a29e6ede1d2d67fdcd1881063ad8b74d35a8112036d4d26f4577e",
     "game/military/organization.gd": "02ba5a766649f7d0c793a3a29d70b431648e58ac12bb1aa6eb1fdb4aa37c83f0",
     "game/military/troop_transport.gd": "28624403cf7fec1e5b5869e9bc63c85aef9746aa21293f1b1ba2d34d3bc6b1cf",
-    "game/orders/order_service.gd": "12a54591ffc11ef0679f0c05364c3f932afaf2f81ed8126bc12dc33571df0cbf",
+    "game/orders/order_service.gd": "b29519455ab3c1dd5676161d47a47176ee8519d72e837d178406c2f0dd5a1412",
     "game/battlefield/squad_execution.gd": "8ed604883a78a98a0942927804391c995bf13f194a695f2bafd014a1d95cb2ac",
     "game/battlefield/vehicle_execution.gd": "c7888a3bcc2aa0d4e331f9956269102d99f891c59c162b559e33d56ab8d3eb9b",
     "game/battlefield/opening_policy.gd": "35d407f7e329ac3d08fb37f9c6ebbfb1dcf2bd487bdb2af761282be5cbcaef3f",
@@ -4546,10 +4616,10 @@
     "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
-    "game/battlefield/battlefield_presentation.gd": "e4af508e53b2f82ecf13a5e7213a7d741c7fe521e129391651da11959c492bc0",
+    "game/battlefield/battlefield_presentation.gd": "c2b63f25b835ca8e3c1e51bc4cb0cb35cae2dd13ab61d482a317c9c96345d23c",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
     "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
-    "game/preview_3d/world_presenter.gd": "0b974a8d04b0b6dfe1f6c61e288e25a09f803acad35612c7f88c24385c348fb3",
+    "game/preview_3d/world_presenter.gd": "67da279513cf093d207b50618dd5e554ae135aa434474e2f71201e79e21cfaaf",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
@@ -4614,6 +4684,8 @@
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
     "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
-    "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac"
+    "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
+    "game/battlefield/presentation_3d/field_t03.gd": "94d69cd942ca8b328ec705d1857018283cbb5cefa084e82ace8db5020aacfa83",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4"
   }
 }

@@ -1,0 +1,32 @@
+{
+  "scope": "First observed-field3D increment: provisional friendly T03 and permitted contact cue, existing shared observer/picking and deadline-driven expiry.",
+  "production_checkpoint": "9ab4e8d",
+  "readiness": "Source reviewed; standalone syntax parse only so far. GitHub current-change engine/action check pending.",
+  "verification_plan": "One supplied brief direct action: actual opening permitted T03 selectable anchor, explicitly synthetic permitted report cue, then fixture logical time crosses canonical expiry and cue disappears. No gameplay tick/clock acceptance, native input/appearance, parent-only movement, regression suite orFPS claim.",
+  "policy": "Existing player policy is authoritative; contacts remain reports, never actual enemy bodies. Physical represented IDs retain precedence.",
+  "diagram": [
+    "../../feature_plans/battlefield_3d_t03.md",
+    "../../feature_plans/battlefield_3d_contacts.md"
+  ],
+  "review_corrections": [
+    "Replaced repeated per-time-update contact Policy.inspect loop with canonical read-only expiry metadata and aggregate deadline guard.",
+    "Removed duplicate policy/entity lookups from already permitted synchronous marker rows.",
+    "Protected represented physical same-ID anchors from report cue replacement."
+  ],
+  "publication_authority": {
+    "human_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+    "human_turn": "01a1d059-1b9c-7070-91a2-e8e45983c141",
+    "standing_lead_repo_authority": "Dawson previously instructed Lead to push changes for Designer review and manage PRs/issues/project/merges.",
+    "verified_repo_id": "1433736061",
+    "repository": "TheInfinityIQ/Trencho_V4",
+    "configured_origin": "https://github.com/TheInfinityIQ/Trencho_V4.git",
+    "connected_repo_push_permission": true,
+    "qualification": "Child push was rejected for unverified destination/authority. Lead verified exact official connected repository and origin and reviewed the source before its own scoped authorized publication. No child retry or credential bypass."
+  },
+  "acceptance_limits": [
+    "Provisional procedural T03 shape, not approved art",
+    "Native camera/picking/readability not observed",
+    "Parent-held T03 movement and broader field content unverified",
+    "Full3D battlefield/game loop and60FPS not established"
+  ]
+}

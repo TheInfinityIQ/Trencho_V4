@@ -1,19 +1,31 @@
 {
-  "scope": "Current implementation atlas only; source baseline ae6deb6d567d972edf58fc3d60c0b28007206f6c",
+  "scope": "Battlefield observer source9ab4e8d, isolated candidate based on maina2d182f. Engine/action verification pending; supplier branch is separate.",
   "checks": {
-    "game_script_coverage": "215 of 215 inventoried game GDScript files; 121 non-test scripts and 94 retained test scripts, explicitly classified",
-    "diagram_source_links": "235 method anchors resolve to the actual current source line; file fingerprints match the maintained function map",
-    "document_structure": "48 system SVGs plus overview parse as XML; Markdown contains 49 Mermaid diagrams; every workflow endpoint and related-system reference resolves",
-    "viewer_javascript": "node --check syntax PASS; no browser interaction executed",
-    "generator_python": "Python syntax and deterministic regeneration/current-output comparison PASS",
-    "offline": "No external script, plugin, network renderer, or new dependency",
-    "gameplay_preservation": "No game script, project configuration, assets, sidecars or retained test fixture modified"
+    "generation": "Current system_map with30 explicit reviewed function purposes, system_atlas and UI diagram regenerated without game execution.",
+    "game_script_inventory": {
+      "total": 233,
+      "non_test": 139,
+      "retained_tests": 94
+    },
+    "atlas": {
+      "systems": 50,
+      "functions_in_inventory": 3581,
+      "diagram_function_links": 289
+    },
+    "function_map": {
+      "files": 1170,
+      "functions": 3804,
+      "named": 3441,
+      "anonymous": 363,
+      "purpose_reviews_required": 0
+    },
+    "links": "Actual candidate VSCode hint points at isolated battlefield working copy; source-code checkpoint9ab4e8d. No external editor or browser interaction tested."
   },
   "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [
-    "Browser appearance/navigation and external VS Code protocol handoff were not visually/runtime verified",
-    "Source review is of responsibilities/workflows and exact references, not a complete line-by-line defect audit of every indexed function",
-    "No game engine, regression suite, performance benchmark or gameplay scenario ran",
-    "Catalog/source inventory does not establish ordinary factory, supply, repeat delivery, full 3D or 60FPS acceptance"
-  ]
+    "No native input/rendering/parent-only movement/full-game/FPS observation.",
+    "No local Godot or regression suite.",
+    "Inventory/static links are not an exhaustive runtime call graph."
+  ],
+  "runtime_evidence": "evidence/battlefield_3d/integration_scope.json"
 }
