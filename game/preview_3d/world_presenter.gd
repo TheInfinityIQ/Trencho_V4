@@ -458,14 +458,17 @@ func refresh_markers() -> void:
 	var carriers: Dictionary = {}
 	var objectives: Dictionary = {}
 	var contacts: Dictionary = {}
+	var physical_ids: Dictionary = {}
 	for row in marker_rows:
 		if row.kind == "PERSON" and row.get("aboard",false): continue
 		present[row.id] = true
 		if row.kind == "PERSON": people[row.id] = row
-		else: people.erase(row.id)
 		if row.kind == "CARRIER": carriers[row.id] = row
 		if row.kind == "PLACE" and row.has("objective_kind"): objectives[row.id] = row
-		if row.kind == "CONTACT" and Policy.inspect(simulation.rear,row.id).get("kind","") == "CONTACT": contacts[row.id] = row
+		if row.kind == "CONTACT": contacts[row.id] = row
+		else: physical_ids[row.id] = true
+	# Match the policy inspector: a permitted physical entity wins a shared ID.
+	for id in physical_ids: contacts.erase(id)
 	field_persons.reconcile(people.values())
 	field_t01_trucks.reconcile(carriers.values())
 	field_objectives.reconcile(objectives.values())
