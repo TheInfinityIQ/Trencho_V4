@@ -1,7 +1,7 @@
 {
-  "scope": "Follow-soldier source reviewed at 9056ee5; selected actual opening soldier follow and manual-pan release passed GitHub run 43265454010 at earlier source 46d8f52. The later scripted-refocus hook is source-reviewed only; native input, visual and FPS acceptance remain open.",
+  "scope": "Friendly-shot cue reviewed at d63529b; one actual consumed round, same admitted shooter cue and shared cosmetic timeout passed GitHub run 43267234814. No rendered, hidden-path or FPS acceptance is established.",
   "checks": {
-    "generation": "System map with 18 reviewed follow-related function purposes and source-validated atlas regenerated without local engine execution.",
+    "generation": "System map with 10 reviewed friendly-shot cue function purposes and source-validated atlas regenerated without local engine execution.",
     "game_script_inventory": {
       "total": 236,
       "non_test": 142,
@@ -9,24 +9,24 @@
     },
     "atlas": {
       "systems": 50,
-      "functions_in_inventory": 3610,
-      "diagram_function_links": 301
+      "functions_in_inventory": 3613,
+      "diagram_function_links": 303
     },
     "function_map": {
-      "files": 1188,
-      "functions": 3833,
-      "named": 3470,
+      "files": 1191,
+      "functions": 3836,
+      "named": 3473,
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Workspace hint points to isolated battlefield-follow-soldier-worktree; reviewed source checkpoint 9056ee5. No external editor/browser interaction tested."
+    "links": "Workspace hint points to isolated battlefield-friendly-shot-cue-worktree; reviewed source checkpoint d63529b. No external editor/browser interaction tested."
   },
   "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [
-    "Scripted refocus, boarding, permission loss, same-ID replacement and model replacement were not demonstrated.",
-    "No native input, rendered appearance, hidden-area progression or FPS observation.",
+    "No rendered appearance, hidden/removing/rebind/offscreen path or native input demonstrated.",
+    "No full encounter, combat outcome or FPS observation.",
     "No local Godot or regression suite.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/follow_soldier_current_change.json"
+  "runtime_evidence": "evidence/battlefield_3d/friendly_shot_current_change.json"
 }
