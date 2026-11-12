@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "dd6a410",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-t04-worktree",
+  "reviewed_baseline": "a9fc00a",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-forward-stop-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3268,7 +3268,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; transit and other issue history remain unavailable.",
       "nodes": [
         {
           "id": "n0",
@@ -3341,6 +3341,30 @@
           "label": "Provisional 7.5 × 3 m T04 stand-in",
           "file": "game/battlefield/presentation_3d/field_t04.gd",
           "function": "_add_standin"
+        },
+        {
+          "id": "stop_auth",
+          "label": "Explicit friendly stop entitlement",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "register_delivery_stop"
+        },
+        {
+          "id": "stop_cue",
+          "label": "Permitted same-ID forward-stop cue",
+          "file": "game/battlefield/presentation_3d/forward_stop.gd",
+          "function": "reconcile"
+        },
+        {
+          "id": "stop_read",
+          "label": "Authorized loose stock and opening issue view",
+          "file": "game/forward_supply/forward_supply.gd",
+          "function": "observe_stop"
+        },
+        {
+          "id": "stop_cache",
+          "label": "Stock invalidation for selected cached stop",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_on_stop_stock_changed"
         }
       ],
       "edges": [
@@ -3403,6 +3427,36 @@
           "from": "t04_shape",
           "to": "field_anchor",
           "label": "same selectable actual ID"
+        },
+        {
+          "from": "stop_auth",
+          "to": "n0",
+          "label": "explicit observer only"
+        },
+        {
+          "from": "n0",
+          "to": "stop_cue",
+          "label": "permitted stop"
+        },
+        {
+          "from": "stop_cue",
+          "to": "field_anchor",
+          "label": "same actual stop ID"
+        },
+        {
+          "from": "stop_auth",
+          "to": "stop_read",
+          "label": "permission rechecked"
+        },
+        {
+          "from": "stop_read",
+          "to": "n2",
+          "label": "present stock and tracked facts only"
+        },
+        {
+          "from": "stop_cache",
+          "to": "stop_read",
+          "label": "refresh only on selection or stock invalidation"
         }
       ],
       "related": [
@@ -3417,7 +3471,8 @@
         "game/battlefield/battlefield_view.gd",
         "game/battlefield/presentation_3d/field_t03.gd",
         "game/battlefield/presentation_3d/reported_contacts.gd",
-        "game/battlefield/presentation_3d/field_t04.gd"
+        "game/battlefield/presentation_3d/field_t04.gd",
+        "game/battlefield/presentation_3d/forward_stop.gd"
       ]
     },
     {
@@ -4574,7 +4629,8 @@
     "game/warehousing/warehouse_view.gd": "warehousing",
     "game/battlefield/presentation_3d/field_t03.gd": "battleview",
     "game/battlefield/presentation_3d/reported_contacts.gd": "battleview",
-    "game/battlefield/presentation_3d/field_t04.gd": "battleview"
+    "game/battlefield/presentation_3d/field_t04.gd": "battleview",
+    "game/battlefield/presentation_3d/forward_stop.gd": "battleview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4615,7 +4671,7 @@
     "game/battlefield/resource_operations.gd": "92d7317edb5eb8a858ce1332f258c2493dcdf7dad344933acf01a5bb3180018f",
     "game/battlefield/vehicle_deployment.gd": "a7a7cd8fcfef3e105974a7b9d915ae86e5e4c8dfa1f8b4e7dc12888aa905d9fd",
     "game/battlefield/rifle_supply_travel.gd": "a01e811f3c97d43fe933014906f3211355380638561d48b2af0492d1772d5c84",
-    "game/forward_supply/forward_supply.gd": "d09b12ef7e8b2d1c5e78da88fd73c663374a762388cc1cab9d887a4f129c1930",
+    "game/forward_supply/forward_supply.gd": "3b822b77d8c9223d044577942f707fc7ec7e002a9fb5368d8cadf296b5208cb3",
     "game/forward_supply/forward_delivery_panel.gd": "373513a8b5707c2447e5614477489232c66413ff0abf5196c1f50dfcfc8db31d",
     "game/forward_supply/forward_transport.gd": "302ef2de6e47fbae854cb34a6a703d78934c54b3662ee11d8e9f96ed3e1372cd",
     "game/forward_supply/vehicle_rack_issue.gd": "61b0b18d2c17f9c1206cc8b60295faf8387ef27f538cac2c75606dd83033a979",
@@ -4645,10 +4701,10 @@
     "game/ui/ui_kit.gd": "d0fdf21da7da0efb22e064fc5ad6c4cef4e0f3654df644ca3edcead28174e7e6",
     "game/ui/demo_guidance.gd": "34b8638524bb10d98c28041e0eb7a97dd0a4cf96d82f001b47e994ae16fffeea",
     "game/ui/demo_guidance_panel.gd": "84e1147ad4af7cd58fb25ab62218ba8e783cac9cfd5125445839f0c2bb5f2089",
-    "game/battlefield/battlefield_presentation.gd": "c2b63f25b835ca8e3c1e51bc4cb0cb35cae2dd13ab61d482a317c9c96345d23c",
-    "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
+    "game/battlefield/battlefield_presentation.gd": "2d1d1a412b8b77547b723a222da5a7aeee7dcac73040e25f4b6bd5b10030c3a9",
+    "game/battlefield/battlefield_view.gd": "0295acc866d014ad35bf59cefb8269c804fb5d7ee624d79821eb6db7a6910eed",
     "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
-    "game/preview_3d/world_presenter.gd": "b5d80125865c64f8f520793eb45878b153f3c019721ba9d491af7cce499ead93",
+    "game/preview_3d/world_presenter.gd": "f11842319b3050e3d7e11827600d98fab832a86e4a2d1b7856e76bcf03b33aad",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
@@ -4662,7 +4718,7 @@
     "game/preview_3d/field_objectives.gd": "1f9188d8de6968da078b85b8d3d8d28fa312e2a50f235616cab9a4225929930a",
     "game/preview_3d/field_objective_cues.gd": "8b817c0779a7df9da91d3027c556422cef6a6fd4d0a00114f733eed12b137ea2",
     "game/preview_3d/manager_pose.gd": "31e22b220ec911a82d918d9d77e4b4bc3b1a484e709ff8cb2504bd283761ec13",
-    "game/scenario/farmland_session.gd": "c9907def6017d65501a5f9796a6101942b03a08ac4eecd3316cc510893c4d395",
+    "game/scenario/farmland_session.gd": "ebbb107338f16ba46e182614fce7ccb6f77b3bb0ec5ef3b127dbb34c7612e981",
     "game/scenario/battlefield_start.gd": "b92d6d1881f807f9e4ce138c5e317598cf809d613ecfadbcc75f3aad352dfed9",
     "game/scenario/rear_start.gd": "8858a3de02cb951306ba35ab8e53e22cbdd0e7204cff93343c06e72f29601b03",
     "game/battlefield/farmland_scenario.gd": "25f9c3684ead8176beebb2a083b9eba7d39b071f01db69491b27630137729fb9",
@@ -4716,6 +4772,7 @@
     "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
     "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
     "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
-    "game/battlefield/presentation_3d/field_t04.gd": "023faac625055c90eddd101d0cef6f5ecb45b72d761966619e532f28364c312b"
+    "game/battlefield/presentation_3d/field_t04.gd": "023faac625055c90eddd101d0cef6f5ecb45b72d761966619e532f28364c312b",
+    "game/battlefield/presentation_3d/forward_stop.gd": "365692679863e4c1fd86346c37e88968a30dfdf3af43c940c80706588ebd7052"
   }
 }

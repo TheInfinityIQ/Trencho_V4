@@ -21,8 +21,11 @@ static func inspect(rear: RefCounted, id: String) -> Dictionary:
 static func _entity_marker(rear: RefCounted, entity: Dictionary) -> Dictionary:
 	if entity.is_empty(): return {}
 	if entity.kind == "PLACE":
-		if entity.id != "hq-berth" and not rear.objectives.objectives.has(entity.id) and not rear.orders.objective_markers.has(entity.id): return {}
+		var stop: Dictionary = rear.forward_supply.delivery_stops.get(entity.id,{}) if rear.forward_supply != null else {}
+		var permitted_stop: bool = not stop.is_empty() and str(stop.get("observer_owner","")) == rear.PLAYER
+		if entity.id != "hq-berth" and not rear.objectives.objectives.has(entity.id) and not rear.orders.objective_markers.has(entity.id) and not permitted_stop: return {}
 		var row: Dictionary = entity.duplicate()
+		if permitted_stop: row["friendly_forward_stop"] = true
 		if rear.objectives.objectives.has(entity.id):
 			var objective: Dictionary = rear.objectives.objectives[entity.id]
 			var owner: String = str(objective.owner)

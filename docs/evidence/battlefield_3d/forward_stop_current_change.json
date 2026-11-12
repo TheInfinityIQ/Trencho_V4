@@ -1,0 +1,11 @@
+{
+  "source_revision": "a9fc00a358a3b173c11f55edfd46a4e2ba0d9b75",
+  "workflow_run": 43260148518,
+  "artifact_id": 13963028061,
+  "artifact_sha256": "d468017afb9d108797affa53f7653d3c248fa94f800f1260b53d7b291030ac65",
+  "demonstration_sha256": "8e011d79d215dd4efd07c983d19d8bb874b166f54aa744fee687ec72c26aa990",
+  "fixture": "Normal Farmland session with explicitly arranged actual stop-held E02 stock and an additional default-undisclosed stop; these are demonstration arrangements, not normal opening grants.",
+  "result": "PASS: permitted actual stop uses shared marker and stock refresh; an undisclosed stop remains hidden.",
+  "scope": "Player-authorized registered forward stop, actual loose stock directly held there and bounded opening-owned pending or active issue facts. Transit and other issue history remain unavailable; intact weapons are not listed.",
+  "limitations": ["No shipment, completed issue, native click, visual appearance, hidden-area progression or FPS was demonstrated.", "Any stock change dirties the selected-stop cache; only a selected authorized stop triggers its next stock query.", "Existing retained job histories are not scanned; this slice does not claim a complete logistics overview."]
+}

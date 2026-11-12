@@ -25,7 +25,7 @@ func request_vehicle_rack_issue(stock_id: String, hull_id: String, handler_id: S
 	return rack_issue.request(stock_id,hull_id,handler_id,quantity,stop_id)
 
 
-func register_delivery_stop(stop_id: String, outbound_points: Array = [], return_points: Array = []) -> Dictionary:
+func register_delivery_stop(stop_id: String, outbound_points: Array = [], return_points: Array = [], observer_owner: String = "") -> Dictionary:
 	var stop: Dictionary = _rear().ledger.inspect_entity(stop_id)
 	var hq: Vector2 = _rear().ledger.inspect_entity("hq-berth").position
 	if stop.get("kind","") != "PLACE" or stop.position.distance_to(hq) <= LOCAL_RADIUS:
@@ -40,8 +40,42 @@ func register_delivery_stop(stop_id: String, outbound_points: Array = [], return
 				return _fail("Every authored waypoint must be a finite metre position.")
 		if not (outbound_points[0] as Vector2).is_equal_approx(hq) or not (outbound_points[-1] as Vector2).is_equal_approx(stop.position) or not (return_points[0] as Vector2).is_equal_approx(stop.position) or not (return_points[-1] as Vector2).is_equal_approx(hq):
 			return _fail("Authored routes must connect actual HQ and this stop in both directions.")
-	delivery_stops[stop_id] = {"outbound_points":outbound_points.duplicate(),"return_points":return_points.duplicate()}
+	delivery_stops[stop_id] = {"outbound_points":outbound_points.duplicate(),"return_points":return_points.duplicate(),"observer_owner":observer_owner}
 	return {"ok":true,"message":"Physical forward stop and its route candidate declared."}
+
+
+func observe_stop(stop_id: String, observer: String, include_stock: bool = true) -> Dictionary:
+	# The registration is explicit: unknown or other-owner stops disclose nothing.
+	var rear: RefCounted = _rear()
+	if observer.is_empty() or observer != rear.PLAYER: return {}
+	var stop: Dictionary = delivery_stops.get(stop_id,{})
+	if stop.is_empty() or str(stop.get("observer_owner","")) != observer: return {}
+	var place: Dictionary = rear.ledger.inspect_entity(stop_id,{},false)
+	if place.get("kind","") != "PLACE": return {}
+	var result := {"opening_available":false,"pending_freight":{},"issues":[]}
+	if include_stock: result["stock"] = rear.ledger.loose_stock_summary(stop_id,observer).contents
+	var operations: RefCounted = rear.battlefield_operations
+	if operations == null or operations.policy == null or operations.policy.resupply == null: return result
+	var opening: RefCounted = operations.policy.resupply
+	if str(opening.stop_id) != stop_id or observer != rear.PLAYER: return result
+	result.opening_available = true
+	var key: String = str(opening._freight_request)
+	if not key.is_empty(): result.pending_freight = transport.planning_status(key)
+	for job_id in opening.owned_jobs:
+		var job: Dictionary = jobs.get(job_id,{})
+		if job.is_empty() or str(job.get("stop","")) != stop_id: continue
+		var recipient: Dictionary = rear.ledger.inspect_entity(str(job.get("recipient","")),{},false)
+		var handler: Dictionary = rear.ledger.inspect_entity(str(job.get("handler","")),{},false)
+		if recipient.get("owner","") != observer or handler.get("owner","") != observer: continue
+		result.issues.append({"kind":"Person","state":str(job.get("state","Unknown")),"type":str(job.get("type","Unknown")),"quantity":int(job.get("quantity",0)),"blocker":str(job.get("blocker",""))})
+	for job_id in opening._rack_jobs:
+		var job: Dictionary = rack_issue.jobs.get(job_id,{})
+		if job.is_empty() or str(job.get("stop","")) != stop_id or str(job.get("owner","")) != observer: continue
+		var hull: Dictionary = rear.ledger.inspect_entity(str(job.get("hull","")),{},false)
+		var handler: Dictionary = rear.ledger.inspect_entity(str(job.get("handler","")),{},false)
+		if hull.get("owner","") != observer or handler.get("owner","") != observer: continue
+		result.issues.append({"kind":"Vehicle rack","state":str(job.get("state","Unknown")),"type":"E26","quantity":int(job.get("quantity",0)),"issued":int(job.get("issued",0)),"blocker":str(job.get("blocker",""))})
+	return result
 
 
 func request_delivery(hull_id: String, stock_id: String, quantity: int, stop_id: String,
