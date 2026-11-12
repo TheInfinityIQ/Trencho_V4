@@ -38,6 +38,7 @@ func request(stock_id: String, hull_id: String, handler_id: String, quantity: in
 		return _fail("The exact arrived ammunition cannot be reserved.")
 	jobs[id] = {"id":id,"owner":rear.PLAYER,"stock":stock_id,"source_holder":stock.holder_id,"hull":hull_id,"handler":handler_id,"stop":stop_id,"quantity":quantity,"issued":0,"claim":id,"carry":"","portion":0,"state":"","deadline":INF,"blocker":"","hull_position":hull.position,"expected":handler.position}
 	_begin(jobs[id],"Walking Source" if leg.seconds > EPS else "Pickup",stock.position,float(leg.seconds) if leg.seconds > EPS else HANDLING)
+	rear.forward_supply._observation_set("rack",jobs[id],true)
 	return {"ok":true,"id":id,"message":"Actual E26 reserved for timed local pickup, carry and rack deposit."}
 
 func hull_committed(id: String) -> bool:
@@ -83,6 +84,7 @@ func resume(id: String) -> Dictionary:
 	row.hull_position = _rear().ledger.inspect_entity(row.hull).position
 	row.blocker = ""
 	_begin(row,("Walking Hull" if not carried.is_empty() else "Walking Source") if leg.seconds > EPS else ("Drop" if not carried.is_empty() else "Pickup"),destination,float(leg.seconds) if leg.seconds > EPS else HANDLING)
+	_rear().forward_supply._observation_set("rack",row,true)
 	return {"ok":true,"message":"Same actual rack issue resumed."}
 
 func next_boundary() -> float:
@@ -141,8 +143,10 @@ func _drop(row: Dictionary) -> void:
 	var result: Dictionary = rear.ledger.transfer_stock(row.carry,row.portion,row.hull)
 	if not result.ok: _stop(row,result.message); return
 	row.issued += row.portion
+	rear.forward_supply._observation_receipt("rack",row,int(row.portion),int(row.issued),str(result.entity_id))
 	row.carry = ""
 	if row.issued == row.quantity:
+		rear.forward_supply._observation_set("rack",row,false)
 		row.state = "Complete"
 		row.deadline = INF
 		rear.ledger.release_claim(row.claim)
@@ -193,7 +197,9 @@ func _stop(row: Dictionary, reason: String) -> void:
 	var carry: Dictionary = _rear().ledger.inspect_entity(row.carry)
 	var retained: bool = carry.get("holder_id","") == row.handler and carry.get("quantity",0) == row.portion
 	row.state = "Interrupted Carry" if retained else "Interrupted"
-	if not retained: row.carry = ""
+	if not retained:
+		_rear().forward_supply._observation_set("rack",row,false)
+		row.carry = ""
 	row.deadline = INF
 	row.blocker = reason
 

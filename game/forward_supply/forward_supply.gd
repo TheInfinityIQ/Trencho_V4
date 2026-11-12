@@ -13,6 +13,9 @@ var jobs: Dictionary = {}
 var transport: RefCounted
 var rack_issue: RefCounted
 var delivery_stops: Dictionary = {}
+# Presentation indexes only; jobs, custody and scheduling remain service-owned.
+var _observation_active: Dictionary = {"delivery":{},"person":{},"rack":{}}
+var _observation_latest: Dictionary = {}
 var _sequence := 0
 
 
@@ -44,37 +47,70 @@ func register_delivery_stop(stop_id: String, outbound_points: Array = [], return
 	return {"ok":true,"message":"Physical forward stop and its route candidate declared."}
 
 
+func _observation_set(kind: String, row: Dictionary, active: bool) -> void:
+	var by_stop: Dictionary = _observation_active[kind]
+	var stop: String = str(row.stop)
+	if active:
+		if not by_stop.has(stop): by_stop[stop] = {}
+		by_stop[stop][str(row.id)] = true
+	elif by_stop.has(stop):
+		by_stop[stop].erase(str(row.id))
+		if by_stop[stop].is_empty(): by_stop.erase(stop)
+
+func _observation_receipt(kind: String, row: Dictionary, quantity: int, cumulative: int, stock_id: String) -> void:
+	var stop: String = str(row.stop)
+	if not _observation_latest.has(stop): _observation_latest[stop] = {}
+	_observation_latest[stop][kind] = {"job":str(row.id),"count":cumulative,"quantity":quantity,
+		"type":str(row.get("type","E26")),"target":str(row.recipient) if kind == "person" else str(row.hull),
+		"handler":str(row.handler),"stock":stock_id,"at":_rear().time}
+
+func _observation_friendly(id: String, observer: String, kind: String) -> bool:
+	var entity: Dictionary = _rear().ledger.inspect_entity(id,{},false)
+	if entity.get("kind","") != kind or entity.get("owner","") != observer: return false
+	return kind != "CARRIER" or str(entity.get("controller","")).trim_suffix("-hq") == observer
+
 func observe_stop(stop_id: String, observer: String, include_stock: bool = true) -> Dictionary:
-	# The registration is explicit: unknown or other-owner stops disclose nothing.
+	# Entitlement is checked before any stop, job or stock details are returned.
 	var rear: RefCounted = _rear()
 	if observer.is_empty() or observer != rear.PLAYER: return {}
 	var stop: Dictionary = delivery_stops.get(stop_id,{})
 	if stop.is_empty() or str(stop.get("observer_owner","")) != observer: return {}
 	var place: Dictionary = rear.ledger.inspect_entity(stop_id,{},false)
 	if place.get("kind","") != "PLACE": return {}
-	var result := {"opening_available":false,"pending_freight":{},"issues":[]}
+	var result := {"opening_available":false,"pending_freight":{},"deliveries":[],"issues":[],"receipts":[]}
 	if include_stock: result["stock"] = rear.ledger.loose_stock_summary(stop_id,observer).contents
 	var operations: RefCounted = rear.battlefield_operations
-	if operations == null or operations.policy == null or operations.policy.resupply == null: return result
-	var opening: RefCounted = operations.policy.resupply
-	if str(opening.stop_id) != stop_id or observer != rear.PLAYER: return result
-	result.opening_available = true
-	var key: String = str(opening._freight_request)
-	if not key.is_empty(): result.pending_freight = transport.planning_status(key)
-	for job_id in opening.owned_jobs:
-		var job: Dictionary = jobs.get(job_id,{})
-		if job.is_empty() or str(job.get("stop","")) != stop_id: continue
-		var recipient: Dictionary = rear.ledger.inspect_entity(str(job.get("recipient","")),{},false)
-		var handler: Dictionary = rear.ledger.inspect_entity(str(job.get("handler","")),{},false)
-		if recipient.get("owner","") != observer or handler.get("owner","") != observer: continue
-		result.issues.append({"kind":"Person","state":str(job.get("state","Unknown")),"type":str(job.get("type","Unknown")),"quantity":int(job.get("quantity",0)),"blocker":str(job.get("blocker",""))})
-	for job_id in opening._rack_jobs:
-		var job: Dictionary = rack_issue.jobs.get(job_id,{})
-		if job.is_empty() or str(job.get("stop","")) != stop_id or str(job.get("owner","")) != observer: continue
-		var hull: Dictionary = rear.ledger.inspect_entity(str(job.get("hull","")),{},false)
-		var handler: Dictionary = rear.ledger.inspect_entity(str(job.get("handler","")),{},false)
-		if hull.get("owner","") != observer or handler.get("owner","") != observer: continue
-		result.issues.append({"kind":"Vehicle rack","state":str(job.get("state","Unknown")),"type":"E26","quantity":int(job.get("quantity",0)),"issued":int(job.get("issued",0)),"blocker":str(job.get("blocker",""))})
+	if operations != null and operations.policy != null and operations.policy.resupply != null:
+		var opening: RefCounted = operations.policy.resupply
+		if str(opening.stop_id) == stop_id:
+			result.opening_available = true
+			var key: String = str(opening._freight_request)
+			if not key.is_empty(): result.pending_freight = transport.planning_status(key)
+	for id in _observation_active.delivery.get(stop_id,{}):
+		var job: Dictionary = transport.jobs.get(id,{})
+		if job.is_empty() or str(job.get("stop","")) != stop_id or not _observation_friendly(str(job.get("hull","")),observer,"CARRIER"): continue
+		if not _observation_friendly(str(job.get("loader","")),observer,"PERSON") or not _observation_friendly(str(job.get("unloader","")),observer,"PERSON"): continue
+		result.deliveries.append({"state":str(job.state),"type":str(job.type),"quantity":int(job.quantity),"loaded":int(job.loaded),"unloaded":int(job.unloaded),"blocker":str(job.blocker)})
+	for kind in ["person","rack"]:
+		var service_jobs: Dictionary = jobs if kind == "person" else rack_issue.jobs
+		for id in _observation_active[kind].get(stop_id,{}):
+			var job: Dictionary = service_jobs.get(id,{})
+			if job.is_empty() or str(job.get("stop","")) != stop_id: continue
+			var target: String = str(job.get("recipient","")) if kind == "person" else str(job.get("hull",""))
+			if not _observation_friendly(target,observer,"PERSON" if kind == "person" else "CARRIER") or not _observation_friendly(str(job.get("handler","")),observer,"PERSON"): continue
+			var item := {"kind":"Person" if kind == "person" else "Vehicle rack","state":str(job.state),"type":str(job.get("type","E26")),"quantity":int(job.quantity),"blocker":str(job.blocker)}
+			if kind == "rack": item["issued"] = int(job.issued)
+			if job.state == "Interrupted Carry":
+				var carried_id: String = str(job.get("carried_stock","")) if kind == "person" else str(job.get("carry",""))
+				var carried: Dictionary = rear.ledger.inspect_entity(carried_id,{},false)
+				var amount: int = int(job.quantity) if kind == "person" else int(job.portion)
+				item["custody"] = "held by friendly handler" if carried.get("kind","") == "STOCK" and carried.get("owner","") == observer and carried.get("holder_id","") == job.handler and int(carried.get("quantity",0)) == amount else "current custody unavailable"
+			result.issues.append(item)
+	for kind in ["person","rack"]:
+		var receipt: Dictionary = _observation_latest.get(stop_id,{}).get(kind,{})
+		if receipt.is_empty(): continue
+		if not _observation_friendly(str(receipt.target),observer,"PERSON" if kind == "person" else "CARRIER") or not _observation_friendly(str(receipt.handler),observer,"PERSON"): continue
+		result.receipts.append({"kind":"Person" if kind == "person" else "Vehicle rack","job":receipt.job,"count":receipt.count,"quantity":receipt.quantity,"type":receipt.type,"at":receipt.at})
 	return result
 
 
@@ -149,6 +185,7 @@ func start_issue(stock_id: String, recipient_id: String, handler_id: String, qua
 		"claim":id,"carried_stock":"","issued_stock":"","state":"Walking Source" if leg.seconds > EPS else "Pickup",
 		"started":rear.time,"deadline":rear.time+(float(leg.seconds) if leg.seconds > EPS else HANDLING_SECONDS),
 		"from":handler.position,"to":stock.position,"expected":handler.position,"blocker":""}
+	_observation_set("person",jobs[id],true)
 	return {"ok":true,"id":id,"message":"Named local issue reserved; the handler must physically collect and deliver it."}
 
 
@@ -292,6 +329,8 @@ func _finish_drop(row: Dictionary) -> void:
 		_interrupt_row(row,issued.message)
 		return
 	row.issued_stock = issued.entity_id
+	_observation_receipt("person",row,int(row.quantity),int(row.quantity),str(issued.entity_id))
+	_observation_set("person",row,false)
 	row.state = "Complete"
 	row.deadline = INF
 	row.blocker = ""
@@ -311,6 +350,7 @@ func _begin(row: Dictionary, stage: String, destination: Vector2, seconds: float
 func _interrupt_row(row: Dictionary, reason: String) -> void:
 	_release_claim(row)
 	row.state = "Interrupted Carry" if not str(row.carried_stock).is_empty() else "Interrupted"
+	if row.state == "Interrupted": _observation_set("person",row,false)
 	row.deadline = INF
 	row.blocker = reason
 
