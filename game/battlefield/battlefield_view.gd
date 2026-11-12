@@ -18,9 +18,15 @@ var _displayed_time := -INF
 var _displayed_speed := -1
 var _displayed_planning_revision := -1
 var _inspector: Label
+var _stop_stock_ledger: RefCounted
+var _stop_stock_id := ""
+var _stop_selection_id := ""
+var _stop_stock_dirty := true
+var _stop_stock: Dictionary = {}
 
 func bind(next_simulation: RefCounted) -> void:
 	simulation = next_simulation
+	_bind_stop_stock()
 	if is_node_ready():
 		_request_refresh()
 		queue_redraw()
@@ -37,6 +43,7 @@ func _ready() -> void:
 		session.simulation_changed.connect(bind)
 		session.state_changed.connect(_request_refresh)
 		session.time_advanced.connect(_request_refresh)
+	_bind_stop_stock()
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	resized.connect(queue_redraw)
@@ -248,12 +255,18 @@ func inspection_text() -> String:
 	if selected.is_empty():
 		selected_id = _default_objective()
 		selected = Presentation.inspect(rear,selected_id)
+	if _stop_selection_id != selected_id:
+		_stop_selection_id = selected_id
+		_stop_stock_id = ""
+		_stop_stock.clear()
+		_stop_stock_dirty = true
 	var objective_id := selected_id if rear.objectives.objectives.has(selected_id) else _default_objective()
 	var objective: Dictionary = rear.objectives.inspect(objective_id)
 	var detail := ""
 	if not selected.is_empty():
 		var title: String = _site_label(selected.id) if selected.kind == "PLACE" else (_unit_label(selected) if selected.kind in ["PERSON","CARRIER"] else selected.id)
 		detail = "%s\nPosition: (%.0f, %.0f) m" % [title, selected.position.x, selected.position.y]
+		if selected.kind == "PLACE" and selected.get("friendly_forward_stop",false): detail += _forward_stop_detail(rear,selected.id)
 		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
 		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
 		if selected.kind == "PERSON":
@@ -319,6 +332,57 @@ func inspection_text() -> String:
 			text += "\n\nAPC DEPLOYMENT\n%s · %s\nDestination: %s\n%s" % [deployment.hull,deployment.state,_site_label(deployment.stop),deployment.blocker]
 			if not str(deployment.get("supply_stop","")).is_empty(): text += "\nSupply rendezvous: "+_site_label(str(deployment.supply_stop))
 	return text
+
+
+
+func _bind_stop_stock() -> void:
+	if _stop_stock_ledger != null and _stop_stock_ledger.stock_changed.is_connected(_on_stop_stock_changed):
+		_stop_stock_ledger.stock_changed.disconnect(_on_stop_stock_changed)
+	_stop_stock_ledger = simulation.rear.ledger if simulation != null else null
+	_stop_stock_id = ""
+	_stop_selection_id = ""
+	_stop_stock.clear()
+	_stop_stock_dirty = true
+	if _stop_stock_ledger != null: _stop_stock_ledger.stock_changed.connect(_on_stop_stock_changed)
+
+func _on_stop_stock_changed(_id: String) -> void:
+	_stop_stock_dirty = true
+	_request_refresh()
+
+func _exit_tree() -> void:
+	if _stop_stock_ledger != null and _stop_stock_ledger.stock_changed.is_connected(_on_stop_stock_changed):
+		_stop_stock_ledger.stock_changed.disconnect(_on_stop_stock_changed)
+	_stop_stock_ledger = null
+
+
+func _forward_stop_detail(rear: RefCounted, id: String) -> String:
+	var refresh_stock := _stop_stock_dirty or _stop_stock_id != id
+	var view: Dictionary = rear.forward_supply.observe_stop(id,rear.PLAYER,refresh_stock)
+	if view.is_empty(): return "\nForward stop details unavailable."
+	if refresh_stock:
+		_stop_stock = view.get("stock",{}).duplicate(true)
+		_stop_stock_id = id
+		_stop_stock_dirty = false
+	var lines: Array[String] = ["", "FRIENDLY FORWARD SUPPLY", "Stock physically held at this stop:"]
+	if _stop_stock.is_empty(): lines.append("No friendly stock directly held at this stop.")
+	else:
+		for type in _stop_stock: lines.append("%s: %d" % [type,int(_stop_stock[type].quantity)])
+	lines.append("In-transit freight: unavailable in this view.")
+	if not view.opening_available:
+		lines.append("Opening supply activity: unavailable.")
+	else:
+		if view.pending_freight.is_empty(): lines.append("No pending opening freight plan; current transit is not tracked here.")
+		else: lines.append("Opening freight plan: %s" % str(view.pending_freight.get("message","Status unavailable.")))
+		if view.issues.is_empty(): lines.append("No tracked opening issue.")
+		else:
+			for issue: Dictionary in view.issues:
+				var text := "%s issue · %s · %d %s" % [issue.kind,issue.state,issue.quantity,issue.type]
+				if issue.has("issued"): text += " · %d transferred" % int(issue.issued)
+				if not str(issue.blocker).is_empty(): text += "\n"+str(issue.blocker)
+				lines.append(text)
+	lines.append("Other issue history: unavailable; arrival alone does not arm a recipient.")
+	return "\n".join(lines)
+
 
 func _activity_label(person: Dictionary) -> String:
 	var rear: RefCounted = simulation.rear

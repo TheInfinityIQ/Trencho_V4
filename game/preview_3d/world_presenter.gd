@@ -26,6 +26,7 @@ const FieldT01Trucks = preload("res://game/preview_3d/field_t01_trucks.gd")
 const FieldObjectives = preload("res://game/preview_3d/field_objectives.gd")
 const FieldT03 = preload("res://game/battlefield/presentation_3d/field_t03.gd")
 const FieldT04 = preload("res://game/battlefield/presentation_3d/field_t04.gd")
+const ForwardStop = preload("res://game/battlefield/presentation_3d/forward_stop.gd")
 const ReportedContacts = preload("res://game/battlefield/presentation_3d/reported_contacts.gd")
 const Policy = preload("res://game/battlefield/battlefield_presentation.gd")
 const FacilityShells = preload("res://game/preview_3d/facility_shells.gd")
@@ -40,6 +41,7 @@ var field_t01_trucks: FieldT01Trucks = FieldT01Trucks.new()
 var field_objectives: FieldObjectives = FieldObjectives.new()
 var field_t03: FieldT03 = FieldT03.new()
 var field_t04: FieldT04 = FieldT04.new()
+var forward_stops: ForwardStop = ForwardStop.new()
 var reported_contacts: ReportedContacts = ReportedContacts.new()
 var rear_root := Node3D.new()
 var field_root := Node3D.new()
@@ -136,6 +138,10 @@ func build(model: RefCounted, pose: RefCounted) -> void:
 	field_t04.changed.connect(_field_t04_changed)
 	field_t04.removing.connect(_field_t04_removing)
 	field_t04.bind(model.rear.ledger,model.rear.combat.world.ground,_inspect_field_marker)
+	_markers_root.add_child(forward_stops)
+	forward_stops.changed.connect(_forward_stop_changed)
+	forward_stops.removing.connect(_forward_stop_removing)
+	forward_stops.bind(model.rear.combat.world.ground)
 	_markers_root.add_child(reported_contacts)
 	reported_contacts.changed.connect(_reported_contact_changed)
 	reported_contacts.removing.connect(_reported_contact_removing)
@@ -480,10 +486,11 @@ func refresh_markers() -> void:
 	field_objectives.reconcile(objectives.values())
 	field_t03.reconcile(carriers.values())
 	field_t04.reconcile(carriers.values())
+	forward_stops.reconcile(marker_rows)
 	reported_contacts.reconcile(contacts.values())
 	_proxy_rows.clear()
 	for row in marker_rows:
-		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id) or field_t03.anchors.has(row.id) or field_t04.anchors.has(row.id) or reported_contacts.anchors.has(row.id): continue
+		if row.kind == "PERSON" or people.has(row.id) or field_t01_trucks.bodies.has(row.id) or field_objectives.anchors.has(row.id) or field_t03.anchors.has(row.id) or field_t04.anchors.has(row.id) or forward_stops.anchors.has(row.id) or reported_contacts.anchors.has(row.id): continue
 		_proxy_rows.append(row)
 		if not markers.has(row.id):
 			var colour := Color("e49b73") if row.kind == "CONTACT" else Color("81d1e6")
@@ -513,6 +520,12 @@ func _field_t04_changed(id: String) -> void:
 	_register_field_anchor(id,field_t04.anchors[id])
 
 func _field_t04_removing(id: String, anchor: Node3D) -> void:
+	if markers.get(id) == anchor: markers.erase(id)
+
+func _forward_stop_changed(id: String) -> void:
+	_register_field_anchor(id,forward_stops.anchors[id])
+
+func _forward_stop_removing(id: String, anchor: Node3D) -> void:
 	if markers.get(id) == anchor: markers.erase(id)
 
 func _reported_contact_changed(id: String) -> void:
