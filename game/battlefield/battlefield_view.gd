@@ -347,7 +347,7 @@ func _bind_stop_stock() -> void:
 
 func _on_stop_stock_changed(_id: String) -> void:
 	_stop_stock_dirty = true
-	_request_refresh()
+	if not _stop_stock_id.is_empty() and selected_id == _stop_stock_id: _request_refresh()
 
 func _exit_tree() -> void:
 	if _stop_stock_ledger != null and _stop_stock_ledger.stock_changed.is_connected(_on_stop_stock_changed):
@@ -363,8 +363,8 @@ func _forward_stop_detail(rear: RefCounted, id: String) -> String:
 		_stop_stock = view.get("stock",{}).duplicate(true)
 		_stop_stock_id = id
 		_stop_stock_dirty = false
-	var lines: Array[String] = ["", "FRIENDLY FORWARD SUPPLY", "Stock physically held at this stop:"]
-	if _stop_stock.is_empty(): lines.append("No friendly stock directly held at this stop.")
+	var lines: Array[String] = ["", "FRIENDLY FORWARD SUPPLY", "Loose stock physically held at this stop:"]
+	if _stop_stock.is_empty(): lines.append("No friendly loose stock directly held at this stop.")
 	else:
 		for type in _stop_stock: lines.append("%s: %d" % [type,int(_stop_stock[type].quantity)])
 	lines.append("In-transit freight: unavailable in this view.")
