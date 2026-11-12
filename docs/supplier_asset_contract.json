@@ -447,5 +447,44 @@
     "receipt": "evidence/supplier_transport/timber_shoulder_layout_manifest_v01.json"
   },
   "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
-  "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment."
+  "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment.",
+  "s4_b_control_lever_study": {
+    "stage": "Lead-authorized versioned local geometry/contact study, not final art/export/runtime acceptance",
+    "reason": "Actual LeftHandIndex1/2 crossed the parked control post even after39mm supported retreat; control placement is brittle, not proof no human pose exists. Move grip inboard rather than contort worker.",
+    "proposal": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_worker_operation_v05/b_control_proposal_v01/proposal.json",
+    "pivot_godot_m": [
+      -0.264,
+      1.15,
+      -0.3375
+    ],
+    "native_x_travel_degrees": [
+      0,
+      45
+    ],
+    "lever_length_m": 0.045,
+    "grip_diameter_m": 0.018,
+    "face_thickness_m": 0.002,
+    "front_x_m": -0.265,
+    "proposed_moving_bounds_m": {
+      "min": [
+        -0.265,
+        1.139,
+        -0.3485
+      ],
+      "max": [
+        -0.254,
+        1.19082,
+        -0.2835
+      ]
+    },
+    "local_relief": {
+      "outer_radius_m": 0.018,
+      "front_depth_m": 0.0025,
+      "preserve": "actual shaft bore, rear reinforcement, positive park pins; no silent enlarged cut or envelope"
+    },
+    "analytical_only": "Declared bounds fit existing cage with1.5mm minimumZmargin; nominal17.5mm remaining post depth is not actual mesh/sweep/structural proof.",
+    "unchanged": "cage,cargo/M05/support/capacity,originalrig/sevenclips,approved8s lift/reverse,manual actual worker service and custody ownership",
+    "acceptance": "Actual complete assembly/lever/post sweep, worker reach/palm/finger/continuous opposite-hand support/feet,cargo/truck/neighbors; then paced full source/export readback and visibly complete normal-speed review. Candidate may compose after passing without another routine permission round.",
+    "scope": "No new gameplay resource cost,player button,forced timing or partial human approval gate"
+  }
 }
