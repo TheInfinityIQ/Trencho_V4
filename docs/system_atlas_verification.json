@@ -1,32 +1,32 @@
 {
-  "scope": "Friendly-shot cue reviewed at d63529b; one actual consumed round, same admitted shooter cue and shared cosmetic timeout passed GitHub run 43267234814. No rendered, hidden-path or FPS acceptance is established.",
+  "scope": "Selected engagement reviewed at 8d76560; one actual arranged five-round issue passed GitHub run 43269292209. Movement, reload, full encounter, native input and FPS are unverified.",
   "checks": {
-    "generation": "System map with 10 reviewed friendly-shot cue function purposes and source-validated atlas regenerated without local engine execution.",
+    "generation": "System map with four reviewed selected-engagement function purposes and source-validated atlas regenerated without local engine execution.",
     "game_script_inventory": {
-      "total": 236,
-      "non_test": 142,
+      "total": 237,
+      "non_test": 143,
       "retained_tests": 94
     },
     "atlas": {
       "systems": 50,
-      "functions_in_inventory": 3613,
-      "diagram_function_links": 303
+      "functions_in_inventory": 3615,
+      "diagram_function_links": 305
     },
     "function_map": {
-      "files": 1191,
-      "functions": 3836,
-      "named": 3473,
+      "files": 1196,
+      "functions": 3838,
+      "named": 3475,
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Workspace hint points to isolated battlefield-friendly-shot-cue-worktree; reviewed source checkpoint d63529b. No external editor/browser interaction tested."
+    "links": "Workspace hint points to isolated battlefield-selected-engagement-worktree; reviewed source checkpoint 8d76560. No external editor/browser interaction tested."
   },
-  "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
+  "browser_preview": "Blocked: the browser tool URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [
-    "No rendered appearance, hidden/removing/rebind/offscreen path or native input demonstrated.",
-    "No full encounter, combat outcome or FPS observation.",
+    "Movement and reload paths, rendered appearance and native input were not exercised.",
+    "No full encounter or FPS observation.",
     "No local Godot or regression suite.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/friendly_shot_current_change.json"
+  "runtime_evidence": "evidence/battlefield_3d/selected_engagement_current_change.json"
 }

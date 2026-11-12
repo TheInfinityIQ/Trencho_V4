@@ -1,5 +1,15 @@
 # Team workflow
 
+## Standing Lead approval and merge authority — 12 November 2026
+
+Dawson directly instructed the Lead in the lead chat: "You are responsible for all approvals and I am to never be responsible for deciding what gets merged or what doesn't. Please update this explicitly so I am never asked this again."
+
+The Lead owns every repository approval and merge decision, including submission, publication, technical review, resolving requested changes and merging. Developers bring permission/responsibility questions to the Lead, not Dawson. Obtain the actual Game Designer's game-meaning review at the current head where required and satisfy required checks; those are review evidence for the Lead's decision, not a request for Dawson's approval. Source-unchanged documentation updates must retain explicit review scope and exact-head evidence.
+
+If reviews disagree, the Lead routes concrete design changes to the Designer and implementation changes to the developer, then obtains the necessary updated review. No disagreement, missing reviewer, publication question or verification of a role review creates a routine Dawson merge gate. Verify original review identity, scope and head rather than treating a relay as sufficient evidence. Respect genuine external restrictions, keep only the refused action blocked, and continue independent authorized work; do not bypass a refusal or invent new authorization.
+
+Dawson's requested appearance approvals and numbered human playtests remain separate product feedback. Do not turn them into responsibility for deciding ordinary PR merges. This explicit standing delegation supersedes conflicting historical permission or merge-approval wording below.
+
 ## Two developers and shared interfaces —12November2026
 
 Dawson explicitly authorized a battlefield developer in Workflow Master

@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "feature": "Selected friendly squad engagement visibility",
+  "workflow": "Linked continuation using existing workflow_metrics.py",
+  "plan": "Selected real person motion, current ammo and same-recipient authorized latest receipt",
+  "source_revision": "89618b908e527562ee43bd2f4c4d0c9feb3075aa",
+  "started_at": "2026-11-12T17:20:31.711579+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T17:29:13.802287+00:00",
+  "seconds_by_phase": {
+    "planning": 62.994817,
+    "implementation": 199.717693,
+    "direct_check": 0,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 203.356068,
+    "release": 0,
+    "waiting": 56.02213,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T17:29:13.624782+00:00",
+      "note": "GitHub run 43269292209 passed the single arranged actual five-round issue; movement, reload, full encounter, native input and FPS remain unverified."
+    }
+  ],
+  "incidents": [],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 0,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {},
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 10619230,
+      "cached_input_tokens": 10569728,
+      "output_tokens": 13841,
+      "reasoning_output_tokens": 4373,
+      "total_tokens": 10633071,
+      "uncached_input_tokens": 49502
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 10619230,
+      "cached_input_tokens": 10569728,
+      "output_tokens": 13841,
+      "reasoning_output_tokens": 4373,
+      "total_tokens": 10633071,
+      "uncached_input_tokens": 49502
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-12T17:20:31.711579+00:00",
+        "ended_at": "2026-11-12T17:21:34.706396+00:00",
+        "receipt_start": "2026-11-12T17:20:20.514Z",
+        "receipt_end": "2026-11-12T17:21:16.945Z",
+        "usage_delta": {
+          "input_tokens": 2591299,
+          "cached_input_tokens": 2589440,
+          "output_tokens": 1111,
+          "reasoning_output_tokens": 263,
+          "total_tokens": 2592410,
+          "uncached_input_tokens": 1859
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T17:21:34.706396+00:00",
+        "ended_at": "2026-11-12T17:24:54.424089+00:00",
+        "receipt_start": "2026-11-12T17:21:16.945Z",
+        "receipt_end": "2026-11-12T17:24:47.896Z",
+        "usage_delta": {
+          "input_tokens": 4416772,
+          "cached_input_tokens": 4409984,
+          "output_tokens": 9285,
+          "reasoning_output_tokens": 3969,
+          "total_tokens": 4426057,
+          "uncached_input_tokens": 6788
+        }
+      },
+      {
+        "phase": "waiting",
+        "started_at": "2026-11-12T17:24:54.424089+00:00",
+        "ended_at": "2026-11-12T17:25:50.446219+00:00",
+        "receipt_start": "2026-11-12T17:24:47.896Z",
+        "receipt_end": "2026-11-12T17:25:38.438Z",
+        "usage_delta": {
+          "input_tokens": 1342614,
+          "cached_input_tokens": 1341568,
+          "output_tokens": 446,
+          "reasoning_output_tokens": 68,
+          "total_tokens": 1343060,
+          "uncached_input_tokens": 1046
+        }
+      },
+      {
+        "phase": "review",
+        "started_at": "2026-11-12T17:25:50.446219+00:00",
+        "ended_at": "2026-11-12T17:29:13.802287+00:00",
+        "receipt_start": "2026-11-12T17:25:38.438Z",
+        "receipt_end": "2026-11-12T17:29:07.684Z",
+        "usage_delta": {
+          "input_tokens": 2268545,
+          "cached_input_tokens": 2228736,
+          "output_tokens": 2999,
+          "reasoning_output_tokens": 73,
+          "total_tokens": 2271544,
+          "uncached_input_tokens": 39809
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

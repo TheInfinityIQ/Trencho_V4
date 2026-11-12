@@ -4,6 +4,7 @@ const CallLog = preload("res://game/diagnostics/function_call_log.gd")
 
 const WORLD_SIZE := Vector2(4000.0, 6000.0)
 const Presentation = preload("res://game/battlefield/battlefield_presentation.gd")
+const SelectedEngagement = preload("res://game/battlefield/selected_engagement.gd")
 const Farmland = preload("res://game/battlefield/farmland_scenario.gd")
 const TRUCK_ART: Texture2D = preload("res://game/test_art/tiny_battle/tile_0132.png")
 const PANEL_WIDTH := 350.0
@@ -268,14 +269,20 @@ func inspection_text() -> String:
 		detail = "%s\nPosition: (%.0f, %.0f) m" % [title, selected.position.x, selected.position.y]
 		if selected.kind == "PLACE" and selected.get("friendly_forward_stop",false): detail += _forward_stop_detail(rear,selected.id)
 		if selected.kind == "CONTACT": detail += "\nReported %s • %.1f s ago\nPosition uncertainty: %.0f m" % [selected.class,selected.age,selected.uncertainty_m]
-		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
+		elif selected.kind == "CARRIER": detail += "\n"+_activity_label(selected)
 		if selected.kind == "PERSON":
 			detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
 			detail += _own_squad_detail(rear,selected)
-			var loaded := 0
-			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"],false):
-				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
-			detail += "\nAmmunition E02: %d total · %d loaded" % [rear.military._rounds(selected.id),loaded]
+			var held: Array = rear.ledger.entities_at(selected.id,["STOCK","WEAPON"],false)
+			var engagement: Dictionary = SelectedEngagement.project(rear,selected,held)
+			if not engagement.is_empty():
+				detail += "\nPersonal movement: %s\nPersonal reload: %s" % [engagement.motion,engagement.reload]
+				detail += "\nE02 directly held loose (including handled portions): %d · loaded in held weapons: %d" % [engagement.loose_e02,engagement.loaded_e02]
+				detail += "\nHandling/assignment: "+_activity_label(selected)
+				var receipt: Dictionary = engagement.receipt
+				if not receipt.is_empty(): detail += "\nLatest confirmed transfer to this person: %d %s at %.1f s (past event)." % [receipt.quantity,receipt.type,receipt.at]
+				else: detail += "\nLatest matching personal transfer: unavailable."
+			else: detail += "\nPersonal engagement details unavailable."
 			if rear.battlefield_operations != null:
 				var collection: Dictionary = rear.battlefield_operations.rifle_collection.get(selected.get("duty_id",""),{})
 				if not collection.is_empty():
@@ -427,5 +434,4 @@ func _activity_label(person: Dictionary) -> String:
 		if person.get("holder_id","") == job.hull and job.state != "Complete": return "Troop transport: "+str(job.state)
 		if person.id in job.people and job.state == "Boarding": return "Awaiting physical boarding"
 	if not str(person.get("crew_station","")).is_empty(): return "Vehicle crew: "+str(person.crew_station)
-	if rear.battlefield_operations != null and rear.battlefield_operations.status.has(person.get("duty_id","")): return str(rear.battlefield_operations.status[person.duty_id])
 	return "At HQ / staging" if str(person.get("holder_id","")).contains("stage") else str(person.get("assignment","Stationary"))
