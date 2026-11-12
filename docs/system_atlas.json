@@ -1,16 +1,16 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "8d76560",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-selected-engagement-worktree",
+  "reviewed_baseline": "f0f4ad8",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-marker-lifetime-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "c0e9e8f525dd111c7c179ee9ad700c933aee5a29be46d626d2a3cd766f2afb55",
+  "source_fingerprint": "3f3cdd6e193af51069611f7d3a2c1dd93070a9afd178994bd67a0ebdc37e46ed",
   "totals": {
     "systems": 50,
     "game_scripts": 237,
     "non_test_scripts": 143,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3615,
+    "functions_in_inventory": 3616,
     "diagram_function_links": 305
   },
   "systems": [
@@ -30179,7 +30179,7 @@
           "label": "Reconcile physical rear visuals",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "refresh_rear",
-          "line": 374
+          "line": 375
         },
         {
           "id": "n6",
@@ -30193,7 +30193,7 @@
           "label": "Static one-metre construction grid",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "_build_grid",
-          "line": 188
+          "line": 189
         },
         {
           "id": "n8",
@@ -30268,7 +30268,7 @@
         "character_animation",
         "warehousing"
       ],
-      "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS.",
+      "notes": "Default main.tscn instances this scene; preview.tscn remains a compatible direct entry. E uses the existing actual Table/site/completed Workshop hit guards. Purchase and placement still use explicit draft/commit commands and their existing owners. Source structure and scoped evidence do not establish player acceptance, full 3D migration or FPS. World-owned generic proxies have explicit lifetimes; specialized battlefield presenters retain responsibility for their own shared-ID anchors.",
       "primary_files": [
         "game/preview_3d/preview.gd",
         "game/preview_3d/world_presenter.gd",
@@ -31202,7 +31202,7 @@
         },
         {
           "path": "game/preview_3d/world_presenter.gd",
-          "sha256": "f11842319b3050e3d7e11827600d98fab832a86e4a2d1b7856e76bcf03b33aad",
+          "sha256": "7902f5b3befc2fd91835a29f95cc92cf41dc6b0ea18061e6a04ce4249d7aff92",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -31226,8 +31226,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::build",
               "name": "build",
-              "line": 77,
-              "end_line": 186,
+              "line": 78,
+              "end_line": 187,
               "kind": "method",
               "purpose": "Construct the existing shared rear and battlefield presentation and bind permitted forward-stop markers alongside existing presenters.",
               "purpose_origin": "reviewed"
@@ -31235,8 +31235,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_build_grid",
               "name": "_build_grid",
-              "line": 188,
-              "end_line": 206,
+              "line": 189,
+              "end_line": 207,
               "kind": "method",
               "purpose": "Build one static unshaded one-metre line mesh over the existing buildable area, with emphasized five-metre lines and no per-cell nodes.",
               "purpose_origin": "reviewed"
@@ -31244,8 +31244,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_build_player",
               "name": "_build_player",
-              "line": 208,
-              "end_line": 242,
+              "line": 209,
+              "end_line": 243,
               "kind": "method",
               "purpose": "Build the one canonical collision-resolved manager and shared first/third views, reusing the existing human factory and compact two-line You/Manager identity that hides with the first-person body.",
               "purpose_origin": "reviewed"
@@ -31253,8 +31253,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_add_human",
               "name": "_add_human",
-              "line": 244,
-              "end_line": 255,
+              "line": 245,
+              "end_line": 256,
               "kind": "method",
               "purpose": "Preserve manager/worker attach, skin and idle behavior by default, while allowing the field static path to skip animator creation after its shared pose is sampled.",
               "purpose_origin": "reviewed"
@@ -31262,8 +31262,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_add_worker",
               "name": "_add_worker",
-              "line": 257,
-              "end_line": 258,
+              "line": 258,
+              "end_line": 259,
               "kind": "method",
               "purpose": "Create the Artist worker scene through the shared character factory for a real rear person.",
               "purpose_origin": "reviewed"
@@ -31271,8 +31271,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_add_soldier",
               "name": "_add_soldier",
-              "line": 260,
-              "end_line": 261,
+              "line": 261,
+              "end_line": 262,
               "kind": "method",
               "purpose": "Create the Artist soldier scene through the shared character factory for a permitted military person.",
               "purpose_origin": "reviewed"
@@ -31280,8 +31280,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_add_character",
               "name": "_add_character",
-              "line": 263,
-              "end_line": 268,
+              "line": 264,
+              "end_line": 269,
               "kind": "method",
               "purpose": "Instantiate the requested composed character with the same model, applying the field detail default before attachment/readiness.",
               "purpose_origin": "reviewed"
@@ -31289,8 +31289,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::sync_character_playback",
               "name": "sync_character_playback",
-              "line": 270,
-              "end_line": 277,
+              "line": 271,
+              "end_line": 278,
               "kind": "method",
               "purpose": "On an actual speed change, refresh cached character playback and persistent site cosmetic speed without standing per-site scans. Preserve the keyed warehouse presenter and replace completed warehouse footprint blockers with measured walkable wall/rack geometry.",
               "purpose_origin": "reviewed"
@@ -31298,8 +31298,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_asset",
               "name": "_asset",
-              "line": 279,
-              "end_line": 302,
+              "line": 280,
+              "end_line": 303,
               "kind": "method",
               "purpose": "Instantiate the original model under an external normalization parent, center its measured bounds and scale visual height without changing imported animation targets or accounting pose.",
               "purpose_origin": "reviewed"
@@ -31307,8 +31307,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_box",
               "name": "_box",
-              "line": 304,
-              "end_line": 324,
+              "line": 305,
+              "end_line": 325,
               "kind": "method",
               "purpose": "Create a presentation box and optional static collision shape with explicit dimensions and material.",
               "purpose_origin": "reviewed"
@@ -31316,8 +31316,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_label",
               "name": "_label",
-              "line": 326,
-              "end_line": 333,
+              "line": 327,
+              "end_line": 334,
               "kind": "method",
               "purpose": "Create a billboard label at an explicit scene presentation offset.",
               "purpose_origin": "reviewed"
@@ -31325,8 +31325,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_build_terrain",
               "name": "_build_terrain",
-              "line": 335,
-              "end_line": 372,
+              "line": 336,
+              "end_line": 373,
               "kind": "method",
               "purpose": "Split the bounded terrain mesh at authored edges and emit clockwise upward-facing triangles with explicit height conversion and existing obstacle bounds.",
               "purpose_origin": "reviewed"
@@ -31334,8 +31334,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::refresh_rear",
               "name": "refresh_rear",
-              "line": 374,
-              "end_line": 435,
+              "line": 375,
+              "end_line": 436,
               "kind": "method",
               "purpose": "Reconcile actual shape/removal changes while retaining each site visual; Awaiting/Building/Complete share the same reserved geometry and keyed visual state rather than rebuilding colliders. Preserve the keyed warehouse presenter and replace completed warehouse footprint blockers with measured walkable wall/rack geometry.",
               "purpose_origin": "reviewed"
@@ -31343,8 +31343,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::is_supply_table_collider",
               "name": "is_supply_table_collider",
-              "line": 437,
-              "end_line": 438,
+              "line": 438,
+              "end_line": 439,
               "kind": "method",
               "purpose": "Match only the retained valid Supply Table collider that still belongs to the current rear presentation root.",
               "purpose_origin": "reviewed"
@@ -31352,8 +31352,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::site_id_from_collider",
               "name": "site_id_from_collider",
-              "line": 440,
-              "end_line": 446,
+              "line": 441,
+              "end_line": 447,
               "kind": "method",
               "purpose": "Resolve a hit's site metadata only through current collision-root ancestry, rejecting missing, detached or unrelated geometry without scanning facilities or reading production state.",
               "purpose_origin": "reviewed"
@@ -31361,8 +31361,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_mark_facility_approach",
               "name": "_mark_facility_approach",
-              "line": 448,
-              "end_line": 464,
+              "line": 449,
+              "end_line": 465,
               "kind": "method",
               "purpose": "Mark the unchanged reserved footprint and draw a non-colliding service cue from the actual outside approach to the authored facade, without implying enterable interiors or moving gameplay doors.",
               "purpose_origin": "reviewed"
@@ -31370,10 +31370,10 @@
             {
               "id": "game/preview_3d/world_presenter.gd::refresh_markers",
               "name": "refresh_markers",
-              "line": 466,
+              "line": 467,
               "end_line": 508,
               "kind": "method",
-              "purpose": "Reconcile permitted markers and existing field presenters, preserving physical-ID precedence and suppressing represented generic proxies.",
+              "purpose": "Reconcile the current permitted battlefield rows with specialized presenters, managing only world-created generic proxy lifetimes and preserving physical marker precedence.",
               "purpose_origin": "reviewed"
             },
             {
@@ -31461,25 +31461,34 @@
               "id": "game/preview_3d/world_presenter.gd::_register_field_anchor",
               "name": "_register_field_anchor",
               "line": 537,
-              "end_line": 542,
+              "end_line": 539,
               "kind": "method",
-              "purpose": "Replace a previous generic marker with the retained owned field anchor while preserving its identity key.",
+              "purpose": "Register a specialized presenter's current shared marker reference, releasing only a world-created generic proxy at the same ID.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/world_presenter.gd::_remove_generic_marker",
+              "name": "_remove_generic_marker",
+              "line": 541,
+              "end_line": 546,
+              "kind": "method",
+              "purpose": "Forget and queue deletion of the exact world-created generic proxy, clearing the shared marker only if it still references that proxy.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/world_presenter.gd::_field_person_changed",
               "name": "_field_person_changed",
-              "line": 544,
-              "end_line": 550,
+              "line": 548,
+              "end_line": 549,
               "kind": "method",
-              "purpose": "Register the current actual person ground anchor for existing selection, retiring any replaced generic proxy before storing the new reference.",
+              "purpose": "Register the field-person presenter’s current anchor without taking ownership of other presenters’ nodes.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/world_presenter.gd::_field_person_removing",
               "name": "_field_person_removing",
-              "line": 552,
-              "end_line": 553,
+              "line": 551,
+              "end_line": 552,
               "kind": "method",
               "purpose": "Erase the actual person selection reference before its presenter frees the removed or swapped anchor.",
               "purpose_origin": "reviewed"
@@ -31487,17 +31496,17 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_t01_changed",
               "name": "_field_t01_changed",
-              "line": 555,
-              "end_line": 561,
+              "line": 554,
+              "end_line": 555,
               "kind": "method",
-              "purpose": "Replace the observed permitted hull's old abstract proxy reference with its one current detailed ground-anchor body, leaving authoritative identity and row ordering unchanged.",
+              "purpose": "Register the field-truck presenter’s current body without taking ownership of other presenters’ nodes.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/world_presenter.gd::_field_t01_removing",
               "name": "_field_t01_removing",
-              "line": 563,
-              "end_line": 564,
+              "line": 557,
+              "end_line": 558,
               "kind": "method",
               "purpose": "Erase only the World marker reference matching the removed detailed hull body before it is freed or replaced by a current abstract fallback.",
               "purpose_origin": "reviewed"
@@ -31505,17 +31514,17 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_field_objective_changed",
               "name": "_field_objective_changed",
-              "line": 566,
-              "end_line": 572,
+              "line": 560,
+              "end_line": 561,
               "kind": "method",
-              "purpose": "Replace only the actual registered objective's old abstract proxy reference with its current ground anchor, preserving identity and current marker-row ordering.",
+              "purpose": "Register the objective presenter’s current anchor without taking ownership of other presenters’ nodes.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/world_presenter.gd::_field_objective_removing",
               "name": "_field_objective_removing",
-              "line": 574,
-              "end_line": 575,
+              "line": 563,
+              "end_line": 564,
               "kind": "method",
               "purpose": "Erase only the World marker reference matching the removed objective anchor before it is freed or replaced.",
               "purpose_origin": "reviewed"
@@ -31523,8 +31532,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::show_preview",
               "name": "show_preview",
-              "line": 577,
-              "end_line": 586,
+              "line": 566,
+              "end_line": 575,
               "kind": "method",
               "purpose": "Draw actual footprint/door with red known-invalid, amber cheap-provisional or explicitly fully checked green feedback, never authority.",
               "purpose_origin": "reviewed"
@@ -31532,8 +31541,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::clear_preview",
               "name": "clear_preview",
-              "line": 588,
-              "end_line": 590,
+              "line": 577,
+              "end_line": 579,
               "kind": "method",
               "purpose": "Hide uncommitted footprint and entrance visuals.",
               "purpose_origin": "reviewed"
@@ -31541,8 +31550,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::move_manager",
               "name": "move_manager",
-              "line": 592,
-              "end_line": 598,
+              "line": 581,
+              "end_line": 587,
               "kind": "method",
               "purpose": "Resolve active manager movement using an orthonormal world basis and publish the complete collision-resolved global position and world yaw without flattening height.",
               "purpose_origin": "reviewed"
@@ -31550,8 +31559,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::refresh_marker_positions",
               "name": "refresh_marker_positions",
-              "line": 600,
-              "end_line": 622,
+              "line": 589,
+              "end_line": 611,
               "kind": "method",
               "purpose": "Refresh existing affected visual motion and perform only a scalar report-expiry guard until a canonical contact deadline becomes due; no new enemy truth or clock owner.",
               "purpose_origin": "reviewed"
@@ -31559,8 +31568,8 @@
             {
               "id": "game/preview_3d/world_presenter.gd::_bind_idle",
               "name": "_bind_idle",
-              "line": 624,
-              "end_line": 662,
+              "line": 613,
+              "end_line": 651,
               "kind": "method",
               "purpose": "Select the known pack neutral Idle clip explicitly rather than its short targeting pose, bind matching skeletal transform tracks and apply the first frame immediately before rendering the paused manager; preserve external normalization.",
               "purpose_origin": "reviewed"
@@ -31581,7 +31590,7 @@
           "label": "Reconcile current permitted world markers",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "refresh_markers",
-          "line": 466
+          "line": 467
         },
         {
           "id": "n1",
@@ -32325,7 +32334,7 @@
           "label": "Build manager body from shared pose",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "_build_player",
-          "line": 208
+          "line": 209
         },
         {
           "id": "n1",
@@ -32339,7 +32348,7 @@
           "label": "Resolve manager movement",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "move_manager",
-          "line": 592
+          "line": 581
         },
         {
           "id": "n3",
