@@ -417,5 +417,22 @@
     "blocked_actions": "Verify original role-review evidence; respect actual external restrictions without bypass, scope blockage to affected mutation and continue independent work. Do not invent a routine human merge gate.",
     "separate_human_feedback": "Requested appearance approvals and numbered playtests are product feedback, not ordinary PR merge decisions.",
     "policy": "docs/team_workflow.md#standing-lead-approval-and-merge-authority--12-november-2026"
+  },
+  "bounded_art_workflow_pilot": {
+    "authority": {
+      "human_chat": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+      "human_turn": "01a1d1d6-f37d-7c81-ba92-1601e2edb619",
+      "human_message": "01a1d1d6-f423-74a1-a582-89c7cefeb9fc",
+      "verified_by": "Lead original human-message readback12November2026"
+    },
+    "director": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
+    "lead_art_interface": "Director only; no worker assignment/questions/review from Lead",
+    "workers": "Maximum3 short-lived independent ready assignments; explicit fixed Luna/Terra dispatch; no recursive delegation or standing chats",
+    "existing_models": "Keep current Director/Lead/Developer model choices",
+    "preserve": "In-flight S4, approved concepts/assets, pauses, Steam/resource/verification restrictions and separate live files/processes",
+    "readiness": "Assignments under review; no dispatch or worker quality/cost result claimed by this policy",
+    "owner": "Director briefs/results/internal review; Lead policy/engineering/integration",
+    "comparison": "Different tasks confound model/workflow cost; record actual scope, effort/corrections/Director overhead and available tokens; unknown cost remains unknown",
+    "policy": "docs/art_workflow_pilot.md"
   }
 }

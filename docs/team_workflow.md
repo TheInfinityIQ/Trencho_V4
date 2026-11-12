@@ -1,5 +1,9 @@
 # Team workflow
 
+## Bounded Artist Director pilot — 12 November 2026
+
+Dawson's directly verified human turn `01a1d1d6-f37d-7c81-ba92-1601e2edb619` in Workflow Master authorizes three different art workflows under the existing Artist Director, with short-lived fixed Luna/Terra workers. [Pilot authority and boundaries](art_workflow_pilot.md) govern this narrow exception to scout-only delegation. Lead art coordination goes only through the Director; developer coordination is unchanged. Preserve in-flight S4 work, approved assets and animation pauses. Dispatch only actual independent ready authorized tasks, with separate files/processes and controlled rendering; record missing scope rather than manufacture three assignments. Director owns briefs/results and internal worker reviews, Lead owns engineering integration and team policy. No extra standing controller, worker recursion, new install, blanket testing or model change to an existing role is authorized.
+
 ## Standing Lead approval and merge authority — 12 November 2026
 
 Dawson directly instructed the Lead in the lead chat: "You are responsible for all approvals and I am to never be responsible for deciding what gets merged or what doesn't. Please update this explicitly so I am never asked this again."
