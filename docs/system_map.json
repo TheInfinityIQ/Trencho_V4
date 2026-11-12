@@ -420,7 +420,7 @@
     ]},
     "docs/evidence/background_test_policy.json": {"role":"data","system":"docs","sha256":"a7a5f6f266ce52a61f25a488f0efb1e3c40e89f18eafe607d282db6e518f0070","lines":52,"purpose":"Supply structured settings, dependency pins or catalogue data for background test policy.","functions":[
     ]},
-    "docs/evidence/battlefield_3d/integration_scope.json": {"role":"data","system":"docs","sha256":"f7f96a7e2227c408bdd32d5f9107f8b4ba829b51395683060e40f8dbb3fd83e4","lines":32,"purpose":"Supply structured settings, dependency pins or catalogue data for integration scope.","functions":[
+    "docs/evidence/battlefield_3d/integration_scope.json": {"role":"data","system":"docs","sha256":"beb9e47faf3f367e965cc445adb177a88dbba6b492d61c32f69cc7381ba80811","lines":62,"purpose":"Supply structured settings, dependency pins or catalogue data for integration scope.","functions":[
     ]},
     "docs/evidence/build_inspection_reduction.md": {"role":"documentation","system":"docs","sha256":"d8886f4afbe9bbb095529fafea9406a13c1e8982c01616e82a911d73ffe5ec43","lines":71,"purpose":"Document Build inspection reduction and GdUnit4 verification.","functions":[
     ]},
@@ -818,7 +818,7 @@
     ]},
     "docs/evidence/warehousing/warehouse-vehicles-source-manifest.json": {"role":"data","system":"docs","sha256":"ca6c3ed01cb43f55179507ca94901176c57fc01bd09e3c86ebb00277b45d946b","lines":31,"purpose":"Supply structured settings, dependency pins or catalogue data for warehouse-vehicles-source-manifest.","functions":[
     ]},
-    "docs/evidence/workflow/battlefield_3d_metrics.json": {"role":"data","system":"docs","sha256":"cd6905401861908c1c9b9740fb7c9848703a63814163d743a768dd1aca835c8a","lines":109,"purpose":"Supply structured settings, dependency pins or catalogue data for battlefield 3d metrics.","functions":[
+    "docs/evidence/workflow/battlefield_3d_metrics.json": {"role":"data","system":"docs","sha256":"196f9520af4ef0d6e7d77a0527ec05552a4998333c21901eb3124dabe8b6a3c7","lines":118,"purpose":"Supply structured settings, dependency pins or catalogue data for battlefield 3d metrics.","functions":[
     ]},
     "docs/evidence/workflow/character_animation_snapshot.json": {"role":"data","system":"docs","sha256":"bc209a08c9fc971857ef5787a9d8fb74abda7dd80e3331af90c76306c29ce046","lines":275,"purpose":"Supply structured settings, dependency pins or catalogue data for character animation snapshot.","functions":[
     ]},
@@ -1014,7 +1014,7 @@
     ]},
     "docs/system_atlas_plan.md": {"role":"documentation","system":"docs","sha256":"b010a1c2a960ac7e6215744dab548c87e80b6d5b845d80e914d71462ee3d31af","lines":26,"purpose":"Document Current implementation atlas contract.","functions":[
     ]},
-    "docs/system_atlas_verification.json": {"role":"data","system":"docs","sha256":"b95dbc39ef800da286a651560ad23555e4aca49ccbb55af09939aadd7c164d32","lines":31,"purpose":"Supply structured settings, dependency pins or catalogue data for system atlas verification.","functions":[
+    "docs/system_atlas_verification.json": {"role":"data","system":"docs","sha256":"4164baa3142e470c3a646c4e88d7251d89a48e754809ef7ee20fe8a3052ca2a1","lines":31,"purpose":"Supply structured settings, dependency pins or catalogue data for system atlas verification.","functions":[
     ]},
     "docs/system_map.json": {"role":"generated_map","system":"docs","purpose":"Store this generated file inventory, per-function purpose/facts and static system connections.","functions":[
     ]},

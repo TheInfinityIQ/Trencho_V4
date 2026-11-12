@@ -1,5 +1,5 @@
 {
-  "scope": "Battlefield observer source9ab4e8d, isolated candidate based on maina2d182f. Engine/action verification pending; supplier branch is separate.",
+  "scope": "Battlefield observer source9ab4e8d, engine/current-action checks passed atbbd57d0. Isolated candidate based on maina2d182f; source/diagram success is not full-game/native/FPS acceptance.",
   "checks": {
     "generation": "Current system_map with30 explicit reviewed function purposes, system_atlas and UI diagram regenerated without game execution.",
     "game_script_inventory": {

@@ -1,7 +1,7 @@
 {
   "scope": "First observed-field3D increment: provisional friendly T03 and permitted contact cue, existing shared observer/picking and deadline-driven expiry.",
   "production_checkpoint": "9ab4e8d",
-  "readiness": "Source reviewed; standalone syntax parse only so far. GitHub current-change engine/action check pending.",
+  "readiness": "Reviewed source plus required compilation and one corrected current-action demonstration passed atbbd57d0. Native appearance/input and wider conversion remain unverified.",
   "verification_plan": "One supplied brief direct action: actual opening permitted T03 selectable anchor, explicitly synthetic permitted report cue, then fixture logical time crosses canonical expiry and cue disappears. No gameplay tick/clock acceptance, native input/appearance, parent-only movement, regression suite orFPS claim.",
   "policy": "Existing player policy is authoritative; contacts remain reports, never actual enemy bodies. Physical represented IDs retain precedence.",
   "diagram": [
@@ -28,5 +28,35 @@
     "Native camera/picking/readability not observed",
     "Parent-held T03 movement and broader field content unverified",
     "Full3D battlefield/game loop and60FPS not established"
-  ]
+  ],
+  "required_check": {
+    "run": 43252016627,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43252016627",
+    "head": "bbd57d01dff235bc4f7d5c9ed60f6a31d00ca526",
+    "conclusion": "success"
+  },
+  "direct_check": {
+    "run": 43252755065,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43252755065",
+    "head": "bbd57d01dff235bc4f7d5c9ed60f6a31d00ca526",
+    "conclusion": "success",
+    "artifact_id": 13959522555,
+    "artifact_sha256": "aa0b44ba14ccf84e0ad85b2d43071df5b319ac212f949737901721e93c2163e4",
+    "script_sha256": "380dfd53261d0446371d04929118b2d0d197c7520d9da531c44a0ccebd28115c",
+    "observed": "Actual normal Farmland empty-opening T03 has its retained selectable anchor; one explicitly synthetic permitted report has its own cue/inspection; cue disappears after fixture logical time crosses canonical expiry. No gameplay tick/native input/FPS claim."
+  },
+  "initial_failed_check": {
+    "run": 43251840125,
+    "artifact_sha256": "a2f075cb2822457f32ac2c6c52c37e2a62b8b9bc1f5a0f82b72d35a5c6b2658b",
+    "observed": "Supplied Simulation.new(false,true) fixture lacked normal Farmland battlefield_operations; existing field_persons.motions access failed and opening T03 assertion failed.",
+    "correction": "Use actual farmland_session.create_empty_field(true) factory already used by normal3D entry; no production null guard or source change.",
+    "classification": "Incomplete demonstration setup; no evidence of production regression. Same action/deadline rerun only."
+  },
+  "production_source_sha256": {
+    "game/battlefield/presentation_3d/field_t03.gd": "94d69cd942ca8b328ec705d1857018283cbb5cefa084e82ace8db5020aacfa83",
+    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
+    "game/preview_3d/world_presenter.gd": "67da279513cf093d207b50618dd5e554ae135aa434474e2f71201e79e21cfaaf",
+    "game/battlefield/battlefield_presentation.gd": "c2b63f25b835ca8e3c1e51bc4cb0cb35cae2dd13ab61d482a317c9c96345d23c",
+    "game/orders/order_service.gd": "b29519455ab3c1dd5676161d47a47176ee8519d72e837d178406c2f0dd5a1412"
+  }
 }
