@@ -6,9 +6,11 @@ signal removing(id: String, anchor: Node3D)
 var anchors: Dictionary[String, Node3D] = {}
 var views: Dictionary[String, Dictionary] = {}
 var _ground: Callable
+var next_expiry: float = INF
 
 func bind(ground: Callable) -> void:
 	for id: String in anchors.keys(): _remove(id)
+	next_expiry = INF
 	_ground = ground
 
 func reconcile(permitted: Array) -> void:
@@ -22,7 +24,8 @@ func reconcile(permitted: Array) -> void:
 		if not is_finite(height): continue
 		present[id] = true
 		var view := {"position": at, "class": str(row.get("class", "Unknown")),
-			"age": float(row.get("age", 0.0)), "uncertainty_m": float(row.get("uncertainty_m", 0.0))}
+			"age": float(row.get("age", 0.0)), "uncertainty_m": float(row.get("uncertainty_m", 0.0)),
+			"expiry_at": float(row.get("expiry_at", INF))}
 		var grounded := Vector3(at.x, height, at.y)
 		if views.has(id) and views[id] == view and anchors[id].position.is_equal_approx(grounded): continue
 		if not anchors.has(id):
@@ -36,6 +39,27 @@ func reconcile(permitted: Array) -> void:
 		changed.emit(id)
 	for id: String in anchors.keys():
 		if not present.has(id): _remove(id)
+	_recalculate_expiry()
+
+func refresh_due(now: float, inspect: Callable) -> void:
+	if now < next_expiry or not inspect.is_valid(): return
+	var rows: Array[Dictionary] = []
+	for id: String in views.keys():
+		var view: Dictionary = views[id]
+		if float(view.expiry_at) <= now:
+			var current: Dictionary = inspect.call(id)
+			if current.get("kind", "") == "CONTACT": rows.append(current)
+		else:
+			var cached: Dictionary = view.duplicate()
+			cached["id"] = id
+			cached["kind"] = "CONTACT"
+			rows.append(cached)
+	reconcile(rows)
+
+func _recalculate_expiry() -> void:
+	next_expiry = INF
+	for view: Dictionary in views.values():
+		next_expiry = minf(next_expiry, float(view.expiry_at))
 
 func _add_report_cue(anchor: Node3D) -> void:
 	# An amber diamond represents a report, not its uncertainty footprint.
@@ -71,3 +95,4 @@ func _exit_tree() -> void:
 	anchors.clear()
 	views.clear()
 	_ground = Callable()
+	next_expiry = INF

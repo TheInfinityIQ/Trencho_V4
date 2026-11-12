@@ -572,13 +572,9 @@ func refresh_marker_positions() -> void:
 	# PERSON poses are affected-event owned. Other cached proxies keep the
 	# existing adapter; contacts use reports, never the true enemy ledger pose.
 	var rear: RefCounted = simulation.rear
-	# Reports age even when no membership event fires. Refresh only admitted IDs
-	# through the same information boundary; expired reports disappear.
-	var reports: Array[Dictionary] = []
-	for id: String in reported_contacts.anchors.keys():
-		var report: Dictionary = Policy.inspect(rear,id)
-		if report.get("kind","") == "CONTACT": reports.append(report)
-	reported_contacts.reconcile(reports)
+	# The policy supplies each report's logical expiry; ordinary time updates
+	# need only a deadline check until one of the admitted reports is due.
+	reported_contacts.refresh_due(rear.time,_inspect_field_marker)
 	for row in _proxy_rows:
 		if not markers.has(row.id): continue
 		if row.kind == "CONTACT":
