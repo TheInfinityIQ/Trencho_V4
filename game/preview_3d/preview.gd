@@ -5,6 +5,7 @@ const FieldPolicy = preload("res://game/battlefield/battlefield_presentation.gd"
 const FieldCues = preload("res://game/preview_3d/field_person_cues.gd")
 const TruckCues = preload("res://game/preview_3d/field_t01_cues.gd")
 const ObjectiveCues = preload("res://game/preview_3d/field_objective_cues.gd")
+const FollowSoldier = preload("res://game/battlefield/presentation_3d/follow_soldier.gd")
 var _construction_visuals_ready := false
 var _construction_preparation_usec := 0
 var _construction_render_resources: Array[Resource] = []
@@ -45,6 +46,8 @@ var _crosshair: Label
 var _field_cues: FieldCues
 var _truck_cues: TruckCues
 var _objective_cues: ObjectiveCues
+var _follow: FollowSoldier
+var _follow_button: Button
 
 func _ready() -> void:
 	super._ready()
@@ -82,6 +85,9 @@ func _ready() -> void:
 	_construction_visuals_ready = true
 
 func _build_hud() -> void:
+	_follow = FollowSoldier.new()
+	add_child(_follow)
+	_follow.state_changed.connect(_update_hint)
 	_field_cues = FieldCues.new()
 	add_child(_field_cues)
 	_truck_cues = TruckCues.new()
@@ -108,6 +114,10 @@ func _build_hud() -> void:
 	perspective.text = "First / Third · V"
 	perspective.pressed.connect(_toggle_camera)
 	row.add_child(perspective)
+	_follow_button = Button.new()
+	_follow_button.text = "Follow soldier"
+	_follow_button.pressed.connect(_toggle_follow)
+	row.add_child(_follow_button)
 	_check_button = Button.new()
 	_check_button.text = "Check placement"
 	_check_button.pressed.connect(_check_candidate)
@@ -144,6 +154,7 @@ func _build_hud() -> void:
 	add_child(_crosshair)
 
 func _replace_world(model: RefCounted) -> void:
+	if _follow != null: _follow.bind(null,null,Callable(),"")
 	if _field_cues != null: _field_cues.bind(null,null)
 	if _truck_cues != null: _truck_cues.bind(null,null)
 	if _objective_cues != null: _objective_cues.bind(null,null,Callable())
@@ -155,6 +166,7 @@ func _replace_world(model: RefCounted) -> void:
 	world = World.new()
 	add_child(world)
 	world.build(model,_session.manager_pose)
+	_follow.bind(world.field_persons,world.rts,_follow_inspect,model.rear.PLAYER)
 	_base.placement_manager_body = world.player
 	_base.placement_manager_shape = world.manager_collision
 	world.first.pose_changed.connect(_camera_changed)
@@ -178,6 +190,7 @@ func _replace_world(model: RefCounted) -> void:
 	_apply_view()
 
 func _show_base() -> void:
+	if _follow != null: _follow.stop("Follow stopped: left the battlefield.")
 	super._show_base()
 	battlefield_open = false
 	if world == null: return
@@ -515,6 +528,7 @@ func _focus_workshop(request: Dictionary, target: Dictionary) -> void:
 		_base.facility.grab_focus()
 
 func _pan_field(offset: Vector2) -> void:
+	if not offset.is_zero_approx() and _follow != null: _follow.stop("Follow stopped: camera panned manually.")
 	world.rts.position.x = clampf(world.rts.position.x+offset.x,0,4000)
 	world.rts.position.z = clampf(world.rts.position.z+offset.y,0,7500)
 
@@ -664,11 +678,23 @@ func _select_marker() -> void:
 	if not nearest.is_empty(): _inspect(nearest)
 
 func _inspect(id: String) -> void:
+	if _follow != null and not _follow.followed_id.is_empty() and _follow.followed_id != id: _follow.stop("Follow stopped: selection changed.")
 	_battlefield.selected_id = id
 	_field_cues.set_selected(id)
 	_truck_cues.set_selected(id)
 	_objective_cues.set_selected(id)
 	_refresh_inspection()
+	_update_hint()
+
+
+func _follow_inspect(id: String) -> Dictionary:
+	return FieldPolicy.inspect(_session.simulation.rear,id)
+
+func _toggle_follow() -> void:
+	if world == null or not battlefield_open or management_open or _modal_open(): return
+	if not _follow.followed_id.is_empty(): _follow.stop("Follow stopped.")
+	else: _follow.start(_battlefield.selected_id)
+	_update_hint()
 
 func _field_camera_changed(_camera: Camera3D) -> void:
 	if world != null: world.field_persons.set_animation_detail(world.rts.size <= 240.0)
@@ -723,10 +749,15 @@ func _update_hint() -> void:
 	if _base._placing_building and not battlefield_open:
 		_hint.text += "\nBUILD · 1 m grid · WASD / middle drag pan · wheel zoom · LMB select · Confirm placement to build · R rotate · RMB/Esc cancel"
 		if not _preview_message.is_empty(): _hint.text += "\n"+_preview_message
+	if battlefield_open and _follow != null and not _follow.status.is_empty(): _hint.text += "\n"+_follow.status
 	if not _command_message.is_empty(): _hint.text += "\n"+_command_message
 	if _place_button != null:
 		_place_button.visible = _base._placing_building and not battlefield_open
 		_place_button.disabled = not _build_target_locked or _candidate.is_empty()
+	if _follow_button != null:
+		_follow_button.visible = battlefield_open and not management_open
+		_follow_button.text = "Stop following" if not _follow.followed_id.is_empty() else "Follow soldier"
+		_follow_button.disabled = _follow.followed_id.is_empty() and (world == null or not world.field_persons.anchors.has(_battlefield.selected_id))
 	if _check_button != null: _check_button.visible = _base._placing_building and not battlefield_open
 	if _crosshair != null: _crosshair.visible = not management_open and not battlefield_open and not _base._placing_building
 	if _inspection_panel != null: _inspection_panel.visible = battlefield_open and not management_open
