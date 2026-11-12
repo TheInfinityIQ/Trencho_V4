@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "9ab4e8d",
+  "reviewed_baseline": "47bfecd",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "e030cb84a55ac771bd6d37e76d3de8b88b202aee18c22a6768f771a2b88d35ef",
+  "source_fingerprint": "b1d01a21e4cab3d09e0e8fe80ea1fb96d2aae5c2a3951f4cff7d6be4441681b1",
   "totals": {
     "systems": 50,
     "game_scripts": 233,
@@ -29151,7 +29151,7 @@
           "label": "Affected actual hull events",
           "file": "game/battlefield/presentation_3d/field_t03.gd",
           "function": "_refresh_id",
-          "line": 88
+          "line": 91
         },
         {
           "id": "report_admit",
@@ -29502,7 +29502,7 @@
         },
         {
           "path": "game/battlefield/presentation_3d/field_t03.gd",
-          "sha256": "94d69cd942ca8b328ec705d1857018283cbb5cefa084e82ace8db5020aacfa83",
+          "sha256": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -29518,16 +29518,16 @@
               "id": "game/battlefield/presentation_3d/field_t03.gd::reconcile",
               "name": "reconcile",
               "line": 23,
-              "end_line": 31,
+              "end_line": 34,
               "kind": "method",
-              "purpose": "Admit and remove only current permitted T03 carrier IDs from the existing marker rows.",
+              "purpose": "Reconcile already-permitted carrier IDs through one current permitted inspection per ID, reject missing or invalid facing, update eligible anchors and remove IDs no longer represented.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_eligible",
               "name": "_eligible",
-              "line": 33,
-              "end_line": 34,
+              "line": 36,
+              "end_line": 37,
               "kind": "method",
               "purpose": "Recognize an actual permitted T03 carrier row with a stable identity.",
               "purpose_origin": "reviewed"
@@ -29535,17 +29535,17 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_refresh",
               "name": "_refresh",
-              "line": 36,
-              "end_line": 63,
+              "line": 39,
+              "end_line": 66,
               "kind": "method",
-              "purpose": "Place a permitted metric provisional hull at its actual finite grounded pose outside the existing rear cutoff, emitting only changed keyed presentation.",
+              "purpose": "Place an eligible carrier anchor using its finite actual position and facing on sampled ground; reject invalid/rear-zone poses, build the provisional silhouette once and emit changes only for updated view state.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_add_standin",
               "name": "_add_standin",
-              "line": 65,
-              "end_line": 75,
+              "line": 68,
+              "end_line": 78,
               "kind": "method",
               "purpose": "Build a clearly labelled non-colliding provisional5.2×2.1m technical silhouette; no approved art or gameplay entity is created.",
               "purpose_origin": "reviewed"
@@ -29553,8 +29553,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_box",
               "name": "_box",
-              "line": 77,
-              "end_line": 86,
+              "line": 80,
+              "end_line": 89,
               "kind": "method",
               "purpose": "Create one local visual box/material for the provisional hull without simulation or collision state.",
               "purpose_origin": "reviewed"
@@ -29562,8 +29562,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_refresh_id",
               "name": "_refresh_id",
-              "line": 88,
-              "end_line": 92,
+              "line": 91,
+              "end_line": 95,
               "kind": "method",
               "purpose": "Reinspect only an already admitted hull through the existing player information policy and remove it if no longer eligible.",
               "purpose_origin": "reviewed"
@@ -29571,8 +29571,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_on_moved",
               "name": "_on_moved",
-              "line": 94,
-              "end_line": 95,
+              "line": 97,
+              "end_line": 98,
               "kind": "method",
               "purpose": "Handle the actual affected-entity movement signal for an admitted T03 identity.",
               "purpose_origin": "reviewed"
@@ -29580,8 +29580,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_on_hull_changed",
               "name": "_on_hull_changed",
-              "line": 97,
-              "end_line": 98,
+              "line": 100,
+              "end_line": 101,
               "kind": "method",
               "purpose": "Handle an actual admitted hull facing/damage event through current permitted inspection.",
               "purpose_origin": "reviewed"
@@ -29589,8 +29589,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_remove",
               "name": "_remove",
-              "line": 100,
-              "end_line": 106,
+              "line": 103,
+              "end_line": 109,
               "kind": "method",
               "purpose": "Unregister and free only this component's retained identity anchor.",
               "purpose_origin": "reviewed"
@@ -29598,8 +29598,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_disconnect_ledger",
               "name": "_disconnect_ledger",
-              "line": 108,
-              "end_line": 113,
+              "line": 111,
+              "end_line": 116,
               "kind": "method",
               "purpose": "Disconnect the exact old ledger event subscriptions before rebind or exit.",
               "purpose_origin": "reviewed"
@@ -29607,8 +29607,8 @@
             {
               "id": "game/battlefield/presentation_3d/field_t03.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 115,
-              "end_line": 121,
+              "line": 118,
+              "end_line": 124,
               "kind": "method",
               "purpose": "Unregister owned anchors and release event/callable references when the presenter exits.",
               "purpose_origin": "reviewed"

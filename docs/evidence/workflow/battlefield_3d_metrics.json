@@ -105,5 +105,22 @@
     "Historical incidents without tracked repair intervals have unknown repair time.",
     "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
   ],
-  "feature_measurement_qualification": "Developer did not record development phase boundaries. Development/repair duration and feature token usage are UNKNOWN. The late0.389s interval/zero counter delta only cover bookkeeping, not the feature; no workflow-efficiency or cost conclusion. Review discoveries are not proven runtime regressions."
+  "feature_measurement_qualification": "Developer did not record development phase boundaries. Development/repair duration and feature token usage are UNKNOWN. The late0.389s interval/zero counter delta only cover bookkeeping, not the feature; no workflow-efficiency or cost conclusion. Review discoveries are not proven runtime regressions.",
+  "fixture_correction": {
+    "failed_run": 43251840125,
+    "passed_run": 43252755065,
+    "kind": "workflow_error",
+    "summary": "Direct demonstration used incomplete model factory; changed fixture to actual normal3D Farmland factory without modifying production.",
+    "repair_seconds": null,
+    "repair_token_usage": null,
+    "qualification": "No recorded repair boundaries; no invented values or production-regression attribution."
+  },
+  "facing_correction": {
+    "source_revision": "47bfecd",
+    "kind": "feature_defect",
+    "summary": "Source review found initial marker rows omit facing; actual admitted carrier is now inspected once on reconciliation and missing facing is rejected. Scoped arranged 37-degree opening assertion passed on GitHub.",
+    "repair_seconds": null,
+    "repair_token_usage": null,
+    "qualification": "Actual feature source defect identified before adoption, not observed production regression; repair timing/tokens were not recorded."
+  }
 }
