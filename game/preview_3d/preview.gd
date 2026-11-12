@@ -208,6 +208,7 @@ func _show_battlefield() -> void:
 func _observe_recipient(id: String) -> void:
 	var marker: Dictionary = FieldPolicy.inspect(_session.simulation.rear,id)
 	if marker.is_empty() or marker.get("owner","") != _session.simulation.rear.PLAYER: return
+	if _follow != null: _follow.stop("Follow stopped: camera refocused.")
 	_show_battlefield()
 	world.rts.position.x = marker.position.x
 	world.rts.position.z = marker.position.y+900

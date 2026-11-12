@@ -24,6 +24,8 @@ Acceptance: one selected eligible friendly person can be followed as its real po
 
 - Inactive → following only through an explicit control for the selected currently permitted, visible, on-foot friendly person. Retain that exact ID and its existing anchor; preserve camera offset and zoom.
 - Following → following on that same anchor's changed event, moving only the observation camera. No per-frame policy or entity lookup; no new clock or combat input.
-- Following → stopped with a visible reason on manual pan, changed selection, boarding/removal, lost permission, leaving the battlefield, simulation replacement or an anchor replaced under the same ID. Do not silently choose a new person or hull. Rebinding and teardown disconnect old presenter signals.
+- Following → stopped with a visible reason on manual pan, an existing scripted recipient reframe, changed selection, boarding/removal, lost permission, leaving the battlefield, simulation replacement or an anchor replaced under the same ID. Do not silently choose a new person or hull. Rebinding and teardown disconnect old presenter signals.
 - Selected friendly squad identity, acknowledged action and execution status are shown as separate facts. Missing or unacknowledged intent is labelled unavailable or not yet acknowledged; no hidden enemy target or military order control is introduced.
 - One brief direct check uses an actual permitted person, starts follow, moves that person through the ledger and verifies the same camera offset, then releases follow. Native button/mouse input, visuals, FPS, boarding and session replacement remain separate unverified behavior.
+
+The scripted recipient-reframe stop is source-reviewed only; the scoped follow movement/manual-pan action does not exercise it.
