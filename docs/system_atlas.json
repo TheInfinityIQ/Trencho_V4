@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "title": "Trencho â€” current implementation atlas",
-  "reviewed_baseline": "622d9aa",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-supply-visibility-worktree",
+  "reviewed_baseline": "9056ee5",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-follow-soldier-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "7b6fa7c1eea98800033a66a631fcda75f2dbf9e3bfcd4dcf55b28ada27e83096",
+  "source_fingerprint": "1d350c5b3c6ac9f10b1a30ec4479bbc71e5c9192bc122c4b6ed4484262a9cc71",
   "totals": {
     "systems": 50,
-    "game_scripts": 235,
-    "non_test_scripts": 141,
+    "game_scripts": 236,
+    "non_test_scripts": 142,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3600,
-    "diagram_function_links": 298
+    "functions_in_inventory": 3610,
+    "diagram_function_links": 301
   },
   "systems": [
     {
@@ -26,7 +26,7 @@
           "label": "Default 3D scene initializes common controller",
           "file": "game/preview_3d/preview.gd",
           "function": "_ready",
-          "line": 49
+          "line": 52
         },
         {
           "id": "n0",
@@ -10137,7 +10137,7 @@
           "label": "Open selected actual Workshop in 3D",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop",
-          "line": 432
+          "line": 446
         }
       ],
       "edges": [
@@ -29145,7 +29145,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity.",
       "nodes": [
         {
           "id": "n0",
@@ -29257,7 +29257,7 @@
           "label": "Stock invalidation for selected cached stop",
           "file": "game/battlefield/battlefield_view.gd",
           "function": "_on_stop_stock_changed",
-          "line": 348
+          "line": 364
         },
         {
           "id": "delivery_index",
@@ -29279,6 +29279,27 @@
           "file": "game/forward_supply/forward_supply.gd",
           "function": "_observation_friendly",
           "line": 67
+        },
+        {
+          "id": "follow_start",
+          "label": "Follow a permitted friendly person",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "start",
+          "line": 25
+        },
+        {
+          "id": "follow_move",
+          "label": "Move only the observer camera on person change",
+          "file": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "function": "_on_person_changed",
+          "line": 51
+        },
+        {
+          "id": "squad_detail",
+          "label": "Friendly squad intent and activity",
+          "file": "game/battlefield/battlefield_view.gd",
+          "function": "_own_squad_detail",
+          "line": 340
         }
       ],
       "edges": [
@@ -29386,6 +29407,21 @@
           "from": "actor_permission",
           "to": "stop_read",
           "label": "current disclosure check"
+        },
+        {
+          "from": "n1",
+          "to": "follow_start",
+          "label": "explicit permitted selection"
+        },
+        {
+          "from": "follow_start",
+          "to": "follow_move",
+          "label": "same current anchor only"
+        },
+        {
+          "from": "follow_start",
+          "to": "squad_detail",
+          "label": "actual own squad facts"
         }
       ],
       "related": [
@@ -29401,7 +29437,8 @@
         "game/battlefield/presentation_3d/field_t03.gd",
         "game/battlefield/presentation_3d/reported_contacts.gd",
         "game/battlefield/presentation_3d/field_t04.gd",
-        "game/battlefield/presentation_3d/forward_stop.gd"
+        "game/battlefield/presentation_3d/forward_stop.gd",
+        "game/battlefield/presentation_3d/follow_soldier.gd"
       ],
       "files": [
         {
@@ -29476,7 +29513,7 @@
         },
         {
           "path": "game/battlefield/battlefield_view.gd",
-          "sha256": "67d2467664138493f3b02d4150fefdd2663095f6ea582cfcf0107df442cd9e75",
+          "sha256": "28efa1d4e03c60f07390a6a262cbc5a913ca8e1df6917744fd69790a232898d5",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -29645,16 +29682,25 @@
               "id": "game/battlefield/battlefield_view.gd::inspection_text",
               "name": "inspection_text",
               "line": 251,
-              "end_line": 334,
+              "end_line": 335,
               "kind": "method",
-              "purpose": "Format permitted selected entity and objective information, including truthful authorized forward-stop observation.",
+              "purpose": "Format permitted selected battlefield details, separating a friendly squad’s acknowledged action from its current execution.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/battlefield_view.gd::_own_squad_detail",
+              "name": "_own_squad_detail",
+              "line": 340,
+              "end_line": 351,
+              "kind": "method",
+              "purpose": "Read only the selected permitted friendly person’s actual squad and show acknowledged intent separately from current activity.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/battlefield/battlefield_view.gd::_bind_stop_stock",
               "name": "_bind_stop_stock",
-              "line": 338,
-              "end_line": 346,
+              "line": 354,
+              "end_line": 362,
               "kind": "method",
               "purpose": "Replace the stock listener once for the current simulation and clear the selected-stop cache.",
               "purpose_origin": "reviewed"
@@ -29662,8 +29708,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_on_stop_stock_changed",
               "name": "_on_stop_stock_changed",
-              "line": 348,
-              "end_line": 350,
+              "line": 364,
+              "end_line": 366,
               "kind": "method",
               "purpose": "Dirty cached loose stock and request a refresh only when its populated stop remains selected.",
               "purpose_origin": "reviewed"
@@ -29671,8 +29717,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 352,
-              "end_line": 355,
+              "line": 368,
+              "end_line": 371,
               "kind": "method",
               "purpose": "Disconnect the stock invalidation listener when the battlefield inspector leaves the tree.",
               "purpose_origin": "reviewed"
@@ -29680,8 +29726,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_forward_stop_detail",
               "name": "_forward_stop_detail",
-              "line": 358,
-              "end_line": 391,
+              "line": 374,
+              "end_line": 407,
               "kind": "method",
               "purpose": "Recheck stop permission and format actual loose stock, bounded active delivery and issue facts, and latest confirmed historical transfers without claiming present custody.",
               "purpose_origin": "reviewed"
@@ -29689,8 +29735,8 @@
             {
               "id": "game/battlefield/battlefield_view.gd::_activity_label",
               "name": "_activity_label",
-              "line": 394,
-              "end_line": 415,
+              "line": 410,
+              "end_line": 431,
               "kind": "method",
               "purpose": "Activity label for battlefield view. Implementation: calls person.get, str, rear.military.troop_transport.jobs.values, rear.forward_supply.transport.jobs.values.",
               "purpose_origin": "implementation_derived"
@@ -29838,6 +29884,76 @@
           ]
         },
         {
+          "path": "game/battlefield/presentation_3d/follow_soldier.gd",
+          "sha256": "8991d5f9bed80b1e4482ed786df4d34417d5354115a192a145ccdcc333199faa",
+          "classification": "implementation / presentation / data",
+          "functions": [
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::bind",
+              "name": "bind",
+              "line": 14,
+              "end_line": 23,
+              "kind": "method",
+              "purpose": "Disconnect the old presenter and bind the current permitted person anchors, camera and inspection boundary.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::start",
+              "name": "start",
+              "line": 25,
+              "end_line": 42,
+              "kind": "method",
+              "purpose": "Start camera-only follow of one currently permitted visible living friendly on-foot person and retain its actual anchor.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::stop",
+              "name": "stop",
+              "line": 44,
+              "end_line": 49,
+              "kind": "method",
+              "purpose": "Clear the exact followed identity and publish a visible reason without moving simulation state.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::_on_person_changed",
+              "name": "_on_person_changed",
+              "line": 51,
+              "end_line": 60,
+              "kind": "method",
+              "purpose": "Move the observation camera by the followed same-anchor movement while preserving its offset, or stop if unavailable.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::_on_person_removing",
+              "name": "_on_person_removing",
+              "line": 62,
+              "end_line": 63,
+              "kind": "method",
+              "purpose": "Stop follow when the exact followed anchor leaves the permitted field presenter.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::_disconnect_presenter",
+              "name": "_disconnect_presenter",
+              "line": 65,
+              "end_line": 69,
+              "kind": "method",
+              "purpose": "Disconnect the follow adapter from old person-presenter signals before rebind or teardown.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/battlefield/presentation_3d/follow_soldier.gd::_exit_tree",
+              "name": "_exit_tree",
+              "line": 71,
+              "end_line": 75,
+              "kind": "method",
+              "purpose": "Release person, camera and inspection references when the follow adapter leaves the scene.",
+              "purpose_origin": "reviewed"
+            }
+          ]
+        },
+        {
           "path": "game/battlefield/presentation_3d/forward_stop.gd",
           "sha256": "365692679863e4c1fd86346c37e88968a30dfdf3af43c940c80706588ebd7052",
           "classification": "implementation / presentation / data",
@@ -29973,35 +30089,35 @@
           "label": "Bind/replace current3D world",
           "file": "game/preview_3d/preview.gd",
           "function": "_replace_world",
-          "line": 146
+          "line": 156
         },
         {
           "id": "n1",
           "label": "Handle explicit gameplay input",
           "file": "game/preview_3d/preview.gd",
           "function": "_unhandled_input",
-          "line": 299
+          "line": 313
         },
         {
           "id": "n2",
           "label": "Consume input/geometry work in physics",
           "file": "game/preview_3d/preview.gd",
           "function": "_physics_process",
-          "line": 367
+          "line": 381
         },
         {
           "id": "n3",
           "label": "Validate and commit actual placement",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_commit",
-          "line": 611
+          "line": 626
         },
         {
           "id": "n4",
           "label": "Consume actual Table or current site E target",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_workshop",
-          "line": 432
+          "line": 446
         },
         {
           "id": "n5",
@@ -30015,7 +30131,7 @@
           "label": "Open actual Supply Table purchase controls",
           "file": "game/preview_3d/preview.gd",
           "function": "_open_supply_table",
-          "line": 484
+          "line": 498
         },
         {
           "id": "n7",
@@ -30154,14 +30270,14 @@
         },
         {
           "path": "game/preview_3d/preview.gd",
-          "sha256": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
+          "sha256": "33359597c63df3baec7a62451dbf73448fffe72b72b55d36019bf06aeec257be",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/preview_3d/preview.gd::_ready",
               "name": "_ready",
-              "line": 49,
-              "end_line": 82,
+              "line": 52,
+              "end_line": 85,
               "kind": "method",
               "purpose": "Compose the shared3D game, pause only behind a covered warm draw, retain its actual shader/asset resources for this scene lifetime, then restore normal1x and enable input; skip GPU work headlessly.",
               "purpose_origin": "reviewed"
@@ -30169,8 +30285,8 @@
             {
               "id": "game/preview_3d/preview.gd::_ready/<lambda#1>",
               "name": "_ready/<lambda#1>",
-              "line": 64,
-              "end_line": 64,
+              "line": 67,
+              "end_line": 67,
               "kind": "lambda",
               "purpose": "Notify the local draft generation when the facility selection explicitly changes.",
               "purpose_origin": "reviewed"
@@ -30178,8 +30294,8 @@
             {
               "id": "game/preview_3d/preview.gd::_ready/<lambda#2>",
               "name": "_ready/<lambda#2>",
-              "line": 65,
-              "end_line": 65,
+              "line": 68,
+              "end_line": 68,
               "kind": "lambda",
               "purpose": "Notify the local draft generation when its orientation explicitly changes.",
               "purpose_origin": "reviewed"
@@ -30187,8 +30303,8 @@
             {
               "id": "game/preview_3d/preview.gd::_ready/<lambda#3>",
               "name": "_ready/<lambda#3>",
-              "line": 66,
-              "end_line": 66,
+              "line": 69,
+              "end_line": 69,
               "kind": "lambda",
               "purpose": "Release captured and held world controls when shell modal visibility changes.",
               "purpose_origin": "reviewed"
@@ -30196,17 +30312,17 @@
             {
               "id": "game/preview_3d/preview.gd::_build_hud",
               "name": "_build_hud",
-              "line": 84,
-              "end_line": 144,
+              "line": 87,
+              "end_line": 154,
               "kind": "method",
-              "purpose": "Construct scene-owned mode controls, placement feedback, explicit Check/Confirm buttons and the existing inspection/cue UI.",
+              "purpose": "Build existing game HUD and bind explicit friendly-soldier follow control and status.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_build_hud/<lambda#1>",
               "name": "_build_hud/<lambda#1>",
-              "line": 99,
-              "end_line": 99,
+              "line": 105,
+              "end_line": 105,
               "kind": "lambda",
               "purpose": "Toggle persistent management visibility without changing the session or speed.",
               "purpose_origin": "reviewed"
@@ -30214,8 +30330,8 @@
             {
               "id": "game/preview_3d/preview.gd::_build_hud/<lambda#2>",
               "name": "_build_hud/<lambda#2>",
-              "line": 103,
-              "end_line": 105,
+              "line": 109,
+              "end_line": 111,
               "kind": "lambda",
               "purpose": "Switch observation area while preserving the same session and rear manager.",
               "purpose_origin": "reviewed"
@@ -30223,26 +30339,26 @@
             {
               "id": "game/preview_3d/preview.gd::_replace_world",
               "name": "_replace_world",
-              "line": 146,
-              "end_line": 178,
+              "line": 156,
+              "end_line": 190,
               "kind": "method",
-              "purpose": "Replace presentation for the same session, retire old bindings and connect current character, construction and battlefield cameras and cues.",
+              "purpose": "Replace scene presentation and bind follow to the new shared model while disconnecting old world references.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_show_base",
               "name": "_show_base",
-              "line": 180,
-              "end_line": 185,
+              "line": 192,
+              "end_line": 198,
               "kind": "method",
-              "purpose": "Reuse Main rear navigation while selecting the retained 3D manager camera.",
+              "purpose": "Stop battlefield follow on leaving the battlefield and show the existing rear view.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_show_battlefield",
               "name": "_show_battlefield",
-              "line": 187,
-              "end_line": 193,
+              "line": 200,
+              "end_line": 206,
               "kind": "method",
               "purpose": "Reuse Main navigation without showing the legacy map and select independent RTS observation.",
               "purpose_origin": "reviewed"
@@ -30250,17 +30366,17 @@
             {
               "id": "game/preview_3d/preview.gd::_observe_recipient",
               "name": "_observe_recipient",
-              "line": 195,
-              "end_line": 202,
+              "line": 208,
+              "end_line": 216,
               "kind": "method",
-              "purpose": "Focus the RTS camera and shared inspection only on a permitted friendly recipient.",
+              "purpose": "For an existing permitted recipient, stop active follow before the scripted camera refocus and select that identity.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_apply_navigation",
               "name": "_apply_navigation",
-              "line": 204,
-              "end_line": 208,
+              "line": 218,
+              "end_line": 222,
               "kind": "method",
               "purpose": "Apply existing queued navigation then expose persistent management for panel actions.",
               "purpose_origin": "reviewed"
@@ -30268,8 +30384,8 @@
             {
               "id": "game/preview_3d/preview.gd::_set_management",
               "name": "_set_management",
-              "line": 210,
-              "end_line": 223,
+              "line": 224,
+              "end_line": 237,
               "kind": "method",
               "purpose": "Apply management visibility/cursor ownership, discard unconfirmed menu drafts on closure and show the construction grid only in unobscured build mode.",
               "purpose_origin": "reviewed"
@@ -30277,8 +30393,8 @@
             {
               "id": "game/preview_3d/preview.gd::_apply_view",
               "name": "_apply_view",
-              "line": 225,
-              "end_line": 247,
+              "line": 239,
+              "end_line": 261,
               "kind": "method",
               "purpose": "Release held controls, select the actual rear/field/first/third/build camera and projections, update placement/hints and send warehouse roof-cutaway eligibility only at that existing mode-change boundary.",
               "purpose_origin": "reviewed"
@@ -30286,8 +30402,8 @@
             {
               "id": "game/preview_3d/preview.gd::_toggle_camera",
               "name": "_toggle_camera",
-              "line": 249,
-              "end_line": 252,
+              "line": 263,
+              "end_line": 266,
               "kind": "method",
               "purpose": "Toggle first/third-person preference only while ordinary rear-world input owns control, outside management, modal and construction modes.",
               "purpose_origin": "reviewed"
@@ -30295,8 +30411,8 @@
             {
               "id": "game/preview_3d/preview.gd::_release_controls",
               "name": "_release_controls",
-              "line": 254,
-              "end_line": 270,
+              "line": 268,
+              "end_line": 284,
               "kind": "method",
               "purpose": "Preserve existing movement/capture/placement release and cancel any queued identity-bound Workshop interaction on modal/view/focus/session changes so it cannot act later on a replaced context.",
               "purpose_origin": "reviewed"
@@ -30304,8 +30420,8 @@
             {
               "id": "game/preview_3d/preview.gd::_modal_open",
               "name": "_modal_open",
-              "line": 272,
-              "end_line": 276,
+              "line": 286,
+              "end_line": 290,
               "kind": "method",
               "purpose": "Read the existing decision dialogs to keep modal input ahead of management and world controls.",
               "purpose_origin": "reviewed"
@@ -30313,8 +30429,8 @@
             {
               "id": "game/preview_3d/preview.gd::_notification",
               "name": "_notification",
-              "line": 278,
-              "end_line": 281,
+              "line": 292,
+              "end_line": 295,
               "kind": "method",
               "purpose": "Release capture and held controls on application focus loss.",
               "purpose_origin": "reviewed"
@@ -30322,8 +30438,8 @@
             {
               "id": "game/preview_3d/preview.gd::_input",
               "name": "_input",
-              "line": 283,
-              "end_line": 297,
+              "line": 297,
+              "end_line": 311,
               "kind": "method",
               "purpose": "Consume input while startup visuals prepare, then preserve existing Tab/mouse/key release ownership.",
               "purpose_origin": "reviewed"
@@ -30331,8 +30447,8 @@
             {
               "id": "game/preview_3d/preview.gd::_unhandled_input",
               "name": "_unhandled_input",
-              "line": 299,
-              "end_line": 365,
+              "line": 313,
+              "end_line": 379,
               "kind": "method",
               "purpose": "Reject startup interaction until prepared, then retain the current focused world/menu controls.",
               "purpose_origin": "reviewed"
@@ -30340,8 +30456,8 @@
             {
               "id": "game/preview_3d/preview.gd::_physics_process",
               "name": "_physics_process",
-              "line": 367,
-              "end_line": 409,
+              "line": 381,
+              "end_line": 423,
               "kind": "method",
               "purpose": "Consume dirty geometry/presentation and queued physics queries or placement intents, then apply only the current permitted manager/RTS/build camera movement.",
               "purpose_origin": "reviewed"
@@ -30349,8 +30465,8 @@
             {
               "id": "game/preview_3d/preview.gd::_queue_workshop",
               "name": "_queue_workshop",
-              "line": 411,
-              "end_line": 415,
+              "line": 425,
+              "end_line": 429,
               "kind": "method",
               "purpose": "Queue one captured rear E request with the current world, simulation, construction, Receiving and camera identities.",
               "purpose_origin": "reviewed"
@@ -30358,8 +30474,8 @@
             {
               "id": "game/preview_3d/preview.gd::_workshop_target",
               "name": "_workshop_target",
-              "line": 417,
-              "end_line": 430,
+              "line": 431,
+              "end_line": 444,
               "kind": "method",
               "purpose": "Resolve an actual completed production site to its current activity/duty, including the declared initial Workshop mapping; reject mismatched owners.",
               "purpose_origin": "reviewed"
@@ -30367,8 +30483,8 @@
             {
               "id": "game/preview_3d/preview.gd::_consume_workshop",
               "name": "_consume_workshop",
-              "line": 432,
-              "end_line": 482,
+              "line": 446,
+              "end_line": 496,
               "kind": "method",
               "purpose": "Consume one current first-hit E request and inspect the actual Table, activity or site controls without starting a construction blueprint; preserve identity, focus and input guards. Inspect the actual warehouse receiving storage from its building E interaction.",
               "purpose_origin": "reviewed"
@@ -30376,8 +30492,8 @@
             {
               "id": "game/preview_3d/preview.gd::_open_supply_table",
               "name": "_open_supply_table",
-              "line": 484,
-              "end_line": 506,
+              "line": 498,
+              "end_line": 520,
               "kind": "method",
               "purpose": "Validate the normal opening and current physical receiving place against the exact table position, reveal management before refreshing existing Supplies/Purchase controls and preserve the current model, cart and order state without spending or advancing gameplay.",
               "purpose_origin": "reviewed"
@@ -30385,8 +30501,8 @@
             {
               "id": "game/preview_3d/preview.gd::_focus_workshop",
               "name": "_focus_workshop",
-              "line": 508,
-              "end_line": 515,
+              "line": 522,
+              "end_line": 529,
               "kind": "method",
               "purpose": "Revalidate deferred current world/model/service/physical owner and selected Work context before scrolling/focusing the existing facility control, leaving backend commands and unrelated panels unchanged.",
               "purpose_origin": "reviewed"
@@ -30394,17 +30510,17 @@
             {
               "id": "game/preview_3d/preview.gd::_pan_field",
               "name": "_pan_field",
-              "line": 517,
-              "end_line": 519,
+              "line": 531,
+              "end_line": 534,
               "kind": "method",
-              "purpose": "Bound the independent RTS camera pan without moving entities or changing orders.",
+              "purpose": "Release follow on manual pan and move the existing RTS camera within its limits.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_pan_build",
               "name": "_pan_build",
-              "line": 521,
-              "end_line": 525,
+              "line": 536,
+              "end_line": 540,
               "kind": "method",
               "purpose": "Pan the overhead rear camera within service bounds, unlock the old target and invalidate its queued placement candidate.",
               "purpose_origin": "reviewed"
@@ -30412,8 +30528,8 @@
             {
               "id": "game/preview_3d/preview.gd::_begin_preview",
               "name": "_begin_preview",
-              "line": 527,
-              "end_line": 534,
+              "line": 542,
+              "end_line": 549,
               "kind": "method",
               "purpose": "Start a fresh blueprint generation with overhead camera and visible pointer, preserving manager pose and requesting a new ground candidate.",
               "purpose_origin": "reviewed"
@@ -30421,8 +30537,8 @@
             {
               "id": "game/preview_3d/preview.gd::_draft_changed",
               "name": "_draft_changed",
-              "line": 536,
-              "end_line": 538,
+              "line": 551,
+              "end_line": 553,
               "kind": "method",
               "purpose": "Advance the local draft generation from explicit kind/rotation events and invalidate its represented candidate.",
               "purpose_origin": "reviewed"
@@ -30430,8 +30546,8 @@
             {
               "id": "game/preview_3d/preview.gd::_draft_ended",
               "name": "_draft_ended",
-              "line": 540,
-              "end_line": 545,
+              "line": 555,
+              "end_line": 560,
               "kind": "method",
               "purpose": "Retire the blueprint generation and restore the appropriate character view without cancelling any committed construction site.",
               "purpose_origin": "reviewed"
@@ -30439,8 +30555,8 @@
             {
               "id": "game/preview_3d/preview.gd::_camera_changed",
               "name": "_camera_changed",
-              "line": 547,
-              "end_line": 548,
+              "line": 562,
+              "end_line": 563,
               "kind": "method",
               "purpose": "Invalidate placement when the active rear camera reports an actually changed represented ray.",
               "purpose_origin": "reviewed"
@@ -30448,8 +30564,8 @@
             {
               "id": "game/preview_3d/preview.gd::_invalidate_preview",
               "name": "_invalidate_preview",
-              "line": 550,
-              "end_line": 560,
+              "line": 565,
+              "end_line": 575,
               "kind": "method",
               "purpose": "Retire obsolete candidate/intent revisions and queue only a needed cheap physics pick, retaining actionable command feedback when appropriate.",
               "purpose_origin": "reviewed"
@@ -30457,8 +30573,8 @@
             {
               "id": "game/preview_3d/preview.gd::_cancel_preview",
               "name": "_cancel_preview",
-              "line": 562,
-              "end_line": 565,
+              "line": 577,
+              "end_line": 580,
               "kind": "method",
               "purpose": "Cancel only the uncommitted draft and report that no actual site was cancelled.",
               "purpose_origin": "reviewed"
@@ -30466,8 +30582,8 @@
             {
               "id": "game/preview_3d/preview.gd::_pick_ground",
               "name": "_pick_ground",
-              "line": 567,
-              "end_line": 588,
+              "line": 582,
+              "end_line": 603,
               "kind": "method",
               "purpose": "Query actual rear ground from the overhead camera, snap the current footprint and seal a cheap-preview candidate with owner, camera and blocker identities.",
               "purpose_origin": "reviewed"
@@ -30475,8 +30591,8 @@
             {
               "id": "game/preview_3d/preview.gd::_candidate_is_current",
               "name": "_candidate_is_current",
-              "line": 590,
-              "end_line": 597,
+              "line": 605,
+              "end_line": 612,
               "kind": "method",
               "purpose": "Validate candidate session/model/service, draft/revision, blueprint/orientation, active ray and relevant truck clearance without granting construction permission.",
               "purpose_origin": "reviewed"
@@ -30484,8 +30600,8 @@
             {
               "id": "game/preview_3d/preview.gd::_queue_commit",
               "name": "_queue_commit",
-              "line": 599,
-              "end_line": 609,
+              "line": 614,
+              "end_line": 624,
               "kind": "method",
               "purpose": "Queue one explicit Confirm-button intent only for a locked current candidate; otherwise request a fresh preview and truthful rejection feedback.",
               "purpose_origin": "reviewed"
@@ -30493,8 +30609,8 @@
             {
               "id": "game/preview_3d/preview.gd::_consume_commit",
               "name": "_consume_commit",
-              "line": 611,
-              "end_line": 620,
+              "line": 626,
+              "end_line": 635,
               "kind": "method",
               "purpose": "Consume the queued placement before callbacks, revalidate context/focus and submit the actual shared construction command once.",
               "purpose_origin": "reviewed"
@@ -30502,8 +30618,8 @@
             {
               "id": "game/preview_3d/preview.gd::_check_candidate",
               "name": "_check_candidate",
-              "line": 622,
-              "end_line": 632,
+              "line": 637,
+              "end_line": 647,
               "kind": "method",
               "purpose": "Run expensive full validation only for an explicit check of the same current candidate; checked feedback is never a reservation.",
               "purpose_origin": "reviewed"
@@ -30511,8 +30627,8 @@
             {
               "id": "game/preview_3d/preview.gd::_placement_result",
               "name": "_placement_result",
-              "line": 634,
-              "end_line": 638,
+              "line": 649,
+              "end_line": 653,
               "kind": "method",
               "purpose": "Show actual returned site identity or explicitly historical last-attempt rejection, retaining feedback across unrelated events and preserving failed drafts without automatic retry.",
               "purpose_origin": "reviewed"
@@ -30520,8 +30636,8 @@
             {
               "id": "game/preview_3d/preview.gd::_select_marker",
               "name": "_select_marker",
-              "line": 640,
-              "end_line": 664,
+              "line": 655,
+              "end_line": 679,
               "kind": "method",
               "purpose": "Select the nearest current ordered visible marker under strict18px and first-row ties; represented objectives use their shared current ground-point/viewport/behind cache, preserving PERSON/T01 and legacy marker behavior.",
               "purpose_origin": "reviewed"
@@ -30529,17 +30645,35 @@
             {
               "id": "game/preview_3d/preview.gd::_inspect",
               "name": "_inspect",
-              "line": 666,
-              "end_line": 671,
+              "line": 681,
+              "end_line": 688,
               "kind": "method",
-              "purpose": "Synchronize actual battlefield selected identity, all bounded cue selections and existing permitted inspection without issuing orders or requiring literal internal IDs in readable text.",
+              "purpose": "Select the existing permitted marker and clear an active follow if the identity changes.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/preview.gd::_follow_inspect",
+              "name": "_follow_inspect",
+              "line": 691,
+              "end_line": 692,
+              "kind": "method",
+              "purpose": "Inspect one requested identity through the existing battlefield information boundary for explicit follow admission.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/preview_3d/preview.gd::_toggle_follow",
+              "name": "_toggle_follow",
+              "line": 694,
+              "end_line": 698,
+              "kind": "method",
+              "purpose": "Start or stop explicit observation of the selected friendly soldier without issuing military commands.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_field_camera_changed",
               "name": "_field_camera_changed",
-              "line": 673,
-              "end_line": 677,
+              "line": 700,
+              "end_line": 704,
               "kind": "method",
               "purpose": "Request existing cue reprojection and update detailed skeletal playback from the current RTS zoom without changing camera controls or gameplay.",
               "purpose_origin": "reviewed"
@@ -30547,8 +30681,8 @@
             {
               "id": "game/preview_3d/preview.gd::_field_viewport_changed",
               "name": "_field_viewport_changed",
-              "line": 679,
-              "end_line": 682,
+              "line": 706,
+              "end_line": 709,
               "kind": "method",
               "purpose": "Invalidate the bounded objective and existing PERSON/T01 projection caches when the current viewport resizes.",
               "purpose_origin": "reviewed"
@@ -30556,8 +30690,8 @@
             {
               "id": "game/preview_3d/preview.gd::_field_truck_removed",
               "name": "_field_truck_removed",
-              "line": 684,
-              "end_line": 686,
+              "line": 711,
+              "end_line": 713,
               "kind": "method",
               "purpose": "Coalesce the existing current Policy refresh after a detailed truck removal so an ineligible detail can recover its unchanged abstract fallback.",
               "purpose_origin": "reviewed"
@@ -30565,8 +30699,8 @@
             {
               "id": "game/preview_3d/preview.gd::_refresh_inspection",
               "name": "_refresh_inspection",
-              "line": 688,
-              "end_line": 692,
+              "line": 715,
+              "end_line": 719,
               "kind": "method",
               "purpose": "Reuse existing battlefield inspection text and explicitly display reported contact confidence.",
               "purpose_origin": "reviewed"
@@ -30574,8 +30708,8 @@
             {
               "id": "game/preview_3d/preview.gd::_state_changed",
               "name": "_state_changed",
-              "line": 694,
-              "end_line": 706,
+              "line": 721,
+              "end_line": 733,
               "kind": "method",
               "purpose": "Apply a changed character playback speed, coalesce rear/field presenter refreshes, invalidate stale checked construction facts and update current feedback.",
               "purpose_origin": "reviewed"
@@ -30583,8 +30717,8 @@
             {
               "id": "game/preview_3d/preview.gd::_time_changed",
               "name": "_time_changed",
-              "line": 708,
-              "end_line": 716,
+              "line": 735,
+              "end_line": 743,
               "kind": "method",
               "purpose": "Update cached battlefield motion and candidate-relevant truck clearance transitions, without global inventory or per-render draft polling.",
               "purpose_origin": "reviewed"
@@ -30592,17 +30726,17 @@
             {
               "id": "game/preview_3d/preview.gd::_update_hint",
               "name": "_update_hint",
-              "line": 718,
-              "end_line": 732,
+              "line": 745,
+              "end_line": 764,
               "kind": "method",
-              "purpose": "Present current mode, economy, interaction/placement feedback and the availability of the explicit placement controls.",
+              "purpose": "Refresh existing HUD text, follow state and placement controls from the current presentation state.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/preview_3d/preview.gd::_blocker_membership",
               "name": "_blocker_membership",
-              "line": 734,
-              "end_line": 742,
+              "line": 766,
+              "end_line": 774,
               "kind": "method",
               "purpose": "Read only existing created construction-truck holder positions inside the current footprint clearance, matching provisional geometry without inventory scans.",
               "purpose_origin": "reviewed"
@@ -30610,8 +30744,8 @@
             {
               "id": "game/preview_3d/preview.gd::_command_reported",
               "name": "_command_reported",
-              "line": 744,
-              "end_line": 747,
+              "line": 776,
+              "end_line": 779,
               "kind": "method",
               "purpose": "Carry existing BaseDemo command and cancellation feedback into the 3D status area without ending an unrelated draft.",
               "purpose_origin": "reviewed"
@@ -31420,7 +31554,7 @@
           "label": "Pick actual current projected marker",
           "file": "game/preview_3d/preview.gd",
           "function": "_select_marker",
-          "line": 640
+          "line": 655
         }
       ],
       "edges": [
@@ -32113,7 +32247,7 @@
           "label": "Supply current occupation to placement",
           "file": "game/preview_3d/preview.gd",
           "function": "_consume_commit",
-          "line": 611
+          "line": 626
         }
       ],
       "edges": [

@@ -271,6 +271,7 @@ func inspection_text() -> String:
 		elif selected.kind != "PLACE": detail += "\n"+_activity_label(selected)
 		if selected.kind == "PERSON":
 			detail += "\nDuty: %s | Health: %d" % [selected.assignment, selected.health]
+			detail += _own_squad_detail(rear,selected)
 			var loaded := 0
 			for weapon in rear.ledger.entities_at(selected.id,["WEAPON"],false):
 				if weapon.ammo_type == "E02": loaded += int(weapon.loaded_rounds)
@@ -333,6 +334,21 @@ func inspection_text() -> String:
 			if not str(deployment.get("supply_stop","")).is_empty(): text += "\nSupply rendezvous: "+_site_label(str(deployment.supply_stop))
 	return text
 
+
+
+
+func _own_squad_detail(rear: RefCounted, person: Dictionary) -> String:
+	if str(person.get("owner","")) != rear.PLAYER: return ""
+	var squad_id := str(person.get("duty_id",""))
+	var squad: Dictionary = rear.military.squads.get(squad_id,{})
+	if squad.is_empty() or str(squad.get("owner","")) != rear.PLAYER or person.id not in squad.get("roster",[]): return "\nSquad: unavailable."
+	var detail := "\nFriendly squad: %s · %s" % [squad_id,str(squad.get("kind","Unknown"))]
+	var intent: Dictionary = rear.orders.intents.get(squad_id,{})
+	if intent.get("state","") == "Acknowledged": detail += "\nAcknowledged squad intent: "+str(intent.get("action","Unavailable"))
+	else: detail += "\nAcknowledged squad intent: unavailable or not yet acknowledged."
+	var activity: String = str(rear.battlefield_operations.status.get(squad_id,"")) if rear.battlefield_operations != null else ""
+	detail += "\nCurrent squad activity: "+(activity if not activity.is_empty() else "Unavailable.")
+	return detail
 
 
 func _bind_stop_stock() -> void:
