@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "reviewed_baseline": "47bfecd",
-  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
+  "reviewed_baseline": "dd6a410",
+  "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-t04-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
@@ -3268,7 +3268,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim.",
       "nodes": [
         {
           "id": "n0",
@@ -3329,6 +3329,18 @@
           "label": "Same selection/inspection identity",
           "file": "game/preview_3d/world_presenter.gd",
           "function": "_register_field_anchor"
+        },
+        {
+          "id": "t04_admit",
+          "label": "Permitted T04 vehicle identity",
+          "file": "game/battlefield/presentation_3d/field_t04.gd",
+          "function": "_eligible"
+        },
+        {
+          "id": "t04_shape",
+          "label": "Provisional 7.5 × 3 m T04 stand-in",
+          "file": "game/battlefield/presentation_3d/field_t04.gd",
+          "function": "_add_standin"
         }
       ],
       "edges": [
@@ -3376,6 +3388,21 @@
           "from": "report_admit",
           "to": "field_anchor",
           "label": "same current permitted ID"
+        },
+        {
+          "from": "n0",
+          "to": "t04_admit",
+          "label": "permitted carrier rows"
+        },
+        {
+          "from": "t04_admit",
+          "to": "t04_shape",
+          "label": "reuses T03 identity/pose lifecycle"
+        },
+        {
+          "from": "t04_shape",
+          "to": "field_anchor",
+          "label": "same selectable actual ID"
         }
       ],
       "related": [
@@ -3389,7 +3416,8 @@
         "game/battlefield/battlefield_presentation.gd",
         "game/battlefield/battlefield_view.gd",
         "game/battlefield/presentation_3d/field_t03.gd",
-        "game/battlefield/presentation_3d/reported_contacts.gd"
+        "game/battlefield/presentation_3d/reported_contacts.gd",
+        "game/battlefield/presentation_3d/field_t04.gd"
       ]
     },
     {
@@ -4545,7 +4573,8 @@
     "game/warehousing/warehouse_service.gd": "warehousing",
     "game/warehousing/warehouse_view.gd": "warehousing",
     "game/battlefield/presentation_3d/field_t03.gd": "battleview",
-    "game/battlefield/presentation_3d/reported_contacts.gd": "battleview"
+    "game/battlefield/presentation_3d/reported_contacts.gd": "battleview",
+    "game/battlefield/presentation_3d/field_t04.gd": "battleview"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -4619,7 +4648,7 @@
     "game/battlefield/battlefield_presentation.gd": "c2b63f25b835ca8e3c1e51bc4cb0cb35cae2dd13ab61d482a317c9c96345d23c",
     "game/battlefield/battlefield_view.gd": "e78dd12722a2a2fc9ecc5a89b56de62376500d1651430aaba0e521be8c58d86e",
     "game/preview_3d/preview.gd": "894411ac62bdcfe6d7a3efeff018e00cebc37bf5abc360e983e48f2aec4ed58a",
-    "game/preview_3d/world_presenter.gd": "67da279513cf093d207b50618dd5e554ae135aa434474e2f71201e79e21cfaaf",
+    "game/preview_3d/world_presenter.gd": "b5d80125865c64f8f520793eb45878b153f3c019721ba9d491af7cce499ead93",
     "game/preview_3d/facility_shells.gd": "fc163f35c52f8bfc065197a138f892f0695456aefaf0e3032af05968a5e55437",
     "game/preview_3d/rear_workers.gd": "116c93bb520294a6f89a82b11ed1396856861e087e1c5695bd56d5369134a68b",
     "game/preview_3d/utility_trucks.gd": "118e13640f471badcc6981721f15cd0cfb2f3c5bfb1ce012008bc0d61989b52c",
@@ -4686,6 +4715,7 @@
     "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
     "game/warehousing/warehouse_view.gd": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac",
     "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
-    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4"
+    "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
+    "game/battlefield/presentation_3d/field_t04.gd": "023faac625055c90eddd101d0cef6f5ecb45b72d761966619e532f28364c312b"
   }
 }

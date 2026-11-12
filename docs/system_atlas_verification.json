@@ -1,25 +1,25 @@
 {
-  "scope": "Battlefield observer source and scoped facing/report checks passed at 47bfecd. Isolated candidate based on main a2d182f; source/diagram success is not full-game/native/FPS acceptance.",
+  "scope": "T04 presentation source reviewed at dd6a410; arranged actual Farmland T04 shared marker and initial/updated facing passed GitHub run 43257090878. Source/diagram success is not native input, visual or FPS acceptance.",
   "checks": {
-    "generation": "Current system_map with30 explicit reviewed function purposes, system_atlas and UI diagram regenerated without game execution.",
+    "generation": "System map with six reviewed T04-related function purposes and source-validated atlas regenerated without local engine execution.",
     "game_script_inventory": {
-      "total": 233,
-      "non_test": 139,
+      "total": 234,
+      "non_test": 140,
       "retained_tests": 94
     },
     "atlas": {
       "systems": 50,
-      "functions_in_inventory": 3581,
-      "diagram_function_links": 289
+      "functions_in_inventory": 3585,
+      "diagram_function_links": 291
     },
     "function_map": {
-      "files": 1170,
-      "functions": 3804,
-      "named": 3441,
+      "files": 1175,
+      "functions": 3808,
+      "named": 3445,
       "anonymous": 363,
       "purpose_reviews_required": 0
     },
-    "links": "Actual candidate VSCode hint points at isolated battlefield working copy; reviewed source checkpoint 47bfecd. No external editor/browser interaction tested."
+    "links": "Workspace hint points to isolated battlefield-t04-worktree; reviewed source checkpoint dd6a410. No external editor/browser interaction tested."
   },
   "browser_preview": "Blocked: the browser tool's URL policy disallows file://. No alternate browser, local host or indirect route attempted.",
   "unverified": [
@@ -27,5 +27,5 @@
     "No local Godot or regression suite.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/integration_scope.json"
+  "runtime_evidence": "evidence/battlefield_3d/t04_current_change.json"
 }

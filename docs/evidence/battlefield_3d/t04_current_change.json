@@ -1,0 +1,10 @@
+{
+  "source_revision": "dd6a410ea1caad756b4f43908b5dda1d217e3895",
+  "scope": "One arranged actual T04 in the normal Farmland session. This is not an ordinary opening grant.",
+  "workflow_run": 43257090878,
+  "artifact_id": 13961134547,
+  "artifact_sha256": "862d4b977b0d06314259b9b0a1526dc0d2e3bda29368a4882e2d67646ecd38a0",
+  "demonstration_sha256": "f744ef62699929769a5ea07ed495c6aa412c88108aa1dd84e3e7b834f9560b15",
+  "result": "PASS: arranged permitted T04 registered its shared marker and used actual initial and updated facing.",
+  "limitations": ["No native click or rendered appearance was checked.", "Parent-only movement, full gameplay and FPS are unverified.", "The T04 silhouette is a provisional internal stand-in."]
+}
