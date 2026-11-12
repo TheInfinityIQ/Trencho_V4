@@ -17,14 +17,18 @@ flowchart TD
   Worker --> ServiceGrip[Actual grip deployed inside reserved service aisle]
   ServiceGrip --> Grips[Actual support contact and manual lock release]
   Grips --> Prepare[Controlled worker lift / real pins engage at parked seats]
-  Prepare --> GripStowed[Pan latch confirmed / actual grip stowed and secured]
-  GripStowed --> HandsClear[Worker releases and withdraws / aisle may clear]
+  Prepare --> GripRetained[Actual parked pins and positive grip detent engaged]
+  GripRetained --> Envelope{Entire retained assembly and paths clear inside unchanged cage?}
+  Envelope -->|yes| HandsClear[Worker hands clear / lower carry and aisle release allowed]
+  Envelope -->|no| Refit[Artist corrects hardware / do not release unsafe service]
+  Refit --> GripHardware
   HandsClear --> Parked[Fully parked and latched; pickup may begin]
   Parked --> Pickup[Receiving actual lower-bale pickup / unchanged custody authority]
   Pickup --> Receipt[Actual carry and finite warehouse handoff]
   Pause[Global pause freezes activity time and mechanism] -.-> Prepare
   UpperPlacement[Any later upper loading] --> Closed{Pan closed and locked?}
-  Closed -->|no| Reject[Actual worker lowers/closes/locks before upper placement]
+  Closed -->|no| Reject[Actual worker lowers pan / retracts and secures grip / closes and locks]
+  Reject --> Closed
   Closed -->|yes| Support[Full retained bearing face and original capacity]
   View[Artist mechanism clip presents committed state; no stock authority] -.-> Prepare
   Note[Prospective design only: no runtime or native acceptance from diagram] -.-> Manifest
@@ -34,3 +38,8 @@ flowchart TD
   Hull --> TimedPose[Approved authored pose follows committed Receiving time]
   HandsClear -. safe presentation handoff .-> Restore[Operation actor hidden before ordinary body restored]
   RootEvents[Actual Ledger movement / height-yaw event] -.-> TimedPose
+
+  Departure[Normal completion or cargo return requests departure] --> TravelReady{Pan closed and locked / grip retracted and secured?}
+  TravelReady -->|no| TravelPrepare[Departure preparation: actual worker lowers / retracts / secures and locks]
+  TravelPrepare --> TravelReady
+  TravelReady -->|yes| Vehicle[Existing ramp and door closure / actual vehicle travel]

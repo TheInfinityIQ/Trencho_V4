@@ -63,6 +63,6 @@
   ],
   "review": {
     "lead": "Scoped return source review completed; no new source defect observed in this episode. This is not final technical approval of unfinished PR146.",
-    "designer": "Final current-head review of complete supplier PR remains required before merge."
+    "designer": "Game Designer reviewed changed-feature handoff and receipt at5020a21: no gameplay contradiction; continue with no added decision/serial gate. This is bounded return-scope feedback, not final approval of unfinished PR146."
   }
 }

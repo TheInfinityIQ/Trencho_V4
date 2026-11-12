@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-12",
+  "scope": "Lead engineering fixture decision from Artist measured fit report. Not complete animation or runtime acceptance.",
+  "problem": "Only29.9999267mm between the deployed20mm grip bar and parked pan; current glove poses intersect pan during parked-state retraction. Do not conceal this with limb distortion.",
+  "measured": {
+    "bar_bounds_godot_m": [
+      [
+        0.14500002562999725,
+        1.0399999618530273,
+        -0.3199999928474426
+      ],
+      [
+        0.1650000363588333,
+        1.25,
+        0.3199999928474426
+      ]
+    ],
+    "pan_bounds_godot_m": [
+      [
+        0.19499996304512024,
+        0.6704999804496765,
+        -0.32199999690055847
+      ],
+      [
+        0.23499999940395355,
+        1.1649999618530273,
+        0.32199999690055847
+      ]
+    ],
+    "nominal_cage_bounds_godot_m": [
+      [
+        -0.265,
+        0.0,
+        -0.35
+      ],
+      [
+        0.265,
+        1.5,
+        0.35
+      ]
+    ],
+    "bar_inside_nominal_cage": true,
+    "bar_to_pan_front_x_gap_m": 0.029999926686286926,
+    "parked_angle_degrees": 90,
+    "slide_state": "100mm deployed",
+    "scope": "Actual rigid geometry at the verified lift endpoint; not approval to change the stow/custody contract."
+  },
+  "decision": "Allow the grip positively retained at its extended stop while the pan is parked; retract after actual lowering before the closed/travel state.",
+  "conditions": [
+    "Entire grip/guide/detent assembly must stay within the unchanged.530\u00d7.700\u00d71.500m cage; the bar-only report does not establish this for the complete assembly.",
+    "Positive visible slide detent and actual parked-pan pins engaged before hands clear and lower pickup.",
+    "No lower-bale, neighboring cargo, truck or actual handling-path interference; no packing/support/capacity change.",
+    "A verified inside-cage positively retained parked configuration may persist during lower carry and aisle release; supersedes unconditional stow-before-every-aisle-release only for this state.",
+    "Actual worker lowers pan before retraction, then secures retracted grip and closed/locked pan before vehicle departure, including cargo returns.",
+    "No powered pan, engine IK workaround, rig distortion, new developer or added approval loop."
+  ],
+  "implementation": "Prospective integration contract only; no production script or runtime asset changed. Artist owns full corrected operation/export and scoped asset QA.",
+  "limited_delivery": {
+    "movement_seconds_per_view": 8.0,
+    "encoded_seconds": 16.066666666666666,
+    "encoded_frames": 482,
+    "fps": 30,
+    "views": 2,
+    "clips_in_supplied_worker_glb": [
+      "worker_s4_open_restricted_v01"
+    ],
+    "readiness": "Prepared unlocked lift only, not latch/stow/complete operator cycle. No human appearance approval inferred; Lead did not inspect encoded motion in this fixture-decision step."
+  },
+  "files": [
+    {
+      "artist_path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\parked_service_grip_fit.json",
+      "bytes": 863,
+      "sha256": "3bf1b83f46abc7eb3cd97d5c14e6c6faf2b1f8b08fe427529018c252ffd6d328"
+    },
+    {
+      "artist_path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\s4_opening_restricted_v01.blend",
+      "bytes": 836736,
+      "sha256": "322355592352abad1434607de3fb77b609d51e1f8823ec10cbb72513ede7a5f5"
+    },
+    {
+      "artist_path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\construction_worker_s4_open_restricted_v01.glb",
+      "bytes": 94064,
+      "sha256": "38b53cc56f54b29a033923c1ac3248c0551b49345aae4ea8549b41a508a46e7e"
+    },
+    {
+      "artist_path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\restricted_opening_review_v01\\s4_opening_restricted_v01.mp4",
+      "bytes": 2837970,
+      "sha256": "e2183c26a2e84c35678b371ec0f2a17cc01b22b5769eec1f7de65f3e02e69a65"
+    },
+    {
+      "artist_path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\restricted_opening_review_v01\\video_manifest.json",
+      "bytes": 3628,
+      "sha256": "8877c60e0677fe3fe3cfacd2789db8108be6c2b2c77fbb2f05fb8d831af6c532"
+    }
+  ],
+  "next": "Artist finishes reachable manual controls, deployment, supported lift, parked pin/detent contact, hands-clear lower access, actual lowering/retraction/closing/locking and withdrawal; provide one full normal-speed opaque preview/export. Existing original clips and approved assets remain preserved."
+}
