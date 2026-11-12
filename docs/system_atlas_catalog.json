@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "reviewed_baseline": "a26fec110e7d3b3aae6e63e3cdf5f83cc46ebad3",
+  "reviewed_baseline": "18fbfdaf95eb768acda76417a26d9002a3d9ef8b",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-transport-worktree",
   "title": "Trencho â€” current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
@@ -4002,8 +4002,8 @@
       "id": "warehousing",
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
-      "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits.",
+      "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state + WarehouseRecovery exact batch coordination",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits. Player-confirmed whole non-timber bay clearance now queues actual Other hauling into one finite6×4m source-only staging fixture; existing actors prepare/carry/deposit exact package IDs. Source receipt lock releases only after physical completion/safe stop. Staged goods remain available for ordinary physical collection.",
       "nodes": [
         {
           "id": "opening",
@@ -4100,6 +4100,54 @@
           "label": "Cached static collision / measured access opening",
           "file": "game/warehousing/warehouse_assets.gd",
           "function": "add_static_collision"
+        },
+        {
+          "id": "stage_quote",
+          "label": "Actual selected bay and full staging quote",
+          "file": "game/warehousing/warehouse_recovery.gd",
+          "function": "quote"
+        },
+        {
+          "id": "stage_confirm",
+          "label": "Explicit same-session bay confirmation",
+          "file": "game/rear_base/base_demo.gd",
+          "function": "_confirm_warehouse_clearance"
+        },
+        {
+          "id": "stage_claim",
+          "label": "Atomic whole physical package claims",
+          "file": "game/identity/identity_ledger.gd",
+          "function": "request_whole_package_batch"
+        },
+        {
+          "id": "stage_jobs",
+          "label": "Locked bay and ordinary Other hauling jobs",
+          "file": "game/warehousing/warehouse_recovery.gd",
+          "function": "confirm"
+        },
+        {
+          "id": "stage_support",
+          "label": "Finite exact destination / real worker fixture visit",
+          "file": "game/warehousing/warehouse_recovery.gd",
+          "function": "reserve_destination"
+        },
+        {
+          "id": "stage_receipt",
+          "label": "Same package deposit / source unlock",
+          "file": "game/warehousing/warehouse_recovery.gd",
+          "function": "deposited"
+        },
+        {
+          "id": "stage_stop",
+          "label": "Safe stop / carried goods finish",
+          "file": "game/warehousing/warehouse_recovery.gd",
+          "function": "stop"
+        },
+        {
+          "id": "stage_use",
+          "label": "Ordinary physical staged stock collection",
+          "file": "game/staffing/rear_simulation.gd",
+          "function": "stock_work_point"
         }
       ],
       "edges": [
@@ -4192,6 +4240,51 @@
           "from": "metal_static_fixture",
           "to": "metal_static_collision",
           "label": "fixture creation only; no inventory authority"
+        },
+        {
+          "from": "stage_quote",
+          "to": "stage_confirm",
+          "label": "explicit player decision"
+        },
+        {
+          "from": "stage_confirm",
+          "to": "stage_claim",
+          "label": "exact bay and unchanged packages"
+        },
+        {
+          "from": "stage_claim",
+          "to": "stage_jobs",
+          "label": "whole supported batch before pickup"
+        },
+        {
+          "from": "stage_jobs",
+          "to": "stage_support",
+          "label": "actual shared actor and existing1.5s smoke"
+        },
+        {
+          "from": "stage_support",
+          "to": "stage_receipt",
+          "label": "existing real pickup/carry/deposit"
+        },
+        {
+          "from": "stage_jobs",
+          "to": "stage_stop",
+          "label": "cancel batch, no uncollected stock loss"
+        },
+        {
+          "from": "stage_stop",
+          "to": "stage_receipt",
+          "label": "safe carried package handoff"
+        },
+        {
+          "from": "stage_receipt",
+          "to": "stage_use",
+          "label": "source-only staged stock remains physical"
+        },
+        {
+          "from": "stage_use",
+          "to": "stage_quote",
+          "label": "only actual empty staging admits another batch"
         }
       ],
       "related": [
@@ -4210,7 +4303,8 @@
         "game/warehousing/warehouse_collision.gd",
         "game/warehousing/warehouse_paths.gd",
         "game/warehousing/warehouse_service.gd",
-        "game/warehousing/warehouse_view.gd"
+        "game/warehousing/warehouse_view.gd",
+        "game/warehousing/warehouse_recovery.gd"
       ],
       "notes": "Scoped normal receipt, fixture conversion, native entrance/presentation and100kgutility/7kgfuel receipts exist with setup limits. Ordinary return/reload/staging recovery, true paired timber, native joined appearance, human keyboard/E acceptance and60FPS remain pending. Nearest feasible source policy avoids exhaustive per-crate route optimization. Versioned metal-access crate rack is source-bound with cached opening-preserving static collision. Separate removable cassettes are imported but not installed by storage preparation; full metal handling remains pending."
     },
@@ -4777,18 +4871,19 @@
     "game/supplier_transport/supplier_passengers.gd": "supplier_transport",
     "game/supplier_transport/supplier_passengers_view.gd": "supplier_transport",
     "game/supplier_transport/paired_ground_path.gd": "supplier_transport",
-    "game/supplier_transport/supplier_returns.gd": "supplier_transport"
+    "game/supplier_transport/supplier_returns.gd": "supplier_transport",
+    "game/warehousing/warehouse_recovery.gd": "warehousing"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
     "game/main/game_session.gd": "55ffbb94540bf9ccb45a674f2ac12bb1a553829c96d689b58b6d12f3a1ec6065",
     "game/rear_base/base_simulation.gd": "7983a2b2178d4275a60daa6520649d487cebe5b54c85ebb95eafbe420c3faa7a",
-    "game/identity/identity_ledger.gd": "dbaa8bc9a1d543da6ef94198291dae2cd5f4ab3a3fb1cb4931ded2e7f2c6ebd4",
+    "game/identity/identity_ledger.gd": "f3526b59986039e1fe172a6a9444a554b09302caf69ab6803e5346f5ec871f67",
     "game/identity/identity_records.gd": "d44aaf36ba405361dd423af438a8d3af16b9d0204daa51014b247a2a8216cc7d",
-    "game/staffing/rear_simulation.gd": "5dcb22612cc7093d8a09d76b948a43ed970d5055cbe8a2d40f06953f77361f1b",
+    "game/staffing/rear_simulation.gd": "1fc4381a002502b1d2c39a2cb290dd67b6016318f42f2f65735c9f63b376cfca",
     "game/staffing/rear_layout.gd": "9813a0caeea2c2a5347768807b905e4a9b1f3b4296f1af03871b36f6d6421851",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "cd69f543544ef86f0fb964a303aa80b5e2c8f35477284831a82e2f0dd10b3428",
+    "game/procurement/receiving_simulation.gd": "8381741d72e5487caee6dc3299cfc2bb866216c059b8ddcf44b64bfeaed0793a",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
     "game/construction/construction_service.gd": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
@@ -4839,7 +4934,7 @@
     "game/bridges/demolition_service.gd": "fd43d7f1d9109d445078f6777c21cfc10395b6c3d4d6ca154342a48b0a458142",
     "game/mines/mine_service.gd": "1506cf17995badc164ba258df758e9b053ec44c66720f88e4469bcb7ec5b618c",
     "game/mines/device_catalogue.gd": "c6513982f0fe073425e719e5bfaaf40426df3277c8cfb0e6c6f611aa47e01830",
-    "game/rear_base/base_demo.gd": "1a90e0a20256c83a007db6b9d1a09cd2271e074c827e635846c1b188f629368c",
+    "game/rear_base/base_demo.gd": "b89b9d27be5b06a6b95be1a3c7672d33a43bfde0b44c9460a46e5bd8fb5613fd",
     "game/rear_base/base_map.gd": "9bbafa6ceda346b796711842deffe74fee0981eb118d1671945c5fab14ab6a41",
     "game/rear_base/factory_plan.gd": "3a1edf570cbf1908510f4e1652230e88b6d5b299f6e09fdd7c6e932217c9fec3",
     "game/rear_base/factory_plan_panel.gd": "49753bdd15717aab36316461a5d894595c24f1f74cfd0416ece6d7860288ee03",
@@ -4915,8 +5010,8 @@
     "game/warehousing/warehouse_assets.gd": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee",
-    "game/warehousing/warehouse_view.gd": "c098d5d0a19818740734a335cd7033f10043849ddfa91c8f676ade9d7d8ed2cb",
+    "game/warehousing/warehouse_service.gd": "34f2bc7698fe3ebf8f8db84e09f8117d3f772bb173e55f51643e1eccd5949cf3",
+    "game/warehousing/warehouse_view.gd": "a6929a5845bfa9e3d878bac977c42b21ca7e50e103841f910d756805b6c68680",
     "game/supplier_transport/cargo_packing.gd": "72681cea8b1c15522b709c4258115a891c1db9adc49dd25b228e798374d196b8",
     "game/supplier_transport/supplier_freight.gd": "61a530f1fa31d19d122bed7cb2e6cb5ea0a4d529cef59e99854fe3e1946f543d",
     "game/supplier_transport/supplier_road.gd": "6487237dc067d2b42d7c08bcd3b169f4413509dd5a296e68d3dcdafc724d020b",
@@ -4927,6 +5022,7 @@
     "game/supplier_transport/supplier_passengers.gd": "4a71de0d3d6d61044113f1a57bfa5c42ebe0428455895f44826167111e372a50",
     "game/supplier_transport/supplier_passengers_view.gd": "b2f9b81f16a530beb91984ab1493080bc459f1a0d930765426e756d6c1ae180f",
     "game/supplier_transport/paired_ground_path.gd": "87975e6e5c5a64bc53b46f343c26687114c3c036509bfc1328f2bd7a7cf1e372",
-    "game/supplier_transport/supplier_returns.gd": "7a2b14d063b166e2322d412137f150129a222d3aaa93656aa75b72a1eaef39c2"
+    "game/supplier_transport/supplier_returns.gd": "7a2b14d063b166e2322d412137f150129a222d3aaa93656aa75b72a1eaef39c2",
+    "game/warehousing/warehouse_recovery.gd": "d385b2c431fbb7ed1848135464f18425bf29e4cdeddf2d4fb97224138bad1e33"
   }
 }
