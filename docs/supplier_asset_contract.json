@@ -558,6 +558,14 @@
       "authority": "Lead acknowledged existing bounded authoring scope; proceed without another routine permission round. No changed mechanism handed for integration."
     }
   },
+  "s4_complete_operator_delivery": {
+    "stage": "Complete V02 source/export/moving-review handoff received and verified by Lead; human full-cycle appearance approval and Godot integration pending. Supersedes study-in-progress readiness above without erasing rejected history.",
+    "package": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_complete_operator_delivery_v02",
+    "archive_sha256": "4e8caea6432e401093754675ecff52428b488ecac60d59edcbc60dc38d469826",
+    "lead_receipt_in_combined_candidate": "evidence/supplier_transport/s4_complete_operator_delivery_v02.json",
+    "runtime": "Paired worker/fixture open and close clips share module origin and clock; existing Root bone motion consumed once. Locked service state persists across packages, no fixed demo hold or stock callbacks.",
+    "limits": "Explicit proximal garment warnings retained. Full 86.7-second video and complementary 57.9-second moving-hand video are appearance previews of actual exports, not game captures or integration/FPS evidence."
+  },
   "s4_service_pacing": {
     "authority": "Game Designer guidance12November2026; Lead timing/integration responsibility",
     "status": "No fixed totalservice duration approved; diagnostic76/121.4s are not forced gameplay delays.",
