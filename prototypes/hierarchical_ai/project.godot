@@ -1,0 +1,15 @@
+; Standalone research prototype: no autoloads or connection to the main game.
+config_version=5
+
+[application]
+config/name="Commander prototype"
+run/main_scene="res://game/main.tscn"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=800
+window/size/window_width_override=1280
+window/size/window_height_override=800
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
