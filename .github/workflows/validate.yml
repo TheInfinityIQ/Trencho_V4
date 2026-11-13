@@ -11,6 +11,11 @@ on:
         type: string
         required: false
         default: ''
+      direct_project:
+        description: Project for the optional direct check (root or a project under prototypes)
+        type: string
+        required: false
+        default: '.'
 
 permissions:
   contents: read
@@ -37,6 +42,7 @@ jobs:
         shell: python
         env:
           DIRECT_CHECK: ${{ inputs.direct_check }}
+          DIRECT_PROJECT: ${{ inputs.direct_project }}
         run: |
           import json, os, pathlib, re, subprocess
           output = pathlib.Path(".artifacts/current-change")
@@ -57,7 +63,8 @@ jobs:
               base = subprocess.check_output(["git", "rev-parse", head + "^"], text=True).strip()
           subprocess.run(["git", "diff", "--check", base, head], check=True)
           changed = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=ACMR", "-z", base, head]).decode().split("\0")
-          scripts = [p for p in changed if p.startswith("game/") and p.endswith(".gd") and "/tests/" not in p]
+          prototype_prefix = "prototypes/hierarchical_ai/"
+          scripts = [p for p in changed if (p.startswith("game/") or p.startswith(prototype_prefix)) and p.endswith(".gd") and "/tests/" not in p]
           textures = ["game/test_art/tiny_battle/tile_0047.png", "game/test_art/tiny_battle/tile_0132.png", "game/test_art/tiny_battle/tile_0001.png", "game/test_art/tiny_battle/tile_0016.png", "game/test_art/roguelike_indoor/indoor_sheet.png", "game/test_art/tiny_battle/tile_0044.png", "game/test_art/tiny_battle/tile_0045.png", "game/test_art/tiny_battle/tile_0046.png", "game/test_art/tiny_battle/tile_0048.png", "game/test_art/tiny_battle/tile_0049.png", "game/test_art/tiny_battle/tile_0050.png", "game/test_art/tiny_battle/tile_0052.png", "game/test_art/roguelike_characters/character_sheet.png"]
           models = ["game/construction/assets/smoke.glb", "game/construction/assets/pylon.glb", "game/construction/assets/scissors.glb", "game/construction/assets/tape_half.glb", "game/characters/assets/construction_worker.glb", "game/characters/assets/soldier.glb", "game/characters/assets/rifle.glb", "game/preview_3d/assets/manager.fbx", "game/preview_3d/assets/manager_idle.fbx", "game/preview_3d/assets/manager_skin.png", "game/preview_3d/assets/supply_table.glb", "game/preview_3d/assets/material_box.glb", "game/preview_3d/assets/industrial/building_h.glb", "game/preview_3d/assets/industrial/building_k.glb", "game/preview_3d/assets/industrial/building_l.glb", "game/preview_3d/assets/industrial/textures/colormap.png", "game/preview_3d/assets/commercial/building_a.glb", "game/preview_3d/assets/commercial/textures/colormap.png", "game/preview_3d/assets/car_kit/truck_flat.glb", "game/preview_3d/assets/car_kit/delivery.glb", "game/preview_3d/assets/car_kit/textures/colormap.png"]
           models += ["game/warehousing/assets/" + name + ".glb" for name in ['warehouse_shell', 'warehouse_crate_rack', 'warehouse_long_stock_rack', 'medium_crate', 'small_crate', 'metal_stock', 'closed_keg', 'timber_bundle', 'textile_bale', 'fuel_can']]
@@ -69,9 +76,18 @@ jobs:
           asset_update = any(p in dependencies or p in [t + ".import" for t in dependencies] for p in changed)
           (output / "scripts.json").write_text(json.dumps(scripts), encoding="utf-8")
           direct = os.environ.get("DIRECT_CHECK", "").strip()
+          workspace = pathlib.Path.cwd().resolve()
+          requested_project = os.environ.get("DIRECT_PROJECT", "").strip() or "."
+          project = (workspace / requested_project).resolve()
+          prototypes = (workspace / "prototypes").resolve()
+          if project != workspace and (not prototypes.is_relative_to(workspace) or not project.is_relative_to(prototypes)):
+              raise SystemExit("Direct project must be the repository root or a project under prototypes.")
+          if not (project / "project.godot").is_file():
+              raise SystemExit("Direct project must contain project.godot.")
+          (output / "direct_project.txt").write_text(str(project), encoding="utf-8")
           if direct:
               (output / "direct_check.gd").write_text(direct + "\n", encoding="utf-8")
-          (output / "scope.txt").write_text(f"revision={head}\nbase={base}\nchanged_scripts={scripts}\ndirect_check={bool(direct)}\nSyntax checks are not gameplay acceptance. No regression suites run.\n", encoding="utf-8")
+          (output / "scope.txt").write_text(f"revision={head}\nbase={base}\nchanged_scripts={scripts}\ndirect_check={bool(direct)}\ndirect_project={project.relative_to(workspace)}\nSyntax checks are not gameplay acceptance. No regression suites run.\n", encoding="utf-8")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
               stream.write(f"engine={'true' if scripts or direct or asset_update else 'false'}\n")
               stream.write(f"direct={'true' if direct else 'false'}\n")
@@ -172,7 +188,10 @@ jobs:
           import json, os, pathlib, re, subprocess
           output = pathlib.Path(".artifacts/current-change")
           for index, script in enumerate(json.loads((output / "scripts.json").read_text())):
-              command = ["timeout", "--signal=TERM", "--kill-after=5s", "30s", os.environ["GODOT_BIN"], "--headless", "--path", ".", "--check-only", "--script", "res://" + script]
+              prefix = "prototypes/hierarchical_ai/"
+              project = prefix.rstrip("/") if script.startswith(prefix) else "."
+              relative = script[len(prefix):] if script.startswith(prefix) else script
+              command = ["timeout", "--signal=TERM", "--kill-after=5s", "30s", os.environ["GODOT_BIN"], "--headless", "--path", project, "--check-only", "--script", "res://" + relative]
               result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
               (output / f"parse-{index:03d}.log").write_text(result.stdout, encoding="utf-8")
               print(script, result.stdout, flush=True)
@@ -198,7 +217,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout --signal=TERM --kill-after=5s 45s "$GODOT_BIN" --headless --path . --audio-driver Dummy --script res://.artifacts/current-change/direct_check.gd > .artifacts/current-change/direct.log 2>&1
+          project="$(cat .artifacts/current-change/direct_project.txt)"
+          timeout --signal=TERM --kill-after=5s 45s "$GODOT_BIN" --headless --path "$project" --audio-driver Dummy --script "$GITHUB_WORKSPACE/.artifacts/current-change/direct_check.gd" > .artifacts/current-change/direct.log 2>&1
           cat .artifacts/current-change/direct.log
           if grep -E '^\s*(SCRIPT ERROR:|ERROR:)' .artifacts/current-change/direct.log; then exit 1; fi
       - name: Retain only current-change evidence

@@ -1,0 +1,27 @@
+flowchart TD
+    Geography[Known geography and mission] --> Terrain[Routes regions crossings sight and access]
+    Observations[Delivered observations with source and time] --> Beliefs[Enemy tracks hypotheses and unknowns]
+    Own[Own forces and current tasks] --> Capability[Available military capability]
+    Supply[Replaceable resource and delivery model] --> Capability
+    Terrain --> Effects[Candidate desired effects]
+    Beliefs --> Effects
+    Capability --> Plans[Feasible operations with alternatives and fallback]
+    Effects --> Plans
+    Plans --> Decision{Enough evidence for this commitment}
+    Decision -->|No| Recon[Assign a specific scouting question]
+    Recon --> Elements[Squads and vehicle elements]
+    Decision -->|Yes| Commit[Commit forces and request support]
+    Commit --> Elements
+    Elements --> Execution[Individual action execution]
+    Execution --> Observations
+    Execution --> Feedback[Progress inability losses and supply use]
+    Feedback --> Own
+    Feedback --> Supply
+    Feedback --> Beliefs
+    Observations -.-> Journal[Timestamped spatial event journal]
+    Beliefs -.-> Journal
+    Plans -.-> Journal
+    Commit -.-> Journal
+    Execution -.-> Journal
+    Supply -.-> Journal
+    Journal --> Analysis[Timeline map reconstruction and decision inspection]
