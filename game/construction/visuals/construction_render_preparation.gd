@@ -82,7 +82,7 @@ func _prepare_warehouse(stage: Node3D) -> void:
 			for material: ShaderMaterial in prepared.materials:
 				material.set_shader_parameter("progress",0.5)
 				resources.append(material)
-	for file: String in ["warehouse_crate_rack_metal_access_v02.glb","warehouse_metal_lower_cassette_v01.glb","warehouse_metal_upper_cassette_v01.glb","warehouse_long_stock_rack.glb","small_crate.glb","medium_crate.glb","metal_stock.glb","closed_keg.glb","timber_bundle.glb","textile_bale.glb","fuel_can.glb"]:
+	for file: String in ["warehouse_crate_rack_metal_access_v02.glb","warehouse_metal_lower_cassette_v01.glb","warehouse_metal_upper_cassette_v01.glb","warehouse_long_stock_rack_v04.glb","small_crate.glb","medium_crate.glb","metal_stock.glb","closed_keg.glb","timber_bundle.glb","textile_bale.glb","fuel_can.glb"]:
 		var model := WarehouseAssets.model(file)
 		if model == null: continue
 		stage.add_child(model)

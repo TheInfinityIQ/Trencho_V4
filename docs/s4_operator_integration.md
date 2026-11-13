@@ -65,3 +65,23 @@ check/publication. The quote now declares a manual-bale variant and keeps other
 S4 cargo on its original static rack/supports. This is a corrected planning
 omission, not evidence of a shipped regression. Retain original restraint meshes
 for travel and remove them using the existing before-pickup condition.
+
+## Focused connection receipt — 13 November 2026
+
+The first direct run43483595686 stalled after its check script read the optional
+raw-order `facing_degrees` key directly. Detailed retained direct.log identifies
+that check line; production already uses a zero default for the same field.
+The corrected check uses that existing default and has a15-second fail-fast
+watchdog for otherwise unhandled check errors, within the unchanged45-second
+process limit. No approved animation or production shelf code changed.
+
+Corrected GitHub run43528719333 passed at source
+`0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1`: actual50kg M05, upper-first cargo,
+same real operator, manual opening, parked lower service, actual closing/exit,
+paired imported animation time/root alignment and paused view sleep. Required
+script parsing also passed. This does not establish paired timber, warehouse
+delivery, ordinary native input, visual approval of a new animation or60FPS.
+
+The subsequent paired-timber/warehouse plan is separately frozen in
+[paired delivery](feature_plans/paired_timber_delivery_v1.json). Preserve this
+source-specific receipt when later integration heads change.

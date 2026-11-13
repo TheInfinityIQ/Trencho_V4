@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "feature": "Complete supplier timber delivery into physical warehouse storage",
+  "frozen_before_production_edits": true,
+  "source_head": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+  "recorded_utc": "2026-11-13T23:41:42Z",
+  "user_outcome": "Two actual workers unload one real timber bundle, shoulder-carry it together and visibly deposit it into the warehouse; the truck departs safely and another order can be placed.",
+  "diagram": "docs/diagrams/paired_timber_delivery.mmd",
+  "existing_owners": {
+    "custody": "IdentityLedger.joint_carries: begin/move/finish/put_down keep one physical stock identity and two exclusive worker commitments",
+    "scheduling": "Receiving and Freight event boundaries; no added global clock, repeating scheduler or animation stock callbacks",
+    "storage": "WarehouseService reserves one finite existing timber cell before cargo leaves the truck",
+    "geometry": "Existing paired_ground_path checks the complete fixed-orientation worker/load envelope; authored turns require actual clear staging space",
+    "art": "Artist Director owns new anatomical contacts, continuous motion, verified exports and normal-speed appearance review; Lead owns integration"
+  },
+  "first_independent_increment": {
+    "change": "Adopt the already delivered separate warehouse long-stock v04 model and timber-only .60/1.75m cell planes; preserve original rack and crate handling.",
+    "asset_sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+    "footprint_m": [2.6, 1.0],
+    "outer_height_m": 2.10,
+    "cells": 4,
+    "bundle_registration_y_m": -0.004,
+    "collision": "Reuse cached exact static mesh collision, so the authored openings are not filled by old coarse boxes.",
+    "startup": "Include revised fixture in existing loading-cover preparation and declared remote import dependencies.",
+    "check": "One brief GitHub current-change observation of the revised timber-only fixture, four cell registrations and preserved ordinary crate planes. Retrieve the actual generated import sidecar; no local engine.",
+    "not_complete": "This is not a finished animated paired delivery. Do not bind historical rejected clips or remove the current honest timber hold until the shared action and accepted motion are connected."
+  },
+  "pair_action_contract": [
+    "Respect the shared hauling priority selector; never borrow a busy worker, consume a higher-priority commitment, or strand one waiting worker instead of feasible lower-priority work.",
+    "Select two distinct eligible physically available hauling workers; reserve both exclusively before claiming one <=50kg source package and one warehouse cell.",
+    "No second eligible person, warehouse cell, truck aisle or complete swept route means cargo stays aboard with a specific event-woken reason.",
+    "Prepare a missing compatible fixture through a real worker visit and existing smoke lifecycle before access.",
+    "Keep fore/aft roles attached to the same worker identities. Actual pickup stations, start/stop/turn/ramp/put-down paths and grip release come from the accepted export metadata, never guessed legacy sockets.",
+    "Use one shared custody begin, atomic pair/payload motion, and one actual destination finish/warehouse commit. Both workers retain their original 25kg contribution limits.",
+    "Reassignment/return before lift releases uncollected promises safely. After lift finish the real supported deposit or existing recoverable put-down; never delete or duplicate cargo. A ground put-down does not commit a warehouse cell, count supplier return, refund cargo, or complete the physical delivery gate; it needs an actual recovery route.",
+    "Pause freezes committed progress and active cosmetics. Hidden views keep applicable domain progression and stop cosmetic frame processing.",
+    "Return/departure still waits for actual handlers, cargo and shelf/ramp/door clearance. Convoy readiness follows the existing final physical handover/departure rules."
+  ],
+  "designer_scope_review": {
+    "reviewer_thread": "01a18e60-cd67-7b01-8047-a8768208b387",
+    "decision": "Observable plan accepted with hauling-priority and recoverable-put-down accounting clarifications incorporated above; final connected-head and animation acceptance remain separate.",
+    "source": "Direct Designer response to this Lead plan in the current task on 13 November 2026"
+  },
+  "required_artist_handoff": [
+    "Approved shoulder/stabilizer contact frames and continuous actual-worker video",
+    "Source/export hashes, clip windows and floor-root/payload transforms",
+    "Truck pickup/ramp and warehouse lower/upper face transitions fitted to accepted unchanged assets",
+    "No hand/torso or glove/load penetration, no excessive ramp bounce, stable fore/aft identity"
+  ],
+  "verification_policy": "Only brief changed-action checks on GitHub. No local Godot, regression suites, raised performance limits or broad FPS acceptance. Human appearance review is distinct from Lead/Designer PR decisions.",
+  "metrics": {
+    "planning_before_this_record_seconds": null,
+    "reason": "Restored status/diagnosis already in progress before this phase timestamp; do not invent a retrospective stopwatch.",
+    "token_usage": null,
+    "token_reason": "Parent chat does not expose attributable provider counters; no estimate substituted.",
+    "regressions": null,
+    "regression_reason": "No regression campaign is authorized; record only observed changed-action failures and planning omissions."
+  }
+}

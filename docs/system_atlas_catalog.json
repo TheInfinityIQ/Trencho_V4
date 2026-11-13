@@ -2,7 +2,7 @@
   "schema": 1,
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
-  "title": "Trencho â€” current implementation atlas",
+  "title": "Trencho \u00e2\u20ac\u201d current implementation atlas",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
   "systems": [
     {
@@ -605,7 +605,7 @@
         {
           "from": "n0",
           "to": "n1",
-          "label": "quote â†’ resource order"
+          "label": "quote \u00e2\u2020\u2019 resource order"
         },
         {
           "from": "n1",
@@ -1290,7 +1290,7 @@
         "identity",
         "construction"
       ],
-      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01â€“T05 specs are data in vehicle_specs.gd.",
+      "notes": "A produced vehicle is not automatically crewed, fuelled, parked, dispatched or combat-ready. Canonical T01\u00e2\u20ac\u201cT05 specs are data in vehicle_specs.gd.",
       "primary_files": [
         "game/production/heavy_production.gd"
       ]
@@ -1458,7 +1458,7 @@
     },
     {
       "id": "dispatch",
-      "title": "Rear â†’ HQ manifests and return",
+      "title": "Rear \u00e2\u2020\u2019 HQ manifests and return",
       "group": "Logistics",
       "owner": "DispatchService",
       "summary": "Owns accepted manifests, staging/loading, route, HQ unloading, cancellation and return commitments. Ledger keeps actual cargo/person/hull identities and receipts.",
@@ -2218,7 +2218,7 @@
     },
     {
       "id": "freight",
-      "title": "HQ â†’ forward stop freight and return",
+      "title": "HQ \u00e2\u2020\u2019 forward stop freight and return",
       "group": "Logistics",
       "owner": "ForwardTransport",
       "summary": "Actual military T01, stock portions, handlers, fuel and both route directions are committed to a job. Unloaded forward stock and return are separate phases.",
@@ -2746,7 +2746,7 @@
         "field",
         "bridge"
       ],
-      "notes": "The normal world is authored Farmland4kmÃ—6km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
+      "notes": "The normal world is authored Farmland4km\u00c3\u20146km. Multiple complete procedural map families and campaign/persistence are not established by terrain catalogue or snapshot methods.",
       "primary_files": [
         "game/terrain/terrain_world.gd",
         "game/terrain/terrain_catalog.gd",
@@ -3059,7 +3059,7 @@
       "title": "Mines, hazards, knowledge and clearance",
       "group": "Engineering",
       "owner": "MineService + DeviceCatalog",
-      "summary": "Actual D01â€“D03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
+      "summary": "Actual D01\u00e2\u20ac\u201cD03 devices, per-side knowledge and timed scan/disarm tasks are distinct from D04 demolition. Ledger movement signals detect physical contacts.",
       "nodes": [
         {
           "id": "n0",
@@ -3273,7 +3273,7 @@
       "title": "Battlefield read models and 2D inspection",
       "group": "Presentation",
       "owner": "BattlefieldPresentation + BattlefieldView",
-      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad’s acknowledged intent separately from current activity. Selected friendly engagement facts distinguish own-squad task and status, individual motion/reload and current E02 from any same-recipient historical transfer.",
+      "summary": "Read models select permitted own units/observed contacts and objective facts. Inspection and supply-stage feedback use actual identities with existing information restrictions. Existing3D observation now has ID-keyed provisional friendly T03 and T04 hulls and distinct permitted report cues, shared picking/inspection and canonical deadline-driven report expiry. No duplicate simulation, hidden enemy bodies or approved-art/FPS claim. The explicitly authorized friendly forward stop has a shared selectable cue and read-only loose-stock/opening-issue inspection; bounded active delivery/issue states and latest confirmed transfer events are separate from current loose stock; full history and untracked interrupted rack work remain unavailable. An explicit follow action keeps one permitted friendly person in view and shows their own squad\u2019s acknowledged intent separately from current activity. Selected friendly engagement facts distinguish own-squad task and status, individual motion/reload and current E02 from any same-recipient historical transfer.",
       "nodes": [
         {
           "id": "n0",
@@ -3343,7 +3343,7 @@
         },
         {
           "id": "t04_shape",
-          "label": "Provisional 7.5 × 3 m T04 stand-in",
+          "label": "Provisional 7.5 \u00d7 3 m T04 stand-in",
           "file": "game/battlefield/presentation_3d/field_t04.gd",
           "function": "_add_standin"
         },
@@ -3875,7 +3875,7 @@
       "title": "Authored world, opening armies and normal rear start",
       "group": "Foundation",
       "owner": "FarmlandSession + FarmlandScenario + BattlefieldStart / RearStart",
-      "summary": "Scenario creation composes the4kmÃ—6km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
+      "summary": "Scenario creation composes the4km\u00c3\u20146km world, declared forces/objectives/stops and authored operation policy. Normal empty-field creation is distinct from legacy prebuilt diagnostic sessions.",
       "nodes": [
         {
           "id": "n0",
@@ -4249,7 +4249,7 @@
       "title": "Enterable warehouse and physical material storage",
       "group": "Rear economy",
       "owner": "WarehouseService + IdentityLedger; WarehouseView presents actual state + WarehouseRecovery exact batch coordination",
-      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits. Player-confirmed whole non-timber bay clearance now queues actual Other hauling into one finite6×4m source-only staging fixture; existing actors prepare/carry/deposit exact package IDs. Source receipt lock releases only after physical completion/safe stop. Staged goods remain available for ordinary physical collection.",
+      "summary": "Completed12x16modules own finite fixture/package space, real worker preparation, event-woken handling access and full-edge joins. Ledger alone owns quantities/custody. ActualGLBs form an enterable lit interior; roof cutaway follows camera mode. Existing utility trips collect real package batches from exterior curbs; fuel handlers use actual shelf faces and explicit20kg can limits. Player-confirmed whole non-timber bay clearance now queues actual Other hauling into one finite6\u00d74m source-only staging fixture; existing actors prepare/carry/deposit exact package IDs. Source receipt lock releases only after physical completion/safe stop. Staged goods remain available for ordinary physical collection.",
       "nodes": [
         {
           "id": "opening",
@@ -5259,13 +5259,13 @@
     "game/construction/visuals/construction_site_visual.gd": "8161f8032a8eac02c21d8ee731d276a60a513b45f8b2773a6a2ef83211139323",
     "game/construction/visuals/construction_celebration.gd": "32f92494b8b3820d053708a61910cab20550b2259991346ce2d5c19e23b44ae2",
     "game/construction/visuals/construction_appearance.gd": "51addcc31278935e1cfeae1d4598312168811be688ffbe4c58ee5b56b461addb",
-    "game/construction/visuals/construction_render_preparation.gd": "6d92fb04a9af39523edce761206cc22f6a1e254a7fd2b02dc4b46626fb6f32cf",
+    "game/construction/visuals/construction_render_preparation.gd": "c0ec061f611191b8521a4e84826fe87031913771a86dc437708606837642baab",
     "game/warehousing/material_packages.gd": "70128b0c201c00c1242e5cbb20e2cc199a4c28922cddd71ee6afdf281d42ab2b",
     "game/warehousing/warehouse_assets.gd": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "34f2bc7698fe3ebf8f8db84e09f8117d3f772bb173e55f51643e1eccd5949cf3",
-    "game/warehousing/warehouse_view.gd": "a6929a5845bfa9e3d878bac977c42b21ca7e50e103841f910d756805b6c68680",
+    "game/warehousing/warehouse_service.gd": "318784c6405a7d964048f0901dbe6f7d9d8ba5779caffe2732a93d3158a52041",
+    "game/warehousing/warehouse_view.gd": "0a5e62647d85ebe31282360d4d508274606a62b957b7f874da4a2b6e17071916",
     "game/supplier_transport/cargo_packing.gd": "2a351eef77f75e5ed411338092913c0f2222e7cb6b31ebc7f1154a954603ae00",
     "game/supplier_transport/supplier_freight.gd": "4133a15838a9a28c85b1e57840e54b5b1305c39401e979ba37fc181036e1591a",
     "game/supplier_transport/supplier_road.gd": "6487237dc067d2b42d7c08bcd3b169f4413509dd5a296e68d3dcdafc724d020b",

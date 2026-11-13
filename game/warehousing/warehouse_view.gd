@@ -171,25 +171,27 @@ func _refresh_bay(bay: Dictionary) -> void:
 		view.packages.erase(index)
 
 func _fixture(parent: Node3D, family: String) -> void:
-	var visual := Assets.model("warehouse_long_stock_rack.glb" if family == "timber" else "warehouse_crate_rack_metal_access_v02.glb")
+	var visual := Assets.model("warehouse_long_stock_rack_v04.glb" if family == "timber" else "warehouse_crate_rack_metal_access_v02.glb")
 	if visual != null:
 		parent.add_child(visual)
-		if family != "timber":
-			Assets.add_static_collision(visual)
-			return
+		# Preserve actual service gaps in both authored fixtures.
+		Assets.add_static_collision(visual)
+		return
+	var post_height := 2.10 if family == "timber" else 1.8
+	var supports: Array = _service.TIMBER_SUPPORT_Y if family == "timber" else [0.25,0.95]
 	for x: float in [-1.27,1.27]:
 		for z: float in [-0.47,0.47]:
-			if visual == null: _world._box(parent,Vector3(x,0.9,z),Vector3(0.06,1.8,0.06),Color("536363"))
-	for y: float in [0.25,0.95]:
+			_world._box(parent,Vector3(x,post_height/2.0,z),Vector3(0.06,post_height,0.06),Color("536363"))
+	for y: float in supports:
 		if family == "timber":
 			for x: float in [-0.25,0.25]:
-				if visual == null: _world._box(parent,Vector3(x,y-0.03,0),Vector3(0.08,0.06,0.9),Color("536363"))
-		elif visual == null: _world._box(parent,Vector3(0,y-0.015,0),Vector3(2.5,0.03,0.9),Color("697879"))
+				_world._box(parent,Vector3(x,y-0.03,0),Vector3(0.08,0.06,0.9),Color("536363"))
+		else: _world._box(parent,Vector3(0,y-0.015,0),Vector3(2.5,0.03,0.9),Color("697879"))
 	var body := StaticBody3D.new()
 	parent.add_child(body)
 	for x: float in [-1.27,1.27]:
-		for z: float in [-0.47,0.47]: _shape(body,Vector3(x,0.9,z),Vector3(0.06,1.8,0.06))
-	for y: float in [0.25,0.95]:
+		for z: float in [-0.47,0.47]: _shape(body,Vector3(x,post_height/2.0,z),Vector3(0.06,post_height,0.06))
+	for y: float in supports:
 		if family == "timber":
 			for x: float in [-0.25,0.25]: _shape(body,Vector3(x,y-0.03,0),Vector3(0.10,0.06,0.9))
 		else: _shape(body,Vector3(0,y-0.015,0),Vector3(2.5,0.03,0.9))

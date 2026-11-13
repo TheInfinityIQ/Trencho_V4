@@ -9,6 +9,8 @@ const WALL := 0.2
 const STRUCTURAL_KG := 10000
 const PREPARE_SECONDS := 1.5
 const STORE := "receiving"
+const TIMBER_SUPPORT_Y := [0.60, 1.75]
+const TIMBER_BASE_REGISTRATION_Y := -0.004 # Actual wood underside relative to retained strap-origin export.
 var modules: Dictionary = {}
 var bays: Dictionary = {}
 var reservations: Dictionary = {}
@@ -538,7 +540,8 @@ func _make_cells(family: String) -> Array[Dictionary]:
 	for deck in 2:
 		for row in 2:
 			for column in columns:
-				result.append({"code":"","stocks":[],"offset":Vector3(0.0 if columns == 1 else -0.93+0.62*column,0.25+0.7*deck,-0.25+0.5*row)})
+				var height: float = float(TIMBER_SUPPORT_Y[deck])+TIMBER_BASE_REGISTRATION_Y if family == "timber" else 0.25+0.7*deck
+				result.append({"code":"","stocks":[],"offset":Vector3(0.0 if columns == 1 else -0.93+0.62*column,height,-0.25+0.5*row)})
 	return result
 
 func _free_cells(bay_id: String, cells: Array, code: String, quantity: int) -> Array[int]:

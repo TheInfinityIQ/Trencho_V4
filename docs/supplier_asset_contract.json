@@ -82,8 +82,8 @@
     "observed_static_evidence": "Artist timber_contact_study_v01: four targets reached without arm extension, error<0.0000004m, bootsX[-.285,+.026] within aisle; actual pickup head/torso intersects illustrative continuous aisle rails. Two static poses only; slope/exit/deformation unverified. S1 correction accepted before geometry.",
     "packing_support_contract": "Exactly one full/remainder timber bundle per S1 deck, centredZ1.55 on accepted saddles; no unverified bundle-on-bundle stack. Both.425m lower and.85m upper support levels need actual contacts. Unload upper overlapping cargo before lower cargo. Runtime must not infer lower pickup fit from upper static study.",
     "lower_deck_correction": "Artist lower_timber_fit_v01 measured22.7mm reach deficit and102/96 body-vs-timber intersections at.25m despite clear rack frame. Lead accepts.425m as a reversible new S1 study target; actual fit/exit and final clearances remain unverified. Preserve truck/package/worker proportions.",
-    "coupled_withdrawal_study": "Fixed upper saddles block a direct lower lift. Accept study: lower release.425→.475, BOTH rootsX-.12→+.23 and loadX-.665→-.255, preservingZ.90/2.20; raise to1m only after actual saddle clearance. Proposed load now fully within ramp. Full posed body/partner/opposite rack/rear sweep and exact root/load/grip samples remain required; boot margin alone proves nothing. Ordinary.25m ground route clearance is not applied to authored truck-specific stations; no global worker shrinking.",
-    "pending_warehouse_handoff": "Preserved original fixture SHA d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189 has no validated two-worker put-down: upper128.6mm reach deficit at staging, continuous face rail collision closer in; lower also body collision. Original retained. Lead approves a NEW VERSION, same2.6x1x1.8m/cell count, support tops.425/.95, clear both long faces, central50mm spine within180mm row gap and endposts outside2m cargo/grips. Artist makes bounded concept revision then measures both rows/decks. Candidate new.485offset grip midpointZ+/−.735; staging markers+/−1.1 are not grip positions. Actual full contacts and aligned engagement/turn paths remain open before route freezes.",
+    "coupled_withdrawal_study": "Fixed upper saddles block a direct lower lift. Accept study: lower release.425\u2192.475, BOTH rootsX-.12\u2192+.23 and loadX-.665\u2192-.255, preservingZ.90/2.20; raise to1m only after actual saddle clearance. Proposed load now fully within ramp. Full posed body/partner/opposite rack/rear sweep and exact root/load/grip samples remain required; boot margin alone proves nothing. Ordinary.25m ground route clearance is not applied to authored truck-specific stations; no global worker shrinking.",
+    "pending_warehouse_handoff": "Preserved original fixture SHA d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189 has no validated two-worker put-down: upper128.6mm reach deficit at staging, continuous face rail collision closer in; lower also body collision. Original retained. Lead approves a NEW VERSION, same2.6x1x1.8m/cell count, support tops.425/.95, clear both long faces, central50mm spine within180mm row gap and endposts outside2m cargo/grips. Artist makes bounded concept revision then measures both rows/decks. Candidate new.485offset grip midpointZ+/\u2212.735; staging markers+/\u22121.1 are not grip positions. Actual full contacts and aligned engagement/turn paths remain open before route freezes.",
     "packing_side_scope": "Current M04 packing uses only measured left-side handling, one bundle/deck centredX-.665/Z1.55. Right-side M04 access is not inferred by mirroring the worker skeleton or reversing a rear exit. Actual spatial truck count and fees remain visible before Confirm."
   },
   "marker_names": "Use accepted shelf root names, Deck_00 etc for actual support planes, and a handoff table of named handling/grip markers and transforms. Keep delivered Undergrip_Reference_1..4 as actual timber contacts after the deliberate quarter-turn. Artist proposes additional marker names/table; Lead freezes corresponding runtime identifiers before integration.",
@@ -117,7 +117,7 @@
   "static_shelf_integration": "S2/S3/S4 ready static exports: bottom-centre root, localXdepth/localZlength, right side identity, left side deliberate180degreeY placement. Cargo_Floor is alreadyY1.02. Use actual .644x.474 solid deck footprints (.628x.458 S4 padding), full50mm release and existing support tops. No worker grip/route acceptance, S1 excluded.",
   "passenger_approved_v02": {
     "stage": "Dawson visually approved passenger exit revision v02; native integration verification pending",
-    "authority": "Lead chat, 10 November 2026: That looks better. Approved—please integrate it into the game and continue with the materials truck and warehouse unloading.",
+    "authority": "Lead chat, 10 November 2026: That looks better. Approved\u2014please integrate it into the game and continue with the materials truck and warehouse unloading.",
     "approved_files": {
       "supplier_passenger.glb": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10",
       "passenger_paths_v02.json": "1d7bea0f07daee06753dc5a124463927c02269dfbbfa1eec6215387fbedb2af5"
@@ -152,7 +152,7 @@
       1.75
     ],
     "stage": "Artist measured a nonempty upper support interval with unchanged retained bend body/legs. Candidate warehouse upper1.75m, lower.60m, outer height at most2.2m, same2.6x1m footprint/four cells. Failed .95/1.40/1.45 upper-height studies retained; no silent storage-order workaround. Truck .60/.95m remains separate. Exported occupied movement, final clips/roots/proxies and normal-speed approval videos remain pending; current runtime shelf dimensions have not been replaced.",
-    "preserve": "Original package, vehicle, rack and character binaries/concepts remain unchanged; all revisions separate. Explicit−4mm package registration may be used only for measured wood-bottom versus strap-origin support.",
+    "preserve": "Original package, vehicle, rack and character binaries/concepts remain unchanged; all revisions separate. Explicit\u22124mm package registration may be used only for measured wood-bottom versus strap-origin support.",
     "scope": "Truck withdrawal/ramp, both warehouse faces/decks, staging/engagement, appropriate grounded carrying directions and revised collider/support proxies. Other material contacts follow the same accepted materials-unloading brief.",
     "warehouse_maximum_outer_height_metres": 2.2,
     "warehouse_measured_upper_support_interval_metres": [
@@ -176,7 +176,12 @@
       "active": "Later human resume remains authoritative. Warehouse static modeling and measured S4 hardware concept remain active. Frozen files untouched; no new hauling clips authorized by this administrative correction.",
       "prevention": "Artist updates existing compact active-work/restore header with actual resume authority and assignments; a replayed summary or new assistant relay is not a later human instruction."
     },
-    "appearance_status": "Revision required by direct Dawson feedback: correct palm support, shoulder carrying and reduced ramp bounce. Prior hand-carry drafts remain historical, not approved."
+    "appearance_status": "Revision required by direct Dawson feedback: correct palm support, shoulder carrying and reduced ramp bounce. Prior hand-carry drafts remain historical, not approved.",
+    "warehouse_runtime_static_integration": {
+      "model": "game/warehousing/assets/warehouse_long_stock_rack_v04.glb",
+      "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+      "status": "Connected timber-only static v04 and matching cell planes; import/current-change check pending. Original retained; new shoulder motion remains Artist-owned and unapproved."
+    }
   },
   "non_timber_geometry_decision": "evidence/supplier_transport/near_face_contact_recommendation_v01.md and frozen manifest supersede earlier partial geometry suggestions. Only a static2D warehouse metal-support/service-opening concept is authorized next; no mesh/other-item animation or runtime changes.",
   "s1_variant_constraint": {
@@ -259,7 +264,7 @@
       "activity": "ReceivingSimulation._start_worker_job retains the existing actual worker, stock claim and finite warehouse promise. _approach_truck acquires existing supplier aisle/access, then routes to the measured operator position before any shelf actuation. Shelf preparation stays in that actual worker job; it is not a second helper or detached automatic timer.",
       "authority": "SupplierFreight owns per-order/per-rack committed mechanism state and checks indexed aboard_packets for the relevant upper pan on stock change. Receiving owns the actual operator activity deadlines. Ledger remains the only stock/custody owner. Require empty upper pan, actual operator access/contact, valid pins and module exclusivity before starting.",
       "completion": "ReceivingSimulation._finish_worker_phase advances authored contact/release/lift/latch/hands-clear boundaries from the delivered export contract. Only parked-and-latched plus hands-clear admits lower pickup. Existing Pickup begin_carry boundary is retained after preparation, not triggered by AnimationPlayer callbacks.",
-      "roots": "ReceivingSimulation._move_activities and existing ledger movement events update actual worker positions from delivered root samples. SupplierActorView renders the matching clip at committed time; worker identity stays unchanged and normal worker presentation is restored after the operator activity. While supported aboard, actual actor presentation must inherit the real truck hull/pivot transform, as with corrected passengers, including when offscreen. Apply delivered model-local root once; hide only the same actual person’s normal presentation during this ownership, never duplicate a worker.",
+      "roots": "ReceivingSimulation._move_activities and existing ledger movement events update actual worker positions from delivered root samples. SupplierActorView renders the matching clip at committed time; worker identity stays unchanged and normal worker presentation is restored after the operator activity. While supported aboard, actual actor presentation must inherit the real truck hull/pivot transform, as with corrected passengers, including when offscreen. Apply delivered model-local root once; hide only the same actual person\u2019s normal presentation during this ownership, never duplicate a worker.",
       "view": "SupplierVehicleView._sync_racks must select the exact revised variant, preserve separately authored transport restraints, and show committed rack state. Remove restraints according to actual upper/lower handling conditions, not merely the global unloading phase. Use appropriate moving collision, never the static warehouse triangle helper for the moving pan.",
       "pause": "Reuse ReceivingSimulation._time/next_boundary and existing pause semantics. One activity timeline drives worker and shelf. No independent wall-clock timer, stock poll or frame-based availability search.",
       "interruption": "ReceivingSimulation._sync_workers must recognize active shelf operation before generic Truck return cleanup. Keep the worker exclusive until a physically safe supported/latched state and real exit, or hold work if the operator is unavailable. Never erase a job while leaving an unsupported moving pan or release its aisle under the worker.",
@@ -374,15 +379,15 @@
     },
     "underside_grip_revision": {
       "stage": "Lead-authorized bounded hardware fitting, not approved dimensions or passed clearance",
-      "authority": "Engineering detail within Dawson’s actual-worker shelf-operation request; supersedes prior Lead layout assumption of no additional grip handle. Original layout/source retained as history.",
+      "authority": "Engineering detail within Dawson\u2019s actual-worker shelf-operation request; supersedes prior Lead layout assumption of no additional grip handle. Original layout/source retained as history.",
       "problem": "Keeping palm surface flat to the rotating pan constrains the wrist into an unnatural orientation during the actual lift. Improve physical grip geometry rather than force bad anatomical poses.",
       "decision": "Fit small real underside rounded grips/handles to the actual broad gloves and opposed thumbs. Allow natural forearm/wrist motion relative to grip; document any actual handle pivot rather than hiding rotation or relocating hands.",
       "constraints": "Preserve full padding/bearing/support, original footprint, ordinary cargo planes, cargo capacity and lower M05 insert. Actual handle+hand envelope must clear loaded lower bale, frame, neighboring stock/truck and moving pan through opening/closing. Finite lower clearance must be measured.",
       "workflow": "Artist may resolve exact bounded grip geometry/pivots and continue actual full sequence without another routine approval gate. Escalate only a real contradiction requiring changed support, footprint or capacity. Next complete opaque preview must include the real revised hardware.",
       "unchanged": "One actual assigned worker, actual support/control/lock/hands-clear gates, no motorized self-actuation, no generic character remodel or cargo shrinking. No runtime binding or appearance approval yet.",
-      "source_fit_update": "Artist concrete report: upper-arm overlap extended199–213mm down sleeve, so no shoulder-seam exemption. Flat-palm quarter-lift correction about110deg/requested wrist deviation about161deg; rejected approach not reused. Actual original glove candidate cavity radius about10.5mm at five stations is feasibility only, not approved handle radius/clearance.",
+      "source_fit_update": "Artist concrete report: upper-arm overlap extended199\u2013213mm down sleeve, so no shoulder-seam exemption. Flat-palm quarter-lift correction about110deg/requested wrist deviation about161deg; rejected approach not reused. Actual original glove candidate cavity radius about10.5mm at five stations is feasibility only, not approved handle radius/clearance.",
       "control_detail": "Compact thumb-operated controls permitted if actual existing thumb fit, press stroke, approach/withdrawal and other-hand support clear all geometry. Do not substitute the earlier failed narrow whole-finger press. Preserve same manual pin/seat behavior, support/footprint/capacity and original rig; no extra helper.",
-      "aisle_option": "Optional measured fit candidate, not required/cleared: moving hinge radial grip offset.450→.465 places initial centreX-.250 instead of-.235,Y.630. A radius<=10.5mm stays inside nominalX-.265 by~4.5mm, but entire bracket/hand and swept occupied clearance still require actual proof. Reason: keep wrist/forearm outside flat-pan lip instead of forcing unnatural arm geometry. Artist may choose simpler actually-cleared body/grip solution.",
+      "aisle_option": "Optional measured fit candidate, not required/cleared: moving hinge radial grip offset.450\u2192.465 places initial centreX-.250 instead of-.235,Y.630. A radius<=10.5mm stays inside nominalX-.265 by~4.5mm, but entire bracket/hand and swept occupied clearance still require actual proof. Reason: keep wrist/forearm outside flat-pan lip instead of forcing unnatural arm geometry. Artist may choose simpler actually-cleared body/grip solution.",
       "footprint_clarification": "Preserve STOWED transport/packing footprint and full padded bearing/cargo capacity. Small explicitly measured temporary grip deployment into the actual exclusively reserved unloading aisle is allowed; original wording constraining all moving grip points to packed cuboid is superseded. No permanently larger rack, cargo shrinking or capacity change.",
       "service_safety": "Actual deployed handle+hand swept envelope must clear operator, bale, neighbors, frame/pan and truck. The12November measured parked-grip decision conditionally permits an inside-cage positively retained extended grip during parked lower service/aisle release. Otherwise physical stow/secure is required before release. After actual worker lowering, grip must retract/secure and pan close/lock before travel. Passive handle return may be shown; the pan remains actual-worker operated/latched, never powered.",
       "current_prototype": "Artist report: manually sliding100mm service grip,19mm diameter/660mm bar and two inboard square rods,212triangles/one closed island. At13 sampled lift positions bar/glove/bale/pan intersections zero; compact18mm thumb controls in fixed post A.780/B1.150. Actual full press/transfer, remaining upper-arm/vest/one forearm-frame passage and coherent arm-basis correction unfinished. No keys/game exports or readiness implied.",
@@ -391,7 +396,7 @@
         "sha256": "53752cb57bc2b38b3f04a7506906061b0dd9a062db7bdc872e54966f39c6f68f",
         "samples": 13,
         "lead_data_review": "Read all13 source rows: fixed frame/pan/handle/bale/self-contact pairs and arm/leg clamps zero. Not a dense sweep, full operation or native game receipt.",
-        "dimensions": "Report bar radius.0095m, nominal bar length.64m, initial full handle boundsZapproximately±.33m. These distinguish bar dimension from overall assembly extent; final exact export contract still pending.",
+        "dimensions": "Report bar radius.0095m, nominal bar length.64m, initial full handle boundsZapproximately\u00b1.33m. These distinguish bar dimension from overall assembly extent; final exact export contract still pending.",
         "contact_limits": "Initial sampled closest palm/finger/thumb bar gaps approximately3.24/2.20/1.86mm; grip-centre alignment is not proof of physically bearing palm contact. Final visible support/contact and exact contract still require review.",
         "remaining": "Dense temporal continuity, actual thumb presses/hand transfer, physical grip deployment/stow, approach/withdrawal/steps, complete closing and approved full opaque preview/export."
       },
@@ -420,7 +425,7 @@
       "warehouse_metal_lower_cassette_v01",
       "warehouse_metal_upper_cassette_v01"
     ],
-    "source_qa": "Artist representative3contacts×53samples on actual exports; not all-cell handling.",
+    "source_qa": "Artist representative3contacts\u00d753samples on actual exports; not all-cell handling.",
     "native_receipt": "evidence/supplier_transport/warehouse_metal_static_native.json"
   },
   "timber_human_revision": {
@@ -574,7 +579,7 @@
     "runtime": "Paired worker/fixture open and close clips share module origin and clock; existing Root bone motion consumed once. Locked service state persists across packages, no fixed demo hold or stock callbacks.",
     "limits": "Explicit proximal garment warnings retained. Full 86.7-second video and complementary 57.9-second moving-hand video are appearance previews of actual exports, not game captures or integration/FPS evidence.",
     "human_approval": {
-      "text": "It’s good",
+      "text": "It\u2019s good",
       "turn": "01a1d352-5867-71f1-9072-22536f396503",
       "message": "01a1d352-5a64-7021-809c-57e6d2a317de",
       "record": "game/supplier_transport/assets/s4_operator/appearance_approval.json"

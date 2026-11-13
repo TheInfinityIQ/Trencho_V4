@@ -21,7 +21,13 @@
     "Release unused warehouse promise during accepted return while retaining actual operator support."
   ],
   "direct_check": {
-    "status": "Prepared, unrun",
-    "scope": "One actual 50kg M05 receiving delivery: upper-first, same worker opening, parked lower pickup, close and safe exit; actual imported paired clip/root alignment and paused cosmetic sleep. No warehouse/full-loop/native/FPS acceptance."
+    "status": "Passed bounded corrected check",
+    "scope": "One actual 50kg M05 receiving delivery: upper-first, same worker opening, parked lower pickup, close and safe exit; actual imported paired clip/root alignment and paused cosmetic sleep. No warehouse/full-loop/native/FPS acceptance.",
+    "source": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+    "run": 43528719333,
+    "job": 132240814993,
+    "original_failed_run": 43483595686,
+    "failure_classification": "Verification-script error: optional raw-order heading key accessed directly; production default already exists. Unhandled error left SceneTree alive until process timeout.",
+    "correction": "Use order.get heading default and 15s watchdog; unchanged 45s process limit; no production or approved-motion change."
   }
 }

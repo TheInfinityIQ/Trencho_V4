@@ -1,0 +1,29 @@
+flowchart TD
+  Order[One confirmed timber shipment] --> Ready{Two eligible actual workers and finite warehouse cell?}
+  Ready -->|no| Hold[Cargo stays aboard; event-woken reason]
+  Ready -->|yes| Priority[Shared hauling priorities; no busy or higher-priority worker borrowed]
+  Priority --> Reserve[One source claim, one cell and two exclusive worker roles]
+  Reserve --> Fixture{Compatible fixture ready?}
+  Fixture -->|no| Prepare[Actual worker reaches bay; existing shelf smoke; ready event]
+  Prepare --> Access
+  Fixture -->|yes| Access[Reserve clear truck aisle and paired handling stations]
+  Access --> Pickup[Reuse accepted bend; fitted palms support one load]
+  Pickup --> Joint[Ledger begins one jointly held portion]
+  Joint --> Withdraw[Actual two-worker withdrawal and shoulder transition]
+  Withdraw --> Ramp[Authored planted ramp gait; same fore and aft identities]
+  Ramp --> Route[Complete pair and payload envelope through actual clear route]
+  Route --> Stage[Clear warehouse staging; both take load into palms]
+  Stage --> Place[Authored lower or upper rack placement on .60/1.75m supports]
+  Place --> Commit[One joint finish and warehouse cell commit]
+  Commit --> Release[Both workers leave safely; physical handover gate]
+  Release --> Depart[Existing shelf securing, ramp, door and clear truck exit]
+  Pose[Accepted clip and root/payload metadata] --> View[Read-only active animation views]
+  Joint --> View
+  Ramp --> View
+  Place --> View
+  View -. no stock authority .-> Joint
+  Interrupted[Real interruption after lift] --> Safe{Supported warehouse deposit possible?}
+  Safe -->|yes| Place
+  Safe -->|no| Ground[One recoverable ground-held package; no delivered/returned/refund credit]
+  Ground --> Recover[Actual later two-worker recovery route]
+  Recover --> Stage

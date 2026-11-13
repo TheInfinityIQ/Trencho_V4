@@ -4,7 +4,7 @@
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "28bff3c5d859e25f6725b8bc70cad4462ccb69f16d72a28a2fd5e97ee09809fb",
+  "source_fingerprint": "ef4b82023c636ca0fde1fb78b3768073faaf4eef8e61f64e59764bb2e7e1108a",
   "totals": {
     "systems": 51,
     "game_scripts": 251,
@@ -7606,7 +7606,7 @@
         },
         {
           "path": "game/construction/visuals/construction_render_preparation.gd",
-          "sha256": "6d92fb04a9af39523edce761206cc22f6a1e254a7fd2b02dc4b46626fb6f32cf",
+          "sha256": "c0ec061f611191b8521a4e84826fe87031913771a86dc437708606837642baab",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -7624,7 +7624,7 @@
               "line": 71,
               "end_line": 94,
               "kind": "method",
-              "purpose": "Draw currently selected warehouse fixtures and packages under the startup cover without granting storage.",
+              "purpose": "Prime the retained warehouse assets and revised timber rack during the existing startup preparation cover.",
               "purpose_origin": "reviewed"
             },
             {
@@ -38413,42 +38413,42 @@
           "label": "Actual12x16 starting warehouse",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "initialize_opening",
-          "line": 41
+          "line": 43
         },
         {
           "id": "reserve",
           "label": "Exact package-space promise",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "reserve",
-          "line": 85
+          "line": 87
         },
         {
           "id": "prepare",
           "label": "Worker reaches clear fixture site",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "begin_preparation",
-          "line": 182
+          "line": 184
         },
         {
           "id": "access",
           "label": "Safe handling access before pickup",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "acquire_access",
-          "line": 235
+          "line": 237
         },
         {
           "id": "commit",
           "label": "Actual stock deposited once",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "commit",
-          "line": 250
+          "line": 252
         },
         {
           "id": "join",
           "label": "Completed full-edge join",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "register_module",
-          "line": 64
+          "line": 66
         },
         {
           "id": "view",
@@ -38469,7 +38469,7 @@
           "label": "Actual selected/connected storage facts",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "summary",
-          "line": 340
+          "line": 342
         },
         {
           "id": "batch",
@@ -39014,14 +39014,14 @@
         },
         {
           "path": "game/warehousing/warehouse_service.gd",
-          "sha256": "34f2bc7698fe3ebf8f8db84e09f8117d3f772bb173e55f51643e1eccd5949cf3",
+          "sha256": "318784c6405a7d964048f0901dbe6f7d9d8ba5779caffe2732a93d3158a52041",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/warehousing/warehouse_service.gd::_init",
               "name": "_init",
-              "line": 34,
-              "end_line": 39,
+              "line": 36,
+              "end_line": 41,
               "kind": "method",
               "purpose": "Subscribe to actual stock/movement/site events and compose one weakly owned finite bay-recovery coordinator.",
               "purpose_origin": "reviewed"
@@ -39029,8 +39029,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::initialize_opening",
               "name": "initialize_opening",
-              "line": 41,
-              "end_line": 62,
+              "line": 43,
+              "end_line": 64,
               "kind": "method",
               "purpose": "Register one free completed starting warehouse and position the existing500M11 once as21actual packages on two ready fixtures.",
               "purpose_origin": "reviewed"
@@ -39038,8 +39038,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::register_module",
               "name": "register_module",
-              "line": 64,
-              "end_line": 83,
+              "line": 66,
+              "end_line": 85,
               "kind": "method",
               "purpose": "Add eight finite fixture sites and the structural ceiling only after an actual module completes; invalidate topology once.",
               "purpose_origin": "reviewed"
@@ -39047,8 +39047,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::reserve",
               "name": "reserve",
-              "line": 85,
-              "end_line": 144,
+              "line": 87,
+              "end_line": 146,
               "kind": "method",
               "purpose": "Reserve actual finite compatible warehouse receipt and worker access, excluding staging and bays locked by recovery and retaining honest route/preparation/full blockers.",
               "purpose_origin": "reviewed"
@@ -39056,8 +39056,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::probe",
               "name": "probe",
-              "line": 146,
-              "end_line": 161,
+              "line": 148,
+              "end_line": 163,
               "kind": "method",
               "purpose": "Preview the same compatible/new/convertible fixture eligibility as reservation without promising space; already-carried reroutes may require Ready compatibility only.",
               "purpose_origin": "reviewed"
@@ -39065,8 +39065,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays",
               "name": "_candidate_bays",
-              "line": 163,
-              "end_line": 169,
+              "line": 165,
+              "end_line": 171,
               "kind": "method",
               "purpose": "Rank only ordinary unlocked warehouse bays by compatible ready storage, empty fixture site and permissible reconfiguration.",
               "purpose_origin": "reviewed"
@@ -39074,8 +39074,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays/<lambda#1>",
               "name": "_candidate_bays/<lambda#1>",
-              "line": 164,
-              "end_line": 164,
+              "line": 166,
+              "end_line": 166,
               "kind": "lambda",
               "purpose": "Exclude finite staging and source bays currently locked for clearance from ordinary warehouse receipt candidates.",
               "purpose_origin": "reviewed"
@@ -39083,8 +39083,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays/<lambda#2>",
               "name": "_candidate_bays/<lambda#2>",
-              "line": 165,
-              "end_line": 168,
+              "line": 167,
+              "end_line": 170,
               "kind": "lambda",
               "purpose": "Order legal ordinary bays by compatible ready fixture, empty site, then other configuration with stable IDs.",
               "purpose_origin": "reviewed"
@@ -39092,8 +39092,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_can_reconfigure",
               "name": "_can_reconfigure",
-              "line": 171,
-              "end_line": 180,
+              "line": 173,
+              "end_line": 182,
               "kind": "method",
               "purpose": "Allow an empty unused ordinary ready bay to change fixture family, refusing staging, recovery locks, retirement, stock and access/promises.",
               "purpose_origin": "reviewed"
@@ -39101,8 +39101,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::begin_preparation",
               "name": "begin_preparation",
-              "line": 182,
-              "end_line": 199,
+              "line": 184,
+              "end_line": 201,
               "kind": "method",
               "purpose": "Require the promised actual worker at the service point and a clear fixture footprint before shelf preparation starts.",
               "purpose_origin": "reviewed"
@@ -39110,8 +39110,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::finish_preparation",
               "name": "finish_preparation",
-              "line": 201,
-              "end_line": 214,
+              "line": 203,
+              "end_line": 216,
               "kind": "method",
               "purpose": "Commit the new fixture family at the actual Ready activity boundary after final occupancy validation, clearing any prior-fixture rollback metadata.",
               "purpose_origin": "reviewed"
@@ -39119,8 +39119,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::reveal_preparation",
               "name": "reveal_preparation",
-              "line": 216,
-              "end_line": 227,
+              "line": 218,
+              "end_line": 229,
               "kind": "method",
               "purpose": "Expose the prepared fixture at the opaque-smoke midpoint only if its actual footprint is clear.",
               "purpose_origin": "reviewed"
@@ -39128,8 +39128,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::ready",
               "name": "ready",
-              "line": 229,
-              "end_line": 230,
+              "line": 231,
+              "end_line": 232,
               "kind": "method",
               "purpose": "Report whether this live space promise refers to an actually ready fixture.",
               "purpose_origin": "reviewed"
@@ -39137,8 +39137,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::destination_point",
               "name": "destination_point",
-              "line": 232,
-              "end_line": 233,
+              "line": 234,
+              "end_line": 235,
               "kind": "method",
               "purpose": "Return the exact promised shelf handling point, or infinity for a missing reservation.",
               "purpose_origin": "reviewed"
@@ -39146,8 +39146,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::acquire_access",
               "name": "acquire_access",
-              "line": 235,
-              "end_line": 248,
+              "line": 237,
+              "end_line": 250,
               "kind": "method",
               "purpose": "Revalidate the exact ready destination cell and reserve its real worker handling point against the bay's actual warehouse or staging holder.",
               "purpose_origin": "reviewed"
@@ -39155,8 +39155,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::commit",
               "name": "commit",
-              "line": 250,
-              "end_line": 264,
+              "line": 252,
+              "end_line": 266,
               "kind": "method",
               "purpose": "Consume only the exact reached matching warehouse/staging cell promise, attach the real deposited stock and schedule safe worker clearance.",
               "purpose_origin": "reviewed"
@@ -39164,8 +39164,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release",
               "name": "release",
-              "line": 266,
-              "end_line": 282,
+              "line": 268,
+              "end_line": 284,
               "kind": "method",
               "purpose": "Release one package promise and its actual handling position, reverting unfinished fixture preparation when appropriate.",
               "purpose_origin": "reviewed"
@@ -39173,8 +39173,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::free_net_kg",
               "name": "free_net_kg",
-              "line": 284,
-              "end_line": 288,
+              "line": 286,
+              "end_line": 290,
               "kind": "method",
               "purpose": "Subtract actual canonical warehouse stock and outstanding promises from completed non-retiring structural capacity.",
               "purpose_origin": "reviewed"
@@ -39182,8 +39182,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::structural_capacity",
               "name": "structural_capacity",
-              "line": 290,
-              "end_line": 294,
+              "line": 292,
+              "end_line": 296,
               "kind": "method",
               "purpose": "Sum10000kg ceilings of actually completed non-retiring modules; physical package fit can bind sooner.",
               "purpose_origin": "reviewed"
@@ -39191,8 +39191,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::physical_space_status",
               "name": "physical_space_status",
-              "line": 296,
-              "end_line": 313,
+              "line": 298,
+              "end_line": 315,
               "kind": "method",
               "purpose": "Describe actual compatible ordinary receipt capacity and preparation while excluding recovery staging and locked source bays.",
               "purpose_origin": "reviewed"
@@ -39200,8 +39200,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::connected_modules",
               "name": "connected_modules",
-              "line": 315,
-              "end_line": 325,
+              "line": 317,
+              "end_line": 327,
               "kind": "method",
               "purpose": "Traverse only completed full-edge warehouse joins from one actual module and return its connected membership without moving or copying stock.",
               "purpose_origin": "reviewed"
@@ -39209,8 +39209,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_module",
               "name": "stock_module",
-              "line": 327,
-              "end_line": 329,
+              "line": 329,
+              "end_line": 331,
               "kind": "method",
               "purpose": "Resolve an indexed physical package to its owning fixture module, or return empty for legacy/nonwarehouse sources.",
               "purpose_origin": "reviewed"
@@ -39218,8 +39218,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::exterior_doors",
               "name": "exterior_doors",
-              "line": 331,
-              "end_line": 338,
+              "line": 333,
+              "end_line": 340,
               "kind": "method",
               "purpose": "List nonretiring open front portals of one actual connected warehouse, excluding front boundaries removed by completed joins.",
               "purpose_origin": "reviewed"
@@ -39227,8 +39227,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::summary",
               "name": "summary",
-              "line": 340,
-              "end_line": 374,
+              "line": 342,
+              "end_line": 376,
               "kind": "method",
               "purpose": "Cache actual connected/module stock quantities, package counts, fixture readiness and promised capacity from existing cell indexes and the single Ledger inventory.",
               "purpose_origin": "reviewed"
@@ -39236,8 +39236,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::work_point",
               "name": "work_point",
-              "line": 376,
-              "end_line": 377,
+              "line": 378,
+              "end_line": 379,
               "kind": "method",
               "purpose": "Return a worker's currently held warehouse handling point without rescanning stock or geometry.",
               "purpose_origin": "reviewed"
@@ -39245,8 +39245,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_service_point",
               "name": "stock_service_point",
-              "line": 379,
-              "end_line": 383,
+              "line": 381,
+              "end_line": 385,
               "kind": "method",
               "purpose": "Read the exact package cell service coordinate without a path search, stock duplication or handling reservation.",
               "purpose_origin": "reviewed"
@@ -39254,8 +39254,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_point",
               "name": "stock_point",
-              "line": 385,
-              "end_line": 395,
+              "line": 387,
+              "end_line": 397,
               "kind": "method",
               "purpose": "Choose the actual registered package cell face and optionally retain handling access on its real warehouse/staging holder.",
               "purpose_origin": "reviewed"
@@ -39263,8 +39263,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release_point",
               "name": "release_point",
-              "line": 397,
-              "end_line": 398,
+              "line": 399,
+              "end_line": 400,
               "kind": "method",
               "purpose": "Release one worker's warehouse service face and wake waiting allocations without rebuilding presentation.",
               "purpose_origin": "reviewed"
@@ -39272,8 +39272,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::take_clearance",
               "name": "take_clearance",
-              "line": 400,
-              "end_line": 403,
+              "line": 402,
+              "end_line": 405,
               "kind": "method",
               "purpose": "Consume a finished-deposit access-clearance request once, rather than repeatedly sending idle workers away.",
               "purpose_origin": "reviewed"
@@ -39281,8 +39281,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::watch_clearance",
               "name": "watch_clearance",
-              "line": 405,
-              "end_line": 406,
+              "line": 407,
+              "end_line": 408,
               "kind": "method",
               "purpose": "Watch only this departing worker and former handling position until the access radius is clear.",
               "purpose_origin": "reviewed"
@@ -39290,8 +39290,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path",
               "name": "clearance_path",
-              "line": 408,
-              "end_line": 438,
+              "line": 410,
+              "end_line": 440,
               "kind": "method",
               "purpose": "Choose a distinct reachable end-apron rest point that clears every shelf service face; use the ordinary outside waiting owner only when needed.",
               "purpose_origin": "reviewed"
@@ -39299,8 +39299,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path/<lambda#1>",
               "name": "clearance_path/<lambda#1>",
-              "line": 433,
-              "end_line": 433,
+              "line": 435,
+              "end_line": 435,
               "kind": "lambda",
               "purpose": "Prefer the shortest geometric approach to a legal warehouse rest point before actual route validation.",
               "purpose_origin": "reviewed"
@@ -39308,8 +39308,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_slot_body",
               "name": "set_slot_body",
-              "line": 440,
-              "end_line": 446,
+              "line": 442,
+              "end_line": 448,
               "kind": "method",
               "purpose": "Apply Area3D enter/exit occupancy to one fixture site and wake preparation; never poll overlaps per frame.",
               "purpose_origin": "reviewed"
@@ -39317,8 +39317,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::fixture_bounds",
               "name": "fixture_bounds",
-              "line": 448,
-              "end_line": 450,
+              "line": 450,
+              "end_line": 452,
               "kind": "method",
               "purpose": "Return the rotated physical2.6x1m rack footprint for clearance and path ownership.",
               "purpose_origin": "reviewed"
@@ -39326,8 +39326,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_module_body",
               "name": "set_module_body",
-              "line": 452,
-              "end_line": 456,
+              "line": 454,
+              "end_line": 458,
               "kind": "method",
               "purpose": "Track player/vehicle presence in one module through Area3D events for safe removal.",
               "purpose_origin": "reviewed"
@@ -39335,8 +39335,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::obstacles",
               "name": "obstacles",
-              "line": 458,
-              "end_line": 466,
+              "line": 460,
+              "end_line": 468,
               "kind": "method",
               "purpose": "Reuse topology/fixture-invalidated actual wall/post/rack routing rectangles; stock quantity changes do not rebuild them.",
               "purpose_origin": "reviewed"
@@ -39344,8 +39344,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::can_remove",
               "name": "can_remove",
-              "line": 468,
-              "end_line": 488,
+              "line": 470,
+              "end_line": 490,
               "kind": "method",
               "purpose": "Require an empty, unreserved, unoccupied non-connecting module before removal; preserve current access conservatively.",
               "purpose_origin": "reviewed"
@@ -39353,8 +39353,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::retire",
               "name": "retire",
-              "line": 490,
-              "end_line": 496,
+              "line": 492,
+              "end_line": 498,
               "kind": "method",
               "purpose": "Stop new admissions to a dismantling module and track actual remaining occupants until removal is safe.",
               "purpose_origin": "reviewed"
@@ -39362,8 +39362,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::joined",
               "name": "joined",
-              "line": 498,
-              "end_line": 500,
+              "line": 500,
+              "end_line": 502,
               "kind": "method",
               "purpose": "Accept only equal-span, full matching cardinal warehouse edges; reject corner, diagonal and partial-edge contact.",
               "purpose_origin": "reviewed"
@@ -39371,8 +39371,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_walls",
               "name": "_walls",
-              "line": 502,
-              "end_line": 508,
+              "line": 504,
+              "end_line": 510,
               "kind": "method",
               "purpose": "Project only actual below-person-height solid wall/post proxies into pedestrian routing; exclude floors and overhead geometry.",
               "purpose_origin": "reviewed"
@@ -39380,8 +39380,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::hidden_boundaries",
               "name": "hidden_boundaries",
-              "line": 510,
-              "end_line": 519,
+              "line": 512,
+              "end_line": 521,
               "kind": "method",
               "purpose": "Derive which complete neighbouring modules remove each local boundary group symmetrically.",
               "purpose_origin": "reviewed"
@@ -39389,8 +39389,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::module_colliders",
               "name": "module_colliders",
-              "line": 521,
-              "end_line": 533,
+              "line": 523,
+              "end_line": 535,
               "kind": "method",
               "purpose": "Transform the Artist-measured collision proxies into world metres, omitting only actual joined boundary groups.",
               "purpose_origin": "reviewed"
@@ -39398,17 +39398,17 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_make_cells",
               "name": "_make_cells",
-              "line": 535,
-              "end_line": 542,
+              "line": 537,
+              "end_line": 545,
               "kind": "method",
-              "purpose": "Create finite two-deck physical package positions for crates or separate long-stock saddles.",
+              "purpose": "Create four finite timber positions on the revised 0.60/1.75m supports with explicit wood-base registration, while retaining ordinary sixteen-position crate layouts.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::_free_cells",
               "name": "_free_cells",
-              "line": 544,
-              "end_line": 559,
+              "line": 547,
+              "end_line": 562,
               "kind": "method",
               "purpose": "Return only wholly unoccupied and unpromised cells; a partially filled package still occupies its full envelope.",
               "purpose_origin": "reviewed"
@@ -39416,8 +39416,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_quantity",
               "name": "_cell_quantity",
-              "line": 561,
-              "end_line": 565,
+              "line": 564,
+              "end_line": 568,
               "kind": "method",
               "purpose": "Read current actual Ledger quantity for the stock IDs indexed by one physical package cell.",
               "purpose_origin": "reviewed"
@@ -39425,8 +39425,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_attach_stock",
               "name": "_attach_stock",
-              "line": 567,
-              "end_line": 576,
+              "line": 570,
+              "end_line": 579,
               "kind": "method",
               "purpose": "Register the actual package in its exact bay cell and position it at that cell on the real ordinary or staging holder.",
               "purpose_origin": "reviewed"
@@ -39434,8 +39434,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_service_point",
               "name": "_cell_service_point",
-              "line": 578,
-              "end_line": 580,
+              "line": 581,
+              "end_line": 583,
               "kind": "method",
               "purpose": "Compute the package's own accessible shelf face in world coordinates without any route search.",
               "purpose_origin": "reviewed"
@@ -39443,8 +39443,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_choose_point",
               "name": "_choose_point",
-              "line": 582,
-              "end_line": 599,
+              "line": 585,
+              "end_line": 602,
               "kind": "method",
               "purpose": "Validate distinct person/reservation clearance and real routing for one exact package service face; watch only actual blocking passers-by.",
               "purpose_origin": "reviewed"
@@ -39452,8 +39452,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_clear_for_appearance",
               "name": "_clear_for_appearance",
-              "line": 601,
-              "end_line": 607,
+              "line": 604,
+              "end_line": 610,
               "kind": "method",
               "purpose": "Require the actual future rack volume to be free of tracked bodies and real worker positions.",
               "purpose_origin": "reviewed"
@@ -39461,8 +39461,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_stock_changed",
               "name": "_stock_changed",
-              "line": 609,
-              "end_line": 618,
+              "line": 612,
+              "end_line": 621,
               "kind": "method",
               "purpose": "Refresh the indexed package's bay after quantity changes and detach it only when depleted or physically moved away, notifying event-driven views/quotes.",
               "purpose_origin": "reviewed"
@@ -39470,8 +39470,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_entity_moved",
               "name": "_entity_moved",
-              "line": 620,
-              "end_line": 647,
+              "line": 623,
+              "end_line": 650,
               "kind": "method",
               "purpose": "Wake only watched blocked access, shelf appearance or retiring-module occupancy when a relevant person actually moves clear.",
               "purpose_origin": "reviewed"
@@ -39479,8 +39479,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_site_changed",
               "name": "_site_changed",
-              "line": 649,
-              "end_line": 667,
+              "line": 652,
+              "end_line": 670,
               "kind": "method",
               "purpose": "Register completed warehouse modules or safely retire removed ones; invalidate topology only when actual site state changes.",
               "purpose_origin": "reviewed"
@@ -39488,8 +39488,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_touch",
               "name": "_touch",
-              "line": 669,
-              "end_line": 674,
+              "line": 672,
+              "end_line": 677,
               "kind": "method",
               "purpose": "Increment logical freshness and wake waiting work; emit keyed presentation changes only for a nonempty module ID.",
               "purpose_origin": "reviewed"
@@ -39497,8 +39497,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_reject",
               "name": "_reject",
-              "line": 676,
-              "end_line": 677,
+              "line": 679,
+              "end_line": 680,
               "kind": "method",
               "purpose": "Return a structured warehouse blocker with its player-facing explanation without mutating custody.",
               "purpose_origin": "reviewed"
@@ -39507,7 +39507,7 @@
         },
         {
           "path": "game/warehousing/warehouse_view.gd",
-          "sha256": "a6929a5845bfa9e3d878bac977c42b21ca7e50e103841f910d756805b6c68680",
+          "sha256": "0a5e62647d85ebe31282360d4d508274606a62b957b7f874da4a2b6e17071916",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -39577,16 +39577,16 @@
               "id": "game/warehousing/warehouse_view.gd::_fixture",
               "name": "_fixture",
               "line": 173,
-              "end_line": 195,
+              "end_line": 197,
               "kind": "method",
-              "purpose": "Select the separately versioned metal-access crate rack with opening-preserving static collision; retain existing timber and missing-asset primitive presentation without installing unprepared metal supports.",
+              "purpose": "Instantiate the actual family-specific rack and cached mesh collision preserving service openings, or build a height-matched fallback fixture.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_view.gd::_shape",
               "name": "_shape",
-              "line": 197,
-              "end_line": 203,
+              "line": 199,
+              "end_line": 205,
               "kind": "method",
               "purpose": "Attach one box collision proxy with explicit local dimensions and placement to its owning body.",
               "purpose_origin": "reviewed"
@@ -39594,8 +39594,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke",
               "name": "_smoke",
-              "line": 205,
-              "end_line": 218,
+              "line": 207,
+              "end_line": 220,
               "kind": "method",
               "purpose": "Reuse the existing low-poly construction smoke for one finite1.5-second shelf appearance; author no new animation clip.",
               "purpose_origin": "reviewed"
@@ -39603,8 +39603,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_smoke_alpha",
               "name": "_smoke_alpha",
-              "line": 220,
-              "end_line": 224,
+              "line": 222,
+              "end_line": 226,
               "kind": "method",
               "purpose": "Fade only the temporary smoke material copies through the existing effect tween.",
               "purpose_origin": "reviewed"
@@ -39612,8 +39612,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::sync_speed",
               "name": "sync_speed",
-              "line": 226,
-              "end_line": 235,
+              "line": 228,
+              "end_line": 237,
               "kind": "method",
               "purpose": "Pause or retime only currently active finite smoke tweens after an actual simulation-speed command.",
               "purpose_origin": "reviewed"
@@ -39621,8 +39621,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_slot_body",
               "name": "_slot_body",
-              "line": 237,
-              "end_line": 238,
+              "line": 239,
+              "end_line": 240,
               "kind": "method",
               "purpose": "Forward the actual body enter/exit event to that fixture site's occupancy owner.",
               "purpose_origin": "reviewed"
@@ -39630,8 +39630,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_module_body",
               "name": "_module_body",
-              "line": 240,
-              "end_line": 245,
+              "line": 242,
+              "end_line": 247,
               "kind": "method",
               "purpose": "Track actual module entry/exit for safe removal and roof cutaway, preserving wall collisions.",
               "purpose_origin": "reviewed"
@@ -39639,8 +39639,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::set_cutaway_enabled",
               "name": "set_cutaway_enabled",
-              "line": 247,
-              "end_line": 250,
+              "line": 249,
+              "end_line": 252,
               "kind": "method",
               "purpose": "Apply an actual camera-mode command once and reconcile current modules so first person retains the ceiling while occupied third/overhead views may cut it away.",
               "purpose_origin": "reviewed"
@@ -39648,8 +39648,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_reconcile_shell",
               "name": "_reconcile_shell",
-              "line": 252,
-              "end_line": 281,
+              "line": 254,
+              "end_line": 283,
               "kind": "method",
               "purpose": "Hide only joined boundaries and interior roof as appropriate, preserve real walls/colliders and create bounded shadow-free lights at authored anchors once.",
               "purpose_origin": "reviewed"
@@ -39657,8 +39657,8 @@
             {
               "id": "game/warehousing/warehouse_view.gd::_exit_tree",
               "name": "_exit_tree",
-              "line": 283,
-              "end_line": 284,
+              "line": 285,
+              "end_line": 286,
               "kind": "method",
               "purpose": "Disconnect the warehouse change signal when this presenter leaves its scene.",
               "purpose_origin": "reviewed"
@@ -39735,7 +39735,7 @@
           "label": "One finite warehouse cell consumed",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "commit",
-          "line": 250
+          "line": 252
         },
         {
           "id": "gate",
