@@ -33,3 +33,11 @@ Proposed ownership: feature-owned standalone world/travel, observation/report an
 - `game/example_map.gd`: declare scenario fixture and actual entities separately from the detached known-map/own-force snapshot. No free supplies or report timers presented as sensing.
 
 Validation proposal: one arranged crossing case, use real task and actual finite physical movement to a scout observation, verify commander retains the original question until later report receipt, then records an evidence-linked reconsideration; inspect original observation and receipt times/coverage. The exact fixture and single brief GitHub action require Lead review. This is not an exhaustive sensor, movement or combat campaign and gives no full gameplay/native/FPS acceptance.
+
+## First-block prerequisite evidence
+
+First block merged as `c9808a97096ec9fc77f23370326c1691f13708cf` through PR 156 at reviewed `bad80e79e1cbd029f310ac088eb46291f8b9a217`. Required run `43482858005` and one explicit direct run `43482852268` passed. The verified direct artifact `14065418962` has SHA-256 `e7ef27231941c8b820e8bb86b9873f856df8dea3f4308a1f746443e1fed04c14`. The direct action exercised the standalone example's chosen and alternative routes, unanswered crossing question, side/time/locations, copied input and inspector construction. It did not exercise scouting, native controls, general maps or FPS.
+
+## Current source review and check scope
+
+At `d850ddef725731e77dba06e415153e0371e630ab`, the Designer approved gameplay meaning for the single example: real named prototype positions, an unobstructed 40m local sensor, later three-second report receipt and provisional route reconsideration. Direct interpolation on this one origin-to-bridge leg is not general graph navigation; the empty fixture does not demonstrate positive contacts, occlusion or broad belief revision. Values 20m/s, 40m and 3s are prototype parameters, not Trencho balancing. Manual Issue/Advance controls are experimental controls. Runtime, native input and rendered appearance remain unverified pending the Lead's single action.
