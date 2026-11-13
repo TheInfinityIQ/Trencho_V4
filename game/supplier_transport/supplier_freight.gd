@@ -8,12 +8,15 @@ const REAR_Z := 6.685249243
 const CLIP_SECONDS := 2.0
 var _receiving_ref: WeakRef
 var _packet_orders: Dictionary = {}
+var shelves: RefCounted
 
 func _init(receiving: RefCounted) -> void:
 	_receiving_ref = weakref(receiving)
+	shelves = preload("res://game/supplier_transport/supplier_shelves.gd").new(receiving)
 	receiving.ledger.stock_changed.connect(_stock_changed)
 
 func register(order: Dictionary) -> void:
+	shelves.register(order)
 	order.packet_by_stock = {}
 	order.aboard_packets = {}
 	order.source_codes = {}
@@ -70,6 +73,12 @@ func can_unload(order: Dictionary) -> bool:
 
 func close(order: Dictionary) -> bool:
 	if not can_unload(order) or not order.get("aisle_workers",[]).is_empty(): return false
+	if not shelves.all_closed(order):
+		if order.get("storage_warning","") != "Waiting for a hauler to secure cargo shelving":
+			order.storage_warning = "Waiting for a hauler to secure cargo shelving"
+			_receiving_ref.get_ref().supplier_state_changed.emit()
+		return false
+	order.storage_warning = ""
 	order.mechanism = "ramp_stow"
 	order.mechanism_started = float(_receiving_ref.get_ref()._time)
 	order.mechanism_next = float(order.mechanism_started)+CLIP_SECONDS

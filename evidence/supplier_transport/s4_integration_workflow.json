@@ -1,0 +1,27 @@
+{
+  "feature": "Approved S4 worker-operated materials unloading",
+  "plan": "docs/s4_operator_integration.md",
+  "plan_file_creation_utc": "2026-11-13T05:16:28.588204+00:00",
+  "recorded_utc": "2026-11-13T18:28:37.782128+00:00",
+  "wall_time_scope": "Includes interrupted research inquiry and team coordination; focused development time was not separately metered.",
+  "token_usage": null,
+  "token_usage_reason": "This chat does not expose attributable provider usage counters; do not substitute payload estimates.",
+  "regressions_detected": null,
+  "regression_scope": "No regression suite or broad scenarios run; none may be inferred from source parsing.",
+  "planning_omissions": [
+    {
+      "finding": "First support-height edit affected all S4 cargo instead of the accepted M05-only variant.",
+      "caught": "Source review before publication/engine check",
+      "resolution": "Declare manual-bale variant in quote; preserve ordinary racks/supports.",
+      "repair_seconds": null
+    }
+  ],
+  "precheck_source_corrections": [
+    "Replace final ingress point instead of appending a duplicate rear detour.",
+    "Release unused warehouse promise during accepted return while retaining actual operator support."
+  ],
+  "direct_check": {
+    "status": "Prepared, unrun",
+    "scope": "One actual 50kg M05 receiving delivery: upper-first, same worker opening, parked lower pickup, close and safe exit; actual imported paired clip/root alignment and paused cosmetic sleep. No warehouse/full-loop/native/FPS acceptance."
+  }
+}

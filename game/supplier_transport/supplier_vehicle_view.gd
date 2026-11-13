@@ -3,6 +3,7 @@ extends AnimatableBody3D
 const Assets = preload("res://game/warehousing/warehouse_assets.gd")
 const Packages = preload("res://game/warehousing/material_packages.gd")
 const ActorView = preload("res://game/supplier_transport/supplier_actor_view.gd")
+const ShelfView = preload("res://game/supplier_transport/supplier_shelf_view.gd")
 const ROOT := "res://game/supplier_transport/assets/"
 const SHELVES := {"S2":"s2_crateshelf_v01.glb","S3":"s3_restraintrack_v01.glb","S4":"s4_protectedcargo_v01.glb"}
 static var _scenes: Dictionary = {}
@@ -95,6 +96,8 @@ func refresh(row: Dictionary) -> void:
 		_mechanism_started = float(row.get("mechanism_started",0.0))
 		_sync_mechanism()
 	_sync_racks(row.get("racks",[]))
+	for id: String in row.get("shelves",{}):
+		if _racks.has(id) and _racks[id] is ShelfView: _racks[id].refresh(row.shelves[id])
 	for packet: Dictionary in row.get("packages",[]):
 		var id: String = str(packet.stock)
 		var quantity: int = int(row.get("aboard",{}).get(id,0))
@@ -126,8 +129,9 @@ func _sync_racks(rows: Array) -> void:
 		var id: String = str(row.id)
 		if not _racks.has(id):
 			assert(_cargo_floor != null and _cargo_floor.get_parent() == _pivot,"Static racks require the actual retained Cargo_Floor marker")
-			var rack := model(str(SHELVES[str(row.family)]))
+			var rack: Node3D = ShelfView.new() if row.get("manual_bale",false) else model(str(SHELVES[str(row.family)]))
 			_cargo_floor.add_child(rack)
+			if rack is ShelfView: (rack as ShelfView).bind(_receiving,_model)
 			var dimensions: Vector3 = row.size
 			var at: Vector3 = Vector3(row.origin)+Vector3(dimensions.x/2.0,-_pivot.position.y,dimensions.z/2.0)
 			var basis := Basis(Vector3.UP,PI if int(row.side) < 0 else 0.0)
@@ -195,6 +199,8 @@ func _sync_mechanism() -> void:
 
 func sync_speed() -> void:
 	var speed := float(_model.speed)
+	for rack: Node3D in _racks.values():
+		if rack is ShelfView: (rack as ShelfView).sync_speed()
 	if _driver != null and not is_equal_approx(speed,_driver_speed):
 		_driver_speed = speed
 		_driver.sync_speed()

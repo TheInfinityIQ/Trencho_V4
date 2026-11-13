@@ -47,8 +47,10 @@ func confirm(id: String, expected: String) -> Dictionary:
 		var person: Dictionary = service.ledger.inspect_person_status(person_id)
 		if not str(person.get("carrying_stock_id","")).is_empty() or not str(person.get("joint_carry_id","")).is_empty(): continue
 		if job.phase == "Truck return": continue # Already withdrawing after reassignment.
+		if str(job.get("claim_id","")).is_empty(): continue # Close-only operator retains the real safe securing task.
 		var claim: Dictionary = service.ledger.inspect_claim(str(job.claim_id))
 		if not claim.is_empty() and not claim.cancelled: releases[str(job.claim_id)] = person_id
+		if job.phase in ["Shelf opening","Shelf closing"]: continue # Lock goods, retain support through safe close and exit.
 		var path: Array = []
 		if person.get("supplier_access_id","") == id:
 			path = _withdrawal_path(order,job,Vector2(person.position))
@@ -60,6 +62,15 @@ func confirm(id: String, expected: String) -> Dictionary:
 	order.return_claims = locked.claims
 	order.return_quote = offer.duplicate(true)
 	order.storage_warning = ""
+	for worker: Dictionary in service._workers.values():
+		var active: Dictionary = worker.job
+		if active.get("order_id","") != id or active.get("phase","") not in ["Shelf opening","Shelf closing"]: continue
+		# Its uncollected stock claim was transferred to the return transaction,
+		# but support must continue. Release unused destination space, not hands.
+		if active.has("storage"):
+			service.warehouse.release(str(active.storage))
+			active.erase("storage")
+		if service.warehouse != null: service.warehouse.release_point(str(worker.person_id))
 	for person_id: String in withdrawals:
 		var job: Dictionary = service._workers[person_id].job
 		if job.has("storage"):

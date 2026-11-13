@@ -19,7 +19,7 @@ func prepare(camera: Camera3D) -> void:
 	cover.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var label := Label.new()
-	label.text = "Preparing construction visuals…"
+	label.text = "Preparing game visuals…"
 	center.add_child(label)
 	var stage := Node3D.new()
 	camera.add_child(stage)
@@ -62,6 +62,7 @@ func prepare(camera: Camera3D) -> void:
 	truck.scale = Vector3.ONE*TruckArt.MODEL_SCALE
 	truck.position = Vector3(10,1,0)
 	_prepare_warehouse(stage)
+	_prepare_supplier_shelves(stage)
 	await RenderingServer.frame_post_draw
 	elapsed_usec = Time.get_ticks_usec()-started
 	stage.queue_free()
@@ -81,7 +82,7 @@ func _prepare_warehouse(stage: Node3D) -> void:
 			for material: ShaderMaterial in prepared.materials:
 				material.set_shader_parameter("progress",0.5)
 				resources.append(material)
-	for file: String in ["warehouse_crate_rack.glb","warehouse_long_stock_rack.glb","small_crate.glb","medium_crate.glb","metal_stock.glb","closed_keg.glb","timber_bundle.glb","textile_bale.glb","fuel_can.glb"]:
+	for file: String in ["warehouse_crate_rack_metal_access_v02.glb","warehouse_metal_lower_cassette_v01.glb","warehouse_metal_upper_cassette_v01.glb","warehouse_long_stock_rack.glb","small_crate.glb","medium_crate.glb","metal_stock.glb","closed_keg.glb","timber_bundle.glb","textile_bale.glb","fuel_can.glb"]:
 		var model := WarehouseAssets.model(file)
 		if model == null: continue
 		stage.add_child(model)
@@ -91,3 +92,14 @@ func _prepare_warehouse(stage: Node3D) -> void:
 	light.position = Vector3(0,4,0)
 	light.omni_range = 20.0
 	light.shadow_enabled = false
+
+func _prepare_supplier_shelves(stage: Node3D) -> void:
+	# Draw the actual approved opaque/skinned resources under the existing cover;
+	# no person or mechanism activity is registered in the simulation.
+	for file: String in ["fixture_s4_full_review_v01.glb","worker_s4_full_review_v01.glb"]:
+		var packed := load("res://game/supplier_transport/assets/s4_operator/"+file) as PackedScene
+		resources.append(packed)
+		var model := packed.instantiate() as Node3D
+		WarehouseAssets.prepare(model)
+		stage.add_child(model)
+		model.position = Vector3(0,0,4)

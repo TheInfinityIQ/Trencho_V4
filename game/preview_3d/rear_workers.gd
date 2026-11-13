@@ -90,6 +90,8 @@ func _sync_activity(id: String) -> void:
 	var actor: Dictionary = _model.rear.actors[id]
 	var job: Dictionary = _model.receiving._workers.get(id,{}).get("job",{})
 	var phase: String = str(job.get("phase",actor.phase))
+	# The dedicated export shows this same person only during manual shelf work.
+	bodies[id].visible = phase not in ["Shelf opening","Shelf closing"]
 	var label := "Worker %d\n%s" % [_numbers[id],phase]
 	if _roles[id].text != label: _roles[id].text = label
 	var external: Dictionary = actor.get("external_work",{})

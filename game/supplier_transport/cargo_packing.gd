@@ -124,7 +124,7 @@ static func _place(truck: Dictionary, packet: Dictionary) -> bool:
 	var family: String = FAMILY[packet.code]
 	var choice := _choice(truck,packet,family)
 	if choice.is_empty():
-		if not _add_rack(truck,family,packet.code == "M04"): return false
+		if not _add_rack(truck,family,packet.code == "M04",packet.code == "M05"): return false
 		choice = _choice(truck,packet,family)
 		if choice.is_empty(): return false
 	var rack: Dictionary = truck.racks[int(choice.rack)]
@@ -158,6 +158,7 @@ static func _choice(truck: Dictionary, packet: Dictionary, family: String) -> Di
 	for rack_index in truck.racks.size():
 		var rack: Dictionary = truck.racks[rack_index]
 		if rack.family != family: continue
+		if family == "S4" and bool(rack.get("manual_bale",false)) != (packet.code == "M05"): continue
 		if packet.code == "M04" and int(rack.side) != -1: continue
 		for index in rack.spaces.size():
 			var box: AABB = rack.spaces[index].box
@@ -171,7 +172,7 @@ static func _choice(truck: Dictionary, packet: Dictionary, family: String) -> Di
 					best = {"rack":rack_index,"space":index,"size":size,"turn":turn}
 	return best
 
-static func _add_rack(truck: Dictionary, family: String, left_only: bool = false) -> bool:
+static func _add_rack(truck: Dictionary, family: String, left_only: bool = false, manual_bale: bool = false) -> bool:
 	var length: float = SPECS[family].length
 	for side: int in [-1,1]:
 		if left_only and side != -1: continue
@@ -181,7 +182,8 @@ static func _add_rack(truck: Dictionary, family: String, left_only: bool = false
 		if used+length > SIDE_SPAN+EPS: continue
 		var origin := Vector3(-0.93 if side < 0 else 0.40,FLOOR_Y,FRONT_Z+0.10+used)
 		var row := {"id":"rack-%02d" % truck.racks.size(),"family":family,"side":side,"origin":origin,"size":Vector3(RACK_DEPTH,1.50,length),"spaces":[]}
-		var tops: Array = SPECS[family].tops
+		row.manual_bale = manual_bale
+		var tops: Array = [0.18,0.70] if manual_bale else SPECS[family].tops
 		var inset: float = SPECS[family].inset
 		for index in tops.size():
 			var ceiling: float = (float(tops[index+1])-TRAY if index+1 < tops.size() else 1.50)-RELEASE
@@ -212,6 +214,10 @@ static func _dependencies(truck: Dictionary) -> void:
 		var bounds := AABB(packet.position-Vector3(packet.size.x/2.0,0,packet.size.z/2.0),packet.size)
 		for other: Dictionary in truck.packages:
 			if other.id == packet.id or other.rack != packet.rack: continue
+			# The S4 upper pan must be EMPTY before it can fold for lower access.
+			if FAMILY[packet.code] == "S4" and packet.position.y < FLOOR_Y+0.70 and other.position.y >= FLOOR_Y+0.70:
+				packet.blocked_by.append(str(other.id))
+				continue
 			if other.support == packet.id:
 				packet.blocked_by.append(str(other.id))
 				continue

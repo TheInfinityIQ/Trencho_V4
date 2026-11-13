@@ -1,0 +1,56 @@
+{
+  "artist_review_complete": true,
+  "actual_encoded_media_reviewed": true,
+  "full_cycle_phase_sheets_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "full_cycle_regular_boundary_sheets_reviewed": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "moving_hand_sheets_reviewed": {
+    "phase": [
+      1
+    ],
+    "boundaries": [
+      1
+    ]
+  },
+  "critical_mechanism_join_sheets_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "method": "Viewed actual encoded-video decoded quarter/mid/three-quarter phase samples and boundaries. Full uninterrupted 1x movie is supplied for human appearance review. This record does not claim a human watched or approved the movie.",
+  "full_cycle_observations": [
+    "Approach, manual detent operation, guided handle extension, positive locks, supported lift, hands-clear interval, supported reverse, retraction and withdrawal are present in chronological order.",
+    "The fixed full-body camera keeps the operator, feet and opaque shelf visible; complementary hand views are required because the torso and pan naturally obscure some contacts.",
+    "The original faceted worker appearance remains. Service withdrawal/regrip includes a high free-hand clearance route around the retained handle; subjective pacing and gesture appearance remain for full-cycle human review."
+  ],
+  "retained_warning": "Original proximal sleeve/vest attachment overlaps remain explicit source-specific garment warnings; the raw1146-frame count is preserved. No new distal-arm/hand/fixture exemption.",
+  "human_full_cycle_appearance_approval": false,
+  "engine_integration_verified": false,
+  "critical_join_decoded_records": 57,
+  "moving_hand_observations": [
+    "Right grip and its release/regrip are visible from the complementary underside view, including the hands-clear interval.",
+    "Four continuous left-thumb excerpts show closed-lock release, parked-lock engagement, parked-lock release and closed-lock engagement. Orange control orientation changes are visible; no fixture surface is hidden."
+  ],
+  "critical_join_observations": [
+    "Manual detents and positive latch transitions are represented at the measured boundaries.",
+    "Lift and exact reverse joins retain the approved8s timing; no visible whole-body discontinuity at the corrected lowering boundary.",
+    "The service-ready and closing start retain the same locked fixture pose; final handle is retracted and worker withdrawn."
+  ],
+  "video_hashes": {
+    "review_video\\s4_complete_cycle_v02\\s4_complete_cycle_v02.mp4": "edeab9095d1830fea030dff0fc57a2d1f948397182cb42e75f755286ce7d9bf4",
+    "review_video\\s4_moving_hand_coverage_v02\\s4_moving_hand_coverage_v02.mp4": "c48dca137f9467cfe48fe14dcd49b364a4da014f4220b047d260f6d1ceda7f5a"
+  },
+  "readiness": "Artist export/moving-review gates complete. Human full-cycle appearance approval and Lead-owned engine integration remain pending."
+}

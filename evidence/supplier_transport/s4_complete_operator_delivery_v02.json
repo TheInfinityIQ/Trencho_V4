@@ -1,7 +1,7 @@
 {
   "asset": "S4 complete worker-operated shelf",
   "date": "2026-11-12",
-  "readiness": "Complete source/export/moving-review handoff. Human full-cycle appearance approval and Godot integration remain pending.",
+  "readiness": "Complete source/export/moving-review package and human full-cycle appearance approved; Lead runtime integration in progress.",
   "package": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_complete_operator_delivery_v02",
   "archive_sha256": "4e8caea6432e401093754675ecff52428b488ecac60d59edcbc60dc38d469826",
   "editable_source_sha256": "b11ce07f221e2431d46cbd15ef85c4a56062ff464b18f31868d810c343e0d86c",
@@ -22,7 +22,7 @@
     "exported_mesh_fixture_frames": 2601,
     "joint_findings": 0,
     "exported_mesh_fixture_findings": 0,
-    "maximum_constrained_source_export_joint_error_m": 0.0000036385999462231337,
+    "maximum_constrained_source_export_joint_error_m": 3.6385999462231337e-06,
     "lift_seconds": 8,
     "reverse_seconds": 8,
     "v04_delta": "Only the 31-frame knee-settling join before lowering; all other pose channels compared unchanged. Earlier exact source scope and changed-join direct checks are documented in the package.",
@@ -39,9 +39,13 @@
   "preserved": "Original rig/rest/weights/seven clips, compact controls, accepted <=2 mm local post notch, original cage/capacity/supports and approved lift/reverse.",
   "visual_limit": "High free-hand clearance route and overall pacing remain visible for subjective appearance feedback. Clearance statistics do not establish naturalness.",
   "not_verified": [
-    "Human full-cycle appearance approval",
     "Godot import, paired runtime placement or root-motion consumption",
     "Game performance, full gameplay loop or regression coverage"
   ],
-  "local_engine_runs": 0
+  "local_engine_runs": 0,
+  "human_appearance_approval": {
+    "text": "It’s good",
+    "date": "2026-11-13",
+    "turn": "01a1d352-5867-71f1-9072-22536f396503"
+  }
 }

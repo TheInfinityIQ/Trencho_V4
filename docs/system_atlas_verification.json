@@ -32,5 +32,15 @@
     "review": "Compared combined world_presenter against both parents; current battlefield presenter/lifetime and supplier rear/convoy/manager edits retained. AGENTS duplicate current rules removed before this record.",
     "contract": "Original/candidate snapshot b402eab9 preserved then both amended with Lead-approved clockedlever study and servicepacing; source/art/runtime acceptance remains pending.",
     "checks": "No new engine/action/broad scenario. Existing component receipts retain their exact parent scope; combined source not gameplayaccepted."
+  },
+  "s4_integration_source_review": {
+    "date": "2026-11-13",
+    "game_scripts": 251,
+    "non_test_scripts": 157,
+    "retained_tests": 94,
+    "functions_in_inventory": 3792,
+    "systems": 51,
+    "diagram_links": 333,
+    "status": "Source-only S4 wiring reviewed; no engine demonstration yet. Previous parent receipts retain exact scope."
   }
 }

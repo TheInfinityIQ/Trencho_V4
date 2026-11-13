@@ -199,11 +199,12 @@ func _begin_convoy(created: Array[Dictionary]) -> void:
 func supplier_vehicle_views() -> Array[Dictionary]:
 	var rows: Array[Dictionary] = []
 	for order: Dictionary in _active_suppliers.values():
-		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"state_started":float(order.state_entered_at),"driver_id":str(order.id)+"-driver","position":ledger._world_position(order.id),"facing_degrees":float(order.get("facing_degrees",0.0)),"storage_warning":str(order.get("storage_warning","")),"moving":not order.motion.is_empty(),"mechanism":str(order.get("mechanism","")),"mechanism_started":float(order.get("mechanism_started",0.0)),"packages":order.packet_manifest.duplicate(true),"racks":order.rack_manifest.duplicate(true),"aboard":order.get("aboard_packets",{}).duplicate()})
+		rows.append({"id":order.id,"kind":order.kind,"state":order.state,"state_started":float(order.state_entered_at),"driver_id":str(order.id)+"-driver","position":ledger._world_position(order.id),"facing_degrees":float(order.get("facing_degrees",0.0)),"storage_warning":str(order.get("storage_warning","")),"moving":not order.motion.is_empty(),"mechanism":str(order.get("mechanism","")),"mechanism_started":float(order.get("mechanism_started",0.0)),"packages":order.packet_manifest.duplicate(true),"racks":order.rack_manifest.duplicate(true),"aboard":order.get("aboard_packets",{}).duplicate(),"shelves":order.get("shelf_states",{}).duplicate(true)})
 	return rows
 
 func worker_height(id: String, at: Vector2) -> float:
 	var job: Dictionary = _workers.get(id,{}).get("job",{})
+	if job.get("phase","") in ["Shelf opening","Shelf closing"]: return Freight.FLOOR_Y
 	if job.get("phase","") not in ["Approach","Pickup","Truck egress","Truck return"]: return 0.0
 	var order: Dictionary = _find_order(str(job.order_id))
 	return Freight.height(order,at) if not order.get("packet_manifest",[]).is_empty() else 0.0
@@ -815,7 +816,7 @@ func _exit_passenger(order: Dictionary) -> void:
 
 
 func start_shared_unload(id: String) -> bool:
-	if _orders.is_empty() or (development_convoys and convoy_ready()): return false
+	if _orders.is_empty() or (development_convoys and convoy_ready() and not freight.shelves.pending_close()): return false
 	if _workers.has(id): return false
 	var person: Dictionary = ledger.inspect_person_status(id)
 	if person.duty_id != "hauling" or person.pending_assignment != "None" or person.health <= 0: return false
@@ -827,7 +828,7 @@ func start_shared_unload(id: String) -> bool:
 
 func _start_worker_job(id: String) -> bool:
 	for order in _orders:
-		if order.kind != "Freight" or order.state != "Berthed" or order.get("return_requested",false): continue
+		if order.kind != "Freight" or order.state != "Berthed": continue
 		if not order.packet_manifest.is_empty() and not freight.can_unload(order): continue
 		var slot: int = order.slot
 		var berth: Dictionary = freight_berths[slot]
@@ -837,6 +838,8 @@ func _start_worker_job(id: String) -> bool:
 		if active >= STAFF_LIMIT: continue
 		var duty: String = ledger.inspect_entity(id).duty_id
 		if not _workers[id].get("shared",false) and duty != berth.duty and not (slot == 0 and duty == "Receiving"): continue
+		if development_convoys and freight.shelves.start_close_job(id,order,slot): return true
+		if order.get("return_requested",false): continue
 		var room := free_receiving_kg(slot)
 		if room <= 0:
 			if warehouse != null and order.get("storage_warning","") != "Warehouse full — free storage or expand it":
@@ -901,6 +904,8 @@ func _finish_worker_phase(id: String) -> void:
 	var job: Dictionary = _workers[id].job
 	var previous_phase: String = str(job.phase)
 	match job.phase:
+		"Shelf opening", "Shelf closing":
+			freight.shelves.finish(_find_order(str(job.order_id)),job,id)
 		"Source access": _approach_truck(id,job)
 		"Source queue":
 			job.path = []
@@ -944,10 +949,16 @@ func _finish_worker_phase(id: String) -> void:
 				job.ends_at = INF
 				_find_order(job.order_id).storage_warning = "Shelf site occupied — waiting for clearance"
 		"Approach":
-			job.phase = "Pickup"
-			job.started_at = _time
-			job.ends_at = _time + 2.0
-			job.path = []
+			var order: Dictionary = _find_order(str(job.order_id))
+			if job.get("s4_action","") == "close":
+				freight.shelves.begin(order,job,id,true)
+			elif freight.shelves.needs_open(order,freight.packet(order,str(job.source_id))):
+				freight.shelves.begin(order,job,id,false)
+			else:
+				job.phase = "Pickup"
+				job.started_at = _time
+				job.ends_at = _time + 2.0
+				job.path = []
 		"Pickup", "Storage access":
 			if job.has("storage") and not warehouse.acquire_access(str(job.storage)):
 				job.phase = "Storage access"
@@ -1015,6 +1026,8 @@ func _approach_truck(id: String, job: Dictionary) -> void:
 	if not order.packet_manifest.is_empty():
 		var origin: Vector2 = ledger.inspect_person_status(id).position
 		var route_in: Array = freight.ingress(order,str(job.source_id),origin)
+		var service_at: Vector2 = freight.shelves.approach_point(order,job)
+		if not route_in.is_empty(): route_in[-1] = service_at
 		if route_in.is_empty() or not freight.reserve_aisle(order,[id]):
 			_queue_at_source(id,job)
 			return
@@ -1025,7 +1038,7 @@ func _approach_truck(id: String, job: Dictionary) -> void:
 			job.path = []
 			job.ends_at = INF
 			return
-		ledger.register_handling_point(str(order.id),id,freight.pickup_point(order,str(job.source_id)))
+		ledger.register_handling_point(str(order.id),id,service_at if job.get("s4_action","") == "close" else freight.pickup_point(order,str(job.source_id)))
 		job.phase = "Approach"
 		job.path = route_in
 		job.started_at = _time
@@ -1051,12 +1064,13 @@ func _sync_workers() -> void:
 		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
+		if not job.is_empty() and job.phase in ["Shelf opening","Shelf closing"]: continue # Keep actual support until the hands-safe boundary.
 		if _workers[id].get("shared",false): still_assigned = person.assignment == "Rear Labour" and person.duty_id == "hauling" and not job.is_empty()
 		if not job.is_empty() and job.phase in ["Carry", "Drop","Truck egress","Carry blocked","Truck return"]:
 			continue # G01 retains the old duty until the carried freight is deposited.
 		if not still_assigned or person.pending_assignment != "None":
 			if not job.is_empty() and not str(person.get("supplier_access_id","")).is_empty():
-				_must(ledger.release_claim(str(job.claim_id)))
+				if not str(job.claim_id).is_empty(): _must(ledger.release_claim(str(job.claim_id)))
 				if job.has("storage"):
 					warehouse.release(str(job.storage))
 					job.erase("storage")
@@ -1067,7 +1081,7 @@ func _sync_workers() -> void:
 				worker_activity_changed.emit(id)
 				continue
 			if not job.is_empty():
-				_must(ledger.release_claim(job.claim_id))
+				if not str(job.claim_id).is_empty(): _must(ledger.release_claim(job.claim_id))
 				if job.has("storage"): warehouse.release(str(job.storage))
 			_workers.erase(id)
 
@@ -1093,7 +1107,9 @@ func _move_activities() -> void:
 	if development_convoys: passengers.advance_poses()
 	for id in _workers:
 		var job: Dictionary = _workers[id].job
-		if not job.is_empty() and not job.path.is_empty():
+		if not job.is_empty() and job.phase in ["Shelf opening","Shelf closing"]:
+			_must(ledger.move_entity(id,"rear-lane",freight.shelves.active_position(_find_order(str(job.order_id)),job)))
+		elif not job.is_empty() and not job.path.is_empty():
 			_must(ledger.move_entity(id, "rear-lane", _motion_position(job)))
 
 
