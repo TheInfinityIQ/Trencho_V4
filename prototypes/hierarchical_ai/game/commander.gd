@@ -33,6 +33,14 @@ static func decide(input: Dictionary) -> Dictionary:
 	}
 	return {"ok":true,"effect":"Keep the selected approach usable.","route":chosen,"alternatives":routes.slice(1),"question":question,"question_at":point_id,"journal":[event]}
 
+static func reassess(_input: Dictionary, previous: Dictionary, delivered: Dictionary) -> Dictionary:
+	# The only new information is the delivered local observation, not world truth.
+	var result: Dictionary = previous.duplicate(true)
+	var detected: Array = delivered.get("detected_classes",[])
+	result["received_observation"] = delivered.duplicate(true)
+	result["reassessment"] = "Retain the route provisionally: nothing was detected within the reported area at the observation time; other areas and later movement remain unknown." if detected.is_empty() else "Retain the route as an uncommitted candidate: a local report identified %s; the commander needs further assessment." % ", ".join(detected)
+	return result
+
 static func _visit(current: String, finish: String, edges: Array, movement: String, path: Array, used: Array, length: float, routes: Array[Dictionary]) -> void:
 	if current == finish:
 		routes.append({"nodes":path.duplicate(),"edges":used.duplicate(),"metres":length})

@@ -1,6 +1,10 @@
 extends RefCounted
 ## One explicit known-map example. Enemy presence and strength are not provided.
 
+static func physical_fixture() -> Dictionary:
+	# Actual experiment state stays separate from the commander's known snapshot.
+	return {"hostiles":[]}
+
 static func snapshot() -> Dictionary:
 	return {
 		"side":"blue", "time_seconds":0.0, "commander":"blue-commander",
