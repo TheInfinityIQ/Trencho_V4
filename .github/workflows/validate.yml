@@ -72,6 +72,7 @@ jobs:
           models += ["game/supplier_transport/assets/materials_truck.glb", "game/supplier_transport/assets/civilian_carrier.glb", "game/supplier_transport/assets/supplier_driver.glb", "game/supplier_transport/assets/supplier_passenger.glb"]
           models += ["game/supplier_transport/assets/" + name + ".glb" for name in ["s1_longstockrack_v03", "s2_crateshelf_v01", "s3_restraintrack_v01", "s4_protectedcargo_v01"]]
           models += ["game/supplier_transport/assets/s4_operator/" + name + ".glb" for name in ["worker_s4_full_review_v01", "fixture_s4_full_review_v01"]]
+          models += ["game/supplier_transport/assets/timber_pair/timber_worker_motions_v01.glb"]
           dependencies = textures + models
           (output / "asset-dependencies.json").write_text(json.dumps(dependencies), encoding="utf-8")
           asset_update = any(p in dependencies or p in [t + ".import" for t in dependencies] for p in changed)

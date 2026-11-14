@@ -41,9 +41,15 @@ func confirm(id: String, expected: String) -> Dictionary:
 		return _reject("The truck or remaining cargo changed. Review the delivery and confirm again; nothing was returned.")
 	var releases := {}
 	var withdrawals := {}
+	var pair_plan := {"ok":true,"claims":{},"rows":[]}
+	if service.timber_activity != null:
+		pair_plan = service.timber_activity.return_plan(order)
+		if not pair_plan.ok: return _reject(str(pair_plan.message))
+		releases.merge(pair_plan.claims)
 	for person_id: String in service._workers:
 		var job: Dictionary = service._workers[person_id].job
 		if job.get("order_id","") != id: continue
+		if job.has("timber_pair"): continue
 		var person: Dictionary = service.ledger.inspect_person_status(person_id)
 		if not str(person.get("carrying_stock_id","")).is_empty() or not str(person.get("joint_carry_id","")).is_empty(): continue
 		if job.phase == "Truck return": continue # Already withdrawing after reassignment.
@@ -62,6 +68,7 @@ func confirm(id: String, expected: String) -> Dictionary:
 	order.return_claims = locked.claims
 	order.return_quote = offer.duplicate(true)
 	order.storage_warning = ""
+	if service.timber_activity != null: service.timber_activity.return_confirmed(pair_plan)
 	for worker: Dictionary in service._workers.values():
 		var active: Dictionary = worker.job
 		if active.get("order_id","") != id or active.get("phase","") not in ["Shelf opening","Shelf closing"]: continue

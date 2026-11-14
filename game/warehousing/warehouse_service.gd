@@ -7,6 +7,7 @@ const Packages = preload("res://game/warehousing/material_packages.gd")
 const Collision = preload("res://game/warehousing/warehouse_collision.gd")
 const MODULE_SIZE := Vector2(12,16)
 const WALL := 0.2
+const ROW_PITCH := 3.0
 const STRUCTURAL_KG := 10000
 const PREPARE_SECONDS := 1.5
 const STORE := "receiving"
@@ -71,7 +72,7 @@ func register_module(row: Dictionary) -> void:
 		for line in 4:
 			var index: int = bank*4+line
 			var id := "%s/bay-%02d" % [row.id,index]
-			var local := Vector2(-3.0 if bank == 0 else 3.0,-4.5+float(line)*3.0)
+			var local := Vector2(-3.0 if bank == 0 else 3.0,-4.5+float(line)*ROW_PITCH)
 			# Long axis follows module localX. A quarter-turn rotates the whole layout.
 			var turn: float = PI/2.0 if bool(row.quarter_turn) else PI
 			var at: Vector2 = row.center+local.rotated(turn)
@@ -85,7 +86,7 @@ func register_module(row: Dictionary) -> void:
 	_obstacles_dirty = true
 	_touch(str(row.id))
 
-func reserve(person: String, code: String, quantity: int, allow_prepare: bool = true, queue_access: bool = false) -> Dictionary:
+func reserve(person: String, code: String, quantity: int, allow_prepare: bool = true, queue_access: bool = false, candidate_filter: Callable = Callable()) -> Dictionary:
 	if quantity <= 0 or quantity > Packages.capacity(code): return _reject("INVALID_PACKAGE","Invalid material package.")
 	if free_net_kg() < quantity: return _reject("WAREHOUSE_FULL","Warehouse full — free storage or expand it.")
 	var family := Packages.fixture_family(code)
@@ -114,6 +115,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 		var queued := false
 		for candidate: int in _free_cells(bay.id,cells,code,quantity):
 			has_position = true
+			if candidate_filter.is_valid() and not candidate_filter.call(bay,cells[candidate]): continue
 			at = _choose_point(bay,person,origin,cells[candidate])
 			if not at.is_finite() and queue_access and compatible:
 				var waiting: Vector2 = _cell_service_point(bay,cells[candidate])

@@ -20,7 +20,7 @@ func begin(id: String, people: Array, source_id: String, quantity: int, claim_id
 	var place := ""
 	for person_id: String in people:
 		var person: Records.Person = ledger._person(person_id)
-		if person == null or person.owner != source.owner or person.assignment != Records.Assignment.REAR_LABOUR or person.health <= 0 or person.pending_assignment != -1 or not person.joint_carry_id.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not person.crew_station.is_empty() or not person.construction_truck_id.is_empty() or not ledger._is_place(person.holder_id):
+		if person == null or person.owner != source.owner or person.assignment != Records.Assignment.REAR_LABOUR or person.health <= 0 or (person.pending_assignment != -1 and person.supplier_access_id != source.holder_id) or not person.joint_carry_id.is_empty() or not person.carrying_stock_id.is_empty() or not person.carrying_weapon_id.is_empty() or not person.crew_station.is_empty() or not person.construction_truck_id.is_empty() or not ledger._is_place(person.holder_id):
 			return ledger._reject("PERSON_BUSY","Both actual handlers must be free for this exclusive carry.")
 		if not ledger._at_handling_point(person_id,source_id): return ledger._reject("NOT_AT_GRIP","Both workers must reach registered source stations.")
 		if source.unit_mass_kg*float(quantity)/2.0+ledger._contents_mass(person_id) > 25.0:

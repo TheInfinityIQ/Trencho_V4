@@ -1,5 +1,14 @@
 # Team workflow
 
+## Lead succession — 13 November 2026
+
+Dawson requested replacement Lead chat `01a1d807-02eb-7e52-8f46-93bb10241447`.
+The successor adopts the existing `logs/supplier-field-integration-worktree` on
+`codex/supplier-field-integration`; outgoing Lead `01a199a0-f08e-7f23-947f-62655a9ed233`
+ceases active feature edits. All standing Lead authority transfers; historical
+records below remain. Battlefield and Artist ownership are unchanged. Protect
+the dirty human root. See [handoff](lead_developer_handoff_2026_11_13.md).
+
 ## Bounded Artist Director pilot — 12 November 2026
 
 Dawson's directly verified human turn `01a1d1d6-f37d-7c81-ba92-1601e2edb619` in Workflow Master authorizes three different art workflows under the existing Artist Director, with short-lived fixed Luna/Terra workers. [Pilot authority and boundaries](art_workflow_pilot.md) govern this narrow exception to scout-only delegation. Lead art coordination goes only through the Director; developer coordination is unchanged. Preserve in-flight S4 work, approved assets and animation pauses. Dispatch only actual independent ready authorized tasks, with separate files/processes and controlled rendering; record missing scope rather than manufacture three assignments. Director owns briefs/results and internal worker reviews, Lead owns engineering integration and team policy. No extra standing controller, worker recursion, new install, blanket testing or model change to an existing role is authorized.

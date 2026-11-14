@@ -44,6 +44,11 @@ func start_available(actors: Array) -> bool:
 		if rear.ledger.inspect_person_status(actor.id).pending_assignment == "None": available.append(actor)
 	var selected: Dictionary = {}
 	for task: String in order:
+		if task == "unloading" and rear.receiving != null:
+			var candidates: Array[String] = []
+			for actor: Dictionary in available:
+				if not selected.has(actor.id) and actor.phase == "Idle": candidates.append(str(actor.id))
+			for id: String in rear.receiving.start_shared_timber(candidates): selected[id] = true
 		for actor: Dictionary in available:
 			if selected.has(actor.id) or actor.phase != "Idle": continue
 			if _start_task(actor,task): selected[actor.id] = true

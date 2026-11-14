@@ -12,6 +12,7 @@
 *.fbx binary
 *.blend binary
 game/supplier_transport/assets/s4_operator/*.glb filter=lfs diff=lfs merge=lfs -text
+game/supplier_transport/assets/timber_pair/*.glb filter=lfs diff=lfs merge=lfs -text
 game/supplier_transport/assets/s4_operator/source/*.blend filter=lfs diff=lfs merge=lfs -text
 
 # Preserve the verbatim third-party licence bytes, including original whitespace.

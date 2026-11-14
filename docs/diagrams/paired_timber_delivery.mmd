@@ -23,6 +23,9 @@ flowchart TD
   Commit --> Release[Both workers leave safely; physical handover gate]
   Release --> Depart[Existing shelf securing, ramp, door and clear truck exit]
   Pose[Accepted clip and root/payload metadata] --> View[Read-only active animation views]
+  Pose --> Sampler[One timestamp samples predecoded FORE, AFT and payload transforms]
+  Sampler --> Joint
+  Sampler --> View
   Joint --> View
   Ramp --> View
   Place --> View

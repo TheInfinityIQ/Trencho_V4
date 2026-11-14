@@ -61,6 +61,7 @@ var road: RefCounted
 var passengers: RefCounted
 var returns: RefCounted
 var timber_handoffs: RefCounted
+var timber_activity: RefCounted
 var _packing_key := ""
 var _packing_quote: Dictionary = {}
 
@@ -73,6 +74,10 @@ func bind_warehouse(owner: RefCounted) -> void:
 	warehouse.stock_committed.connect(func(stock_id: String) -> void:
 		var service: RefCounted = service_ref.get_ref()
 		if service != null: service.timber_handoffs.stock_committed(stock_id))
+
+func bind_timber_activity(rear: RefCounted) -> void:
+	assert(timber_activity == null and warehouse != null)
+	timber_activity = preload("res://game/supplier_transport/paired_timber_delivery.gd").new(self,rear)
 
 func _warehouse_changed() -> void:
 	# Queue a boundary; never run the simulation inside a Ledger/Area3D signal.
@@ -90,8 +95,10 @@ func _refresh_storage_warnings() -> void:
 		for worker: Dictionary in _workers.values():
 			var job: Dictionary = worker.job
 			if job.get("order_id","") != order.id: continue
-			if job.phase in ["Storage approach","Preparing storage","Storage settling"]: preparing = true
-			if job.phase == "Storage blocked": blocked = true
+			var phase: String = str(job.phase)
+			if timber_activity != null and job.has("timber_pair"): phase = str(timber_activity.rows.get(job.timber_pair,{}).get("phase",phase))
+			if phase in ["Storage approach","Preparing storage","Storage settling"]: preparing = true
+			if phase == "Storage blocked": blocked = true
 		var has_cargo := false
 		var has_space := false
 		for source_id: String in order.stock_ids:
@@ -170,6 +177,7 @@ func quote_delivery(cart: Dictionary, workers: bool = false) -> Dictionary:
 	elif workers and personnel_admitted() >= PERSONNEL_LIMIT: reason = "Personnel vehicles are still clearing."
 	elif workers and rear_population()+incoming_people()+_outside_rear_places()+8 > REAR_LIMIT: reason = "Eight workers need free rear population places."
 	elif _money < quote.cost: reason = "Not enough requisition for the complete order."
+	if reason.is_empty() and timber_activity != null: reason = str(timber_activity.layout_blocker(quote.vehicles))
 	quote.can_commit = reason.is_empty()
 	quote.message = reason if not reason.is_empty() else "Ready to confirm. Trucks appear at the south road and unload physically."
 	return quote
@@ -208,6 +216,7 @@ func supplier_vehicle_views() -> Array[Dictionary]:
 	return rows
 
 func worker_height(id: String, at: Vector2) -> float:
+	if timber_activity != null and timber_activity.people.has(id): return timber_activity.height(id,at)
 	var job: Dictionary = _workers.get(id,{}).get("job",{})
 	if job.get("phase","") in ["Shelf opening","Shelf closing"]: return Freight.FLOOR_Y
 	if job.get("phase","") not in ["Approach","Pickup","Truck egress","Truck return"]: return 0.0
@@ -279,6 +288,9 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 	for order_id: String in pending:
 		if timber_handoffs.has_pending(order_id):
 			return _reject("JOINT_HANDOFF_REQUIRED","Finish or recover the actual paired timber delivery before this debug delivery; nothing changed.")
+	if timber_activity != null:
+		for row: Dictionary in timber_activity.rows.values():
+			if pending.has(row.order.id): return _reject("JOINT_HANDOFF_REQUIRED","Finish the actual paired timber action before debug delivery; nothing changed.")
 	for person_id: String in _workers:
 		var job: Dictionary = _workers[person_id].job
 		if not job.is_empty() and pending.has(job.order_id) and not str(ledger.inspect_person_status(person_id).get("joint_carry_id","")).is_empty():
@@ -484,6 +496,7 @@ func advance_time(seconds: float) -> Dictionary:
 
 func next_boundary() -> float:
 	var boundary: float = freight.next_boundary() if development_convoys else INF
+	if timber_activity != null: boundary = minf(boundary,float(timber_activity.next_boundary()))
 	for order in _orders:
 		if order.next_at > _time: boundary = minf(boundary, order.next_at)
 	for walk in _walks: boundary = minf(boundary, walk.ends_at)
@@ -675,6 +688,7 @@ func _pump() -> void:
 	while again:
 		again = freight.settle() if development_convoys else false
 		if development_convoys: again = road.settle() or again
+		if timber_activity != null: again = timber_activity.settle() or again
 		for order in _orders:
 			if order.next_at > _time:
 				continue
@@ -740,6 +754,11 @@ func _pump() -> void:
 			if order.state == "Disembarking" and (bool(order.get("rear_cleared",false)) if development_convoys else order.people_arrived == order.expected_people):
 				_start_vehicle_motion(order, "Departing", _exit(order))
 				again = true
+		if timber_activity != null:
+			var idle: Array[String] = []
+			for person: String in _workers:
+				if not _workers[person].get("shared",false) and _workers[person].job.is_empty(): idle.append(person)
+			if not timber_activity.start(idle).is_empty(): again = true
 		for id in _workers:
 			if not _workers[id].get("shared",false) and _workers[id].job.is_empty() and _start_worker_job(id):
 				again = true
@@ -833,6 +852,13 @@ func start_shared_unload(id: String) -> bool:
 	_workers.erase(id)
 	return false
 
+func start_shared_timber(ids: Array) -> Array:
+	if timber_activity == null: return []
+	var candidates: Array = ids.duplicate()
+	for person: String in _workers:
+		if not _workers[person].get("shared",false) and _workers[person].job.is_empty() and person not in candidates: candidates.append(person)
+	return timber_activity.start(candidates)
+
 
 func _start_worker_job(id: String) -> bool:
 	for order in _orders:
@@ -859,8 +885,9 @@ func _start_worker_job(id: String) -> bool:
 			var code: String = str(order.get("source_codes",{}).get(source_id,""))
 			if code.is_empty(): code = str(ledger.inspect_entity(source_id,{},false).get("design_type",""))
 			if code == "M04":
-				order.storage_warning = "Timber requires two actual handlers"
-				continue # Joint custody is connected in the next planned phase.
+				if ledger.available(str(source_id)) > 0 and str(order.get("storage_warning","")).is_empty():
+					order.storage_warning = str(timber_activity.unavailable) if timber_activity != null and not str(timber_activity.unavailable).is_empty() else "Waiting for two eligible actual timber handlers and reachable storage"
+				continue
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
 			if quantity <= 0:
 				continue
@@ -1069,6 +1096,7 @@ func _approach_truck(id: String, job: Dictionary) -> void:
 
 func _sync_workers() -> void:
 	for id in _workers.keys():
+		if timber_activity != null and timber_activity.people.has(id): continue
 		var person := ledger.inspect_person_status(id)
 		var still_assigned: bool = person.assignment == "Rear Labour" and person.duty_id in (["Receiving"] + freight_berths.map(func(row: Dictionary) -> String: return row.duty))
 		var job: Dictionary = _workers[id].job
@@ -1113,7 +1141,9 @@ func _move_activities() -> void:
 		walk.position = at
 		_must(ledger.move_entity(walk.person_id, "rear-lane", at))
 	if development_convoys: passengers.advance_poses()
+	if timber_activity != null: timber_activity.advance_roots()
 	for id in _workers:
+		if timber_activity != null and timber_activity.people.has(id): continue
 		var job: Dictionary = _workers[id].job
 		if not job.is_empty() and job.phase in ["Shelf opening","Shelf closing"]:
 			_must(ledger.move_entity(id,"rear-lane",freight.shelves.active_position(_find_order(str(job.order_id)),job)))

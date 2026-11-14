@@ -2,8 +2,8 @@
   "updated_date": "2026-11-13",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
-    "title": "Trencho V4 Developer",
-    "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+    "title": "Trencho V4 — Lead Developer Handoff",
+    "thread_id": "01a1d807-02eb-7e52-8f46-93bb10241447",
     "host_id": "local",
     "owns": [
       "Logistics implementation and shared authoritative state/interfaces; battlefield presentation is delegated under explicit file agreement",
@@ -16,17 +16,18 @@
       "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer",
       "Routine UI/UX design and implementation, including accepted retired-role handoff decisions"
     ],
-    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
+    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
     "requested_settings": {
       "model": "gpt-6.1-sol",
       "reasoning_effort": "medium",
       "speed": "standard"
     },
-    "observed_runtime_ui_settings": null
+    "observed_runtime_ui_settings": null,
+    "runtime_evidence": "Requested GPT-6.1 Sol / Medium retained; no independent creation-response model/effort readback available."
   },
   "consultants": [
     {
-      "title": "Trencho \u00e2\u20ac\u201d Game Designer",
+      "title": "Trencho â€” Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
       "scope": "Material gameplay decisions and required exact-current-head PR game-meaning approval; no routine engineering/status monitoring. Lead performs technical review and merges after actual Designer approval and required checks.",
@@ -38,7 +39,7 @@
       "observed_runtime_ui_settings": null
     },
     {
-      "title": "Trencho \u2014 3D Artist",
+      "title": "Trencho — 3D Artist",
       "thread_id": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
       "host_id": "local",
       "scope": "Bounded 3D and authorized 2D asset creation/sourcing, provenance and export handoff; useful parallel asset work continues during accepted development. No production-code integration ownership. Original 2D Artist remains inactive; paused animation authoring remains binding.",
@@ -50,7 +51,7 @@
       "observed_runtime_ui_settings": null
     }
   ],
-  "current_work": "Lead continues materials-to-warehouse delivery in combined draft PR157, isolated from the dirty human checkout. Approved full S4 operator motion and revised truck/warehouse timber fixtures have scoped checks. Joint/ground custody and both-worker warehouse access passed separate direct observations. Artist is completing shoulder/ramp/warehouse motion; connected paired delivery, final exact-head review and playable-loop acceptance remain pending.",
+  "current_work": "Successor Lead adopts existing uncommitted paired timber feature on codex/supplier-field-integration at6d934ab; connected lower-tier50kg check not yet run. Preserve dirty human root and separate Battlefield/Artist ownership.",
   "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. Animation authoring remains paused outside explicitly resumed supplier vehicles and the approved2m/50kg/~1.3m item-hauling layout. The bounded Director pilot changes delegation only: every trial must use actual already-authorized ready work, and it does not resume unrelated paused animation scope. Numbered human-playtest and appearance approvals remain separate; see docs/art_workflow_pilot.md.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -106,7 +107,7 @@
     "charter": "docs/developer_team.md",
     "agents": [
       {
-        "title": "Trencho \u00e2\u20ac\u201d Developer A \u00e2\u20ac\u201d Army Supply",
+        "title": "Trencho â€” Developer A â€” Army Supply",
         "thread_id": "01a1ae78-5b3a-7993-87ca-7d316595fd7e",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -118,7 +119,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho \u00e2\u20ac\u201d Developer B \u00e2\u20ac\u201d Operations & Transport",
+        "title": "Trencho â€” Developer B â€” Operations & Transport",
         "thread_id": "01a1ae78-6945-7ae0-b03c-f2b5fadb56ad",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -130,7 +131,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho \u00e2\u20ac\u201d Developer C \u00e2\u20ac\u201d Player Experience",
+        "title": "Trencho â€” Developer C â€” Player Experience",
         "thread_id": "01a1ae78-77c2-7822-9322-328161666746",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -142,7 +143,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho \u2014 Battlefield Developer",
+        "title": "Trencho — Battlefield Developer",
         "thread_id": "01a1d05a-1647-7923-ab40-ed05fc0d2498",
         "host_id": "local",
         "status": "active_authorized_battlefield_3d",
@@ -170,7 +171,7 @@
       "design": "Designer explicit game-identity approval at current exact PR head",
       "default": "Lead technical approval plus current exact-head Game Designer approval and required checks permit Lead merge without another Dawson permission question. Concrete external permission/tool restrictions remain binding only for their affected action.",
       "native_github_approval": "Report actual submission separately from a recorded role review note",
-      "authority": "Dawson direct6November2026 standing developer\u2192lead+Designer reviews\u2192lead merge instruction",
+      "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
     "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs with actual Designer review and required checks. The sole additional programmer is the explicitly authorized Battlefield Developer under the current two-developer boundary; retired developers stay inactive. Art delegation is limited to the bounded Director pilot and on-demand fixed-Luna scout. No blanket serial/small-commit gate, extra standing role or unrelated animation resumption is introduced.",
@@ -426,10 +427,10 @@
       "kind": "chatgpt",
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs.",
       "retired_date": "2026-11-09",
-      "status": "Do not consult; replaced by Trencho \u2014 3D Artist under Dawson direct instruction."
+      "status": "Do not consult; replaced by Trencho — 3D Artist under Dawson direct instruction."
     },
     {
-      "title": "Trencho \u00e2\u20ac\u201d UI/UX developer",
+      "title": "Trencho â€” UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
       "scope": "Historical UI/UX role; accepted interaction decisions and source pointers retained in docs/team_handoff.md.",
@@ -646,5 +647,34 @@
     "owner": "Director briefs/results/internal review; Lead policy/engineering/integration",
     "comparison": "Different tasks confound model/workflow cost; record actual scope, effort/corrections/Director overhead and available tokens; unknown cost remains unknown",
     "policy": "docs/art_workflow_pilot.md"
-  }
+  },
+  "lead_history": [
+    {
+      "transferred_date": "2026-11-13",
+      "reason": "Dawson-requested replacement Lead; outgoing Lead ceases feature edits",
+      "record": {
+        "title": "Trencho V4 Developer",
+        "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+        "host_id": "local",
+        "owns": [
+          "Logistics implementation and shared authoritative state/interfaces; battlefield presentation is delegated under explicit file agreement",
+          "Technical choices",
+          "Final integration",
+          "Published review revisions",
+          "Focused verification and living map",
+          "Engineering ownership and technical PR approval; dormant developers are not reactivated",
+          "Combined integration verification and testable player handoff",
+          "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer",
+          "Routine UI/UX design and implementation, including accepted retired-role handoff decisions"
+        ],
+        "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
+        "requested_settings": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "speed": "standard"
+        },
+        "observed_runtime_ui_settings": null
+      }
+    }
+  ]
 }

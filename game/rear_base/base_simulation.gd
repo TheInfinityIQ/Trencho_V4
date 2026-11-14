@@ -143,6 +143,7 @@ func _init(expanded: bool = false, world_session: bool = false, initial_rear: bo
 			assert(person.ok,str(person))
 		# Uncommitted people already join the default Hauling pool. Receiving is
 		# eligible work there, rather than a second permanent assignment.
+		receiving.bind_timber_activity(rear)
 	elif initial_rear:
 		RearStart.apply(self)
 	rear.advance_time(0)
@@ -276,6 +277,7 @@ func _advance_live_quantum(remaining_budget_usec: int = SIMULATION_FRAME_USEC) -
 	_refresh_trip_admissions()
 
 func after_command() -> void:
+	if receiving.timber_activity != null: receiving.timber_activity.wake()
 	CallLog.record(&"rear_base/base_simulation.gd::after_command")
 	if not _live_planning: return
 	# Management callbacks receive the same settled t. Apply their immediate

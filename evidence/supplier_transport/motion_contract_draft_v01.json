@@ -1,0 +1,635 @@
+{
+  "schema": "timber_paired_motion_v1",
+  "status": "DRAFT / MUTABLE / NOT ACTIVATION AUTHORITY",
+  "human_appearance_approved": false,
+  "integrated": false,
+  "planned_animation_library": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\timber_worker_motions_v01.glb",
+  "export_sha256": null,
+  "roles": {
+    "FORE": "same assigned person throughout; leader during forward tandem shoulder travel; +X person in canonical front warehouse handling",
+    "AFT": "same assigned person throughout; follower during tandem travel; -X person in canonical front handling"
+  },
+  "skeleton": {
+    "source": "construction_worker_animated_v01",
+    "bones": 33,
+    "shared_joint_profile": "joint_guard_v1",
+    "bone_rest_scale_mesh_weights_unchanged": true,
+    "original_seven_clips_preserved": true
+  },
+  "basis": {
+    "units": "metres",
+    "export": "glTF2 / Godot Y up",
+    "source_forward": "+Z",
+    "warehouse_long_axis": "+X",
+    "quaternion_order": "xyzw",
+    "yaw_axis": "+Y",
+    "root_motion": "body library is in place; floor roots/yaw and one payload are separate synchronized samples",
+    "stage_rule": "world_matrix = stage_matrix * sampled_source_matrix; apply once; samples already include source floor height; no added cargo-floor or packet-seat correction",
+    "existing_visual_pi_correction": "do not apply twice; actual sampled raw root matrix is authoritative"
+  },
+  "sample_layout": {
+    "time_s": "seconds from zero, inclusive terminal sample",
+    "roles": {
+      "FORE": {
+        "floor_root_godot_xyz_m": [
+          0,
+          0,
+          0
+        ],
+        "body_yaw_radians": 0,
+        "body_rotation_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "AFT": {
+        "floor_root_godot_xyz_m": [
+          0,
+          0,
+          0
+        ],
+        "body_yaw_radians": 0,
+        "body_rotation_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    "payload": {
+      "position_godot_xyz_m": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  },
+  "sample_layout_values_are_examples": true,
+  "clips": [
+    {
+      "name": "pickup_upper",
+      "fore_clip": "timber_pickup_upper_fore",
+      "aft_clip": "timber_pickup_upper_aft",
+      "duration_s": 7.533333333333333,
+      "fps": 30,
+      "sample_count": 227,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\pickup_upper_v03.blend",
+      "source_basis": "truck_model_origin",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\pickup_upper_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          -0.12,
+          1.02,
+          2.2
+        ],
+        "AFT": [
+          -0.12,
+          1.02,
+          0.9
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.29,
+          1.02,
+          2.2
+        ],
+        "AFT": [
+          0.29,
+          1.02,
+          0.9
+        ]
+      },
+      "contact_landmarks": {
+        "both_palms_contact_s": 3.2,
+        "rack_support_release_s": 3.2,
+        "lift_clear_end_s": 3.6,
+        "withdraw_end_s": 6.0,
+        "original_bend_reused": true
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "pickup_lower",
+      "fore_clip": "timber_pickup_lower_fore",
+      "aft_clip": "timber_pickup_lower_aft",
+      "duration_s": 8.2,
+      "fps": 30,
+      "sample_count": 247,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\pickup_lower_v03.blend",
+      "source_basis": "truck_model_origin",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\pickup_lower_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          -0.12,
+          1.02,
+          2.2
+        ],
+        "AFT": [
+          -0.12,
+          1.02,
+          0.9
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.29,
+          1.02,
+          2.2
+        ],
+        "AFT": [
+          0.29,
+          1.02,
+          0.9
+        ]
+      },
+      "contact_landmarks": {
+        "both_palms_contact_s": 3.2,
+        "rack_support_release_s": 3.2,
+        "lift_clear_end_s": 3.6,
+        "withdraw_end_s": 6.0,
+        "original_bend_reused": true
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "shoulder_transition",
+      "fore_clip": "timber_shoulder_transition_fore",
+      "aft_clip": "timber_shoulder_transition_aft",
+      "duration_s": 8.0,
+      "fps": 30,
+      "sample_count": 241,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\transition_shoulder_v08.blend",
+      "source_basis": "pair_floor_source_origin",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\shoulder_transition_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.29,
+          0,
+          0.65
+        ],
+        "AFT": [
+          0.29,
+          0,
+          -0.65
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          0,
+          0.65
+        ],
+        "AFT": [
+          0.12,
+          0,
+          -0.65
+        ]
+      },
+      "contact_landmarks": {
+        "right_underhand_support": "throughout; actual proximity readback pending",
+        "left_underhand_release_s": 5.04,
+        "left_side_regrip_s": 8.0,
+        "shoulder_bearing": "verified at endpoint; continuous landmark refinement pending"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "ramp",
+      "fore_clip": "timber_ramp_fore",
+      "aft_clip": "timber_ramp_aft",
+      "duration_s": 22.4,
+      "fps": 30,
+      "sample_count": 673,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\ramp_motion_v03.blend",
+      "source_basis": "truck_model_origin",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\ramp_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          1.02,
+          2.2
+        ],
+        "AFT": [
+          0.12,
+          1.02,
+          0.9
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          0,
+          7.65
+        ],
+        "AFT": [
+          0.12,
+          0,
+          6.35
+        ]
+      },
+      "contact_landmarks": {
+        "settle_s": [
+          0,
+          0.8
+        ],
+        "walk_s": [
+          0.8,
+          21.6
+        ],
+        "stand_s": [
+          21.6,
+          22.4
+        ],
+        "support": "right shoulder, right underside hand, left inner-side stabilizer"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "turn_right",
+      "fore_clip": "timber_turn_right_fore",
+      "aft_clip": "timber_turn_right_aft",
+      "duration_s": 9.6,
+      "fps": 30,
+      "sample_count": 289,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\turn_right_v01.blend",
+      "source_basis": "source_ground_frame",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\turn_right_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          0,
+          7.65
+        ],
+        "AFT": [
+          0.12,
+          0,
+          6.35
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.77,
+          0,
+          7
+        ],
+        "AFT": [
+          -0.53,
+          0,
+          7
+        ]
+      },
+      "contact_landmarks": {
+        "support": "same shoulder/hand support; rigid group rotates",
+        "turn_yaw_delta_radians": 1.5707963267948966
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "turn_left",
+      "fore_clip": "timber_turn_left_fore",
+      "aft_clip": "timber_turn_left_aft",
+      "duration_s": 9.6,
+      "fps": 30,
+      "sample_count": 289,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\turn_left_v01.blend",
+      "source_basis": "source_ground_frame",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\turn_left_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          0,
+          7.65
+        ],
+        "AFT": [
+          0.12,
+          0,
+          6.35
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          -0.53,
+          0,
+          7
+        ],
+        "AFT": [
+          0.77,
+          0,
+          7
+        ]
+      },
+      "contact_landmarks": {
+        "support": "same shoulder/hand support; rigid group rotates",
+        "turn_yaw_delta_radians": -1.5707963267948966
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "shoulder_release",
+      "fore_clip": "timber_shoulder_release_fore",
+      "aft_clip": "timber_shoulder_release_aft",
+      "duration_s": 8.0,
+      "fps": 30,
+      "sample_count": 241,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\transition_shoulder_v08.blend",
+      "source_basis": "pair_floor_source_origin; reversed samples",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\shoulder_release_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.12,
+          0,
+          0.65
+        ],
+        "AFT": [
+          0.12,
+          0,
+          -0.65
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.29,
+          0,
+          0.65
+        ],
+        "AFT": [
+          0.29,
+          0,
+          -0.65
+        ]
+      },
+      "contact_landmarks": {
+        "reverse_of": "shoulder_transition",
+        "left_underhand_recontact_s": 2.96,
+        "right_underhand_support": "throughout; actual readback pending"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "underhand_walk",
+      "fore_clip": "timber_underhand_walk_fore",
+      "aft_clip": "timber_underhand_walk_aft",
+      "duration_s": 9.6,
+      "fps": 30,
+      "sample_count": 289,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\underhand_walk_v01.blend",
+      "source_basis": "source_ground_frame",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\underhand_walk_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.77,
+          0,
+          6.83
+        ],
+        "AFT": [
+          -0.53,
+          0,
+          6.83
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.77,
+          0,
+          8.795
+        ],
+        "AFT": [
+          -0.53,
+          0,
+          8.795
+        ]
+      },
+      "contact_landmarks": {
+        "settle_s": [
+          0,
+          0.8
+        ],
+        "walk_s": [
+          0.8,
+          8.8
+        ],
+        "stand_s": [
+          8.8,
+          9.6
+        ],
+        "support": "both palms of both existing workers"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "deposit_lower",
+      "fore_clip": "timber_deposit_lower_fore",
+      "aft_clip": "timber_deposit_lower_aft",
+      "duration_s": 8.2,
+      "fps": 30,
+      "sample_count": 247,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\pickup_lower_v03.blend",
+      "source_basis": "canonical warehouse rack origin; transformed reversed pickup",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\deposit_lower_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.65,
+          0,
+          -1.205
+        ],
+        "AFT": [
+          -0.65,
+          0,
+          -1.205
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.65,
+          0,
+          -0.795
+        ],
+        "AFT": [
+          -0.65,
+          0,
+          -0.795
+        ]
+      },
+      "contact_landmarks": {
+        "rack_support_acquired_s": 5.0,
+        "both_palms_release_s": 5.0,
+        "remaining_motion": "empty unbend/hand withdrawal and stance recovery",
+        "wood_support_top_m": 0.6,
+        "packet_root_seated_y_m": 0.596
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "deposit_upper",
+      "fore_clip": "timber_deposit_upper_fore",
+      "aft_clip": "timber_deposit_upper_aft",
+      "duration_s": 9.6,
+      "fps": 30,
+      "sample_count": 289,
+      "loop": false,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\pickup_warehouse_upper_v03.blend",
+      "source_basis": "canonical warehouse rack origin; transformed reversed pickup",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\deposit_upper_paths_v01.json",
+      "root_start_godot_xyz_m": {
+        "FORE": [
+          0.65,
+          0,
+          -1.205
+        ],
+        "AFT": [
+          -0.65,
+          0,
+          -1.205
+        ]
+      },
+      "root_end_godot_xyz_m": {
+        "FORE": [
+          0.65,
+          0,
+          -0.795
+        ],
+        "AFT": [
+          -0.65,
+          0,
+          -0.795
+        ]
+      },
+      "contact_landmarks": {
+        "rack_support_acquired_s": 6.0,
+        "both_palms_release_s": 6.0,
+        "remaining_motion": "empty unbend/hand withdrawal and stance recovery",
+        "wood_support_top_m": 1.75,
+        "packet_root_seated_y_m": 1.746
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips"
+    },
+    {
+      "name": "shoulder_walk_loop",
+      "fore_clip": "timber_shoulder_walk_loop_fore",
+      "aft_clip": "timber_shoulder_walk_loop_aft",
+      "duration_s": 0.8,
+      "fps": 30,
+      "sample_count": 25,
+      "loop": true,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\ramp_motion_v03.blend",
+      "source_basis": "cycle extracted at2.4..3.2s; source start-pair anchor supplied",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\shoulder_walk_loop_paths_v01.json",
+      "root_start_godot_xyz_m": null,
+      "root_end_godot_xyz_m": null,
+      "contact_landmarks": {
+        "support": "unchanged during loop"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips",
+      "nominal_speed_m_s": 0.2725,
+      "cycle_translation_godot_m": [
+        0,
+        0,
+        0.21800000000000003
+      ]
+    },
+    {
+      "name": "underhand_walk_loop",
+      "fore_clip": "timber_underhand_walk_loop_fore",
+      "aft_clip": "timber_underhand_walk_loop_aft",
+      "duration_s": 0.8,
+      "fps": 30,
+      "sample_count": 25,
+      "loop": true,
+      "source_blend": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\underhand_walk_v01.blend",
+      "source_basis": "cycle extracted at2.4..3.2s; source start-pair anchor supplied",
+      "planned_sample_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\underhand_walk_loop_paths_v01.json",
+      "root_start_godot_xyz_m": null,
+      "root_end_godot_xyz_m": null,
+      "contact_landmarks": {
+        "support": "unchanged during loop"
+      },
+      "readiness": "draft; timings/hash may change; do not activate unfinished clips",
+      "nominal_speed_m_s": 0.2729166666666667,
+      "cycle_translation_godot_m": [
+        0,
+        0,
+        0.21833333333333338
+      ]
+    }
+  ],
+  "warehouse": {
+    "asset": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_long_stock_rack_v04.glb",
+    "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+    "dimensions_m": [
+      2.6,
+      1.0,
+      2.1
+    ],
+    "front_cells_stage": "rack world matrix * identity",
+    "back_cells_stage": "rack world matrix * Y-rotation(pi); roles remain attached, do not swap people",
+    "canonical_seated_payloads": {
+      "lower": [
+        0,
+        0.596,
+        -0.25
+      ],
+      "upper": [
+        0,
+        1.746,
+        -0.25
+      ]
+    },
+    "pair_access_roots_at_rack": {
+      "FORE": [
+        0.65,
+        0,
+        -0.795
+      ],
+      "AFT": [
+        -0.65,
+        0,
+        -0.795
+      ]
+    },
+    "packet_seat_rule": "PacketRootY = support top minus .004m only in seated poses; no second runtime offset"
+  },
+  "turn": {
+    "source_pivot_godot_m": [
+      0.12,
+      0,
+      7
+    ],
+    "yaw_delta_radians": [
+      -1.5707963267948966,
+      1.5707963267948966
+    ],
+    "available_staging_square_m": [
+      3,
+      3
+    ],
+    "actual_swept_footprint": "pending final measured take extraction; maximum distance includes timber, both workers and equipment"
+  },
+  "verified_source_evidence": {
+    "transition_v08": "241 samples, zero raw joint-angle findings and zero torso-through path findings; full visual/export review pending",
+    "ramp_v03": "673 samples, zero joint-angle/speed findings and zero torso-through path findings; min projected separation1.2308m; visual/export pending",
+    "turn_and_underhand_takes": "289 samples each; zero joint findings and zero torso-through findings; visual/export pending"
+  },
+  "events_are_visual_only": true,
+  "authority": "Receiving retains actual worker assignments and one shared payload claim; this file does not change stock/custody/access callbacks",
+  "tolerance_source": "human_animation_tolerance_2026_11_13.json",
+  "pilot_plan": "not included"
+}

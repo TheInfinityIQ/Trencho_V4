@@ -139,6 +139,38 @@
     "finish": "Both registered actual warehouse roots precede joint finish and one warehouse commit. SupplierTimberHandoffs consumes only its actual committed-stock event; ordinary single-worker unloaded accounting must not count it again. Both participants then clear their reserved endpoints.",
     "return": "Before-lift cancellation and physical empty withdrawal must be validated before the return stock transaction mutates anything. After lift or put-down, pending physical custody blocks departure/return clearance until an actual recoverable delivery. Existing single-worker return phase assumptions cannot be reused for pair proxy jobs.",
     "interruption": "A supported ground put-down preserves stock and the originating delivery obligation. Recover using that actual source ID and a new real claim; never clear the convoy from an empty personal carrying pointer.",
-    "view": "Use existing manual-seek SupplierActorView, with visibility/pause gating and authoritative root sampler. The ordinary rear worker view must hide only the two actual animated IDs; no replacement people."
+    "view": "Use existing manual-seek SupplierActorView, with visibility/pause gating and authoritative root sampler. The ordinary rear worker view must hide only the two actual animated IDs; no replacement people.",
+    "safe_assignment_release": "JointMaterialCarry.finish clears the carry and may apply pending duties immediately. Do not call it at first rack contact while the authored hands/withdrawal still need control. Use the actual accepted hands-safe completion boundary and both real terminal standing roots for finish/commit, then release both worker proxies together. The payload may already rest on the rack while that shared physical handoff remains committed; no early stock receipt or second animation callback."
+  },
+  "motion_adapter_before_edits": {
+    "draft_source": "evidence/supplier_transport/motion_contract_draft_v01.json",
+    "sha256": "99430f7fe22e3978cc2393305fc677f1cfc57746cda15ba2c05b2672cd5d8712",
+    "schema": "timber_paired_motion_v1",
+    "source_status": "Draft and mutable, explicitly not activation authority; final export/appearance not yet delivered.",
+    "change": "Feature-local pure sampler accepts explicit contract and per-clip sample arrays, validates complete synchronized FORE/AFT/payload streams, predecodes finite vectors/quaternions once, and samples all three from one timestamp. It neither reads inventory nor runs a clock or activates missing assets.",
+    "world_rule": "Caller composes stage matrix * raw sampled source matrix once. Samples include their source floor height and seated registration; no added floor, visualPI or packet-base correction.",
+    "loop_rule": "Return raw wrapped cycle plus explicit cycle count/translation. Activity must apply net cycle displacement and its real ground route without repeating floor offsets or snapping at wrap; do not silently treat the in-place body library as world movement.",
+    "acceptance": "Actual final streams/imported clips must later align with their sampled roots and one payload in the connected current-change demonstration. No synthetic array check is substituted for actual exported motion."
+  },
+  "bank_access_planning_discovery": {
+    "source": "Actual12x16m module has two banks of racks3m apart in rows, central staging aisle and narrower cross aisles; final FORE/AFT roots depend on front/back cell rotation.",
+    "risk": "A solo-reachable first cell does not prove a paired path. Repeatedly releasing/reserving it would select the same infeasible cell. A loaded180turn in a narrow row gap cannot be assumed.",
+    "plan": "Preflight complete shared route as a warehouse candidate predicate before promising the cell. Route outside through actual turn-clear envelope to the module door, enter with the narrower actual forward pair envelope, turn in clear central staging, then translate forward or backward along the row and use the authored shoulder release/underhand approach/deposit.",
+    "backward_take": "Deferred under bounded completion freeze; first test promises only proven feasible forward/turn rack faces, with explicit capability limits.",
+    "guard": "Final measured turn envelope and actual body/payload samples are required before activation. An unavailable complete route keeps cargo aboard with an event-woken specific reason."
+  },
+  "first_playtest_scope_revision": {
+    "authority": "Actual Game Designer review delivered in this Lead continuation; human playable-first priority independently read in Designer turn01a1d7b8-ef48-7c10-8c4d-8adca701e908, human message01a1d7b8-f03b-7d61-8b1f-a035a69d1241.",
+    "scope": "Usable lower truck pickup -> real paired motion -> reachable lower warehouse receipt -> safe departure -> another supported order. Up to50kg supported timber orders.",
+    "prepayment": "Inspect actual proposed manifests and refuse any unsupported upper pickup or out-of-scope timber amount before payment. Preserve packing, quantities, fees and geometry; no repacking, hidden reduction or fake upper motion.",
+    "deferred_functionality": [
+      "Upper truck pickup",
+      "Upper warehouse deposit",
+      "Opposite faces without currently proven forward access",
+      "Onward timber handling"
+    ],
+    "polish": "Minor surface clips, small contact gaps and cosmetic foot smoothing do not hold up the usable preview or integration. Gross torso-through limbs, impossible/support/custody defects remain blockers.",
+    "ground_pace": "Designer baseline roughly1m/s on clear ground, with agreeing actual gait/roots. Latest Director draft loops report1m cycle displacement per1s. Ramp/turn/pickup/placement retain their authored cautious pace.",
+    "review": "One consolidated final exact-head Designer review after connected action demonstration; no new per-component polish or Dawson PR gate."
   }
 }

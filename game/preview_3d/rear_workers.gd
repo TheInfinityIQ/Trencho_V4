@@ -91,9 +91,11 @@ func _sync_activity(id: String) -> void:
 	var job: Dictionary = _model.receiving._workers.get(id,{}).get("job",{})
 	var phase: String = str(job.get("phase",actor.phase))
 	# The dedicated export shows this same person only during manual shelf work.
-	bodies[id].visible = phase not in ["Shelf opening","Shelf closing"]
+	var pair_motion: bool = _model.receiving.timber_activity != null and _model.receiving.timber_activity.animated(id)
+	bodies[id].visible = phase not in ["Shelf opening","Shelf closing"] and not pair_motion
 	var label := "Worker %d\n%s" % [_numbers[id],phase]
 	if _roles[id].text != label: _roles[id].text = label
+	if pair_motion: return # Its existing body is hidden; only the paired export animates this person.
 	var external: Dictionary = actor.get("external_work",{})
 	var moving: bool = not job.get("path",[]).is_empty() if not job.is_empty() else bool(external.get("moving",not actor.motion.is_empty()))
 	var next: StringName = &"idle"

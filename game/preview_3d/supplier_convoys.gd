@@ -9,6 +9,7 @@ var _ledger: RefCounted
 var _pending := false
 var _model: RefCounted
 var _passengers: Node3D
+var _timber: Node3D
 
 func bind(receiving: RefCounted, simulation: RefCounted = null) -> void:
 	_receiving = receiving
@@ -20,6 +21,10 @@ func bind(receiving: RefCounted, simulation: RefCounted = null) -> void:
 		_passengers = preload("res://game/supplier_transport/supplier_passengers_view.gd").new()
 		add_child(_passengers)
 		_passengers.bind(_model,self)
+		if _receiving.timber_activity != null:
+			_timber = preload("res://game/supplier_transport/paired_timber_view.gd").new()
+			add_child(_timber)
+			_timber.bind(_model)
 	_request_refresh()
 
 func _request_refresh() -> void:
@@ -81,6 +86,7 @@ func _moved(id: String, _start: Vector2, finish: Vector2) -> void:
 
 func sync_speed() -> void:
 	if _passengers != null: _passengers.sync_speed()
+	if _timber != null: _timber.sync_speed()
 	for body: Node3D in bodies.values():
 		if body is SupplierView: (body as SupplierView).sync_speed()
 
