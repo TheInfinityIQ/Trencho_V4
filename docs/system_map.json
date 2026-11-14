@@ -1058,7 +1058,7 @@
     ]},
     "docs/feature_plans/paired_supplier_unloading.json": {"role":"data","system":"docs","sha256":"21bc4bf7b404b5a6cfcfe6a1427814805a629a77be83b9ede791ab1e1b8000d8","lines":46,"purpose":"Supply structured settings, dependency pins or catalogue data for paired supplier unloading.","functions":[
     ]},
-    "docs/feature_plans/paired_timber_delivery_v1.json": {"role":"data","system":"docs","sha256":"bef94306fdc0780b09d0f49f2c446e34f85616585b145c3ce9022282384112cb","lines":133,"purpose":"Supply structured settings, dependency pins or catalogue data for paired timber delivery v1.","functions":[
+    "docs/feature_plans/paired_timber_delivery_v1.json": {"role":"data","system":"docs","sha256":"651a522f6ee836b2c58f6cacd3e99f465660125e8e4a81fdcfc89dc7f5c7f4eb","lines":144,"purpose":"Supply structured settings, dependency pins or catalogue data for paired timber delivery v1.","functions":[
     ]},
     "docs/feature_plans/place_manage_buildings_v1.json": {"role":"data","system":"docs","sha256":"457d2d9cd2c4911129fbcdc5bfca1b4c0b70338606aed686f765643b15945658","lines":33,"purpose":"Supply structured settings, dependency pins or catalogue data for place manage buildings v1.","functions":[
     ]},
@@ -1224,7 +1224,7 @@
     ]},
     "docs/team_handoff.md": {"role":"documentation","system":"docs","sha256":"e98c4fbb9049603515c75f117994ac181461208d656380e9018c47ac24a1e67c","lines":92,"purpose":"Document Team transition handoff.","functions":[
     ]},
-    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"625bbcf3712b2939e15fec79b41836b5720250ceb5b5efd9d0651abc75b2edbc","lines":626,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
+    "docs/team_integration_state.json": {"role":"data","system":"docs","sha256":"447a0ef960ac7f94b4b865fd7e27e598831659eaa11cd77328a3fb8c7186e7d9","lines":650,"purpose":"Supply structured settings, dependency pins or catalogue data for team integration state.","functions":[
     ]},
     "docs/team_workflow.md": {"role":"documentation","system":"docs","sha256":"b2c55ab7c5a53401cde35911dcc1d043c4542f8e29b5b499b73005d2f3aa9866","lines":413,"purpose":"Document Team workflow.","functions":[
     ]},
@@ -1246,7 +1246,7 @@
     ]},
     "evidence/supplier_transport/s4_integration_workflow.json": {"role":"data","system":"evidence","sha256":"991352cc5bc47d77ea85a07aa424623a6bafb4b83f96de626f00063c7fa902fe","lines":33,"purpose":"Supply structured settings, dependency pins or catalogue data for s4 integration workflow.","functions":[
     ]},
-    "evidence/supplier_transport/timber_custody_integration.json": {"role":"data","system":"evidence","sha256":"631dd72ae9c33ebc738e416ed70bff4fbb865018ffb59490ad48daf564d872a0","lines":32,"purpose":"Supply structured settings, dependency pins or catalogue data for timber custody integration.","functions":[
+    "evidence/supplier_transport/timber_custody_integration.json": {"role":"data","system":"evidence","sha256":"571e1075576100808d6e44b2eb7bdcd06bdf2936e2506ca067e0ab6d8e20eba8","lines":40,"purpose":"Supply structured settings, dependency pins or catalogue data for timber custody integration.","functions":[
     ]},
     "evidence/supplier_transport/timber_fixture_integration.json": {"role":"data","system":"evidence","sha256":"bf0a9b4c43b8d4156cc140121e4dd128b384afaaa86fa3b4af8671ba0ca7a21e","lines":38,"purpose":"Supply structured settings, dependency pins or catalogue data for timber fixture integration.","functions":[
     ]},

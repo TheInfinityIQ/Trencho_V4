@@ -20,7 +20,6 @@
   ],
   "new_uid": "Actual engine-generated value retained from passing remote demonstration; no local engine/cache edit.",
   "remaining": [
-    "Both-worker warehouse access API added after this receipt requires its own connected observation.",
     "Accepted new continuous shoulder/ramp/warehouse motion",
     "Real pair matching and route integration",
     "Final native playable loop/appearance and60FPS acceptance",
@@ -28,5 +27,14 @@
   ],
   "regression_suites": 0,
   "local_engine_runs": 0,
-  "performance_limits_raised": false
+  "performance_limits_raised": false,
+  "pair_access": {
+    "source": "e457a9ea06a94748db92fd59c3b562e0f90d9a3a",
+    "run": 43537767816,
+    "result": "pass",
+    "artifact": 14091030352,
+    "artifact_sha256": "2c22e7092f21249fa819db84ebde8c18519d7e442d469f715504feb30c83e95a",
+    "scope": "One prepared real50kg cell gains two actual workers explicit stations, generic access retains pair, release clears both. Explicit API inputs, not accepted authored roots or actual carry route.",
+    "unverified": "Both clearance departures following actual paired animated warehouse placement."
+  }
 }

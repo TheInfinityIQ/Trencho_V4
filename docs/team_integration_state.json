@@ -1,5 +1,5 @@
 {
-  "updated_date": "2026-11-12",
+  "updated_date": "2026-11-13",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
     "title": "Trencho V4 Developer",
@@ -26,7 +26,7 @@
   },
   "consultants": [
     {
-      "title": "Trencho â€” Game Designer",
+      "title": "Trencho \u00e2\u20ac\u201d Game Designer",
       "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
       "host_id": "local",
       "scope": "Material gameplay decisions and required exact-current-head PR game-meaning approval; no routine engineering/status monitoring. Lead performs technical review and merges after actual Designer approval and required checks.",
@@ -38,7 +38,7 @@
       "observed_runtime_ui_settings": null
     },
     {
-      "title": "Trencho — 3D Artist",
+      "title": "Trencho \u2014 3D Artist",
       "thread_id": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
       "host_id": "local",
       "scope": "Bounded 3D and authorized 2D asset creation/sourcing, provenance and export handoff; useful parallel asset work continues during accepted development. No production-code integration ownership. Original 2D Artist remains inactive; paused animation authoring remains binding.",
@@ -50,7 +50,7 @@
       "observed_runtime_ui_settings": null
     }
   ],
-  "current_work": "Approved passenger v02 is integrated and has scoped native/hierarchy receipts. Lead continues the materials-to-warehouse block in draft PR146; Artist resumes the accepted two-worker timber layout and separate reachable shelf versions. No main adoption or full-loop/FPS acceptance is claimed.",
+  "current_work": "Lead continues materials-to-warehouse delivery in combined draft PR157, isolated from the dirty human checkout. Approved full S4 operator motion and revised truck/warehouse timber fixtures have scoped checks. Joint/ground custody and both-worker warehouse access passed separate direct observations. Artist is completing shoulder/ramp/warehouse motion; connected paired delivery, final exact-head review and playable-loop acceptance remain pending.",
   "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. Animation authoring remains paused outside explicitly resumed supplier vehicles and the approved2m/50kg/~1.3m item-hauling layout. The bounded Director pilot changes delegation only: every trial must use actual already-authorized ready work, and it does not resume unrelated paused animation scope. Numbered human-playtest and appearance approvals remain separate; see docs/art_workflow_pilot.md.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
@@ -106,7 +106,7 @@
     "charter": "docs/developer_team.md",
     "agents": [
       {
-        "title": "Trencho â€” Developer A â€” Army Supply",
+        "title": "Trencho \u00e2\u20ac\u201d Developer A \u00e2\u20ac\u201d Army Supply",
         "thread_id": "01a1ae78-5b3a-7993-87ca-7d316595fd7e",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -118,7 +118,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho â€” Developer B â€” Operations & Transport",
+        "title": "Trencho \u00e2\u20ac\u201d Developer B \u00e2\u20ac\u201d Operations & Transport",
         "thread_id": "01a1ae78-6945-7ae0-b03c-f2b5fadb56ad",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -130,7 +130,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho â€” Developer C â€” Player Experience",
+        "title": "Trencho \u00e2\u20ac\u201d Developer C \u00e2\u20ac\u201d Player Experience",
         "thread_id": "01a1ae78-77c2-7822-9322-328161666746",
         "host_id": "local",
         "model": "gpt-6.1-sol",
@@ -142,7 +142,7 @@
         "status": "stopped_no_successor"
       },
       {
-        "title": "Trencho — Battlefield Developer",
+        "title": "Trencho \u2014 Battlefield Developer",
         "thread_id": "01a1d05a-1647-7923-ab40-ed05fc0d2498",
         "host_id": "local",
         "status": "active_authorized_battlefield_3d",
@@ -170,7 +170,7 @@
       "design": "Designer explicit game-identity approval at current exact PR head",
       "default": "Lead technical approval plus current exact-head Game Designer approval and required checks permit Lead merge without another Dawson permission question. Concrete external permission/tool restrictions remain binding only for their affected action.",
       "native_github_approval": "Report actual submission separately from a recorded role review note",
-      "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
+      "authority": "Dawson direct6November2026 standing developer\u2192lead+Designer reviews\u2192lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
     "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs with actual Designer review and required checks. The sole additional programmer is the explicitly authorized Battlefield Developer under the current two-developer boundary; retired developers stay inactive. Art delegation is limited to the bounded Director pilot and on-demand fixed-Luna scout. No blanket serial/small-commit gate, extra standing role or unrelated animation resumption is introduced.",
@@ -426,10 +426,10 @@
       "kind": "chatgpt",
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs.",
       "retired_date": "2026-11-09",
-      "status": "Do not consult; replaced by Trencho — 3D Artist under Dawson direct instruction."
+      "status": "Do not consult; replaced by Trencho \u2014 3D Artist under Dawson direct instruction."
     },
     {
-      "title": "Trencho â€” UI/UX developer",
+      "title": "Trencho \u00e2\u20ac\u201d UI/UX developer",
       "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
       "host_id": "local",
       "scope": "Historical UI/UX role; accepted interaction decisions and source pointers retained in docs/team_handoff.md.",
@@ -531,19 +531,19 @@
   },
   "supplier_transport_candidate": {
     "authority": "Dawson Lead turn01a1c6fc-6bab-7db2-af11-a090b04ffabb: continue materials truck/warehouse then troop transport; explicit answer: Resume animations for these vehicles.",
-    "branch": "codex/supplier-transport-loop",
-    "worktree": "logs/supplier-transport-worktree",
+    "branch": "codex/supplier-field-integration",
+    "worktree": "logs/supplier-field-integration-worktree",
     "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
     "status": "draft_published_not_merged_or_main_adopted",
-    "evidence": "docs/evidence/supplier_transport/current_change_receipts.json",
-    "next": "Artist completes real thumb cams, guide clearance near retraction, deployment/stow, approach/withdrawal and true closing after improved actual-shelf lift/lower component review. Component shown as progress only, no final approval/runtime integration; rejectedv03 remains excluded.",
+    "evidence": "evidence/supplier_transport/timber_fixture_integration.json and timber_custody_integration.json; docs/s4_operator_integration.md",
+    "next": "Finish actual paired supplier pickup/shoulder/ramp/warehouse activity after complete Artist export and normal-speed appearance review; one connected current-change observation and exact-head Designer/Lead review before merge.",
     "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
     "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
     "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
     "item_hauling": "RESUMED by Dawson selecting Resume with that carrying layout: existing2m planks/50kg maximum bundle, roughly1.3m worker separation. Reuse synchronized existing bend, no new pickup clip. Artist fits actual grips and checks clearance, then provides full video for human approval.",
-    "source_current": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
-    "pr": 146,
-    "pr_url": "https://github.com/TheInfinityIQ/Trencho_V4/pull/146",
+    "source_current": "e457a9ea06a94748db92fd59c3b562e0f90d9a3a",
+    "pr": 157,
+    "pr_url": "https://github.com/TheInfinityIQ/Trencho_V4/pull/157",
     "passenger_approval": "Dawson approved v02 supported push-off/landing; source integrated. Native aec2dae receipt passed; subsequent hierarchy check separately recorded.",
     "native_receipt": 42959035573,
     "actor_window_receipt": {
@@ -567,7 +567,7 @@
       "human_approval": "pending",
       "scope": "28.4s warehouse-only Artist preview; corrected58clip export and9files verified,6encoded phase sheets inspected; not native integration."
     },
-    "source_current_scope": "Latest checked production checkpoint; subsequent evidence/sidecar/concept-only commits do not imply another gameplay run.",
+    "source_current_scope": "Published production checkpoint; source-bound receipts below retain their exact heads. Subsequent documentation does not imply another gameplay run.",
     "warehouse_static_receipt": {
       "run": 43014853905,
       "source": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
@@ -575,11 +575,35 @@
       "scope": "Only newly selected static rack, actual collision gap/neighbor rail/intact pan and separate cassette import/registration. No stock, preparation, hauling, full scene or FPS demonstration."
     },
     "s4_animation_review": {
+      "human_approval": "approved",
+      "approval_record": "game/supplier_transport/assets/s4_operator/appearance_approval.json",
+      "video_sha256": "edeab9095d1830fea030dff0fc57a2d1f948397182cb42e75f755286ce7d9bf4",
+      "package_sha256": "4e8caea6432e401093754675ecff52428b488ecac60d59edcbc60dc38d469826",
+      "integration_receipt": 43528719333,
+      "source": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+      "scope": "Actual M05 worker opening, lower pickup/locked shelf retention, closing/withdrawal and imported alignment. No warehouse/timber/full-loop/FPS acceptance."
+    },
+    "timber_appearance_status": "New continuous source in progress, not yet review-approved. Dawson accepts minor surface clipping; full torso penetration and gross unnatural hand rotation remain defects. Historical hand-carry drafts stay unbound.",
+    "prior_candidate": {
+      "branch": "codex/supplier-transport-loop",
+      "worktree": "logs/supplier-transport-worktree",
+      "source_current": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
+      "pr": 146,
+      "status": "Open historical draft146; supersede only when replacement157 is accepted."
+    },
+    "historical_rejected_s4_animation_review": {
       "video_sha256": "7cc21f53bbecadbbc8438a9f133d982976824f86042c7eb831305e7807c0c24e",
       "human_approval": "rejected",
       "scope": "36s actual worker-operated shelf preview; arms overlap torso and hands spin unnaturally; not runtime bound"
     },
-    "timber_appearance_status": "Human revision required: actual palms at pickup, shoulder carry and restrained ramp gait. Earlier hand-carry drafts not approved."
+    "current_timber_receipts": {
+      "warehouse_fixture": 43531026084,
+      "truck_fixture": 43532318916,
+      "solo_refusal": 43535306483,
+      "joint_ground_receipt": 43537283766,
+      "pair_access": 43537767816,
+      "limits": "Separate source-bound capabilities only; no full paired motion, ordinary connected loop or60FPS acceptance."
+    }
   },
   "two_developer_authority": {
     "date": "2026-11-12",

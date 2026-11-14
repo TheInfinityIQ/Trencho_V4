@@ -129,5 +129,16 @@
     "atomicity": "Validate both distinct finite stations, routes and other workers/reserved endpoints before changing either registration. On blockage retain original promise and watch actual blocker movement; no new poll.",
     "lifecycle": "Generic single-worker reacquisition cannot overwrite paired stations. Commit requests clearance for both; release removes both endpoint promises. Existing single-worker behavior remains.",
     "verification": "One brief current-change reservation capability observation: actual prepared cell, both explicit distinct worker points, generic reacquisition retaining pair, release of both endpoints. No repeated fixture/old custody scenarios, authored-root or full-loop acceptance."
+  },
+  "connected_activity_hooks_before_remaining_edits": {
+    "single_activity_owner": "Receiving-owned pair activity advances once per existing boundary, not twice through two worker proxy jobs. Worker proxies have no separate finite deadline/path; common sync/movement must defer to the shared activity.",
+    "selection": "HaulingPolicy offers only actual unselected idle people at unloading category after higher priorities. Commit both Rear actor phases together; never reserve a lone waiting person when other work is feasible.",
+    "source": "One prepared warehouse token, actual two-station access and complete swept route are required before lift. Truck aisle and actual supplier-access commitments retain both identities until both pass the rear-clear boundary.",
+    "lift": "Accepted metadata contact time begins JointMaterialCarry once. Original packet hides from stock event and the same load appears at its sampled payload transform; no second source copy or doubled floor/registration offset.",
+    "motion": "All two floor roots, yaw and one payload transform share the same activity time. Retain FORE/AFT IDs. Fixed-orientation ground translation is distinct from actual swept turn/stop/start clips; no instantaneous elbow rotation.",
+    "finish": "Both registered actual warehouse roots precede joint finish and one warehouse commit. SupplierTimberHandoffs consumes only its actual committed-stock event; ordinary single-worker unloaded accounting must not count it again. Both participants then clear their reserved endpoints.",
+    "return": "Before-lift cancellation and physical empty withdrawal must be validated before the return stock transaction mutates anything. After lift or put-down, pending physical custody blocks departure/return clearance until an actual recoverable delivery. Existing single-worker return phase assumptions cannot be reused for pair proxy jobs.",
+    "interruption": "A supported ground put-down preserves stock and the originating delivery obligation. Recover using that actual source ID and a new real claim; never clear the convoy from an empty personal carrying pointer.",
+    "view": "Use existing manual-seek SupplierActorView, with visibility/pause gating and authoritative root sampler. The ordinary rear worker view must hide only the two actual animated IDs; no replacement people."
   }
 }
