@@ -4,7 +4,7 @@
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "d74c0dbb9d7d2fdb3e1c60a31482d4a53215e15bf863fb2a1fa4a210f3cd2322",
+  "source_fingerprint": "8d431e4f5051c5698d8f478a10cd05064545b9b89ceedebd4145457b6ac8305a",
   "totals": {
     "systems": 51,
     "game_scripts": 252,
@@ -41081,7 +41081,7 @@
         },
         {
           "path": "game/supplier_transport/supplier_timber_handoffs.gd",
-          "sha256": "37638dd11d3e2a47b0b653d5b6bff49e064e2bbe6460999a3b115d63debe588c",
+          "sha256": "9581f3d5518cbf13004194480ef31e941ca730bf87c34a696bba72294309f907",
           "classification": "implementation / presentation / data",
           "functions": [
             {

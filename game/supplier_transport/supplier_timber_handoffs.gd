@@ -5,7 +5,7 @@ var _owner: WeakRef
 
 func _init(receiving: RefCounted) -> void:
 	_owner = weakref(receiving)
-	var owner_ref := weakref(self)
+	var owner_ref: WeakRef = weakref(self)
 	receiving.ledger.joint_carries.custody_changed.connect(func(state: String, details: Dictionary) -> void:
 		var owner: RefCounted = owner_ref.get_ref()
 		if owner != null: owner._custody_changed(state,details))
