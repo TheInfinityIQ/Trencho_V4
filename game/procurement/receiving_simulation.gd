@@ -848,8 +848,9 @@ func _start_worker_job(id: String) -> bool:
 			continue
 		for source_id in order.stock_ids:
 			if not freight.accessible(order,str(source_id)): continue
-			var actual_packet: Dictionary = freight.packet(order,str(source_id))
-			if actual_packet.get("code","") == "M04":
+			var code: String = str(order.get("source_codes",{}).get(source_id,""))
+			if code.is_empty(): code = str(ledger.inspect_entity(source_id,{},false).get("design_type",""))
+			if code == "M04":
 				order.storage_warning = "Timber requires two actual handlers"
 				continue # Joint custody is connected in the next planned phase.
 			var quantity := mini(25, mini(room, ledger.available(source_id)))
@@ -864,7 +865,6 @@ func _start_worker_job(id: String) -> bool:
 			if warehouse != null:
 				var attempt_key := "%s/%s/%s" % [id,order.id,source_id]
 				if int(_storage_attempts.get(attempt_key,-1)) == int(warehouse.revision): continue
-				var code: String = str(ledger.inspect_entity(source_id,{},false).design_type)
 				quantity = mini(quantity,Packages.capacity(code))
 				storage = warehouse.reserve(id,code,quantity,true,true)
 				if not storage.ok:
@@ -880,7 +880,7 @@ func _start_worker_job(id: String) -> bool:
 				if not storage.is_empty(): warehouse.release(str(storage.id))
 				continue
 			var job := {"order_id": order.id, "source_id": source_id, "quantity": quantity,
-				"code": ledger.inspect_entity(source_id).design_type, "claim_id": claim_id,
+				"code": code, "claim_id": claim_id,
 				"phase": "Approach", "started_at": _time, "slot":slot,"destination":berth.store}
 			job.path = approach
 			job.ends_at = _time + _path_length(job.path) / 1.5

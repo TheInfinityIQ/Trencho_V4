@@ -1,5 +1,7 @@
 flowchart TD
   Order[One confirmed timber shipment] --> Ready{Two eligible actual workers and finite warehouse cell?}
+  Onward[Ordinary onward or outbound timber request] --> Unsupported[Specific two-handler capability reason; no solo split or claim]
+  Unsupported --> Other[Other feasible hauling continues under existing priorities]
   Ready -->|no| Hold[Cargo stays aboard; event-woken reason]
   Ready -->|yes| Priority[Shared hauling priorities; no busy or higher-priority worker borrowed]
   Priority --> Reserve[One source claim, one cell and two exclusive worker roles]

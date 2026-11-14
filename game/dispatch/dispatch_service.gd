@@ -102,6 +102,7 @@ func accept(hull_id: String, mode: String, passengers: Array, cargo: Dictionary,
 		var owner: RefCounted = rear.gun_owner(gun_id)
 		if gun.is_empty() or owner == null or gun.kind != "HEAVY_OBJECT" or gun.design_type != "E13" or gun.owner != rear.PLAYER or gun.holder_id != owner.bay_id: return _fail("Select the same packed E13 physically occupying F10 for collection.")
 	for type in cargo:
+		if type == "M04": return _fail("Timber requires two handlers. Paired outbound timber loading is not available in this checkpoint.")
 		if type == "E13" or typeof(cargo[type]) != TYPE_INT or int(cargo[type]) <= 0: return _fail("Cargo requires positive whole item counts; E13 uses field-gun collection.")
 		var mass: float = _unit_mass(type)
 		if mass <= 0.0: return _fail("Unknown physical cargo mass for " + type)

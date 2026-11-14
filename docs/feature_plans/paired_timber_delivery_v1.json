@@ -71,6 +71,38 @@
     "asset_sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
     "variant_rule": "M04 and non-M04 S1 packets must not share support definitions. Timber remains left-side, exactly one bundle per deck, no timber-on-timber stacking.",
     "transform": "Use existing measured Cargo_Floor-to-rack placement once; no new recentering or truck geometry edit.",
-    "startup_and_check": "Declare actual model import and existing loading-cover preparation, then one bounded exact-variant/actual-render-model current-change demonstration on GitHub. Keep rejected motion unbound."
+    "startup_and_check": "Declare actual model import and existing loading-cover preparation, then one bounded exact-variant/actual-render-model current-change demonstration on GitHub. Keep rejected motion unbound.",
+    "check_result": {
+      "run": 43532318916,
+      "source": "feb6873c28ed1a6d5e9aabc05709b5c37a47ac34",
+      "result": "pass",
+      "scope": "Static actual variant/import/packet support/placement only; motion remains unfinished"
+    }
+  },
+  "planning_discoveries": [
+    "Actual import dependencies were duplicated; first new-asset check detected the missed second list. Replaced copies with one shared manifest.",
+    "Ordinary begin_carry currently enforces mass only; supplier pair activation must not silently allow a lighter2m bundle to become a solo downstream haul.",
+    "Recoverable ground-held timber needs a retained owner/recovery route and explicit debug/return/convoy accounting, even after hands are released."
+  ],
+  "implementation_couplings_before_pair_code": {
+    "priority_selection": "HaulingPolicy.start_available visits categories across the actual idle pool. Offer pair candidates only within the unloading category after higher-priority commitments; mark both actual actors before lower categories can claim either. Dedicated Receiving staff must use the same exclusive rules.",
+    "custody": "IdentityLedger.joint_carries already provides begin/move/finish/put_down. Receiving counts delivery only after actual joint finish AND one matching WarehouseService.commit; mass allowance remains25kg/person.",
+    "warehouse": "One finite token must retain both participant service points and safe access/clearance; do not add a second cell promise for the same package. Exact final stations come from accepted motion, not guessed legacy undergrip sockets.",
+    "routes": "PairedGroundPath currently certifies fixed-orientation translations only. It does not authorize instant heading changes at elbows; actual start/stop and authored swept turns need clear staging space from the measured new metadata.",
+    "return_and_debug": "SupplierReturns and debug_deliver_resources must recognize pending pair/ground custody even when personal carrying pointers are empty. No return/refund/deposit/convoy completion may be fabricated by a cleared hand.",
+    "interruptions": "Keep actual recoverable package ID/origins and an event-woken recovery route after put_down. Release worker eligibility separately from physical delivery/return accounting.",
+    "views": "One shared clip/root/payload time; explicit FORE/AFT identity; stage transform once; cosmetic-only processing while active/visible; no runtime IK or animation stock callbacks.",
+    "activation_boundary": "No historical rejected hand-carry draft, pose-only image or unverified shared-library fit is a valid continuous-motion handoff."
+  },
+  "ordinary_timber_carry_boundary_before_edits": {
+    "designer_decision": "Current checkpoint ends with actual paired supplier receipt, safe departure and another order; onward timber to production/staging is unfinished and not required for this checkpoint. Even lighter2m portions require two actual handlers.",
+    "source_surfaces": [
+      "game/staffing/rear_simulation.gd::_job_option",
+      "game/identity/identity_ledger.gd::_check_transfer",
+      "game/dispatch/dispatch_service.gd::accept"
+    ],
+    "implementation": "Refuse unsupported solo M04 at ordinary feasible-task selection so other jobs continue; also refuse timber-to-person primitive transfers and outbound admissions needing unimplemented paired handling. JointMaterialCarry remains the only real two-person custody path; no new worker or capacity exception.",
+    "check": "A brief current-change ordinary hauling/refusal observation will verify no solo reservation/assignment while another feasible material job proceeds. No broad regression campaign.",
+    "prepublication_source_amendment": "Legacy receiving orders can lack packet manifests; identify timber through retained source_codes or a light actual stock identity before single-worker selection. Do not rely on packet metadata alone or let the ledger refusal reach Receiving._must. Reuse the same cached code instead of repeated deep inspection."
   }
 }

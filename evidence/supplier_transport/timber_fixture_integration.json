@@ -1,0 +1,32 @@
+{
+  "feature": "Actual timber storage and truck fixture connection before paired motion",
+  "warehouse": {
+    "run": 43531026084,
+    "source": "dafdd24054883137bd7ce9b16b8686457adac6bc",
+    "asset_sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+    "result": "pass",
+    "scope": "Actual imported2.6x1x2.10m rack, four timber cells registered to .60/1.75m wood supports, preserved crate planes and cached actual mesh collision",
+    "retained_failure": {
+      "run": 43530197708,
+      "source": "94ba6887a14ec57e9b6a636b57f858bd204c6c2b",
+      "cause": "The duplicated actual-import list still loaded original rack; source parsing passed. Fixed by one shared declared dependency manifest, not a changed geometry or raised limit."
+    }
+  },
+  "truck": {
+    "run": 43532318916,
+    "source": "feb6873c28ed1a6d5e9aabc05709b5c37a47ac34",
+    "asset_sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+    "result": "pass",
+    "scope": "Actual100kg timber/25kg metal order with distinct physical S1 variants, two50kg bundles on .60/.95m supports, retained metal .425m support, imported rack envelope at real Cargo_Floor and once-only wood registration; no cargo delivered by this fixture check"
+  },
+  "sidecars": "Actual Godot-generated remote sidecars copied after source hash comparison; no local engine run or .godot edits.",
+  "unverified": [
+    "New continuous paired shoulder/ramp/warehouse motion",
+    "Actual paired supplier-to-warehouse handover/recovery",
+    "Native full-loop appearance/input and 60FPS",
+    "Final exact-head Designer approval and main merge"
+  ],
+  "local_engine_runs": 0,
+  "regression_suites_run": 0,
+  "performance_limits_raised": false
+}

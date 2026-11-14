@@ -4,7 +4,7 @@
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "8c1c374f8373af57a136e5cbddfe6a425e064374aa989dca69b6ccfed25a1803",
+  "source_fingerprint": "7f8a1a67242130052745c86993aa3df1c0eadd41236d4cfba40e89a92c424512",
   "totals": {
     "systems": 51,
     "game_scripts": 251,
@@ -1040,7 +1040,7 @@
       "files": [
         {
           "path": "game/identity/identity_ledger.gd",
-          "sha256": "f3526b59986039e1fe172a6a9444a554b09302caf69ab6803e5346f5ec871f67",
+          "sha256": "4dc9eb2f87e00e37fc534245a8971de28c1104dfc0dec9498f3649eb5ad4965b",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -2433,16 +2433,16 @@
               "id": "game/identity/identity_ledger.gd::_check_transfer",
               "name": "_check_transfer",
               "line": 2169,
-              "end_line": 2189,
+              "end_line": 2191,
               "kind": "method",
-              "purpose": "Validate source, actual destination access, exact quantities and matching claims, refusing independent cargo onto shared-load handlers.",
+              "purpose": "Validate actual source/destination, local access, quantities and claims; timber cannot transfer into one person and active shared handlers cannot receive independent stock.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/identity/identity_ledger.gd::_split_stock",
               "name": "_split_stock",
-              "line": 2192,
-              "end_line": 2212,
+              "line": 2194,
+              "end_line": 2214,
               "kind": "method",
               "purpose": "Move one exact conserved stock portion while optionally deferring change events until an atomic multi-person custody commit completes.",
               "purpose_origin": "reviewed"
@@ -2450,8 +2450,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_remove_stock",
               "name": "_remove_stock",
-              "line": 2215,
-              "end_line": 2229,
+              "line": 2217,
+              "end_line": 2231,
               "kind": "method",
               "purpose": "Remove the exact stock quantity once for an explicit accounting reason and notify its real physical storage index.",
               "purpose_origin": "reviewed"
@@ -2459,8 +2459,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_set_assignment",
               "name": "_set_assignment",
-              "line": 2232,
-              "end_line": 2239,
+              "line": 2234,
+              "end_line": 2241,
               "kind": "method",
               "purpose": "Set assignment for identity ledger, applying its validation and side effects. Implementation: calls _event; updates person.assignment, person.duty_id, person.pending_assignment, person.pending_duty.",
               "purpose_origin": "implementation_derived"
@@ -2468,8 +2468,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_new_entity",
               "name": "_new_entity",
-              "line": 2242,
-              "end_line": 2247,
+              "line": 2244,
+              "end_line": 2249,
               "kind": "method",
               "purpose": "Return entity for identity ledger. Implementation: calls Records.Entity.new, _fill_entity; updates _entities[id].",
               "purpose_origin": "implementation_derived"
@@ -2477,8 +2477,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_fill_entity",
               "name": "_fill_entity",
-              "line": 2250,
-              "end_line": 2260,
+              "line": 2252,
+              "end_line": 2262,
               "kind": "method",
               "purpose": "Fill entity for identity ledger. Implementation: updates entity.controller, entity.created_at, entity.description, entity.design_type.",
               "purpose_origin": "implementation_derived"
@@ -2486,8 +2486,8 @@
             {
               "id": "game/identity/identity_ledger.gd::contents_masses",
               "name": "contents_masses",
-              "line": 2263,
-              "end_line": 2272,
+              "line": 2265,
+              "end_line": 2274,
               "kind": "method",
               "purpose": "Compute fresh contained masses for selected holder IDs using one current holder hierarchy and shared recursive memo within this synchronous read; preserve scalar stock-leaf behavior and subtree addition order without retaining world state.",
               "purpose_origin": "reviewed"
@@ -2495,8 +2495,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_contents_mass",
               "name": "_contents_mass",
-              "line": 2274,
-              "end_line": 2278,
+              "line": 2276,
+              "end_line": 2280,
               "kind": "method",
               "purpose": "Return zero for stock leaves or compute descendant mass using a holder-to-children index.",
               "purpose_origin": "reviewed"
@@ -2504,8 +2504,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_children_by_holder",
               "name": "_children_by_holder",
-              "line": 2280,
-              "end_line": 2285,
+              "line": 2282,
+              "end_line": 2287,
               "kind": "method",
               "purpose": "Build a direct-child index for every physical holder in one ledger pass.",
               "purpose_origin": "reviewed"
@@ -2513,8 +2513,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_indexed_contents_mass",
               "name": "_indexed_contents_mass",
-              "line": 2287,
-              "end_line": 2294,
+              "line": 2289,
+              "end_line": 2296,
               "kind": "method",
               "purpose": "Recursively sum descendant mass through the supplied child index, reusing this inspection's mass results.",
               "purpose_origin": "reviewed"
@@ -2522,8 +2522,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_world_position",
               "name": "_world_position",
-              "line": 2297,
-              "end_line": 2301,
+              "line": 2299,
+              "end_line": 2303,
               "kind": "method",
               "purpose": "Resolve authoritative world coordinates by recursively adding holder positions.",
               "purpose_origin": "reviewed"
@@ -2531,8 +2531,8 @@
             {
               "id": "game/identity/identity_ledger.gd::register_handling_point",
               "name": "register_handling_point",
-              "line": 2304,
-              "end_line": 2310,
+              "line": 2306,
+              "end_line": 2312,
               "kind": "method",
               "purpose": "Record an activity-owned per-person local access point on an existing holder; reaching that point authorizes the same local handling boundary.",
               "purpose_origin": "reviewed"
@@ -2540,8 +2540,8 @@
             {
               "id": "game/identity/identity_ledger.gd::release_handling_points",
               "name": "release_handling_points",
-              "line": 2312,
-              "end_line": 2316,
+              "line": 2314,
+              "end_line": 2318,
               "kind": "method",
               "purpose": "Release a person actual handling points globally or for only the specified physical holder.",
               "purpose_origin": "reviewed"
@@ -2549,8 +2549,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_at_handling_point",
               "name": "_at_handling_point",
-              "line": 2318,
-              "end_line": 2326,
+              "line": 2320,
+              "end_line": 2328,
               "kind": "method",
               "purpose": "Check an actual person or their carried stock against that person's registered physical access point on the other holder.",
               "purpose_origin": "reviewed"
@@ -2558,8 +2558,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_colocated",
               "name": "_colocated",
-              "line": 2328,
-              "end_line": 2330,
+              "line": 2330,
+              "end_line": 2332,
               "kind": "method",
               "purpose": "Retain exact colocation, also accepting actual arrival at explicitly registered per-person service points instead of widening a global distance tolerance.",
               "purpose_origin": "reviewed"
@@ -2567,8 +2567,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_free_id",
               "name": "_free_id",
-              "line": 2333,
-              "end_line": 2334,
+              "line": 2335,
+              "end_line": 2336,
               "kind": "method",
               "purpose": "Require a nonempty ID unused by both entity records and claims.",
               "purpose_origin": "reviewed"
@@ -2576,8 +2576,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_is_place",
               "name": "_is_place",
-              "line": 2337,
-              "end_line": 2338,
+              "line": 2339,
+              "end_line": 2340,
               "kind": "method",
               "purpose": "Check that an existing ID names a physical PLACE record.",
               "purpose_origin": "reviewed"
@@ -2585,8 +2585,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_is_person_holder",
               "name": "_is_person_holder",
-              "line": 2341,
-              "end_line": 2342,
+              "line": 2343,
+              "end_line": 2344,
               "kind": "method",
               "purpose": "Check whether an existing holder is a place or carrier that can contain a person.",
               "purpose_origin": "reviewed"
@@ -2594,8 +2594,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_can_hold_stock",
               "name": "_can_hold_stock",
-              "line": 2345,
-              "end_line": 2346,
+              "line": 2347,
+              "end_line": 2348,
               "kind": "method",
               "purpose": "Check whether an existing holder is a place, carrier or person that can contain loose stock.",
               "purpose_origin": "reviewed"
@@ -2603,8 +2603,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_stock",
               "name": "_stock",
-              "line": 2349,
-              "end_line": 2350,
+              "line": 2351,
+              "end_line": 2352,
               "kind": "method",
               "purpose": "Return a stock record of the requested ID, otherwise null.",
               "purpose_origin": "reviewed"
@@ -2612,8 +2612,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_weapon",
               "name": "_weapon",
-              "line": 2353,
-              "end_line": 2354,
+              "line": 2355,
+              "end_line": 2356,
               "kind": "method",
               "purpose": "Return a weapon record of the requested ID, otherwise null.",
               "purpose_origin": "reviewed"
@@ -2621,8 +2621,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_person",
               "name": "_person",
-              "line": 2357,
-              "end_line": 2358,
+              "line": 2359,
+              "end_line": 2360,
               "kind": "method",
               "purpose": "Return the requested record as a Person, otherwise null.",
               "purpose_origin": "reviewed"
@@ -2630,8 +2630,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_is_active_carry",
               "name": "_is_active_carry",
-              "line": 2361,
-              "end_line": 2367,
+              "line": 2363,
+              "end_line": 2369,
               "kind": "method",
               "purpose": "Recognize ordinary personal and keyed shared stock commitments before another inventory operation can take the load.",
               "purpose_origin": "reviewed"
@@ -2639,8 +2639,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_valid_mass",
               "name": "_valid_mass",
-              "line": 2370,
-              "end_line": 2371,
+              "line": 2372,
+              "end_line": 2373,
               "kind": "method",
               "purpose": "Accept only positive finite mass values.",
               "purpose_origin": "reviewed"
@@ -2648,8 +2648,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_event",
               "name": "_event",
-              "line": 2374,
-              "end_line": 2375,
+              "line": 2376,
+              "end_line": 2377,
               "kind": "method",
               "purpose": "Append a timestamped ledger event.",
               "purpose_origin": "reviewed"
@@ -2657,8 +2657,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_ok",
               "name": "_ok",
-              "line": 2378,
-              "end_line": 2379,
+              "line": 2380,
+              "end_line": 2381,
               "kind": "method",
               "purpose": "Create a successful ledger result with code OK, message and optional entity ID.",
               "purpose_origin": "reviewed"
@@ -2666,8 +2666,8 @@
             {
               "id": "game/identity/identity_ledger.gd::_reject",
               "name": "_reject",
-              "line": 2382,
-              "end_line": 2383,
+              "line": 2384,
+              "end_line": 2385,
               "kind": "method",
               "purpose": "Create a failed ledger result with explicit error code, message and no entity ID.",
               "purpose_origin": "reviewed"
@@ -3550,7 +3550,7 @@
         },
         {
           "path": "game/staffing/rear_simulation.gd",
-          "sha256": "1fc4381a002502b1d2c39a2cb290dd67b6016318f42f2f65735c9f63b376cfca",
+          "sha256": "578e486978eddee87c2503704ffac464a93a96f2457752981efb1de5c13a7a27",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -3917,16 +3917,16 @@
               "id": "game/staffing/rear_simulation.gd::_job_option",
               "name": "_job_option",
               "line": 1045,
-              "end_line": 1113,
+              "end_line": 1116,
               "kind": "method",
-              "purpose": "Delegate tagged exact-package recovery selection to its owner; otherwise compare actual legal accessible stock, capacities and physical routes for ordinary hauling.",
+              "purpose": "Offer only a currently feasible ordinary hauling job, exposing unsupported onward two-worker timber handling before any solo claim while other materials remain eligible.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/rear_simulation.gd::_job_option/<lambda#1>",
               "name": "_job_option/<lambda#1>",
-              "line": 1066,
-              "end_line": 1069,
+              "line": 1069,
+              "end_line": 1072,
               "kind": "lambda",
               "purpose": "Order current warehouse candidates by pure geometric pick/delivery estimate with deterministic stock-ID ties; no custody or route promise is created.",
               "purpose_origin": "reviewed"
@@ -3934,8 +3934,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job_before",
               "name": "_job_before",
-              "line": 1116,
-              "end_line": 1121,
+              "line": 1119,
+              "end_line": 1124,
               "kind": "method",
               "purpose": "Compare viable haul choices by effective priority, stable job order and approach distance.",
               "purpose_origin": "reviewed"
@@ -3943,8 +3943,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_in_flight",
               "name": "_in_flight",
-              "line": 1124,
-              "end_line": 1128,
+              "line": 1127,
+              "end_line": 1131,
               "kind": "method",
               "purpose": "Count the quantity currently committed/carried for a hauling job.",
               "purpose_origin": "reviewed"
@@ -3952,8 +3952,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reserved_space",
               "name": "_reserved_space",
-              "line": 1131,
-              "end_line": 1139,
+              "line": 1134,
+              "end_line": 1142,
               "kind": "method",
               "purpose": "Sum inbound carry/output/receiving capacity promises for a destination, optionally excluding one person.",
               "purpose_origin": "reviewed"
@@ -3961,8 +3961,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::reserve_output_space",
               "name": "reserve_output_space",
-              "line": 1142,
-              "end_line": 1146,
+              "line": 1145,
+              "end_line": 1149,
               "kind": "method",
               "purpose": "Validate and apply reserve output space in rear simulation. Successful outcomes: Full output capacity promised to ",
               "purpose_origin": "implementation_derived"
@@ -3970,8 +3970,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::release_output_space",
               "name": "release_output_space",
-              "line": 1149,
-              "end_line": 1150,
+              "line": 1152,
+              "end_line": 1153,
               "kind": "method",
               "purpose": "Release output space for rear simulation. Implementation: calls _output_promises.erase.",
               "purpose_origin": "implementation_derived"
@@ -3979,8 +3979,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::output_space_valid",
               "name": "output_space_valid",
-              "line": 1153,
-              "end_line": 1157,
+              "line": 1156,
+              "end_line": 1160,
               "kind": "method",
               "purpose": "Output space valid for rear simulation. Implementation: calls _output_promises.has, store.filter.is_empty, ledger.loose_stock_mass_at, _reserved_space.",
               "purpose_origin": "implementation_derived"
@@ -3988,8 +3988,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_free_space",
               "name": "_free_space",
-              "line": 1160,
-              "end_line": 1161,
+              "line": 1163,
+              "end_line": 1164,
               "kind": "method",
               "purpose": "Subtract physical loose-stock mass and inbound promises from a store's capacity.",
               "purpose_origin": "reviewed"
@@ -3997,8 +3997,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_valid_destination",
               "name": "_valid_destination",
-              "line": 1164,
-              "end_line": 1167,
+              "line": 1167,
+              "end_line": 1170,
               "kind": "method",
               "purpose": "Authorize finite staging only for that actual actor's exact admitted recovery load; retain ordinary accessible/filter/capacity/source-only rules elsewhere.",
               "purpose_origin": "reviewed"
@@ -4006,8 +4006,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_nearest_storage",
               "name": "_nearest_storage",
-              "line": 1170,
-              "end_line": 1185,
+              "line": 1173,
+              "end_line": 1188,
               "kind": "method",
               "purpose": "Select nearest accepting reachable storage using the same person's unreserved work-point preview and stable tie-break, excluding piles and the former destination. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -4015,8 +4015,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reroute",
               "name": "_reroute",
-              "line": 1188,
-              "end_line": 1206,
+              "line": 1191,
+              "end_line": 1209,
               "kind": "method",
               "purpose": "Retain actual carried goods and demand while selecting safe alternative storage or a recoverable pile, then physically carry to its reserved work point. Resolve warehouse stock at its actual cell and retain finite destination promises through physical preparation/carry/deposit.",
               "purpose_origin": "reviewed"
@@ -4024,8 +4024,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_deposit",
               "name": "_deposit",
-              "line": 1209,
-              "end_line": 1238,
+              "line": 1212,
+              "end_line": 1241,
               "kind": "method",
               "purpose": "Deposit the real carried load once into reached storage, consume its exact cell promise and report a recovery-package receipt before releasing the actor safely.",
               "purpose_origin": "reviewed"
@@ -4033,8 +4033,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_release_load",
               "name": "_release_load",
-              "line": 1241,
-              "end_line": 1252,
+              "line": 1244,
+              "end_line": 1255,
               "kind": "method",
               "purpose": "Release an uncollected actor load and storage access while retaining whole recovery-batch source claims for another eligible hauler.",
               "purpose_origin": "reviewed"
@@ -4042,8 +4042,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at",
               "name": "_stock_at",
-              "line": 1255,
-              "end_line": 1256,
+              "line": 1258,
+              "end_line": 1259,
               "kind": "method",
               "purpose": "Return the player's positive stock inspections at one holder, optionally omitting mass.",
               "purpose_origin": "reviewed"
@@ -4051,8 +4051,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_stock_at/<lambda#1>",
               "name": "_stock_at/<lambda#1>",
-              "line": 1256,
-              "end_line": 1256,
+              "line": 1259,
+              "end_line": 1259,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns e.owner == PLAYER and e.quantity > 0.",
               "purpose_origin": "implementation_derived"
@@ -4060,8 +4060,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_reconcile_relocation",
               "name": "_reconcile_relocation",
-              "line": 1259,
-              "end_line": 1290,
+              "line": 1262,
+              "end_line": 1293,
               "kind": "method",
               "purpose": "Reconcile one relocation job with current quantity and any active actor commitment.",
               "purpose_origin": "reviewed"
@@ -4069,8 +4069,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::workforce_snapshot",
               "name": "workforce_snapshot",
-              "line": 1293,
-              "end_line": 1319,
+              "line": 1296,
+              "end_line": 1322,
               "kind": "method",
               "purpose": "Inspect rear people and requested duties to report actual, pending, present and unfilled workforce positions.",
               "purpose_origin": "reviewed"
@@ -4078,8 +4078,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::hauling_snapshot",
               "name": "hauling_snapshot",
-              "line": 1321,
-              "end_line": 1330,
+              "line": 1324,
+              "end_line": 1333,
               "kind": "method",
               "purpose": "Clone actual haul jobs and annotate current age, effective priority, in-flight quantity and Emergency contention/starvation without exporting the full rear or mutating jobs.",
               "purpose_origin": "reviewed"
@@ -4087,8 +4087,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::snapshot",
               "name": "snapshot",
-              "line": 1333,
-              "end_line": 1365,
+              "line": 1336,
+              "end_line": 1368,
               "kind": "method",
               "purpose": "Build the broad rear staffing, people, store, service/event and optional audit/ledger inspection, reusing the current detached hauling-job view.",
               "purpose_origin": "reviewed"
@@ -4096,8 +4096,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_refresh_contention",
               "name": "_refresh_contention",
-              "line": 1368,
-              "end_line": 1374,
+              "line": 1371,
+              "end_line": 1377,
               "kind": "method",
               "purpose": "Update whether waiting haul demands are blocked by competing viable work.",
               "purpose_origin": "reviewed"
@@ -4105,8 +4105,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_waiting_job_viable",
               "name": "_waiting_job_viable",
-              "line": 1377,
-              "end_line": 1394,
+              "line": 1380,
+              "end_line": 1397,
               "kind": "method",
               "purpose": "Check whether a waiting job can be served by an eligible actor under current reservations and routes.",
               "purpose_origin": "reviewed"
@@ -4114,8 +4114,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::audit",
               "name": "audit",
-              "line": 1397,
-              "end_line": 1417,
+              "line": 1400,
+              "end_line": 1420,
               "kind": "method",
               "purpose": "Preserve ordinary25kg actor/load invariants; distinguish truck-owned bulk destination promises from actual personal carried mass, whose25kg check remains intact.",
               "purpose_origin": "reviewed"
@@ -4123,8 +4123,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_assigned",
               "name": "_assigned",
-              "line": 1420,
-              "end_line": 1424,
+              "line": 1423,
+              "end_line": 1427,
               "kind": "method",
               "purpose": "Count rear actors whose authoritative current duty equals the requested duty.",
               "purpose_origin": "reviewed"
@@ -4132,8 +4132,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_committed",
               "name": "_committed",
-              "line": 1427,
-              "end_line": 1431,
+              "line": 1430,
+              "end_line": 1434,
               "kind": "method",
               "purpose": "Count current and pending assignments committed to a duty using narrow duty reads.",
               "purpose_origin": "reviewed"
@@ -4141,8 +4141,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_pending_in",
               "name": "_pending_in",
-              "line": 1434,
-              "end_line": 1439,
+              "line": 1437,
+              "end_line": 1442,
               "kind": "method",
               "purpose": "Count actors with a pending assignment into the requested duty.",
               "purpose_origin": "reviewed"
@@ -4150,8 +4150,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_retaining",
               "name": "_retaining",
-              "line": 1442,
-              "end_line": 1447,
+              "line": 1445,
+              "end_line": 1450,
               "kind": "method",
               "purpose": "Count actors currently assigned to the duty who are not pending a transfer away.",
               "purpose_origin": "reviewed"
@@ -4159,8 +4159,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_present",
               "name": "_present",
-              "line": 1450,
-              "end_line": 1454,
+              "line": 1453,
+              "end_line": 1457,
               "kind": "method",
               "purpose": "Count currently assigned actors physically idle/unloading at the duty.",
               "purpose_origin": "reviewed"
@@ -4168,8 +4168,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_job",
               "name": "_job",
-              "line": 1457,
-              "end_line": 1460,
+              "line": 1460,
+              "end_line": 1463,
               "kind": "method",
               "purpose": "Find a hauling job dictionary by ID, returning an empty dictionary when absent.",
               "purpose_origin": "reviewed"
@@ -4177,8 +4177,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_next",
               "name": "_next",
-              "line": 1463,
-              "end_line": 1465,
+              "line": 1466,
+              "end_line": 1468,
               "kind": "method",
               "purpose": "Increment and return the shared rear identifier/order sequence.",
               "purpose_origin": "reviewed"
@@ -4186,8 +4186,8 @@
             {
               "id": "game/staffing/rear_simulation.gd::_result",
               "name": "_result",
-              "line": 1468,
-              "end_line": 1469,
+              "line": 1471,
+              "end_line": 1472,
               "kind": "method",
               "purpose": "Return a rear command result containing success and message.",
               "purpose_origin": "reviewed"
@@ -4965,7 +4965,7 @@
           "label": "Ordinary manifest preparation / common worker",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "start_shared_preparation",
-          "line": 500
+          "line": 501
         }
       ],
       "edges": [
@@ -5310,7 +5310,7 @@
       "files": [
         {
           "path": "game/procurement/receiving_simulation.gd",
-          "sha256": "717c795bb7716f81973915fa59e7ce20ea46bd481e95f267c16ccd55b696affc",
+          "sha256": "47cf7ed7807e5e35a882fabbf936977c1de3bd1b75335beeaa75f075277abfa7",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -5805,7 +5805,7 @@
               "line": 829,
               "end_line": 900,
               "kind": "method",
-              "purpose": "Reserve physical source/destination and choose a real unload or close-only task, preserving staffing, cargo dependencies and warehouse promises.",
+              "purpose": "Choose an eligible real receiving action and reserve actual source/destination; use cached source material identity with a light legacy fallback so unsupported timber never enters the single-handler path.",
               "purpose_origin": "reviewed"
             },
             {
@@ -12312,35 +12312,35 @@
           "label": "Reserve actual cargo",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "_reserve_cargo",
-          "line": 169
+          "line": 170
         },
         {
           "id": "n2",
           "label": "Load through named handling tasks",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "_schedule_preparation",
-          "line": 517
+          "line": 518
         },
         {
           "id": "n3",
           "label": "Depart when physically ready",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "depart",
-          "line": 897
+          "line": 898
         },
         {
           "id": "n4",
           "label": "Progress route and HQ handling",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "advance_to",
-          "line": 281
+          "line": 282
         },
         {
           "id": "n5",
           "label": "Settle unload / return / cancel",
           "file": "game/dispatch/dispatch_service.gd",
           "function": "settle",
-          "line": 417
+          "line": 418
         }
       ],
       "edges": [
@@ -12384,7 +12384,7 @@
       "files": [
         {
           "path": "game/dispatch/dispatch_service.gd",
-          "sha256": "4d5ace99f524bfa61b913fae887f406411284aa7155cc912957444cf3d980bc3",
+          "sha256": "b813d571ea21e693bd15b2210e9df53b1e7f4a9f1d6cb9e37aa099eeeac637a1",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -12427,16 +12427,16 @@
               "id": "game/dispatch/dispatch_service.gd::accept",
               "name": "accept",
               "line": 74,
-              "end_line": 149,
+              "end_line": 150,
               "kind": "method",
-              "purpose": "Preserve real manifest/crew/cargo admission and reject construction-only hull identities or retained utility workers at the authoritative outbound boundary.",
+              "purpose": "Validate real hull, crew, passengers, cargo and admission before reserving a physical dispatch manifest; refuse unsupported paired outbound timber before committing workers or stock.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/dispatch/dispatch_service.gd::_unit_mass",
               "name": "_unit_mass",
-              "line": 151,
-              "end_line": 156,
+              "line": 152,
+              "end_line": 157,
               "kind": "method",
               "purpose": "Unit mass for dispatch service. Implementation: calls type.begins_with, Fixed.RECIPES.values, float.",
               "purpose_origin": "implementation_derived"
@@ -12444,8 +12444,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::active_handling_status",
               "name": "active_handling_status",
-              "line": 158,
-              "end_line": 162,
+              "line": 159,
+              "end_line": 163,
               "kind": "method",
               "purpose": "Resolve the selected hull's existing active manifest and return only detached current state, handling-phase and blocker strings; expose no mutable physical records or inventory.",
               "purpose_origin": "reviewed"
@@ -12453,8 +12453,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_active_manifest",
               "name": "_active_manifest",
-              "line": 164,
-              "end_line": 167,
+              "line": 165,
+              "end_line": 168,
               "kind": "method",
               "purpose": "Active manifest for dispatch service.",
               "purpose_origin": "implementation_derived"
@@ -12462,8 +12462,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_reserve_cargo",
               "name": "_reserve_cargo",
-              "line": 169,
-              "end_line": 206,
+              "line": 170,
+              "end_line": 207,
               "kind": "method",
               "purpose": "Retain existing physical named weapon/stock reservations; E01 captures only functional empty owned WEAPON identities in accessible eligible rear storage, never generic STOCK. Already accepted physical weapon items retain their identity and existing lifecycle.",
               "purpose_origin": "reviewed"
@@ -12471,8 +12471,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_begin_hull_approach",
               "name": "_begin_hull_approach",
-              "line": 208,
-              "end_line": 225,
+              "line": 209,
+              "end_line": 226,
               "kind": "method",
               "purpose": "Begin hull approach for dispatch service. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, _rear_vehicle_path, route.is_empty; updates rear.vehicles.vehicles[row.hull].state, rear.yard.occupied[row.home_slot], rear.yard.reserved[row.home_slot], row.blocker.",
               "purpose_origin": "implementation_derived"
@@ -12480,8 +12480,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_rear_vehicle_path",
               "name": "_rear_vehicle_path",
-              "line": 227,
-              "end_line": 230,
+              "line": 228,
+              "end_line": 231,
               "kind": "method",
               "purpose": "Rear vehicle path for dispatch service. Implementation: calls _rear_ref.get_ref, Layout.path, rear.construction.vehicle_path, rear.construction.parking_owner.",
               "purpose_origin": "implementation_derived"
@@ -12489,8 +12489,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_start_route",
               "name": "_start_route",
-              "line": 232,
-              "end_line": 252,
+              "line": 233,
+              "end_line": 253,
               "kind": "method",
               "purpose": "Start route for dispatch service. Implementation: calls _rear_ref.get_ref, row.get, row.route_profile.duplicate, _crossing_profile; updates profile, profile.strict_turns, row.blocker, row.distance.",
               "purpose_origin": "implementation_derived"
@@ -12498,8 +12498,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_crossing_profile",
               "name": "_crossing_profile",
-              "line": 254,
-              "end_line": 267,
+              "line": 255,
+              "end_line": 268,
               "kind": "method",
               "purpose": "Crossing profile for dispatch service. Implementation: calls profile.duplicate, str(effective.get(\"bridge\",\"\")).is_empty, str, effective.get; updates distance, effective.bridge_at_m.",
               "purpose_origin": "implementation_derived"
@@ -12507,8 +12507,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_fail",
               "name": "_fail",
-              "line": 269,
-              "end_line": 270,
+              "line": 270,
+              "end_line": 271,
               "kind": "method",
               "purpose": "Return a failed dispatch service command result with the supplied explanation.",
               "purpose_origin": "implementation_derived"
@@ -12516,8 +12516,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::next_boundary",
               "name": "next_boundary",
-              "line": 272,
-              "end_line": 279,
+              "line": 273,
+              "end_line": 280,
               "kind": "method",
               "purpose": "Return the next scheduled dispatch service event time for the shared scheduler. Implementation: calls manifests.values, minf, float, row.task.is_empty; updates next.",
               "purpose_origin": "implementation_derived"
@@ -12525,8 +12525,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::advance_to",
               "name": "advance_to",
-              "line": 281,
-              "end_line": 330,
+              "line": 282,
+              "end_line": 331,
               "kind": "method",
               "purpose": "Advance scheduled dispatch service work to the supplied simulation time. Implementation: calls _rear_ref.get_ref, manifests.values, float, request_safe_return; updates _advancing_at, fuel, moved, row.blocker.",
               "purpose_origin": "implementation_derived"
@@ -12534,8 +12534,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_route_progress",
               "name": "_route_progress",
-              "line": 332,
-              "end_line": 343,
+              "line": 333,
+              "end_line": 344,
               "kind": "method",
               "purpose": "Route progress for dispatch service. Implementation: calls minf, float; updates distance, fuel, remaining.",
               "purpose_origin": "implementation_derived"
@@ -12543,8 +12543,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_finish_route",
               "name": "_finish_route",
-              "line": 345,
-              "end_line": 405,
+              "line": 346,
+              "end_line": 406,
               "kind": "method",
               "purpose": "Finish route for dispatch service. Implementation: calls _rear_ref.get_ref, rear.ledger.move_entity, row.get, rear.ledger.set_rear_place; updates rear.vehicles.vehicles[row.hull].state, rear.yard.occupied[slot], rear.yard.reserved[row.home_slot], rear.yard.reserved[slot].",
               "purpose_origin": "implementation_derived"
@@ -12552,8 +12552,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_physical_totals",
               "name": "_physical_totals",
-              "line": 407,
-              "end_line": 415,
+              "line": 408,
+              "end_line": 416,
               "kind": "method",
               "purpose": "Physical totals for dispatch service. Implementation: calls row.passengers.size, int, totals.get, _rear_ref.get_ref().ledger.inspect_entity; updates totals.guns, totals[item.type].",
               "purpose_origin": "implementation_derived"
@@ -12561,8 +12561,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::settle",
               "name": "settle",
-              "line": 417,
-              "end_line": 439,
+              "line": 418,
+              "end_line": 440,
               "kind": "method",
               "purpose": "Resolve immediately eligible dispatch service transitions and report whether state changed. Implementation: calls manifests.values, row.task.is_empty, row.stock_items.size, row.weapon_items.size; updates changed, row.blocker, row.hq_berth.",
               "purpose_origin": "implementation_derived"
@@ -12570,8 +12570,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::ready_dispatch_site",
               "name": "ready_dispatch_site",
-              "line": 441,
-              "end_line": 468,
+              "line": 442,
+              "end_line": 469,
               "kind": "method",
               "purpose": "Find an actually accessible centre with eligible dedicated staff or a real idle common hauler, preserving physical transport readiness and supplied staffing ownership.",
               "purpose_origin": "reviewed"
@@ -12579,8 +12579,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_worker_ready_for_duty",
               "name": "_worker_ready_for_duty",
-              "line": 470,
-              "end_line": 471,
+              "line": 471,
+              "end_line": 472,
               "kind": "method",
               "purpose": "Read supplied current handler facts through the original duty, pending assignment, Idle phase, health, stock carry and weapon carry short-circuit predicate.",
               "purpose_origin": "reviewed"
@@ -12588,8 +12588,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_ready_worker",
               "name": "_ready_worker",
-              "line": 473,
-              "end_line": 478,
+              "line": 474,
+              "end_line": 479,
               "kind": "method",
               "purpose": "Find the first actual handler for the captured manifest duty through the shared unchanged predicate, preserving the original actor/entity-read loop.",
               "purpose_origin": "reviewed"
@@ -12597,8 +12597,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_start_task",
               "name": "_start_task",
-              "line": 480,
-              "end_line": 489,
+              "line": 481,
+              "end_line": 490,
               "kind": "method",
               "purpose": "Capture one finite manifest task with actual actor IDs/timing/route, mark those workers exclusively busy and supply read-only phase/motion facts to their visual presenter.",
               "purpose_origin": "reviewed"
@@ -12606,8 +12606,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_clear_task",
               "name": "_clear_task",
-              "line": 491,
-              "end_line": 498,
+              "line": 492,
+              "end_line": 499,
               "kind": "method",
               "purpose": "Release the completed manifest task and visual facts, then rebalance staffing at that safe event before another owner can claim the worker.",
               "purpose_origin": "reviewed"
@@ -12615,8 +12615,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::start_shared_preparation",
               "name": "start_shared_preparation",
-              "line": 500,
-              "end_line": 510,
+              "line": 501,
+              "end_line": 511,
               "kind": "method",
               "purpose": "Offer a single eligible common hauler to ordinary preparation of an existing ready manifest; preserve current task, gun-team and vehicle requirements.",
               "purpose_origin": "reviewed"
@@ -12624,8 +12624,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_preparation_path",
               "name": "_preparation_path",
-              "line": 512,
-              "end_line": 515,
+              "line": 513,
+              "end_line": 516,
               "kind": "method",
               "purpose": "Resolve a reachable real per-person source/staging work point through the existing Rear access owner before preparing a handling route.",
               "purpose_origin": "reviewed"
@@ -12633,8 +12633,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_schedule_preparation",
               "name": "_schedule_preparation",
-              "line": 517,
-              "end_line": 614,
+              "line": 518,
+              "end_line": 615,
               "kind": "method",
               "purpose": "Schedule actual manifest gun/passenger/dedicated or supplied ordinary handling, requiring physical source/staging approach and retaining existing finite claims/load completion.",
               "purpose_origin": "reviewed"
@@ -12642,8 +12642,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_approach_staged",
               "name": "_approach_staged",
-              "line": 616,
-              "end_line": 627,
+              "line": 617,
+              "end_line": 628,
               "kind": "method",
               "purpose": "Distinguish blocked, already-present and newly walking access to actual staged goods, registering the corresponding stopped-hull handling port without falsely reporting a blocked state as progress.",
               "purpose_origin": "reviewed"
@@ -12651,8 +12651,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_finish_task",
               "name": "_finish_task",
-              "line": 629,
-              "end_line": 773,
+              "line": 630,
+              "end_line": 774,
               "kind": "method",
               "purpose": "Complete actual manifest handling boundaries, checking safe destination access before pickup and preserving real stock/weapon identity, staged claims and physical truck loading.",
               "purpose_origin": "reviewed"
@@ -12660,8 +12660,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_automatic_delivery_facts",
               "name": "_automatic_delivery_facts",
-              "line": 775,
-              "end_line": 808,
+              "line": 776,
+              "end_line": 809,
               "kind": "method",
               "purpose": "Preserve automatic physical shipping readiness and reject construction-domain trucks before accepting a normal rear/army shipment.",
               "purpose_origin": "reviewed"
@@ -12669,8 +12669,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::accept_automatic_delivery",
               "name": "accept_automatic_delivery",
-              "line": 810,
-              "end_line": 830,
+              "line": 811,
+              "end_line": 831,
               "kind": "method",
               "purpose": "Reject actual fuel ownership, reuse only an unchanged insufficient-tank failure bookmark, otherwise measure the intended cargo trip and reserve once; bookmark no positive grant, freshly compare actual facts and immediately call existing Strategic Delivery acceptance only when the actual tank suffices.",
               "purpose_origin": "reviewed"
@@ -12678,8 +12678,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::route_preview",
               "name": "route_preview",
-              "line": 832,
-              "end_line": 835,
+              "line": 833,
+              "end_line": 836,
               "kind": "method",
               "purpose": "Resolve one existing accepted manifest and delegate its current physical route/profile measurement to the shared trip calculator with no prospective cargo addition.",
               "purpose_origin": "reviewed"
@@ -12687,8 +12687,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_route_preview_for",
               "name": "_route_preview_for",
-              "line": 837,
-              "end_line": 886,
+              "line": 838,
+              "end_line": 887,
               "kind": "method",
               "purpose": "Measure the authoritative Dispatch approach/outward/HQ/return segments and existing 25 percent reserve; optional prospective cargo affects only loaded outward legs while zero addition preserves accepted-manifest physical route pricing.",
               "purpose_origin": "reviewed"
@@ -12696,8 +12696,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::set_route_profile",
               "name": "set_route_profile",
-              "line": 888,
-              "end_line": 895,
+              "line": 889,
+              "end_line": 896,
               "kind": "method",
               "purpose": "Apply a freshly validated detached route profile only to an accepted predeparture manifest whose commitments have not been withdrawn; retain existing route and fuel admission failures without mutating a pending cancellation.",
               "purpose_origin": "reviewed"
@@ -12705,8 +12705,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::depart",
               "name": "depart",
-              "line": 897,
-              "end_line": 930,
+              "line": 898,
+              "end_line": 931,
               "kind": "method",
               "purpose": "Depart for dispatch service. Implementation: calls _rear_ref.get_ref, manifests.get, row.is_empty, row.task.is_empty; updates count, have, rear.vehicles.vehicles[row.hull].state, row.departed.",
               "purpose_origin": "implementation_derived"
@@ -12714,8 +12714,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_hq_berth_count",
               "name": "_hq_berth_count",
-              "line": 932,
-              "end_line": 936,
+              "line": 933,
+              "end_line": 937,
               "kind": "method",
               "purpose": "Return count for dispatch service. Implementation: calls manifests.values; updates count.",
               "purpose_origin": "implementation_derived"
@@ -12723,8 +12723,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_schedule_hq",
               "name": "_schedule_hq",
-              "line": 938,
-              "end_line": 1002,
+              "line": 939,
+              "end_line": 1003,
               "kind": "method",
               "purpose": "Schedule hq for dispatch service. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, _hq_berth_count, row.get; updates hq_reserve[person_id], military_hulls[row.hull], military_people[person_id], row.blocker.",
               "purpose_origin": "implementation_derived"
@@ -12732,8 +12732,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::free_hq_handlers",
               "name": "free_hq_handlers",
-              "line": 1004,
-              "end_line": 1020,
+              "line": 1005,
+              "end_line": 1021,
               "kind": "method",
               "purpose": "Free hq handlers for dispatch service. Implementation: calls _rear_ref.get_ref, hq_staff.slice, rear.ledger.inspect_entity, person.is_empty; updates busy.",
               "purpose_origin": "implementation_derived"
@@ -12741,8 +12741,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::request_safe_return",
               "name": "request_safe_return",
-              "line": 1022,
-              "end_line": 1058,
+              "line": 1023,
+              "end_line": 1059,
               "kind": "method",
               "purpose": "Request safe return for dispatch service. Implementation: calls _rear_ref.get_ref, manifests.get, row.is_empty, row.get; updates needed_fuel, return_places[person_id], return_profile.allow_partial_bridge, return_profile.strict_turns.",
               "purpose_origin": "implementation_derived"
@@ -12750,8 +12750,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::report_route_hazard",
               "name": "report_route_hazard",
-              "line": 1060,
-              "end_line": 1067,
+              "line": 1061,
+              "end_line": 1068,
               "kind": "method",
               "purpose": "Report route hazard for dispatch service. Implementation: calls _rear_ref.get_ref, manifests.get, row.is_empty, reason.is_empty; updates row.blocker, row.state, row.stop_deadline.",
               "purpose_origin": "implementation_derived"
@@ -12759,8 +12759,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::clear_route_hazard",
               "name": "clear_route_hazard",
-              "line": 1069,
-              "end_line": 1088,
+              "line": 1070,
+              "end_line": 1089,
               "kind": "method",
               "purpose": "Clear route hazard for dispatch service. Implementation: calls _rear_ref.get_ref, manifests.get, row.is_empty, float; updates elapsed, left, row.blocker, row.last_time.",
               "purpose_origin": "implementation_derived"
@@ -12768,8 +12768,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::cancel",
               "name": "cancel",
-              "line": 1090,
-              "end_line": 1114,
+              "line": 1091,
+              "end_line": 1115,
               "kind": "method",
               "purpose": "Withdraw only this predeparture manifest's passenger/fleet/weapon/stock commitments once, retaining actual hull/crew/cargo and current handling; preserve a captured approach route until its existing arrival handoff enters cancellation, then let existing safe unload/return work complete.",
               "purpose_origin": "reviewed"
@@ -12777,8 +12777,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::change_mode",
               "name": "change_mode",
-              "line": 1116,
-              "end_line": 1136,
+              "line": 1117,
+              "end_line": 1137,
               "kind": "method",
               "purpose": "Validate a live predeparture mode change, including unwithdrawn commitments and actual hull/crew capacity, then update only that manifest's Fleet crew/hull admissions and invalidate its old route preview atomically.",
               "purpose_origin": "reviewed"
@@ -12786,8 +12786,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::add_field_gun",
               "name": "add_field_gun",
-              "line": 1138,
-              "end_line": 1156,
+              "line": 1139,
+              "end_line": 1157,
               "kind": "method",
               "purpose": "Admit one current uncommitted physical field gun within the live unwithdrawn predeparture manifest's seat/payload limits, record its actual output bay/promise and resume physical staging; reject pending-cancellation edits.",
               "purpose_origin": "reviewed"
@@ -12795,8 +12795,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_manifest_payload",
               "name": "_manifest_payload",
-              "line": 1158,
-              "end_line": 1165,
+              "line": 1159,
+              "end_line": 1166,
               "kind": "method",
               "purpose": "Manifest payload for dispatch service. Implementation: calls _rear_ref.get_ref, row.guns.size, rear.ledger.inspect_entity, _unit_mass; updates mass.",
               "purpose_origin": "implementation_derived"
@@ -12804,8 +12804,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_schedule_cancel",
               "name": "_schedule_cancel",
-              "line": 1167,
-              "end_line": 1209,
+              "line": 1168,
+              "end_line": 1210,
               "kind": "method",
               "purpose": "Schedule cancel for dispatch service. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, _start_task, _ready_worker; updates row.blocker, row.return_phase, row.state, row.task.gun.",
               "purpose_origin": "implementation_derived"
@@ -12813,8 +12813,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::snapshot",
               "name": "snapshot",
-              "line": 1211,
-              "end_line": 1254,
+              "line": 1212,
+              "end_line": 1255,
               "kind": "method",
               "purpose": "Export the current dispatch service state as a detached inspection dictionary. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, row.cargo.duplicate, row.passengers.size; updates committed.guns, committed.people, committed[item.type], copy.arrived.",
               "purpose_origin": "implementation_derived"
@@ -12822,8 +12822,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::_payload_mass",
               "name": "_payload_mass",
-              "line": 1256,
-              "end_line": 1268,
+              "line": 1257,
+              "end_line": 1269,
               "kind": "method",
               "purpose": "Payload mass for dispatch service. Implementation: calls _rear_ref.get_ref, rear.ledger.inspect_entity, _unit_mass; updates total.",
               "purpose_origin": "implementation_derived"
@@ -12831,8 +12831,8 @@
             {
               "id": "game/dispatch/dispatch_service.gd::audit",
               "name": "audit",
-              "line": 1270,
-              "end_line": 1285,
+              "line": 1271,
+              "end_line": 1286,
               "kind": "method",
               "purpose": "Audit for dispatch service. Implementation: calls _rear_ref.get_ref, military_people.size, incoming_people.size, errors.append.",
               "purpose_origin": "implementation_derived"

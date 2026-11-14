@@ -2170,6 +2170,8 @@ func _check_transfer(source: Records.Entity, quantity: int, destination_id: Stri
 	if source == null or not _can_hold_stock(destination_id):
 		return _reject("INVALID_HOLDER", "Source stock and an existing physical destination are required.")
 	var receiver := _person(destination_id)
+	if receiver != null and source.design_type == "M04":
+		return _reject("TIMBER_PAIR_REQUIRED","A two-metre timber load needs two actual handlers, including lighter portions.")
 	if receiver != null and not receiver.joint_carry_id.is_empty():
 		return _reject("PERSON_BUSY","The actual shared-load handler cannot receive an independent load.")
 	if _entities[source.holder_id].kind == Records.Kind.WEAPON:

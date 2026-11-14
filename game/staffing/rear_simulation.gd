@@ -1043,6 +1043,9 @@ func _start_job(a: Dictionary, category: String = "", destination: String = "") 
 
 
 func _job_option(job: Dictionary, person: Dictionary) -> Dictionary:
+	if str(job.type) == "M04":
+		job.blocker = "Timber requires two handlers. Onward paired timber hauling is not available in this checkpoint."
+		return {}
 	if job.has("warehouse_recovery"): return warehouse.recovery.option(job,person)
 	if not stores.has(job.destination) or not stores[job.destination].accessible:
 		job.blocker = "Destination inaccessible; demand retained"

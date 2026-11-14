@@ -314,7 +314,7 @@ This diagram is the local rear haul path. Strategic manifests, forward trucks an
 - [set_order](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/hauling_policy.gd#L11) — Validate complete category preference
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/hauling_policy.gd#L33) — Start highest-priority feasible idle work
 - [start_shared_unload](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L818) — Actual common worker / incoming claim
-- [start_shared_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L500) — Ordinary manifest preparation / common worker
+- [start_shared_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L501) — Ordinary manifest preparation / common worker
 
 <a id="procurement"></a>
 ## Purchasing, requisition and inbound deliveries
@@ -683,11 +683,11 @@ Automatic request fulfilment uses accept_automatic_delivery; retained manual man
 **Source anchors:**
 
 - [accept](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L74) — Accept real manifest
-- [_reserve_cargo](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L169) — Reserve actual cargo
-- [_schedule_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L517) — Load through named handling tasks
-- [depart](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L897) — Depart when physically ready
-- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L281) — Progress route and HQ handling
-- [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L417) — Settle unload / return / cancel
+- [_reserve_cargo](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L170) — Reserve actual cargo
+- [_schedule_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L518) — Load through named handling tasks
+- [depart](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L898) — Depart when physically ready
+- [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L282) — Progress route and HQ handling
+- [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L418) — Settle unload / return / cancel
 
 <a id="hq"></a>
 ## HQ receipts, reserve equipment and local issue
