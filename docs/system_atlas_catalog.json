@@ -5286,7 +5286,7 @@
     "game/warehousing/warehouse_assets.gd": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "6bdf7f5cac429525bdf8166e0cc346f6a0ba20a077340449e225ecdc575818a6",
+    "game/warehousing/warehouse_service.gd": "f4dc62767503e39416607090a692ae5ce10796d29eaf507fee6d42afc117298b",
     "game/warehousing/warehouse_view.gd": "0a5e62647d85ebe31282360d4d508274606a62b957b7f874da4a2b6e17071916",
     "game/supplier_transport/cargo_packing.gd": "e194a290148dd5b6f89030fe0195f85f844fed4aa00cc8ee81e7f91d687e1f46",
     "game/supplier_transport/supplier_freight.gd": "4133a15838a9a28c85b1e57840e54b5b1305c39401e979ba37fc181036e1591a",

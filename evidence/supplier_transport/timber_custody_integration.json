@@ -1,0 +1,32 @@
+{
+  "feature": "Supplier paired/ground timber obligation through exact warehouse receipt",
+  "source": "e1faf98e7159bb89c7da3cad1872aa466fe881c5",
+  "run": 43537283766,
+  "result": "pass",
+  "artifact": 14089738217,
+  "artifact_sha256": "f798edf89ea35fd3ae31d1cecc2ec5a221f4cb06c74c660786b35d2080795d28",
+  "scope": "Actual opening workers, one paid50kg shipment, real jointly held bundle, supported ground put-down, debug preflight refusal without mutation, real recovery, physical deposit not yet counted and exact finite warehouse cell commit creating one50kg receipt. Demonstration uses explicit handling stations and direct custody actions; it is not the authored route/animation.",
+  "retained_failures": [
+    {
+      "run": 43536724125,
+      "source": "8c412babafc0748b0771e2f1c10532c00e307c87",
+      "cause": "New weakref variable inferred Variant under warning-as-error. Explicit WeakRef type fixes production compile; demonstration never ran."
+    },
+    {
+      "run": 43537011053,
+      "source": "e1faf98e7159bb89c7da3cad1872aa466fe881c5",
+      "cause": "Temporary check used result.id rather than existing Ledger.entity_id. Same production source passed after correcting only check field names."
+    }
+  ],
+  "new_uid": "Actual engine-generated value retained from passing remote demonstration; no local engine/cache edit.",
+  "remaining": [
+    "Both-worker warehouse access API added after this receipt requires its own connected observation.",
+    "Accepted new continuous shoulder/ramp/warehouse motion",
+    "Real pair matching and route integration",
+    "Final native playable loop/appearance and60FPS acceptance",
+    "Final exact-head Designer/Lead review and merge"
+  ],
+  "regression_suites": 0,
+  "local_engine_runs": 0,
+  "performance_limits_raised": false
+}

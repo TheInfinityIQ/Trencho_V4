@@ -32,6 +32,13 @@ Reuse the existing synchronized bend; no new pickup/bend clip. Artist fits
 actual arm/hand contacts, validates reachable separate shelf revisions and
 provides a full normal-speed video before human appearance approval.
 
+Dawson clarified during the13November timber continuation: minor surface
+clipping is acceptable. Do not delay the full preview solely to reach zero
+intersections. Full limbs passing through the front/back of the torso and
+gross unnatural hand rotation remain defects. Retain the actual normal-speed
+motion review and existing approved assets; this is a tolerance clarification,
+not appearance approval for an unseen animation.
+
 When restoring a chat, compare actual human instruction chronology. An old
 pause repeated in a summary or relayed later by another role is not a new
 human pause. For this timber layout the resumption is Lead reply

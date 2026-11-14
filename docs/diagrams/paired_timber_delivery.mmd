@@ -8,6 +8,8 @@ flowchart TD
   Reserve --> Fixture{Compatible fixture ready?}
   Fixture -->|no| Prepare[Actual worker reaches bay; existing shelf smoke; ready event]
   Prepare --> Access
+  Prepare --> PairPoints[One prepared cell gains both authored world-root stations atomically]
+  PairPoints --> Access
   Fixture -->|yes| Access[Reserve clear truck aisle and paired handling stations]
   Access --> Rack[Actual timber-only S1v03 at .60/.95m; unchanged other S1 supports]
   Rack --> Pickup[Reuse bend with bounded foot-contact correction; fitted palms support one load]

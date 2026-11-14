@@ -116,5 +116,18 @@
     "source": "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
     "rationale": "Godot signals notify owners at actual custody/receipt transitions; no periodic stock scans or animation callbacks.",
     "acceptance": "One brief current-change normal pickup/put-down/recovery/warehouse-receipt demonstration, without damage injection, suites, animation acceptance or raised limits."
+  },
+  "appearance_tolerance": {
+    "source": "Dawson direct Lead-chat clarification during this continuation",
+    "accepted": "Minor surface clipping is acceptable. It must not hold up the complete preview solely for a zero-intersection target.",
+    "unacceptable": "Full limbs passing through the front/back of the torso and gross unnatural hand rotation remain the stated defects.",
+    "relay": "Sent directly to existing Artist Director chat; current dimensions/approved assets and requested full normal-speed animation review preserved."
+  },
+  "warehouse_pair_access_before_edits": {
+    "change": "Upgrade an existing prepared M04 cell token to two explicit actual participant stations; quantity/cell promise remains single.",
+    "input": "The connected activity supplies final FORE/AFT world roots from accepted authored metadata; warehouse never guesses offsets or changes the motion.",
+    "atomicity": "Validate both distinct finite stations, routes and other workers/reserved endpoints before changing either registration. On blockage retain original promise and watch actual blocker movement; no new poll.",
+    "lifecycle": "Generic single-worker reacquisition cannot overwrite paired stations. Commit requests clearance for both; release removes both endpoint promises. Existing single-worker behavior remains.",
+    "verification": "One brief current-change reservation capability observation: actual prepared cell, both explicit distinct worker points, generic reacquisition retaining pair, release of both endpoints. No repeated fixture/old custody scenarios, authored-root or full-loop acceptance."
   }
 }

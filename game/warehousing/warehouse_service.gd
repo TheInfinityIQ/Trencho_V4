@@ -238,6 +238,7 @@ func destination_point(token: String) -> Vector2:
 func acquire_access(token: String) -> bool:
 	if not ready(token): return false
 	var promise: Dictionary = reservations[token]
+	if promise.has("participants"): return acquire_pair_access(token,promise.participants,promise.stations)
 	var rear: RefCounted = _rear_ref.get_ref()
 	var bay: Dictionary = bays[promise.bay]
 	var origin: Vector2 = rear.ledger.inspect_entity(promise.person,{},false).position
@@ -250,6 +251,44 @@ func acquire_access(token: String) -> bool:
 	rear.ledger.register_handling_point(holder,str(promise.person),at)
 	return true
 
+func acquire_pair_access(token: String, people: Array, stations: Array) -> bool:
+	# The activity supplies accepted authored world roots. One existing cell
+	# promise gains two endpoints; this neither creates stock nor lifts a load.
+	if not ready(token) or people.size() != 2 or stations.size() != 2 or people[0] == people[1]: return false
+	var promise: Dictionary = reservations[token]
+	if promise.code != "M04" or people[0] != promise.person: return false
+	if promise.has("participants") and promise.participants != people: return false
+	if _work_points.has(people[1]) and people[1] not in promise.get("participants",[]): return false
+	if not stations[0] is Vector2 or not stations[1] is Vector2: return false
+	if not stations[0].is_finite() or not stations[1].is_finite() or stations[0].distance_to(stations[1]) < 1.2: return false
+	var rear: RefCounted = _rear_ref.get_ref()
+	var occupants: Array[Dictionary] = rear.ledger.rear_worker_views(rear.actors.keys(),rear.PLAYER)
+	var clear := true
+	for at: Vector2 in stations:
+		for other: String in _work_points:
+			if other not in people and _work_points[other].point.distance_squared_to(at) < 1.2*1.2: clear = false
+		for row: Dictionary in occupants:
+			if row.id in people or row.position.distance_squared_to(at) >= 1.2*1.2: continue
+			clear = false
+			if not _access_blockers.has(row.id): _access_blockers[row.id] = []
+			if at not in _access_blockers[row.id]: _access_blockers[row.id].append(at)
+	if not clear: return false
+	for index in 2:
+		if not rear.actors.has(people[index]): return false
+		var origin: Vector2 = rear.ledger.inspect_entity(str(people[index]),{},false).position
+		if rear.walk_path(origin,stations[index]).is_empty(): return false
+	var bay: Dictionary = bays[promise.bay]
+	var holder := str(bay.get("store",STORE))
+	# No observer or competing reservation sees only one committed endpoint.
+	promise.participants = people.duplicate()
+	promise.stations = stations.duplicate()
+	promise.point = stations[0]
+	promise.queued = false
+	for index in 2:
+		_work_points[people[index]] = {"holder":holder,"point":stations[index],"bay":str(bay.id)}
+		rear.ledger.register_handling_point(holder,str(people[index]),stations[index])
+	return true
+
 func commit(token: String, stock_id: String) -> Dictionary:
 	if not ready(token): return _reject("STORAGE_NOT_READY","Actual reserved shelf is not ready.")
 	var promise: Dictionary = reservations[token]
@@ -260,9 +299,12 @@ func commit(token: String, stock_id: String) -> Dictionary:
 		return _reject("DEPOSIT_MISMATCH","Only the exact actual deposited stock consumes this storage promise.")
 	if not bay.cells[int(promise.cell)].stocks.is_empty(): return _reject("POSITION_OCCUPIED","A physical crate already occupies this shelf position.")
 	_attach_stock(bay,int(promise.cell),stock_id,str(promise.code))
-	_clearance_pending[promise.person] = promise.point
+	var people: Array = promise.get("participants",[promise.person])
+	var stations: Array = promise.get("stations",[promise.point])
+	for index in people.size():
+		_clearance_pending[people[index]] = stations[index]
+		_work_points.erase(people[index])
 	reservations.erase(token)
-	_work_points.erase(promise.person)
 	_touch(bay.module)
 	stock_committed.emit(stock_id)
 	return {"ok":true}
@@ -272,7 +314,7 @@ func release(token: String) -> void:
 	var promise: Dictionary = reservations[token]
 	var bay: Dictionary = bays[promise.bay]
 	reservations.erase(token)
-	_work_points.erase(promise.person)
+	for person: String in promise.get("participants",[promise.person]): _work_points.erase(person)
 	if bay.state != "Ready" and bay.preparer == promise.person:
 		var previous: String = str(bay.get("previous_family",""))
 		bay.state = "Ready" if not previous.is_empty() else "Empty"
