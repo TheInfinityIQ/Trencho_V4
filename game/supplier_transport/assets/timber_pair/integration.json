@@ -1,0 +1,91 @@
+{
+  "usable_for_playtest": true,
+  "status": "Connected lower-tier current-change demonstration passed; final exact-head review and human appearance/playtest feedback remain separate.",
+  "usable_clips": [
+    "pickup_lower",
+    "shoulder_transition",
+    "ramp",
+    "shoulder_ground_travel",
+    "turn_right",
+    "turn_left",
+    "shoulder_release",
+    "underhand_walk",
+    "deposit_lower",
+    "shoulder_walk_loop",
+    "underhand_walk_loop"
+  ],
+  "contract_sha256": "57c48b028c0d64f1353e564abe5d05b889f691317b95598798d4548e2c7706d1",
+  "library_sha256": "192d91d6a65d8c2d0679e818676f510f8b5c163c8cb39da1080b33c28a815a75",
+  "sample_receipts": [
+    {
+      "file": "pickup_lower_paths_v01.json",
+      "sha256": "472b8aaba49f288643a67f4bf6573c6d46fd79b1bd80522336a642cda0922c35",
+      "source_pair_glb_sha256": "11f05c5c7be22d4b2b15c57deda1a658f51dd81b773e8f56a6e3658534fbb11f"
+    },
+    {
+      "file": "shoulder_transition_paths_v01.json",
+      "sha256": "890c2776f403e4a8da37f9b10ccff3a673309bf491dc473805ed9d18bc18b62a",
+      "source_pair_glb_sha256": "7b8b2b94befd9ce420f97b7d44006a741ca591180ffe03d84cc21139e325d851"
+    },
+    {
+      "file": "ramp_paths_v01.json",
+      "sha256": "6908dc6ef6289bbe33b0778404164a076d1d556e59707e60706aa0c38fc0b6ac",
+      "source_pair_glb_sha256": "72f16253d19d6fdc4ce27f1c4270e651a2e2f05bfacd95118b9b8f899934fd08"
+    },
+    {
+      "file": "turn_right_paths_v01.json",
+      "sha256": "ec4c840f27378f8a0b0b8b721a94cc4fd01d0a3e8df4a7186a206ee2b87470d7",
+      "source_pair_glb_sha256": "00492bcecd8fff5480359cbe7e7ab9e5b82759cfbbbd73deeaac8f8baa634739"
+    },
+    {
+      "file": "turn_left_paths_v01.json",
+      "sha256": "7cd8d7e3141e3374d14006e2c6bbfcf65f08c7d03731c56db89bc9a9fa0a4de5",
+      "source_pair_glb_sha256": "c66ed5c3cc9fbd346f943d66137795ad95556120254aeab865f13ec68042e5fc"
+    },
+    {
+      "file": "shoulder_release_paths_v01.json",
+      "sha256": "c15f3e1fd17400731ab5d28cabc945bc266f3ed1d1df739d657a35719d72c4d9",
+      "source_pair_glb_sha256": "93f59cd987faf5089e8a0849fe513754af7cf10d6477e5ac26e30a14d0c67448"
+    },
+    {
+      "file": "underhand_walk_paths_v01.json",
+      "sha256": "8e467d8f16e0af4b7b924ea7080eb39010dc5f1fef9b4ffebea8e3bf0cd0884d",
+      "source_pair_glb_sha256": "f2e6e8f270393da307e51c9eb8a873e73e4cee2644fc205e24bc1185fc6996cb"
+    },
+    {
+      "file": "deposit_lower_paths_v01.json",
+      "sha256": "cd0c55d23dc3693905b113ad4018c22b028d8b1c145ec300cd387303ca858f3b",
+      "source_pair_glb_sha256": "130a248a18bc3729eab3f7011db8c41e2c1bc3ee5aeec708f390a78e86c24946"
+    },
+    {
+      "file": "shoulder_walk_loop_paths_v01.json",
+      "sha256": "31ccb3411b86283cc1966c93c072d71638f2a5e509d61bcc2c48ecd305737732",
+      "source_pair_glb_sha256": "d9374f826f91ca796172be93504acac50417e77e84c52d8eb6167df5d9cc095a"
+    },
+    {
+      "file": "underhand_walk_loop_paths_v01.json",
+      "sha256": "671f5e1a26de9f0333174b01d03dc89ce879f770e846c114cba86eed6e3b8126",
+      "source_pair_glb_sha256": "671e6f66624c4f043fc1c44affdefb65d4097bc7fd45939fd542d0c999378632"
+    },
+    {
+      "file": "shoulder_ground_travel_paths_v01.json",
+      "sha256": "39db539f0b396636da5b5aa39ba9268394abfbf9887e60a947d0ecea29b95dab",
+      "source_pair_glb_sha256": "884f5045f4586921436a5167c27537a6aae4ea63194352c95a409d1fa000dd5f"
+    }
+  ],
+  "appearance_approved": false,
+  "scope": "Lower-tier paired timber, up to50kg supported orders, reachable lower cells; upper-tier and onward handling unfinished.",
+  "known_polish": [
+    "~9.7mm payload vertical registration difference at transition-to-ramp join, retained as minor post-playtest polish",
+    "Minor surface clips and smooth gait angular-speed advisories retained; no shared joint-angle bounds widened"
+  ],
+  "authority": "Actual Designer first-checkpoint scope and verified human playable-first priority; existing approved S4/models untouched.",
+  "source_contract_sha256": "bd0502e64a7e533b2943753a29ad36659adea07d806bb91f9eaaf840f467d4e7",
+  "contract_hash_note": "Repository UTF-8/LF bytes; original delivered byte hash retained as source_contract_sha256.",
+  "connected_receipt": {
+    "run": 43550402781,
+    "source": "40a6b50580aadd0d2e69a4e455428cfdddc22b9b",
+    "result": "pass",
+    "scope": "Actual50kg paid order, two actual existing workers, authored roots/role clips, shelf preparation, pause/resume, one real warehouse receipt, physical departure and next supported purchase;100kg prepayment refusal. Explicit elapsed ticks at1x, not native input/render/FPS or human appearance approval."
+  }
+}

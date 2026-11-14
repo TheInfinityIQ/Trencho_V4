@@ -1,7 +1,10 @@
 # Warehouse recovery menu proposal
 
-UI/UX consultation,10November2026. **Proposed only**: no Return cargo or Clear bay
-control is available until its actual activity owner exists. This introduces no
+UI/UX consultation,10November2026. The original proposal is retained below. Remaining aboard-cargo return now has
+source implementation on the supplier feature branch, with one safe-withdrawal/actual-exit refund episode passed at4992164. Native menu and full-loop acceptance remain open.
+Clear bay staging now has source implementation for actual non-timber whole
+packages, one finite batch and safe stop; one scoped clearance/recollection episode passed at2d61539.
+Warehouse reload remains proposed only. This introduces no
 new developer, screen framework, art, animation or approval gate.
 
 Keep the actual above-truck cause primary: Full, Preparing storage, blocked

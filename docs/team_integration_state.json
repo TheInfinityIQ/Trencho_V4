@@ -1,9 +1,9 @@
 {
-  "updated_date": "2026-11-12",
+  "updated_date": "2026-11-13",
   "authority": "Current explicit instructions from Dawson in Trencho V4 Developer. Historical documents and peer recommendations are context; later human instructions govern.",
   "lead": {
-    "title": "Trencho V4 Developer",
-    "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+    "title": "Trencho V4 — Lead Developer Handoff",
+    "thread_id": "01a1d807-02eb-7e52-8f46-93bb10241447",
     "host_id": "local",
     "owns": [
       "Logistics implementation and shared authoritative state/interfaces; battlefield presentation is delegated under explicit file agreement",
@@ -11,43 +11,68 @@
       "Final integration",
       "Published review revisions",
       "Focused verification and living map",
-      "Feature delegation and technical approval of developer PRs",
+      "Engineering ownership and technical PR approval; dormant developers are not reactivated",
       "Combined integration verification and testable player handoff",
-      "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer"
+      "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer",
+      "Routine UI/UX design and implementation, including accepted retired-role handoff decisions"
     ],
-    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4"
+    "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
+    "requested_settings": {
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "speed": "standard"
+    },
+    "observed_runtime_ui_settings": null,
+    "runtime_evidence": "Requested GPT-6.1 Sol / Medium retained; no independent creation-response model/effort readback available."
   },
   "consultants": [
     {
-      "title": "Trencho â€” Game Designer",
-      "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
+      "title": "Trencho V4 — Game Designer Handoff",
+      "thread_id": "01a1d80c-f41f-7511-8973-ca44a5ec591c",
       "host_id": "local",
-      "scope": "Gameplay vision/rules and current exact-head PR game-meaning approval; Lead performs technical review and merges after Designer approval and required checks."
-    },
-    {
-      "title": "Trencho â€” UI/UX developer",
-      "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
-      "host_id": "local",
-      "scope": "Consult ONLY when an update to menus is needed; no routine feature/code/merge approval gate."
+      "scope": "Material gameplay decisions and required exact-current-head PR game-meaning approval; no routine engineering/status monitoring. Lead performs technical review and merges after actual Designer approval and required checks.",
+      "requested_settings": {
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "speed": "standard"
+      },
+      "observed_runtime_ui_settings": null
     },
     {
       "title": "Trencho — 3D Artist",
       "thread_id": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
       "host_id": "local",
-      "scope": "Create or find free 3D assets and create 2D assets as needed. Coordinate bounded asset/export/licence handoffs with Lead; original2D Artist is no longer consulted. No production-code integration ownership."
+      "scope": "Bounded 3D and authorized 2D asset creation/sourcing, provenance and export handoff; useful parallel asset work continues during accepted development. No production-code integration ownership. Original 2D Artist remains inactive; paused animation authoring remains binding.",
+      "requested_settings": {
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "medium",
+        "speed": "standard"
+      },
+      "observed_runtime_ui_settings": null
     }
   ],
-  "current_work": "Use developer_team.agents[*].current_assignment for each active developer task and continuity_recovery.lead_next_action for lead dispatch. No duplicate mutable assignment summary is maintained here.",
-  "paused": "Polishing, optimization, benchmarks and all regression writing/runs, broad scenarios, failure injection and coverage matrices until main game completion. No local engine; only brief explicitly supplied GitHub demonstrations of newly changed code.",
+  "current_work": "Successor Lead connected lower-tier50kg paired timber in PR157; direct run43550402781 and required43550389532 passed at40a6b50. Final exact-head review/merge/playtest handoff pending; dirty human root protected.",
+  "paused": "Polishing, optimization, benchmark campaigns, regression writing/runs, broad scenarios, failure injection and coverage matrices remain paused until main game completion. No local Godot; only brief explicitly supplied GitHub current-change demonstrations. Animation authoring remains paused outside explicitly resumed supplier vehicles and the approved2m/50kg/~1.3m item-hauling layout. The bounded Director pilot changes delegation only: every trial must use actual already-authorized ready work, and it does not resume unrelated paused animation scope. Numbered human-playtest and appearance approvals remain separate; see docs/art_workflow_pilot.md.",
   "review_source": {
     "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
     "branch": "main",
-    "commit_resolution": "PR89 reviewed head3859e9b was merged into main as ab2a406. Use the exact main revision in the handoff; later documentation/feature PRs require their own exact-head decisions. The human checkout was preserved; no forced pull/reset was performed.",
+    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/145",
+    "head": "a2d182f367bf584315f9e516a91152198e333204",
+    "reviewed_head": "438dca7a6ac24fb89bf9206e052bd13dd6886328",
+    "status": "merged_warehouse_core_checkpoint_not_complete_loop",
+    "pull_request_status": "merged",
+    "commit_resolution": "Warehouse-core PR145 merged and adopted locally; source/game-meaning/static approval is bounded. Current handoff supersedes the retired UI draft snapshot. No new GitHub readback or publication in this administrative turn.",
     "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded.",
-    "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89",
-    "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
-    "status": "merged_partial_prototype_not_complete_demo",
-    "pull_request_status": "merged"
+    "previous_snapshot": {
+      "repository": "https://github.com/TheInfinityIQ/Trencho_V4",
+      "branch": "main",
+      "commit_resolution": "PR89 reviewed head3859e9b was merged into main as ab2a406. Use the exact main revision in the handoff; later documentation/feature PRs require their own exact-head decisions. The human checkout was preserved; no forced pull/reset was performed.",
+      "preservation": "Publish current first-party code/configuration, retained tests and reviewed maps; retain UID sidecars. Generated caches, builds, logs and downloaded dependencies remain excluded.",
+      "pull_request": "https://github.com/TheInfinityIQ/Trencho_V4/pull/89",
+      "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+      "status": "merged_partial_prototype_not_complete_demo",
+      "pull_request_status": "merged"
+    }
   },
   "scope_limits": [
     "The existing GDD gameplay scope remains; feature priorities do not establish implementation or acceptance.",
@@ -76,7 +101,7 @@
     "qualification": "The native milestone page and four issue assignments agree; an API milestone summary counter discrepancy remains recorded in the Designer receipts."
   },
   "developer_team": {
-    "authority": "Dawson direct9November2026: Lead is only programmer; work with Game Designer for PR approval, then Lead merges. Dawson is not a routine task/publication/merge blocker.",
+    "authority": "Dawson human authorization, 10 November 2026, adviser chat 01a1b3e9-a21c-7e62-855a-8d369f305b83, turn 01a1c6de-2e95-7312-bc28-cd14c7add017; verified directly by Lead read_thread. Supersedes conflicting active UI consultation and earlier observation-only restriction for this bounded administrative transition; adviser returns to observation-only afterward.",
     "model": "gpt-6.1-sol",
     "reasoning_effort": "medium",
     "charter": "docs/developer_team.md",
@@ -124,8 +149,8 @@
         "status": "active_authorized_battlefield_3d",
         "worktree": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/battlefield-presentation-worktree",
         "branch": "codex/battlefield-3d-presentation",
-        "worktree_status": "Confirmed isolated copy on basea2d182f; frozen integrated source9ab4e8d awaiting Lead-owned publication/current-change evidence.",
-        "current_assignment": "Complete permitted T03 and reported-contact3D observer slice, including explicitly authorized field-only world_presenter adapter; Lead reviews/publishes integrated head.",
+        "worktree_status": "Integration candidate in logs/supplier-field-integration-worktree; original supplier and human worktrees preserved.",
+        "current_assignment": "Lead-assigned isolated supplier and battlefield integration preparation; PR155 marker lifetime repair merged.",
         "owns": [
           "new game/battlefield/presentation_3d/**",
           "agreed battlefield-only game/preview_3d/field_*",
@@ -142,14 +167,14 @@
       }
     ],
     "review_policy": {
-      "technical": "Lead owns engineering review, fixes, validation and integration as sole developer under Dawson 8 November instruction. Do not reactivate another developer to satisfy the earlier supporting-review convention.",
+      "technical": "Lead owns engineering review, fixes, validation and integration; the authorized Battlefield Developer owns agreed battlefield presentation. Retired developers remain inactive.",
       "design": "Designer explicit game-identity approval at current exact PR head",
       "default": "Lead technical approval plus current exact-head Game Designer approval and required checks permit Lead merge without another Dawson permission question. Concrete external permission/tool restrictions remain binding only for their affected action.",
       "native_github_approval": "Report actual submission separately from a recorded role review note",
       "authority": "Dawson direct6November2026 standing developer→lead+Designer reviews→lead merge instruction",
       "decision_routes": "docs/team_workflow.md#pr-review-and-merge-decisions"
     },
-    "lifecycle": "Lead completes and follows owned work. Other developer chats remain inactive; no new developer task or successor after C Workshop handoff. No background service or additional execution owner.",
+    "lifecycle": "Lead continues accepted ready work autonomously and integrates Artist handoffs with actual Designer review and required checks. The sole additional programmer is the explicitly authorized Battlefield Developer under the current two-developer boundary; retired developers stay inactive. Art delegation is limited to the bounded Director pilot and on-demand fixed-Luna scout. No blanket serial/small-commit gate, extra standing role or unrelated animation resumption is introduced.",
     "reviewed_prs": [
       {
         "pr": 93,
@@ -242,7 +267,9 @@
     "onboarding": "docs/developer_onboarding.md",
     "verification_policy": "Current replacement AGENTS/current_change_verification: no local engine, regression additions/runs, broad scenarios or coverage/failure campaigns. Changed-code parsing and at most one brief explicitly supplied GitHub new-code demonstration. Existing tests retained for later.",
     "continuity_protocol": "docs/team_workflow.md#completion-next-assignment-and-blocked-work",
-    "status": "Lead sole developer; other developer chats inactive. C completed current bounded source handoff, then stopped.",
+    "status": "Lead owns shared engineering and integration; the authorized Battlefield Developer owns agreed battlefield presentation. Designer directs gameplay; Artist Director owns the bounded pilot. Retired developers remain inactive.",
+    "requested_speed": "standard",
+    "settings_qualification": "Sol model remains fixed for the existing active roles, Medium default/Standard speed. Bounded Low/High next-task effort policy and the separate fixed-Luna scout are documented in model_policy; no live settings were changed or inferred in this turn.",
     "current_authority": {
       "date": "2026-11-12",
       "user_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
@@ -321,9 +348,9 @@
       "scope": "base_demo.gd cancellation interaction; proportional diagram/evidence/maps; propose unavoidable domain changes first",
       "record_kind": "completed successor history; never dispatch this already integrated work"
     },
-    "lead_next_action": "Lead finalizes Supply Table PR136: normal-opening E opens actual existing purchasing/hiring; focused42575068272 PASS at source357bd633 with exact evidence and both images reviewed. Final metadata approval/required checks then Lead merge. GDD alignment PR137 merged eed39b6 with main42576033262 PASS. Next: consult Designer on next bounded ordinary factory-loop connection; no dormant developer activation or human continue gate. Movement/Strategy/coupling review deferred in deferred_architecture.json. Current3D Artist handles3D/2D; retired2D Artist never consulted; UI/UX only for menu updates.",
+    "lead_next_action": "Correct visible animation videos; import/bind driver and shelves; finish measured two-person timber receipt and authored passenger exit. Native checks run only on GitHub.",
     "publication": "The partial prototype is merged into mainab2a406. This three-file documentation handoff is a separate local branch until normally published and reviewed; historical candidate receipts do not imply pending source-publication permission.",
-    "artist": "Continue/status request delivered to ChatGPT Artist chat; no fresh assistant response observed, and no art handoff is a prerequisite for the current code tasks."
+    "artist": "Current10November bounded supplier work is active; independent driver handoff received, its approval video rejected for visibility, correction requested. Timber contacts/fixture and troop exit remain unfinished. Earlier6November no-response prose is history."
   },
   "local_review_candidates": [
     {
@@ -363,24 +390,35 @@
       "runtime": "NONE combined; only component-specific historical evidence"
     }
   ],
-  "current_open_prs": [],
-  "current_open_prs_scope": "6 November2026 main-adoption snapshot: zero open code PRs after89/101 merged and100 closed superseded. Lead owns live readback. The forthcoming documentation handoff and new current-demand feature PRs are separate; this snapshot is not a perpetual live zero-PR assertion.",
+  "current_open_prs": [
+    146
+  ],
+  "current_open_prs_scope": "Current feature snapshot: supplier integration draft146. This list records this feature only, not an exhaustive audit of unrelated PRs.",
   "main_adoption": {
-    "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
-    "reviewed_head": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
-    "status": "partial_prototype_source_merged",
-    "source_pr": 89,
-    "feature_pr": 101,
-    "superseded_pr": 100,
-    "open_delivery_goals": [
-      83,
-      90,
-      91,
-      92
-    ],
-    "player_launch": "Update a clean local main to the merged revision, open project.godot in Godot and press F5. The main scene starts in the paused empty field. Preserve local changes; no forced pull/reset or human-checkout update was performed by this handoff.",
-    "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance.",
-    "validation": "Main validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406; changed-production parsing passed, optional demonstration SKIPPED. Lead supplied receipt; B independently read actual head/jobs/steps. No watcher or new run."
+    "head": "a2d182f367bf584315f9e516a91152198e333204",
+    "reviewed_head": "438dca7a6ac24fb89bf9206e052bd13dd6886328",
+    "source_pr": 145,
+    "status": "warehouse_core_checkpoint_merged_and_adopted",
+    "player_launch": "Normal configured main scene: F5 opens the shared 3D game at 1x. Human numbered-stage acceptance remains open. No launch occurred in this administrative turn.",
+    "acceptance_limit": "Recovery/staging, paired timber, wider supplier loop, native joined appearance, keyboard/E comfort, human stage/animation approval and 60 FPS remain open. See docs/warehousing.md.",
+    "preservation": "Prior delivery verified 20 unrelated file hashes unchanged and adopted two identical approved Designer notes. This administrative edit preserves unrelated work.",
+    "previous_snapshot": {
+      "head": "ab2a4063d2c3d309ce4ad37a860fc9804ebd58dc",
+      "reviewed_head": "3859e9b7670c1350d12a2b15c9f4d0a20dc8c95a",
+      "status": "partial_prototype_source_merged",
+      "source_pr": 89,
+      "feature_pr": 101,
+      "superseded_pr": 100,
+      "open_delivery_goals": [
+        83,
+        90,
+        91,
+        92
+      ],
+      "player_launch": "Update a clean local main to the merged revision, open project.godot in Godot and press F5. The main scene starts in the paused empty field. Preserve local changes; no forced pull/reset or human-checkout update was performed by this handoff.",
+      "acceptance_limit": "Source integration and parsing do not establish complete ordinary factory/supply/repeat operations, native input/rendering, pacing or60FPS compliance.",
+      "validation": "Main validate42330742832/job128276446850 COMPLETED SUCCESS at exactab2a406; changed-production parsing passed, optional demonstration SKIPPED. Lead supplied receipt; B independently read actual head/jobs/steps. No watcher or new run."
+    }
   },
   "retired_consultants": [
     {
@@ -390,9 +428,184 @@
       "scope": "Free 2D asset research, verified provenance/license ledger and integration-ready asset/module handoffs.",
       "retired_date": "2026-11-09",
       "status": "Do not consult; replaced by Trencho — 3D Artist under Dawson direct instruction."
+    },
+    {
+      "title": "Trencho â€” UI/UX developer",
+      "thread_id": "01a19918-bdb3-74f2-bd91-1159b36923a8",
+      "host_id": "local",
+      "scope": "Historical UI/UX role; accepted interaction decisions and source pointers retained in docs/team_handoff.md.",
+      "retired_date": "2026-11-10",
+      "status": "Handoff complete; no further tasks. Routine UI/UX transferred to Lead. Adviser owns archiving; archive state not independently observed."
     }
   ],
   "deferred_architecture": "docs/deferred_architecture.json",
+  "model_policy": {
+    "authority": "Dawson human authorization, 10 November 2026, adviser chat 01a1b3e9-a21c-7e62-855a-8d369f305b83, turn 01a1c6de-2e95-7312-bc28-cd14c7add017; verified directly by Lead read_thread. Supersedes conflicting active UI consultation and earlier observation-only restriction for this bounded administrative transition; adviser returns to observation-only afterward.",
+    "requested_default": {
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "speed": "standard"
+    },
+    "applies_to": [
+      "Lead",
+      "Game Designer",
+      "3D Artist"
+    ],
+    "observed_runtime_ui_settings": null,
+    "observation_status": "Requested policy only; Lead did not inspect or change live model/reasoning/speed settings in this documentation-only turn. Adviser owns application-side configuration. Historical model fields are not runtime observations.",
+    "automatic_escalation": "Never switch existing role models or add standing workers or controllers. The explicitly authorized on-demand fixed-Luna asset scout and bounded Director-led art pilot are the only exceptions; see docs/art_workflow_pilot.md. Surface concrete unresolved quality issues.",
+    "fixed_models": {
+      "Lead": "gpt-6.1-sol",
+      "Game Designer": "gpt-6.1-sol",
+      "3D Artist": "gpt-6.1-sol",
+      "asset_scout": "gpt-6-luna"
+    },
+    "reasoning_policy": {
+      "authority": "Dawson direct human request in Workflow Master chat 01a1b3e9-a21c-7e62-855a-8d369f305b83, turn 01a1c6f0-38b2-79f3-93b7-54aabbd090c5, verified by Lead read_thread: implement the Luna reference scout, Lead-first concept workflow and reasoning adjustment while never changing models. Bounded documentation/configuration exception; adviser returns to observation-only afterward.",
+      "default": "Medium for ordinary Lead/Designer/Artist phases; Standard speed retained.",
+      "low": "Next real task: simple supplied-fact lookup or administrative work.",
+      "high": "Next real task: concrete cross-system state/ownership defects, conflicting evidence/dimensions/export contracts or difficult authorized rig/deformation issues. This does not authorize paused work.",
+      "return": "Medium for the next ordinary phase; no extra turn solely to reset effort.",
+      "not_triggers": [
+        "Missing evidence",
+        "Denied tools"
+      ],
+      "peer_control": "Existing caller may select thinking on a real authorized send_message_to_thread dispatch, omit model and assert the recipient fixed model; do not claim a prompt changes current live inference.",
+      "lead_self_control": "No supported self-setting tool exposed here. Record recommended next-turn effort only; no self-message, new controller, API key or claim of installed automatic self-adjustment.",
+      "runtime_status": "Policy and available tool controls documented; no reasoning/model task dispatch performed in this administrative turn."
+    }
+  },
+  "communication_policy": {
+    "record": "Reuse one current feature brief/asset contract and this existing state record.",
+    "send_only": [
+      "Changed deliverable",
+      "Decision",
+      "Required review",
+      "Real blocker"
+    ],
+    "avoid": "Acknowledgement/status-only loops and routine engineering monitoring by Designer. No routine Dawson approval gate.",
+    "ui_handoff": "docs/team_handoff.md",
+    "quality": "Raise a concrete unresolved quality issue instead of repeated unsuccessful attempts."
+  },
+  "administrative_transition": {
+    "date": "2026-11-10",
+    "authorization_chat": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+    "authorization_turn": "01a1c6de-2e95-7312-bc28-cd14c7add017",
+    "human_message": "Can you proceed with implementing those changes? As well as setting the agents to the levels / models you believe they need to be at.",
+    "accepted_recommendation_turn": "01a1c6dc-8072-7770-af48-b5bae1384045",
+    "scope": "Workflow documentation and completed UI handoff only. No gameplay, peer messages, publication/merge, engine, checks, captures, benchmarks or research in this turn. Minimal text/JSON/diff verification only.",
+    "ui_handoff_source": "C:/Users/dawso/Documents/Codex/2026-11-06/you-ll-be-responsible-for-keeping/work/trencho-consolidation-2026-11-10.json#ui_handoff",
+    "ui_handoff_record": "docs/team_handoff.md",
+    "recovery_status": "Return cargo and Clear a bay are proposals/open follow-ups; preserve same-truck physical states, safe carries, actual-exit goods-only refund once with transport fee retained, actual packing and bounded single-batch staging."
+  },
+  "on_demand_asset_scout": {
+    "authority": "Dawson direct human request in Workflow Master chat 01a1b3e9-a21c-7e62-855a-8d369f305b83, turn 01a1c6f0-38b2-79f3-93b7-54aabbd090c5, verified by Lead read_thread: implement the Luna reference scout, Lead-first concept workflow and reasoning adjustment while never changing models. Bounded documentation/configuration exception; adviser returns to observation-only afterward.",
+    "name": "asset_scout",
+    "config": ".codex/agents/asset_scout.toml",
+    "model": "gpt-6-luna",
+    "lifecycle": "Only on demand after an accepted Lead brief and coherent faceted concept. Return one bounded reference shortlist or no match, then stop. No standing sidebar chat, polling job or controller.",
+    "effort": "High for real searches; Low for exact catalogue lookups. No effort override in TOML.",
+    "ownership": "Artist asks Lead for purpose, accepted fit/dimensions, moving parts, stage and faceted references. Lead resolves engineering; Designer only material gameplay/style contradictions. Artist selects viewing references and authors original model; Lead integrates.",
+    "contract": "docs/3d_asset_workflow.md",
+    "diagram": "docs/diagrams/asset_reference_workflow.mmd",
+    "reference_limits": "Project references first; one external pass, up to 3-5 references, retain source URLs/known creators. No licensing research/filter, candidate downloads/purchases, imported or re-sculpted/traced/modified mesh, geometry/texture incorporation or unsupported topology/rig claims. No match does not block original modeling.",
+    "configuration_status": "Project TOML created; parse/schema inspection only. Custom-role discovery/loading and actual search quality unverified.",
+    "host_support": "Current spawn_agent exposes task_name/message/model/reasoning_effort/fork_turns but no custom-role selector. A selector is not needed for explicit dispatch.",
+    "supported_dispatch": {
+      "task_name": "asset_scout",
+      "model": "gpt-6-luna",
+      "reasoning_effort": "high for real search; low for catalogue lookup",
+      "fork_turns": "none",
+      "message": "Read and include the TOML developer_instructions plus the accepted narrow brief/concept and result contract. Never inherit Sol parent."
+    },
+    "invocation_status": "Not invoked or tested here; no asset search, image generation or modeling performed.",
+    "unavailable_model_rule": "If explicit Luna is unavailable, report the concrete limit; never silently substitute parent/another model."
+  },
+  "asset_workflow_update": {
+    "date": "2026-11-10",
+    "authorization_chat": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
+    "authorization_turn": "01a1c6f0-38b2-79f3-93b7-54aabbd090c5",
+    "scope": "Configuration and existing documentation only. Preserve delivered work and unrelated edits; no peer messages, art/search execution, engine/tests/captures/benchmarks, publication or gameplay resumption.",
+    "supersedes": "Prior external-mesh-foundation guidance for new assets under the concept-first original-authoring workflow; historical assets/provenance remain unchanged.",
+    "source": "https://learn.chatgpt.com/docs/agent-configuration/subagents#custom-agents",
+    "observed_settings": "No live model/reasoning changes claimed; custom discovery unverified, explicit Luna/effort dispatch supported by the currently exposed schema but not exercised."
+  },
+  "supplier_transport_candidate": {
+    "authority": "Dawson Lead turn01a1c6fc-6bab-7db2-af11-a090b04ffabb: continue materials truck/warehouse then troop transport; explicit answer: Resume animations for these vehicles.",
+    "branch": "codex/supplier-field-integration",
+    "worktree": "logs/supplier-field-integration-worktree",
+    "source_core": "3e1cd67423161802621594dadbbccbdbb3047935",
+    "status": "draft_published_not_merged_or_main_adopted",
+    "evidence": "evidence/supplier_transport/timber_fixture_integration.json and timber_custody_integration.json; docs/s4_operator_integration.md",
+    "next": "Finish actual paired supplier pickup/shoulder/ramp/warehouse activity after complete Artist export and normal-speed appearance review; one connected current-change observation and exact-head Designer/Lead review before merge.",
+    "artist_thread": "01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe",
+    "video_v01": "Rejected; v02 timing also superseded. Corrected timing_v03 six encoded interior phases inspected and presented for human review; GLB unchanged.",
+    "merge_gates": "Final exact-head Lead technical review, actual Designer approval and required checks; no routine Dawson GitHub permission gate.",
+    "item_hauling": "RESUMED by Dawson selecting Resume with that carrying layout: existing2m planks/50kg maximum bundle, roughly1.3m worker separation. Reuse synchronized existing bend, no new pickup clip. Artist fits actual grips and checks clearance, then provides full video for human approval.",
+    "source_current": "e457a9ea06a94748db92fd59c3b562e0f90d9a3a",
+    "pr": 157,
+    "pr_url": "https://github.com/TheInfinityIQ/Trencho_V4/pull/157",
+    "passenger_approval": "Dawson approved v02 supported push-off/landing; source integrated. Native aec2dae receipt passed; subsequent hierarchy check separately recorded.",
+    "native_receipt": 42959035573,
+    "actor_window_receipt": {
+      "run": 42971327265,
+      "source": "a8b090e6401dddfe1556f9e8edd99817bf3cd25f",
+      "result": "pass",
+      "scope": "Explicit clip window and first actual passenger ground walk; no full episode repeat."
+    },
+    "timber_video_review": {
+      "sha256": "642ed976b3cbd41c8eccf9504eaa04fc548c7ef2a09cd6c614d3138b389380a8",
+      "human_approval": "pending",
+      "scope": "Truck-only normal-speed upper/lower pickup and ramp exit; not native game or warehouse delivery."
+    },
+    "ground_animation_review": {
+      "sha256": "b253417b0b5eed256cc054f712514a5e11065490082fddd70f68550f75e5e3f2",
+      "human_approval": "pending",
+      "scope": "29.6s ground-only Artist preview; frozen46clips, four file hashes and encoded phase sheets checked; not native integration."
+    },
+    "warehouse_animation_review": {
+      "sha256": "6f025b8c1da9392eba86689a4b3fd2043a04ae470035c1e3011aff37e3854e71",
+      "human_approval": "pending",
+      "scope": "28.4s warehouse-only Artist preview; corrected58clip export and9files verified,6encoded phase sheets inspected; not native integration."
+    },
+    "source_current_scope": "Published production checkpoint; source-bound receipts below retain their exact heads. Subsequent documentation does not imply another gameplay run.",
+    "warehouse_static_receipt": {
+      "run": 43014853905,
+      "source": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
+      "result": "pass",
+      "scope": "Only newly selected static rack, actual collision gap/neighbor rail/intact pan and separate cassette import/registration. No stock, preparation, hauling, full scene or FPS demonstration."
+    },
+    "s4_animation_review": {
+      "human_approval": "approved",
+      "approval_record": "game/supplier_transport/assets/s4_operator/appearance_approval.json",
+      "video_sha256": "edeab9095d1830fea030dff0fc57a2d1f948397182cb42e75f755286ce7d9bf4",
+      "package_sha256": "4e8caea6432e401093754675ecff52428b488ecac60d59edcbc60dc38d469826",
+      "integration_receipt": 43528719333,
+      "source": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+      "scope": "Actual M05 worker opening, lower pickup/locked shelf retention, closing/withdrawal and imported alignment. No warehouse/timber/full-loop/FPS acceptance."
+    },
+    "timber_appearance_status": "New continuous source in progress, not yet review-approved. Dawson accepts minor surface clipping; full torso penetration and gross unnatural hand rotation remain defects. Historical hand-carry drafts stay unbound.",
+    "prior_candidate": {
+      "branch": "codex/supplier-transport-loop",
+      "worktree": "logs/supplier-transport-worktree",
+      "source_current": "c7dd49012bc095ef11e64f1fee03fc2f3bfc0b8d",
+      "pr": 146,
+      "status": "Open historical draft146; supersede only when replacement157 is accepted."
+    },
+    "historical_rejected_s4_animation_review": {
+      "video_sha256": "7cc21f53bbecadbbc8438a9f133d982976824f86042c7eb831305e7807c0c24e",
+      "human_approval": "rejected",
+      "scope": "36s actual worker-operated shelf preview; arms overlap torso and hands spin unnaturally; not runtime bound"
+    },
+    "current_timber_receipts": {
+      "warehouse_fixture": 43531026084,
+      "truck_fixture": 43532318916,
+      "solo_refusal": 43535306483,
+      "joint_ground_receipt": 43537283766,
+      "pair_access": 43537767816,
+      "limits": "Separate source-bound capabilities only; no full paired motion, ordinary connected loop or60FPS acceptance."
+    }
+  },
   "two_developer_authority": {
     "date": "2026-11-12",
     "user_thread": "01a1b3e9-a21c-7e62-855a-8d369f305b83",
@@ -430,9 +643,56 @@
     "workers": "Maximum3 short-lived independent ready assignments; explicit fixed Luna/Terra dispatch; no recursive delegation or standing chats",
     "existing_models": "Keep current Director/Lead/Developer model choices",
     "preserve": "In-flight S4, approved concepts/assets, pauses, Steam/resource/verification restrictions and separate live files/processes",
-    "readiness": "Assignments under review; no dispatch or worker quality/cost result claimed by this policy",
+    "readiness": "Policy authorization only; operational dispatch/results stay with Director. No final art, integration or quality/cost conclusion is claimed here.",
     "owner": "Director briefs/results/internal review; Lead policy/engineering/integration",
     "comparison": "Different tasks confound model/workflow cost; record actual scope, effort/corrections/Director overhead and available tokens; unknown cost remains unknown",
     "policy": "docs/art_workflow_pilot.md"
-  }
+  },
+  "lead_history": [
+    {
+      "transferred_date": "2026-11-13",
+      "reason": "Dawson-requested replacement Lead; outgoing Lead ceases feature edits",
+      "record": {
+        "title": "Trencho V4 Developer",
+        "thread_id": "01a199a0-f08e-7f23-947f-62655a9ed233",
+        "host_id": "local",
+        "owns": [
+          "Logistics implementation and shared authoritative state/interfaces; battlefield presentation is delegated under explicit file agreement",
+          "Technical choices",
+          "Final integration",
+          "Published review revisions",
+          "Focused verification and living map",
+          "Engineering ownership and technical PR approval; dormant developers are not reactivated",
+          "Combined integration verification and testable player handoff",
+          "Repository issues, PR disposition, milestones and Projects reconciliation with Game Designer",
+          "Routine UI/UX design and implementation, including accepted retired-role handoff decisions"
+        ],
+        "checkout": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4",
+        "requested_settings": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "speed": "standard"
+        },
+        "observed_runtime_ui_settings": null
+      }
+    }
+  ],
+  "consultant_history": [
+    {
+      "transferred_date": "2026-11-13",
+      "record": {
+        "title": "Trencho â€” Game Designer",
+        "thread_id": "01a18e60-cd67-7b01-8047-a8768208b387",
+        "host_id": "local",
+        "scope": "Material gameplay decisions and required exact-current-head PR game-meaning approval; no routine engineering/status monitoring. Lead performs technical review and merges after actual Designer approval and required checks.",
+        "requested_settings": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "speed": "standard"
+        },
+        "observed_runtime_ui_settings": null
+      },
+      "reason": "Dawson-requested replacement Game Designer"
+    }
+  ]
 }

@@ -1,0 +1,50 @@
+{
+  "stage": "One source-measured shoulder layout; no new models/actions/exports; acceptance required before motion",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\LAYOUT.md",
+      "bytes": 5031,
+      "sha256": "693c91eee96eda62aee30d9711d93d1ba1e6212212599cd433ee43277928c469"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\shoulder_layout_dimensions.json",
+      "bytes": 5886,
+      "sha256": "54d758b95a6046352ecdee66aa2ad117b140dc61372ce5c62afa984f1aa9ab8d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\source_layout_measurements.json",
+      "bytes": 6279,
+      "sha256": "14cb766898ab5431179485d0668e2b5bbe4ea84c9f05a79ba39089f5d9248a13"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\timber_shoulder_carry_layout_v01.png",
+      "bytes": 643806,
+      "sha256": "bdeab12980a60fc88036faa256f7fd2b8f97d3a6fac00f3c81daec5d7304641a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\timber_shoulder_carry_layout_v01.svg",
+      "bytes": 18624,
+      "sha256": "8ea2ce925bf8f29ff21def5adeb100a3a4eac8695109d6772838c3dfaa3700b3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_shoulder_layout_v01\\vehicle_native_dependencies.json",
+      "bytes": 1042,
+      "sha256": "4e22d320d142045ce10b847bc3f6ca39adb7346b8cb6bd378177b7bc0da44438"
+    }
+  ],
+  "preserved_timber_files": 19,
+  "s4_delivery_files_unchanged": 82,
+  "lead_decision": {
+    "stage": "Accepted as revised animation layout basis, not passed anatomy/arms/transition/moving clearance or human appearance",
+    "review": "Inspected full four-panel concept and source-measured layout. All manifest file identities matched; use authoritative PNGbdeab129, not unfinished relay fragment.",
+    "authorized": "Fit true palmar/finger/thumb underside support, actual weighted shoulder/tucked arms and transition geometry, then revised coordinated motion after early fit clears. Original synchronized initial pickup bend body retained; shoulder transfer/travel is within human revision. Return a concrete blocker or coherent finished handoff, not per-step approval loops.",
+    "roles": "Leading(+length)/trailing(-length) map once to actual person IDs. Old sourceactor0Z.90 was cab-side/trailing for+Zexit;actor1Z2.20 led. No automatic role/identity swap from old fore/aft names or geography.",
+    "packing": "Existing conservative M04 catalogue envelope2x.24x.32 remains. Actual mesh162mm height does not authorize shrinking packing. Both actual and conservative overhead limits need source check.",
+    "motion": "Actual paired supports/sole contacts through both ramp breakovers, natural controlled stepping, low terrain-adjusted bob. Targets are provisional authored references, not gameplay speed or collision acceptance. Existing planar1.2m joint separation guard retained.",
+    "warehouse": "Transfer shoulder load back to real palm support at clear staging before close bay engagement; no shoulder load routed into stored stock.",
+    "limits": "Old hand-carry clips unapproved; no new revised clip/export/native check delivered by this layout. Original assets and independent worker-operated shelf brief preserved.",
+    "verified_manifest_files": 6,
+    "report_original_sha256": "693c91eee96eda62aee30d9711d93d1ba1e6212212599cd433ee43277928c469",
+    "report_repository_lf_sha256": "693c91eee96eda62aee30d9711d93d1ba1e6212212599cd433ee43277928c469"
+  }
+}

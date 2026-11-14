@@ -1,0 +1,1039 @@
+{
+  "stage": "HUMAN-APPROVED passenger v02 revision, as reported by Lead. Native integration and gameplay verification remain Lead-owned; not claimed complete.",
+  "source": {
+    "file": "construction_worker_crew_exit_v02.blend",
+    "bytes": 1573837,
+    "sha256": "b1fe51af8f7941d2b2082f2f12884d411a93a3705e6cec40dce92e6d3f95eab0"
+  },
+  "export": {
+    "file": "construction_worker_crew_exit_v02.glb",
+    "bytes": 1039744,
+    "sha256": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10"
+  },
+  "complete_exit_video": {
+    "file": "crew_left04_exit_revision_v02.mp4",
+    "bytes": 2390496,
+    "sha256": "852f6d6e33d7c201cd159d6cdd8bc5555cb13b9a0e70a5f0bf5e4c6c8891e38f"
+  },
+  "focused_takeoff_landing_video": {
+    "file": "crew_takeoff_landing_revision_v02.mp4",
+    "bytes": 771367,
+    "sha256": "6038cbd51c6b7f2691bf8f9e20d69b025e2e9047bcab7cfe8dfbdbb93d906a8f"
+  },
+  "root_paths_proposal": {
+    "file": "runtime_actor_paths_proposal_v02.json",
+    "bytes": 970400,
+    "sha256": "1d7bea0f07daee06753dc5a124463927c02269dfbbfa1eec6215387fbedb2af5"
+  },
+  "change": "Adds a supported .4s push-off between loading dip and flight. Hips and knees extend, heels roll up about fixed toe pivots, arms swing, then feet release. Airborne whole-hip path follows ballistic motion; root height compensates local leg recoil. Landing compresses then recovers. No frozen deep-crouch lift.",
+  "revised_clips": [
+    {
+      "name": "crew_rear_crouch",
+      "seconds": 0.5,
+      "loop": false
+    },
+    {
+      "name": "crew_rear_push_off",
+      "seconds": 0.4,
+      "loop": false
+    },
+    {
+      "name": "crew_rear_jump",
+      "seconds": 0.6,
+      "loop": false
+    },
+    {
+      "name": "crew_rear_land",
+      "seconds": 0.8,
+      "loop": false
+    },
+    {
+      "name": "crew_walk_clear",
+      "seconds": 2.0,
+      "loop": false
+    }
+  ],
+  "preserved_clips": [
+    "idle",
+    "walk",
+    "carry_idle",
+    "carry_walk",
+    "pickup",
+    "unload",
+    "construct",
+    "supplier_driver_idle",
+    "supplier_driver_drive",
+    "crew_seated_idle",
+    "crew_prepare_exit",
+    "crew_wait_exit",
+    "crew_stand_left",
+    "crew_stand_right",
+    "crew_turn_rear_left",
+    "crew_turn_rear_right",
+    "crew_rear_walk_01",
+    "crew_rear_walk_02",
+    "crew_rear_walk_03",
+    "crew_rear_walk_04"
+  ],
+  "total_clips": 25,
+  "mesh": {
+    "triangles": 4152,
+    "materials": 1,
+    "joints": 33,
+    "unchanged_geometry_weights": true
+  },
+  "measured_mechanics": {
+    "stage": "Actual-export measurements for revised draft; human mechanics approval pending.",
+    "supported_push_seconds": 0.4,
+    "hips_rise_before_release_m": 0.20520424842834473,
+    "knee_interior_start_deg": 104.54732188936484,
+    "knee_interior_release_deg": 151.50377277274615,
+    "heel_rise_m": 0.11013424396514893,
+    "toe_pivot_max_drift_m": 1.8623471021614067E-06,
+    "hip_vertical_velocity_last_supported_interval": 0.9144687652587891,
+    "hip_vertical_velocity_first_airborne_interval": 0.9541583061218262,
+    "release_root": {
+      "godot_xyz": [
+        0,
+        1.02,
+        3.66
+      ],
+      "raw_visual_yaw": 0,
+      "actor_yaw": -3.141592653589793,
+      "actor_yaw_unwrapped": -3.141592653589793
+    },
+    "landing_root": {
+      "godot_xyz": [
+        0,
+        0,
+        4.26
+      ],
+      "raw_visual_yaw": 0,
+      "actor_yaw": -3.141592653589793,
+      "actor_yaw_unwrapped": -3.141592653589793
+    },
+    "flight_seconds": 0.6,
+    "contact_review": {
+      "authored_key_check_pass": true,
+      "strict_1mm_midpoint_check_pass": false,
+      "accepted_for_draft_visual_review_only": [
+        {
+          "clip": "crew_rear_push_off",
+          "frame": 11.5,
+          "boot_sole_deviation_m": 0.0018906784057617365
+        }
+      ],
+      "reason": "One between-key sample differs from the boot contact plane by1.89mm, within the3mm support-ray tolerance and below one pixel at review scale. No unsupported footprint, passenger or truck-body collision. Original strict diagnostic remains unchanged; no claim of a perfect1mm sole lock or integration approval."
+    }
+  },
+  "release": {
+    "push_off_seconds": 0.4,
+    "root_start": [
+      0,
+      1.02,
+      3.46
+    ],
+    "root_release": [
+      0,
+      1.02,
+      3.66
+    ],
+    "toe_pivots_z": 3.6753344,
+    "reference_deck_edge_z": 3.7
+  },
+  "airborne": {
+    "seconds": 0.6,
+    "landing_root": [
+      0,
+      0,
+      4.26
+    ],
+    "trajectory_reference": "Actual exported Hips position follows gravity9.81m/s2; rootfloorY compensates animated local hip height. Root samples derive from actual GLB, not an unevaluated source pose."
+  },
+  "landing": {
+    "absorption_seconds": 0.8,
+    "walk_clear_seconds": 2,
+    "walk_clear_end_root": [
+      0,
+      0,
+      5.1
+    ],
+    "reference": "Stopped level1.02m deck, flatground0; variable terrain not established."
+  },
+  "checks": {
+    "preservation": {
+      "geometry": [
+        {
+          "attribute": "POSITION",
+          "max_difference": 0.0,
+          "count": 10961
+        },
+        {
+          "attribute": "NORMAL",
+          "max_difference": 0.0,
+          "count": 10961
+        },
+        {
+          "attribute": "COLOR_0",
+          "max_difference": 0.0,
+          "count": 10961
+        },
+        {
+          "attribute": "JOINTS_0",
+          "max_difference": 0,
+          "count": 10961
+        },
+        {
+          "attribute": "WEIGHTS_0",
+          "max_difference": 0.0,
+          "count": 10961
+        }
+      ],
+      "clips": [
+        {
+          "name": "idle",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "walk",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "carry_idle",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "carry_walk",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "pickup",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "unload",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "construct",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "supplier_driver_idle",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "supplier_driver_drive",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_seated_idle",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_prepare_exit",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_wait_exit",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_stand_left",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_stand_right",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_turn_rear_left",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_turn_rear_right",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_rear_walk_01",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_rear_walk_02",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_rear_walk_03",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        },
+        {
+          "name": "crew_rear_walk_04",
+          "same_channel_set": true,
+          "maximum_sample_difference": 0
+        }
+      ],
+      "same_joint_order": true,
+      "indices_equal": true
+    },
+    "mesh_qa": {
+      "ok": true,
+      "pass": true,
+      "errors": [],
+      "warnings": [],
+      "ground_z": -0.0,
+      "zfighting": [],
+      "floating": [],
+      "back_to_back": [],
+      "enclosed": [],
+      "objects": {
+        "SK_Construction_Worker": {
+          "verts": 2112,
+          "faces": 4152,
+          "tris": 4152,
+          "ngons": 0,
+          "boundary_edges": 0,
+          "nonmanifold_edges": 0,
+          "wire_edges": 0,
+          "loose_verts": 0,
+          "degenerate_faces": 0,
+          "zero_length_edges": 0,
+          "inconsistent_normals_edges": 0,
+          "duplicate_verts": 0,
+          "islands": 21,
+          "inside_out_islands": 0,
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "materials": 1,
+          "unweighted_verts": 0,
+          "verts_over_4_influences": 0
+        }
+      }
+    },
+    "format": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "pose_transitions": {
+      "pass": true,
+      "pairs": [
+        {
+          "from": "crew_seated_idle",
+          "to": "crew_prepare_exit",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_prepare_exit",
+          "to": "crew_wait_exit",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_wait_exit",
+          "to": "crew_stand_left",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_wait_exit",
+          "to": "crew_stand_right",
+          "max_joint_angle_deg": 4.393410013373862E-05,
+          "worst_bone": "LeftLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_stand_left",
+          "to": "crew_turn_rear_left",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_stand_right",
+          "to": "crew_turn_rear_right",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_left",
+          "to": "crew_rear_walk_01",
+          "max_joint_angle_deg": 9.956626120759429E-06,
+          "worst_bone": "LeftFoot",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_left",
+          "to": "crew_rear_walk_02",
+          "max_joint_angle_deg": 9.956626120759429E-06,
+          "worst_bone": "LeftFoot",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_left",
+          "to": "crew_rear_walk_03",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_left",
+          "to": "crew_rear_walk_04",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_right",
+          "to": "crew_rear_walk_01",
+          "max_joint_angle_deg": 9.956626120759429E-06,
+          "worst_bone": "LeftFoot",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_right",
+          "to": "crew_rear_walk_02",
+          "max_joint_angle_deg": 9.956626120759429E-06,
+          "worst_bone": "LeftFoot",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_right",
+          "to": "crew_rear_walk_03",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_turn_rear_right",
+          "to": "crew_rear_walk_04",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_walk_01",
+          "to": "crew_rear_crouch",
+          "max_joint_angle_deg": 0.00013548933165614144,
+          "worst_bone": "RightLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_walk_02",
+          "to": "crew_rear_crouch",
+          "max_joint_angle_deg": 0.00013548933165614144,
+          "worst_bone": "RightLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_walk_03",
+          "to": "crew_rear_crouch",
+          "max_joint_angle_deg": 0.00013548933165614144,
+          "worst_bone": "RightLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_walk_04",
+          "to": "crew_rear_crouch",
+          "max_joint_angle_deg": 0.00013548933165614144,
+          "worst_bone": "RightLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_crouch",
+          "to": "crew_rear_push_off",
+          "max_joint_angle_deg": 8.288203082366094E-05,
+          "worst_bone": "RightFoot",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_push_off",
+          "to": "crew_rear_jump",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_jump",
+          "to": "crew_rear_land",
+          "max_joint_angle_deg": 5.949522128665402E-05,
+          "worst_bone": "RightLeg",
+          "max_local_translation_m": 0
+        },
+        {
+          "from": "crew_rear_land",
+          "to": "crew_walk_clear",
+          "max_joint_angle_deg": 0,
+          "worst_bone": "",
+          "max_local_translation_m": 0
+        }
+      ],
+      "root_bone_channels": 0
+    },
+    "root_transition_boundaries": 80,
+    "key_contacts": {
+      "pass": true,
+      "results": [
+        {
+          "clip": "crew_rear_crouch",
+          "frames": 16,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 8.535385132013573E-07,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_rear_push_off",
+          "frames": 13,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 7.343292236505761E-07,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_rear_jump",
+          "frames": 19,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 6.677627562567956E-07,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": {
+            "seconds": 0.4666666666666667,
+            "min_body_z": 4.028543949127197,
+            "root": {
+              "godot_xyz": [
+                0,
+                0.5533950166490342,
+                4.126666666666667
+              ],
+              "raw_visual_yaw": 0,
+              "actor_yaw": -3.141592653589793,
+              "actor_yaw_unwrapped": -3.141592653589793
+            }
+          }
+        },
+        {
+          "clip": "crew_rear_land",
+          "frames": 25,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 8.06587195256725E-07,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_walk_clear",
+          "frames": 61,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 8.105518500417519E-07,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        }
+      ],
+      "scope": "Actual reimported GLB poses/root paths; 30fps keys or half-frame samples as named. Boot sole support at low-plane vertices, remaining occupants, nonboot truck and full airborne jump intersections. Planned foot anchors checked; finite samples are not a mathematical continuous collision certificate. Unchanged pose checks retained after numeric equivalence check."
+    },
+    "midpoint_contacts_strict_diagnostic": {
+      "pass": false,
+      "results": [
+        {
+          "clip": "crew_rear_crouch",
+          "frames": 16,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 0.00014640808105470526,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_rear_push_off",
+          "frames": 13,
+          "failures": 1,
+          "first_failures": [
+            {
+              "frame": 11.5,
+              "truck_nonboot_pairs": 0,
+              "hard_seated_contact_count": 0,
+              "cushion_compression": 0,
+              "passenger_pairs": {},
+              "unsupported_sole_vertices": [],
+              "max_sole_error": 0.0018906784057617365
+            }
+          ],
+          "max_sole_error": 0.0018906784057617365,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_rear_jump",
+          "frames": 19,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 0.0006406076604520694,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": {
+            "seconds": 0.45,
+            "min_body_z": 4.011940002441406,
+            "root": {
+              "godot_xyz": [
+                0.0,
+                0.6139845326900482,
+                4.11
+              ],
+              "raw_visual_yaw": 0.0,
+              "actor_yaw": -3.141592653589793,
+              "actor_yaw_unwrapped": -3.141592653589793
+            }
+          }
+        },
+        {
+          "clip": "crew_rear_land",
+          "frames": 25,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 0.0006888521020300686,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        },
+        {
+          "clip": "crew_walk_clear",
+          "frames": 61,
+          "failures": 0,
+          "first_failures": [],
+          "max_sole_error": 0.000521518954262945,
+          "max_planted_target_drift_per_frame": 0,
+          "seated_contact_max_pairs": 0,
+          "max_cushion_compression_m": 0,
+          "hard_seated_contact_count": 0,
+          "rear_clear_first_sample": null
+        }
+      ],
+      "scope": "Actual reimported GLB poses/root paths; 30fps keys or half-frame samples as named. Boot sole support at low-plane vertices, remaining occupants, nonboot truck and full airborne jump intersections. Planned foot anchors checked; finite samples are not a mathematical continuous collision certificate. Unchanged pose checks retained after numeric equivalence check."
+    },
+    "root_compensation": {
+      "derived_from_actual_glb_hips": true,
+      "reason": "Standalone source pose evaluation retained the active action final hip value. Root height now derives from the actual exported hip samples, preventing a false release lift. GLB geometry/animations unchanged.",
+      "release_hip_local_y": 0.935204267501831,
+      "landing_hip_local_y": 0.8600000143051147,
+      "hip_release_velocity_y": 1.117659578005473,
+      "changes": [
+        {
+          "seconds": 0.0,
+          "old_root_y": 1.0952042531967163,
+          "new_root_y": 1.02,
+          "exported_hips_local_y": 0.935204267501831
+        },
+        {
+          "seconds": 0.03333333333333333,
+          "old_root_y": 1.047801316854689,
+          "new_root_y": 1.0478013176494174,
+          "exported_hips_local_y": 0.9392082691192627
+        },
+        {
+          "seconds": 0.06666666666666667,
+          "old_root_y": 1.0718146003193327,
+          "new_root_y": 1.0718146019087897,
+          "exported_hips_local_y": 0.9361003041267395
+        },
+        {
+          "seconds": 0.1,
+          "old_root_y": 1.0891645223299662,
+          "new_root_y": 1.0891645247141524,
+          "exported_hips_local_y": 0.9287557005882263
+        },
+        {
+          "seconds": 0.13333333333333333,
+          "old_root_y": 1.1020338645829093,
+          "new_root_y": 1.1020338677618238,
+          "exported_hips_local_y": 0.9149916768074036
+        },
+        {
+          "seconds": 0.16666666666666666,
+          "old_root_y": 1.1115098157988652,
+          "new_root_y": 1.1115098197725084,
+          "exported_hips_local_y": 0.8937210440635681
+        },
+        {
+          "seconds": 0.2,
+          "old_root_y": 1.1161841566403707,
+          "new_root_y": 1.116184161408742,
+          "exported_hips_local_y": 0.8663520216941833
+        },
+        {
+          "seconds": 0.23333333333333334,
+          "old_root_y": 1.1115703262858923,
+          "new_root_y": 1.1115703318489925,
+          "exported_hips_local_y": 0.8373711705207825
+        },
+        {
+          "seconds": 0.26666666666666666,
+          "old_root_y": 1.0911625969674852,
+          "new_root_y": 1.0911626033253141,
+          "exported_hips_local_y": 0.8132842183113098
+        },
+        {
+          "seconds": 0.3,
+          "old_root_y": 1.0490521218299862,
+          "new_root_y": 1.0490521289825439,
+          "exported_hips_local_y": 0.800000011920929
+        },
+        {
+          "seconds": 0.3333333333333333,
+          "old_root_y": 0.9827517182562087,
+          "new_root_y": 0.9827517262034946,
+          "exported_hips_local_y": 0.8000057339668274
+        },
+        {
+          "seconds": 0.36666666666666664,
+          "old_root_y": 0.8944193128055997,
+          "new_root_y": 0.8944193215476139,
+          "exported_hips_local_y": 0.8111434578895569
+        },
+        {
+          "seconds": 0.4,
+          "old_root_y": 0.7896346154848735,
+          "new_root_y": 0.7896346250216166,
+          "exported_hips_local_y": 0.8278334736824036
+        },
+        {
+          "seconds": 0.43333333333333335,
+          "old_root_y": 0.6745740383995904,
+          "new_root_y": 0.6745740487310621,
+          "exported_hips_local_y": 0.8438993692398071
+        },
+        {
+          "seconds": 0.4666666666666667,
+          "old_root_y": 0.5533950055228338,
+          "new_root_y": 0.5533950166490342,
+          "exported_hips_local_y": 0.8551837205886841
+        },
+        {
+          "seconds": 0.5,
+          "old_root_y": 0.4271764801343283,
+          "new_root_y": 0.42717649205525743,
+          "exported_hips_local_y": 0.8606075644493103
+        },
+        {
+          "seconds": 0.5333333333333333,
+          "old_root_y": 0.29450207706027554,
+          "new_root_y": 0.2945020897759334,
+          "exported_hips_local_y": 0.8615872859954834
+        },
+        {
+          "seconds": 0.5666666666666667,
+          "old_root_y": 0.1528598181512617,
+          "new_root_y": 0.1528598316616483,
+          "exported_hips_local_y": 0.8606348633766174
+        },
+        {
+          "seconds": 0.6,
+          "old_root_y": -1.4305114870438729E-08,
+          "new_root_y": 0,
+          "exported_hips_local_y": 0.8600000143051147
+        }
+      ]
+    },
+    "visual": {
+      "artist_reviewed": true,
+      "inspection": "All30actual encoded quarter/mid/three-quarter frames across10exit stages, plus6encoded supported/release/first-airborne frames256,262,267,268,269,271 and final encodedframe369.",
+      "mechanics": "Visible hip/knee extension and heel rise while toes remain on deck before foot release; arms swing forward; early airborne legs are extended, then recoil; landing bends and recovers. Whole primary subject/boots/deckedge/ground visible in uninterrupted side-three-quarter shot throughout load/push/flight/land/clear.",
+      "clock": "Scene30fps before GLB import; imported action frame ranges recorded; encode30fps, all actions1x.",
+      "caption_warning": "Some3Dcaption glyphs clip intermittently; primary subject/feet are unobstructed. Stage labels and metadata remain available.",
+      "human_approval": false,
+      "lead_review": "Pending; share with Lead before presenting to Dawson."
+    },
+    "video": {
+      "stage": "Revised proposal for Lead mechanics review then Dawson approval; v01 rejected.",
+      "video": {
+        "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_left04_exit_revision_v02.mp4",
+        "bytes": 2390496,
+        "encoded_and_decoded_frames": 369,
+        "fps": 30,
+        "seconds": 12.3,
+        "resolution": [
+          960,
+          720
+        ],
+        "complete_source_frames": 369,
+        "decoded_samples": [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_left04_exit_revision_v02.mp4.decode/frame_00001.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_left04_exit_revision_v02.mp4.decode/frame_00184.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_left04_exit_revision_v02.mp4.decode/frame_00369.png"
+        ],
+        "approval": "Pending Dawson; artist render, not game capture."
+      },
+      "focused_video": {
+        "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_takeoff_landing_revision_v02.mp4",
+        "bytes": 771367,
+        "encoded_and_decoded_frames": 129,
+        "fps": 30,
+        "seconds": 4.3,
+        "resolution": [
+          960,
+          720
+        ],
+        "complete_source_frames": 129,
+        "decoded_samples": [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_takeoff_landing_revision_v02.mp4.decode/frame_00001.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_takeoff_landing_revision_v02.mp4.decode/frame_00064.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/crew_takeoff_landing_revision_v02.mp4.decode/frame_00129.png"
+        ],
+        "approval": "Pending Dawson; artist render, not game capture."
+      },
+      "ranges": [
+        {
+          "clip": "crew_seated_idle",
+          "label": "Seated",
+          "seconds": 2,
+          "first_frame": 1,
+          "last_frame": 60,
+          "encoded_phase_frames": [
+            16,
+            31,
+            46
+          ]
+        },
+        {
+          "clip": "crew_prepare_exit",
+          "label": "Feet under knees",
+          "seconds": 1,
+          "first_frame": 61,
+          "last_frame": 90,
+          "encoded_phase_frames": [
+            69,
+            76,
+            83
+          ]
+        },
+        {
+          "clip": "crew_stand_left",
+          "label": "Stand",
+          "seconds": 2,
+          "first_frame": 91,
+          "last_frame": 150,
+          "encoded_phase_frames": [
+            106,
+            121,
+            136
+          ]
+        },
+        {
+          "clip": "crew_turn_rear_left",
+          "label": "Step and turn",
+          "seconds": 2,
+          "first_frame": 151,
+          "last_frame": 210,
+          "encoded_phase_frames": [
+            166,
+            181,
+            196
+          ]
+        },
+        {
+          "clip": "crew_rear_walk_04",
+          "label": "Walk to rear",
+          "seconds": 1.0,
+          "first_frame": 211,
+          "last_frame": 240,
+          "encoded_phase_frames": [
+            219,
+            226,
+            233
+          ]
+        },
+        {
+          "clip": "crew_rear_crouch",
+          "label": "Load legs",
+          "seconds": 0.5,
+          "first_frame": 241,
+          "last_frame": 255,
+          "encoded_phase_frames": [
+            245,
+            249,
+            252
+          ]
+        },
+        {
+          "clip": "crew_rear_push_off",
+          "label": "SUPPORTED PUSH-OFF",
+          "seconds": 0.4,
+          "first_frame": 256,
+          "last_frame": 267,
+          "encoded_phase_frames": [
+            259,
+            262,
+            265
+          ]
+        },
+        {
+          "clip": "crew_rear_jump",
+          "label": "Airborne",
+          "seconds": 0.6,
+          "first_frame": 268,
+          "last_frame": 285,
+          "encoded_phase_frames": [
+            272,
+            277,
+            282
+          ]
+        },
+        {
+          "clip": "crew_rear_land",
+          "label": "Landing absorption",
+          "seconds": 0.8,
+          "first_frame": 286,
+          "last_frame": 309,
+          "encoded_phase_frames": [
+            292,
+            298,
+            304
+          ]
+        },
+        {
+          "clip": "crew_walk_clear",
+          "label": "Walk clear",
+          "seconds": 2.0,
+          "first_frame": 310,
+          "last_frame": 369,
+          "encoded_phase_frames": [
+            325,
+            340,
+            355
+          ]
+        }
+      ],
+      "decoded_rows": [
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0016.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0031.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0046.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0069.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0076.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0083.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0106.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0121.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0136.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0166.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0181.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0196.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0219.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0226.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0233.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0245.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0249.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0252.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0259.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0262.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0265.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0272.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0277.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0282.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0292.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0298.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0304.png"
+        ],
+        [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0325.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0340.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_phase_0355.png"
+        ]
+      ],
+      "sheets": [
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_sheet_1.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_revision_sheet_2.png"
+      ],
+      "release_decodes": [
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_256.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_262.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_267.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_268.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_269.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/crew_exit_delivery_v02/encoded_release_271.png"
+      ],
+      "camera": "Uninterrupted fixed side/three-quarter for loading, supported push-off, airborne, landing and walking clear. Rear aisle camera before this. Whole subject/deck edge/ground visible.",
+      "import_fps": 30,
+      "encode_fps": 30,
+      "source_sha256": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10",
+      "scope": "Actual exported joint clips with separate revised root paths; not native gameplay or an accepted integration timing contract."
+    }
+  },
+  "known_draft_warning": "One midpoint in push-off has1.891mm sole-plane variance versus the strict1mm diagnostic.3mm floor-support rays still pass; no truck/partner intersections. Preserved strict report remains false for that sample; accepted for draft appearance review only, not hidden as a perfect sole lock.",
+  "scope": "Passenger revision only. Preserve v01 binaries as rejected drafts and corrected driver timing_v03. No item-hauling contact authoring/finalization or new pickup clip. Lead owns identities, root paths/custody and native integration; human appearance acceptance pending.",
+  "approval_record": {
+    "status": "Human-approved passenger animation v02; native integration remains Lead-owned and pending verification.",
+    "approval_reported_by": "Lead Developer chat 01a199a0-f08e-7f23-947f-62655a9ed233",
+    "human_quote": "That looks better. Approved—please integrate it into the game and continue with the materials truck and warehouse unloading.",
+    "scope": "Approved passenger v02 clips and sampled root paths. No additional passenger authoring requested. Existing materials/warehouse integration may continue; item-hauling contact/animation pause remains in force.",
+    "preserve": "Rejected v01 history, approved v02 binaries/videos and corrected driver timing_v03 unchanged."
+  }
+}

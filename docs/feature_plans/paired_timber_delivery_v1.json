@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "feature": "Complete supplier timber delivery into physical warehouse storage",
+  "frozen_before_production_edits": true,
+  "source_head": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+  "recorded_utc": "2026-11-13T23:41:42Z",
+  "user_outcome": "Two actual workers unload one real timber bundle, shoulder-carry it together and visibly deposit it into the warehouse; the truck departs safely and another order can be placed.",
+  "diagram": "docs/diagrams/paired_timber_delivery.mmd",
+  "existing_owners": {
+    "custody": "IdentityLedger.joint_carries: begin/move/finish/put_down keep one physical stock identity and two exclusive worker commitments",
+    "scheduling": "Receiving and Freight event boundaries; no added global clock, repeating scheduler or animation stock callbacks",
+    "storage": "WarehouseService reserves one finite existing timber cell before cargo leaves the truck",
+    "geometry": "Existing paired_ground_path checks the complete fixed-orientation worker/load envelope; authored turns require actual clear staging space",
+    "art": "Artist Director owns new anatomical contacts, continuous motion, verified exports and normal-speed appearance review; Lead owns integration"
+  },
+  "first_independent_increment": {
+    "change": "Adopt the already delivered separate warehouse long-stock v04 model and timber-only .60/1.75m cell planes; preserve original rack and crate handling.",
+    "asset_sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+    "footprint_m": [
+      2.6,
+      1.0
+    ],
+    "outer_height_m": 2.1,
+    "cells": 4,
+    "bundle_registration_y_m": -0.004,
+    "collision": "Reuse cached exact static mesh collision, so the authored openings are not filled by old coarse boxes.",
+    "startup": "Include revised fixture in existing loading-cover preparation and declared remote import dependencies.",
+    "check": "One brief GitHub current-change observation of the revised timber-only fixture, four cell registrations and preserved ordinary crate planes. Retrieve the actual generated import sidecar; no local engine.",
+    "not_complete": "This is not a finished animated paired delivery. Do not bind historical rejected clips or remove the current honest timber hold until the shared action and accepted motion are connected.",
+    "check_result": {
+      "run": 43531026084,
+      "source": "dafdd24054883137bd7ce9b16b8686457adac6bc",
+      "result": "pass",
+      "scope": "Actual revised import/bounds, four timber cells, unchanged crate cells and exact mesh collision; no paired motion"
+    }
+  },
+  "pair_action_contract": [
+    "Respect the shared hauling priority selector; never borrow a busy worker, consume a higher-priority commitment, or strand one waiting worker instead of feasible lower-priority work.",
+    "Select two distinct eligible physically available hauling workers; reserve both exclusively before claiming one <=50kg source package and one warehouse cell.",
+    "No second eligible person, warehouse cell, truck aisle or complete swept route means cargo stays aboard with a specific event-woken reason.",
+    "Prepare a missing compatible fixture through a real worker visit and existing smoke lifecycle before access.",
+    "Keep fore/aft roles attached to the same worker identities. Actual pickup stations, start/stop/turn/ramp/put-down paths and grip release come from the accepted export metadata, never guessed legacy sockets.",
+    "Use one shared custody begin, atomic pair/payload motion, and one actual destination finish/warehouse commit. Both workers retain their original 25kg contribution limits.",
+    "Reassignment/return before lift releases uncollected promises safely. After lift finish the real supported deposit or existing recoverable put-down; never delete or duplicate cargo. A ground put-down does not commit a warehouse cell, count supplier return, refund cargo, or complete the physical delivery gate; it needs an actual recovery route.",
+    "Pause freezes committed progress and active cosmetics. Hidden views keep applicable domain progression and stop cosmetic frame processing.",
+    "Return/departure still waits for actual handlers, cargo and shelf/ramp/door clearance. Convoy readiness follows the existing final physical handover/departure rules."
+  ],
+  "designer_scope_review": {
+    "reviewer_thread": "01a18e60-cd67-7b01-8047-a8768208b387",
+    "decision": "Observable plan accepted with hauling-priority and recoverable-put-down accounting clarifications incorporated above; final connected-head and animation acceptance remain separate.",
+    "source": "Direct Designer response to this Lead plan in the current task on 13 November 2026"
+  },
+  "required_artist_handoff": [
+    "Approved shoulder/stabilizer contact frames and continuous actual-worker video",
+    "Source/export hashes, clip windows and floor-root/payload transforms",
+    "Truck pickup/ramp and warehouse lower/upper face transitions fitted to accepted unchanged assets",
+    "No hand/torso or glove/load penetration, no excessive ramp bounce, stable fore/aft identity"
+  ],
+  "verification_policy": "Only brief changed-action checks on GitHub. No local Godot, regression suites, raised performance limits or broad FPS acceptance. Human appearance review is distinct from Lead/Designer PR decisions.",
+  "metrics": {
+    "planning_before_this_record_seconds": null,
+    "reason": "Restored status/diagnosis already in progress before this phase timestamp; do not invent a retrospective stopwatch.",
+    "token_usage": null,
+    "token_reason": "Parent chat does not expose attributable provider counters; no estimate substituted.",
+    "regressions": null,
+    "regression_reason": "No regression campaign is authorized; record only observed changed-action failures and planning omissions."
+  },
+  "next_independent_increment": {
+    "frozen_before_production_edits": true,
+    "change": "Adopt delivered S1v03 ONLY for timber racks, matching .60/.95m truck-floor support planes and explicit bundle base registration. Preserve metal S1 legacy geometry/packing and existing vehicle/cargo envelopes.",
+    "asset_sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+    "variant_rule": "M04 and non-M04 S1 packets must not share support definitions. Timber remains left-side, exactly one bundle per deck, no timber-on-timber stacking.",
+    "transform": "Use existing measured Cargo_Floor-to-rack placement once; no new recentering or truck geometry edit.",
+    "startup_and_check": "Declare actual model import and existing loading-cover preparation, then one bounded exact-variant/actual-render-model current-change demonstration on GitHub. Keep rejected motion unbound.",
+    "check_result": {
+      "run": 43532318916,
+      "source": "feb6873c28ed1a6d5e9aabc05709b5c37a47ac34",
+      "result": "pass",
+      "scope": "Static actual variant/import/packet support/placement only; motion remains unfinished"
+    }
+  },
+  "planning_discoveries": [
+    "Actual import dependencies were duplicated; first new-asset check detected the missed second list. Replaced copies with one shared manifest.",
+    "Ordinary begin_carry currently enforces mass only; supplier pair activation must not silently allow a lighter2m bundle to become a solo downstream haul.",
+    "Recoverable ground-held timber needs a retained owner/recovery route and explicit debug/return/convoy accounting, even after hands are released."
+  ],
+  "implementation_couplings_before_pair_code": {
+    "priority_selection": "HaulingPolicy.start_available visits categories across the actual idle pool. Offer pair candidates only within the unloading category after higher-priority commitments; mark both actual actors before lower categories can claim either. Dedicated Receiving staff must use the same exclusive rules.",
+    "custody": "IdentityLedger.joint_carries already provides begin/move/finish/put_down. Receiving counts delivery only after actual joint finish AND one matching WarehouseService.commit; mass allowance remains25kg/person.",
+    "warehouse": "One finite token must retain both participant service points and safe access/clearance; do not add a second cell promise for the same package. Exact final stations come from accepted motion, not guessed legacy undergrip sockets.",
+    "routes": "PairedGroundPath currently certifies fixed-orientation translations only. It does not authorize instant heading changes at elbows; actual start/stop and authored swept turns need clear staging space from the measured new metadata.",
+    "return_and_debug": "SupplierReturns and debug_deliver_resources must recognize pending pair/ground custody even when personal carrying pointers are empty. No return/refund/deposit/convoy completion may be fabricated by a cleared hand.",
+    "interruptions": "Keep actual recoverable package ID/origins and an event-woken recovery route after put_down. Release worker eligibility separately from physical delivery/return accounting.",
+    "views": "One shared clip/root/payload time; explicit FORE/AFT identity; stage transform once; cosmetic-only processing while active/visible; no runtime IK or animation stock callbacks.",
+    "activation_boundary": "No historical rejected hand-carry draft, pose-only image or unverified shared-library fit is a valid continuous-motion handoff."
+  },
+  "ordinary_timber_carry_boundary_before_edits": {
+    "designer_decision": "Current checkpoint ends with actual paired supplier receipt, safe departure and another order; onward timber to production/staging is unfinished and not required for this checkpoint. Even lighter2m portions require two actual handlers.",
+    "source_surfaces": [
+      "game/staffing/rear_simulation.gd::_job_option",
+      "game/identity/identity_ledger.gd::_check_transfer",
+      "game/dispatch/dispatch_service.gd::accept"
+    ],
+    "implementation": "Refuse unsupported solo M04 at ordinary feasible-task selection so other jobs continue; also refuse timber-to-person primitive transfers and outbound admissions needing unimplemented paired handling. JointMaterialCarry remains the only real two-person custody path; no new worker or capacity exception.",
+    "check": "A brief current-change ordinary hauling/refusal observation will verify no solo reservation/assignment while another feasible material job proceeds. No broad regression campaign.",
+    "prepublication_source_amendment": "Legacy receiving orders can lack packet manifests; identify timber through retained source_codes or a light actual stock identity before single-worker selection. Do not rely on packet metadata alone or let the ledger refusal reach Receiving._must. Reuse the same cached code instead of repeated deep inspection."
+  },
+  "custody_increment_before_edits": {
+    "owner": "Receiving-owned SupplierTimberHandoffs, connected to JointMaterialCarry custody events and WarehouseService committed-stock event",
+    "state": "Pending action references actual stock IDs; no duplicate inventory. Ground put-down retains a pending supplier obligation after personal joint pointers clear. A recovery transfers the obligation to actual new stock without erasing remaining ground quantity.",
+    "completion": "Only a matching real warehouse cell commit counts unloaded. A finish pose, empty hand, shared-carry release or ground put-down does not.",
+    "guards": [
+      "Debug resource delivery preflight refuses every selected order with a pending joint/ground handoff before mutation.",
+      "Normal completion and supplier return readiness retain physical gate until actual warehouse receipt."
+    ],
+    "source": "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "rationale": "Godot signals notify owners at actual custody/receipt transitions; no periodic stock scans or animation callbacks.",
+    "acceptance": "One brief current-change normal pickup/put-down/recovery/warehouse-receipt demonstration, without damage injection, suites, animation acceptance or raised limits."
+  },
+  "appearance_tolerance": {
+    "source": "Dawson direct Lead-chat clarification during this continuation",
+    "accepted": "Minor surface clipping is acceptable. It must not hold up the complete preview solely for a zero-intersection target.",
+    "unacceptable": "Full limbs passing through the front/back of the torso and gross unnatural hand rotation remain the stated defects.",
+    "relay": "Sent directly to existing Artist Director chat; current dimensions/approved assets and requested full normal-speed animation review preserved."
+  },
+  "warehouse_pair_access_before_edits": {
+    "change": "Upgrade an existing prepared M04 cell token to two explicit actual participant stations; quantity/cell promise remains single.",
+    "input": "The connected activity supplies final FORE/AFT world roots from accepted authored metadata; warehouse never guesses offsets or changes the motion.",
+    "atomicity": "Validate both distinct finite stations, routes and other workers/reserved endpoints before changing either registration. On blockage retain original promise and watch actual blocker movement; no new poll.",
+    "lifecycle": "Generic single-worker reacquisition cannot overwrite paired stations. Commit requests clearance for both; release removes both endpoint promises. Existing single-worker behavior remains.",
+    "verification": "One brief current-change reservation capability observation: actual prepared cell, both explicit distinct worker points, generic reacquisition retaining pair, release of both endpoints. No repeated fixture/old custody scenarios, authored-root or full-loop acceptance."
+  },
+  "connected_activity_hooks_before_remaining_edits": {
+    "single_activity_owner": "Receiving-owned pair activity advances once per existing boundary, not twice through two worker proxy jobs. Worker proxies have no separate finite deadline/path; common sync/movement must defer to the shared activity.",
+    "selection": "HaulingPolicy offers only actual unselected idle people at unloading category after higher priorities. Commit both Rear actor phases together; never reserve a lone waiting person when other work is feasible.",
+    "source": "One prepared warehouse token, actual two-station access and complete swept route are required before lift. Truck aisle and actual supplier-access commitments retain both identities until both pass the rear-clear boundary.",
+    "lift": "Accepted metadata contact time begins JointMaterialCarry once. Original packet hides from stock event and the same load appears at its sampled payload transform; no second source copy or doubled floor/registration offset.",
+    "motion": "All two floor roots, yaw and one payload transform share the same activity time. Retain FORE/AFT IDs. Fixed-orientation ground translation is distinct from actual swept turn/stop/start clips; no instantaneous elbow rotation.",
+    "finish": "Both registered actual warehouse roots precede joint finish and one warehouse commit. SupplierTimberHandoffs consumes only its actual committed-stock event; ordinary single-worker unloaded accounting must not count it again. Both participants then clear their reserved endpoints.",
+    "return": "Before-lift cancellation and physical empty withdrawal must be validated before the return stock transaction mutates anything. After lift or put-down, pending physical custody blocks departure/return clearance until an actual recoverable delivery. Existing single-worker return phase assumptions cannot be reused for pair proxy jobs.",
+    "interruption": "A supported ground put-down preserves stock and the originating delivery obligation. Recover using that actual source ID and a new real claim; never clear the convoy from an empty personal carrying pointer.",
+    "view": "Use existing manual-seek SupplierActorView, with visibility/pause gating and authoritative root sampler. The ordinary rear worker view must hide only the two actual animated IDs; no replacement people.",
+    "safe_assignment_release": "JointMaterialCarry.finish clears the carry and may apply pending duties immediately. Do not call it at first rack contact while the authored hands/withdrawal still need control. Use the actual accepted hands-safe completion boundary and both real terminal standing roots for finish/commit, then release both worker proxies together. The payload may already rest on the rack while that shared physical handoff remains committed; no early stock receipt or second animation callback."
+  },
+  "motion_adapter_before_edits": {
+    "draft_source": "evidence/supplier_transport/motion_contract_draft_v01.json",
+    "sha256": "99430f7fe22e3978cc2393305fc677f1cfc57746cda15ba2c05b2672cd5d8712",
+    "schema": "timber_paired_motion_v1",
+    "source_status": "Draft and mutable, explicitly not activation authority; final export/appearance not yet delivered.",
+    "change": "Feature-local pure sampler accepts explicit contract and per-clip sample arrays, validates complete synchronized FORE/AFT/payload streams, predecodes finite vectors/quaternions once, and samples all three from one timestamp. It neither reads inventory nor runs a clock or activates missing assets.",
+    "world_rule": "Caller composes stage matrix * raw sampled source matrix once. Samples include their source floor height and seated registration; no added floor, visualPI or packet-base correction.",
+    "loop_rule": "Return raw wrapped cycle plus explicit cycle count/translation. Activity must apply net cycle displacement and its real ground route without repeating floor offsets or snapping at wrap; do not silently treat the in-place body library as world movement.",
+    "acceptance": "Actual final streams/imported clips must later align with their sampled roots and one payload in the connected current-change demonstration. No synthetic array check is substituted for actual exported motion."
+  },
+  "bank_access_planning_discovery": {
+    "source": "Actual12x16m module has two banks of racks3m apart in rows, central staging aisle and narrower cross aisles; final FORE/AFT roots depend on front/back cell rotation.",
+    "risk": "A solo-reachable first cell does not prove a paired path. Repeatedly releasing/reserving it would select the same infeasible cell. A loaded180turn in a narrow row gap cannot be assumed.",
+    "plan": "Preflight complete shared route as a warehouse candidate predicate before promising the cell. Route outside through actual turn-clear envelope to the module door, enter with the narrower actual forward pair envelope, turn in clear central staging, then translate forward or backward along the row and use the authored shoulder release/underhand approach/deposit.",
+    "backward_take": "Deferred under bounded completion freeze; first test promises only proven feasible forward/turn rack faces, with explicit capability limits.",
+    "guard": "Final measured turn envelope and actual body/payload samples are required before activation. An unavailable complete route keeps cargo aboard with an event-woken specific reason."
+  },
+  "first_playtest_scope_revision": {
+    "authority": "Actual Game Designer review delivered in this Lead continuation; human playable-first priority independently read in Designer turn01a1d7b8-ef48-7c10-8c4d-8adca701e908, human message01a1d7b8-f03b-7d61-8b1f-a035a69d1241.",
+    "scope": "Usable lower truck pickup -> real paired motion -> reachable lower warehouse receipt -> safe departure -> another supported order. Up to50kg supported timber orders.",
+    "prepayment": "Inspect actual proposed manifests and refuse any unsupported upper pickup or out-of-scope timber amount before payment. Preserve packing, quantities, fees and geometry; no repacking, hidden reduction or fake upper motion.",
+    "deferred_functionality": [
+      "Upper truck pickup",
+      "Upper warehouse deposit",
+      "Opposite faces without currently proven forward access",
+      "Onward timber handling"
+    ],
+    "polish": "Minor surface clips, small contact gaps and cosmetic foot smoothing do not hold up the usable preview or integration. Gross torso-through limbs, impossible/support/custody defects remain blockers.",
+    "ground_pace": "Designer baseline roughly1m/s on clear ground, with agreeing actual gait/roots. Latest Director draft loops report1m cycle displacement per1s. Ramp/turn/pickup/placement retain their authored cautious pace.",
+    "review": "One consolidated final exact-head Designer review after connected action demonstration; no new per-component polish or Dawson PR gate."
+  }
+}

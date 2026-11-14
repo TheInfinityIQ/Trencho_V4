@@ -1,0 +1,143 @@
+{
+  "readiness": "Read-only geometry assessment and recommendation; no complete other-item contact/mount contract accepted, no asset/animation authoring.",
+  "inputs": [
+    {
+      "path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\supplier-transport-worktree\\game\\supplier_transport\\cargo_packing.gd",
+      "bytes": 10552,
+      "sha256": "72681cea8b1c15522b709c4258115a891c1db9adc49dd25b228e798374d196b8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\supplier-transport-worktree\\game\\warehousing\\material_packages.gd",
+      "bytes": 2260,
+      "sha256": "70128b0c201c00c1242e5cbb20e2cc199a4c28922cddd71ee6afdf281d42ab2b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\supplier-transport-worktree\\game\\supplier_transport\\supplier_vehicle_view.gd",
+      "bytes": 10539,
+      "sha256": "bc20bef74c778b1737a5d2efedb8a582e68a6b01a17cd957817d367b0b9664e6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\supplier-transport-worktree\\game\\warehousing\\warehouse_service.gd",
+      "bytes": 30440,
+      "sha256": "8742b67afc1822eecf5f8a083ee9527b0b59047ec7503b0016c721352135efee"
+    },
+    {
+      "path": "C:\\Users\\dawso\\Developer\\Projects\\Godot\\trencho_v4\\logs\\supplier-transport-worktree\\game\\warehousing\\warehouse_view.gd",
+      "bytes": 11068,
+      "sha256": "ed75bd51add710e2a1ff37df3a3dcf0b716be4a60e6065fb41e7020a6aade6ac"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\character_animation_delivery\\worker\\construction_worker_animated_v01.blend",
+      "bytes": 622085,
+      "sha256": "7a17bf831ae110a1b70a09e19b48b0cd11a409fa83fc6fdf85e0c9afd2b438f0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s1_longstockrack_v02.glb",
+      "bytes": 142180,
+      "sha256": "82fc0b91a59c0ea0d583a71b7ee7d8180bb86102a8ce17792ff6879995d6c673"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\faceted_materials_vehicle\\faceted_materials_vehicle_v02.glb",
+      "bytes": 1041888,
+      "sha256": "55c6af7bc322131bb0fce6c54b7c58319a7c390a421823c93c684563a895e271"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\metal_stock_v01.glb",
+      "bytes": 107060,
+      "sha256": "480546528e9f7c16df60f4982179266c4eaadacf330c010ace321bbd90b0cdb7"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\closed_keg_v01.glb",
+      "bytes": 42260,
+      "sha256": "6c57c1886c88885cd8d7d43558a880d0ac92eb09705d3250e1efff6e3c8a81b0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\textile_bale_v01.glb",
+      "bytes": 42228,
+      "sha256": "4a5290c667eca57d7d5d3abd621624d4313530c8fd696c58554205eb26a53d85"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\shared_material_packages\\fuel_can_v01.glb",
+      "bytes": 59752,
+      "sha256": "7df5739bccbd8a71b162d7a00e8b68290dc18575df4b69a69a8452327b25f756"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\small_crate_v01.glb",
+      "bytes": 69804,
+      "sha256": "2e37b5e0713a6f5202cd38f4e80e2362364d8eab77e6a0c81d4ceaf65d9701ac"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\medium_crate_v01.glb",
+      "bytes": 69504,
+      "sha256": "f52f8e73e0c39f58588a323e026ef12c003018ff28af9789ecec07f1ddf43e95"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_crate_rack_v01.glb",
+      "bytes": 117124,
+      "sha256": "6ca65fa822fa9c978d5a3cc6b250606e01365109cd6303d68e6f478bf6494727"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s2_crateshelf_v01.glb",
+      "bytes": 297540,
+      "sha256": "8e316683100da54c661faa2b0307a5ce724c2f358f20d2ff8d9c8d41b0b4b12f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s3_restraintrack_v01.glb",
+      "bytes": 223884,
+      "sha256": "07ecc831eafd2ffe950a1b8fab160748ce5bc100d9f7e0500e0bfc0f5ee5ce57"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s4_protectedcargo_v01.glb",
+      "bytes": 270316,
+      "sha256": "75a7444d180393f783c6aba0648e5113e062b6556b079b93467565c4ecaec442"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\geometry_decision_v01.md",
+      "bytes": 8717,
+      "sha256": "8a655a8da98bd6aded12597744f4ff01fe77a5e17167c2a2ff3be40a7c48bd30"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\vertical_exclusions.json",
+      "bytes": 1155,
+      "sha256": "2254f236a8c7b6d42b9c8aaea42f9f172a0e04ca6a3498e5a158d34032e01b0d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\context_and_support_measurements.json",
+      "bytes": 100807,
+      "sha256": "454e48479dd2025f9adc93ec5482e228532ea5308314cf1d45d849ab446fe806"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\grip_facing_workspace.json",
+      "bytes": 9752,
+      "sha256": "2153680608b419ac7d979cee47aa49380b2ae43085b93d8ab87146211a42268f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\mounting_interval_measurements.json",
+      "bytes": 587043,
+      "sha256": "6612726d0671c5dc56883cf326466bd41cb50f888d79a1b7f224f00501395441"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\actual_cargo_geometry_v01\\actual_geometry_measurements.json",
+      "bytes": 221336,
+      "sha256": "cf7f34baffdb3f576acdb0d7dba3ac377e51a80c153537c836713b7970cd4818"
+    }
+  ],
+  "frozen_timber_unchanged": true,
+  "original_body_and_bend_preserved": true,
+  "lead_readback": {
+    "report_original_sha256": "8a655a8da98bd6aded12597744f4ff01fe77a5e17167c2a2ff3be40a7c48bd30",
+    "report_repository_lf_sha256": "d62fdae4da304d042c60be0e3c5b9ae93bd605acb102905c2561728779fffbac",
+    "verified_manifest_files": 24,
+    "accepted_next_step": "Correct variant-specific S1 side transforms/support before choosing any support remedy; then fit actual near-face contacts. Earlier insert requirement is unconfirmed.",
+    "readiness": "Necessary spans/body-only witnesses are not final mounting/contact approval. No universal riser, capacity/economic change, new pickup, other-item animation or fixture authoring approved."
+  },
+  "lead_correction": {
+    "status": "Earlier support-side conclusion withdrawn; original source report/input hashes retained as historical provenance",
+    "artist_correction": "The four LEFT zero-support conclusion is withdrawn. Artist applied the general S2/S3/S4 left-PI rule to S1 without establishing its separate orientation. Frozen LEFT timber S1 uses identity; S1 is excluded from current runtime shelf binding. Corrected proposed wall-side S1Metal placement is left identity/rightPI, with exact support/hand clearance still being measured. No actual-side support defect or insert requirement is established by the earlier count. Pure90-to72 rack arithmetic and actual package yaw are unaffected.",
+    "lead_lesson": "Matching file hashes establishes provenance, not the correctness of an asset-coordinate assumption. Verify variant-specific transforms before promoting measurements to integration facts.",
+    "new_repository_report": "Adds a prominent erratum above the unchanged historical report. The earlier report_repository_lf_sha256 refers only to the original report body.",
+    "next": "Correct explicit side transforms/support before determining whether an insert is required; no authoring or capacity change."
+  }
+}

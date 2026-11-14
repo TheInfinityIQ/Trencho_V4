@@ -1,0 +1,24 @@
+{
+  "asset": "warehouse_long_stock_rack_v04.glb",
+  "author": "Existing Trencho 3D Artist",
+  "source": "Existing Artist delivery warehouse/warehouse_long_stock_rack_v04.glb",
+  "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+  "bytes": 271672,
+  "retained_original": "warehouse_long_stock_rack.glb remains unchanged",
+  "integration": "Timber-only static fixture with actual cached mesh collision and startup preparation; no crate changes or capacity grant",
+  "geometry_metres": {
+    "footprint": [
+      2.6,
+      1.0
+    ],
+    "height": 2.1,
+    "support_planes": [
+      0.6,
+      1.75
+    ],
+    "cells": 4
+  },
+  "package_registration_y_metres": -0.004,
+  "registration_basis": "Accepted supplier_asset_contract explicit wood-bottom versus strap-origin registration; not a new capacity dimension",
+  "readiness": "Static import/bounds/cell/collision current-change receipt43531026084 passed at dafdd24; actual remote generated import sidecar retained. Paired motion and full-loop/native/FPS acceptance remain separate."
+}

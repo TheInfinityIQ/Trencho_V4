@@ -1,5 +1,21 @@
 # Team workflow
 
+## Game Designer succession — 13 November 2026
+
+Dawson requested replacement Designer `01a1d80c-f41f-7511-8973-ca44a5ec591c`.
+Route current gameplay decisions and final-head reviews there; outgoing Designer
+`01a18e60-cd67-7b01-8047-a8768208b387` retains historical evidence and ceases the
+active role. See [Designer handoff](game_designer_handoff_2026_11_13.md).
+
+## Lead succession — 13 November 2026
+
+Dawson requested replacement Lead chat `01a1d807-02eb-7e52-8f46-93bb10241447`.
+The successor adopts the existing `logs/supplier-field-integration-worktree` on
+`codex/supplier-field-integration`; outgoing Lead `01a199a0-f08e-7f23-947f-62655a9ed233`
+ceases active feature edits. All standing Lead authority transfers; historical
+records below remain. Battlefield and Artist ownership are unchanged. Protect
+the dirty human root. See [handoff](lead_developer_handoff_2026_11_13.md).
+
 ## Bounded Artist Director pilot — 12 November 2026
 
 Dawson's directly verified human turn `01a1d1d6-f37d-7c81-ba92-1601e2edb619` in Workflow Master authorizes three different art workflows under the existing Artist Director, with short-lived fixed Luna/Terra workers. [Pilot authority and boundaries](art_workflow_pilot.md) govern this narrow exception to scout-only delegation. Lead art coordination goes only through the Director; developer coordination is unchanged. Preserve in-flight S4 work, approved assets and animation pauses. Dispatch only actual independent ready authorized tasks, with separate files/processes and controlled rendering; record missing scope rather than manufacture three assignments. Director owns briefs/results and internal worker reviews, Lead owns engineering integration and team policy. No extra standing controller, worker recursion, new install, blanket testing or model change to an existing role is authorized.
@@ -49,10 +65,97 @@ This supersedes the sole-programmer rule only for this two-developer arrangement
   movement. Gameplay/dimension/rig/export-contract changes go to Lead; no new
   animation scope or model changes are authorized by this team revision.
 - Designer keeps gameplay authority. UI remains Lead-owned. Developers A/B/C,
-  original2D Artist and retired UI/UX stay inactive. No extra controllers/agents.
+  original2D Artist and retired UI/UX stay inactive. No extra standing controllers;
+  only the bounded Artist Director pilot and on-demand scout exceptions above apply.
   Fixed-model/Medium-default policy remains; requested settings are not observed UI proof.
 
+## Historical consolidation —10November2026; superseded above
+
+Dawson explicitly accepted the consolidation recommendation in adviser chat
+`01a1b3e9-a21c-7e62-855a-8d369f305b83`, human turn
+`01a1c6de-2e95-7312-bc28-cd14c7add017`: “Can you proceed with implementing those
+changes? As well as setting the agents to the levels / models you believe they
+need to be at.” This supersedes the earlier observation-only restriction for
+this bounded transition and all conflicting active UI consultation instructions.
+The adviser returns to observation-only monitoring afterward.
+
+At that transition the Lead became the sole programmer; the12November two-developer
+arrangement above now governs. The Lead retains integration and routine
+UI/UX design and implementation. The separate UI/UX role has completed its
+handoff and is retired; do not assign it further work. Retain its accepted
+interaction decisions and source pointers in [team handoff](team_handoff.md).
+The Game Designer handles material gameplay decisions and required approval of
+the current exact PR head, not routine engineering or status monitoring. The
+3D Artist retains bounded 3D and authorized 2D asset ownership, including useful
+parallel asset production. Developers A/B/C and the original 2D Artist stay inactive.
+
+Requested defaults for Lead, Designer and Artist are **GPT-6.1 Sol, Medium
+reasoning, Standard speed**. These are policy requests, not independently observed
+runtime/UI settings; see [team state](team_integration_state.json). Do not
+automatically change models, use Extra High/Max/Ultra or add workers/controllers,
+except the narrowly authorized fixed-Luna asset scout described below.
+Surface a concrete unresolved quality issue instead of repeating failed attempts.
+
+Reuse one current feature brief/asset contract and the existing state record.
+Send concise handoffs only for a changed deliverable, decision, required review
+or real blocker; omit acknowledgement/status-only loops. Keep normal autonomous
+continuation of accepted ready development and useful parallel asset work.
+Lead technical approval, actual current-head Designer approval and required
+checks still govern merges; no blanket serial gate, small-commit review gate or
+routine Dawson approval is added. No local engine, restricted verification,
+paused animation authoring and numbered human-playtest dependencies remain binding.
+This administrative transition does not resume gameplay work.
+
+## Fixed-model reasoning and asset scout — 10 November 2026
+
+Dawson's later human turn `01a1c6f0-38b2-79f3-93b7-54aabbd090c5` in the same
+Workflow Master chat explicitly requests the Luna scout/concept-first workflow
+and reasoning adjustment while **never changing models**. This is a bounded
+configuration/documentation authorization, not general adviser intervention or
+gameplay resumption. Lead/Designer/Artist stay fixed to Sol; scout stays Luna.
+
+Artist first asks Lead for the asset brief; coherent faceted 2D views precede
+bounded viewing-only scout references, then original modeling and existing
+QA/export/integration. Follow [asset workflow](3d_asset_workflow.md) and its
+[process diagram](diagrams/asset_reference_workflow.mmd). Existing approved
+concepts/deliveries remain. Licensing research and mesh/texture acquisition or
+reuse are excluded from this reference-only search. No match is not a blocker.
+
+Reasoning choices for the **next real authorized task/phase**, at fixed models:
+
+- **Medium default:** ordinary Lead/Designer/Artist work, Standard speed.
+- **Low:** simple supplied-fact lookup or administrative tasks.
+- **High:** concrete cross-system state/ownership defects, conflicting evidence,
+  dimensions/export contracts, or difficult authorized rig/deformation work.
+  These triggers do not authorize paused animations or new work by themselves.
+- Return to Medium for the next ordinary phase. No automatic Extra High/Max/Ultra.
+  Missing evidence and denied tools are not effort-escalation triggers.
+
+On a real authorized dispatch, an existing caller may set `thinking` in
+`send_message_to_thread`, **omit `model`**, and state the recipient's fixed model
+in the instruction. This controls a future Codex task; an instruction alone does
+not change live inference or independently verify the selected setting. Do not
+send an extra turn merely to reset effort. A Lead session without an exposed
+self-setting tool records a recommended next-turn effort; no self-message,
+controller or API key is introduced, and no automatic self-adjustment is claimed.
+
+The only newly authorized on-demand delegation is `asset_scout`, pinned to
+`gpt-6-luna`: High for real reference searches, Low for exact catalogue lookups.
+Its TOML omits an effort override. If custom-role loading is unavailable, the
+existing caller reads that file and dispatches explicit Luna plus effort with
+`fork_turns="none"`, carrying its narrow instructions/brief/concept in the message.
+Never inherit the Sol parent. Current custom-role discovery is unverified;
+explicit model/effort spawn is available but deliberately not exercised here.
+No standing chat, polling job, new controller or retired-developer activation.
+
 ## Current working agreement — 9 November 2026
+
+10 November supplier-transport resumption: Dawson explicitly resumed materials
+truck/warehouse unloading, then troop transport, preserving approved assets and
+concepts. His reply “Resume animations for these vehicles” in Lead turn
+`01a1c6fc-6bab-7db2-af11-a090b04ffabb` authorizes new animation for these two
+supplier vehicles only. This supersedes their earlier animation pause; other
+paused work and all no-local-engine/current-change verification limits remain.
 
 Dawson's latest publication convention: one complete playable game-loop block
 per PR, with small local checkpoint commits and a consolidated first feature
@@ -84,9 +187,9 @@ not a routine work/PR/merge blocker. Scope a genuine external permission refusal
 to the affected action and continue independent authorized work.
 
 **Trencho — 3D Artist** creates/finds free3D assets and can create2D assets;
-the original2D Artist is retired and must no longer be consulted. Consult UI/UX
-only when a menu update is needed. Existing controls reused by a world
-interaction do not create a standing menu-review gate. Artists/designers
+the original2D Artist is retired and must no longer be consulted. The 10 November
+consolidation transfers routine UI/UX work to the Lead and retires that separate
+role. Existing controls reused by a world interaction create no extra review gate. Artists/designers
 coordinate content and design with the Lead; other developer chats stay inactive.
 
 Dawson's9November convention: the GDD guides the game idea and feel, rather
@@ -99,7 +202,7 @@ in [deferred architecture](deferred_architecture.json) for later. It does not
 block current gameplay delivery or authorize an immediate refactor/benchmark.
 Earlier conflicting roster/assignment text is historical.
 
-## Current ownership — 8 November 2026
+## Historical ownership — 8 November 2026
 
 Dawson returned implementation to the Lead as the only developer. Developer C
 finishes only the current bounded Workshop handoff, then stops; no successor or
@@ -119,8 +222,8 @@ Updated 6 November 2026 under Dawson's direct instruction to align design and de
 - **Dawson:** intended experience, priorities and material compromises.
 - **Game Designer:** overall vision, gameplay scope, meaningful decisions, rules, pacing and observable requisites. Owns the [GDD](game_design_document.md), resolves real gameplay contradictions and reviews player-facing consequences.
 - **Developer:** creates the systems, chooses technical specifications/architecture, implements features, selects appropriate checks, owns integration, the current review PR and published delivery. Maintains implementation status and technical records. The Designer does not approve routine engineering choices.
-- **UI/UX developer:** interaction, menu flow, visual information hierarchy and reusable presentation, coordinated with gameplay requirements and actual system state.
-- **2D Artist:** sourced assets and their origin, license, attribution and modifications, coordinated with the Developer.
+- **Lead UI/UX ownership:** interaction, menu flow, visual information hierarchy and reusable presentation, coordinated with gameplay requirements and actual system state. The former separate UI/UX role is retired after handoff.
+- **3D Artist:** bounded 3D and authorized 2D assets, verified origin/licence and export handoff. Original 2D Artist remains inactive.
 
 Consultants contribute through explicitly agreed work. Do not activate archived developers, old review authorities or competing integration loops. The current Developer remains the integration owner.
 
@@ -150,7 +253,7 @@ Use Objective, Outcome and Next task in progress/completion handoffs. Say Comple
 
 ### Responsibility and permission questions
 
-Dawson's direct 6 November instruction: all developers, including UI/UX, bring
+Dawson's historical 6 November routing instruction: all developers, including UI/UX, bring
 questions about responsibilities, permissions, repository access and PR submission
 to the Lead Developer. Contributors use the same routing for integration questions.
 Do not ask Dawson directly for routine engineering or repository authorization.

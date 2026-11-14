@@ -1,0 +1,6 @@
+*.glb filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+# Preserve the approved original motion-data checksum, including line endings.
+passenger_paths_v02.json filter=lfs diff=lfs merge=lfs -text

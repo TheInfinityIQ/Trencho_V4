@@ -2,13 +2,17 @@ extends RefCounted
 ## Finite warehouse fixtures and space promises. IdentityLedger owns all quantities.
 signal changed(module_id: String)
 signal space_changed
+signal stock_committed(stock_id: String)
 const Packages = preload("res://game/warehousing/material_packages.gd")
 const Collision = preload("res://game/warehousing/warehouse_collision.gd")
 const MODULE_SIZE := Vector2(12,16)
 const WALL := 0.2
+const ROW_PITCH := 3.0
 const STRUCTURAL_KG := 10000
 const PREPARE_SECONDS := 1.5
 const STORE := "receiving"
+const TIMBER_SUPPORT_Y := [0.60, 1.75]
+const TIMBER_BASE_REGISTRATION_Y := Packages.TIMBER_WOOD_BASE_REGISTRATION_Y
 var modules: Dictionary = {}
 var bays: Dictionary = {}
 var reservations: Dictionary = {}
@@ -29,12 +33,14 @@ var _clearance_pending: Dictionary = {}
 var _access_departures: Dictionary = {}
 var _access_blockers: Dictionary = {}
 var _sequence := 0
+var recovery: RefCounted
 
 func _init(rear: RefCounted) -> void:
 	_rear_ref = weakref(rear)
 	rear.ledger.stock_changed.connect(_stock_changed)
 	rear.ledger.entity_moved.connect(_entity_moved)
 	rear.construction.site_changed.connect(_site_changed)
+	recovery = preload("res://game/warehousing/warehouse_recovery.gd").new(self,rear)
 
 func initialize_opening() -> void:
 	var rear: RefCounted = _rear_ref.get_ref()
@@ -66,7 +72,7 @@ func register_module(row: Dictionary) -> void:
 		for line in 4:
 			var index: int = bank*4+line
 			var id := "%s/bay-%02d" % [row.id,index]
-			var local := Vector2(-3.0 if bank == 0 else 3.0,-4.5+float(line)*3.0)
+			var local := Vector2(-3.0 if bank == 0 else 3.0,-4.5+float(line)*ROW_PITCH)
 			# Long axis follows module localX. A quarter-turn rotates the whole layout.
 			var turn: float = PI/2.0 if bool(row.quarter_turn) else PI
 			var at: Vector2 = row.center+local.rotated(turn)
@@ -80,7 +86,7 @@ func register_module(row: Dictionary) -> void:
 	_obstacles_dirty = true
 	_touch(str(row.id))
 
-func reserve(person: String, code: String, quantity: int, allow_prepare: bool = true, queue_access: bool = false) -> Dictionary:
+func reserve(person: String, code: String, quantity: int, allow_prepare: bool = true, queue_access: bool = false, candidate_filter: Callable = Callable()) -> Dictionary:
 	if quantity <= 0 or quantity > Packages.capacity(code): return _reject("INVALID_PACKAGE","Invalid material package.")
 	if free_net_kg() < quantity: return _reject("WAREHOUSE_FULL","Warehouse full — free storage or expand it.")
 	var family := Packages.fixture_family(code)
@@ -91,6 +97,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 	var ready_position_blocked := false
 	var pending_room := false
 	for pending: Dictionary in bays.values():
+		if pending.get("staging",false) or pending.get("clearing",false): continue
 		if modules[pending.module].retiring or pending.state in ["Empty","Ready"] or pending.family != family: continue
 		if not _free_cells(pending.id,pending.cells,code,quantity).is_empty(): pending_room = true
 	for bay: Dictionary in candidates:
@@ -108,6 +115,7 @@ func reserve(person: String, code: String, quantity: int, allow_prepare: bool = 
 		var queued := false
 		for candidate: int in _free_cells(bay.id,cells,code,quantity):
 			has_position = true
+			if candidate_filter.is_valid() and not candidate_filter.call(bay,cells[candidate]): continue
 			at = _choose_point(bay,person,origin,cells[candidate])
 			if not at.is_finite() and queue_access and compatible:
 				var waiting: Vector2 = _cell_service_point(bay,cells[candidate])
@@ -158,7 +166,7 @@ func probe(person: String, code: String, quantity: int, allow_prepare: bool = tr
 	return Vector2.INF
 
 func _candidate_bays(family: String) -> Array:
-	var result: Array = bays.values()
+	var result: Array = bays.values().filter(func(bay: Dictionary) -> bool: return not bay.get("staging",false) and not bay.get("clearing",false))
 	result.sort_custom(func(a: Dictionary,b: Dictionary) -> bool:
 		var first := 0 if a.state == "Ready" and a.family == family else 1 if a.state == "Empty" else 2
 		var second := 0 if b.state == "Ready" and b.family == family else 1 if b.state == "Empty" else 2
@@ -166,6 +174,7 @@ func _candidate_bays(family: String) -> Array:
 	return result
 
 func _can_reconfigure(bay: Dictionary) -> bool:
+	if bay.get("staging",false) or bay.get("clearing",false): return false
 	if bay.state != "Ready" or modules[bay.module].retiring: return false
 	for cell: Dictionary in bay.cells:
 		if not cell.stocks.is_empty(): return false
@@ -231,6 +240,7 @@ func destination_point(token: String) -> Vector2:
 func acquire_access(token: String) -> bool:
 	if not ready(token): return false
 	var promise: Dictionary = reservations[token]
+	if promise.has("participants"): return acquire_pair_access(token,promise.participants,promise.stations)
 	var rear: RefCounted = _rear_ref.get_ref()
 	var bay: Dictionary = bays[promise.bay]
 	var origin: Vector2 = rear.ledger.inspect_entity(promise.person,{},false).position
@@ -238,8 +248,47 @@ func acquire_access(token: String) -> bool:
 	if not at.is_finite(): return false
 	promise.point = at
 	promise.queued = false
-	_work_points[promise.person] = {"holder":STORE,"point":at,"bay":str(bay.id)}
-	rear.ledger.register_handling_point(STORE,str(promise.person),at)
+	var holder := str(bay.get("store",STORE))
+	_work_points[promise.person] = {"holder":holder,"point":at,"bay":str(bay.id)}
+	rear.ledger.register_handling_point(holder,str(promise.person),at)
+	return true
+
+func acquire_pair_access(token: String, people: Array, stations: Array) -> bool:
+	# The activity supplies accepted authored world roots. One existing cell
+	# promise gains two endpoints; this neither creates stock nor lifts a load.
+	if not ready(token) or people.size() != 2 or stations.size() != 2 or people[0] == people[1]: return false
+	var promise: Dictionary = reservations[token]
+	if promise.code != "M04" or people[0] != promise.person: return false
+	if promise.has("participants") and promise.participants != people: return false
+	if _work_points.has(people[1]) and people[1] not in promise.get("participants",[]): return false
+	if not stations[0] is Vector2 or not stations[1] is Vector2: return false
+	if not stations[0].is_finite() or not stations[1].is_finite() or stations[0].distance_to(stations[1]) < 1.2: return false
+	var rear: RefCounted = _rear_ref.get_ref()
+	var occupants: Array[Dictionary] = rear.ledger.rear_worker_views(rear.actors.keys(),rear.PLAYER)
+	var clear := true
+	for at: Vector2 in stations:
+		for other: String in _work_points:
+			if other not in people and _work_points[other].point.distance_squared_to(at) < 1.2*1.2: clear = false
+		for row: Dictionary in occupants:
+			if row.id in people or row.position.distance_squared_to(at) >= 1.2*1.2: continue
+			clear = false
+			if not _access_blockers.has(row.id): _access_blockers[row.id] = []
+			if at not in _access_blockers[row.id]: _access_blockers[row.id].append(at)
+	if not clear: return false
+	for index in 2:
+		if not rear.actors.has(people[index]): return false
+		var origin: Vector2 = rear.ledger.inspect_entity(str(people[index]),{},false).position
+		if rear.walk_path(origin,stations[index]).is_empty(): return false
+	var bay: Dictionary = bays[promise.bay]
+	var holder := str(bay.get("store",STORE))
+	# No observer or competing reservation sees only one committed endpoint.
+	promise.participants = people.duplicate()
+	promise.stations = stations.duplicate()
+	promise.point = stations[0]
+	promise.queued = false
+	for index in 2:
+		_work_points[people[index]] = {"holder":holder,"point":stations[index],"bay":str(bay.id)}
+		rear.ledger.register_handling_point(holder,str(people[index]),stations[index])
 	return true
 
 func commit(token: String, stock_id: String) -> Dictionary:
@@ -247,15 +296,19 @@ func commit(token: String, stock_id: String) -> Dictionary:
 	var promise: Dictionary = reservations[token]
 	var rear: RefCounted = _rear_ref.get_ref()
 	var stock: Dictionary = rear.ledger.inspect_entity(stock_id,{},false)
-	if stock.get("holder_id","") != STORE or stock.get("design_type","") != promise.code or int(stock.get("quantity",0)) != int(promise.quantity):
-		return _reject("DEPOSIT_MISMATCH","Only the exact actual deposited stock consumes this storage promise.")
 	var bay: Dictionary = bays[promise.bay]
+	if stock.get("holder_id","") != str(bay.get("store",STORE)) or stock.get("design_type","") != promise.code or int(stock.get("quantity",0)) != int(promise.quantity):
+		return _reject("DEPOSIT_MISMATCH","Only the exact actual deposited stock consumes this storage promise.")
 	if not bay.cells[int(promise.cell)].stocks.is_empty(): return _reject("POSITION_OCCUPIED","A physical crate already occupies this shelf position.")
 	_attach_stock(bay,int(promise.cell),stock_id,str(promise.code))
-	_clearance_pending[promise.person] = promise.point
+	var people: Array = promise.get("participants",[promise.person])
+	var stations: Array = promise.get("stations",[promise.point])
+	for index in people.size():
+		_clearance_pending[people[index]] = stations[index]
+		_work_points.erase(people[index])
 	reservations.erase(token)
-	_work_points.erase(promise.person)
 	_touch(bay.module)
+	stock_committed.emit(stock_id)
 	return {"ok":true}
 
 func release(token: String) -> void:
@@ -263,7 +316,7 @@ func release(token: String) -> void:
 	var promise: Dictionary = reservations[token]
 	var bay: Dictionary = bays[promise.bay]
 	reservations.erase(token)
-	_work_points.erase(promise.person)
+	for person: String in promise.get("participants",[promise.person]): _work_points.erase(person)
 	if bay.state != "Ready" and bay.preparer == promise.person:
 		var previous: String = str(bay.get("previous_family",""))
 		bay.state = "Ready" if not previous.is_empty() else "Empty"
@@ -294,6 +347,7 @@ func physical_space_status(code: String, quantity: int) -> String:
 	var preparing := false
 	var empty_site := false
 	for bay: Dictionary in bays.values():
+		if bay.get("staging",false) or bay.get("clearing",false): continue
 		if modules[bay.module].retiring: continue
 		if bay.state == "Empty":
 			empty_site = true
@@ -383,8 +437,9 @@ func stock_point(stock_id: String, person: String, keep: bool = false) -> Vector
 	var origin: Vector2 = rear.ledger.inspect_entity(person,{},false).position
 	var point := _choose_point(bay,person,origin,bay.cells[int(_stock_cells[stock_id].cell)])
 	if point.is_finite() and keep:
-		_work_points[person] = {"holder":STORE,"point":point,"bay":str(bay.id)}
-		rear.ledger.register_handling_point(STORE,person,point)
+		var holder := str(bay.get("store",STORE))
+		_work_points[person] = {"holder":holder,"point":point,"bay":str(bay.id)}
+		rear.ledger.register_handling_point(holder,person,point)
 	return point
 
 func release_point(person: String) -> void:
@@ -531,7 +586,8 @@ func _make_cells(family: String) -> Array[Dictionary]:
 	for deck in 2:
 		for row in 2:
 			for column in columns:
-				result.append({"code":"","stocks":[],"offset":Vector3(0.0 if columns == 1 else -0.93+0.62*column,0.25+0.7*deck,-0.25+0.5*row)})
+				var height: float = float(TIMBER_SUPPORT_Y[deck])+TIMBER_BASE_REGISTRATION_Y if family == "timber" else 0.25+0.7*deck
+				result.append({"code":"","stocks":[],"offset":Vector3(0.0 if columns == 1 else -0.93+0.62*column,height,-0.25+0.5*row)})
 	return result
 
 func _free_cells(bay_id: String, cells: Array, code: String, quantity: int) -> Array[int]:
@@ -565,7 +621,7 @@ func _attach_stock(bay: Dictionary, cell_index: int, stock_id: String, code: Str
 	var local: Vector3 = cell.offset
 	var at: Vector2 = bay.center+Vector2(local.x,local.z).rotated(float(bay.rotation))
 	var rear: RefCounted = _rear_ref.get_ref()
-	var result: Dictionary = rear.ledger.position_stored_stock(stock_id,STORE,at)
+	var result: Dictionary = rear.ledger.position_stored_stock(stock_id,str(bay.get("store",STORE)),at)
 	assert(result.ok,str(result))
 
 func _cell_service_point(bay: Dictionary, cell: Dictionary) -> Vector2:
@@ -605,7 +661,7 @@ func _stock_changed(id: String) -> void:
 	var stock: Dictionary = rear.ledger.inspect_entity(id,{},false)
 	var address: Dictionary = _stock_cells[id]
 	var bay: Dictionary = bays[address.bay]
-	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != STORE:
+	if int(stock.get("quantity",0)) <= 0 or stock.get("holder_id","") != str(bay.get("store",STORE)):
 		bay.cells[int(address.cell)].stocks.erase(id)
 		_stock_cells.erase(id)
 	_touch(bay.module)

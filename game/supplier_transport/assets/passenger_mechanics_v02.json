@@ -1,0 +1,44 @@
+{
+  "stage": "Actual-export measurements for revised draft; human mechanics approval pending.",
+  "supported_push_seconds": 0.4,
+  "hips_rise_before_release_m": 0.20520424842834473,
+  "knee_interior_start_deg": 104.54732188936484,
+  "knee_interior_release_deg": 151.50377277274615,
+  "heel_rise_m": 0.11013424396514893,
+  "toe_pivot_max_drift_m": 1.8623471021614067e-06,
+  "hip_vertical_velocity_last_supported_interval": 0.9144687652587891,
+  "hip_vertical_velocity_first_airborne_interval": 0.9541583061218262,
+  "release_root": {
+    "godot_xyz": [
+      0,
+      1.02,
+      3.66
+    ],
+    "raw_visual_yaw": 0,
+    "actor_yaw": -3.141592653589793,
+    "actor_yaw_unwrapped": -3.141592653589793
+  },
+  "landing_root": {
+    "godot_xyz": [
+      0,
+      0,
+      4.26
+    ],
+    "raw_visual_yaw": 0,
+    "actor_yaw": -3.141592653589793,
+    "actor_yaw_unwrapped": -3.141592653589793
+  },
+  "flight_seconds": 0.6,
+  "contact_review": {
+    "authored_key_check_pass": true,
+    "strict_1mm_midpoint_check_pass": false,
+    "accepted_for_draft_visual_review_only": [
+      {
+        "clip": "crew_rear_push_off",
+        "frame": 11.5,
+        "boot_sole_deviation_m": 0.0018906784057617365
+      }
+    ],
+    "reason": "One between-key sample differs from the boot contact plane by1.89mm, within the3mm support-ray tolerance and below one pixel at review scale. No unsupported footprint, passenger or truck-body collision. Original strict diagnostic remains unchanged; no claim of a perfect1mm sole lock or integration approval."
+  }
+}

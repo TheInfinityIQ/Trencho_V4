@@ -1,0 +1,206 @@
+{
+  "stage": "Driver v02 GLB unchanged; corrected timing_v03 video and encoded interior phases artist-reviewed. Lead/human approval pending.",
+  "source": {
+    "file": "construction_worker_driver_v02.blend",
+    "bytes": 814098,
+    "sha256": "5b6f2bbde739412a2e834f06efc1050f82cfdff9f32ece06c1cd2953bc4818d5"
+  },
+  "export": {
+    "file": "construction_worker_driver_v02.glb",
+    "bytes": 807976,
+    "sha256": "340234b61fc425d4006cb7648e691330c7eff2afc6d20298d2316ca3c6fa7cd3"
+  },
+  "video": {
+    "file": "supplier_driver_complete_review_timing_v03.mp4",
+    "bytes": 2392913,
+    "sha256": "202808a38eba837c7b0fb980b52a29324f4f83b945a969d42cfa1ae3bbb32cc1"
+  },
+  "new_clips": {
+    "supplier_driver_idle": {
+      "seconds": 4,
+      "loop": true
+    },
+    "supplier_driver_drive": {
+      "seconds": 4,
+      "loop": true
+    }
+  },
+  "duration_change": "Both new clips were 2s in withdrawn v01; now 4s.",
+  "preserved_original_clips": [
+    "idle",
+    "walk",
+    "carry_idle",
+    "carry_walk",
+    "pickup",
+    "unload",
+    "construct"
+  ],
+  "preservation_check": {
+    "geometry": [
+      {
+        "attribute": "POSITION",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "NORMAL",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "COLOR_0",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "JOINTS_0",
+        "max_difference": 0,
+        "count": 10961
+      },
+      {
+        "attribute": "WEIGHTS_0",
+        "max_difference": 0.0,
+        "count": 10961
+      }
+    ],
+    "clips": [
+      {
+        "name": "idle",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "walk",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "carry_idle",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "carry_walk",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "pickup",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "unload",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "construct",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      }
+    ],
+    "same_joint_order": true,
+    "indices_equal": true
+  },
+  "format": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "mesh_qa": {
+    "ok": true,
+    "pass": true,
+    "errors": [],
+    "warnings": [
+      "hidden back-to-back faces: SK_Construction_Worker (2 pairs) - delete to save tris"
+    ],
+    "ground_z": 0.0,
+    "zfighting": [],
+    "floating": [],
+    "back_to_back": [
+      {
+        "where": "SK_Construction_Worker",
+        "tri_pairs": 2
+      }
+    ],
+    "enclosed": [],
+    "objects": {
+      "SK_Construction_Worker": {
+        "verts": 2112,
+        "faces": 4152,
+        "tris": 4152,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 21,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "unweighted_verts": 0,
+        "verts_over_4_influences": 0
+      }
+    }
+  },
+  "accepted_warnings": "Two hidden back-to-back face pairs in unchanged seated worker deformation. No geometry/weights/index edits.",
+  "actor_floor_relative_driver_seat": [
+    0,
+    -0.407,
+    0
+  ],
+  "actor_floor_relative_body_pivot": [
+    -0.45,
+    -0.007,
+    -0.23
+  ],
+  "actor_floor_truck_rest": [
+    -0.45,
+    0.993,
+    -0.23
+  ],
+  "hips_above_actor_floor_m": 0.407,
+  "raw_visual_yaw_radians": 3.141592653589793,
+  "motion": "In-place spine/chest sway, head/neck checks; fixed wrist and ankle targets. Unchanged static wheel. No world root motion.",
+  "video_review": {
+    "camera": "Fixed close cutaway, retained source wheel/seats/floor; exterior/dashboard omitted only in review",
+    "frames": 720,
+    "fps": 30,
+    "seconds": 24,
+    "cycles_per_action": 3,
+    "speed": 1,
+    "encoding": "One fully sampled 120-frame loop repeated 3 times per action",
+    "artist_inspected_encoded_frames": [
+      31,
+      61,
+      91,
+      391,
+      421,
+      451
+    ],
+    "observations": "Visible changes in head direction and torso/shoulders across interior phases; head, both hands and wheel unobstructed. Hands remain planted.",
+    "timing_correction": "Old review imported at24fps with actions0..96 then sampled30frames/sec:1.25x plus hold. Superseded. Timing_v03 sets scene30fps BEFORE import and uses30fps sampling; actual GLB is unchanged.",
+    "phase_image_prefix": "encoded_phase_v03_"
+  },
+  "scope_limits": [
+    "Not truck driving/world motion evidence",
+    "Not driver entry/exit",
+    "Not passenger exit",
+    "No paused hauling clips",
+    "No Godot integration or runtime performance acceptance"
+  ],
+  "supersedes": "driver_delivery_v01 approval withdrawn; original files preserved",
+  "superseded_video_v02": {
+    "file": "supplier_driver_complete_review_v02.mp4",
+    "bytes": 2377892,
+    "sha256": "49dd455246188ae863157851d55836af5fc514f78ff6f1de3e2c9081ef2c6d25"
+  }
+}

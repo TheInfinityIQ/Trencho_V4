@@ -1,0 +1,94 @@
+{
+  "scope": "These six shelf-operation exports only.",
+  "runtime_vs_full_checks": [
+    {
+      "kind": "worker",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "samples": 1277,
+      "max_node_world_matrix_error": 0
+    },
+    {
+      "kind": "worker",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "samples": 1280,
+      "max_node_world_matrix_error": 3.2782554626464844e-06
+    },
+    {
+      "kind": "fixture",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "samples": 1277,
+      "max_node_world_matrix_error": 0
+    },
+    {
+      "kind": "fixture",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "samples": 1280,
+      "max_node_world_matrix_error": 3.8743019104003906e-07
+    }
+  ],
+  "root_bind_nodes": {
+    "worker": [
+      {
+        "name": "RIG_Worker",
+        "identity_error": 0.0
+      }
+    ],
+    "fixture": [
+      {
+        "name": "S4_Folding_Protected_Cargo_v02",
+        "identity_error": 0.0
+      }
+    ]
+  },
+  "summaries": {
+    "worker": {
+      "exported_vertices": 10961,
+      "triangles": 4152,
+      "mesh_nodes": 1,
+      "material_surfaces": 1,
+      "materials": 1,
+      "textures": 0,
+      "animation_count": 1
+    },
+    "fixture": {
+      "exported_vertices": 23942,
+      "triangles": 8474,
+      "mesh_nodes": 19,
+      "material_surfaces": 20,
+      "materials": 2,
+      "textures": 0,
+      "animation_count": 1,
+      "lower_insert_godot_bounds_m": [
+        [
+          -0.23000000417232513,
+          0.10000000149011612,
+          -0.3149999976158142
+        ],
+        [
+          0.23000000417232513,
+          0.17999999970197678,
+          0.3149999976158142
+        ]
+      ]
+    }
+  },
+  "identity_roots": true,
+  "clip_pair_alignment": true,
+  "engine_capture": false
+}

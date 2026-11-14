@@ -1,0 +1,21 @@
+flowchart LR
+  Buy[Purchase exactly eight real identities] --> Seats[Assign actual retained v02 seat positions / rear-to-front exit order]
+  Seats --> Driver[Separate supplier driver remains supplier-owned]
+  Seats --> Prep[Measured opposite-feet preparation / actual stand clearance]
+  Prep --> Rear[Stand / walk through cleared rear rows / crouch]
+  Rear --> Push[Approved v02 supported push-off / extend legs before flight]
+  Push --> Jump[One actual jump and landing / retain aboard custody until ground contact]
+  Jump --> Clear[Previous passenger clears actual rear landing zone]
+  Clear --> Next[Next rear-to-front passenger]
+  Jump --> Walk[Same identity walks to actual arrival point]
+  Walk --> Admit[Actual arrival changes owner/population once]
+  Clear -->|last passenger| Depart[Carrier may request clear departure]
+  Admit --> Gate[Every arrival plus actual departure required for order gate]
+  Depart --> Gate
+  Clock[Receiving activity deadlines / no animation callbacks change custody] -.-> Prep
+  Clock -.-> Push
+  Clock -.-> Jump
+  Pause[Pause freezes activity time and pose / hidden view keeps domain progressing] -.-> Clock
+  Seats --> Pose[Supported actors inherit the actual truck pivot / flight detaches into level service frame]
+  Pose --> Ground[Actual person movement events update detached roots even offscreen]
+  Pose --> Visible[Visibility gates skeletal animation only / never spatial following]

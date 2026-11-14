@@ -1,0 +1,54 @@
+{
+  "pass_": true,
+  "worker_clips": {
+    "carry_idle": 2.0,
+    "carry_walk": 0.800000011920929,
+    "construct": 2.0,
+    "idle": 2.0,
+    "pickup": 2.0,
+    "S4_worker_close": 8.0,
+    "S4_worker_open": 8.0,
+    "unload": 2.0,
+    "walk": 0.6666666865348816
+  },
+  "mechanism_clips": {
+    "S4_worker_close": 8.0,
+    "S4_worker_open": 8.0
+  },
+  "joint_position_error_m": 1.778091166803923e-05,
+  "joint_matrix_error": 5.990266799926758e-05,
+  "joint_samples": 792,
+  "original_rest_matrix_error": 0,
+  "bind_axis_mapping": "Constant bone-local mapping derived independently from original export and source rest bones; rest matrix and original channels separately required unchanged.",
+  "original_clip_preservation": [
+    {
+      "clip": "carry_idle",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "carry_walk",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "construct",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "idle",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "pickup",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "unload",
+      "max_existing_channel_error": 0
+    },
+    {
+      "clip": "walk",
+      "max_existing_channel_error": 0
+    }
+  ],
+  "scope": "Actual changed clip key/half-key transforms vs authoring source and original seven channel data; no engine/gameplay acceptance"
+}

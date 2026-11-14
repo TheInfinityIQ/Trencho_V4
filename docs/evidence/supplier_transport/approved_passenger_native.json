@@ -1,0 +1,38 @@
+{
+  "checks": [
+    "Same paid mixed shipment and eight real people created: PASS",
+    "Actual personnel service begins behind an unloading material truck: PASS",
+    "Both retained vehicle models instantiate in Godot: PASS",
+    "Actual supplier identity uses the corrected four-second driver export: delivery-0001: PASS",
+    "Actual floor-relative driver root is below the hip marker: delivery-0001: PASS",
+    "Actual supplier identity uses the corrected four-second driver export: delivery-0002: PASS",
+    "Actual floor-relative driver root is below the hip marker: delivery-0002: PASS",
+    "Quoted S2/S3 racks instantiate at the actual Cargo_Floor marker: PASS",
+    "Actual supported push-off, flight, landing and ground walk render at1x: PASS",
+    "Eight actual passenger actors remain visible independently of truck movement: PASS",
+    "Actual approved push-off and flight clips retain export timing: PASS",
+    "Pause freezes actual passenger activity time: PASS",
+    "Rear-clear carrier departs independently of unfinished freight: PASS",
+    "Actual passing route reserves its slower4m/s speed: PASS",
+    "Same episode completes exact warehouse receipt and all eight arrivals: PASS",
+    "Carrier departs after rear clearance while real arrival walks continue: PASS",
+    "Arrived identities release their supplier actors for normal worker presentation: PASS",
+    "Real gate, paid cost and accounting remain consistent: PASS"
+  ],
+  "end_time": 158.333333333334,
+  "failed": false,
+  "frames": 108,
+  "movie_fps": 24,
+  "movie_seconds": 4.5,
+  "phases": {
+    "6": true,
+    "7": true,
+    "8": true,
+    "9": true,
+    "10": true,
+    "11": true
+  },
+  "sampling": "Native fixed-fps24, exactly one1/24second model step per recorded frame; approved30fps paths interpolate against the same clock.",
+  "scope": "One paid48M02+21M08/eight-person convoy at1x using production suppliers, imported driver/racks and approved passenger v02. Supported push-off, flight, landing and clearance recorded, followed by a separate3second passing segment; exact warehouse receipt and all8arrivals finish in the same episode. Warehouse scenery/haulers omitted; no input, full-gameplay or FPS acceptance.",
+  "start_time": 17.8333333333333
+}

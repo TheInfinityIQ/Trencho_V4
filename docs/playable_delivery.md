@@ -1,12 +1,23 @@
 # Connected playable delivery
 
+## Lower-tier paired timber checkpoint — 13 November 2026
+
+The connected50kg supplier purchase, two real workers, imported authored motion,
+warehouse receipt, physical truck exit and next supported purchase passed GitHub
+run43550402781 at40a6b50. Unsupported upper manifests are refused before payment.
+See [playtest instructions and limits](paired_timber_playtest.md). Final-head
+review/publication is recorded in PR157; human stages1/2 and appearance approval
+remain pending. Upper-tier/onward handling and animated recovery are unfinished.
+
 [Physical warehousing](warehousing.md) is the active integration block: the
 starting12×16m depot, finite packages, worker-prepared fixtures, held-truck
 warnings and completed full-edge joins have scoped domain receipts. Actual
 imported rendering, native entrance and camera ceiling have scoped receipts;
 publication/adoption status is tracked in PR145.
-Ordinary return/staging recovery and paired timber transport are separately
-planned; this does not mark stages1/2 or full-game60FPS accepted.
+Remaining aboard-cargo return now has source implementation on the supplier
+feature branch; a scoped safe-withdrawal/actual-exit refund episode passed at4992164. Finite non-timber bay-clearance staging now has source implementation with its
+focused clearance/recollection episode passed at2d61539. Warehouse reload and paired timber
+transport remain separately planned; this does not mark stages1/2 or full-game60FPS accepted.
 
 [Construction follow-up](construction_delivery_completion.md): builders can fetch
 actual materials for their own starved site. The site menu shows actual delivery,

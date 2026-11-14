@@ -1,0 +1,59 @@
+{
+  "readiness": "Frozen checked ground art draft for Lead/human review. Not appearance-approved or native-integrated.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.glb",
+      "bytes": 1575672,
+      "sha256": "be2a3b5f90bd903357ec2e8726c0cfe0d875e955b6c480b16f2d30c548b9ae4d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.blend",
+      "bytes": 3397622,
+      "sha256": "fcd19eb3f0cb02fc5e4c3333c8b1d3a5720503b022ebd3f406fe046f4ac947cc"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\ground_pair_root_and_load_paths_v01.json",
+      "bytes": 1441022,
+      "sha256": "0607a02418583212ae5dfcbb4c24fd6c5be20eb2c3282aecccba8fea98751024"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\timber_ground_full_motion_draft_v01.mp4",
+      "bytes": 3143576,
+      "sha256": "b253417b0b5eed256cc054f712514a5e11065490082fddd70f68550f75e5e3f2"
+    }
+  ],
+  "clips": 46,
+  "new_clips": 17,
+  "preserved_clips": 29,
+  "checks": {
+    "actual_pair_samples": 567,
+    "flagged": 0,
+    "stance_pass": true,
+    "max_planted_ankle_drift_m": 2.506231789783077e-06,
+    "max_grip_error_m": 5.527507362065139e-07,
+    "loop_endpoint_difference": 0
+  },
+  "video": {
+    "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/timber_ground_delivery_v01/timber_ground_full_motion_draft_v01.mp4",
+    "bytes": 3143576,
+    "encoded_and_decoded_frames": 888,
+    "fps": 30,
+    "seconds": 29.6,
+    "resolution": [
+      960,
+      720
+    ],
+    "complete_source_frames": 888,
+    "decoded_samples": [
+      "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/timber_ground_delivery_v01/timber_ground_full_motion_draft_v01.mp4.decode/frame_00001.png",
+      "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/timber_ground_delivery_v01/timber_ground_full_motion_draft_v01.mp4.decode/frame_00444.png",
+      "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/timber_ground_delivery_v01/timber_ground_full_motion_draft_v01.mp4.decode/frame_00888.png"
+    ],
+    "approval": "Pending Dawson; artist render, not game capture."
+  },
+  "artist_visual_review": "All four actual encoded quarter-phase sheets inspected, including both turn views; heads/feet/supporting hands visible.",
+  "important": "Actor0 uses turn_fore;actor1 turn_aft. Native GLB front+Z,left+X,right-X. Preserve visualPI once. No new pickup. Use exact paired paths.",
+  "lead_review": "All four frozen files matched byte counts and SHA256. Lead viewed all four actual encoded phase sheets, including cardinal travel and fixed-high/following turn views. No native engine run or runtime binding.",
+  "human_appearance_approval": "Pending ground-only question in Lead chat; truck video approval is separate and also still pending here.",
+  "superseded": "Earlier44clip before_turn_pair_fix versions remain historical. Only frozen46clip export uses separate simultaneous fore/aft turn clips."
+}

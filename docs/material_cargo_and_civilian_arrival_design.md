@@ -1,5 +1,11 @@
 # Material cargo and civilian arrivals
 
+10 November authority update: Dawson explicitly answered “Resume animations for
+these vehicles” in Lead turn `01a1c6fc-6bab-7db2-af11-a090b04ffabb`. Materials
+truck unloading and troop-transport passenger sequences are now authorized;
+the earlier pause references below are historical for these two vehicles only.
+Other animation work remains paused. Preserve the existing assets and concepts.
+
 Accepted direction, 9 November 2026. Dawson requested material-specific cargo, efficient physical truck packing, rear unloading including paired plank carrying, visible civilian passengers and a completed transport passing a stopped vehicle. His later refinement selects an M35-style cab and six-wheel chassis with an enclosed moving-truck box and an upward sectional rear shutter for materials. The civilian carrier is a separate open passenger vehicle.
 
 Handling follows the accepted Designer direction for this prototype. Package capacities below include the Lead's 10 November choices under Dawson's explicit delegation for abstract materials. The Lead owns the systems, packing algorithm, routes and integration; the Artist owns original faceted art and authored animations. The ongoing pickup and construction-capacity work continues. These requirements do not establish that either transport is implemented or accepted.

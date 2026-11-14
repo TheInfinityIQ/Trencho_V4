@@ -1,0 +1,269 @@
+{
+  "stage": "Animated driver-only increment ready for Lead integration. Artist reviewed complete decoded first/reveal/end frames; human appearance/gameplay acceptance remains separate.",
+  "source": {
+    "file": "construction_worker_driver_v01.blend",
+    "bytes": 687519,
+    "sha256": "9d9c3f35394971f846c78209aae528f069ad90c2ffc4b4ce24ec435461decc6c"
+  },
+  "export": {
+    "file": "construction_worker_driver_v01.glb",
+    "bytes": 773896,
+    "sha256": "9de840b867f2d5eaa9823129c0bc79c63df175a63b1e3326b7b61e6957e68ed5"
+  },
+  "export_summary": {
+    "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/driver_delivery_v01/construction_worker_driver_v01.glb",
+    "bytes": 773896,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "joints": [
+      33
+    ],
+    "triangles": 4152,
+    "clips": [
+      {
+        "name": "carry_idle",
+        "duration": 1.9999999664723873,
+        "tracks": 25
+      },
+      {
+        "name": "carry_walk",
+        "duration": 0.7999999783933163,
+        "tracks": 26
+      },
+      {
+        "name": "construct",
+        "duration": 1.9999999664723873,
+        "tracks": 16
+      },
+      {
+        "name": "idle",
+        "duration": 1.9999999664723873,
+        "tracks": 25
+      },
+      {
+        "name": "pickup",
+        "duration": 1.9999999664723873,
+        "tracks": 22
+      },
+      {
+        "name": "supplier_driver_drive",
+        "duration": 1.9999999664723873,
+        "tracks": 20
+      },
+      {
+        "name": "supplier_driver_idle",
+        "duration": 1.9999999664723873,
+        "tracks": 20
+      },
+      {
+        "name": "unload",
+        "duration": 1.9999999664723873,
+        "tracks": 22
+      },
+      {
+        "name": "walk",
+        "duration": 0.6666666530072689,
+        "tracks": 26
+      }
+    ],
+    "external": []
+  },
+  "preserved_original_clips": [
+    "idle",
+    "walk",
+    "carry_idle",
+    "carry_walk",
+    "pickup",
+    "unload",
+    "construct"
+  ],
+  "new_driver_clips": [
+    "supplier_driver_idle",
+    "supplier_driver_drive"
+  ],
+  "animation_root": "Floor/foot-relative actor root at0, not hip-relative. Root bone has no world movement; Hips is .407m above the actor root in driver clips.",
+  "driver_hips_above_actor_floor_m": 0.40700000524520874,
+  "driver_seat_marker_relative_body_pivot": [
+    -0.45,
+    0.4,
+    -0.23
+  ],
+  "actor_floor_relative_driver_seat": [
+    0,
+    -0.40700000524520874,
+    0
+  ],
+  "actor_floor_relative_body_pivot": [
+    -0.45,
+    -0.007000005245208718,
+    -0.23
+  ],
+  "body_pivot_rest_height_m": 1.0,
+  "actor_floor_at_truck_rest": [
+    -0.45,
+    0.9929999947547912,
+    -0.23
+  ],
+  "raw_avatar_correction": {
+    "rotation_y_radians": 3.141592653589793,
+    "rotation_y_degrees": 180,
+    "reason": "Same existing raw worker presenter correction: raw visual faces+Z, seat/truckforward is-Z. Seat marker has identity rotation. Apply once to visual, do not add another PI in the clip."
+  },
+  "duration_s": {
+    "supplier_driver_idle": 2.0,
+    "supplier_driver_drive": 2.0
+  },
+  "looping": [
+    "supplier_driver_idle",
+    "supplier_driver_drive"
+  ],
+  "ownership": "Lead owns driver identity, truck/seat/body sway and world transforms. Clips have no method/custody tracks. No clone of the supplier driver joins the workforce.",
+  "qa": {
+    "ok": true,
+    "pass": true,
+    "errors": [],
+    "warnings": [
+      "hidden back-to-back faces: SK_Construction_Worker (2 pairs) - delete to save tris"
+    ],
+    "ground_z": 0.0,
+    "zfighting": [],
+    "floating": [],
+    "back_to_back": [
+      {
+        "where": "SK_Construction_Worker",
+        "tri_pairs": 2
+      }
+    ],
+    "enclosed": [],
+    "objects": {
+      "SK_Construction_Worker": {
+        "verts": 2112,
+        "faces": 4152,
+        "tris": 4152,
+        "ngons": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "wire_edges": 0,
+        "loose_verts": 0,
+        "degenerate_faces": 0,
+        "zero_length_edges": 0,
+        "inconsistent_normals_edges": 0,
+        "duplicate_verts": 0,
+        "islands": 21,
+        "inside_out_islands": 0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "materials": 1,
+        "unweighted_verts": 0,
+        "verts_over_4_influences": 0
+      }
+    }
+  },
+  "limits": "Existing cab fit only; not driver entry/exit, single-worker package handling, paired timber, crew exit, integration or performance acceptance.",
+  "format_check": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "preservation_check": {
+    "geometry": [
+      {
+        "attribute": "POSITION",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "NORMAL",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "COLOR_0",
+        "max_difference": 0.0,
+        "count": 10961
+      },
+      {
+        "attribute": "JOINTS_0",
+        "max_difference": 0,
+        "count": 10961
+      },
+      {
+        "attribute": "WEIGHTS_0",
+        "max_difference": 0.0,
+        "count": 10961
+      }
+    ],
+    "clips": [
+      {
+        "name": "idle",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "walk",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "carry_idle",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "carry_walk",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "pickup",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "unload",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      },
+      {
+        "name": "construct",
+        "same_channel_set": true,
+        "maximum_sample_difference": 0
+      }
+    ],
+    "same_joint_order": true,
+    "indices_equal": true
+  },
+  "video": {
+    "file": "supplier_driver_complete_review_v01.mp4",
+    "bytes": 472399,
+    "sha256": "55a703a5a3e61adacf00204402cec1bda51786b370796809da46fe53fd7455cb",
+    "check": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/driver_delivery_v01/supplier_driver_complete_review_v01.mp4",
+      "bytes": 472399,
+      "encoded_and_decoded_frames": 152,
+      "fps": 30,
+      "seconds": 5.066666666666666,
+      "resolution": [
+        800,
+        512
+      ],
+      "complete_source_frames": 152,
+      "decoded_samples": [
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/driver_delivery_v01/supplier_driver_complete_review_v01.mp4.decode/frame_00001.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/driver_delivery_v01/supplier_driver_complete_review_v01.mp4.decode/frame_00076.png",
+        "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation/driver_delivery_v01/supplier_driver_complete_review_v01.mp4.decode/frame_00152.png"
+      ],
+      "approval": "Pending Dawson; artist render, not game capture."
+    }
+  },
+  "accepted_warning_rationale": "Two hidden back-to-back face pairs in the seated deformation of the unchanged worker; source mesh/weights/indices remain identical. No new overlapping source geometry introduced.",
+  "explicitly_excluded": [
+    "All draft timber clips",
+    "New single-package hauling variants",
+    "Passenger exit",
+    "Driver entry/exit"
+  ]
+}

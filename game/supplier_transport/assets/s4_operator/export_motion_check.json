@@ -1,0 +1,215 @@
+{
+  "source_sha256": "8ca9cf3b3ee584ddc998f351faf164ebf9033dd45a77133a84e990a954df97e4",
+  "root_bake_joint_error_m": 2.106499319919621e-06,
+  "max_source_export_joint_error_m": 3.6385999462231337e-06,
+  "max_source_export_matrix_error": 1.7762184143066406e-05,
+  "max_fixture_matrix_error": 3.0100345611572266e-06,
+  "bind_axis_error": 0.0,
+  "half_frame_joint_samples": 5201,
+  "joint_findings": [],
+  "actual_exported_mesh_fixture_findings": [],
+  "output_files": [
+    {
+      "file": "worker_s4_full_review_v01.glb",
+      "bytes": 1937992,
+      "sha256": "0c6d99cc5ebf553ae0fd37dbd499a6570fd8d85e73354f20c23a049fed6d1fbe",
+      "kind": "worker",
+      "clip": "full_review",
+      "source_frames": [
+        1,
+        2601
+      ],
+      "duration_s": 86.66666666666667,
+      "runtime": false,
+      "animations": [
+        "worker_s4_full_review_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_full_review_v01.glb",
+      "bytes": 1456668,
+      "sha256": "62ca07785627e67e3bcee48db6c77dbd4c22730ac040df11d3bc00a0dc9a5d72",
+      "kind": "fixture",
+      "clip": "full_review",
+      "source_frames": [
+        1,
+        2601
+      ],
+      "duration_s": 86.66666666666667,
+      "runtime": false,
+      "animations": [
+        "fixture_s4_full_review_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    },
+    {
+      "file": "worker_s4_open_v01.glb",
+      "bytes": 1286560,
+      "sha256": "dc2c876d2382000a06ff863315183c276aa209a46bcc35ff7030d5779cfb7af0",
+      "kind": "worker",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "duration_s": 42.53333333333333,
+      "runtime": true,
+      "animations": [
+        "worker_s4_open_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_open_v01.glb",
+      "bytes": 1276588,
+      "sha256": "4bca814bb574b52559de8c402d1855290ba387da5376a3b1838e2ca815bd82a0",
+      "kind": "fixture",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "duration_s": 42.53333333333333,
+      "runtime": true,
+      "animations": [
+        "fixture_s4_open_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    },
+    {
+      "file": "worker_s4_close_v01.glb",
+      "bytes": 1288040,
+      "sha256": "cdd2e2ed85c7423ec62462dba2e1a3806a814a372f546a05a8cc1e51af354f63",
+      "kind": "worker",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "duration_s": 42.63333333333333,
+      "runtime": true,
+      "animations": [
+        "worker_s4_close_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_close_v01.glb",
+      "bytes": 1277000,
+      "sha256": "b2ec16675926268030cd910d3a34a2a50daf93cb4b668a128de039e48f456a81",
+      "kind": "fixture",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "duration_s": 42.63333333333333,
+      "runtime": true,
+      "animations": [
+        "fixture_s4_close_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    }
+  ],
+  "rig_objects_neutral": true,
+  "body_object_neutral": true,
+  "root_bone_preserved": true,
+  "original7clips_changed": false,
+  "readiness": "Actual exports match constrained source and approved8s lift/reverse; joint/mesh/fixture checks retained for identical asset hashes. Full encoded video and final handoff manifest pending.",
+  "comparison_reference": "Immutable V04 source evaluated with the installed Production_Joint_Limits enabled, matching final authoring source. Serialized assets unchanged; original raw diagnostic comparison retained in working history.",
+  "raw_diagnostic_joint_difference_m": 3.6385999462231337e-06,
+  "source_export_worst": {
+    "frame": 2483,
+    "bone": "LeftHandIndex3",
+    "error_m": 3.6385999462231337e-06
+  },
+  "constraint_enable_raw_matrix_difference_by_bone": {
+    "Root": 0,
+    "Hips": 0,
+    "Spine": 0,
+    "Chest": 0,
+    "UpperChest": 0,
+    "Neck": 0,
+    "Head": 0,
+    "LeftShoulder": 0,
+    "LeftArm": 0,
+    "LeftForeArm": 0,
+    "LeftHand": 0,
+    "LeftHandIndex1": 0,
+    "LeftHandIndex2": 0,
+    "LeftHandIndex3": 0,
+    "LeftHandThumb1": 0,
+    "LeftHandThumb2": 0,
+    "RightShoulder": 0,
+    "RightArm": 0,
+    "RightForeArm": 0,
+    "RightHand": 0,
+    "RightHandIndex1": 0,
+    "RightHandIndex2": 0,
+    "RightHandIndex3": 0,
+    "RightHandThumb1": 0,
+    "RightHandThumb2": 0,
+    "LeftUpLeg": 0,
+    "LeftLeg": 0,
+    "LeftFoot": 0,
+    "LeftToes": 0,
+    "RightUpLeg": 0,
+    "RightLeg": 0,
+    "RightFoot": 0,
+    "RightToes": 0
+  },
+  "approved_lift_preservation": {
+    "lift": {
+      "boundary_source_frames": [
+        670,
+        910
+      ],
+      "duration_s": 8,
+      "maximum_approved_world_joint_error_m": 1.2755638234172112e-05,
+      "worst": {
+        "offset_frame": 0,
+        "bone": "LeftToes",
+        "error_m": 1.2755638234172112e-05
+      }
+    },
+    "lower_reverse": {
+      "boundary_source_frames": [
+        1685,
+        1925
+      ],
+      "duration_s": 8,
+      "maximum_approved_world_joint_error_m": 1.1775689184743373e-06,
+      "worst": {
+        "offset_frame": 0,
+        "bone": "RightHandIndex3",
+        "error_m": 1.1775689184743373e-06
+      }
+    }
+  },
+  "unchanged_export_hashes_reverified": true
+}

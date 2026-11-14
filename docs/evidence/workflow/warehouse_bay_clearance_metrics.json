@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "feature": "warehouse-bay-clearance",
+  "workflow": "planned-feature",
+  "plan": "docs/feature_plans/warehouse_bay_clearance.json",
+  "source_revision": "f11fd3c9e0510d2f5b05acfc96c4efe1c0670668",
+  "started_at": "2026-11-12T13:48:06.436150+00:00",
+  "status": "closed",
+  "ended_at": "2026-11-12T14:06:28.335922+00:00",
+  "seconds_by_phase": {
+    "planning": 19.268067,
+    "implementation": 792.525091,
+    "direct_check": 187.923808,
+    "repair": 0,
+    "late_handling": 0,
+    "review": 0,
+    "release": 102.182806,
+    "waiting": 0,
+    "paused": 0,
+    "workflow_overhead": 0
+  },
+  "timing_scope": "Recorded phase wall time; earlier work unknown; UTC clock changes can affect duration.",
+  "active_phase": null,
+  "observation_scope": [
+    {
+      "recorded_at": "2026-11-12T14:06:28.225691+00:00",
+      "note": "One GitHub-only current-action episode passed on first execution,15checkpoints and157.2 simulated seconds; this is not native input/visual/FPS acceptance. No observed runtime regression/production repair in this scope. One shared-access planning discovery recorded with unknown separate handling duration. Early investigation before journal start is unmeasured; no comparison of total workflow efficiency is justified."
+    }
+  ],
+  "incidents": [
+    {
+      "recorded_at": "2026-11-12T14:04:46.051589+00:00",
+      "id": "staging-shared-access",
+      "kind": "planning_discovery",
+      "summary": "Cross-store warehouse/staging hauling reuses one per-worker access map; reserving source access can replace the destination face. Physical pickup now revalidates destination access and its route before custody, with an event-woken wait.",
+      "severity": "low",
+      "evidence": "Before changes WarehouseService.stock_point and reserve both wrote _work_points[person]; RearSimulation Pickup now calls acquire_access before begin_carry. The current clearance/recollection episode passed.",
+      "planning_assessment": "possible",
+      "note": "Caught during implementation before the first engine demonstration. No observed runtime regression or failed action; separate discovery/handling duration was not instrumented and is unknown."
+    }
+  ],
+  "unique_incidents_by_kind": {
+    "regression": 0,
+    "candidate_regression": 0,
+    "feature_defect": 0,
+    "planning_discovery": 1,
+    "pre_existing": 0,
+    "infrastructure": 0,
+    "workflow_error": 0,
+    "scope_change": 0
+  },
+  "confirmed_planning_gap_count": 0,
+  "tracked_repair_seconds_by_incident": {
+    "staging-shared-access": 0
+  },
+  "tokens": {
+    "measurement": "Actual Codex cumulative metadata deltas. Phase labels are approximate completion-time attribution, not request-level tracing.",
+    "complete_recorded_interval_total": {
+      "input_tokens": 6141949,
+      "cached_input_tokens": 6113792,
+      "output_tokens": 39245,
+      "reasoning_output_tokens": 17253,
+      "total_tokens": 6181194,
+      "uncached_input_tokens": 28157
+    },
+    "known_interval_subtotal": {
+      "input_tokens": 6141949,
+      "cached_input_tokens": 6113792,
+      "output_tokens": 39245,
+      "reasoning_output_tokens": 17253,
+      "total_tokens": 6181194,
+      "uncached_input_tokens": 28157
+    },
+    "unknown_intervals": 0,
+    "coverage": "Partial: through recorded receipt timestamps; active phase/final reply and earlier work excluded. Lead-only intervals; no dollar or all-service claim.",
+    "boundaries": [
+      {
+        "phase": "planning",
+        "started_at": "2026-11-12T13:48:06.436150+00:00",
+        "ended_at": "2026-11-12T13:48:25.704217+00:00",
+        "receipt_start": "2026-11-12T13:44:39.715Z",
+        "receipt_end": "2026-11-12T13:48:15.686Z",
+        "usage_delta": {
+          "input_tokens": 476430,
+          "cached_input_tokens": 471168,
+          "output_tokens": 5836,
+          "reasoning_output_tokens": 4044,
+          "total_tokens": 482266,
+          "uncached_input_tokens": 5262
+        }
+      },
+      {
+        "phase": "implementation",
+        "started_at": "2026-11-12T13:48:25.704217+00:00",
+        "ended_at": "2026-11-12T14:01:38.229308+00:00",
+        "receipt_start": "2026-11-12T13:48:15.686Z",
+        "receipt_end": "2026-11-12T14:01:14.773Z",
+        "usage_delta": {
+          "input_tokens": 4218522,
+          "cached_input_tokens": 4199040,
+          "output_tokens": 27358,
+          "reasoning_output_tokens": 10445,
+          "total_tokens": 4245880,
+          "uncached_input_tokens": 19482
+        }
+      },
+      {
+        "phase": "direct_check",
+        "started_at": "2026-11-12T14:01:38.229308+00:00",
+        "ended_at": "2026-11-12T14:04:46.153116+00:00",
+        "receipt_start": "2026-11-12T14:01:14.773Z",
+        "receipt_end": "2026-11-12T14:03:29.199Z",
+        "usage_delta": {
+          "input_tokens": 1154672,
+          "cached_input_tokens": 1152000,
+          "output_tokens": 3048,
+          "reasoning_output_tokens": 1730,
+          "total_tokens": 1157720,
+          "uncached_input_tokens": 2672
+        }
+      },
+      {
+        "phase": "release",
+        "started_at": "2026-11-12T14:04:46.153116+00:00",
+        "ended_at": "2026-11-12T14:06:28.335922+00:00",
+        "receipt_start": "2026-11-12T14:03:29.199Z",
+        "receipt_end": "2026-11-12T14:04:46.257Z",
+        "usage_delta": {
+          "input_tokens": 292325,
+          "cached_input_tokens": 291584,
+          "output_tokens": 3003,
+          "reasoning_output_tokens": 1034,
+          "total_tokens": 295328,
+          "uncached_input_tokens": 741
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Zero observed regressions does not establish regression-free behavior.",
+    "Historical incidents without tracked repair intervals have unknown repair time.",
+    "Counts and durations are cooperative bookkeeping, not tamper-proof telemetry."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "stage": "Dawson visually approved passenger exit revision v02; native integration verification pending",
+  "authority": "Lead chat, 10 November 2026: That looks better. Approved\u2014please integrate it into the game and continue with the materials truck and warehouse unloading.",
+  "approved_files": {
+    "supplier_passenger.glb": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10",
+    "passenger_paths_v02.json": "1d7bea0f07daee06753dc5a124463927c02269dfbbfa1eec6215387fbedb2af5"
+  },
+  "rejected": "Passenger v01 jump remains rejected; previous driver timing corrections preserved",
+  "limits": "Human animation approval is not native gameplay, full-loop or FPS acceptance. Item-hauling contact/animation finalization remains separately paused.",
+  "sources": [
+    "revision_manifest_v02.json",
+    "mechanics_summary_v02.json",
+    "runtime_actor_paths_proposal_v02.json"
+  ]
+}

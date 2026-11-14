@@ -15,6 +15,7 @@ const TYPES: Dictionary = {
 	"M11":{"name":"Building Materials","kg":24,"size":Vector3(0.60,0.32,0.40),"shape":"crate"},
 }
 const PLANK_SIZE := Vector3(2.00,0.05,0.15)
+const TIMBER_WOOD_BASE_REGISTRATION_Y := -0.004 # Mesh wood underside versus retained strap-origin frame.
 const MODELS := {"M01":"metal_stock.glb","M03":"closed_keg.glb","M04":"timber_bundle.glb","M05":"textile_bale.glb","M08":"fuel_can.glb"}
 
 static func model_file(code: String) -> String:

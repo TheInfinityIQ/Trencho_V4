@@ -1,0 +1,29 @@
+{
+  "scope": "Artist necessary reach bounds only; no fitted grips, occupied geometry, authoring or runtime approval. Existing dimensions/stock unchanged.",
+  "source_file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\retained_package_contacts_v01\\reach_preflight_v01.json",
+  "source_sha256": "fee0814c45cde183e368b82873264e7bc5f2475683f34ae1fc8c8f863dadf29b",
+  "actual_runtime_mapping": {
+    "S1": [
+      "M01",
+      "M04"
+    ],
+    "S2": [
+      "M02",
+      "M06",
+      "M11"
+    ],
+    "S3": [
+      "M03",
+      "M08"
+    ],
+    "S4": [
+      "M05",
+      "M07",
+      "M09",
+      "M10"
+    ]
+  },
+  "correction": "Preflight metal on S2/S3 is diagnostic; runtime Metal uses S1. Do not redesign unrelated racks around those diagnostic failures.",
+  "unresolved": "Actual contact station/support intervals and occupied geometry for retained non-timber packages. Work1.1/Approach markers are staging; closer.735 is unapproved for non-timber. Positive optimistic bounds do not establish actual grip or clearance.",
+  "lead_direction": "Artist derives a compact feasible geometry recommendation using actual family/package orientation and original bend/standing. Preserve assets/capacity; quantify any separate raised mount/version before authoring. No guessed contact/mirrored grip/new pickup."
+}

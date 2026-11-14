@@ -1,0 +1,492 @@
+{
+  "body_library": {
+    "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\timber_worker_motions_v01.glb",
+    "sha256": "192d91d6a65d8c2d0679e818676f510f8b5c163c8cb39da1080b33c28a815a75",
+    "bytes": 2561316,
+    "skins": [
+      33
+    ],
+    "mesh_resources": 1,
+    "triangles": 4152,
+    "clips": [
+      "timber_deposit_lower_aft",
+      "timber_deposit_lower_fore",
+      "timber_pickup_lower_aft",
+      "timber_pickup_lower_fore",
+      "timber_ramp_aft",
+      "timber_ramp_fore",
+      "timber_shoulder_ground_travel_aft",
+      "timber_shoulder_ground_travel_fore",
+      "timber_shoulder_release_aft",
+      "timber_shoulder_release_fore",
+      "timber_shoulder_transition_aft",
+      "timber_shoulder_transition_fore",
+      "timber_shoulder_walk_loop_aft",
+      "timber_shoulder_walk_loop_fore",
+      "timber_turn_left_aft",
+      "timber_turn_left_fore",
+      "timber_turn_right_aft",
+      "timber_turn_right_fore",
+      "timber_underhand_walk_aft",
+      "timber_underhand_walk_fore",
+      "timber_underhand_walk_loop_aft",
+      "timber_underhand_walk_loop_fore"
+    ],
+    "external_resources": []
+  },
+  "paired_clips": {
+    "pickup_lower": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\pickup_lower.glb",
+      "sha256": "11f05c5c7be22d4b2b15c57deda1a658f51dd81b773e8f56a6e3658534fbb11f",
+      "bytes": 1580588,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "pickup_lower"
+      ],
+      "external_resources": []
+    },
+    "shoulder_transition": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\shoulder_transition.glb",
+      "sha256": "7b8b2b94befd9ce420f97b7d44006a741ca591180ffe03d84cc21139e325d851",
+      "bytes": 1578924,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "shoulder_transition"
+      ],
+      "external_resources": []
+    },
+    "ramp": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\ramp.glb",
+      "sha256": "72f16253d19d6fdc4ce27f1c4270e651a2e2f05bfacd95118b9b8f899934fd08",
+      "bytes": 1820892,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "ramp"
+      ],
+      "external_resources": []
+    },
+    "shoulder_ground_travel": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\shoulder_ground_travel.glb",
+      "sha256": "884f5045f4586921436a5167c27537a6aae4ea63194352c95a409d1fa000dd5f",
+      "bytes": 1427796,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "shoulder_ground_travel"
+      ],
+      "external_resources": []
+    },
+    "turn_right": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\turn_right.glb",
+      "sha256": "00492bcecd8fff5480359cbe7e7ab9e5b82759cfbbbd73deeaac8f8baa634739",
+      "bytes": 1553832,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "turn_right"
+      ],
+      "external_resources": []
+    },
+    "turn_left": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\turn_left.glb",
+      "sha256": "c66ed5c3cc9fbd346f943d66137795ad95556120254aeab865f13ec68042e5fc",
+      "bytes": 1553832,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "turn_left"
+      ],
+      "external_resources": []
+    },
+    "shoulder_release": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\shoulder_release.glb",
+      "sha256": "93f59cd987faf5089e8a0849fe513754af7cf10d6477e5ac26e30a14d0c67448",
+      "bytes": 1578612,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "shoulder_release"
+      ],
+      "external_resources": []
+    },
+    "underhand_walk": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\underhand_walk.glb",
+      "sha256": "f2e6e8f270393da307e51c9eb8a873e73e4cee2644fc205e24bc1185fc6996cb",
+      "bytes": 1460932,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "underhand_walk"
+      ],
+      "external_resources": []
+    },
+    "deposit_lower": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\deposit_lower.glb",
+      "sha256": "130a248a18bc3729eab3f7011db8c41e2c1bc3ee5aeec708f390a78e86c24946",
+      "bytes": 1580388,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "deposit_lower"
+      ],
+      "external_resources": []
+    },
+    "shoulder_walk_loop": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\shoulder_walk_loop.glb",
+      "sha256": "d9374f826f91ca796172be93504acac50417e77e84c52d8eb6167df5d9cc095a",
+      "bytes": 1365420,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "shoulder_walk_loop"
+      ],
+      "external_resources": []
+    },
+    "underhand_walk_loop": {
+      "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\paired_clips\\underhand_walk_loop.glb",
+      "sha256": "671e6f66624c4f043fc1c44affdefb65d4097bc7fd45939fd542d0c999378632",
+      "bytes": 1375496,
+      "skins": [
+        33,
+        33
+      ],
+      "mesh_resources": 3,
+      "triangles": 9040,
+      "clips": [
+        "underhand_walk_loop"
+      ],
+      "external_resources": []
+    }
+  },
+  "complete_review": {
+    "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\timber_complete_operator_v01\\export\\timber_lower_delivery_review_v01.glb",
+    "sha256": "0e2ee4dfb8f2b57ca8bf57f888e82c858d7b7d11f45f34373c9600ca8ff9454d",
+    "bytes": 5855472,
+    "skins": [
+      33,
+      33
+    ],
+    "mesh_resources": 24,
+    "triangles": 38628,
+    "clips": [
+      "lower_delivery_draft"
+    ],
+    "external_resources": [],
+    "duration_s": 72.4,
+    "frames": 2173,
+    "windows": [
+      {
+        "stage": "pickup_lower",
+        "first_frame": 1,
+        "last_frame": 247,
+        "start_s": 0.0,
+        "end_s": 8.2,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "shoulder_transition",
+        "first_frame": 247,
+        "last_frame": 487,
+        "start_s": 8.2,
+        "end_s": 16.2,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -1.5499999523162842
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.0199999809265137
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "ramp",
+        "first_frame": 487,
+        "last_frame": 1159,
+        "start_s": 16.2,
+        "end_s": 38.6,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "shoulder_ground_travel",
+        "first_frame": 1159,
+        "last_frame": 1279,
+        "start_s": 38.6,
+        "end_s": 42.6,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "turn_right",
+        "first_frame": 1279,
+        "last_frame": 1567,
+        "start_s": 42.6,
+        "end_s": 52.2,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -1.965000033378601
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "shoulder_release",
+        "first_frame": 1567,
+        "last_frame": 1807,
+        "start_s": 52.2,
+        "end_s": 60.2,
+        "source_to_example_native": [
+          [
+            3.422854177870249e-08,
+            -1.0,
+            0.0,
+            0.11999999731779099
+          ],
+          [
+            1.0,
+            3.422854177870249e-08,
+            0.0,
+            -9.085000038146973
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "underhand_walk",
+        "first_frame": 1807,
+        "last_frame": 1927,
+        "start_s": 60.2,
+        "end_s": 64.2,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -1.965000033378601
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "stage": "deposit_lower",
+        "first_frame": 1927,
+        "last_frame": 2173,
+        "start_s": 64.2,
+        "end_s": 72.4,
+        "source_to_example_native": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.11999999731779099
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -11.96500015258789
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "warehouse_example_origin_godot_m": [
+      0.12,
+      0,
+      11.965
+    ]
+  }
+}

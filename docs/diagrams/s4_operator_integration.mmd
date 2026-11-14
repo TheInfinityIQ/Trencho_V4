@@ -1,0 +1,21 @@
+flowchart TD
+  Cargo[Confirmed packed cargo] --> Dependency[Upper cargo blocks lower S4 access]
+  Dependency --> Claim[Receiving reserves real source and warehouse cell]
+  Claim --> Aisle[Freight reserves exclusive truck aisle]
+  Aisle --> Walk[Same hauler walks to approved module-local start]
+  Walk --> Open[Receiving deadline: worker-supported opening]
+  Open --> Park[Positively locked and hands clear]
+  Park --> Pickup[Existing real pickup, carry and warehouse deposit]
+  Pickup --> Remaining{Lower cargo remains?}
+  Remaining -->|yes| Park
+  Remaining -->|no or return| CloseJob[Available actual hauler reserves closing work]
+  CloseJob --> Close[Receiving deadline: supported closing and retraction]
+  Close --> Exit[Actual worker exits and releases aisle]
+  Exit --> Door[Freight stows ramp and closes door]
+  Door --> Depart[Existing physical departure and optional return refund]
+  Open --> Event[Activity event]
+  Close --> Event
+  Event --> View[Paired export views at same origin and time]
+  View -. read only .-> Receiving[Receiving owns time, people and custody]
+  Return[Return or reassignment during operation] --> Safe[Retain operator through hands-safe boundary]
+  Safe --> Close

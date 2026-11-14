@@ -1,0 +1,53 @@
+{
+  "feature": "Clear one warehouse bay into finite staging",
+  "date": "2026-11-12",
+  "scope": "Physical non-timber whole-package bay clearance using existing Hauling actors, normal movement/pickup/deposit and existing fixtures/smoke. Remains in supplier PR146; no new animation or warehouse reload/refund work.",
+  "basis": [
+    "feature_plans/warehouse_v4.json",
+    "warehouse_recovery_menu.md",
+    "diagrams/warehouse_recovery_v4.mmd"
+  ],
+  "location": {
+    "center": [
+      106,
+      186
+    ],
+    "size": [
+      6,
+      4
+    ],
+    "rationale": "Outside construction bounds ending atY180, west of Supply TableX120 and north of supplier roadY200. One2.6x1m fixture plus1.1m service faces fits6x4m; authoritative routes and actual Area3D/worker occupancy still gate preparation."
+  },
+  "acceptance": [
+    "Warehouse inspection selects a real bay; explicit confirmation defaults Keep bay and revalidates session/bay/exact packages before mutation.",
+    "Atomically claim every whole supported unreserved package and reserve the entire matching staging cell layout. Source bay refuses new deposits/reconfiguration until the batch completes or stops safely.",
+    "A real Hauling worker visits staging before existing1.5s smoke/fixture preparation, then normal2s pickup, physical carry and2s deposit move exact package IDs, origins and counts; no instantaneous capacity gain.",
+    "Stage is source-only for ordinary jobs/output/overflow. Explicit recovery jobs alone can deposit their exact reserved cells. Staged goods remain physically usable by ordinary consumers.",
+    "One batch only; no next batch until actual staging is empty and active package/access promises clear. Occupied/preparing/blocked/in-use reasons are distinct.",
+    "Stop clearing releases uncollected claims; carried packages finish at staging before source lock releases. Staffing changes use existing safe carry handoff.",
+    "Reject timber even for light remainder until real paired transport/animation is connected; do not split or quietly single-carry it."
+  ],
+  "ownership": {
+    "WarehouseRecovery": "Warehouse-owned weak-reference coordinator for exact batch quote/claims/tagged normal haul jobs and source lock lifetime.",
+    "WarehouseService": "Existing finite fixture/cell/access/Area3D and event-driven occupancy owner; staging bay excluded from ordinary receipt/module capacity.",
+    "RearSimulation": "Existing shared actors, priorities, movement and timed preparation/pickup/deposit; tagged exact-package requests reuse these phases.",
+    "IdentityLedger": "Atomic whole batch claims; scoped preserve-package carry option retains IDs without changing ordinary split semantics.",
+    "WarehouseView": "Reuse actual existing fixture/smoke/package presentation in a staging root; no new art."
+  },
+  "planned_cases": [
+    "Existing foreign source claims/incoming promises/access refuse whole command unchanged.",
+    "A staging package picked up while another batch portion arrives cannot free the batch early.",
+    "No source lock release on pickup alone; wait for all safe deposits or stop completion.",
+    "Existing haul cancellation/reassignment must preserve shared batch claims and actual carried deposit.",
+    "Warehouse paths include staging fixture; ordinary receipt/source lookup must not assume every bay belongs to a warehouse module.",
+    "No per-frame stock scan or new global owner. Quote reads on UI command/refresh; staging emptiness follows indexed stock-change events."
+  ],
+  "verification": "One brief GitHub-only current-change episode: clear one real partially occupied starter bay through actual shared workers and fixture prep, verify same IDs/origins and quantities at staging, source reopening and ordinary staged-stock collection. Changed-script parsing only otherwise. No local engine, regression suite, broad scenario or FPS claim.",
+  "diagram": "diagrams/warehouse_bay_clearance.mmd",
+  "sources": [
+    "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "https://docs.godotengine.org/en/stable/classes/class_area3d.html"
+  ],
+  "status": "Source implemented in existing draft PR146; required43232986324 and one current-action43232975407 passed at2d61539. Native menu/rendering and full-loop acceptance remain open.",
+  "receipt": "evidence/supplier_transport/warehouse_bay_clearance.json"
+}

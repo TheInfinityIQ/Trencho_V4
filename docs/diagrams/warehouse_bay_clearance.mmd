@@ -1,0 +1,23 @@
+flowchart TD
+  Inspect[Warehouse inspection: select actual bay] --> Quote[Exact whole packages and full staging layout]
+  Quote --> Confirm{Same session/bay/quote and staging empty?}
+  Confirm -->|keep or changed| NoChange[No mutation]
+  Confirm -->|confirm| Claims[Ledger atomic whole-batch claims]
+  Claims --> Lock[Close source bay to incoming deposits and reconfiguration]
+  Lock --> Jobs[Tagged ordinary Other hauling jobs]
+  Jobs --> Visit[Real shared worker visits staging]
+  Visit --> Smoke[Existing1.5s smoke and actual compatible fixture]
+  Smoke --> Pickup[Real source approach and2s pickup]
+  Pickup --> Carry[Same package ID and origin physically carried]
+  Carry --> Drop[Reached reserved staging cell and2s deposit]
+  Drop --> More{All requested packages deposited?}
+  More -->|no| Jobs
+  More -->|yes| Unlock[Reopen source bay for normal receipt/reconfiguration]
+  Drop --> Stage[Finite staging stock remains source-only]
+  Stage --> Use[Ordinary physical collection for valid use]
+  Use --> Empty{Actually empty and no access/promises?}
+  Empty -->|yes| Quote
+  Stop[Stop clearing] --> Release[Release uncollected claims; carried packages finish safe deposits]
+  Release --> Unlock
+  Block[Actual stock/occupancy/topology events] -. wake affected work .-> Jobs
+  Forbidden[No ordinary freight, factory output, automatic overflow or single-person timber]

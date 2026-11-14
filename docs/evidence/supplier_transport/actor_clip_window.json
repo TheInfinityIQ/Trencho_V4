@@ -1,0 +1,20 @@
+{
+  "actual_time": 22.3666666666667,
+  "checks": [
+    "Same paid mixed shipment and eight real people created: PASS",
+    "Incoming passenger starts outside the service camera: PASS",
+    "Offscreen seated actor follows actual incoming hull movement before any phase change: PASS",
+    "Offscreen actor seeks the supplied clean pickup window rather than compressing the full clip: PASS",
+    "Supported actor inherits the actual truck pivot before takeoff: PASS",
+    "Actual takeoff detaches the actor into the approved level frame and reaches its real landing: PASS",
+    "First passenger actually completes rear clearance before the ground-walk observation: PASS",
+    "Actual ground movement events update the complete actor root while offscreen: PASS",
+    "Actual walking heading follows the current travelled segment: PASS"
+  ],
+  "failed": false,
+  "scope": "One changed-action observation: actual offscreen incoming hull, explicit0\u2013.6s pickup clip window, first passenger exit/landing/rear clearance, then actual ground movement and travelled-segment heading. Explicit1x simulation steps; no full material receipt or recording.",
+  "source": "a8b090e6401dddfe1556f9e8edd99817bf3cd25f",
+  "run": 42971327265,
+  "required_run": 42970702042,
+  "artifact_sha256": "e6c5585aa42b7c2522fe9101c0d3f15692b55f551dfee7518c17fe431cd7e95f"
+}

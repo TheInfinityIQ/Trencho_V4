@@ -1,0 +1,69 @@
+{
+  "feature": "Finite warehouse bay clearance and physical staging recovery",
+  "revision": "2d6153937fb0ad3fa6006d7f0c5dad4acb1d5ecb",
+  "production_checkpoint": "18fbfdaf95eb768acda76417a26d9002a3d9ef8b",
+  "required_check": {
+    "run": 43232986324,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43232986324",
+    "conclusion": "success",
+    "scope": "Changed production scripts compile; no regression suite."
+  },
+  "direct_check": {
+    "run": 43232975407,
+    "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43232975407",
+    "conclusion": "success",
+    "artifact_id": 13951995276,
+    "artifact_sha256": "14c6ec6a6ec35a71d37b287f6d66460b6c39334cdb50f2342b57c4da3953f242",
+    "scope": "One current-change warehouse bay clearance and ordinary staged-stock recollection episode. Actual empty-opening Rear/warehouse/shared workers, 0.1s explicit1x simulation steps, bounded300simulated seconds. No native UI, imported staging render, regression suite, failure matrix, other materials orFPS claim.",
+    "checks": [
+      "PASS Actual starter bay contains five whole packages /116kg",
+      "PASS Explicit exact bay batch confirmed",
+      "PASS Source bay closed to ordinary receipt during clearance",
+      "PASS No instantaneous stock or storage capacity gain",
+      "PASS Actual five-package bay clearance finishes",
+      "PASS Actual shared hauler visits/smoke then physical pickup/carry/drop within25kg",
+      "PASS Exactly116kg in five finite staging positions",
+      "PASS Same whole-package IDs, origins and quantities moved to staging",
+      "PASS Source bay empty and reopened only after actual deposits",
+      "PASS Warehouse384kg retained; occupied staging admits no second batch",
+      "PASS Staging excluded from ordinary destinations and overflow/output promises",
+      "PASS Ordinary physical collection can use staged goods",
+      "PASS Normal haulers recollect staging into real warehouse storage",
+      "PASS Actually empty staging admits the next bay batch after access clears",
+      "PASS Current episode preserves quantities, claims, custody and money"
+    ],
+    "simulation_seconds_total": 157.199999999995,
+    "simulation_seconds_clearance": 72.7999999999996,
+    "episode": {
+      "source_bay": "initial-depot/bay-04",
+      "whole_packages": 5,
+      "kg": 116,
+      "starting_total_M11": 500,
+      "warehouse_after_clearance_M11": 384,
+      "staging_after_clearance_M11": 116,
+      "warehouse_after_normal_recollection_M11": 500,
+      "final_staging_kg": 0
+    }
+  },
+  "production_source_sha256": {
+    "game/identity/identity_ledger.gd": "f3526b59986039e1fe172a6a9444a554b09302caf69ab6803e5346f5ec871f67",
+    "game/procurement/receiving_simulation.gd": "8381741d72e5487caee6dc3299cfc2bb866216c059b8ddcf44b64bfeaed0793a",
+    "game/rear_base/base_demo.gd": "b89b9d27be5b06a6b95be1a3c7672d33a43bfde0b44c9460a46e5bd8fb5613fd",
+    "game/staffing/rear_simulation.gd": "1fc4381a002502b1d2c39a2cb290dd67b6016318f42f2f65735c9f63b376cfca",
+    "game/warehousing/warehouse_recovery.gd": "d385b2c431fbb7ed1848135464f18425bf29e4cdeddf2d4fb97224138bad1e33",
+    "game/warehousing/warehouse_service.gd": "34f2bc7698fe3ebf8f8db84e09f8117d3f772bb173e55f51643e1eccd5949cf3",
+    "game/warehousing/warehouse_view.gd": "a6929a5845bfa9e3d878bac977c42b21ca7e50e103841f910d756805b6c68680"
+  },
+  "unverified": [
+    "Native warehouse E/menu interaction and confirmation appearance",
+    "Actual imported outdoor staging rendering, collision and smoke appearance; this episode observed domain preparation states only",
+    "Foreign source claims, stale confirmation, safe stop/reassignment and blocked routes/access were source-reviewed but not executed as separate scenarios",
+    "Other material types and genuine paired timber; timber clearance explicitly refused until connected",
+    "Automatic consumer source selection is not established by the explicit ordinary recollection command",
+    "Full supplier game-loop block, player stages and60FPS remain open"
+  ],
+  "review": {
+    "lead": "Scoped source/ownership review and one new-code episode completed without an observed source defect. Not final technical approval of unfinished PR146.",
+    "designer": "Changed-feature handoff to follow; complete-block exact-head approval remains required before merge."
+  }
+}

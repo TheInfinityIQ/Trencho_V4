@@ -1,0 +1,1299 @@
+{
+  "stage": "Static materials vehicle with authored door/ramp clips. Pending Dawson visual/motion approval and Lead integration. Driver/paired carry/package stages separate.",
+  "axes": "Metres. glTF/Godot+Y up/-Z forward; Blender+Z up/+Y forward.",
+  "dimensions_godot_xyz_m": [
+    2.434999942779541,
+    3.390036940574646,
+    5.829999923706055
+  ],
+  "bounds_blender_xyz_m": [
+    [
+      -1.2174999713897705,
+      -3.2799999713897705,
+      -3.6835670471191406e-05
+    ],
+    [
+      1.2174999713897705,
+      2.549999952316284,
+      3.390000104904175
+    ]
+  ],
+  "nominal_body_width_m": 2.12,
+  "wheel_radius_m": 0.43,
+  "track_m": 1.8,
+  "axles_godot_z_m": [
+    -1.85,
+    1.65,
+    2.55
+  ],
+  "wheel_spin": "LocalX angle=-signed_forward_travel/0.43; allsix share one mesh",
+  "front_steer": "Steer_FL/FR localY; positiveleft",
+  "body_sway": "Body_Pivot localZroll/localXpitch, originGodotY1.0; Lead runtime.",
+  "cargo": {
+    "canonical_worker_height_m": 1.823499495,
+    "usable_length_m": 2.735249243,
+    "usable_width_m": 1.9,
+    "floor_world_y_m": 1.02,
+    "opening_width_m": 1.9,
+    "guaranteed_opening_height_m": 1.94,
+    "opening_bottom_world_y_m": 1.04,
+    "opening_top_world_y_m": 2.98,
+    "aisle_width_m": 0.8,
+    "side_lane_width_m": 0.55,
+    "driver_hip_world": [
+      -0.45,
+      1.4,
+      -0.23
+    ],
+    "driver_eye_world": [
+      -0.45,
+      2.08,
+      -0.24
+    ],
+    "driver_floor_world": [
+      -0.45,
+      0.993,
+      -0.23
+    ]
+  },
+  "ramp": {
+    "horizontal_run_m": 3,
+    "rise_m": 1.02,
+    "width_m": 0.9,
+    "stow": "Slides underdeck; extends rear then raisesdock/lowersgroundend.",
+    "tip_marker_error_m": 4.76837158203125e-07,
+    "workzone": "Rear_Access andRamp_Ground are referencegroundtargets; Lead checks actualterrain/clearance beforedeploy.",
+    "floor_step": "Silltop1.04m versuscargo/rampdock1.02m; small20mmthreshold must be included in physicalfloorroute."
+  },
+  "door": {
+    "type": "Tenrigidsectionalpanels, fixedjointlength0.194m, vertical\u00e2\u2020\u20190.30mcurvedheader\u00e2\u2020\u2019overhead path; nofoldtailgate",
+    "fully_open_lowest_y_m": 3.2825000286102295,
+    "overhead_panel_clearance": "Fullopenpanels above2.98mopening; endpoint boundschecked",
+    "clips": {
+      "ramp_deploy": {
+        "seconds": 2,
+        "targets": [
+          "Door_Section_00",
+          "Door_Section_01",
+          "Door_Section_02",
+          "Door_Section_03",
+          "Door_Section_04",
+          "Door_Section_05",
+          "Door_Section_06",
+          "Door_Section_07",
+          "Door_Section_08",
+          "Door_Section_09",
+          "Ramp_Root"
+        ]
+      },
+      "ramp_stow": {
+        "seconds": 2,
+        "targets": [
+          "Door_Section_00",
+          "Door_Section_01",
+          "Door_Section_02",
+          "Door_Section_03",
+          "Door_Section_04",
+          "Door_Section_05",
+          "Door_Section_06",
+          "Door_Section_07",
+          "Door_Section_08",
+          "Door_Section_09",
+          "Ramp_Root"
+        ]
+      },
+      "door_open": {
+        "seconds": 2,
+        "targets": [
+          "Door_Section_00",
+          "Door_Section_01",
+          "Door_Section_02",
+          "Door_Section_03",
+          "Door_Section_04",
+          "Door_Section_05",
+          "Door_Section_06",
+          "Door_Section_07",
+          "Door_Section_08",
+          "Door_Section_09",
+          "Ramp_Root"
+        ]
+      },
+      "door_close": {
+        "seconds": 2,
+        "targets": [
+          "Door_Section_00",
+          "Door_Section_01",
+          "Door_Section_02",
+          "Door_Section_03",
+          "Door_Section_04",
+          "Door_Section_05",
+          "Door_Section_06",
+          "Door_Section_07",
+          "Door_Section_08",
+          "Door_Section_09",
+          "Ramp_Root"
+        ]
+      }
+    },
+    "sequence": "door_open2s -> ramp_deploy2s -> actualpickup/deposit -> ramp_stow2s -> door_close2s. Everyclip explicitlycontrolsall11mechanismnodes, includingconstantothermechanismposes. Noautomaticcustody/statecallbacks inasset."
+  },
+  "nodes": {
+    "Cargo_Floor": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        1.7176246643066406
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Cargo_Front": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        0.3499999940395355
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Cargo_Left": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.949999988079071,
+        0.019999980926513672,
+        1.7176246643066406
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Cargo_Rear": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        3.085249185562134
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Cargo_Right": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.949999988079071,
+        0.019999980926513672,
+        1.7176246643066406
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Eye": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        1.0799999237060547,
+        -0.23999999463558197
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Floor": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        -0.00700002908706665,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Seat": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.44999998807907104,
+        0.3999999761581421,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Exhaust_Emitter": {
+      "parent": "Body_Pivot",
+      "translation": [
+        -0.9900000095367432,
+        1.505000114440918,
+        0.029999999329447746
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Passenger_Seat": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0.44999998807907104,
+        0.3999999761581421,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Loading_Ramp": {
+      "parent": "Ramp_Root",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 0
+    },
+    "Ramp_Root": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        -0.13999998569488525,
+        -0.08340977877378464
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Ramp_Top": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.019999980926513672,
+        3.085249185562134
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_00": {
+      "parent": "Door_Section_00",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_00": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        0.09700000286102295,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_01": {
+      "parent": "Door_Section_01",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_01": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        0.29100000858306885,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_02": {
+      "parent": "Door_Section_02",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_02": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        0.48500001430511475,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_03": {
+      "parent": "Door_Section_03",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_03": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        0.6790000200271606,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_04": {
+      "parent": "Door_Section_04",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_04": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        0.8730000257492065,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_05": {
+      "parent": "Door_Section_05",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_05": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        1.066999912261963,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_06": {
+      "parent": "Door_Section_06",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_06": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        1.261000156402588,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_07": {
+      "parent": "Door_Section_07",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_07": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        1.4549999237060547,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_08": {
+      "parent": "Door_Section_08",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_08": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        1.6490001678466797,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Door_Slat_09": {
+      "parent": "Door_Section_09",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 1
+    },
+    "Door_Section_09": {
+      "parent": "Rear_Door",
+      "translation": [
+        0,
+        1.8429999351501465,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Door": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0.039999961853027344,
+        3.1202492713928223
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Materials_Body": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 2
+    },
+    "SM_Materials_Glass": {
+      "parent": "Body_Pivot",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 3
+    },
+    "Body_Pivot": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0,
+        1,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Driver_Exit_Left": {
+      "parent": "Materials_Visual",
+      "translation": [
+        -1.649999976158142,
+        0,
+        -0.23000000417232513
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Ramp_Ground": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0,
+        0,
+        6.085249423980713
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Rear_Access": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0,
+        0,
+        6.685249328613281
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_ML": {
+      "parent": "Spin_ML",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_ML": {
+      "parent": "Materials_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        1.649999976158142
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_MR": {
+      "parent": "Spin_MR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_MR": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        1.649999976158142
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RL": {
+      "parent": "Spin_RL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_RL": {
+      "parent": "Materials_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        2.549999952316284
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_RR": {
+      "parent": "Spin_RR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_RR": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        2.549999952316284
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FL": {
+      "parent": "Spin_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_FL": {
+      "parent": "Steer_FL",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FL": {
+      "parent": "Materials_Visual",
+      "translation": [
+        -0.8999999761581421,
+        0.4300000071525574,
+        -1.850000023841858
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "SM_Wheel_FR": {
+      "parent": "Spin_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "mesh": 4
+    },
+    "Spin_FR": {
+      "parent": "Steer_FR",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Steer_FR": {
+      "parent": "Materials_Visual",
+      "translation": [
+        0.8999999761581421,
+        0.4300000071525574,
+        -1.850000023841858
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Materials_Visual": {
+      "parent": null,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "mesh_resources": 5,
+  "mesh_instances": 19,
+  "triangles_unique": 13696,
+  "triangles_instances": 34552,
+  "materials": [
+    {
+      "name": "M_Transport_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5199999809265137
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "name": "M_Transport_Glass",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.23999999463558197,
+          0.3799999952316284,
+          0.44999998807907104,
+          0.20000000298023224
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.18000000715255737
+      }
+    },
+    {
+      "name": "M_Pickup_Wheel_Palette",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.800000011920929
+      }
+    }
+  ],
+  "images": 0,
+  "skins": 0,
+  "accepted_warnings": {
+    "raw": [
+      "hidden back-to-back faces: SM_Materials_Body (68 pairs) - delete to save tris",
+      "hidden back-to-back faces: SM_Loading_Ramp (52 pairs) - delete to save tris",
+      "hidden back-to-back faces: SM_Materials_Glass<->SM_Materials_Body (12 pairs) - delete to save tris"
+    ],
+    "reason": "Hiddenmountedcontactfaces onfixedbody, anti-slipbar/rampcontacts andglass/frames. No reportedz-fighting/floating/winding/degenerate/nonmanifolderrors. Tinywheel-bound~0.04mmbelowground isnominalcontacttolerance."
+  },
+  "provenance": {
+    "body_door_ramp": "Original Trencho parametricgeometry afterall-angleconcept andlicensed-foundationinspection.",
+    "wheel": "Originalownpickupv03sharedwheel scaledfromR.36to.43. No externalgeometryinwheel.",
+    "reference": "DawsonM35page/moving-truckphoto; no referenceimages/brands/insigniadistributed.",
+    "search": "asset_reference/README.md; ZskyCCBYcandidateinspectedandrejected,nogeometry/materialcopied.",
+    "concept": "concept_all_angles_v01.png, exactpromptretained; conceptnotCAD."
+  },
+  "checks": {
+    "mesh": "mesh_review_published.json pass",
+    "format": "Khronos0errors/0warnings;14intendedemptymarkerinfos",
+    "roundtrip": "roundtrip_check.json all19meshbounds<1e-4m,actualfullopendoorclearanceandramp-tipalignmentchecked",
+    "clips": "animation_contract_check.json4clips2seconds/all11nodeseach",
+    "source": "v02 saved source reopened; exact marker verified; one scene. v01 QA/mesh-bounds/clip checks apply by exact binary and normalized JSON equivalence.",
+    "marker": "marker_fix_v02.json and marker_roundtrip_v02.json: exact Cargo_Floor; complete binary geometry/animation identical to v01; JSON identical apart from marker name"
+  },
+  "unverified": [
+    "Actualgamecontrollerandcollision/routing/custody",
+    "Actualseateddriver/pairedworkerclips",
+    "Terrainfit/rearworkzoneclearance",
+    "Runtimeperformance",
+    "Dawsonvisual/motionapproval"
+  ],
+  "files": [
+    {
+      "file": "faceted_materials_vehicle_v02.glb",
+      "bytes": 1041888,
+      "sha256": "55c6af7bc322131bb0fce6c54b7c58319a7c390a421823c93c684563a895e271"
+    },
+    {
+      "file": "faceted_materials_vehicle_v02.blend",
+      "bytes": 515313,
+      "sha256": "b12de44ca4a8d1790f47227da73a331c950e4e1d22c9edcb934027cce617f1c6"
+    },
+    {
+      "file": "concept_all_angles_v01.png",
+      "bytes": 2106223,
+      "sha256": "c36e8713e26eeb9ee3b770dd105efe51f152f8a7b00deefd7859fb9313ea9d19"
+    },
+    {
+      "file": "materials_door_ramp_review_v01.mp4",
+      "bytes": 2323513,
+      "sha256": "a504d1bca0818b7bb5833c45fd1ee428c4e7f3029190cea7993648385e7e84ab"
+    }
+  ],
+  "video": {
+    "file": "materials_door_ramp_review_v01.mp4",
+    "original_source": "faceted_materials_vehicle_v01.glb",
+    "equivalence": "Only marker name changed in v02. Full GLB BIN and all remaining JSON identical; no visible or motion change. Do not relabel original footage as newly rendered v02."
+  }
+}

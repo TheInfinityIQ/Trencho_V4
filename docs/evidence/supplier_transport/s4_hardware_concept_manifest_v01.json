@@ -1,0 +1,33 @@
+{
+  "readiness": "Measured 2D hardware concept; Lead acceptance required before modeling. No mechanism/source/animation changes.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\HANDOFF.md",
+      "bytes": 4249,
+      "sha256": "78f660ebc79115a0cf78557dd5b7b57903a6c0e52dce5c1c245b5347ecadd038"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\s4_closed_folded_hardware_concept_v01.png",
+      "bytes": 514133,
+      "sha256": "76d315c101f7121c3bf2cfb31d12b60fdb54eb4249e3225215d3a83efa6e03a3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\s4_closed_folded_hardware_concept_v01.svg",
+      "bytes": 35679,
+      "sha256": "b1a1453ce23904ca19708cfd9c9365b3f2dbb9dc02e92d2700f7a5e33e886d4f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_mechanism_concept_v01\\s4_hardware_dimensions_v01.json",
+      "bytes": 1846,
+      "sha256": "f486baa37da3daf37feee256d91306cf511da711aa2945d2555ceb16446545fc"
+    }
+  ],
+  "lead_acceptance": {
+    "stage": "Accepted for separately versioned static/rigid-mechanism prototype; not final clearance or finished animation approval",
+    "visual": "Inspected full four-panel hardware PNG and measured handoff.",
+    "explicit_refinement": "HingeY690 accepted for prototype with intact6mm padding, nominal5mm parked wall gap and15mm lifted-bale gap; no further reduction/tolerance waiver or capacity/support shrink.",
+    "conditions": "Actual new hardware, seats/locks, truck/neighbor cargo, mechanism sweep and lower stored/lifted bale/hand approach checked before export. Intentional mating contacts distinguished from clashes. Return concrete conflict if failed.",
+    "deliverable": "Versioned source/GLB, exported engine-local pivot/seat/lock markers, finite1.5s unlock/fold/park and coherent close/lock, full normal-speed review video and QA/preservation receipts. No new person pickup/body or other-item hauling clips.",
+    "verified_manifest_files": 4
+  }
+}

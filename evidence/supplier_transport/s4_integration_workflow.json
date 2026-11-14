@@ -1,0 +1,33 @@
+{
+  "feature": "Approved S4 worker-operated materials unloading",
+  "plan": "docs/s4_operator_integration.md",
+  "plan_file_creation_utc": "2026-11-13T05:16:28.588204+00:00",
+  "recorded_utc": "2026-11-13T18:28:37.782128+00:00",
+  "wall_time_scope": "Includes interrupted research inquiry and team coordination; focused development time was not separately metered.",
+  "token_usage": null,
+  "token_usage_reason": "This chat does not expose attributable provider usage counters; do not substitute payload estimates.",
+  "regressions_detected": null,
+  "regression_scope": "No regression suite or broad scenarios run; none may be inferred from source parsing.",
+  "planning_omissions": [
+    {
+      "finding": "First support-height edit affected all S4 cargo instead of the accepted M05-only variant.",
+      "caught": "Source review before publication/engine check",
+      "resolution": "Declare manual-bale variant in quote; preserve ordinary racks/supports.",
+      "repair_seconds": null
+    }
+  ],
+  "precheck_source_corrections": [
+    "Replace final ingress point instead of appending a duplicate rear detour.",
+    "Release unused warehouse promise during accepted return while retaining actual operator support."
+  ],
+  "direct_check": {
+    "status": "Passed bounded corrected check",
+    "scope": "One actual 50kg M05 receiving delivery: upper-first, same worker opening, parked lower pickup, close and safe exit; actual imported paired clip/root alignment and paused cosmetic sleep. No warehouse/full-loop/native/FPS acceptance.",
+    "source": "0ae99026fb2a773ae53b2a8c0ec24b3a7e9938a1",
+    "run": 43528719333,
+    "job": 132240814993,
+    "original_failed_run": 43483595686,
+    "failure_classification": "Verification-script error: optional raw-order heading key accessed directly; production default already exists. Unhandled error left SceneTree alive until process timeout.",
+    "correction": "Use order.get heading default and 15s watchdog; unchanged 45s process limit; no production or approved-motion change."
+  }
+}

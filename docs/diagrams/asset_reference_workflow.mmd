@@ -1,0 +1,21 @@
+flowchart TD
+  Request[Accepted asset task] --> Brief[Artist asks Lead for purpose / accepted fit / moving parts / stage / faceted references]
+  Brief --> Decision{Material gameplay or style contradiction?}
+  Decision -->|yes| Designer[Lead asks Designer for that decision]
+  Designer --> Concept
+  Decision -->|no| Concept[Coherent faceted 2D turnaround / preserve compliant approved concepts]
+  Concept --> Views[Front / back / left / right / useful three-quarter / top-bottom where shape needs them]
+  Views --> Resolve[Resolve contradictory equipment and proportions before modeling]
+  Resolve --> Scout[On-demand asset_scout / fixed Luna / explicit dispatch effort]
+  Scout --> Local[Inspect existing project viewing references first]
+  Local --> Search[One bounded external pass / up to 3-5 viewing references]
+  Search --> Shortlist[URLs / creators / visual fit / mismatches / unknowns OR honest no match]
+  Shortlist --> Select[Artist selects useful references; no match is not a blocker]
+  Select --> Original[Artist authors original model from accepted brief and concept]
+  Original --> QA[Proportionate existing asset QA / export / readiness evidence]
+  QA --> Handoff[Editable source and export / dimensions / orientation / pivot / actual limits]
+  Handoff --> Integrate[Lead integrates under existing permitted checks and required Designer review]
+  Prohibited[Viewing references only: no imported mesh / tracing / resculpting / geometry-texture reuse / paid download / purchase]
+  Prohibited -.-> Scout
+  Paused[Paused new animation and no local engine remain binding]
+  Paused -.-> QA

@@ -1,0 +1,1052 @@
+{
+  "version": 1,
+  "date": "2026-11-10",
+  "readiness": "Three reviewed static shelves ready for Lead integration; no worker pickup/extraction/carry claim.",
+  "source": {
+    "file": "s2_s3_s4_static_v01.blend",
+    "bytes": 258662,
+    "sha256": "f5ce4a1274cb991cda3af03a10d83a31af2135360cbcaf42e8f20fd7668bcefb"
+  },
+  "source_scene_count": 1,
+  "source_actions": 0,
+  "source_contains_s1": false,
+  "axes": "Metres, Godot+Yup. Shelf localX=depth,localZ=length. Bottom-centre origin,identityrotation,unitscale. Cargo nativeX=length; use exact Packet rotations intentionally.",
+  "parent": "Materials_Visual/Body_Pivot/Cargo_Floor. Existing marker is truck(0,1.02,1.7176246643); placement table is RELATIVE to that marker, with no extra1.02 offset.",
+  "restraints": "Restraint_00 etc are separate static mesh children; remove corresponding one BEFORE pickup.20mm low lips,50mm release. No new restraint mechanism animation.",
+  "support": "Deck markers are actual upper support planes. Clear bay650x480mm is free space; flat support is644x474mm on S2/S3,628x458mm padding on S4. Padding lies inside30mm structure.",
+  "packet_contract": "Packet_00_00 etc are mesh-bottom pivots. Standard Packet yawY=-90degrees turns medium600mm nativeX along rackZ. S3 Can_Packet slots have identityrotation and Z\u00b1160mm: two300mm cans along racklength,400mm acrossdepth. One keg OR two cans perlevel; not both. No extra unsupported stacks inferred.",
+  "height_limits": "S2 pitch450mm minus30structure=420clear;50release leaves370mm packageH, so400mm bale belongs in S4. S3/S4 pitch600 gives570clear;500keg70mm remaining /420can150mm.",
+  "grip_limit": "Approach and Extract markers are PROVISIONAL alignment references. Actual anatomical pickup/contact/path remains unvalidated; these static exports do not grant a worker route through occupied racks.",
+  "stock": "Shared visuals only, no new stock. Runtime material labels and actual netkg/capacity including partials; quantities/fees unchanged.",
+  "collision": "Visual GLBs have no proxies. Lead owns matching runtime collision and reservations.",
+  "provenance": "Original artist-authored shelf geometry and project palette. Concept sheets preceded bounded fixed-Luna viewing references; no external mesh/texture incorporated. See concept_review_v01.md and reference_selection_v01.md.",
+  "concepts": [
+    "s2_concept_v01.png",
+    "s3_concept_v01.png",
+    "s4_concept_v01.png"
+  ],
+  "prompts": "concept_prompts_v01.json",
+  "concept_tool": "Built-in image generation",
+  "accepted_warning_rationale": "Hidden back-to-back contact faces and coincident seam vertices between editable closed frame parts. Visible coplanar panel overlap was fixed. No mesh QA errors.",
+  "video": {
+    "file": "s2_s3_s4_static_review_v01.mp4",
+    "bytes": 1056624,
+    "sha256": "38e2637c8e5830f17db1e23818ce1c45830095f02950438eb6603da5aba14ddd",
+    "manifest": {
+      "video": {
+        "file": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves/s2_s3_s4_static_review_v01.mp4",
+        "bytes": 1056624,
+        "encoded_and_decoded_frames": 498,
+        "fps": 30,
+        "seconds": 16.6,
+        "resolution": [
+          800,
+          640
+        ],
+        "complete_source_frames": 498,
+        "decoded_samples": [
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves/s2_s3_s4_static_review_v01.mp4.decode/frame_00001.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves/s2_s3_s4_static_review_v01.mp4.decode/frame_00249.png",
+          "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves/s2_s3_s4_static_review_v01.mp4.decode/frame_00498.png"
+        ],
+        "approval": "Pending Dawson; artist render, not game capture."
+      },
+      "ranges": [
+        {
+          "asset": "S2_CrateShelf",
+          "first_frame": 1,
+          "last_motion_frame": 151,
+          "last_frame": 166,
+          "end_hold_frames": 15
+        },
+        {
+          "asset": "S3_RestraintRack",
+          "first_frame": 167,
+          "last_motion_frame": 317,
+          "last_frame": 332,
+          "end_hold_frames": 15
+        },
+        {
+          "asset": "S4_ProtectedCargo",
+          "first_frame": 333,
+          "last_motion_frame": 483,
+          "last_frame": 498,
+          "end_hold_frames": 15
+        }
+      ],
+      "capture": "Actual imported static GLBs rotated for inspection. No authored asset animation or game acceptance."
+    },
+    "first_reveal_end_visually_checked": true
+  },
+  "local_godot_run": false,
+  "gameplay_or_performance_acceptance": false,
+  "human_appearance_approval": "Pending",
+  "assets": [
+    {
+      "root": "S2_CrateShelf",
+      "collection": "ASSET_S2_CrateShelf",
+      "file": "s2_crateshelf_v01.glb",
+      "external_LDH_m": [
+        0.7,
+        0.53,
+        1.5
+      ],
+      "clear_support_footprint_LD_m": [
+        0.65,
+        0.48
+      ],
+      "support_tops_m": [
+        0.1,
+        0.55,
+        1.0
+      ],
+      "relative_to_Cargo_Floor_godot_xyz_m": [
+        0.665,
+        0,
+        -0.9176246215
+      ],
+      "qa_pass": true,
+      "errors": [],
+      "warnings": [
+        "SM_S2_CrateShelf: duplicate verts=48 loose verts=0",
+        "hidden back-to-back faces: SM_S2_CrateShelf (158 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_S2_CrateShelf<->S2_CrateShelf__Restraint_01 (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_S2_CrateShelf<->S2_CrateShelf__Restraint_00 (6 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_S2_CrateShelf<->S2_CrateShelf__Restraint_02 (6 pairs) - delete to save tris"
+      ],
+      "bounds_blender_xyz_m": [
+        [
+          -0.26499998569488525,
+          -0.3499999940395355,
+          0.0
+        ],
+        [
+          0.26499998569488525,
+          0.3499999940395355,
+          1.5
+        ]
+      ],
+      "visuals": [
+        "SM_S2_CrateShelf",
+        "S2_CrateShelf__Restraint_00",
+        "S2_CrateShelf__Restraint_01",
+        "S2_CrateShelf__Restraint_02"
+      ],
+      "summary": {
+        "bytes": 297540,
+        "mesh_resources": 4,
+        "mesh_instances": 4,
+        "primitives": 4,
+        "materials": 1,
+        "triangles_per_mesh_resource": 3084,
+        "vertices_per_mesh_resource": 7577,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "bytes": 297540,
+      "sha256": "8e316683100da54c661faa2b0307a5ce724c2f358f20d2ff8d9c8d41b0b4b12f",
+      "export_nodes": [
+        {
+          "extras": {
+            "export_marker_name": "Approach_00"
+          },
+          "name": "Approach_00",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Approach_01"
+          },
+          "name": "Approach_01",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Approach_02"
+          },
+          "name": "Approach_02",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_00"
+          },
+          "name": "Deck_00",
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_01"
+          },
+          "name": "Deck_01",
+          "translation": [
+            0,
+            0.550000011920929,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_02"
+          },
+          "name": "Deck_02",
+          "translation": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_00"
+          },
+          "name": "Extract_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_01"
+          },
+          "name": "Extract_01",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.6000000238418579,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_02"
+          },
+          "name": "Extract_02",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            1.0499999523162842,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_00_00"
+          },
+          "name": "Packet_00_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_01_00"
+          },
+          "name": "Packet_01_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.550000011920929,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_02_00"
+          },
+          "name": "Packet_02_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_00"
+          },
+          "name": "Release_00",
+          "translation": [
+            -0.23999999463558197,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_01"
+          },
+          "name": "Release_01",
+          "translation": [
+            -0.23999999463558197,
+            0.6000000238418579,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_02"
+          },
+          "name": "Release_02",
+          "translation": [
+            -0.23999999463558197,
+            1.0499999523162842,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_00"
+          },
+          "mesh": 0,
+          "name": "Restraint_00"
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_01"
+          },
+          "mesh": 1,
+          "name": "Restraint_01"
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_02"
+          },
+          "mesh": 2,
+          "name": "Restraint_02"
+        },
+        {
+          "mesh": 3,
+          "name": "SM_S2_CrateShelf"
+        },
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "extras": {
+            "external_LDH_m": [
+              0.7,
+              0.53,
+              1.5
+            ],
+            "support_tops_m": [
+              0.1,
+              0.55,
+              1.0
+            ],
+            "stage": "Static shelves; carrying motion, structural load rating and game integration separate.",
+            "clear_support_footprint_LD_m": [
+              0.65,
+              0.48
+            ],
+            "removal_rule": "Remove the corresponding restraint BEFORE any pickup; static meshes, no mechanism clip. Low lip20mm; release50mm. No long S1 aisle rails."
+          },
+          "name": "S2_CrateShelf"
+        }
+      ],
+      "flat_solid_support_LD_m": [
+        0.644,
+        0.474
+      ],
+      "clear_internal_LD_m": [
+        0.65,
+        0.48
+      ],
+      "roundtrip": {
+        "file": "s2_crateshelf_v01.glb",
+        "bounds_error_m": 0.0,
+        "bounds_blender_xyz_m": [
+          [
+            -0.26499998569488525,
+            -0.3499999940395355,
+            0.0
+          ],
+          [
+            0.26499998569488525,
+            0.3499999940395355,
+            1.5
+          ]
+        ]
+      },
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "root": "S3_RestraintRack",
+      "collection": "ASSET_S3_RestraintRack",
+      "file": "s3_restraintrack_v01.glb",
+      "external_LDH_m": [
+        0.7,
+        0.53,
+        1.5
+      ],
+      "clear_support_footprint_LD_m": [
+        0.65,
+        0.48
+      ],
+      "support_tops_m": [
+        0.1,
+        0.7
+      ],
+      "relative_to_Cargo_Floor_godot_xyz_m": [
+        0.665,
+        0,
+        -0.2176246215
+      ],
+      "qa_pass": true,
+      "errors": [],
+      "warnings": [
+        "SM_S3_RestraintRack: duplicate verts=36 loose verts=0",
+        "hidden back-to-back faces: SM_S3_RestraintRack (106 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_S3_RestraintRack<->S3_RestraintRack__Restraint_01 (8 pairs) - delete to save tris",
+        "hidden back-to-back faces: SM_S3_RestraintRack<->S3_RestraintRack__Restraint_00 (6 pairs) - delete to save tris"
+      ],
+      "bounds_blender_xyz_m": [
+        [
+          -0.26499998569488525,
+          -0.3499999940395355,
+          0.0
+        ],
+        [
+          0.26499998569488525,
+          0.3499999940395355,
+          1.5
+        ]
+      ],
+      "visuals": [
+        "SM_S3_RestraintRack",
+        "S3_RestraintRack__Restraint_00",
+        "S3_RestraintRack__Restraint_01"
+      ],
+      "summary": {
+        "bytes": 223884,
+        "mesh_resources": 3,
+        "mesh_instances": 3,
+        "primitives": 3,
+        "materials": 1,
+        "triangles_per_mesh_resource": 2328,
+        "vertices_per_mesh_resource": 5685,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "bytes": 223884,
+      "sha256": "07ecc831eafd2ffe950a1b8fab160748ce5bc100d9f7e0500e0bfc0f5ee5ce57",
+      "export_nodes": [
+        {
+          "extras": {
+            "export_marker_name": "Approach_00"
+          },
+          "name": "Approach_00",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Approach_01"
+          },
+          "name": "Approach_01",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Can_Packet_00_00"
+          },
+          "name": "Can_Packet_00_00",
+          "translation": [
+            0,
+            0.10000000149011612,
+            0.1599999964237213
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Can_Packet_00_01"
+          },
+          "name": "Can_Packet_00_01",
+          "translation": [
+            0,
+            0.10000000149011612,
+            -0.1599999964237213
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Can_Packet_01_00"
+          },
+          "name": "Can_Packet_01_00",
+          "translation": [
+            0,
+            0.699999988079071,
+            0.1599999964237213
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Can_Packet_01_01"
+          },
+          "name": "Can_Packet_01_01",
+          "translation": [
+            0,
+            0.699999988079071,
+            -0.1599999964237213
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_00"
+          },
+          "name": "Deck_00",
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_01"
+          },
+          "name": "Deck_01",
+          "translation": [
+            0,
+            0.699999988079071,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_00"
+          },
+          "name": "Extract_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_01"
+          },
+          "name": "Extract_01",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.75,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_00_00"
+          },
+          "name": "Packet_00_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_01_00"
+          },
+          "name": "Packet_01_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.699999988079071,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_00"
+          },
+          "name": "Release_00",
+          "translation": [
+            -0.23999999463558197,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_01"
+          },
+          "name": "Release_01",
+          "translation": [
+            -0.23999999463558197,
+            0.75,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_00"
+          },
+          "mesh": 0,
+          "name": "Restraint_00"
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_01"
+          },
+          "mesh": 1,
+          "name": "Restraint_01"
+        },
+        {
+          "mesh": 2,
+          "name": "SM_S3_RestraintRack"
+        },
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "extras": {
+            "external_LDH_m": [
+              0.7,
+              0.53,
+              1.5
+            ],
+            "support_tops_m": [
+              0.1,
+              0.7
+            ],
+            "stage": "Static shelves; carrying motion, structural load rating and game integration separate.",
+            "clear_support_footprint_LD_m": [
+              0.65,
+              0.48
+            ],
+            "removal_rule": "Remove the corresponding restraint BEFORE any pickup; static meshes, no mechanism clip. Low lip20mm; release50mm. No long S1 aisle rails."
+          },
+          "name": "S3_RestraintRack"
+        }
+      ],
+      "flat_solid_support_LD_m": [
+        0.644,
+        0.474
+      ],
+      "clear_internal_LD_m": [
+        0.65,
+        0.48
+      ],
+      "roundtrip": {
+        "file": "s3_restraintrack_v01.glb",
+        "bounds_error_m": 0.0,
+        "bounds_blender_xyz_m": [
+          [
+            -0.26499998569488525,
+            -0.3499999940395355,
+            0.0
+          ],
+          [
+            0.26499998569488525,
+            0.3499999940395355,
+            1.5
+          ]
+        ]
+      },
+      "format_errors": 0,
+      "format_warnings": 0
+    },
+    {
+      "root": "S4_ProtectedCargo",
+      "collection": "ASSET_S4_ProtectedCargo",
+      "file": "s4_protectedcargo_v01.glb",
+      "external_LDH_m": [
+        0.7,
+        0.53,
+        1.5
+      ],
+      "clear_support_footprint_LD_m": [
+        0.65,
+        0.48
+      ],
+      "support_tops_m": [
+        0.1,
+        0.7
+      ],
+      "relative_to_Cargo_Floor_godot_xyz_m": [
+        0.665,
+        0,
+        0.4823753785
+      ],
+      "qa_pass": true,
+      "errors": [],
+      "warnings": [
+        "SM_S4_ProtectedCargo: duplicate verts=24 loose verts=0",
+        "hidden back-to-back faces: SM_S4_ProtectedCargo (126 pairs) - delete to save tris",
+        "hidden back-to-back faces: S4_ProtectedCargo__Restraint_01<->SM_S4_ProtectedCargo (12 pairs) - delete to save tris",
+        "hidden back-to-back faces: S4_ProtectedCargo__Restraint_00<->SM_S4_ProtectedCargo (8 pairs) - delete to save tris"
+      ],
+      "bounds_blender_xyz_m": [
+        [
+          -0.26499998569488525,
+          -0.3499999940395355,
+          0.0
+        ],
+        [
+          0.26499998569488525,
+          0.3499999940395355,
+          1.5
+        ]
+      ],
+      "visuals": [
+        "SM_S4_ProtectedCargo",
+        "S4_ProtectedCargo__Restraint_00",
+        "S4_ProtectedCargo__Restraint_01"
+      ],
+      "summary": {
+        "bytes": 270316,
+        "mesh_resources": 3,
+        "mesh_instances": 3,
+        "primitives": 3,
+        "materials": 1,
+        "triangles_per_mesh_resource": 2808,
+        "vertices_per_mesh_resource": 6910,
+        "joints": [],
+        "clips": [],
+        "has_vertex_colors": true,
+        "external_uris": []
+      },
+      "bytes": 270316,
+      "sha256": "75a7444d180393f783c6aba0648e5113e062b6556b079b93467565c4ecaec442",
+      "export_nodes": [
+        {
+          "extras": {
+            "export_marker_name": "Approach_00"
+          },
+          "name": "Approach_00",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Approach_01"
+          },
+          "name": "Approach_01",
+          "translation": [
+            -0.5450000166893005,
+            0,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_00"
+          },
+          "name": "Deck_00",
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Deck_01"
+          },
+          "name": "Deck_01",
+          "translation": [
+            0,
+            0.699999988079071,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_00"
+          },
+          "name": "Extract_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Extract_01"
+          },
+          "name": "Extract_01",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            -0.5450000166893005,
+            0.75,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_00_00"
+          },
+          "name": "Packet_00_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.10000000149011612,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Packet_01_00"
+          },
+          "name": "Packet_01_00",
+          "rotation": [
+            0,
+            -0.7071068286895752,
+            0,
+            0.7071068286895752
+          ],
+          "translation": [
+            0,
+            0.699999988079071,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_00"
+          },
+          "name": "Release_00",
+          "translation": [
+            -0.23999999463558197,
+            0.15000000596046448,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Release_01"
+          },
+          "name": "Release_01",
+          "translation": [
+            -0.23999999463558197,
+            0.75,
+            0
+          ]
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_00"
+          },
+          "mesh": 0,
+          "name": "Restraint_00"
+        },
+        {
+          "extras": {
+            "export_marker_name": "Restraint_01"
+          },
+          "mesh": 1,
+          "name": "Restraint_01"
+        },
+        {
+          "mesh": 2,
+          "name": "SM_S4_ProtectedCargo"
+        },
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "extras": {
+            "external_LDH_m": [
+              0.7,
+              0.53,
+              1.5
+            ],
+            "support_tops_m": [
+              0.1,
+              0.7
+            ],
+            "stage": "Static shelves; carrying motion, structural load rating and game integration separate.",
+            "clear_support_footprint_LD_m": [
+              0.65,
+              0.48
+            ],
+            "removal_rule": "Remove the corresponding restraint BEFORE any pickup; static meshes, no mechanism clip. Low lip20mm; release50mm. No long S1 aisle rails."
+          },
+          "name": "S4_ProtectedCargo"
+        }
+      ],
+      "flat_solid_support_LD_m": [
+        0.628,
+        0.458
+      ],
+      "clear_internal_LD_m": [
+        0.65,
+        0.48
+      ],
+      "roundtrip": {
+        "file": "s4_protectedcargo_v01.glb",
+        "bounds_error_m": 0.0,
+        "bounds_blender_xyz_m": [
+          [
+            -0.26499998569488525,
+            -0.3499999940395355,
+            0.0
+          ],
+          [
+            0.26499998569488525,
+            0.3499999940395355,
+            1.5
+          ]
+        ]
+      },
+      "format_errors": 0,
+      "format_warnings": 0
+    }
+  ]
+}

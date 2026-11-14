@@ -1,0 +1,37 @@
+{
+  "stage": "One source-measured worker/operator/control proposal before authoring; needs Lead acceptance",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_operator_layout_v01\\operator_layout_dimensions.json",
+      "bytes": 3053,
+      "sha256": "4a4afd1007e8ae8676a462c34daa363f11cddc2139d7c7720fe7c4ec922efa2a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_operator_layout_v01\\PLAN.md",
+      "bytes": 4746,
+      "sha256": "544c15d0b8d6509a1a5021e3b322c276035b63ab15f5a1ec0d3a3757ab68b842"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_operator_layout_v01\\s4_worker_operator_plan_v01.png",
+      "bytes": 497945,
+      "sha256": "5c8560466393ebc2a83b0bce8b8a95e69d822dced9deb8f505721646e92fb417"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_operator_layout_v01\\s4_worker_operator_plan_v01.svg",
+      "bytes": 15878,
+      "sha256": "eb99e1656c0078b2a8257ade501c5633deeff10edaa86987f939e679ff10b840"
+    }
+  ],
+  "source_v02_glb_sha256": "c54254af943c8132184877f88e46dba55929ec31b42749bbe078dc0ed864a948",
+  "new_actions": 0,
+  "new_models": 0,
+  "lead_decision": {
+    "stage": "Lead accepted layout basis for actual anatomy/control fitting and coordinated authoring; not passed reach, clearance, human appearance or runtime acceptance",
+    "hardware": "Recessed manual paddles and fixed-frame linkage accepted as scoped revision within original footprint. Both corresponding end pins must have explicit release/engagement states, including hand transfer without accidental relocking.",
+    "body": "Actual worker uses genuine palm/finger edge grips, steps and hips/knees. The 715mm reach is not passed; no arm stretching or teleport. Check occupied bale, gloves, helmet, torso, feet, frame, truck and neighboring geometry through full motion.",
+    "timing": "Eight seconds each direction is a fitting reference, not final duration. No forced old 1.5-second rigid mechanism action.",
+    "ownership": "Receiving reserves one actual worker and module through approach, operation, latch and hands-clear. Pause freezes both. Animation does not grant stock or completion. No motion without operator contact/control; interruption cannot fabricate a latch.",
+    "preserved": "Existing support, padding, footprint, quantities, upper-empty and closed-before-upper-loading rules, M05-only insert, worker identity, original timber pickup bend and v02 source history.",
+    "next": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary."
+  }
+}

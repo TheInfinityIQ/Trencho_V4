@@ -1,0 +1,2436 @@
+{
+  "scope": "Only the changed640mm/20mm bar and newly shown insert rechecked against the exact cached source lift; unchanged body/environment results remain in dense_lift_audit.json.",
+  "flags": [],
+  "frames": 121,
+  "max_sign_safe_wrist_speed_deg_s": {
+    "Left": 72.78482859246692,
+    "Right": 63.35218910813574
+  },
+  "insert": {
+    "top_y_m": 0.18,
+    "height_m": 0.08000000566244125,
+    "scene_translation_y_m": -7.152557379708213e-09
+  },
+  "rows": [
+    {
+      "frame": 1,
+      "u": 0,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0,
+        "Right": 0
+      }
+    },
+    {
+      "frame": 2,
+      "u": 0.00020717592592592592,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.0,
+        "Right": 0.0
+      }
+    },
+    {
+      "frame": 3,
+      "u": 0.0008240740740740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.8392936535488004,
+        "Right": 0.8392936535488004
+      }
+    },
+    {
+      "frame": 4,
+      "u": 0.0018437500000000006,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.6785873571234071,
+        "Right": 1.9683181778532295
+      }
+    },
+    {
+      "frame": 5,
+      "u": 0.003259259259259259,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 2.5178811607496527,
+        "Right": 2.5178811607496527
+      }
+    },
+    {
+      "frame": 6,
+      "u": 0.0050636574074074065,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.250570794853482,
+        "Right": 3.1403497040288935
+      }
+    },
+    {
+      "frame": 7,
+      "u": 0.007250000000000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.846127461840582,
+        "Right": 3.800064374569538
+      }
+    },
+    {
+      "frame": 8,
+      "u": 0.009811342592592594,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.320529612784023,
+        "Right": 4.36109887766469
+      }
+    },
+    {
+      "frame": 9,
+      "u": 0.012740740740740742,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.747763332758871,
+        "Right": 4.821376504328077
+      }
+    },
+    {
+      "frame": 10,
+      "u": 0.01603125,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.105225813495954,
+        "Right": 5.139604852472864
+      }
+    },
+    {
+      "frame": 11,
+      "u": 0.019675925925925927,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.406773321834293,
+        "Right": 5.374103670840363
+      }
+    },
+    {
+      "frame": 12,
+      "u": 0.02366782407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.630155448204809,
+        "Right": 5.503618833273528
+      }
+    },
+    {
+      "frame": 13,
+      "u": 0.028000000000000004,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.69236905580009,
+        "Right": 5.630155448204809
+      }
+    },
+    {
+      "frame": 14,
+      "u": 0.03266550925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.69236905580009,
+        "Right": 5.69236905580009
+      }
+    },
+    {
+      "frame": 15,
+      "u": 0.03765740740740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.567246653639587,
+        "Right": 5.630155448204809
+      }
+    },
+    {
+      "frame": 16,
+      "u": 0.04296875,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.374103670840363,
+        "Right": 5.374103670840363
+      }
+    },
+    {
+      "frame": 17,
+      "u": 0.0485925925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.173755452216267,
+        "Right": 5.139604852472864
+      }
+    },
+    {
+      "frame": 18,
+      "u": 0.05452199074074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.747763332758871,
+        "Right": 4.747763332758871
+      }
+    },
+    {
+      "frame": 19,
+      "u": 0.06075,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.36109887766469,
+        "Right": 4.36109887766469
+      }
+    },
+    {
+      "frame": 20,
+      "u": 0.06726967592592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.7534360332925094,
+        "Right": 3.9366370009718805
+      }
+    },
+    {
+      "frame": 21,
+      "u": 0.07407407407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.250570794853482,
+        "Right": 3.3043028942926855
+      }
+    },
+    {
+      "frame": 22,
+      "u": 0.08115624999999999,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 2.654079808231743,
+        "Right": 2.586876993705319
+      }
+    },
+    {
+      "frame": 23,
+      "u": 0.08850925925925925,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.5701746882323926,
+        "Right": 1.876717736993346
+      }
+    },
+    {
+      "frame": 24,
+      "u": 0.09612615740740742,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.5934702308833909,
+        "Right": 0.5934702308833909
+      }
+    },
+    {
+      "frame": 25,
+      "u": 0.10400000000000002,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.0,
+        "Right": 0.0
+      }
+    },
+    {
+      "frame": 26,
+      "u": 0.11212384259259262,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.0,
+        "Right": 0.0
+      }
+    },
+    {
+      "frame": 27,
+      "u": 0.12049074074074075,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.5934702308833909,
+        "Right": 1.0279206028811394
+      }
+    },
+    {
+      "frame": 28,
+      "u": 0.12909375,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 2.220562416600782,
+        "Right": 2.0558412976655593
+      }
+    },
+    {
+      "frame": 29,
+      "u": 0.13792592592592592,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.250570794853482,
+        "Right": 3.195935445918067
+      }
+    },
+    {
+      "frame": 30,
+      "u": 0.14698032407407408,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.279575779924552,
+        "Right": 4.279575779924552
+      }
+    },
+    {
+      "frame": 31,
+      "u": 0.15625,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.308161198420293,
+        "Right": 5.308161198420293
+      }
+    },
+    {
+      "frame": 32,
+      "u": 0.1657280092592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.336531651946455,
+        "Right": 6.336531651946455
+      }
+    },
+    {
+      "frame": 33,
+      "u": 0.17540740740740743,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 7.340826885049796,
+        "Right": 7.340826885049796
+      }
+    },
+    {
+      "frame": 34,
+      "u": 0.18528125000000004,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 8.329759740987773,
+        "Right": 8.329759740987773
+      }
+    },
+    {
+      "frame": 35,
+      "u": 0.1953425925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.345990008201554,
+        "Right": 9.364813820028328
+      }
+    },
+    {
+      "frame": 36,
+      "u": 0.20558449074074078,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 10.313428448791775,
+        "Right": 10.364527653210146
+      }
+    },
+    {
+      "frame": 37,
+      "u": 0.216,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 11.260325997747703,
+        "Right": 11.260325997747703
+      }
+    },
+    {
+      "frame": 38,
+      "u": 0.22658217592592594,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 12.162545786575398,
+        "Right": 12.133552667026299
+      }
+    },
+    {
+      "frame": 39,
+      "u": 0.23732407407407405,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 13.083324706898791,
+        "Right": 13.13705548026823
+      }
+    },
+    {
+      "frame": 40,
+      "u": 0.24821875000000004,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 14.329613344695126,
+        "Right": 14.415383994820884
+      }
+    },
+    {
+      "frame": 41,
+      "u": 0.25925925925925924,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 16.252912099602042,
+        "Right": 16.38242039929465
+      }
+    },
+    {
+      "frame": 42,
+      "u": 0.27043865740740736,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 19.157332818720384,
+        "Right": 19.322092472594207
+      }
+    },
+    {
+      "frame": 43,
+      "u": 0.28174999999999994,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 23.282068723472218,
+        "Right": 23.25179247660542
+      }
+    },
+    {
+      "frame": 44,
+      "u": 0.2931863425925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 28.671762977968793,
+        "Right": 28.250996934314706
+      }
+    },
+    {
+      "frame": 45,
+      "u": 0.3047407407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 35.36069332636005,
+        "Right": 34.242306953234916
+      }
+    },
+    {
+      "frame": 46,
+      "u": 0.31640625,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 43.33260307721025,
+        "Right": 41.07066044917436
+      }
+    },
+    {
+      "frame": 47,
+      "u": 0.328175925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 52.2947932092045,
+        "Right": 48.397631200981984
+      }
+    },
+    {
+      "frame": 48,
+      "u": 0.3400428240740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 61.45252252526575,
+        "Right": 55.48790842046667
+      }
+    },
+    {
+      "frame": 49,
+      "u": 0.3520000000000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 69.13056718354527,
+        "Right": 61.067231850195
+      }
+    },
+    {
+      "frame": 50,
+      "u": 0.3640405092592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 72.78482859246692,
+        "Right": 63.35218910813574
+      }
+    },
+    {
+      "frame": 51,
+      "u": 0.37615740740740744,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 69.86056506380858,
+        "Right": 60.58944242744085
+      }
+    },
+    {
+      "frame": 52,
+      "u": 0.38834374999999993,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 59.21626974540777,
+        "Right": 51.810926544091835
+      }
+    },
+    {
+      "frame": 53,
+      "u": 0.4005925925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 41.45480450492606,
+        "Right": 37.07717462625137
+      }
+    },
+    {
+      "frame": 54,
+      "u": 0.4128969907407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 29.762770607862453,
+        "Right": 26.98196870682944
+      }
+    },
+    {
+      "frame": 55,
+      "u": 0.4252500000000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 26.294403396782496,
+        "Right": 23.537844617867986
+      }
+    },
+    {
+      "frame": 56,
+      "u": 0.43764467592592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 22.699916309841612,
+        "Right": 19.879148859581434
+      }
+    },
+    {
+      "frame": 57,
+      "u": 0.45007407407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 18.954015140575486,
+        "Right": 15.957676082459301
+      }
+    },
+    {
+      "frame": 58,
+      "u": 0.46253124999999995,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 14.97855875359449,
+        "Right": 11.659862312122922
+      }
+    },
+    {
+      "frame": 59,
+      "u": 0.47500925925925924,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 10.566453640044204,
+        "Right": 6.869919137765834
+      }
+    },
+    {
+      "frame": 60,
+      "u": 0.48750115740740735,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.535524164766445,
+        "Right": 1.186940479453574
+      }
+    },
+    {
+      "frame": 61,
+      "u": 0.5,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.5934702308833909,
+        "Right": 5.0357636721975245
+      }
+    },
+    {
+      "frame": 62,
+      "u": 0.5124988425925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.0686278481754545,
+        "Right": 8.681730201050087
+      }
+    },
+    {
+      "frame": 63,
+      "u": 0.5249907407407408,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.9366370009718805,
+        "Right": 8.28736874867824
+      }
+    },
+    {
+      "frame": 64,
+      "u": 0.53746875,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.6583968739468236,
+        "Right": 7.646335312742959
+      }
+    },
+    {
+      "frame": 65,
+      "u": 0.5499259259259259,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.357175114453425,
+        "Right": 6.946395650865452
+      }
+    },
+    {
+      "frame": 66,
+      "u": 0.562355324074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.1403497040288935,
+        "Right": 5.875058376290136
+      }
+    },
+    {
+      "frame": 67,
+      "u": 0.5747500000000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.36109887766469,
+        "Right": 8.22337254294333
+      }
+    },
+    {
+      "frame": 68,
+      "u": 0.5871030092592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.747763332758871,
+        "Right": 8.392944789767295
+      }
+    },
+    {
+      "frame": 69,
+      "u": 0.5994074074074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.558532653700876,
+        "Right": 7.244232704976182
+      }
+    },
+    {
+      "frame": 70,
+      "u": 0.6116562499999999,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.320529612784023,
+        "Right": 6.110153183557662
+      }
+    },
+    {
+      "frame": 71,
+      "u": 0.6238425925925927,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.0686278481754545,
+        "Right": 4.965329892933012
+      }
+    },
+    {
+      "frame": 72,
+      "u": 0.6359594907407408,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.9366370009718805,
+        "Right": 3.8916453668819453
+      }
+    },
+    {
+      "frame": 73,
+      "u": 0.648,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.800064374569538,
+        "Right": 2.9673515081528996
+      }
+    },
+    {
+      "frame": 74,
+      "u": 0.6599571759259258,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.441125759693207,
+        "Right": 2.654079808231743
+      }
+    },
+    {
+      "frame": 75,
+      "u": 0.6718240740740742,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.138907034908177,
+        "Right": 3.3043028942926855
+      }
+    },
+    {
+      "frame": 76,
+      "u": 0.68359375,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 7.600133392431385,
+        "Right": 3.8916453668819453
+      }
+    },
+    {
+      "frame": 77,
+      "u": 0.6952592592592592,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 8.74237179158001,
+        "Right": 4.279575779924552
+      }
+    },
+    {
+      "frame": 78,
+      "u": 0.7068136574074075,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.476971559157983,
+        "Right": 4.4806032317343565
+      }
+    },
+    {
+      "frame": 79,
+      "u": 0.71825,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.966073814318472,
+        "Right": 4.597001988542985
+      }
+    },
+    {
+      "frame": 80,
+      "u": 0.7295613425925925,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 10.123858331644545,
+        "Right": 4.558532653700876
+      }
+    },
+    {
+      "frame": 81,
+      "u": 0.7407407407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 10.001352161386675,
+        "Right": 4.4806032317343565
+      }
+    },
+    {
+      "frame": 82,
+      "u": 0.7517812500000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.642762492117335,
+        "Right": 4.279575779924552
+      }
+    },
+    {
+      "frame": 83,
+      "u": 0.7626759259259259,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.15562357867445,
+        "Right": 3.8916453668819453
+      }
+    },
+    {
+      "frame": 84,
+      "u": 0.773417824074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 12.133552667026299,
+        "Right": 7.737911608642999
+      }
+    },
+    {
+      "frame": 85,
+      "u": 0.7839999999999999,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 11.854582012566924,
+        "Right": 7.553648885048355
+      }
+    },
+    {
+      "frame": 86,
+      "u": 0.7944155092592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 11.19759366600453,
+        "Right": 7.121647829032771
+      }
+    },
+    {
+      "frame": 87,
+      "u": 0.8046574074074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 10.48279051426539,
+        "Right": 6.581907249591477
+      }
+    },
+    {
+      "frame": 88,
+      "u": 0.81471875,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 9.697396289079043,
+        "Right": 6.081263378347653
+      }
+    },
+    {
+      "frame": 89,
+      "u": 0.8245925925925925,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 8.90206336788388,
+        "Right": 5.567246653639587
+      }
+    },
+    {
+      "frame": 90,
+      "u": 0.8342719907407408,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 8.137261395331803,
+        "Right": 5.070613688796061
+      }
+    },
+    {
+      "frame": 91,
+      "u": 0.84375,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 7.364777480811635,
+        "Right": 4.597001988542985
+      }
+    },
+    {
+      "frame": 92,
+      "u": 0.8530196759259259,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.688074026719523,
+        "Right": 4.111683330557808
+      }
+    },
+    {
+      "frame": 93,
+      "u": 0.8620740740740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.110153183557662,
+        "Right": 3.706221103518027
+      }
+    },
+    {
+      "frame": 94,
+      "u": 0.8709062500000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.630155448204809,
+        "Right": 3.357175114453425
+      }
+    },
+    {
+      "frame": 95,
+      "u": 0.8795092592592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.139604852472864,
+        "Right": 3.195935445918067
+      }
+    },
+    {
+      "frame": 96,
+      "u": 0.8878761574074073,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.784711488343822,
+        "Right": 3.026116663783015
+      }
+    },
+    {
+      "frame": 97,
+      "u": 0.8960000000000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.4806032317343565,
+        "Right": 3.026116663783015
+      }
+    },
+    {
+      "frame": 98,
+      "u": 0.9038738425925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.0686278481754545,
+        "Right": 2.7836224142760084
+      }
+    },
+    {
+      "frame": 99,
+      "u": 0.9114907407407408,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.026116663783015,
+        "Right": 1.9683181778532295
+      }
+    },
+    {
+      "frame": 100,
+      "u": 0.91884375,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.9683181778532295,
+        "Right": 1.186940479453574
+      }
+    },
+    {
+      "frame": 101,
+      "u": 0.925925925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.6785873571234071,
+        "Right": 1.453699279299045
+      }
+    },
+    {
+      "frame": 102,
+      "u": 0.9327303240740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.876717736993346,
+        "Right": 2.3738811004015146
+      }
+    },
+    {
+      "frame": 103,
+      "u": 0.9392499999999999,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 2.5178811607496527,
+        "Right": 3.195935445918067
+      }
+    },
+    {
+      "frame": 104,
+      "u": 0.9454780092592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.357175114453425,
+        "Right": 4.025111840695665
+      }
+    },
+    {
+      "frame": 105,
+      "u": 0.9514074074074075,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.154292606644701,
+        "Right": 4.747763332758871
+      }
+    },
+    {
+      "frame": 106,
+      "u": 0.95703125,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.821376504328077,
+        "Right": 5.4392467538673
+      }
+    },
+    {
+      "frame": 107,
+      "u": 0.9623425925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.4392467538673,
+        "Right": 6.05223567238773
+      }
+    },
+    {
+      "frame": 108,
+      "u": 0.9673344907407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.99375853448371,
+        "Right": 6.581907249591477
+      }
+    },
+    {
+      "frame": 109,
+      "u": 0.972,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.446740592644879,
+        "Right": 6.9717014000886754
+      }
+    },
+    {
+      "frame": 110,
+      "u": 0.9763321759259259,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.766606063518727,
+        "Right": 7.244232704976182
+      }
+    },
+    {
+      "frame": 111,
+      "u": 0.9803240740740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.920997375503353,
+        "Right": 7.364777480811635
+      }
+    },
+    {
+      "frame": 112,
+      "u": 0.9839687500000001,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.9717014000886754,
+        "Right": 7.340826885049796
+      }
+    },
+    {
+      "frame": 113,
+      "u": 0.9872592592592593,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.895505551595466,
+        "Right": 7.195449366761014
+      }
+    },
+    {
+      "frame": 114,
+      "u": 0.9901886574074074,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.635202981111961,
+        "Right": 6.920997375503353
+      }
+    },
+    {
+      "frame": 115,
+      "u": 0.99275,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 6.224371662693953,
+        "Right": 6.473999691808276
+      }
+    },
+    {
+      "frame": 116,
+      "u": 0.9949363425925927,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 5.661347711957947,
+        "Right": 5.875058376290136
+      }
+    },
+    {
+      "frame": 117,
+      "u": 0.9967407407407407,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 4.893882523832688,
+        "Right": 5.173755452216267
+      }
+    },
+    {
+      "frame": 118,
+      "u": 0.99815625,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 3.9811202067088853,
+        "Right": 4.238226230899874
+      }
+    },
+    {
+      "frame": 119,
+      "u": 0.999175925925926,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 2.9073988185398743,
+        "Right": 3.1403497040288935
+      }
+    },
+    {
+      "frame": 120,
+      "u": 0.9997928240740741,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 1.5701746882323926,
+        "Right": 1.876717736993346
+      }
+    },
+    {
+      "frame": 121,
+      "u": 1,
+      "checks": {
+        "handle_frame": 0,
+        "handle_body": 0,
+        "handle_bale": 0,
+        "handle_SM_S4_Moving_Pan": 0,
+        "handle_SM_Grip_Sleeve_-0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_-0.075": 0,
+        "handle_SM_Grip_Sleeve_0.075": 0,
+        "handle_SM_Grip_Sleeve_Mount_0.075": 0,
+        "body_insert": 0,
+        "handle_insert": 0
+      },
+      "wrist_speed_deg_s": {
+        "Left": 0.5934702308833909,
+        "Right": 0.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,606 @@
+{
+  "version": 1,
+  "owner": "Lead engineering contract for Artist's resumed materials then crew deliverables",
+  "preserve": "Existing approved concepts, both v02 vehicles and existing four door/ramp clips; separate shelf GLBs and separate versioned animation export. No geometry imported from viewing references.",
+  "coordinates": "Godot metres, truck root: Cargo_Front Z.35, floorY1.02, Cargo_Floor worldZ1.7176246643. Shelf placement table must state rack-root-to-Cargo_Floor transform explicitly; no hidden scale. Underlying truck GLB remains byte-identical.",
+  "shelves_accepted": {
+    "S1_LongStockRack": {
+      "length": 2.2,
+      "depth": 0.53,
+      "height": 1.5,
+      "front_offsets": [
+        0.1,
+        2.3
+      ],
+      "support_tops": [
+        0.425,
+        0.85
+      ],
+      "structure": "Wall-side braced/cantilever, no continuous aisle-face longitudinal rails through measured bent head/torso/hand stations. Endframes/cornerposts only where actual lifted people/bundle sweep clears them, including aft carrier crossing rear frame.",
+      "saddles": "Longitudinal centre plus/minus.25m; width.10m, leaving delivered hand zones outside plus/minus.30m."
+    },
+    "S2_CrateShelf": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.55,
+        1.0
+      ]
+    },
+    "S3_RestraintRack": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.7
+      ]
+    },
+    "S4_ProtectedCargo": {
+      "length": 0.7,
+      "depth": 0.53,
+      "height": 1.5,
+      "support_tops": [
+        0.1,
+        0.7
+      ],
+      "permanent_divider": false
+    },
+    "routine_details": "30mm tray structure,50mm release travel and removable static restraints accepted. Artist reports actual clear deck dimensions and permitted loading/stacking surfaces; Lead does not infer them from outer boxes."
+  },
+  "timber_overhang_decision": "YES to375mm airborne LEFT overhang beyond0.9m ramp while both carrier feet remain on actual aisle/ramp, conditional on actual rear-body/wheel/cargo/ground swept clearance and retained hand contacts. Not permission for cargo-only centering or fictitious supported load. A failed clearance study is a concrete blocker to resolve before animation, not a reason for repeated poses.",
+  "timber_contact_study": {
+    "status": "Lead accepts these as proposed study targets, not proven limb/contact fit",
+    "bundle_center_x_z": [
+      -0.665,
+      1.55
+    ],
+    "fore_worker_root_x_z": [
+      -0.12,
+      0.9
+    ],
+    "aft_worker_root_x_z": [
+      -0.12,
+      2.2
+    ],
+    "facing": "both toward-X, step rearward together; front worker enters first so people do not pass within0.8m aisle",
+    "undergrip_x": -0.525,
+    "undergrip_z": [
+      0.72,
+      1.08,
+      2.02,
+      2.38
+    ],
+    "lift_bundle_base_relative_floor": [
+      0.85,
+      1.0
+    ],
+    "separation_m": 1.3,
+    "ownership": "Worker clips in place. Lead owns one shared bundle path, both station paths, root transforms and cargo custody; Artist owns actual joint motion and exact grip transforms, including crest/toe transitions. No90degreeboxyaw or independently recentered cargo.",
+    "observed_static_evidence": "Artist timber_contact_study_v01: four targets reached without arm extension, error<0.0000004m, bootsX[-.285,+.026] within aisle; actual pickup head/torso intersects illustrative continuous aisle rails. Two static poses only; slope/exit/deformation unverified. S1 correction accepted before geometry.",
+    "packing_support_contract": "Exactly one full/remainder timber bundle per S1 deck, centredZ1.55 on accepted saddles; no unverified bundle-on-bundle stack. Both.425m lower and.85m upper support levels need actual contacts. Unload upper overlapping cargo before lower cargo. Runtime must not infer lower pickup fit from upper static study.",
+    "lower_deck_correction": "Artist lower_timber_fit_v01 measured22.7mm reach deficit and102/96 body-vs-timber intersections at.25m despite clear rack frame. Lead accepts.425m as a reversible new S1 study target; actual fit/exit and final clearances remain unverified. Preserve truck/package/worker proportions.",
+    "coupled_withdrawal_study": "Fixed upper saddles block a direct lower lift. Accept study: lower release.425\u2192.475, BOTH rootsX-.12\u2192+.23 and loadX-.665\u2192-.255, preservingZ.90/2.20; raise to1m only after actual saddle clearance. Proposed load now fully within ramp. Full posed body/partner/opposite rack/rear sweep and exact root/load/grip samples remain required; boot margin alone proves nothing. Ordinary.25m ground route clearance is not applied to authored truck-specific stations; no global worker shrinking.",
+    "pending_warehouse_handoff": "Preserved original fixture SHA d0c35c65ab479789a2db239d7731511eeebdcbf073c9cd474a6b8c80dbfc3189 has no validated two-worker put-down: upper128.6mm reach deficit at staging, continuous face rail collision closer in; lower also body collision. Original retained. Lead approves a NEW VERSION, same2.6x1x1.8m/cell count, support tops.425/.95, clear both long faces, central50mm spine within180mm row gap and endposts outside2m cargo/grips. Artist makes bounded concept revision then measures both rows/decks. Candidate new.485offset grip midpointZ+/\u2212.735; staging markers+/\u22121.1 are not grip positions. Actual full contacts and aligned engagement/turn paths remain open before route freezes.",
+    "packing_side_scope": "Current M04 packing uses only measured left-side handling, one bundle/deck centredX-.665/Z1.55. Right-side M04 access is not inferred by mirroring the worker skeleton or reversing a rear exit. Actual spatial truck count and fees remain visible before Confirm."
+  },
+  "marker_names": "Use accepted shelf root names, Deck_00 etc for actual support planes, and a handoff table of named handling/grip markers and transforms. Keep delivered Undergrip_Reference_1..4 as actual timber contacts after the deliberate quarter-turn. Artist proposes additional marker names/table; Lead freezes corresponding runtime identifiers before integration.",
+  "animation_interface": "Preserve existing game worker/soldier rigs and required clips. Compare current construction_worker.glb skeleton and visual-root orientation before authoring additions; report an incompatible bone/root contract before changing it. Export explicitly named new clips and lengths/contact windows in a manifest. Root movement/custody belong to Lead, not animation method tracks. Existing mechanism clips remain2seconds each.",
+  "crew_next": "Existing eight comfortable inward seats retained; investigate measured rear-to-front exit with genuine temporary feet-under-knees preparation. No permanently cramped anatomy. Return exact occupied-clearance conflict if it cannot fit before authoring the complete stand/walk/crouch/jump/land/walk-on sequence.",
+  "acceptance": "Scoped static/export/contact QA, editable source, exact export hashes/transforms, actual readiness and limitations. Complete visible videos with framing inspected before sharing. New authoring authorized only for these two supplier vehicles; no local Godot, new regression matrix or unrelated asset reset.",
+  "driver_increment": {
+    "v01_export_sha256": "9de840b867f2d5eaa9823129c0bc79c63df175a63b1e3326b7b61e6957e68ed5",
+    "root": "Floor-relative; Driver_Seat+(0,-.407,0), raw visual PI correction exactly once. Driver remains supplier-owned.",
+    "video_v01_sha256": "55a703a5a3e61adacf00204402cec1bda51786b370796809da46fe53fd7455cb",
+    "video_status": "REJECTED as approval evidence: wide partly obscured driver and endpoint/hold sampling; no human appearance approval. Artist preparing versioned visible-motion correction.",
+    "runtime": "Floor-relative marker binding unchanged; source reads actual imported clip duration, now4s for both v02 loops.",
+    "v02_export_sha256": "340234b61fc425d4006cb7648e691330c7eff2afc6d20298d2316ca3c6fa7cd3",
+    "v02_video_sha256": "49dd455246188ae863157851d55836af5fc514f78ff6f1de3e2c9081ef2c6d25",
+    "v02_review": "SUPERSEDED timing claim: visible motion confirmed but import24fps/96frame actions sampled at30, causing1.25x motion and.8s hold percycle.",
+    "current_review_video": {
+      "file": "game/supplier_transport/assets/source/supplier_driver_complete_review_timing_v03.mp4",
+      "sha256": "202808a38eba837c7b0fb980b52a29324f4f83b945a969d42cfa1ae3bbb32cc1",
+      "seconds": 24,
+      "fps": 30,
+      "cycles_per_action": 3,
+      "actual_clip_seconds": 4,
+      "sampling": "30fps set before GLB import;120frames per4s cycle. Lead inspected actual encoded31/61/91 and391/421/451 phase PNGs; visible movement, fixed camera and clear head/hands/wheel.",
+      "readiness": "Ready for human visual review only; native import/gameplay separate.",
+      "glb_unchanged": "340234b61fc425d4006cb7648e691330c7eff2afc6d20298d2316ca3c6fa7cd3"
+    }
+  },
+  "video_gate": "Complete visibly animated action at1x, fixed clear framing and disclosed cutaway; several cycles for short loops. Lead inspects actual encoded per-action25/50/75percent frames before sharing. Endpoints, channel counts, camera turns and static model reels do not establish action visibility. Set capture/import frame rate before animation import or sample by actual imported action span and source clip seconds; encoded FPS alone does not prove1x motion.",
+  "item_hauling_pause": "LIFTED for the accepted2m/50kg/~1.3m timber layout by Dawson: Resume with that carrying layout. Reuse synchronized existing bend; no new pickup/bend clip. Artist fits contacts and supplies full normal-speed videos for appearance approval.",
+  "passenger_route_agreement": "Lead accepts X0/floor1.02 toRear_StandZ3.46 andLeft04,Right04,...Left01,Right01. Comfortable transit; temporarily prepare remaining occupants feet to.20m only at stopped service.306corridor samples are not sole support/rise/turn/bumper/landing proof. Timings/root/contact samples pending complete Artist handoff.",
+  "static_shelf_integration": "S2/S3/S4 ready static exports: bottom-centre root, localXdepth/localZlength, right side identity, left side deliberate180degreeY placement. Cargo_Floor is alreadyY1.02. Use actual .644x.474 solid deck footprints (.628x.458 S4 padding), full50mm release and existing support tops. No worker grip/route acceptance, S1 excluded.",
+  "passenger_approved_v02": {
+    "stage": "Dawson visually approved passenger exit revision v02; native integration verification pending",
+    "authority": "Lead chat, 10 November 2026: That looks better. Approved\u2014please integrate it into the game and continue with the materials truck and warehouse unloading.",
+    "approved_files": {
+      "supplier_passenger.glb": "7518d240df0277ff971fae1ee444fe3d6ee003075003568e71ae9b03ac179c10",
+      "passenger_paths_v02.json": "1d7bea0f07daee06753dc5a124463927c02269dfbbfa1eec6215387fbedb2af5"
+    },
+    "rejected": "Passenger v01 jump remains rejected; previous driver timing corrections preserved",
+    "limits": "Human animation approval and scoped native integration receipts do not establish full-loop/FPS acceptance or main adoption. Timber hauling is resumed separately under the explicit approved layout.",
+    "sources": [
+      "revision_manifest_v02.json",
+      "mechanics_summary_v02.json",
+      "runtime_actor_paths_proposal_v02.json"
+    ],
+    "integration_receipts": {
+      "native_components": 42959035573,
+      "native_source": "aec2dae69777e8e63ad53cbbf049463c4ae3cc78",
+      "hierarchy_and_resource": 42960993401,
+      "hierarchy_source": "dbf2ea41bb06200b16aff10fba8dd4b7060a32d9",
+      "limits": "Scoped component/source actions only; no full-game/FPS or main-adoption acceptance. Original visual approval receipt retains its historical stage text."
+    }
+  },
+  "item_hauling_pause_history": "Artist reports Dawson paused item-hauling animation/contact finalization for a dimension discussion. Honor this narrower pause; preserve studies and reuse existing synchronized bend for eventual two-person pickup. Driver and passenger exit remain separate authorized work. No new item pickup clip.",
+  "timber_resumed_layout": {
+    "plank_metres": 2.0,
+    "bundle_max_kg": 50,
+    "worker_root_spacing_approx_metres": 1.3,
+    "motion": "Existing pickup/bend body and leg poses reused; original clean clip interval then fitted arm/hand hauling fragments. No new bend or runtime posture/IK solver. Exact source clip windows/contact/release roots remain Artist data, not inferred by Lead.",
+    "truck_new_version_support_targets": [
+      0.6,
+      0.95
+    ],
+    "warehouse_new_version_support_targets": [
+      0.6,
+      1.75
+    ],
+    "stage": "Artist measured a nonempty upper support interval with unchanged retained bend body/legs. Candidate warehouse upper1.75m, lower.60m, outer height at most2.2m, same2.6x1m footprint/four cells. Failed .95/1.40/1.45 upper-height studies retained; no silent storage-order workaround. Truck .60/.95m remains separate. Exported occupied movement, final clips/roots/proxies and normal-speed approval videos remain pending; current runtime shelf dimensions have not been replaced.",
+    "preserve": "Original package, vehicle, rack and character binaries/concepts remain unchanged; all revisions separate. Explicit\u22124mm package registration may be used only for measured wood-bottom versus strap-origin support.",
+    "scope": "Truck withdrawal/ramp, both warehouse faces/decks, staging/engagement, appropriate grounded carrying directions and revised collider/support proxies. Other material contacts follow the same accepted materials-unloading brief.",
+    "warehouse_maximum_outer_height_metres": 2.2,
+    "warehouse_measured_upper_support_interval_metres": [
+      1.64117,
+      1.88287
+    ],
+    "authority": "Dawson reply request_user_input_async call_9facb63e60f84b6ebbd046e1582fabfe: Resume with that carrying layout. Artist acknowledged an older pause was replayed after restoration without evidence of a newer human pause; that replay does not supersede this reply.",
+    "truck_frozen_delivery": "evidence/supplier_transport/timber_truck_frozen_manifest.json; exact checked truck-only draft, human appearance approval pending; not bound into runtime.",
+    "warehouse_with_50mm_insertion_lift_upper_interval_metres": [
+      1.64117,
+      1.83287
+    ],
+    "warehouse_provisional_update": "Superseded by frozen corrected58clip handoff and exact static v04 SHA4fb62795:2.6x1x2.10m, four cells,.60/1.75 supports. Artist818exported occupied samples passed. This remains art QA, not human/native gameplay acceptance.",
+    "ground_provisional_update": "Superseded by frozen46clip delivery. Stable actor0/fore and actor1/aft use distinct simultaneous turn clips; do not re-sort by world position. Starts/stops.8s/.12m, loops.8s/.24m at authored.3m/s,4s90degree turns need actual clear3m zone. Exact paired paths own worker/load synchronization; any retiming applies to both workers and payload together.",
+    "ground_frozen_delivery": "evidence/supplier_transport/timber_ground_frozen_manifest.json; frozen46clip draft checked by Artist, file hashes and encoded phase sheets reviewed by Lead, shown for human appearance approval; not runtime bound.",
+    "warehouse_current_animation_limit": "Standing correction complete only in frozen GLB6030dcdf. Nine files verified by Lead, six encoded phase sheets inspected; appearance/native integration pending. before_standing_fix files remain superseded. Use authoritative floor-root/raw_yaw/load_position/quaternion and clip phase; auxiliary load_base is a wrist target, never a stored stock transform.",
+    "warehouse_frozen_delivery": "evidence/supplier_transport/timber_warehouse_frozen_manifest.json; exact corrected58clip GLB6030dcdf checked, full video shown for human appearance approval; no runtime binding.",
+    "pause_replay_correction": {
+      "status": "Second post-restoration pause relay explicitly withdrawn by Artist; no active-state change",
+      "source": "Artist acknowledged no newer direct human turn/time/source after Lead resume call_9facb63e60f84b6ebbd046e1582fabfe. Erroneous relay occurred inside restored turn01a1ca56-12f1-7372-94a8-2e8996ae4fe0 immediately after compaction.",
+      "active": "Later human resume remains authoritative. Warehouse static modeling and measured S4 hardware concept remain active. Frozen files untouched; no new hauling clips authorized by this administrative correction.",
+      "prevention": "Artist updates existing compact active-work/restore header with actual resume authority and assignments; a replayed summary or new assistant relay is not a later human instruction."
+    },
+    "appearance_status": "Revision required by direct Dawson feedback: correct palm support, shoulder carrying and reduced ramp bounce. Prior hand-carry drafts remain historical, not approved.",
+    "warehouse_runtime_static_integration": {
+      "model": "game/warehousing/assets/warehouse_long_stock_rack_v04.glb",
+      "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
+      "status": "Connected timber-only static v04 and matching cell planes; import/current-change check pending. Original retained; new shoulder motion remains Artist-owned and unapproved."
+    },
+    "truck_runtime_static_integration": {
+      "model": "game/supplier_transport/assets/s1_longstockrack_v03.glb",
+      "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+      "status": "Timber-only variant using .60/.95m supports, original M01 S1 definition retained; remote check pending.",
+      "variant_custody": "Exactly one <=50kg bundle per shelf; full existing Cargo_Floor mapping. Shared paired action is still blocked until accepted revised motion is connected."
+    },
+    "retained_bend_contact_amendment": {
+      "decision": "Lead permits the same synchronized original hip/torso bend and timing with bounded versioned leg-contact correction, not a new pickup gesture or a change to original source/rig/S4.",
+      "evidence": "Artist reused_source_audit.json and bend_contact_adaptation_proposal.json: original foot ROM findings are not an import-basis difference or observed injury; 85mm empty approach stance proposal resolves sampled nonarm limits while preserving sole contact.",
+      "remaining": "Actual clear empty stance join, truck/rack/partner swept clearance, complete continuous export and appearance review remain Artist-owned. Do not infer motion approval from sampled numbers."
+    }
+  },
+  "non_timber_geometry_decision": "evidence/supplier_transport/near_face_contact_recommendation_v01.md and frozen manifest supersede earlier partial geometry suggestions. Only a static2D warehouse metal-support/service-opening concept is authorized next; no mesh/other-item animation or runtime changes.",
+  "s1_variant_constraint": {
+    "stage": "Artist actual-family geometry assessment; runtime unchanged",
+    "decision": "Do not apply revised timber S1 .60/.95 supports and1.50m packing ceiling to metal as a capacity-preserving shared rack. Timber and metal need separate measured variants. Preserve original metal support spacing/usable stack envelope until full contact/mount/overhead contract is accepted.",
+    "reported_geometric_capacity": {
+      "original_homogeneous_metal_packets": 90,
+      "timber_revision_homogeneous_metal_packets": 72,
+      "scope": "Artist source-derived pure-rack packing calculation only, retaining current order/rotations/stacking/release. Not final shipment vehicle count or cost; full quotes also enforce payload/grouping/fees."
+    },
+    "orientation": "Actual Metal quarter_turn+PI/2; other package placements follow actual packing, not static Packet marker yaw. Fixture side orientation and global package yaw are distinct.",
+    "next": "First recompute support with explicit S1 left-identity/right-PI transforms and actual packet placement; then fit real undergrips. Do not author a support insert from the withdrawn side count. Preserve old metal planes/stacking envelope and frozen timber.",
+    "support_defect": "Earlier four-LEFT claim withdrawn. Corrected proposed S1Metal leftIDENTITY/rightPI projection has0zero-area left/4right under THAT proposal, not current runtime (S1 remains excluded). Full actor/stock access and any support remedy remain unaccepted.",
+    "registration_choice": "Prefer explicit+2mm metal-only bearing shim for concept; preserve nominal packet roots/planes and full stack envelope. Not permission to shift all materials or author an unverified rack."
+  },
+  "non_timber_static_contact_candidates": {
+    "warehouse_back_bale": {
+      "receipt": "evidence/supplier_transport/warehouse_back_bale_static_contact.json",
+      "stage": "Source static candidate only; retains original shelf height and cargo orientation",
+      "root_fixture_local": [
+        -0.31,
+        0,
+        1.03
+      ],
+      "effective_yaw": "PI",
+      "body": "Original pickup1.0s unchanged",
+      "next": "Retain for eventual complete handling contract; actual load-supporting grasp/lift/release/occupied motion/native integration remain unverified. Other cases still unresolved; no generalized offset or fixture change."
+    }
+  },
+  "warehouse_metal_concept_brief": {
+    "verified_manifest_files": 23,
+    "original_report_sha256": "da65649f97790de6d96c5705026504673c77c0543022bc3984e54afd6b2e53a6",
+    "repository_lf_report_sha256": "e5f53a32667ddb0b126a93c5a2eb71608763bc3e85a671859011c6e67ead4a3e",
+    "next_authorized": "One measured static2D warehouse metal-support/service-opening concept before mesh authoring: preserve footprint,16cells,tray planes; removable item-specific lower537mm/upper105mm centre cassettes, properly supported600mm service opening, unchanged non-metal cells/envelopes. Back-bale existing contact retained.",
+    "s1_registration": "For the S1Metal concept prefer explicit+2mm bearing shim, retaining nominal packet roots, original planes and stacking envelope. Actual support/actor fit and modeling remain unapproved.",
+    "held": "No S2/S4 guessed riser, tray cut, unsupported20mm overhang, capacity change, new pickup or further pose sweep. Need one quantified full-support/access variant proposal after warehouse concept.",
+    "limits": "Physical surface targets/native Blender hand calibration are not exported Godot bone-local sockets. Static witness and source-part equivalence are not delivered fixture structure, full animation, native gameplay or human appearance approval."
+  },
+  "warehouse_metal_concept_acceptance": {
+    "verified_manifest_files": 6,
+    "visual": "Inspected complete four-panel PNG: faceted mixed rack, end section, reinforced opening/load path, sixteen-cell allocation and cassette footprint.",
+    "warehouse_decision": "Accepted for bounded STATIC modeling only. Preserve original rack, create separately versioned empty rack with measured opening and properly capped/reinforced ends within retained envelope. Separate removable lower537mm/upper105mm80x200mm cassettes, rooted at tray contact. No baked cargo/workers or permanent cradles in ordinary cells. Actual new geometry must retain representative contacts/neighbor envelopes/back-bale approach before export; no all-cell handling or native claim.",
+    "s4_decision": "Single folding-pan proposal sent to Game Designer for bounded observable mechanism scope. No S4 hardware/guard/seat modeling or animation approved yet. Source above-overlap blockers suggest the required unload order; actual quote/interlock demonstration remains pending changed implementation.",
+    "s4_original_report_sha256": "8fd0765975e54dfdcab7a571ef59e7f587eb85eb8dce90647f40ae7d32a154b2",
+    "s4_repository_lf_sha256": "d4a3d43658f7f6161fe68cae54cc49d9d726cd886f0514fb015be5476e35aae7"
+  },
+  "s4_fold_up_proposal": {
+    "stage": "Improved actual-shelf lift/lower component reviewed/shown as work in progress; complete operator sequence, new game export and human appearance approval remain pending",
+    "report": "evidence/supplier_transport/s4_fold_up_full_support_proposal_v01.md",
+    "scope": "Empty-only folding upper full-support pan, metal-independent80mm lowerM05insert, original footprint/ordinary planes/geometric capacities. No loaded folding, no simultaneous fold/lift, no overhang or general small-case permission.",
+    "source_observation": "CargoPacking._dependencies indexes above-overlap packets once. No actual changed-variant quote or interlock receipt yet; source inference is not gameplay proof.",
+    "pending": "Classify upper-arm/vest intersections around natural shoulder seam versus real torso penetration; refit actual pan/palms/control strokes, one-hand load support, seats/pins, root/steps, approach/withdrawal and complete closing. Preserve coherent anatomical chain instead of forcing Cartesian hand contacts. Artist continues full S4 operation without another routine approval gate. Finished preview must show actual shelf plus readable opaque body/hands continuously. Human approval and runtime connection remain pending.",
+    "preserved": "Original S4 unchanged; other small-crate geometry remains unresolved.",
+    "authority": "Latest direct Dawson11November2026 worker-operated requirement supersedes prior self-actuation presentation; earlier Designer observable safety/stock rules otherwise remain.",
+    "observable_rules": "One actual assigned unloading worker approaches an empty upper shelf, physically releases locks, grips/lifts the pan, secures its parked latch and clears hands before lower pickup. For upper reloading, a real worker lowers/closes/locks first. Job assignment/preparation happens automatically within unloading; shelf motion itself is worker-caused. No extra player control, menu, purchase or resource cost. Actual upper-empty gate, secure-before-pickup, no simultaneous fold/lift, closed+locked-before-upper-placement, pause freezing worker/mechanism, ordinary priorities/quantities/support/footprint/capacity and M05-onlyinsert.",
+    "diagram": "diagrams/s4_bale_service.mmd",
+    "initial_reference_timing": "Prior1.5s is rigid-clip reference only. Derive natural coordinated operator timing from actual grips/reach/clearance; retime worker and mechanism together.",
+    "hardware_concept": "evidence/supplier_transport/s4_hardware_concept_manifest_v01.json",
+    "failed_gate": "evidence/supplier_transport/s4_first_clearance_gate.json",
+    "revision_plan": "evidence/supplier_transport/s4_guard_revision_plan.json",
+    "delivery": "evidence/supplier_transport/s4_mechanism_delivery_v02.json",
+    "restraints": "New mechanism is service configuration and excludes original separate Restraint_00/01. Lead independently read old GLB: both are actual separate mesh nodes (meshes0/1 of3), not markers. Preserve/compose their original transforms/geometry and removal conditions before replacing a transport shelf. No permanent restraint disappearance or new removal clip approved.",
+    "original_failure": "s4_first_clearance_gate.json and revision plan preserved; the revised source gate success does not rewrite the failed first prototype.",
+    "appearance_status": "REJECTED v03; scenario still liked but actual animation must be revised and approved",
+    "worker_operation_request": "evidence/supplier_transport/s4_worker_operation_request.json",
+    "worker_ownership": "Receiving retains one actual exclusive worker/job through approach, operation, latch confirmation and hands-clear. No spawned fake helper or inventory/availability polling. Existing stock authority/claims remain; animation callbacks never grant completion. Interruption cannot fabricate a latch or continue without an actual operator.",
+    "operator_layout": {
+      "stage": "Lead accepted layout basis for actual anatomy/control fitting and coordinated authoring; not passed reach, clearance, human appearance or runtime acceptance",
+      "hardware": "Initial narrow control failed glove fit; wider flush static press fit passed per Artist, but B housing atY1.10 overlaps actual torso sweep. B aroundY.90 accepted as fitting candidate only; complete movement and remaining entry/transfer reach paths still require correction.",
+      "body": "Actual worker uses genuine palm/finger edge grips, steps and hips/knees. The 715mm reach is not passed; no arm stretching or teleport. Check occupied bale, gloves, helmet, torso, feet, frame, truck and neighboring geometry through full motion.",
+      "timing": "Eight seconds each direction is a fitting reference, not final duration. No forced old 1.5-second rigid mechanism action.",
+      "ownership": "Receiving reserves one actual worker and module through approach, operation, latch and hands-clear. Pause freezes both. Animation does not grant stock or completion. No motion without operator contact/control; interruption cannot fabricate a latch.",
+      "preserved": "Existing support, padding, footprint, quantities, upper-empty and closed-before-upper-loading rules, M05-only insert, worker identity, original timber pickup bend and v02 source history.",
+      "next": "Artist supplies fitted coordinated worker/mechanism clips and exported contract, plus complete normal-speed opening and closing video showing hands and feet for human approval; report a concrete fitting blocker if necessary.",
+      "receipt": "evidence/supplier_transport/s4_operator_layout_manifest_v01.json"
+    },
+    "runtime_connection_plan": {
+      "stage": "Source-reviewed integration plan; no active worker shelf implementation yet",
+      "packing": "CargoPacking.quote/_dependencies must declare the exact revised shelf variant and upper-pan dependency for each lower M05 packet at order time. Current above-overlap dependency is not a substitute for whole-pan-empty clearance. Preserve ordinary cargo planes and immutable packet identity; no per-frame geometry scans.",
+      "activity": "ReceivingSimulation._start_worker_job retains the existing actual worker, stock claim and finite warehouse promise. _approach_truck acquires existing supplier aisle/access, then routes to the measured operator position before any shelf actuation. Shelf preparation stays in that actual worker job; it is not a second helper or detached automatic timer.",
+      "authority": "SupplierFreight owns per-order/per-rack committed mechanism state and checks indexed aboard_packets for the relevant upper pan on stock change. Receiving owns the actual operator activity deadlines. Ledger remains the only stock/custody owner. Require empty upper pan, actual operator access/contact, valid pins and module exclusivity before starting.",
+      "completion": "ReceivingSimulation._finish_worker_phase advances authored contact/release/lift/latch/hands-clear boundaries from the delivered export contract. Only parked-and-latched plus hands-clear admits lower pickup. Existing Pickup begin_carry boundary is retained after preparation, not triggered by AnimationPlayer callbacks.",
+      "roots": "ReceivingSimulation._move_activities and existing ledger movement events update actual worker positions from delivered root samples. SupplierActorView renders the matching clip at committed time; worker identity stays unchanged and normal worker presentation is restored after the operator activity. While supported aboard, actual actor presentation must inherit the real truck hull/pivot transform, as with corrected passengers, including when offscreen. Apply delivered model-local root once; hide only the same actual person\u2019s normal presentation during this ownership, never duplicate a worker.",
+      "view": "SupplierVehicleView._sync_racks must select the exact revised variant, preserve separately authored transport restraints, and show committed rack state. Remove restraints according to actual upper/lower handling conditions, not merely the global unloading phase. Use appropriate moving collision, never the static warehouse triangle helper for the moving pan.",
+      "pause": "Reuse ReceivingSimulation._time/next_boundary and existing pause semantics. One activity timeline drives worker and shelf. No independent wall-clock timer, stock poll or frame-based availability search.",
+      "interruption": "ReceivingSimulation._sync_workers must recognize active shelf operation before generic Truck return cleanup. Keep the worker exclusive until a physically safe supported/latched state and real exit, or hold work if the operator is unavailable. Never erase a job while leaving an unsupported moving pan or release its aisle under the worker.",
+      "debug_delivery": "ReceivingSimulation.debug_deliver_resources must resolve any actual shelf-operator job/access/promise once and restore a declared safe mechanism state; no animation may continue as if an operator remained. Its exact semantics must be implemented with the new activity, not assumed from current generic cleanup.",
+      "remaining_art_contract": "Final actual root/contact samples, control-to-pin transitions including release across hand transfer, opening/closing clip names and durations, latch/seat contacts, occupied full-sweep clearance and human-approved full-motion video. Existing 8-second estimate is not a runtime constant.",
+      "direct_check": "After actual implementation, one short GitHub-only changed-action demonstration: actual assigned worker, empty upper pan, physical operator sequence and authoritative parked/hands-clear gate before lower pickup. Check the new connected action only; no regression suite/local engine or FPS claim.",
+      "worker_view_handoff": {
+        "stage": "Source-reviewed prospective wiring; actual approved complete clip/root/contact contract still required before implementation",
+        "normal_presenter": "game/preview_3d/rear_workers.gd owns actual worker anchor, labels and CharacterVisual. During an actual shelf-operation job hide only that actual person body. Keep the anchor/labels and event-driven Ledger position current. CharacterVisual visibility_changed already stops hidden animation via sync_playback.",
+        "operation_presenter": "Compose a feature-local shelf operator view under existing supplier convoys, reusing SupplierActorView and exact actual worker id. Only the matching actual worker gets temporary operation presentation; no new logical worker, cargo or stock.",
+        "initial_order": "WorldPresenter binds supplier convoys before RearWorkers deferred membership creation. Initial normal body creation must consult committed operation ownership as well as subsequent activity events, preventing a duplicate first frame if the operator view already exists.",
+        "support": "While aboard, parent the operation actor to the real SupplierVehicleView pivot and apply exact module-local root relative to that hull once. Inherit hull movement/roll/pitch even offscreen. Do not use stationary world-space root sampling as a substitute for actual support.",
+        "position_and_height": "ReceivingSimulation._move_activities must publish actual operation root position through Ledger within the existing activity advance. A changed height/yaw without planar movement needs a root event as in passengers. Extend worker_height for exact new supported phases so normal labels and later handoff do not sink to ground. No new inventory polling or global scheduler.",
+        "restore": "At authoritative hands-clear/safe exit, hide/remove operation actor before restoring normal body. Receiving worker_activity_changed drives the existing RearWorkers._on_worker_activity_changed refresh and activity. Actual Ledger position/duty/cargo remain unchanged by the view.",
+        "pause_and_cost": "Both authored mechanism and actor seek the same committed Receiving time. Visibility gates skeletal work only. Hidden normal CharacterVisual playback stops; physics/root support remains correct while offscreen. No engine-side procedural arm solver or per-frame worker status scan.",
+        "checks": "When actual code is connected, one brief GitHub changed-action demonstration must include actual person identity, supported pivot relationship, exactly one visible body at entry/return and authoritative cargo gate. Existing suites/local engine remain paused; no present acceptance claim.",
+        "neutral_frame": "SupplierVehicleView Body_Pivot has a retained rest offset (existing passenger and cargo code subtract1m). Capture the actual neutral pivot transform at bind before animation; compose supported world frame as current hull pivot times inverse neutral pivot, then immutable truck-to-module and delivered actor-local pose. Never add the1.02m cargo-floor offset twice or move skin separately from rig.",
+        "creation_order": "Handle both existing truck/new operation and existing operation/new truck view: attach during the operation changed event when body exists, and during truck creation for already active operation actors. Initial RearWorkers membership must apply the same committed ownership predicate before making normal body visible.",
+        "pose_scope": "Artist right-lane source witness is not all rack sides/slots/occupied shipments. Use exact immutable quoted rack placement and explicitly retained clearance limits; do not silently mirror roles/contacts or claim all placements proven by one render."
+      },
+      "packing_and_access_boundaries": {
+        "stage": "Source-reviewed pre-implementation requirements; no production behavior changed",
+        "variant": "CargoPacking quote declares the exact manual-bale variant for affected S4 racks. Preserve ordinary support planes and capacities; optional80mm insert changes only actual lower M05 bearing/packet placement and fitting space, never all ordinary cargo.",
+        "upper_index": "Classify immutable upper-pan packet membership at quote/register time for the whole same rack, including stacked packets. SupplierFreight register/stock_changed maintain an indexed count of actual upper packets still aboard. Claimed-but-not-yet-picked-up packets remain aboard. Update zero/nonzero membership once, not by per-frame inventory scans.",
+        "deadlock_prevention": "ReceivingSimulation._start_worker_job skips a lower-M05 operation while any actual upper-pan stock remains. It must not claim the shared aisle while waiting for upper unloaders; otherwise those workers could not clear the very pan it awaits. Existing higher-priority job allocation stays intact.",
+        "prep_versus_pickup": "Upper empty allows the real assigned worker to approach and prepare the closed shelf; it does not by itself allow pickup. Actual lower pickup additionally requires parked, pins engaged and operator hands clear. Keep these distinct gates so a closed shelf can be prepared without bypassing safety or becoming permanently unselectable.",
+        "storage": "Reserve a finite compatible warehouse destination before taking source access or starting preparation; full warehouse retains goods aboard. Retain same job/person/source claim across operation, without allocating a second helper.",
+        "custody": "Mechanism preparation and animation never remove stock. Existing authoritative begin_carry happens only at actual approved pickup after the ready gate. The exact80mm insert and immutable variant need one changed-action quote/import demonstration once connected."
+      },
+      "service_grip_bounds": "Immutable quoted/stowed rack bounds remain unchanged. During operation reserve the actual deployed service envelope with the same worker/aisle commitment. A positively retained parked grip may persist through lower carry and aisle release only when the entire grip/guide/detent assembly and actual handling paths clear within the unchanged quoted cage, lower cargo, neighbors and truck. Actual worker lowers pan before grip retraction; closed/locked pan and retracted/secured grip are mandatory before vehicle departure, including returned trucks. See evidence/supplier_transport/s4_parked_grip_retention_decision.json. Moving geometry follows committed activity time independently of visibility; no inventory scan or static warehouse triangle helper.",
+      "startup_assets": "When approved assets are connected, include their real worker/mechanism resources in the existing covered startup preparation rather than first disk-load at live operator contact. Existing hook is Preview._ready -> construction_render_preparation.prepare. Keep simulation paused under cover and restore existing normal opening speed. Source review also found warehouse preparation still lists old crate rack rather than currently selected metal-accessv02/cassettes; address that actual asset-list mismatch in the same integration block. This plan does not establish a measured frame hitch or60FPS and introduces no benchmark campaign.",
+      "collision_scope": "Source inspection: SupplierVehicleView.bind creates whole SupplierHull box on layer5; WorldPresenter._build_player uses mask1, so the retained whole hull already blocks the player from the supplier interior. NPC handling uses committed Ledger supplier access, not body-part rigid physics. If final actual deployed operation remains inside that hull, do not add unused per-part native colliders merely to satisfy an assumed gate. Confirm final envelope once; add only needed collision if it actually extends outside retained hull or a separately accepted walkable-truck interaction requires it. Source body/prop clearance remains essential for believable animation. No present physics/playability acceptance."
+    },
+    "operator_control_revision": {
+      "stage": "Source fitting discovery before animation/export; accepted scoped hardware revision, not final clearance or appearance",
+      "conflict": "Actual posed shared glove finger strip spans118.55mm alongZ against20mm recess and18mm face at end-postZ-.3375, only12.5mm from neighbor boundary. BVH surface intersection remains relevant even when sampled vertex penetration is zero. No claim all possible hand poses are impossible.",
+      "revision": "Use wider flush fixed control mount, moving both centers approximately100mm along+Z toward-.2375 within the same module. Fit actual glove width and modest clearance, no individually remodeled fingers. Original20mm slot/18mm face are superseded for this revision.",
+      "constraints": "Entire bracket/control stays within original footprint, outside cargo/padding/pan swept volume and neighbor bay. Retain structural/bearing support. Check full press stroke and hand entry/withdrawal with occupied geometry.",
+      "pins": "Paired pins use retained push-push release detent through hand transfer. Worker re-engages only at matching actual seated stop; no unsupported self-actuation.",
+      "continuation": "Artist may fit revision and proceed to coordinated worker/mechanism animation if actual source fit clears, without another routine dimension approval gate. Return concrete remaining conflict or completed full-motion/export handoff.",
+      "preserved": "Narrow-control failure/source history, original worker mesh/rig, actual worker identity, upper-empty/lock/hands-clear gates, full shelf support/padding/footprint/cargo capacity, synchronized original timber pickup bend.",
+      "records": [
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\control_blocker_measurement.json",
+          "repository": "docs/evidence/supplier_transport/s4_narrow_control_conflict.json",
+          "bytes": 4439,
+          "original_sha256": "3c4edc466617d999db6e6d3f2bdf240a74467579905df678b769ebafcfc4600c"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\manual_hardware_fit.json",
+          "repository": "docs/evidence/supplier_transport/s4_narrow_control_hardware_fit.json",
+          "bytes": 6554,
+          "original_sha256": "227e9b7499927a167c04f593609829c0bc849b9879906567584b985c77746000"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\control_clearance_closeup.png",
+          "repository": "game/supplier_transport/assets/source/s4_narrow_control_conflict.png",
+          "bytes": 756311,
+          "original_sha256": "76b35552e86adeb8e1b69a4636b7535fdceb445d490c9e3af5ef834e1ad9c79e"
+        }
+      ],
+      "validation": "Lead inspected actual glove/control closeup and source measurement report. No Godot or gameplay check; no animation keys/export delivered at this gate.",
+      "receipt": "evidence/supplier_transport/s4_control_mount_revision.json"
+    },
+    "operator_control_waist_revision": {
+      "stage": "Wider control static press fit passed per Artist, but complete candidate operation failed before keys/export; waist relocation accepted only as next fitting basis",
+      "actual_conflict": "B housing atY1.10 intersects actual left shoulder and upper chest during lift. At4.266667seconds source Boolean overlap4.91351e-6m3 liesX[-.264,-.257],Y[1.078,1.122],Z[-.2351,-.1600]. Source opening241samples/89failed; independent approach/hand-transfer reach failures remain.",
+      "decision": "Fit B aroundY.90m front waist-access region, keeping wider flush face and within-module Z placement. A may remainY.78 if actual clearance remains. Artist may tune exact waist-height mount from full measured sweep without another routine approval gate.",
+      "required": "Check whole actual body/arms/pan/occupied cargo through opening and closing, control full strokes and approach/withdrawal. Keep controls distinct for real broad gloves. No geometry shrink, arm clamp/stretch, contact tolerance hiding solid overlap or removal of structural/bearing support.",
+      "separate_path_defect": "Correct actual approach and hand-transfer reach paths independently with natural steps/hip motion. Relocated hardware alone cannot establish full-action success.",
+      "delivery_gate": "Only after actual changed-operation source fit clears: coordinated worker/mechanism actions, verified export, full normal-speed opening/closing video for human approval. No active runtime asset binding or Godot acceptance.",
+      "records": [
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\CONFLICT_HANDOFF.md",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_conflict.md",
+          "bytes": 4648,
+          "original_sha256": "989251348e6c9317ac0ae3779e7e41473cc6be98a193e969bac2b4f1fdeb0001"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\remaining_motion_conflict.json",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_conflict.json",
+          "bytes": 2772,
+          "original_sha256": "470098962a11e04fea974aaa84888a531248b367a515f951e87ae92ebf7f446f"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\source_operation_gate.json",
+          "repository": "docs/evidence/supplier_transport/s4_upper_control_operation_gate.json",
+          "bytes": 229150,
+          "original_sha256": "84495ecec1822c256274ca156809dd5da0ef95d82963dc9d49d9407c20497956"
+        },
+        {
+          "original": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v03\\remaining_motion_conflict_2.png",
+          "repository": "game/supplier_transport/assets/source/s4_upper_control_conflict.png",
+          "bytes": 736641,
+          "original_sha256": "8fa4e75fdc1959d0fcfce65bad2aa8384508dcf8f6fea7d7dc4a4f891a7f69ec"
+        }
+      ],
+      "receipt": "evidence/supplier_transport/s4_waist_control_revision.json"
+    },
+    "operator_motion_rejection": "evidence/supplier_transport/s4_operator_motion_rejection_v03.json",
+    "anatomical_revision": "evidence/supplier_transport/s4_anatomical_revision_plan_v04.json",
+    "diagnostic_frame_status": "Initial native diagnostic rig/skin-frame error corrected; old153-pair claim and stretched images retracted. Corrected shared-frame source/GLB comparison supports remaining actual self-contact/wrist defects. Anatomical revision still in progress, no new animation approved.",
+    "early_body_blocking": {
+      "stage": "Lead accepted early anatomical basis for continued actual shelf fitting, not finished human approval or runtime integration",
+      "review": "Lead inspected handoff, all12 actual encoded interior frames in opaque front/side sheet and manifest identities. Arms stay visibly in front of torso in the shown body block; full prop/contact sequence remains absent.",
+      "scope": "Fixed-root planted-foot squat/rise/reach and provisional coherent elbow/forearm/palm orientation. Cabinet/pan omitted and labelled. No new game action keys/exports.",
+      "limited_measurement": "Artist sampled forearm/hand-to-torso pairs0, maximum combined wrist-relative deviation46.079deg and relative angular speed44.768deg/s. These do not establish universal anatomical limits or all-body/prop clearance.",
+      "remaining": "Classify upper-arm/vest intersections around natural shoulder seam versus real torso penetration; refit actual pan/palms/control strokes, one-hand load support, seats/pins, root/steps, approach/withdrawal and complete closing. Preserve coherent anatomical chain instead of forcing Cartesian hand contacts.",
+      "next": "Artist continues full S4 operation without another routine approval gate. Finished preview must show actual shelf plus readable opaque body/hands continuously. Human approval and runtime connection remain pending.",
+      "preserved": "Original rig/seven clips, successful shelf support/footprint/capacity, actual assigned worker, rejectedv03/invalid diagnostic history and original timber pickup bend.",
+      "receipt": "evidence/supplier_transport/s4_early_body_blocking_v04.json"
+    },
+    "underside_grip_revision": {
+      "stage": "Lead-authorized bounded hardware fitting, not approved dimensions or passed clearance",
+      "authority": "Engineering detail within Dawson\u2019s actual-worker shelf-operation request; supersedes prior Lead layout assumption of no additional grip handle. Original layout/source retained as history.",
+      "problem": "Keeping palm surface flat to the rotating pan constrains the wrist into an unnatural orientation during the actual lift. Improve physical grip geometry rather than force bad anatomical poses.",
+      "decision": "Fit small real underside rounded grips/handles to the actual broad gloves and opposed thumbs. Allow natural forearm/wrist motion relative to grip; document any actual handle pivot rather than hiding rotation or relocating hands.",
+      "constraints": "Preserve full padding/bearing/support, original footprint, ordinary cargo planes, cargo capacity and lower M05 insert. Actual handle+hand envelope must clear loaded lower bale, frame, neighboring stock/truck and moving pan through opening/closing. Finite lower clearance must be measured.",
+      "workflow": "Artist may resolve exact bounded grip geometry/pivots and continue actual full sequence without another routine approval gate. Escalate only a real contradiction requiring changed support, footprint or capacity. Next complete opaque preview must include the real revised hardware.",
+      "unchanged": "One actual assigned worker, actual support/control/lock/hands-clear gates, no motorized self-actuation, no generic character remodel or cargo shrinking. No runtime binding or appearance approval yet.",
+      "source_fit_update": "Artist concrete report: upper-arm overlap extended199\u2013213mm down sleeve, so no shoulder-seam exemption. Flat-palm quarter-lift correction about110deg/requested wrist deviation about161deg; rejected approach not reused. Actual original glove candidate cavity radius about10.5mm at five stations is feasibility only, not approved handle radius/clearance.",
+      "control_detail": "Compact thumb-operated controls permitted if actual existing thumb fit, press stroke, approach/withdrawal and other-hand support clear all geometry. Do not substitute the earlier failed narrow whole-finger press. Preserve same manual pin/seat behavior, support/footprint/capacity and original rig; no extra helper.",
+      "aisle_option": "Optional measured fit candidate, not required/cleared: moving hinge radial grip offset.450\u2192.465 places initial centreX-.250 instead of-.235,Y.630. A radius<=10.5mm stays inside nominalX-.265 by~4.5mm, but entire bracket/hand and swept occupied clearance still require actual proof. Reason: keep wrist/forearm outside flat-pan lip instead of forcing unnatural arm geometry. Artist may choose simpler actually-cleared body/grip solution.",
+      "footprint_clarification": "Preserve STOWED transport/packing footprint and full padded bearing/cargo capacity. Small explicitly measured temporary grip deployment into the actual exclusively reserved unloading aisle is allowed; original wording constraining all moving grip points to packed cuboid is superseded. No permanently larger rack, cargo shrinking or capacity change.",
+      "service_safety": "Actual deployed handle+hand swept envelope must clear operator, bale, neighbors, frame/pan and truck. The12November measured parked-grip decision conditionally permits an inside-cage positively retained extended grip during parked lower service/aisle release. Otherwise physical stow/secure is required before release. After actual worker lowering, grip must retract/secure and pan close/lock before travel. Passive handle return may be shown; the pan remains actual-worker operated/latched, never powered.",
+      "current_prototype": "Artist report: manually sliding100mm service grip,19mm diameter/660mm bar and two inboard square rods,212triangles/one closed island. At13 sampled lift positions bar/glove/bale/pan intersections zero; compact18mm thumb controls in fixed post A.780/B1.150. Actual full press/transfer, remaining upper-arm/vest/one forearm-frame passage and coherent arm-basis correction unfinished. No keys/game exports or readiness implied.",
+      "sampled_lift_progress": {
+        "source": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v04\\timed_reach_source_check.json",
+        "sha256": "53752cb57bc2b38b3f04a7506906061b0dd9a062db7bdc872e54966f39c6f68f",
+        "samples": 13,
+        "lead_data_review": "Read all13 source rows: fixed frame/pan/handle/bale/self-contact pairs and arm/leg clamps zero. Not a dense sweep, full operation or native game receipt.",
+        "dimensions": "Report bar radius.0095m, nominal bar length.64m, initial full handle boundsZapproximately\u00b1.33m. These distinguish bar dimension from overall assembly extent; final exact export contract still pending.",
+        "contact_limits": "Initial sampled closest palm/finger/thumb bar gaps approximately3.24/2.20/1.86mm; grip-centre alignment is not proof of physically bearing palm contact. Final visible support/contact and exact contract still require review.",
+        "remaining": "Dense temporal continuity, actual thumb presses/hand transfer, physical grip deployment/stow, approach/withdrawal/steps, complete closing and approved full opaque preview/export."
+      },
+      "dense_source_update": "Artist reports121 lift poses clear actual worker/self/truck/bale/occupied-neighbor/guide checks, arm/leg clamp0 and maximum working wrist54.7057deg. This is not full operator completion. Hardware check exposed660mm bar ends entering cabinet sides after~35deg; canonical overall bar revised toward640mm for650mm opening, actual full endcap/rod extents and cached-pose recheck required.",
+      "manual_control_revision": "Flush45-degree retained thumb cam/dial authorized in place of inward3mm push that makes rigid Thumb2 enter post rim. A0closed-locked/A45released; B0released/B45parked-locked. Actual cam sweep/contact, seat-only pins and other-hand support still require proof. No powered shelf or packing/support/capacity change.",
+      "invalid_speed_metric": "First dense LeftWrist5395deg/s is INVALID quaternion-sign accounting per Artist; recompute sign-safe relative wrist speed and keep original error/retraction. Reported world-hand speed~28deg/s is a different metric, not a silent replacement or proof of all joint continuity.",
+      "hardware_gate": "Check complete actual bar/endcaps/sliding rods/cams against retained frame and one another through the same actual motion, not only worker-vs-hardware or generator dimensions. Reuse cached actual poses for changed geometry; no full-game suite. Readable partial actual-shelf lift/lower may be technically reviewed before final control choreography, clearly labelled unfinished."
+    },
+    "anatomical_authoring_direction": "Correct actual elbow hinge/forearm roll and grip as one coherent anatomical chain. Temporary non-exported Blender-native IK/FK authoring controls may be used for this specific clip and baked to unchanged original export skeleton if custom analytic basis continues failing; no generic rig framework, character remodel or production bones. Preserve original seven clip channels/rest/skin. Native IK still requires appropriate poles/rig-local limits and actual visible/self-contact review.",
+    "anatomical_motion_continuity": "Actual complete motion must stay on a temporally coherent elbow/hinge solution and forearm roll. Prior-frame preference and same chest frame are useful; quaternion sign fixes alone cannot repair geometric branch swaps. If a grip/body path forces singular/disconnected clearance, revise the bounded trajectory rather than snap or loosen limits. Retain a sensible elbow bend margin and verify readable continuous motion before final export.",
+    "lift_component_review": "evidence/supplier_transport/s4_lift_component_v04.json"
+  },
+  "warehouse_metal_runtime_plan": {
+    "diagram": "diagrams/warehouse_metal_supports.mmd",
+    "stage": "Prospective only, before runtime implementation",
+    "owner": "Existing WarehouseService owns finite cell promises and any per-cell removable support state; Receiving owns physical worker preparation/handling, Ledger owns actual stock.",
+    "rule": "A metal-specific support must be ready at the actual cell before handoff. Other-material cells retain their original planes/envelopes. Preparing/changing a support requires the real worker and existing smoke/preparation semantics; no global clock or standing inventory poll.",
+    "limits": "Static models and the two representative inner-cell witnesses do not establish all-cell contact or completed material handling."
+  },
+  "warehouse_metal_static_delivery": {
+    "receipt": "evidence/supplier_transport/warehouse_metal_static_manifest.json",
+    "stage": "Static rack view/collision and cassette imports passed scoped native43014853905 atc7dd490; per-cell preparation/full handling remain unconnected.",
+    "runtime_limit": "Per-cell support preparation/installation, raised metal placement and real lift/deposit remain unconnected. Existing WarehouseService stock/capacity/claims untouched.",
+    "assets": [
+      "warehouse_crate_rack_metal_access_v02",
+      "warehouse_metal_lower_cassette_v01",
+      "warehouse_metal_upper_cassette_v01"
+    ],
+    "source_qa": "Artist representative3contacts\u00d753samples on actual exports; not all-cell handling.",
+    "native_receipt": "evidence/supplier_transport/warehouse_metal_static_native.json"
+  },
+  "timber_human_revision": {
+    "authority": "Direct Dawson Lead reply to request_user_input_async call_e96ad660865a491cab999a1438827ce4",
+    "feedback": "They should not use the tops of their hands to pick up wood; carry wood over their shoulders during travel; avoid excessive bouncing down the ramp.",
+    "interpretation": "Feedback concerns timber people/wood despite arriving through the folding-shelf question. It does not establish S4 mechanism approval or rejection.",
+    "stage": "Timber truck/ground/warehouse appearance requires revision; previous hand-carry videos are not approved. Originals retained; no runtime animation binding changed.",
+    "next": "Lead accepted forward tandem/right-shoulder/flat-bundle layout as basis. Artist fits actual palmar/shoulder support and moving transition clearance, then supplies revised complete normal-speed video. No prior hand-carry approval inferred.",
+    "limits": "No blanket new pickup/body clip permission; shoulder transition/travel may need distinct authored motion and measured roof/ramp/warehouse clearance. No animation or geometry completion inferred from the revised brief."
+  },
+  "timber_shoulder_layout": {
+    "stage": "Accepted as revised animation layout basis, not passed anatomy/arms/transition/moving clearance or human appearance",
+    "review": "Inspected full four-panel concept and source-measured layout. All manifest file identities matched; use authoritative PNGbdeab129, not unfinished relay fragment.",
+    "authorized": "Fit true palmar/finger/thumb underside support, actual weighted shoulder/tucked arms and transition geometry, then revised coordinated motion after early fit clears. Original synchronized initial pickup bend body retained; shoulder transfer/travel is within human revision. Return a concrete blocker or coherent finished handoff, not per-step approval loops.",
+    "roles": "Leading(+length)/trailing(-length) map once to actual person IDs. Old sourceactor0Z.90 was cab-side/trailing for+Zexit;actor1Z2.20 led. No automatic role/identity swap from old fore/aft names or geography.",
+    "packing": "Existing conservative M04 catalogue envelope2x.24x.32 remains. Actual mesh162mm height does not authorize shrinking packing. Both actual and conservative overhead limits need source check.",
+    "motion": "Actual paired supports/sole contacts through both ramp breakovers, natural controlled stepping, low terrain-adjusted bob. Targets are provisional authored references, not gameplay speed or collision acceptance. Existing planar1.2m joint separation guard retained.",
+    "warehouse": "Transfer shoulder load back to real palm support at clear staging before close bay engagement; no shoulder load routed into stored stock.",
+    "limits": "Old hand-carry clips unapproved; no new revised clip/export/native check delivered by this layout. Original assets and independent worker-operated shelf brief preserved.",
+    "verified_manifest_files": 6,
+    "report_original_sha256": "693c91eee96eda62aee30d9711d93d1ba1e6212212599cd433ee43277928c469",
+    "report_repository_lf_sha256": "693c91eee96eda62aee30d9711d93d1ba1e6212212599cd433ee43277928c469",
+    "diagram": "diagrams/timber_shoulder_carry.mmd",
+    "receipt": "evidence/supplier_transport/timber_shoulder_layout_manifest_v01.json"
+  },
+  "s4_parked_grip_decision": "evidence/supplier_transport/s4_parked_grip_retention_decision.json",
+  "s4_handle_deployment_amendment": "12November Lead permits captive controlled spring-assisted100mm grip extension only after actual worker front-pad release, guided hand movement and positive detent engagement. Pan remains fully manually supported and operated; parked grip stays retained extended. Actual lowering and closed-pan locks precede manual grip retraction and secured travel. Full-cycle contacts/export/appearance and integration remain pending. See evidence/supplier_transport/s4_parked_grip_retention_decision.json spring_deployment_amendment.",
+  "s4_b_control_lever_study": {
+    "stage": "Both enlarged levers and torso-turn choreography are rejected studies retained as history. No lever variation is adopted. Active authorized study is the measured local inner-post notch with original compact control and supported route; no final art/export/runtime acceptance.",
+    "reason": "Actual LeftHandIndex1/2 crossed the parked control post even after39mm supported retreat; control placement is brittle, not proof no human pose exists. Move grip inboard rather than contort worker.",
+    "proposal": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_worker_operation_v05/b_control_proposal_v01/proposal.json",
+    "pivot_godot_m": [
+      -0.264,
+      1.15,
+      -0.3375
+    ],
+    "native_x_travel_degrees": [
+      0,
+      45
+    ],
+    "lever_length_m": 0.045,
+    "grip_diameter_m": 0.018,
+    "face_thickness_m": 0.002,
+    "front_x_m": -0.265,
+    "proposed_moving_bounds_m": {
+      "min": [
+        -0.265,
+        1.139,
+        -0.3485
+      ],
+      "max": [
+        -0.254,
+        1.19082,
+        -0.2835
+      ]
+    },
+    "local_relief": {
+      "outer_radius_m": 0.018,
+      "front_depth_m": 0.0025,
+      "preserve": "actual shaft bore, rear reinforcement, positive park pins; no silent enlarged cut or envelope"
+    },
+    "analytical_only": "Declared bounds fit existing cage with1.5mm minimumZmargin; nominal17.5mm remaining post depth is not actual mesh/sweep/structural proof.",
+    "unchanged": "cage,cargo/M05/support/capacity,originalrig/sevenclips,approved8s lift/reverse,manual actual worker service and custody ownership",
+    "acceptance": "Actual complete assembly/lever/post sweep, worker reach/palm/finger/continuous opposite-hand support/feet,cargo/truck/neighbors; then paced full source/export readback and visibly complete normal-speed review. Candidate may compose after passing without another routine permission round.",
+    "scope": "No new gameplay resource cost,player button,forced timing or partial human approval gate",
+    "clocked_revision": {
+      "stage": "Rejected continuous operator-fit study; geometry/control-pose results remain scoped history, not adopted final art or runtime",
+      "reason": "Upward lever passed geometry/9controlposes but intersects actual free-hand transfer; lower grip orientation addresses the obstruction without contorting operator. Failed endpoint/interpolation routes remain rejected.",
+      "decision_source": "Artist b_control_proposal_v02/decision.md reviewed by Lead; direct Lead authorization recorded in Director chat",
+      "pivot_godot_m": [
+        -0.264,
+        1.15,
+        -0.3375
+      ],
+      "native_x_travel_degrees": [
+        0,
+        45
+      ],
+      "released_grip_centre_m": [
+        -0.264,
+        1.15,
+        -0.2925
+      ],
+      "locked_grip_centre_m": [
+        -0.264,
+        1.11818,
+        -0.30568
+      ],
+      "proposed_bounds_m": {
+        "min": [
+          -0.265,
+          1.10918,
+          -0.3485
+        ],
+        "max": [
+          -0.254,
+          1.161,
+          -0.2835
+        ]
+      },
+      "unchanged": "45mm lever,18mm face2mm thick,frontX-.265;shaftbore/rear reinforcement/positivepins; cage/cargo/M05/support/capacity/rig/sevenclips/approved8s lift+reverse/truck",
+      "relief": "Rebuild original post, REPLACE priorquadrantcut with newly oriented sameR18mm/depth2.5mm relief. Never combinecuts or silentlyenlarge.",
+      "gates": "Actualwholelever/poststroke plus continuousoperatorroute/palm/contact/oppositehandsupport/feet/cargo/truck/neighbors before composition. Analyticalbounds/isolatedposes are not actualroute proof. If gates pass proceed fullpacedsource/export/video without another permissionround.",
+      "prior_upward_study": "Retain geometry pass as history; rejected for continuousoperator fit, not integrated."
+    },
+    "clocked_operator_outcome": {
+      "source": "Artist Director report and s4_worker_operation_v05/clocked_b_route_v01_progress.json, 12 November 2026",
+      "scoped_geometry_result": "Director reports actual 91-position lever/post sweep and nine restricted thumb poses pass; this does not establish full operator clearance.",
+      "rejection": "Expanded control intersects the LeftArm transfer sweep. Key 13 corrected candidate still has 22 actual lever/LeftArm triangle pairs; original endpoint also remains blocked.",
+      "readiness": "Neither lever variation is adopted; preserve failed studies for diagnosis.",
+      "fixture_state_diagnosis_withdrawn": "Director measured torso_turn_fixture_preflight.json: saved slide X -0.550000012 m and actual RightC/bar error 80.33 micrometres before and after correction. Suspected stowed-state mismatch was an unmeasured inference and is disproved; earlier reports are not invalidated on this basis.",
+      "current_residual": "Director reports original compact control with supported 39 mm route remains the best measured study: 1411 samples, two residual Index1/2 post contacts. Exact overlap extent and local structural boundary are under inspection; no accepted full animation.",
+      "torso_turn_outcome": "First actual three-degree step remains blocked at frame 5: 54 bar overlap counts and 31.29 mm unsupported fitting error. Do not promote endpoint success or adopt this choreography.",
+      "preconditions_and_lesson": "Final manifest must declare measured handle X -0.55 m, pan 90 degrees and unlocked pins before parked transfer. Measure saved state before attributing failure to setup."
+    },
+    "current_revision": "local_post_notch_study",
+    "local_post_notch_study": {
+      "stage": "Lead-authorized versioned local geometry study; no final animation or runtime adoption",
+      "decision_source": "Artist post_notch_proposal_v01/decision.md and actual diagram reviewed by Lead, 12 November 2026",
+      "measured_basis": "Intended-state replay: two residual contacts, B segment 27 at u 0.625 and 0.6875. Deepest overlapping finger triangle extends 0.464785 mm past inner post face Z -0.325 m.",
+      "cutter_bounds_godot_m": {
+        "min": [
+          -0.266,
+          1.139,
+          -0.327
+        ],
+        "max": [
+          -0.247,
+          1.154,
+          -0.323
+        ]
+      },
+      "scope": "Rounded 19 by 15 mm mouth, at most 2 mm into existing material. Build from original fixture, no historical lever cuts combined and no added projection/cage change.",
+      "retained_geometry": "Rear reinforcement starts X -0.240 m, cutter stops -0.247 m. At least 5.5 mm material remains to shaft bore edge Z -0.3325 m; geometric accounting, not strength certification.",
+      "unchanged": "Original compact control, shaft, pins, supports, M05, capacity, cargo, truck, original rig/rest/weights/seven clips/31 limits and approved eight-second lift plus reverse.",
+      "gates": "Actual rounded mesh and continuous full-route clearance/support/feet/body/joints/cargo/truck/neighbors plus changed-mesh QA. If passing, proceed directly to paced whole source, actual export/readback and full normal-speed video with complementary hand coverage. Bounds alone are not proof; no silent wider cut or combined historical cuts."
+    },
+    "original_control_choreography_study": {
+      "stage": "Torso-turn study blocked; exact residual of earlier supported original-control route is under inspection, not accepted full animation",
+      "approach": "Original compact control; modest 12-degree Chest axial turn during free-hand transfer only, with actual opposite-hand support refit and planted feet.",
+      "unchanged": "Original rig, limits, mesh, rest pose, seven clips, approved eight-second lift and reverse, cargo and vehicle contracts.",
+      "gates": "Actual continuous mechanism/body clearance, joint limits, continuous contact/support and feet; then paced full-cycle source, actual export/readback and full normal-speed video review. No endpoint-only acceptance.",
+      "authority": "Lead acknowledged existing bounded authoring scope; proceed without another routine permission round. No changed mechanism handed for integration."
+    }
+  },
+  "s4_complete_operator_delivery": {
+    "stage": "Full V02 appearance approved directly by Dawson on 13 November 2026; Lead runtime integration is in progress, not yet engine-verified.",
+    "package": "C:/Users/dawso/.codex/visualizations/2026/11/08/01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe/s4_complete_operator_delivery_v02",
+    "archive_sha256": "4e8caea6432e401093754675ecff52428b488ecac60d59edcbc60dc38d469826",
+    "lead_receipt_in_combined_candidate": "evidence/supplier_transport/s4_complete_operator_delivery_v02.json",
+    "runtime": "Paired worker/fixture open and close clips share module origin and clock; existing Root bone motion consumed once. Locked service state persists across packages, no fixed demo hold or stock callbacks.",
+    "limits": "Explicit proximal garment warnings retained. Full 86.7-second video and complementary 57.9-second moving-hand video are appearance previews of actual exports, not game captures or integration/FPS evidence.",
+    "human_approval": {
+      "text": "It\u2019s good",
+      "turn": "01a1d352-5867-71f1-9072-22536f396503",
+      "message": "01a1d352-5a64-7021-809c-57e6d2a317de",
+      "record": "game/supplier_transport/assets/s4_operator/appearance_approval.json"
+    }
+  },
+  "s4_service_pacing": {
+    "authority": "Game Designer guidance12November2026; Lead timing/integration responsibility",
+    "status": "No fixed totalservice duration approved; diagnostic76/121.4s are not forced gameplay delays.",
+    "rules": "Preserve approved8s lift/reverse unless explicitly revised; no blanket speedup,teleport or skipped support. Diagnostic sample density/dwell is not gameplay work. Keep valid parkedhands-clear state across actual lowerhandling; do not add diagnostic hold on top or replay fullopenclose perpackage.",
+    "handoff": "Artist supplies exact openready/parkedlockedhandsclear/serviceclear/return/closedlocked/gripstowed phasebounds and actualsource/export durations. Lead owns actorpaths,cargo custody and timing; no animation callback grants stock.",
+    "acceptance": "Practical pacing and natural fullmotion need review; source contact/joint statistics do not establish appearance or fullgame acceptance."
+  }
+}

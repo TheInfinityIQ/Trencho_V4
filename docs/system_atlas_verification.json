@@ -1,32 +1,46 @@
 {
-  "scope": "Battlefield marker lifetime repair at f0f4ad8; GitHub run 43325446452 passed one explicitly arranged same-ID report-to-T04 transition.",
+  "scope": "Source-only candidate combining supplier e3e357a and main a1cd2d57; no integration gameplay or native acceptance is claimed.",
   "checks": {
-    "generation": "System map with six reviewed marker lifetime function purposes and source-validated atlas regenerated without local engine execution.",
+    "generation": "Rebuilt from combined source, union of previously reviewed exact-source purposes and ownership records, and one newly reviewed combined world build.",
     "game_script_inventory": {
-      "total": 237,
-      "non_test": 143,
+      "total": 249,
+      "non_test": 155,
       "retained_tests": 94
     },
     "atlas": {
-      "systems": 50,
-      "functions_in_inventory": 3616,
-      "diagram_function_links": 305
+      "systems": 51,
+      "functions_in_inventory": 3769,
+      "diagram_function_links": 333
     },
     "function_map": {
-      "files": 1200,
-      "functions": 3839,
-      "named": 3476,
-      "anonymous": 363,
+      "files": 1387,
+      "functions": 3992,
+      "named": 3622,
+      "anonymous": 370,
       "purpose_reviews_required": 0
     },
-    "links": "Workspace hint points to isolated battlefield-marker-lifetime-worktree; reviewed source checkpoint f0f4ad8."
+    "links": "Candidate workspace logs/supplier-field-integration-worktree; source baseline is the two listed parents plus the isolated contract checkpoint."
   },
-  "browser_preview": "Not performed.",
   "unverified": [
-    "Generic proxy cleanup and the person, T01 and objective callbacks were source-reviewed only.",
-    "No native input, rendered appearance, full lifecycle or FPS acceptance.",
-    "No local Godot or regression suite.",
+    "No local Godot, GitHub action, regression suite, broad scenario, native input, full logistics loop or FPS acceptance.",
+    "Textual merge and source maps do not prove combined runtime behavior.",
+    "Art and supplier draft readiness remain with their owners and existing review process.",
     "Inventory/static links are not an exhaustive runtime call graph."
   ],
-  "runtime_evidence": "evidence/battlefield_3d/marker_lifetime_current_change.json"
+  "lead_source_review": {
+    "candidate": "1cc12e66 production with a862dc44 policycleanup",
+    "review": "Compared combined world_presenter against both parents; current battlefield presenter/lifetime and supplier rear/convoy/manager edits retained. AGENTS duplicate current rules removed before this record.",
+    "contract": "Original/candidate snapshot b402eab9 preserved then both amended with Lead-approved clockedlever study and servicepacing; source/art/runtime acceptance remains pending.",
+    "checks": "No new engine/action/broad scenario. Existing component receipts retain their exact parent scope; combined source not gameplayaccepted."
+  },
+  "s4_integration_source_review": {
+    "date": "2026-11-13",
+    "game_scripts": 251,
+    "non_test_scripts": 157,
+    "retained_tests": 94,
+    "functions_in_inventory": 3792,
+    "systems": 51,
+    "diagram_links": 333,
+    "status": "Source-only S4 wiring reviewed; no engine demonstration yet. Previous parent receipts retain exact scope."
+  }
 }

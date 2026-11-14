@@ -1,0 +1,541 @@
+{
+  "readiness": "Static QA, representative contact, format and Artist visual checks passed; human appearance/native/game integration separate and pending.",
+  "files": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\environment.json",
+      "bytes": 984,
+      "sha256": "6a853127fc79d5df4aa67001ccd27bf98a42c4cc4661c8bb3435aaeb8a75a47c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\export_attribute_seams.json",
+      "bytes": 3508,
+      "sha256": "7c204805ac1ebd04abd46e83d1b2956ff2cf885757ce34150fe4bb58d976982c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\export_complete.json",
+      "bytes": 37,
+      "sha256": "05a37cb9be57ad2fc1acf1ef32449066b0176b93439c47fb0837ffb64dea8ca8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\export_roundtrip.json",
+      "bytes": 13307,
+      "sha256": "93d77e77a16654dd26576c9a16eed073606bdf0e4798170fa8904358bda48488"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contact_gate.json",
+      "bytes": 1405,
+      "sha256": "cea9d402cf6191192c54b7fd9a09a7812f9a060e5130cceaf7ff545dbc2a27f1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\actual_palm_vertical_bounds.json",
+      "bytes": 3463,
+      "sha256": "4b2ecdbf7ff16cc7dda1b097c225cfc7d5a1f28f55a94fc5ce1be86724f0765e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\actual_surface_frames.json",
+      "bytes": 25007,
+      "sha256": "ad90aaa32e5fb18286f67e6438aeb5ecb9a102032e21ecc20e1b9bd83cbb951c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\back_bale_preserved.json",
+      "bytes": 17792,
+      "sha256": "4c0623a1f4177f6ff4e7bc6c15076b23914946d345303947d2249b351495e6f5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\back_lower_metal.json",
+      "bytes": 18330,
+      "sha256": "e70cedb74ca000f53adb4a3255ebd673f536500ff2dd939e4fb20387b2c579b1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\back_upper_metal.json",
+      "bytes": 18345,
+      "sha256": "c79540a71ad5c0fde5edbee06a0c4f722560bd95c73eacce266d35b6df0808a5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\complete.json",
+      "bytes": 76,
+      "sha256": "6ea14aa28c0a5774ac4f744865b983e5256310a0529fd3bcb08a2ecd8f5a0afa"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\hand_calibration.json",
+      "bytes": 22214,
+      "sha256": "9f613b3e1caca461c0d26e8c6e1769fae0b6c2e246b1e74a027d961a3bc073b9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\static_contact_results.json",
+      "bytes": 3997,
+      "sha256": "73c5e9c4ad3584ab7aced361bee31790e2825d6b4f09af5e2798fb0b50a80046"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\exported_contacts\\warehouse_bale_station_interval.json",
+      "bytes": 199,
+      "sha256": "4f0303ec495a89e84a618818cf64a0ec4d2af36eeff54d49c65dece7fb932d71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\HANDOFF.md",
+      "bytes": 5294,
+      "sha256": "6a72d0f8f4821d4357b87cd1193a972515c93a17ac5aecb4e80b0d1ccd272ba1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_build.json",
+      "bytes": 5894,
+      "sha256": "56ed33b07a6235ad2ea2303510b62820029cf2eb62e16a96ac8cc4ea3cecd077"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contact_gate.json",
+      "bytes": 1403,
+      "sha256": "6a77d791753621bb97f1e062e64ae858dd30b2aa0b8d0ef76cb69a6ba61f7ec9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\actual_palm_vertical_bounds.json",
+      "bytes": 3463,
+      "sha256": "4b2ecdbf7ff16cc7dda1b097c225cfc7d5a1f28f55a94fc5ce1be86724f0765e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\actual_surface_frames.json",
+      "bytes": 25007,
+      "sha256": "ad90aaa32e5fb18286f67e6438aeb5ecb9a102032e21ecc20e1b9bd83cbb951c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\back_bale_preserved.json",
+      "bytes": 17792,
+      "sha256": "4c0623a1f4177f6ff4e7bc6c15076b23914946d345303947d2249b351495e6f5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\back_lower_metal.json",
+      "bytes": 18330,
+      "sha256": "e70cedb74ca000f53adb4a3255ebd673f536500ff2dd939e4fb20387b2c579b1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\back_upper_metal.json",
+      "bytes": 18345,
+      "sha256": "c79540a71ad5c0fde5edbee06a0c4f722560bd95c73eacce266d35b6df0808a5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\complete.json",
+      "bytes": 76,
+      "sha256": "6ea14aa28c0a5774ac4f744865b983e5256310a0529fd3bcb08a2ecd8f5a0afa"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\hand_calibration.json",
+      "bytes": 22214,
+      "sha256": "9f613b3e1caca461c0d26e8c6e1769fae0b6c2e246b1e74a027d961a3bc073b9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\static_contact_results.json",
+      "bytes": 3997,
+      "sha256": "73c5e9c4ad3584ab7aced361bee31790e2825d6b4f09af5e2798fb0b50a80046"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\source_contacts\\warehouse_bale_station_interval.json",
+      "bytes": 199,
+      "sha256": "4f0303ec495a89e84a618818cf64a0ec4d2af36eeff54d49c65dece7fb932d71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02.blend",
+      "bytes": 158454,
+      "sha256": "7c9884cef63e532fc07398877286d1ad95529eeb1f2aa99b197c352a59ac91f1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02.glb",
+      "bytes": 142656,
+      "sha256": "51dd6520078b18c0b8f17366ce463e536206a2199ae4fd7e401537393f2bae14"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02.glb.validation.json",
+      "bytes": 1923,
+      "sha256": "b8db7c41667af166cbcc2cd713270535e9b8a1540cf56f83533c77276723b155"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_export_receipt.json",
+      "bytes": 4712,
+      "sha256": "d359d18345b480ecafbaf661b97bf9d2c330f4f0cdbc3807ae4e2113d3905f68"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_material.png",
+      "bytes": 761518,
+      "sha256": "4dd3b30f71149e70ee54b118c10946455957e55f9597db3fd3d16a66f5d46f0e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review.png",
+      "bytes": 811067,
+      "sha256": "1b64685968a193cfb468a57795b8a18e7fe92c02c6e621618f4069783dda0d67"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_back.png",
+      "bytes": 151172,
+      "sha256": "acd3f3cceb4f836bd0a14b0ae69dbdf69063a99f72a00629d95f079d8b412b85"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_front.png",
+      "bytes": 151279,
+      "sha256": "4ac394ac403d67d256eb13b27509b5863e40f97af9c580061906465fa130bcae"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_left.png",
+      "bytes": 154913,
+      "sha256": "7891f9fec588ba3eefd6aceae9f34c05283b034c2888cad97b06886269a18d28"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_right.png",
+      "bytes": 154584,
+      "sha256": "1617f1c6d1c45b02d9fda882adf709f52f644064a27a7fd452c84b7ac6c38d15"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_three_quarter.png",
+      "bytes": 179214,
+      "sha256": "8de2dc302ae2173851e4793ed1b88b0c55155717ada09e2eef44ad1f95bc6900"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_palette_review_top.png",
+      "bytes": 148049,
+      "sha256": "b506a32623ce494b5e32da248edbccfd3aaeb57ebe2132951c0f4576f0c3d0d0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_roundtrip_qa.json",
+      "bytes": 814,
+      "sha256": "030db101b1963e469f2aa677c1c86b0a3fa4ed43d58b657b524e035345e05743"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_source_qa.json",
+      "bytes": 718,
+      "sha256": "91eec5ce30fff20a68f63d11699c75486531e1426629655566c9144d90a4305a"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review.png",
+      "bytes": 603258,
+      "sha256": "e04d76fe9241a378808bf630e8bdf7224b4823d8f55266463fc68be889a713f9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_back.png",
+      "bytes": 95746,
+      "sha256": "03963b17d5837c6cea58a4fe7dbbcf61f3335ce96f28dde3012c1e79e774cb37"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_front.png",
+      "bytes": 95959,
+      "sha256": "d8a266e70791144bb86ed0d053c2364013a2e13304f001bdc3ce6eba9eaf4118"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_left.png",
+      "bytes": 95104,
+      "sha256": "ab1ff95af8b72768f36b089d73f946d7770b10e0b1f2528bde540475dbb0b927"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_right.png",
+      "bytes": 94885,
+      "sha256": "098d62b3b947f3df43318c532796751b5cfbddb08c0c356e9064547e9ccc8cd1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_three_quarter.png",
+      "bytes": 132643,
+      "sha256": "a0bc054e4d3ee0f2ebeeebcfb4ad27c67e479968beef578d950369f300e1b9f5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_crate_rack_metal_access_v02_wire_review_top.png",
+      "bytes": 90754,
+      "sha256": "1dbfc5b04c30506bea113c42e06b46435e365af68e5423b8b58bdf5176177fe8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01.blend",
+      "bytes": 102744,
+      "sha256": "7744f15ef7b69131971c2e2a42d86bad0ee0c7688c7042cec3325a392167e404"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01.glb",
+      "bytes": 25504,
+      "sha256": "fe8c8f0c953c01579eaf54c8ede53223fa1b3ab1065c25d4fca7b33cb6c58fee"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01.glb.validation.json",
+      "bytes": 1622,
+      "sha256": "10be2af14d31ef2602d8d8d1d301d0f5e69058169ab4541fcb14ce13049f8b15"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_export_receipt.json",
+      "bytes": 3248,
+      "sha256": "d71da7f15b60f882be9470955daedeefac44da848a0adbb3ad79c00c3cb3b3c4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_material.png",
+      "bytes": 518444,
+      "sha256": "b21e1e09d78af3fd64314c7e3baebe23271f5d91e642724d1c9c72546e779044"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review.png",
+      "bytes": 730740,
+      "sha256": "c608355cab22a2d949cedeecf0d1135eab08972cd62b528ff5cab07184bbbe97"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_back.png",
+      "bytes": 143769,
+      "sha256": "2580e9e43fbf5ba174cfef890315ec870316bfc2a6bb990c3c94434498d5e712"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_front.png",
+      "bytes": 143770,
+      "sha256": "721853a9152f80ac037c477776ed47ca6e878cf49612d404cb1dacf12d17c39f"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_left.png",
+      "bytes": 146857,
+      "sha256": "e3f3ca7e853a8ca90a897a2cb0a0f1df4228ef216a5b219ac9d80665e939bbfe"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_right.png",
+      "bytes": 146857,
+      "sha256": "e3f3ca7e853a8ca90a897a2cb0a0f1df4228ef216a5b219ac9d80665e939bbfe"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_three_quarter.png",
+      "bytes": 150517,
+      "sha256": "597bf896e24b5ae6b5564cc840b34f800913ac8acafad2b7bb5f875e841478ae"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_palette_review_top.png",
+      "bytes": 141353,
+      "sha256": "5e7bc43e5e422161fccb6820cb85a52a04dd092504c37d9f7f1b3c5fe03698b0"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_roundtrip_qa.json",
+      "bytes": 802,
+      "sha256": "ae6bc54aebe791bb109131110d7bba443c533e2664eaf69677e99a7a1d0916be"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_source_qa.json",
+      "bytes": 712,
+      "sha256": "fa586304f930aa515dd98cee2aa7cfe516cb88ea5586d53c18c5ab8a9ea73ac1"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review.png",
+      "bytes": 541878,
+      "sha256": "76e3d7ee098225853eff6679f87cfc2d51e65b55e203faf9fadaf182f3658f47"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_back.png",
+      "bytes": 88085,
+      "sha256": "cc26640cab7cec85129df8c2178e69d5cde7dd6dbb022816c5065c06eef4d054"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_front.png",
+      "bytes": 88133,
+      "sha256": "2858f7d43bda83d4d1232ee702c6c1323c2949d49959731384443a3365ff89bd"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_left.png",
+      "bytes": 109057,
+      "sha256": "0270723f44dc5d8c4517b998e8818f6bf1f7926925a8e3bbff4fb063e1763d00"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_right.png",
+      "bytes": 109080,
+      "sha256": "f8b6210ca20f8027f316dcbe414dd4b685d9856695bdfa389a642f4848db1d58"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_three_quarter.png",
+      "bytes": 107042,
+      "sha256": "156942b8fc09306073bf778a2a33e575a1fcd6541f429bc1b99183bc816abced"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_lower_cassette_v01_wire_review_top.png",
+      "bytes": 60262,
+      "sha256": "59cd8f96ea3336c78c66eb3997ad3ea9edfb9b238de43291b1e9ddc186a1ad54"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01.blend",
+      "bytes": 103053,
+      "sha256": "87f5e9aaf556e8cea5526920362b4c053d18a6c677b9f562fff2e5b2d5809ae6"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01.glb",
+      "bytes": 25148,
+      "sha256": "b145391a021cbcd962bf2d251d894798aff37be2376dbe80225a33690071ac6e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01.glb.validation.json",
+      "bytes": 1622,
+      "sha256": "e4017ab1f4d44d8d20db2edf6f23561b417c3b20535bf8a3be7d6106fb1f7f89"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_export_receipt.json",
+      "bytes": 3251,
+      "sha256": "d9f9040d18169e89040feb5b1f482ba15a5d177cd82c7a0fada49df4250be628"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_material.png",
+      "bytes": 637094,
+      "sha256": "95552f0582ea103fa84a12585d21ad74a206afe4c299e264b293f398117ed30e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review.png",
+      "bytes": 765100,
+      "sha256": "756e5eba287f3b3f8f7d546b65efc79138d60cdc648d01013b8c09260f31a7ee"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_back.png",
+      "bytes": 146583,
+      "sha256": "64e63682adab6fdb94f121ae372b8ab6427bb4c444b0cf0ba7b99375f523e500"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_front.png",
+      "bytes": 146595,
+      "sha256": "8e5e24d4536b7199f8e9a670afd825dc191310ba4720a53b3baa08abfd0d6ae4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_left.png",
+      "bytes": 147717,
+      "sha256": "396e995e11fe0e4be9bd15ec6b28a2181483759784e55973eeac38293fa368fb"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_right.png",
+      "bytes": 147737,
+      "sha256": "2fa67fae52896be913f219eea551c8acfa32c91a0d6440e52a1831d1f32388e2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_three_quarter.png",
+      "bytes": 159307,
+      "sha256": "91956f6c16121e0a697604b36069a34c0f7288e956bc68cf0eeb94a70a7ee3f5"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_palette_review_top.png",
+      "bytes": 146116,
+      "sha256": "ce4c1a9711630d3dbc5bae46ef66169a7750af89cf967e8ef05dbc409e2f5446"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_roundtrip_qa.json",
+      "bytes": 802,
+      "sha256": "f32b607801e8b7935dc79178ed8b84616993e228fbc1b44793e9319117516129"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_source_qa.json",
+      "bytes": 712,
+      "sha256": "ad03d68bb116d715fe7ad286a9738b8f487c5da4215b6801cd8cef23b1cf8146"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review.png",
+      "bytes": 619273,
+      "sha256": "b8df4cacf5dc24359a05b59ffacd35b950fc15525b4ceec424803b0f77b9621b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_back.png",
+      "bytes": 94650,
+      "sha256": "198f84e3ead16305d849444e64b35abddcc944a1c2ecd09683a6ba3f140ebf0d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_front.png",
+      "bytes": 94606,
+      "sha256": "fdcf21e73ce9647935eeeacfe6eefa458984561de252216c26648b672dc3b33c"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_left.png",
+      "bytes": 111226,
+      "sha256": "7607329f4f0da24f9d4e3b799d5dfa85503fd4347499a76fb7cb572f7efec231"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_right.png",
+      "bytes": 111173,
+      "sha256": "8b111e4f1e3cb7f74ed4ae359497e95959645654ee797f946b22af38070a1bf8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_three_quarter.png",
+      "bytes": 125051,
+      "sha256": "20c47e4fe2f3983a1760889d5434efbb141edf5e609e172056a25208412d4178"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse_metal_static_v01\\warehouse_metal_upper_cassette_v01_wire_review_top.png",
+      "bytes": 112037,
+      "sha256": "14d7073eeed0b4b957ed17db0fdf1d9cd9fa2c475932a01ae1499f28c7c74e09"
+    }
+  ],
+  "preserved_timber": [
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.glb",
+      "sha256": "69b63af4fe4e57c1eae907b8cc829e1b4e93961f3a0628844f9101a1c11d652d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\construction_worker_timber_truck_draft_v01.blend",
+      "sha256": "a650198cfc1a5f4d8efb0518fdb887da1ca72a4cfa3a799acd172b311fb1158e"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\truck_floor_root_and_load_paths_v01.json",
+      "sha256": "b58e9fc25addb5ab4b80308f88f8d3b112fd3abed18c10aa009a951bffdee419"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\hand_grip_and_axis_contract_v01.json",
+      "sha256": "de151530376141325702efc7a53e43599301d66cf221483c2c80ca04690cf1f9"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_truck_delivery_v01\\timber_truck_full_motion_draft_v01.mp4",
+      "sha256": "642ed976b3cbd41c8eccf9504eaa04fc548c7ef2a09cd6c614d3138b389380a8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\materials_shelves\\s1_longstockrack_v03.glb",
+      "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.glb",
+      "sha256": "be2a3b5f90bd903357ec2e8726c0cfe0d875e955b6c480b16f2d30c548b9ae4d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\construction_worker_timber_ground_draft_v01.blend",
+      "sha256": "fcd19eb3f0cb02fc5e4c3333c8b1d3a5720503b022ebd3f406fe046f4ac947cc"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\ground_pair_root_and_load_paths_v01.json",
+      "sha256": "0607a02418583212ae5dfcbb4c24fd6c5be20eb2c3282aecccba8fea98751024"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_ground_delivery_v01\\timber_ground_full_motion_draft_v01.mp4",
+      "sha256": "b253417b0b5eed256cc054f712514a5e11065490082fddd70f68550f75e5e3f2"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\construction_worker_timber_warehouse_draft_v01.glb",
+      "sha256": "6030dcdfc37db5d4caac81f57bdcbfec49709333156eed04c28005b6f1d2aa9b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\construction_worker_timber_warehouse_draft_v01.blend",
+      "sha256": "aa53a3e21d959160c99d57e8636d0ccf57da3ffe1e8d0ff4aa0f8cd337e086e8"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\warehouse_pair_root_and_load_paths_v01.json",
+      "sha256": "c0f222a6719a59cd1f4ca340c5cba9ee4baee69f0d60781dbf6c14b8b8ed170b"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\timber_warehouse_full_motion_draft_v01.mp4",
+      "sha256": "6f025b8c1da9392eba86689a4b3fd2043a04ae470035c1e3011aff37e3854e71"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_long_stock_rack_v04.glb",
+      "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\warehouse\\warehouse_long_stock_rack_v04.blend",
+      "sha256": "ca2923fd140c5b2deb9a0f24faed8f5b07b5db2de6b108a996eb70422ae129c3"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\original_bend_and_join_check_v01.json",
+      "sha256": "8adcd986fea5525eac334b3f89967d6ec0fa587633ca664cd14087aebe5ca588"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\preservation_check.json",
+      "sha256": "9da4ba4c7ce26b04253d10e1d45999127cff6e1b27c37d5b78b62f2cbf82939d"
+    },
+    {
+      "path": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\vehicle_character_animation\\timber_warehouse_delivery_v01\\video_manifest.json",
+      "sha256": "5b4b17d03cfee253c8b132648ad3e64176746ff8fd4f2534ac5204b711f26e52"
+    }
+  ],
+  "old_contact_evidence_unchanged": true,
+  "animations_created": 0,
+  "lead_review": {
+    "verified_files": 89,
+    "visual": "Inspected three full material renders; source/export QA and representative contact limits read from handoff.",
+    "integration_scope": "New empty crate rack selected by WarehouseView, cached static triangle collision preserves service opening. Independent cassette resources/source preserved and declared for import; not installed by stock/preparation logic.",
+    "acceptance": "Brief GitHub-only direct check: imported default crate fixture, open service gap, solid adjacent rail and intact tray; cassette marker/registration imports. No full gameplay, animation, all-cell orFPS claim.",
+    "rationale": "One static collision shape per imported mesh preserves measured holes/caps and uses the mesh parent transform. Cached by retained Mesh resource at fixture creation; no per-frame rebuild or inventory poll. Primitive enclosing boxes/one convex hull would fill the service opening. This static choice has not been performance-benchmarked.",
+    "sources": [
+      "https://docs.godotengine.org/en/stable/tutorials/physics/collision_shapes_3d.html",
+      "https://docs.godotengine.org/en/stable/classes/class_mesh.html#class-mesh-method-create-trimesh-shape"
+    ]
+  }
+}

@@ -1,6 +1,16 @@
 # One objective, bounded execution
 
-Current operating workflow, 9 November 2026: the Lead is the sole programmer.
+Current operating workflow, 10 November 2026: the Lead is the sole programmer
+and routine UI/UX owner; the separate UI role is retired after its handoff.
+Designer handles material gameplay decisions and required current-head review;
+Artist retains bounded parallel asset work. The requested role defaults are
+GPT-6.1 Sol / Medium / Standard, not observed runtime settings. No automatic
+model switching, standing workers/controllers or acknowledgement/status loops.
+The later 10 November exception authorizes only the on-demand fixed-Luna
+`asset_scout` after an accepted brief/coherent concept, and bounded next-task
+effort choices at unchanged models. See the current [asset workflow](3d_asset_workflow.md)
+for explicit Luna/effort dispatch when custom-role discovery is unverified.
+See [current ownership](team_workflow.md) and [transferred UI decisions](team_handoff.md).
 Use [feature planning and measurement](development_workflow.md) and the
 [candidate comparison protocols](workflow_experiments.json) before new production
 edits. The controller and parallel-team descriptions below are retained historical

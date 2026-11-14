@@ -1,0 +1,947 @@
+{
+  "asset": "S4 complete worker-operated protected shelf",
+  "version": "complete_operator_v02",
+  "stage": "Review-ready animated asset package; human full-cycle appearance approval and game integration pending.",
+  "sources": {
+    "editable": "s4_complete_game_ready_v01.blend",
+    "editable_sha256": "b11ce07f221e2431d46cbd15ef85c4a56062ff464b18f31868d810c343e0d86c",
+    "diagnostic_v04": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v05\\s4_full_cycle_internal_v04.blend",
+    "diagnostic_sha256": "8ca9cf3b3ee584ddc998f351faf164ebf9033dd45a77133a84e990a954df97e4",
+    "preserved_parent_v03": "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_worker_operation_v05\\s4_full_cycle_internal_v03.blend",
+    "checked_raw_copy": {
+      "file": "s4_complete_checked_raw_v04.blend",
+      "sha256": "8ca9cf3b3ee584ddc998f351faf164ebf9033dd45a77133a84e990a954df97e4",
+      "purpose": "Raw diagnostic keys with constraints muted for independent checking. Use the game-ready source with active restrictions for further authoring."
+    }
+  },
+  "units": "metres",
+  "axes": "glTF/Godot Y up; module-local coordinates. Native Blender Z up.",
+  "dimensions": {
+    "fixed_cage_m": [
+      0.53,
+      1.5,
+      0.7
+    ],
+    "fixed_cage_godot_bounds_m": [
+      [
+        -0.265,
+        0,
+        -0.35
+      ],
+      [
+        0.265,
+        1.5,
+        0.35
+      ]
+    ],
+    "lower_insert_godot_bounds_m": [
+      [
+        -0.23000000417232513,
+        0.10000000149011612,
+        -0.3149999976158142
+      ],
+      [
+        0.23000000417232513,
+        0.17999999970197678,
+        0.3149999976158142
+      ]
+    ],
+    "service_grip_diameter_m": 0.02,
+    "service_grip_length_m": 0.64
+  },
+  "skeleton": {
+    "bones": 33,
+    "limited_joints": 31,
+    "rest_and_weights_preserved": true,
+    "original_seven_clips_unchanged": true,
+    "authoring_constraints_active": true,
+    "engine_constraints_exported": false
+  },
+  "geometry": {
+    "worker": {
+      "exported_vertices": 10961,
+      "triangles": 4152,
+      "mesh_nodes": 1,
+      "material_surfaces": 1,
+      "materials": 1,
+      "textures": 0,
+      "animation_count": 1
+    },
+    "fixture": {
+      "exported_vertices": 23942,
+      "triangles": 8474,
+      "mesh_nodes": 19,
+      "material_surfaces": 20,
+      "materials": 2,
+      "textures": 0,
+      "animation_count": 1,
+      "lower_insert_godot_bounds_m": [
+        [
+          -0.23000000417232513,
+          0.10000000149011612,
+          -0.3149999976158142
+        ],
+        [
+          0.23000000417232513,
+          0.17999999970197678,
+          0.3149999976158142
+        ]
+      ]
+    }
+  },
+  "clips": [
+    {
+      "file": "worker_s4_full_review_v01.glb",
+      "bytes": 1937992,
+      "sha256": "0c6d99cc5ebf553ae0fd37dbd499a6570fd8d85e73354f20c23a049fed6d1fbe",
+      "kind": "worker",
+      "clip": "full_review",
+      "source_frames": [
+        1,
+        2601
+      ],
+      "duration_s": 86.66666666666667,
+      "runtime": false,
+      "animations": [
+        "worker_s4_full_review_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_full_review_v01.glb",
+      "bytes": 1456668,
+      "sha256": "62ca07785627e67e3bcee48db6c77dbd4c22730ac040df11d3bc00a0dc9a5d72",
+      "kind": "fixture",
+      "clip": "full_review",
+      "source_frames": [
+        1,
+        2601
+      ],
+      "duration_s": 86.66666666666667,
+      "runtime": false,
+      "animations": [
+        "fixture_s4_full_review_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    },
+    {
+      "file": "worker_s4_open_v01.glb",
+      "bytes": 1286560,
+      "sha256": "dc2c876d2382000a06ff863315183c276aa209a46bcc35ff7030d5779cfb7af0",
+      "kind": "worker",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "duration_s": 42.53333333333333,
+      "runtime": true,
+      "animations": [
+        "worker_s4_open_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_open_v01.glb",
+      "bytes": 1276588,
+      "sha256": "4bca814bb574b52559de8c402d1855290ba387da5376a3b1838e2ca815bd82a0",
+      "kind": "fixture",
+      "clip": "open",
+      "source_frames": [
+        1,
+        1277
+      ],
+      "duration_s": 42.53333333333333,
+      "runtime": true,
+      "animations": [
+        "fixture_s4_open_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    },
+    {
+      "file": "worker_s4_close_v01.glb",
+      "bytes": 1288040,
+      "sha256": "cdd2e2ed85c7423ec62462dba2e1a3806a814a372f546a05a8cc1e51af354f63",
+      "kind": "worker",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "duration_s": 42.63333333333333,
+      "runtime": true,
+      "animations": [
+        "worker_s4_close_v01"
+      ],
+      "meshes": 1,
+      "materials": 1,
+      "skins": 1,
+      "images": 0,
+      "triangles": 4152,
+      "skin_joints": 33
+    },
+    {
+      "file": "fixture_s4_close_v01.glb",
+      "bytes": 1277000,
+      "sha256": "b2ec16675926268030cd910d3a34a2a50daf93cb4b668a128de039e48f456a81",
+      "kind": "fixture",
+      "clip": "close",
+      "source_frames": [
+        1307,
+        2586
+      ],
+      "duration_s": 42.63333333333333,
+      "runtime": true,
+      "animations": [
+        "fixture_s4_close_v01"
+      ],
+      "meshes": 19,
+      "materials": 2,
+      "skins": 0,
+      "images": 0
+    }
+  ],
+  "timing": {
+    "fps": 30,
+    "full_source_frames": 2601,
+    "full_motion_seconds": 86.66666666666667,
+    "runtime_clips": [
+      {
+        "id": "full_review",
+        "lo": 1,
+        "hi": 2601,
+        "runtime": false
+      },
+      {
+        "id": "open",
+        "lo": 1,
+        "hi": 1277,
+        "runtime": true
+      },
+      {
+        "id": "close",
+        "lo": 1307,
+        "hi": 2586,
+        "runtime": true
+      }
+    ],
+    "approved_lift_preservation": {
+      "lift": {
+        "boundary_source_frames": [
+          670,
+          910
+        ],
+        "duration_s": 8,
+        "maximum_approved_world_joint_error_m": 1.2755638234172112e-05,
+        "worst": {
+          "offset_frame": 0,
+          "bone": "LeftToes",
+          "error_m": 1.2755638234172112e-05
+        }
+      },
+      "lower_reverse": {
+        "boundary_source_frames": [
+          1685,
+          1925
+        ],
+        "duration_s": 8,
+        "maximum_approved_world_joint_error_m": 1.1775689184743373e-06,
+        "worst": {
+          "offset_frame": 0,
+          "bone": "RightHandIndex3",
+          "error_m": 1.1775689184743373e-06
+        }
+      }
+    },
+    "service_review_hold_frames": [
+      1278,
+      1307
+    ],
+    "final_review_hold_frames": [
+      2587,
+      2601
+    ],
+    "service_hold_runtime_controlled": true,
+    "not_per_package_open_close": true
+  },
+  "root_motion": {
+    "object_roots_identity": true,
+    "carrier": "Existing Root bone carries placement and animation; do not add a second actor transform or duplicate root motion.",
+    "evidence": "actor_root_motion.json",
+    "paired_playback": "Load matching worker and fixture files at the same module origin, start at time0 and drive both from the same clock. Runtime open/close timing and stock/custody remain Lead-owned."
+  },
+  "states": {
+    "initial": {
+      "frame": 1,
+      "phase": "Approach handling position",
+      "u": 0,
+      "camA": 0,
+      "camB": 0,
+      "slide_x": -0.45,
+      "release": 0,
+      "support": [],
+      "contacts": {
+        "Left": null,
+        "Right": null
+      }
+    },
+    "service_ready": {
+      "frame": 1277,
+      "phase": "Release and step clear of locked shelf / Relax elbow and fingers after lowering upper arm",
+      "u": 1.0000000278275352,
+      "camA": 0.7853981633974483,
+      "camB": 0.7853981633974483,
+      "slide_x": -0.55,
+      "release": 0.0,
+      "support": [],
+      "contacts": {
+        "Left": null,
+        "Right": null
+      }
+    },
+    "close_initial": {
+      "frame": 1307,
+      "phase": "Parked locked lower-service interval",
+      "u": 1.0000000278275352,
+      "camA": 0.7853981633974483,
+      "camB": 0.7853981633974483,
+      "slide_x": -0.55,
+      "release": 0.0,
+      "support": [],
+      "contacts": {
+        "Left": null,
+        "Right": null
+      }
+    },
+    "final": {
+      "frame": 2586,
+      "phase": "Withdraw from secured shelf / Approach handling position",
+      "u": 0.0,
+      "camA": 0.0,
+      "camB": 0.0,
+      "slide_x": -0.45,
+      "release": 0.0,
+      "support": [],
+      "contacts": {
+        "Left": null,
+        "Right": null
+      }
+    },
+    "supported_transfer_preconditions": {
+      "slide_x_m": -0.55,
+      "pan_angles_deg": [
+        0,
+        90
+      ],
+      "closed_cam_released_deg": 45,
+      "parked_cam_released_deg": 0,
+      "pins": "Released during manual pan movement; positive locks engage only at actual end seats."
+    }
+  },
+  "mechanism": {
+    "revision": "Original compact thumb cams plus accepted local post notch; lever and torso-turn studies excluded.",
+    "maximum_post_removal_m": 0.002,
+    "outer_cage_bounds_unchanged": true,
+    "local_notch_corner_radius_m": 0.0005,
+    "change": "qa/accepted_post_notch_decision.md"
+  },
+  "verification": {
+    "native_parent_frames": 2601,
+    "native_parent_half_frame_joint_samples": 5201,
+    "new_join_direct_check_source_frames": [
+      1654,
+      1687
+    ],
+    "all_unchanged_pose_channels_verified": true,
+    "exported_half_frame_joint_samples": 5201,
+    "exported_joint_findings": 0,
+    "actual_export_worker_fixture_collision_findings": 0,
+    "max_source_export_joint_error_m": 3.6385999462231337e-06,
+    "max_fixture_matrix_error": 3.0100345611572266e-06,
+    "runtime_clip_pairs_match_full": true,
+    "actual_export_reimport_render": true,
+    "encoded_media_decoded_and_inspected": true
+  },
+  "retained_warnings": {
+    "original_garment_contact_frames": 1146,
+    "exact_current_reviewed_face_pairs": 123,
+    "scope": "Only the preserved proximal sleeve/vest attachment face pairs and measured extents, reviewed opaque and wire. Original raw1146-frame finding count retained. V04 changes only leg quaternion channels1655..1685; no shared rig exemption or reference change.",
+    "decision": "qa/complete_cycle_v03_garment_decision.json",
+    "gameplay_or_strength_certification": false
+  },
+  "videos": [
+    "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_complete_operator_delivery_v02\\review_video\\s4_complete_cycle_v02\\s4_complete_cycle_v02.mp4",
+    "C:\\Users\\dawso\\.codex\\visualizations\\2026\\11\\08\\01a1bd4c-0ee5-7e33-a72f-947bcb4d4ebe\\s4_complete_operator_delivery_v02\\review_video\\s4_moving_hand_coverage_v02\\s4_moving_hand_coverage_v02.mp4"
+  ],
+  "phases": [
+    {
+      "phase": "Approach handling position",
+      "first_source_frame": 1,
+      "last_source_frame": 1,
+      "first_time_s": 0.0,
+      "last_time_s": 0.0
+    },
+    {
+      "phase": "Approach shelf / Approach handling position",
+      "first_source_frame": 2,
+      "last_source_frame": 38,
+      "first_time_s": 0.03333333333333333,
+      "last_time_s": 1.2333333333333334
+    },
+    {
+      "phase": "Prepare control stance",
+      "first_source_frame": 39,
+      "last_source_frame": 46,
+      "first_time_s": 1.2666666666666666,
+      "last_time_s": 1.5
+    },
+    {
+      "phase": "Reach retracted handle release / Restore balanced lift approach stance",
+      "first_source_frame": 47,
+      "last_source_frame": 66,
+      "first_time_s": 1.5333333333333334,
+      "last_time_s": 2.1666666666666665
+    },
+    {
+      "phase": "Reach retracted handle release / Relax left elbow clear of horizontal pan",
+      "first_source_frame": 67,
+      "last_source_frame": 90,
+      "first_time_s": 2.2,
+      "last_time_s": 2.966666666666667
+    },
+    {
+      "phase": "Reach retracted handle release / Lower left upper arm with elbow folded",
+      "first_source_frame": 91,
+      "last_source_frame": 114,
+      "first_time_s": 3.0,
+      "last_time_s": 3.7666666666666666
+    },
+    {
+      "phase": "Reach retracted handle release / Recover from handle service squat",
+      "first_source_frame": 115,
+      "last_source_frame": 150,
+      "first_time_s": 3.8,
+      "last_time_s": 4.966666666666667
+    },
+    {
+      "phase": "Reach retracted handle release / Withdraw thumb from retained release pad",
+      "first_source_frame": 151,
+      "last_source_frame": 164,
+      "first_time_s": 5.0,
+      "last_time_s": 5.433333333333334
+    },
+    {
+      "phase": "Reach retracted handle release / Approach release pad",
+      "first_source_frame": 165,
+      "last_source_frame": 165,
+      "first_time_s": 5.466666666666667,
+      "last_time_s": 5.466666666666667
+    },
+    {
+      "phase": "Press handle detent release",
+      "first_source_frame": 166,
+      "last_source_frame": 176,
+      "first_time_s": 5.5,
+      "last_time_s": 5.833333333333333
+    },
+    {
+      "phase": "Guide spring-assisted extension",
+      "first_source_frame": 177,
+      "last_source_frame": 199,
+      "first_time_s": 5.866666666666666,
+      "last_time_s": 6.6
+    },
+    {
+      "phase": "Guide handle to captive stop",
+      "first_source_frame": 200,
+      "last_source_frame": 222,
+      "first_time_s": 6.633333333333334,
+      "last_time_s": 7.366666666666666
+    },
+    {
+      "phase": "Engage extended detents",
+      "first_source_frame": 223,
+      "last_source_frame": 233,
+      "first_time_s": 7.4,
+      "last_time_s": 7.733333333333333
+    },
+    {
+      "phase": "Withdraw from extended handle / Withdraw thumb from retained release pad",
+      "first_source_frame": 234,
+      "last_source_frame": 247,
+      "first_time_s": 7.766666666666667,
+      "last_time_s": 8.2
+    },
+    {
+      "phase": "Withdraw from extended handle / Recover from handle service squat",
+      "first_source_frame": 248,
+      "last_source_frame": 283,
+      "first_time_s": 8.233333333333333,
+      "last_time_s": 9.4
+    },
+    {
+      "phase": "Withdraw from extended handle / Lower left upper arm with elbow folded",
+      "first_source_frame": 284,
+      "last_source_frame": 307,
+      "first_time_s": 9.433333333333334,
+      "last_time_s": 10.2
+    },
+    {
+      "phase": "Withdraw from extended handle / Relax left elbow clear of horizontal pan",
+      "first_source_frame": 308,
+      "last_source_frame": 331,
+      "first_time_s": 10.233333333333333,
+      "last_time_s": 11.0
+    },
+    {
+      "phase": "Withdraw from extended handle / Restore balanced lift approach stance",
+      "first_source_frame": 332,
+      "last_source_frame": 352,
+      "first_time_s": 11.033333333333333,
+      "last_time_s": 11.7
+    },
+    {
+      "phase": "Prepare supported lift",
+      "first_source_frame": 353,
+      "last_source_frame": 355,
+      "first_time_s": 11.733333333333333,
+      "last_time_s": 11.8
+    },
+    {
+      "phase": "Reach closed latch and open support grip / Restore balanced working stance",
+      "first_source_frame": 356,
+      "last_source_frame": 375,
+      "first_time_s": 11.833333333333334,
+      "last_time_s": 12.466666666666667
+    },
+    {
+      "phase": "Reach closed latch and open support grip / Relax elbows after hands clear",
+      "first_source_frame": 376,
+      "last_source_frame": 399,
+      "first_time_s": 12.5,
+      "last_time_s": 13.266666666666667
+    },
+    {
+      "phase": "Reach closed latch and open support grip / Lower upper arms with elbows folded",
+      "first_source_frame": 400,
+      "last_source_frame": 423,
+      "first_time_s": 13.3,
+      "last_time_s": 14.066666666666666
+    },
+    {
+      "phase": "Reach closed latch and open support grip / Recover handling stance",
+      "first_source_frame": 424,
+      "last_source_frame": 459,
+      "first_time_s": 14.1,
+      "last_time_s": 15.266666666666667
+    },
+    {
+      "phase": "Reach closed latch and open support grip / Follow measured glove withdrawal around bar",
+      "first_source_frame": 460,
+      "last_source_frame": 495,
+      "first_time_s": 15.3,
+      "last_time_s": 16.466666666666665
+    },
+    {
+      "phase": "Reach closed latch and open support grip / ",
+      "first_source_frame": 496,
+      "last_source_frame": 496,
+      "first_time_s": 16.5,
+      "last_time_s": 16.5
+    },
+    {
+      "phase": "Close right support grip / ",
+      "first_source_frame": 497,
+      "last_source_frame": 537,
+      "first_time_s": 16.533333333333335,
+      "last_time_s": 17.866666666666667
+    },
+    {
+      "phase": "Manually release closed pan locks",
+      "first_source_frame": 538,
+      "last_source_frame": 573,
+      "first_time_s": 17.9,
+      "last_time_s": 19.066666666666666
+    },
+    {
+      "phase": "Take left support grip",
+      "first_source_frame": 574,
+      "last_source_frame": 664,
+      "first_time_s": 19.1,
+      "last_time_s": 22.1
+    },
+    {
+      "phase": "Confirm two-hand support",
+      "first_source_frame": 665,
+      "last_source_frame": 670,
+      "first_time_s": 22.133333333333333,
+      "last_time_s": 22.3
+    },
+    {
+      "phase": "Manually lift supported pan",
+      "first_source_frame": 671,
+      "last_source_frame": 910,
+      "first_time_s": 22.333333333333332,
+      "last_time_s": 30.3
+    },
+    {
+      "phase": "Reach parked latch with right support",
+      "first_source_frame": 911,
+      "last_source_frame": 1050,
+      "first_time_s": 30.333333333333332,
+      "last_time_s": 34.96666666666667
+    },
+    {
+      "phase": "Contact parked latch",
+      "first_source_frame": 1051,
+      "last_source_frame": 1074,
+      "first_time_s": 35.0,
+      "last_time_s": 35.766666666666666
+    },
+    {
+      "phase": "Manually engage parked locks",
+      "first_source_frame": 1075,
+      "last_source_frame": 1110,
+      "first_time_s": 35.8,
+      "last_time_s": 36.96666666666667
+    },
+    {
+      "phase": "Release parked latch control",
+      "first_source_frame": 1111,
+      "last_source_frame": 1125,
+      "first_time_s": 37.0,
+      "last_time_s": 37.46666666666667
+    },
+    {
+      "phase": "Release and step clear of locked shelf / Open right fingers after positive park lock",
+      "first_source_frame": 1126,
+      "last_source_frame": 1149,
+      "first_time_s": 37.5,
+      "last_time_s": 38.266666666666666
+    },
+    {
+      "phase": "Release and step clear of locked shelf / Recover torso with both hands open and feet planted",
+      "first_source_frame": 1150,
+      "last_source_frame": 1185,
+      "first_time_s": 38.3,
+      "last_time_s": 39.46666666666667
+    },
+    {
+      "phase": "Release and step clear of locked shelf / Step back clear of parked mechanism before lowering hands",
+      "first_source_frame": 1186,
+      "last_source_frame": 1222,
+      "first_time_s": 39.5,
+      "last_time_s": 40.7
+    },
+    {
+      "phase": "Release and step clear of locked shelf / Lower hands with right elbow kept folded clear of post",
+      "first_source_frame": 1223,
+      "last_source_frame": 1253,
+      "first_time_s": 40.733333333333334,
+      "last_time_s": 41.733333333333334
+    },
+    {
+      "phase": "Release and step clear of locked shelf / Relax elbow and fingers after lowering upper arm",
+      "first_source_frame": 1254,
+      "last_source_frame": 1277,
+      "first_time_s": 41.766666666666666,
+      "last_time_s": 42.53333333333333
+    },
+    {
+      "phase": "Parked locked lower-service interval",
+      "first_source_frame": 1278,
+      "last_source_frame": 1307,
+      "first_time_s": 42.56666666666667,
+      "last_time_s": 43.53333333333333
+    },
+    {
+      "phase": "Return and regrip locked shelf / Relax elbow and fingers after lowering upper arm",
+      "first_source_frame": 1308,
+      "last_source_frame": 1330,
+      "first_time_s": 43.56666666666667,
+      "last_time_s": 44.3
+    },
+    {
+      "phase": "Return and regrip locked shelf / Lower hands with right elbow kept folded clear of post",
+      "first_source_frame": 1331,
+      "last_source_frame": 1361,
+      "first_time_s": 44.333333333333336,
+      "last_time_s": 45.333333333333336
+    },
+    {
+      "phase": "Return and regrip locked shelf / Step back clear of parked mechanism before lowering hands",
+      "first_source_frame": 1362,
+      "last_source_frame": 1398,
+      "first_time_s": 45.36666666666667,
+      "last_time_s": 46.56666666666667
+    },
+    {
+      "phase": "Return and regrip locked shelf / Recover torso with both hands open and feet planted",
+      "first_source_frame": 1399,
+      "last_source_frame": 1434,
+      "first_time_s": 46.6,
+      "last_time_s": 47.766666666666666
+    },
+    {
+      "phase": "Return and regrip locked shelf / Open right fingers after positive park lock",
+      "first_source_frame": 1435,
+      "last_source_frame": 1458,
+      "first_time_s": 47.8,
+      "last_time_s": 48.56666666666667
+    },
+    {
+      "phase": "Return and regrip locked shelf / ",
+      "first_source_frame": 1459,
+      "last_source_frame": 1459,
+      "first_time_s": 48.6,
+      "last_time_s": 48.6
+    },
+    {
+      "phase": "Contact parked release",
+      "first_source_frame": 1460,
+      "last_source_frame": 1474,
+      "first_time_s": 48.63333333333333,
+      "last_time_s": 49.1
+    },
+    {
+      "phase": "Manually release parked locks",
+      "first_source_frame": 1475,
+      "last_source_frame": 1510,
+      "first_time_s": 49.13333333333333,
+      "last_time_s": 50.3
+    },
+    {
+      "phase": "Restore left lowering support",
+      "first_source_frame": 1511,
+      "last_source_frame": 1679,
+      "first_time_s": 50.333333333333336,
+      "last_time_s": 55.93333333333333
+    },
+    {
+      "phase": "Confirm two-hand lowering support",
+      "first_source_frame": 1680,
+      "last_source_frame": 1685,
+      "first_time_s": 55.96666666666667,
+      "last_time_s": 56.13333333333333
+    },
+    {
+      "phase": "Manually lower supported pan",
+      "first_source_frame": 1686,
+      "last_source_frame": 1925,
+      "first_time_s": 56.166666666666664,
+      "last_time_s": 64.13333333333334
+    },
+    {
+      "phase": "Reach closed latch with right support",
+      "first_source_frame": 1926,
+      "last_source_frame": 2014,
+      "first_time_s": 64.16666666666667,
+      "last_time_s": 67.1
+    },
+    {
+      "phase": "Manually engage closed locks",
+      "first_source_frame": 2015,
+      "last_source_frame": 2050,
+      "first_time_s": 67.13333333333334,
+      "last_time_s": 68.3
+    },
+    {
+      "phase": "Unhook right thumb and release grip / ",
+      "first_source_frame": 2051,
+      "last_source_frame": 2091,
+      "first_time_s": 68.33333333333333,
+      "last_time_s": 69.66666666666667
+    },
+    {
+      "phase": "Withdraw from locked horizontal pan / Follow measured glove withdrawal around bar",
+      "first_source_frame": 2092,
+      "last_source_frame": 2127,
+      "first_time_s": 69.7,
+      "last_time_s": 70.86666666666666
+    },
+    {
+      "phase": "Withdraw from locked horizontal pan / Recover handling stance",
+      "first_source_frame": 2128,
+      "last_source_frame": 2163,
+      "first_time_s": 70.9,
+      "last_time_s": 72.06666666666666
+    },
+    {
+      "phase": "Withdraw from locked horizontal pan / Lower upper arms with elbows folded",
+      "first_source_frame": 2164,
+      "last_source_frame": 2187,
+      "first_time_s": 72.1,
+      "last_time_s": 72.86666666666666
+    },
+    {
+      "phase": "Withdraw from locked horizontal pan / Relax elbows after hands clear",
+      "first_source_frame": 2188,
+      "last_source_frame": 2211,
+      "first_time_s": 72.9,
+      "last_time_s": 73.66666666666667
+    },
+    {
+      "phase": "Withdraw from locked horizontal pan / Restore balanced working stance",
+      "first_source_frame": 2212,
+      "last_source_frame": 2232,
+      "first_time_s": 73.7,
+      "last_time_s": 74.36666666666666
+    },
+    {
+      "phase": "Prepare manual handle stow",
+      "first_source_frame": 2233,
+      "last_source_frame": 2235,
+      "first_time_s": 74.4,
+      "last_time_s": 74.46666666666667
+    },
+    {
+      "phase": "Reach extended handle release / Restore balanced lift approach stance",
+      "first_source_frame": 2236,
+      "last_source_frame": 2255,
+      "first_time_s": 74.5,
+      "last_time_s": 75.13333333333334
+    },
+    {
+      "phase": "Reach extended handle release / Relax left elbow clear of horizontal pan",
+      "first_source_frame": 2256,
+      "last_source_frame": 2279,
+      "first_time_s": 75.16666666666667,
+      "last_time_s": 75.93333333333334
+    },
+    {
+      "phase": "Reach extended handle release / Lower left upper arm with elbow folded",
+      "first_source_frame": 2280,
+      "last_source_frame": 2303,
+      "first_time_s": 75.96666666666667,
+      "last_time_s": 76.73333333333333
+    },
+    {
+      "phase": "Reach extended handle release / Recover from handle service squat",
+      "first_source_frame": 2304,
+      "last_source_frame": 2339,
+      "first_time_s": 76.76666666666667,
+      "last_time_s": 77.93333333333334
+    },
+    {
+      "phase": "Reach extended handle release / Withdraw thumb from retained release pad",
+      "first_source_frame": 2340,
+      "last_source_frame": 2353,
+      "first_time_s": 77.96666666666667,
+      "last_time_s": 78.4
+    },
+    {
+      "phase": "Reach extended handle release / Extended positive engagement",
+      "first_source_frame": 2354,
+      "last_source_frame": 2354,
+      "first_time_s": 78.43333333333334,
+      "last_time_s": 78.43333333333334
+    },
+    {
+      "phase": "Press detent after closed pan lock",
+      "first_source_frame": 2355,
+      "last_source_frame": 2377,
+      "first_time_s": 78.46666666666667,
+      "last_time_s": 79.2
+    },
+    {
+      "phase": "Manually push handle inward",
+      "first_source_frame": 2378,
+      "last_source_frame": 2400,
+      "first_time_s": 79.23333333333333,
+      "last_time_s": 79.96666666666667
+    },
+    {
+      "phase": "Seat handle at retracted captive stop",
+      "first_source_frame": 2401,
+      "last_source_frame": 2411,
+      "first_time_s": 80.0,
+      "last_time_s": 80.33333333333333
+    },
+    {
+      "phase": "Engage retracted travel detents",
+      "first_source_frame": 2412,
+      "last_source_frame": 2422,
+      "first_time_s": 80.36666666666666,
+      "last_time_s": 80.7
+    },
+    {
+      "phase": "Withdraw from secured handle / Withdraw thumb from retained release pad",
+      "first_source_frame": 2423,
+      "last_source_frame": 2436,
+      "first_time_s": 80.73333333333333,
+      "last_time_s": 81.16666666666667
+    },
+    {
+      "phase": "Withdraw from secured handle / Recover from handle service squat",
+      "first_source_frame": 2437,
+      "last_source_frame": 2472,
+      "first_time_s": 81.2,
+      "last_time_s": 82.36666666666666
+    },
+    {
+      "phase": "Withdraw from secured handle / Lower left upper arm with elbow folded",
+      "first_source_frame": 2473,
+      "last_source_frame": 2496,
+      "first_time_s": 82.4,
+      "last_time_s": 83.16666666666667
+    },
+    {
+      "phase": "Withdraw from secured handle / Relax left elbow clear of horizontal pan",
+      "first_source_frame": 2497,
+      "last_source_frame": 2520,
+      "first_time_s": 83.2,
+      "last_time_s": 83.96666666666667
+    },
+    {
+      "phase": "Withdraw from secured handle / Restore balanced lift approach stance",
+      "first_source_frame": 2521,
+      "last_source_frame": 2541,
+      "first_time_s": 84.0,
+      "last_time_s": 84.66666666666667
+    },
+    {
+      "phase": "Stand clear of secured shelf",
+      "first_source_frame": 2542,
+      "last_source_frame": 2549,
+      "first_time_s": 84.7,
+      "last_time_s": 84.93333333333334
+    },
+    {
+      "phase": "Withdraw from secured shelf / Approach handling position",
+      "first_source_frame": 2550,
+      "last_source_frame": 2586,
+      "first_time_s": 84.96666666666667,
+      "last_time_s": 86.16666666666667
+    },
+    {
+      "phase": "Closed locks and travel detents secured",
+      "first_source_frame": 2587,
+      "last_source_frame": 2601,
+      "first_time_s": 86.2,
+      "last_time_s": 86.66666666666667
+    }
+  ],
+  "not_verified": [
+    "Human approval of the complete cycle; earlier approval was the8s lift only.",
+    "Godot import/runtime placement, root-motion consumption and integration; no local engine run.",
+    "Other existing animations, broad regressions, physical strength/balance certification or game performance."
+  ],
+  "provenance": "Original project-authored worker/fixture derivatives and accepted project changes; no new third-party mesh/texture reuse or reference downloads.",
+  "callbacks": "No stock, worker identity, pickup/drop, custody or gameplay callbacks added."
+}

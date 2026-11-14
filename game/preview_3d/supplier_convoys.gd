@@ -2,16 +2,29 @@ extends Node3D
 ## Incoming supplier service only; Receiving owns identities, motion and unloading.
 const Freight = preload("res://game/preview_3d/t01_presentation.gd")
 const Personnel = preload("res://game/preview_3d/t02_presentation.gd")
+const SupplierView = preload("res://game/supplier_transport/supplier_vehicle_view.gd")
 var bodies: Dictionary = {}
 var _receiving: RefCounted
 var _ledger: RefCounted
 var _pending := false
+var _model: RefCounted
+var _passengers: Node3D
+var _timber: Node3D
 
-func bind(receiving: RefCounted) -> void:
+func bind(receiving: RefCounted, simulation: RefCounted = null) -> void:
 	_receiving = receiving
+	_model = simulation
 	_ledger = receiving.ledger
 	_receiving.supplier_state_changed.connect(_request_refresh)
 	_ledger.entity_moved.connect(_moved)
+	if _receiving.development_convoys and _model != null:
+		_passengers = preload("res://game/supplier_transport/supplier_passengers_view.gd").new()
+		add_child(_passengers)
+		_passengers.bind(_model,self)
+		if _receiving.timber_activity != null:
+			_timber = preload("res://game/supplier_transport/paired_timber_view.gd").new()
+			add_child(_timber)
+			_timber.bind(_model)
 	_request_refresh()
 
 func _request_refresh() -> void:
@@ -26,13 +39,23 @@ func _refresh() -> void:
 	for row: Dictionary in _receiving.supplier_vehicle_views():
 		present[row.id] = true
 		if not bodies.has(row.id):
-			var freight: bool = row.kind == "Freight"
-			var scene: PackedScene = load(Freight.MODEL_PATH if freight else Personnel.MODEL_PATH)
-			bodies[row.id] = Freight.create_body(self,row.id,scene) if freight else Personnel.create_body(self,row.id,scene)
+			if _receiving.development_convoys and _model != null:
+				var supplier := SupplierView.new()
+				add_child(supplier)
+				supplier.bind(_receiving,_model,row)
+				bodies[row.id] = supplier
+				if _passengers != null: _passengers.attach_hull(str(row.id),supplier._pivot)
+			else:
+				var freight: bool = row.kind == "Freight"
+				var scene: PackedScene = load(Freight.MODEL_PATH if freight else Personnel.MODEL_PATH)
+				bodies[row.id] = Freight.create_body(self,row.id,scene) if freight else Personnel.create_body(self,row.id,scene)
 		var body: AnimatableBody3D = bodies[row.id]
-		Freight.apply_pose(body,row)
+		if body is SupplierView:
+			(body as SupplierView).refresh(row)
+			(body as SupplierView).apply_pose(row.position)
+		else: Freight.apply_pose(body,row)
 		var label: Label3D = body.get_node("TruckState") as Label3D
-		label.text = "%s · Supplier\n%s · %s" % [row.id,row.kind,row.state]
+		label.text = "%s · Supplier\n%s · %s" % [row.id,row.kind,row.get("mechanism","") if not str(row.get("mechanism","")).is_empty() else row.state]
 		var warning: Label3D = body.get_node_or_null("StorageWarning") as Label3D
 		if warning == null:
 			warning = Label3D.new()
@@ -55,11 +78,21 @@ func _refresh() -> void:
 func _moved(id: String, _start: Vector2, finish: Vector2) -> void:
 	if not bodies.has(id): return
 	var body: AnimatableBody3D = bodies[id]
+	if body is SupplierView:
+		(body as SupplierView).apply_pose(finish)
+		return
 	# Convoy lane always runs west to east; this view never advances its motion.
 	body.transform = Transform3D(Basis(Vector3.UP,PI/2.0),Vector3(finish.x,0,finish.y))
+
+func sync_speed() -> void:
+	if _passengers != null: _passengers.sync_speed()
+	if _timber != null: _timber.sync_speed()
+	for body: Node3D in bodies.values():
+		if body is SupplierView: (body as SupplierView).sync_speed()
 
 func _exit_tree() -> void:
 	if _receiving != null and _receiving.supplier_state_changed.is_connected(_request_refresh): _receiving.supplier_state_changed.disconnect(_request_refresh)
 	if _ledger != null and _ledger.entity_moved.is_connected(_moved): _ledger.entity_moved.disconnect(_moved)
 	_receiving = null
 	_ledger = null
+	_model = null

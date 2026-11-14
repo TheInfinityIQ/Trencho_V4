@@ -1,0 +1,68 @@
+{
+  "stage": "Lead-derived bounded revision before source modification; analytic rectangular envelopes only",
+  "pivot_godot": [
+    0.215,
+    0.69,
+    0
+  ],
+  "change": "Remove rear guard from moving assembly. Make it a fixed wall-side cargo stop atX.240..250,Y.700..710, attached to retained back panel innerX.252 with a2mm standoff. Trim ONLY non-bearing wall-side pan flange fromX.240 to.2345; keep aisle edge-.240, full644mm length and untouched628x458mm padding. New structural depth474.5mm, not480; explicit5.5mm non-bearing trim.",
+  "preserved": "Nominal100/700 ordinary planes, full support footprint, outer700x530x1500, guards10mm, lowerM05-only80mm insert, hingeY690, locks/seats/shaft proposal, stock quantities/capacity/priorities and empty-only sequence. No worker pose or pickup change.",
+  "why": "A stationary rear stop avoids rotating that part into the retained wall rail/back panel. Trimming material outside the full bearing pad bounds the remaining moving structure clear of the rail without changing cargo support.",
+  "analytic_parts": {
+    "pan_structure": {
+      "swept_x": [
+        -0.24043934832203503,
+        0.23490602923739437
+      ],
+      "swept_y": [
+        0.6620670445530732,
+        1.1450175820778796
+      ],
+      "minimum_wall_rail_plane_gap": 0.005093970762605621,
+      "parked_bottom_y": 0.6705
+    },
+    "retained_full_padding": {
+      "swept_x": [
+        -0.23,
+        0.23302775637731996
+      ],
+      "swept_y": [
+        0.6749999999999999,
+        1.1351123453691212
+      ],
+      "minimum_wall_rail_plane_gap": 0.0069722436226800355,
+      "parked_bottom_y": 0.6749999999999999
+    },
+    "moving_aisle_guard": {
+      "swept_x": [
+        -0.26,
+        0.235
+      ],
+      "swept_y": [
+        0.7,
+        1.1654208661806926
+      ],
+      "minimum_wall_rail_plane_gap": 0.0050000000000000044,
+      "parked_bottom_y": 1.1429999999999998
+    },
+    "aisle_attachment_web": {
+      "swept_x": [
+        -0.23999999999999996,
+        0.22499999999999998
+      ],
+      "swept_y": [
+        0.69,
+        1.1451098768429442
+      ],
+      "minimum_wall_rail_plane_gap": 0.015000000000000013,
+      "parked_bottom_y": 1.1429999999999998
+    }
+  },
+  "fixed_stop_scope": "Proposed fixed stop does not overlap panelX.252..262; standoff touches panel intentionally. Actual welded/support construction still required.",
+  "limits": [
+    "This calculation bounds listed planar rectangles against the retainedX.240 rail plane for0..90degrees; it is not full part/worker/stock/truck source acceptance.",
+    "Actual beveled source geometry and new fixed-stop attachment must repeat the same early gate before proceeding. Remaining locks/seats/neighbor/bale/hand checks still unperformed.",
+    "No GLB, mechanism clips, video, native integration, tolerance waiver or silent bearing reduction authorized by arithmetic alone."
+  ],
+  "source_padding_readback": "Actual preserved source cross-section outerX reaches+/\u2212.230m; the bearing top-flat reaches+/\u2212.229. Analytic envelope uses the full .230 outer extent, never trims padding to its top-flat size. Full3D source bounds remain Artist check."
+}
