@@ -1,5 +1,12 @@
 # Team workflow
 
+## Game Designer succession — 13 November 2026
+
+Dawson requested replacement Designer `01a1d80c-f41f-7511-8973-ca44a5ec591c`.
+Route current gameplay decisions and final-head reviews there; outgoing Designer
+`01a18e60-cd67-7b01-8047-a8768208b387` retains historical evidence and ceases the
+active role. See [Designer handoff](game_designer_handoff_2026_11_13.md).
+
 ## Lead succession — 13 November 2026
 
 Dawson requested replacement Lead chat `01a1d807-02eb-7e52-8f46-93bb10241447`.
