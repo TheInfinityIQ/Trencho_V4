@@ -1,0 +1,29 @@
+{
+  "source": "40a6b50580aadd0d2e69a4e455428cfdddc22b9b",
+  "run": 43550402781,
+  "url": "https://github.com/TheInfinityIQ/Trencho_V4/actions/runs/43550402781",
+  "result": "pass",
+  "required_parse_run": 43550389532,
+  "engine": "Godot4.7.2.stable.official.ed1daf0bf",
+  "artifact": {
+    "id": 14096285253,
+    "sha256": "01832e37949d03e779d15bae83bb1bc2971832d2c3648bd460476338971a9da3"
+  },
+  "observed": [
+    "100kg unsupported upper manifest refused before payment/order creation",
+    "Actual50kg supplier purchase and two distinct existing people; actor count remains4",
+    "Worker-prepared storage, AFT-first boarding, pickup, shoulder transition, ramp, authored turns, forward ground route, release and lower-rack deposit",
+    "Imported33-bone role clips, roots and one payload agree with shared sampler; no duplicated truck floor offset",
+    "One logical pause/resume freezes receiving time and physical roots",
+    "Exactly50kg unloaded and stored in a real finite warehouse cell",
+    "Shared activity released, actual truck completed exit/admission release, next actual50kg purchase accepted"
+  ],
+  "limits": [
+    "Explicit elapsed ticks at configured1x are not wall-time/native camera/input/FPS evidence",
+    "Upper truck and warehouse handling, opposite faces without proven forward access and onward timber remain unfinished",
+    "Animated interruption/ground recovery is not connected; interrupted cargo retains an honest hold",
+    "Human appearance approval and numbered stages1/2 acceptance remain pending"
+  ],
+  "sidecars": "Actual generated GLB import and four engine-created script UIDs retained from this exact-source artifact",
+  "first_connected_attempt": "passed; no connected failed run or raised deadline"
+}

@@ -1,5 +1,14 @@
 # Connected playable delivery
 
+## Lower-tier paired timber checkpoint — 13 November 2026
+
+The connected50kg supplier purchase, two real workers, imported authored motion,
+warehouse receipt, physical truck exit and next supported purchase passed GitHub
+run43550402781 at40a6b50. Unsupported upper manifests are refused before payment.
+See [playtest instructions and limits](paired_timber_playtest.md). Final-head
+review/publication is recorded in PR157; human stages1/2 and appearance approval
+remain pending. Upper-tier/onward handling and animated recovery are unfinished.
+
 [Physical warehousing](warehousing.md) is the active integration block: the
 starting12×16m depot, finite packages, worker-prepared fixtures, held-truck
 warnings and completed full-edge joins have scoped domain receipts. Actual
