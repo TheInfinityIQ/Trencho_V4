@@ -1,0 +1,12 @@
+{
+  "asset": "s1_longstockrack_v03.glb",
+  "author": "Existing Trencho 3D Artist",
+  "source": "Existing materials_shelves/s1_longstockrack_v03.glb delivery",
+  "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+  "bytes": 142048,
+  "envelope_metres": [0.53, 1.5, 2.2],
+  "support_planes_above_truck_floor_metres": [0.60, 0.95],
+  "variant": "M04 timber only; left side, one <=50kg bundle per deck; other S1 cargo retains its original support definition",
+  "transform": "Existing metric Cargo_Floor-to-rack mapping and side reflection; no source scale, truck geometry or extra cargo-centering change",
+  "readiness": "Static author delivery connected; current-change import/placement verification pending. New paired shoulder motion and full delivery remain unapproved/unconnected."
+}

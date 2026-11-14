@@ -4,7 +4,7 @@
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "ef4b82023c636ca0fde1fb78b3768073faaf4eef8e61f64e59764bb2e7e1108a",
+  "source_fingerprint": "8c1c374f8373af57a136e5cbddfe6a425e064374aa989dca69b6ccfed25a1803",
   "totals": {
     "systems": 51,
     "game_scripts": 251,
@@ -7606,7 +7606,7 @@
         },
         {
           "path": "game/construction/visuals/construction_render_preparation.gd",
-          "sha256": "c0ec061f611191b8521a4e84826fe87031913771a86dc437708606837642baab",
+          "sha256": "b7505a5d67725cecda92cb5f1c599e62158d143369c5f44565bb3ccfbfb524ae",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -7633,7 +7633,7 @@
               "line": 96,
               "end_line": 105,
               "kind": "method",
-              "purpose": "Retain and draw the approved paired shelf/operator GLBs under the startup cover without creating simulation actors.",
+              "purpose": "Prime approved paired S4 exports and the timber-only S1 static rack under the existing loading cover without registering real worker activity.",
               "purpose_origin": "reviewed"
             }
           ]
@@ -38737,14 +38737,14 @@
       "files": [
         {
           "path": "game/warehousing/material_packages.gd",
-          "sha256": "70128b0c201c00c1242e5cbb20e2cc199a4c28922cddd71ee6afdf281d42ab2b",
+          "sha256": "5d4cf98918ac9bd612d49d00f48533608a333f2186711643517b6b484389a878",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/warehousing/material_packages.gd::model_file",
               "name": "model_file",
-              "line": 20,
-              "end_line": 22,
+              "line": 21,
+              "end_line": 23,
               "kind": "method",
               "purpose": "Select the Artist package export or correctly sized labelled crate without deriving capacity from its mesh.",
               "purpose_origin": "reviewed"
@@ -38752,8 +38752,8 @@
             {
               "id": "game/warehousing/material_packages.gd::capacity",
               "name": "capacity",
-              "line": 24,
-              "end_line": 25,
+              "line": 25,
+              "end_line": 26,
               "kind": "method",
               "purpose": "Return the accepted net-kilogram capacity for one physical package of this material.",
               "purpose_origin": "reviewed"
@@ -38761,8 +38761,8 @@
             {
               "id": "game/warehousing/material_packages.gd::fixture_family",
               "name": "fixture_family",
-              "line": 27,
-              "end_line": 28,
+              "line": 28,
+              "end_line": 29,
               "kind": "method",
               "purpose": "Choose long-stock supports for timber and the compatible crate fixture family for other supported materials.",
               "purpose_origin": "reviewed"
@@ -38770,8 +38770,8 @@
             {
               "id": "game/warehousing/material_packages.gd::split",
               "name": "split",
-              "line": 30,
-              "end_line": 39,
+              "line": 31,
+              "end_line": 40,
               "kind": "method",
               "purpose": "Split a whole-kilogram amount into full-capacity packages plus its exact remainder; retain each full outer envelope.",
               "purpose_origin": "reviewed"
@@ -38779,8 +38779,8 @@
             {
               "id": "game/warehousing/material_packages.gd::label",
               "name": "label",
-              "line": 41,
-              "end_line": 42,
+              "line": 42,
+              "end_line": 43,
               "kind": "method",
               "purpose": "Format material name and actual net kilograms against package capacity for runtime labels.",
               "purpose_origin": "reviewed"
@@ -39014,7 +39014,7 @@
         },
         {
           "path": "game/warehousing/warehouse_service.gd",
-          "sha256": "318784c6405a7d964048f0901dbe6f7d9d8ba5779caffe2732a93d3158a52041",
+          "sha256": "995da9f3fb033860c704ce984d38cbf9e6252e6ab0b8ca78837017187c769b7d",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -39956,7 +39956,7 @@
       "files": [
         {
           "path": "game/supplier_transport/cargo_packing.gd",
-          "sha256": "2a351eef77f75e5ed411338092913c0f2222e7cb6b31ebc7f1154a954603ae00",
+          "sha256": "e194a290148dd5b6f89030fe0195f85f844fed4aa00cc8ee81e7f91d687e1f46",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -40035,25 +40035,25 @@
               "id": "game/supplier_transport/cargo_packing.gd::_choice",
               "name": "_choice",
               "line": 154,
-              "end_line": 173,
+              "end_line": 174,
               "kind": "method",
-              "purpose": "Choose a fitting unoccupied supported packing volume, separating the M05 manual-bale variant from ordinary S4 cargo.",
+              "purpose": "Select a physically fitting residual cargo space with matching material-specific rack variant and accepted rotation; timber remains left-side and lengthwise.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/supplier_transport/cargo_packing.gd::_add_rack",
               "name": "_add_rack",
-              "line": 175,
-              "end_line": 193,
+              "line": 176,
+              "end_line": 195,
               "kind": "method",
-              "purpose": "Allocate one bounded side rack and its real support volumes, applying the .18m insert only to the manual M05 variant.",
+              "purpose": "Add an in-envelope rack with its actual material-specific deck supports: separate timber .60/.95m, manual textile insert, or retained ordinary supports.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/supplier_transport/cargo_packing.gd::_space",
               "name": "_space",
-              "line": 195,
-              "end_line": 196,
+              "line": 197,
+              "end_line": 198,
               "kind": "method",
               "purpose": "Retain only a positive-volume supported packing cuboid.",
               "purpose_origin": "reviewed"
@@ -40061,8 +40061,8 @@
             {
               "id": "game/supplier_transport/cargo_packing.gd::_score",
               "name": "_score",
-              "line": 198,
-              "end_line": 207,
+              "line": 200,
+              "end_line": 209,
               "kind": "method",
               "purpose": "Rank valid manifests by truck count, material splitting and rack count without claiming global optimality.",
               "purpose_origin": "reviewed"
@@ -40070,8 +40070,8 @@
             {
               "id": "game/supplier_transport/cargo_packing.gd::_dependencies",
               "name": "_dependencies",
-              "line": 209,
-              "end_line": 230,
+              "line": 211,
+              "end_line": 232,
               "kind": "method",
               "purpose": "Index immutable stack/extraction blockers and require the complete S4 upper pan empty before lower cargo handling.",
               "purpose_origin": "reviewed"
@@ -40079,8 +40079,8 @@
             {
               "id": "game/supplier_transport/cargo_packing.gd::_full",
               "name": "_full",
-              "line": 232,
-              "end_line": 233,
+              "line": 234,
+              "end_line": 235,
               "kind": "method",
               "purpose": "Return an explicit spatial-capacity refusal instead of silently discarding cargo.",
               "purpose_origin": "reviewed"
@@ -41050,7 +41050,7 @@
         },
         {
           "path": "game/supplier_transport/supplier_vehicle_view.gd",
-          "sha256": "44f847028db4729ca47e778e5d3487cb7b377064cc95e36a510f917392e476f8",
+          "sha256": "e62ad963281986b4c033342bb57712038bedea609776321605206bb7dc081a76",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -41093,25 +41093,25 @@
               "id": "game/supplier_transport/supplier_vehicle_view.gd::_sync_racks",
               "name": "_sync_racks",
               "line": 126,
-              "end_line": 146,
+              "end_line": 147,
               "kind": "method",
-              "purpose": "Instantiate each actual quoted rack, selecting the approved manual M05 variant while preserving ordinary rack and restraint presentation.",
+              "purpose": "Instantiate the actual approved material-specific rack at the retained Cargo_Floor transform and update travel-restraint visibility without granting cargo.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::_create_packet",
               "name": "_create_packet",
-              "line": 148,
-              "end_line": 165,
+              "line": 149,
+              "end_line": 167,
               "kind": "method",
-              "purpose": "Render one real labelled package at its exact committed shelf position and permitted orientation.",
+              "purpose": "Create a labelled keyed cargo model at the confirmed truck-local position, with the timber wood-base registration applied once.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::apply_pose",
               "name": "apply_pose",
-              "line": 167,
-              "end_line": 186,
+              "line": 169,
+              "end_line": 188,
               "kind": "method",
               "purpose": "Present actual travel with correct model heading, wheel distance, steering and restrained body sway.",
               "purpose_origin": "reviewed"
@@ -41119,8 +41119,8 @@
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::_sync_mechanism",
               "name": "_sync_mechanism",
-              "line": 188,
-              "end_line": 198,
+              "line": 190,
+              "end_line": 200,
               "kind": "method",
               "purpose": "Seek the retained authored door/ramp clip using committed activity time and mechanism phase.",
               "purpose_origin": "reviewed"
@@ -41128,8 +41128,8 @@
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::sync_speed",
               "name": "sync_speed",
-              "line": 200,
-              "end_line": 210,
+              "line": 202,
+              "end_line": 212,
               "kind": "method",
               "purpose": "Synchronize driver, rack, exhaust and active truck cosmetics with existing pause/speed without gameplay scans.",
               "purpose_origin": "reviewed"
@@ -41137,8 +41137,8 @@
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::_process",
               "name": "_process",
-              "line": 212,
-              "end_line": 219,
+              "line": 214,
+              "end_line": 221,
               "kind": "method",
               "purpose": "Advance only active cosmetic sway, steering and authored mechanism presentation.",
               "purpose_origin": "reviewed"
@@ -41146,8 +41146,8 @@
             {
               "id": "game/supplier_transport/supplier_vehicle_view.gd::_create_exhaust",
               "name": "_create_exhaust",
-              "line": 221,
-              "end_line": 247,
+              "line": 223,
+              "end_line": 249,
               "kind": "method",
               "purpose": "Create a small bounded low-poly cosmetic exhaust emitter.",
               "purpose_origin": "reviewed"

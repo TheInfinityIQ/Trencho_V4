@@ -158,6 +158,7 @@ static func _choice(truck: Dictionary, packet: Dictionary, family: String) -> Di
 	for rack_index in truck.racks.size():
 		var rack: Dictionary = truck.racks[rack_index]
 		if rack.family != family: continue
+		if family == "S1" and bool(rack.get("timber_rack",false)) != (packet.code == "M04"): continue
 		if family == "S4" and bool(rack.get("manual_bale",false)) != (packet.code == "M05"): continue
 		if packet.code == "M04" and int(rack.side) != -1: continue
 		for index in rack.spaces.size():
@@ -172,10 +173,10 @@ static func _choice(truck: Dictionary, packet: Dictionary, family: String) -> Di
 					best = {"rack":rack_index,"space":index,"size":size,"turn":turn}
 	return best
 
-static func _add_rack(truck: Dictionary, family: String, left_only: bool = false, manual_bale: bool = false) -> bool:
+static func _add_rack(truck: Dictionary, family: String, timber: bool = false, manual_bale: bool = false) -> bool:
 	var length: float = SPECS[family].length
 	for side: int in [-1,1]:
-		if left_only and side != -1: continue
+		if timber and side != -1: continue
 		var used := 0.0
 		for rack: Dictionary in truck.racks:
 			if int(rack.side) == side: used += float(SPECS[rack.family].length)
@@ -183,7 +184,8 @@ static func _add_rack(truck: Dictionary, family: String, left_only: bool = false
 		var origin := Vector3(-0.93 if side < 0 else 0.40,FLOOR_Y,FRONT_Z+0.10+used)
 		var row := {"id":"rack-%02d" % truck.racks.size(),"family":family,"side":side,"origin":origin,"size":Vector3(RACK_DEPTH,1.50,length),"spaces":[]}
 		row.manual_bale = manual_bale
-		var tops: Array = [0.18,0.70] if manual_bale else SPECS[family].tops
+		row.timber_rack = timber
+		var tops: Array = [0.60,0.95] if timber else [0.18,0.70] if manual_bale else SPECS[family].tops
 		var inset: float = SPECS[family].inset
 		for index in tops.size():
 			var ceiling: float = (float(tops[index+1])-TRAY if index+1 < tops.size() else 1.50)-RELEASE

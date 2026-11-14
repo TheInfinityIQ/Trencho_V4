@@ -7,7 +7,8 @@ flowchart TD
   Fixture -->|no| Prepare[Actual worker reaches bay; existing shelf smoke; ready event]
   Prepare --> Access
   Fixture -->|yes| Access[Reserve clear truck aisle and paired handling stations]
-  Access --> Pickup[Reuse accepted bend; fitted palms support one load]
+  Access --> Rack[Actual timber-only S1v03 at .60/.95m; unchanged other S1 supports]
+  Rack --> Pickup[Reuse bend with bounded foot-contact correction; fitted palms support one load]
   Pickup --> Joint[Ledger begins one jointly held portion]
   Joint --> Withdraw[Actual two-worker withdrawal and shoulder transition]
   Withdraw --> Ramp[Authored planted ramp gait; same fore and aft identities]

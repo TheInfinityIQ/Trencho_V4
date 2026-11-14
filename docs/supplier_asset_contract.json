@@ -181,6 +181,17 @@
       "model": "game/warehousing/assets/warehouse_long_stock_rack_v04.glb",
       "sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
       "status": "Connected timber-only static v04 and matching cell planes; import/current-change check pending. Original retained; new shoulder motion remains Artist-owned and unapproved."
+    },
+    "truck_runtime_static_integration": {
+      "model": "game/supplier_transport/assets/s1_longstockrack_v03.glb",
+      "sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+      "status": "Timber-only variant using .60/.95m supports, original M01 S1 definition retained; remote check pending.",
+      "variant_custody": "Exactly one <=50kg bundle per shelf; full existing Cargo_Floor mapping. Shared paired action is still blocked until accepted revised motion is connected."
+    },
+    "retained_bend_contact_amendment": {
+      "decision": "Lead permits the same synchronized original hip/torso bend and timing with bounded versioned leg-contact correction, not a new pickup gesture or a change to original source/rig/S4.",
+      "evidence": "Artist reused_source_audit.json and bend_contact_adaptation_proposal.json: original foot ROM findings are not an import-basis difference or observed injury; 85mm empty approach stance proposal resolves sampled nonarm limits while preserving sole contact.",
+      "remaining": "Actual clear empty stance join, truck/rack/partner swept clearance, complete continuous export and appearance review remain Artist-owned. Do not infer motion approval from sampled numbers."
     }
   },
   "non_timber_geometry_decision": "evidence/supplier_transport/near_face_contact_recommendation_v01.md and frozen manifest supersede earlier partial geometry suggestions. Only a static2D warehouse metal-support/service-opening concept is authorized next; no mesh/other-item animation or runtime changes.",

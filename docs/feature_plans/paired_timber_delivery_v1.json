@@ -16,14 +16,23 @@
   "first_independent_increment": {
     "change": "Adopt the already delivered separate warehouse long-stock v04 model and timber-only .60/1.75m cell planes; preserve original rack and crate handling.",
     "asset_sha256": "4fb6279588aa28d330499c00cb9395039e5fd257f82a0e1e7aaa1de8c8d14d50",
-    "footprint_m": [2.6, 1.0],
-    "outer_height_m": 2.10,
+    "footprint_m": [
+      2.6,
+      1.0
+    ],
+    "outer_height_m": 2.1,
     "cells": 4,
     "bundle_registration_y_m": -0.004,
     "collision": "Reuse cached exact static mesh collision, so the authored openings are not filled by old coarse boxes.",
     "startup": "Include revised fixture in existing loading-cover preparation and declared remote import dependencies.",
     "check": "One brief GitHub current-change observation of the revised timber-only fixture, four cell registrations and preserved ordinary crate planes. Retrieve the actual generated import sidecar; no local engine.",
-    "not_complete": "This is not a finished animated paired delivery. Do not bind historical rejected clips or remove the current honest timber hold until the shared action and accepted motion are connected."
+    "not_complete": "This is not a finished animated paired delivery. Do not bind historical rejected clips or remove the current honest timber hold until the shared action and accepted motion are connected.",
+    "check_result": {
+      "run": 43531026084,
+      "source": "dafdd24054883137bd7ce9b16b8686457adac6bc",
+      "result": "pass",
+      "scope": "Actual revised import/bounds, four timber cells, unchanged crate cells and exact mesh collision; no paired motion"
+    }
   },
   "pair_action_contract": [
     "Respect the shared hauling priority selector; never borrow a busy worker, consume a higher-priority commitment, or strand one waiting worker instead of feasible lower-priority work.",
@@ -55,5 +64,13 @@
     "token_reason": "Parent chat does not expose attributable provider counters; no estimate substituted.",
     "regressions": null,
     "regression_reason": "No regression campaign is authorized; record only observed changed-action failures and planning omissions."
+  },
+  "next_independent_increment": {
+    "frozen_before_production_edits": true,
+    "change": "Adopt delivered S1v03 ONLY for timber racks, matching .60/.95m truck-floor support planes and explicit bundle base registration. Preserve metal S1 legacy geometry/packing and existing vehicle/cargo envelopes.",
+    "asset_sha256": "81adb3e99e1588b15cf88674cd0b87164c050d6ee67d1e9ed9b07fc0d5f09dc4",
+    "variant_rule": "M04 and non-M04 S1 packets must not share support definitions. Timber remains left-side, exactly one bundle per deck, no timber-on-timber stacking.",
+    "transform": "Use existing measured Cargo_Floor-to-rack placement once; no new recentering or truck geometry edit.",
+    "startup_and_check": "Declare actual model import and existing loading-cover preparation, then one bounded exact-variant/actual-render-model current-change demonstration on GitHub. Keep rejected motion unbound."
   }
 }

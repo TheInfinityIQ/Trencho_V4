@@ -125,11 +125,12 @@ func _bind_driver(id: String) -> void:
 
 func _sync_racks(rows: Array) -> void:
 	for row: Dictionary in rows:
-		if not SHELVES.has(str(row.family)): continue # S1 remains a separate unfinished handoff.
+		var file := "s1_longstockrack_v03.glb" if row.get("timber_rack",false) else str(SHELVES.get(str(row.family),""))
+		if file.is_empty(): continue # Other S1 cargo retains its separate original support contract.
 		var id: String = str(row.id)
 		if not _racks.has(id):
 			assert(_cargo_floor != null and _cargo_floor.get_parent() == _pivot,"Static racks require the actual retained Cargo_Floor marker")
-			var rack: Node3D = ShelfView.new() if row.get("manual_bale",false) else model(str(SHELVES[str(row.family)]))
+			var rack: Node3D = ShelfView.new() if row.get("manual_bale",false) else model(file)
 			_cargo_floor.add_child(rack)
 			if rack is ShelfView: (rack as ShelfView).bind(_receiving,_model)
 			var dimensions: Vector3 = row.size
@@ -154,6 +155,7 @@ func _create_packet(packet: Dictionary, quantity: int) -> void:
 	node.rotation.y = PI/2.0 if packet.quarter_turn else 0.0
 	var visual := Assets.model(Packages.model_file(str(packet.code)))
 	node.add_child(visual)
+	if str(packet.code) == "M04": visual.position.y = Packages.TIMBER_WOOD_BASE_REGISTRATION_Y
 	for label_name: String in ["Quantity_Label_Front","Quantity_Label_Back"]:
 		var marker := visual.find_child(label_name,true,false) as Node3D
 		if marker == null: continue

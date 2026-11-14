@@ -96,8 +96,8 @@ func _prepare_warehouse(stage: Node3D) -> void:
 func _prepare_supplier_shelves(stage: Node3D) -> void:
 	# Draw the actual approved opaque/skinned resources under the existing cover;
 	# no person or mechanism activity is registered in the simulation.
-	for file: String in ["fixture_s4_full_review_v01.glb","worker_s4_full_review_v01.glb"]:
-		var packed := load("res://game/supplier_transport/assets/s4_operator/"+file) as PackedScene
+	for path: String in ["res://game/supplier_transport/assets/s4_operator/fixture_s4_full_review_v01.glb","res://game/supplier_transport/assets/s4_operator/worker_s4_full_review_v01.glb","res://game/supplier_transport/assets/s1_longstockrack_v03.glb"]:
+		var packed := load(path) as PackedScene
 		resources.append(packed)
 		var model := packed.instantiate() as Node3D
 		WarehouseAssets.prepare(model)
