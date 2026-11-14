@@ -1,5 +1,6 @@
 extends RefCounted
 ## Ledger-owned two-person custody. Activities own routes and timing.
+signal custody_changed(state: String, details: Dictionary)
 const Records = preload("res://game/identity/identity_records.gd")
 var active: Dictionary = {}
 var _ledger_ref: WeakRef
@@ -32,12 +33,13 @@ func begin(id: String, people: Array, source_id: String, quantity: int, claim_id
 	holder.position = payload_position-ledger._world_position(place)
 	for person_id: String in people: ledger._person(person_id).joint_carry_id = id
 	var stock: Records.Entity = ledger._split_stock(source,quantity,id,false)
-	active[id] = {"id":id,"people":people.duplicate(),"stock":stock.id,"place":place}
+	active[id] = {"id":id,"people":people.duplicate(),"stock":stock.id,"place":place,"origin":source.origin_id}
 	claim.reserved -= quantity
 	claim.fulfilled += quantity
 	ledger._event("Two handlers picked up one shared timber portion",id)
 	ledger.stock_changed.emit(source_id)
 	ledger.stock_changed.emit(stock.id)
+	custody_changed.emit("Carrying",{"id":id,"stock":stock.id,"source":source_id,"origin":source.origin_id,"source_holder":source.holder_id})
 	return ledger._ok("One shared timber load committed once.",id)
 
 func move(id: String, place: String, stations: Array, payload_position: Vector2) -> Dictionary:
@@ -81,6 +83,7 @@ func finish(id: String, destination: String) -> Dictionary:
 	ledger._event("Shared timber physically deposited once",deposited.id)
 	ledger.stock_changed.emit(source.id)
 	ledger.stock_changed.emit(deposited.id)
+	custody_changed.emit("Deposited",{"id":id,"stock":deposited.id,"origin":str(row.origin)})
 	return ledger._ok("One load deposited; both commitments released.",deposited.id)
 
 func put_down(id: String) -> Dictionary:
@@ -96,6 +99,7 @@ func put_down(id: String) -> Dictionary:
 	_clear(id,"Put down")
 	ledger._event("Shared timber put down at its actual position",source.id)
 	ledger.stock_changed.emit(source.id)
+	custody_changed.emit("Ground",{"id":id,"stock":source.id,"origin":str(row.origin)})
 	return ledger._ok("One recoverable ground load; no receipt fabricated.",source.id)
 
 func _clear(id: String, state: String) -> void:

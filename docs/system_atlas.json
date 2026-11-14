@@ -4,14 +4,14 @@
   "reviewed_baseline": "supplier e3e357a plus main a1cd2d57 (candidate integration)",
   "workspace_hint": "C:/Users/dawso/Developer/Projects/Godot/trencho_v4/logs/supplier-field-integration-worktree",
   "diagram_semantics": "Individual arrows show conditional workflow stages or data dependencies, not an exhaustive literal call graph or observed runtime stack. Read the caption and source of each node. Overview edges are explicitly labelled. A method existing in source does not establish ordinary gameplay/3D/FPS acceptance.",
-  "source_fingerprint": "7f8a1a67242130052745c86993aa3df1c0eadd41236d4cfba40e89a92c424512",
+  "source_fingerprint": "d74c0dbb9d7d2fdb3e1c60a31482d4a53215e15bf863fb2a1fa4a210f3cd2322",
   "totals": {
     "systems": 51,
-    "game_scripts": 251,
-    "non_test_scripts": 157,
+    "game_scripts": 252,
+    "non_test_scripts": 158,
     "retained_test_scripts": 94,
-    "functions_in_inventory": 3792,
-    "diagram_function_links": 333
+    "functions_in_inventory": 3798,
+    "diagram_function_links": 334
   },
   "systems": [
     {
@@ -3301,7 +3301,7 @@
           "label": "Procurement creates arriving people",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "buy_people",
-          "line": 373
+          "line": 381
         },
         {
           "id": "n2",
@@ -4958,7 +4958,7 @@
           "label": "Actual common worker / incoming claim",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "start_shared_unload",
-          "line": 818
+          "line": 826
         },
         {
           "id": "shared_outgoing",
@@ -5094,14 +5094,14 @@
         },
         {
           "path": "game/staffing/joint_material_carry.gd",
-          "sha256": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
+          "sha256": "a12d5af072e9d7067d16635ba991424d52947be220df205d948b693940627b83",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/staffing/joint_material_carry.gd::_init",
               "name": "_init",
-              "line": 7,
-              "end_line": 8,
+              "line": 8,
+              "end_line": 9,
               "kind": "method",
               "purpose": "Retain the authoritative Ledger weakly for composed two-person custody operations.",
               "purpose_origin": "reviewed"
@@ -5109,17 +5109,17 @@
             {
               "id": "game/staffing/joint_material_carry.gd::begin",
               "name": "begin",
-              "line": 10,
-              "end_line": 41,
+              "line": 11,
+              "end_line": 43,
               "kind": "method",
-              "purpose": "Validate two actual free handlers, distinct reached grip stations, per-person mass and one matching claim before atomically creating one shared stock holder.",
+              "purpose": "Validate two real free handlers, source stations, mass allowance and one reserved timber portion, commit shared custody atomically and notify its original physical delivery owner.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/joint_material_carry.gd::move",
               "name": "move",
-              "line": 43,
-              "end_line": 68,
+              "line": 45,
+              "end_line": 70,
               "kind": "method",
               "purpose": "Commit both actual worker endpoints and the one physical payload endpoint before publishing movement events.",
               "purpose_origin": "reviewed"
@@ -5127,26 +5127,26 @@
             {
               "id": "game/staffing/joint_material_carry.gd::finish",
               "name": "finish",
-              "line": 70,
-              "end_line": 84,
+              "line": 72,
+              "end_line": 87,
               "kind": "method",
-              "purpose": "Require both actual destination handling stations, deposit one retained stock portion and release both worker commitments.",
+              "purpose": "Require both actual destination stations, deposit the retained shared stock once, release both handler commitments and emit a physical deposit event without fabricating warehouse acceptance.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/joint_material_carry.gd::put_down",
               "name": "put_down",
-              "line": 86,
-              "end_line": 99,
+              "line": 89,
+              "end_line": 103,
               "kind": "method",
-              "purpose": "Retain one recoverable stock at the actual interrupted payload position without fabricating receipt or stock loss.",
+              "purpose": "Retain actual shared stock at a recoverable ground place, release handlers and emit a ground-custody event that preserves pending supplier obligations.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/staffing/joint_material_carry.gd::_clear",
               "name": "_clear",
-              "line": 101,
-              "end_line": 109,
+              "line": 105,
+              "end_line": 113,
               "kind": "method",
               "purpose": "Release both shared-load commitments and apply eligible pending duties after a completed deposit or actual put-down.",
               "purpose_origin": "reviewed"
@@ -5154,8 +5154,8 @@
             {
               "id": "game/staffing/joint_material_carry.gd::snapshot",
               "name": "snapshot",
-              "line": 111,
-              "end_line": 112,
+              "line": 115,
+              "end_line": 116,
               "kind": "method",
               "purpose": "Return a detached snapshot of one active shared material carry.",
               "purpose_origin": "reviewed"
@@ -5176,70 +5176,70 @@
           "label": "Quote raw-resource purchase",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "quote_resources",
-          "line": 216
+          "line": 221
         },
         {
           "id": "n1",
           "label": "Purchase resources / create order",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "buy_resources",
-          "line": 224
+          "line": 229
         },
         {
           "id": "n2",
           "label": "Purchase real worker cohort",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "buy_people",
-          "line": 373
+          "line": 381
         },
         {
           "id": "n3",
           "label": "Admit and progress inbound order",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_pump",
-          "line": 664
+          "line": 672
         },
         {
           "id": "n4",
           "label": "Disembark actual passengers",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_disembark",
-          "line": 783
+          "line": 791
         },
         {
           "id": "n5",
           "label": "Unload via worker phases",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_finish_worker_phase",
-          "line": 903
+          "line": 911
         },
         {
           "id": "n6",
           "label": "Quote complete current goods/worker draft",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "quote_delivery",
-          "line": 153
+          "line": 158
         },
         {
           "id": "n7",
           "label": "Validate and commit one paid convoy",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "buy_delivery",
-          "line": 172
+          "line": 177
         },
         {
           "id": "n8",
           "label": "Record actual departure and drain member set",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_set_state",
-          "line": 1193
+          "line": 1201
         },
         {
           "id": "n9",
           "label": "Current convoy readiness",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "convoy_ready",
-          "line": 136
+          "line": 141
         }
       ],
       "edges": [
@@ -5310,32 +5310,41 @@
       "files": [
         {
           "path": "game/procurement/receiving_simulation.gd",
-          "sha256": "47cf7ed7807e5e35a882fabbf936977c1de3bd1b75335beeaa75f075277abfa7",
+          "sha256": "ed9c27210f6ccc7b76988371b673de866d26d22f6069bdadbde3357397cf2606",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/procurement/receiving_simulation.gd::bind_warehouse",
               "name": "bind_warehouse",
-              "line": 66,
-              "end_line": 71,
+              "line": 67,
+              "end_line": 75,
               "kind": "method",
-              "purpose": "Bind the explicit scene-owned physical storage owner through a weak callback.",
+              "purpose": "Connect finite warehouse availability and exact committed-stock events through weak owner callbacks; custody accounting follows real storage receipts.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/procurement/receiving_simulation.gd::bind_warehouse/<lambda#1>",
               "name": "bind_warehouse/<lambda#1>",
-              "line": 69,
-              "end_line": 71,
+              "line": 70,
+              "end_line": 72,
               "kind": "lambda",
               "purpose": "Forward a live warehouse capacity/access change to Receiving only while the weak service still exists.",
               "purpose_origin": "reviewed"
             },
             {
+              "id": "game/procurement/receiving_simulation.gd::bind_warehouse/<lambda#2>",
+              "name": "bind_warehouse/<lambda#2>",
+              "line": 73,
+              "end_line": 75,
+              "kind": "lambda",
+              "purpose": "Forward an actual warehouse stock commit to the receiving-owned timber handoff tracker while the service still exists.",
+              "purpose_origin": "reviewed"
+            },
+            {
               "id": "game/procurement/receiving_simulation.gd::_warehouse_changed",
               "name": "_warehouse_changed",
-              "line": 73,
-              "end_line": 79,
+              "line": 77,
+              "end_line": 83,
               "kind": "method",
               "purpose": "Wake only event-blocked storage/carry activities and mark supplier storage warnings dirty.",
               "purpose_origin": "reviewed"
@@ -5343,8 +5352,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_refresh_storage_warnings",
               "name": "_refresh_storage_warnings",
-              "line": 81,
-              "end_line": 107,
+              "line": 85,
+              "end_line": 111,
               "kind": "method",
               "purpose": "Derive each present truck's actual full/preparing/blocked feedback from remaining cargo and physical warehouse state at keyed changes.",
               "purpose_origin": "reviewed"
@@ -5352,17 +5361,17 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_init",
               "name": "_init",
-              "line": 110,
-              "end_line": 125,
+              "line": 114,
+              "end_line": 130,
               "kind": "method",
-              "purpose": "Compose Receiving with the shared identity ledger, actual storage/arrival places and weakly owned freight, returns, road and passenger services.",
+              "purpose": "Reuse the supplied physical ledger, create existing supplier activity owners and the event-driven timber handoff tracker, and establish receiving/transit places.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/procurement/receiving_simulation.gd::configure_supply_table",
               "name": "configure_supply_table",
-              "line": 128,
-              "end_line": 134,
+              "line": 133,
+              "end_line": 139,
               "kind": "method",
               "purpose": "Configure the development supply service and its actual material stop without creating a second game session.",
               "purpose_origin": "reviewed"
@@ -5370,8 +5379,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::convoy_ready",
               "name": "convoy_ready",
-              "line": 136,
-              "end_line": 137,
+              "line": 141,
+              "end_line": 142,
               "kind": "method",
               "purpose": "Report whether the currently committed convoy member set is empty.",
               "purpose_origin": "reviewed"
@@ -5379,8 +5388,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_spatial_quote",
               "name": "_spatial_quote",
-              "line": 139,
-              "end_line": 151,
+              "line": 144,
+              "end_line": 156,
               "kind": "method",
               "purpose": "Cache the pure physical packing result by canonical cart and current vehicle limit.",
               "purpose_origin": "reviewed"
@@ -5388,8 +5397,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::quote_delivery",
               "name": "quote_delivery",
-              "line": 153,
-              "end_line": 170,
+              "line": 158,
+              "end_line": 175,
               "kind": "method",
               "purpose": "Combine spatial truck count, existing prices and live money/admission gates before confirmation.",
               "purpose_origin": "reviewed"
@@ -5397,8 +5406,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::buy_delivery",
               "name": "buy_delivery",
-              "line": 172,
-              "end_line": 187,
+              "line": 177,
+              "end_line": 192,
               "kind": "method",
               "purpose": "Commit one fully validated paid spatial convoy, exact packet manifests and optional eight real passengers.",
               "purpose_origin": "reviewed"
@@ -5406,8 +5415,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::buy_delivery/<lambda#1>",
               "name": "buy_delivery/<lambda#1>",
-              "line": 187,
-              "end_line": 187,
+              "line": 192,
+              "end_line": 192,
               "kind": "lambda",
               "purpose": "Return the committed order identity for the command result.",
               "purpose_origin": "reviewed"
@@ -5415,8 +5424,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_begin_convoy",
               "name": "_begin_convoy",
-              "line": 189,
-              "end_line": 197,
+              "line": 194,
+              "end_line": 202,
               "kind": "method",
               "purpose": "Assign one convoy sequence and all member IDs before dispatching its real carriers, then notify the order gate.",
               "purpose_origin": "reviewed"
@@ -5424,8 +5433,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::supplier_vehicle_views",
               "name": "supplier_vehicle_views",
-              "line": 199,
-              "end_line": 203,
+              "line": 204,
+              "end_line": 208,
               "kind": "method",
               "purpose": "Publish detached active supplier presentation data including packages, rack states and actual operator timing.",
               "purpose_origin": "reviewed"
@@ -5433,8 +5442,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::worker_height",
               "name": "worker_height",
-              "line": 205,
-              "end_line": 210,
+              "line": 210,
+              "end_line": 215,
               "kind": "method",
               "purpose": "Derive actual supplier floor/ramp support height for the current worker activity.",
               "purpose_origin": "reviewed"
@@ -5442,8 +5451,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::requisition_balance",
               "name": "requisition_balance",
-              "line": 212,
-              "end_line": 213,
+              "line": 217,
+              "end_line": 218,
               "kind": "method",
               "purpose": "Return the currently spendable requisition balance.",
               "purpose_origin": "reviewed"
@@ -5451,8 +5460,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::quote_resources",
               "name": "quote_resources",
-              "line": 216,
-              "end_line": 221,
+              "line": 221,
+              "end_line": 226,
               "kind": "method",
               "purpose": "Quote the selected purchased goods and current freight admission limits without committing payment or delivery.",
               "purpose_origin": "reviewed"
@@ -5460,8 +5469,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::buy_resources",
               "name": "buy_resources",
-              "line": 224,
-              "end_line": 240,
+              "line": 229,
+              "end_line": 245,
               "kind": "method",
               "purpose": "Submit goods through the combined convoy command in development mode, retaining the existing separate legacy purchasing path otherwise.",
               "purpose_origin": "reviewed"
@@ -5469,8 +5478,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::debug_pending_resource_mass",
               "name": "debug_pending_resource_mass",
-              "line": 243,
-              "end_line": 249,
+              "line": 248,
+              "end_line": 254,
               "kind": "method",
               "purpose": "Sum still-undelivered inbound freight quantities for all pending resource orders or an explicitly selected batch, without changing orders.",
               "purpose_origin": "reviewed"
@@ -5478,8 +5487,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::debug_order_raw_resources",
               "name": "debug_order_raw_resources",
-              "line": 252,
-              "end_line": 263,
+              "line": 257,
+              "end_line": 268,
               "kind": "method",
               "purpose": "Create zero-cost debug freight orders containing1000ofeach purchasable raw resource without debiting requisition; return only this batch's IDs.",
               "purpose_origin": "reviewed"
@@ -5487,17 +5496,17 @@
             {
               "id": "game/procurement/receiving_simulation.gd::debug_deliver_resources",
               "name": "debug_deliver_resources",
-              "line": 266,
-              "end_line": 328,
+              "line": 271,
+              "end_line": 336,
               "kind": "method",
-              "purpose": "Explicitly bypass pending freight into actual ordinary rear stock, refusing finite recovery staging, abandoning pending return claims without refund and clearing current worker commitments.",
+              "purpose": "Preflight explicit debug delivery, refusing unresolved shared or recoverable ground timber before mutation, then bypass ordinary non-paired incoming travel while preserving actual stock quantities.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/procurement/receiving_simulation.gd::debug_deliver_people",
               "name": "debug_deliver_people",
-              "line": 331,
-              "end_line": 370,
+              "line": 339,
+              "end_line": 378,
               "kind": "method",
               "purpose": "Explicitly deliver the same actual incoming people once, release their aboard/walk commitments and consistently complete the debug convoy gate.",
               "purpose_origin": "reviewed"
@@ -5505,8 +5514,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::debug_deliver_people/<lambda#1>",
               "name": "debug_deliver_people/<lambda#1>",
-              "line": 347,
-              "end_line": 347,
+              "line": 355,
+              "end_line": 355,
               "kind": "lambda",
               "purpose": "Remove only the completed passenger's remaining timed walk so normal settlement cannot arrive that identity twice.",
               "purpose_origin": "reviewed"
@@ -5514,8 +5523,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::buy_people",
               "name": "buy_people",
-              "line": 373,
-              "end_line": 386,
+              "line": 381,
+              "end_line": 394,
               "kind": "method",
               "purpose": "Submit eight people through the convoy command in development mode, retaining existing paid admission/population reservations otherwise.",
               "purpose_origin": "reviewed"
@@ -5523,8 +5532,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::recovery_instructor_offer",
               "name": "recovery_instructor_offer",
-              "line": 389,
-              "end_line": 395,
+              "line": 397,
+              "end_line": 403,
               "kind": "method",
               "purpose": "Determine whether the applicable rear/service area lacks a living eligible trained person and may offer the existing paid recovery instructor.",
               "purpose_origin": "reviewed"
@@ -5532,8 +5541,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::buy_recovery_instructor",
               "name": "buy_recovery_instructor",
-              "line": 398,
-              "end_line": 413,
+              "line": 406,
+              "end_line": 421,
               "kind": "method",
               "purpose": "Validate the current gate and existing recovery eligibility/capacity, reserve and pay for one instructor, and dispatch its development convoy when applicable.",
               "purpose_origin": "reviewed"
@@ -5541,8 +5550,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::cancel_order",
               "name": "cancel_order",
-              "line": 416,
-              "end_line": 427,
+              "line": 424,
+              "end_line": 435,
               "kind": "method",
               "purpose": "Validate and apply cancel order in receiving simulation. Successful outcomes: Full refund completed; no goods or people were dispatched.",
               "purpose_origin": "implementation_derived"
@@ -5550,8 +5559,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::assign_unloaders",
               "name": "assign_unloaders",
-              "line": 430,
-              "end_line": 447,
+              "line": 438,
+              "end_line": 455,
               "kind": "method",
               "purpose": "Validate and apply assign unloaders in receiving simulation. Successful outcomes: Assigned real people; they must walk to the truck before unloading.",
               "purpose_origin": "implementation_derived"
@@ -5559,8 +5568,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::release_unloaders",
               "name": "release_unloaders",
-              "line": 450,
-              "end_line": 461,
+              "line": 458,
+              "end_line": 469,
               "kind": "method",
               "purpose": "Validate and apply release unloaders in receiving simulation. Successful outcomes: Reassignment requested. Active carries finish safe deposit before becoming Available.",
               "purpose_origin": "implementation_derived"
@@ -5568,8 +5577,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::advance_time",
               "name": "advance_time",
-              "line": 464,
-              "end_line": 474,
+              "line": 472,
+              "end_line": 482,
               "kind": "method",
               "purpose": "Validate and apply advance time in receiving simulation. Successful outcomes: Simulation advanced; only elapsed physical activities complete.",
               "purpose_origin": "implementation_derived"
@@ -5577,8 +5586,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::next_boundary",
               "name": "next_boundary",
-              "line": 477,
-              "end_line": 484,
+              "line": 485,
+              "end_line": 492,
               "kind": "method",
               "purpose": "Return the earliest actual order, mechanism, passenger walk or worker completion.",
               "purpose_origin": "reviewed"
@@ -5586,8 +5595,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::advance_clock_to",
               "name": "advance_clock_to",
-              "line": 487,
-              "end_line": 493,
+              "line": 495,
+              "end_line": 501,
               "kind": "method",
               "purpose": "Advance clock to for receiving simulation. Implementation: calls _move_activities; updates _income, _money, _time.",
               "purpose_origin": "implementation_derived"
@@ -5595,8 +5604,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::credit_objective_income",
               "name": "credit_objective_income",
-              "line": 495,
-              "end_line": 498,
+              "line": 503,
+              "end_line": 506,
               "kind": "method",
               "purpose": "Credit objective income for receiving simulation. Implementation: calls assert, is_finite; updates _income, _money.",
               "purpose_origin": "implementation_derived"
@@ -5604,8 +5613,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::freight_limit",
               "name": "freight_limit",
-              "line": 501,
-              "end_line": 502,
+              "line": 509,
+              "end_line": 510,
               "kind": "method",
               "purpose": "Return 10 + freight_berths.size() for receiving simulation. Implementation: calls freight_berths.size.",
               "purpose_origin": "implementation_derived"
@@ -5613,8 +5622,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::add_freight_berth",
               "name": "add_freight_berth",
-              "line": 504,
-              "end_line": 508,
+              "line": 512,
+              "end_line": 516,
               "kind": "method",
               "purpose": "Validate and apply add freight berth in receiving simulation. Successful outcomes: One physical F02 berth added to the shared ten-place waiting queue.",
               "purpose_origin": "implementation_derived"
@@ -5622,8 +5631,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::berth_committed",
               "name": "berth_committed",
-              "line": 510,
-              "end_line": 515,
+              "line": 518,
+              "end_line": 523,
               "kind": "method",
               "purpose": "Berth committed for receiving simulation. Implementation: calls freight_berths.size.",
               "purpose_origin": "implementation_derived"
@@ -5631,8 +5640,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::remove_freight_berth",
               "name": "remove_freight_berth",
-              "line": 517,
-              "end_line": 525,
+              "line": 525,
+              "end_line": 533,
               "kind": "method",
               "purpose": "Validate and apply remove freight berth in receiving simulation. Successful outcomes: One physical berth removed; the ten waiting places remain shared.",
               "purpose_origin": "implementation_derived"
@@ -5640,8 +5649,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::free_receiving_kg",
               "name": "free_receiving_kg",
-              "line": 527,
-              "end_line": 533,
+              "line": 535,
+              "end_line": 541,
               "kind": "method",
               "purpose": "Read actual finite warehouse free netkg when composed; preserve ordinary berth storage arithmetic for legacy openings.",
               "purpose_origin": "reviewed"
@@ -5649,8 +5658,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::freight_admitted",
               "name": "freight_admitted",
-              "line": 536,
-              "end_line": 537,
+              "line": 544,
+              "end_line": 545,
               "kind": "method",
               "purpose": "Return _admitted(\"Freight\") for receiving simulation. Implementation: calls _admitted.",
               "purpose_origin": "implementation_derived"
@@ -5658,8 +5667,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::personnel_admitted",
               "name": "personnel_admitted",
-              "line": 540,
-              "end_line": 541,
+              "line": 548,
+              "end_line": 549,
               "kind": "method",
               "purpose": "Return _admitted(\"Personnel\") for receiving simulation. Implementation: calls _admitted.",
               "purpose_origin": "implementation_derived"
@@ -5667,8 +5676,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::incoming_people",
               "name": "incoming_people",
-              "line": 544,
-              "end_line": 548,
+              "line": 552,
+              "end_line": 556,
               "kind": "method",
               "purpose": "Return count for receiving simulation. Implementation: updates count.",
               "purpose_origin": "implementation_derived"
@@ -5676,8 +5685,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_outside_rear_places",
               "name": "_outside_rear_places",
-              "line": 550,
-              "end_line": 551,
+              "line": 558,
+              "end_line": 559,
               "kind": "method",
               "purpose": "Return int(external_rear_reservations.call()) if external_rear_reservations.is_valid() else 0 for receiving simulation. Implementation: calls int, external_rear_reservations.call, external_rear_reservations.is_valid.",
               "purpose_origin": "implementation_derived"
@@ -5685,8 +5694,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::rear_population",
               "name": "rear_population",
-              "line": 554,
-              "end_line": 557,
+              "line": 562,
+              "end_line": 565,
               "kind": "method",
               "purpose": "Return the authoritative player rear occupancy count through the narrow ledger query.",
               "purpose_origin": "reviewed"
@@ -5694,8 +5703,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::receiving_kg",
               "name": "receiving_kg",
-              "line": 560,
-              "end_line": 561,
+              "line": 568,
+              "end_line": 569,
               "kind": "method",
               "purpose": "Return int(ledger.loose_stock_mass_at(freight_berths[slot].store)) for receiving simulation. Implementation: calls int, ledger.loose_stock_mass_at.",
               "purpose_origin": "implementation_derived"
@@ -5703,8 +5712,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::reserved_storage_kg",
               "name": "reserved_storage_kg",
-              "line": 564,
-              "end_line": 569,
+              "line": 572,
+              "end_line": 577,
               "kind": "method",
               "purpose": "Return mass for receiving simulation. Implementation: calls _workers.values, worker.job.is_empty, worker.job.get; updates mass.",
               "purpose_origin": "implementation_derived"
@@ -5712,8 +5721,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::resource_counts",
               "name": "resource_counts",
-              "line": 572,
-              "end_line": 593,
+              "line": 580,
+              "end_line": 601,
               "kind": "method",
               "purpose": "Summarize ordered, player-owned aboard, carried, deposited and available quantities for one material; supplier-owned returned cargo is excluded from player onboard stock.",
               "purpose_origin": "reviewed"
@@ -5721,8 +5730,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::snapshot",
               "name": "snapshot",
-              "line": 596,
-              "end_line": 607,
+              "line": 604,
+              "end_line": 615,
               "kind": "method",
               "purpose": "Build detached order, worker, timing and account views, including cached-cargo return offers and optional ledger diagnostics.",
               "purpose_origin": "reviewed"
@@ -5730,8 +5739,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::audit",
               "name": "audit",
-              "line": 610,
-              "end_line": 638,
+              "line": 618,
+              "end_line": 646,
               "kind": "method",
               "purpose": "Audit actual freight/people/worker reservations and Ledger conservation, using the warehouse structural promise ceiling instead of a fictitious Table overflow.",
               "purpose_origin": "reviewed"
@@ -5739,8 +5748,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_new_order",
               "name": "_new_order",
-              "line": 641,
-              "end_line": 661,
+              "line": 649,
+              "end_line": 669,
               "kind": "method",
               "purpose": "Create one admitted purchase order with its cargo/layout and original paid goods-price and retained transport-fee receipt; free orders cannot yield a goods refund.",
               "purpose_origin": "reviewed"
@@ -5748,8 +5757,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_pump",
               "name": "_pump",
-              "line": 664,
-              "end_line": 740,
+              "line": 672,
+              "end_line": 748,
               "kind": "method",
               "purpose": "Settle due vehicle, mechanism, passenger and worker boundaries; close/depart only finished deliveries or safely cleared returns and complete return custody/refunds before releasing actual exit admission.",
               "purpose_origin": "reviewed"
@@ -5757,8 +5766,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_dispatch",
               "name": "_dispatch",
-              "line": 743,
-              "end_line": 780,
+              "line": 751,
+              "end_line": 788,
               "kind": "method",
               "purpose": "Create the actual external carrier, driver, packet stock or passengers and register freight source indexes before starting its committed physical arrival.",
               "purpose_origin": "reviewed"
@@ -5766,8 +5775,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_disembark",
               "name": "_disembark",
-              "line": 783,
-              "end_line": 790,
+              "line": 791,
+              "end_line": 798,
               "kind": "method",
               "purpose": "Begin approved stopped passenger preparation and rear-to-front activities in the3D convoy, preserving legacy cadence elsewhere.",
               "purpose_origin": "reviewed"
@@ -5775,8 +5784,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_position_supplier_occupants",
               "name": "_position_supplier_occupants",
-              "line": 792,
-              "end_line": 796,
+              "line": 800,
+              "end_line": 804,
               "kind": "method",
               "purpose": "Place only actual aboard passengers and the separate supplier driver at retained-model stations after spawn or an actual heading change.",
               "purpose_origin": "reviewed"
@@ -5784,8 +5793,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_exit_passenger",
               "name": "_exit_passenger",
-              "line": 799,
-              "end_line": 815,
+              "line": 807,
+              "end_line": 823,
               "kind": "method",
               "purpose": "Complete the existing single-passenger exit boundary, remove that actual aboard seat and begin the same identity ground walk; newly authored exit phases remain pending.",
               "purpose_origin": "reviewed"
@@ -5793,8 +5802,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::start_shared_unload",
               "name": "start_shared_unload",
-              "line": 818,
-              "end_line": 826,
+              "line": 826,
+              "end_line": 834,
               "kind": "method",
               "purpose": "Offer an available real hauler to Receiving, including pending shelf securing after cargo-order readiness unlocks.",
               "purpose_origin": "reviewed"
@@ -5802,8 +5811,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_start_worker_job",
               "name": "_start_worker_job",
-              "line": 829,
-              "end_line": 900,
+              "line": 837,
+              "end_line": 908,
               "kind": "method",
               "purpose": "Choose an eligible real receiving action and reserve actual source/destination; use cached source material identity with a light legacy fallback so unsupported timber never enters the single-handler path.",
               "purpose_origin": "reviewed"
@@ -5811,8 +5820,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_finish_worker_phase",
               "name": "_finish_worker_phase",
-              "line": 903,
-              "end_line": 994,
+              "line": 911,
+              "end_line": 1002,
               "kind": "method",
               "purpose": "Complete the current actual receiving phase, including safe shelf operation boundaries, physical carrying, deposition and supplier exit.",
               "purpose_origin": "reviewed"
@@ -5820,8 +5829,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_carry_from_rear",
               "name": "_carry_from_rear",
-              "line": 996,
-              "end_line": 1003,
+              "line": 1004,
+              "end_line": 1011,
               "kind": "method",
               "purpose": "Begin the real ground carry only after the worker clears the supplier rear, or retain an event-blocked carry.",
               "purpose_origin": "reviewed"
@@ -5829,8 +5838,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_queue_at_source",
               "name": "_queue_at_source",
-              "line": 1005,
-              "end_line": 1022,
+              "line": 1013,
+              "end_line": 1030,
               "kind": "method",
               "purpose": "Retain package space while releasing the warehouse standing face and routing a source waiter to a distinct outside position.",
               "purpose_origin": "reviewed"
@@ -5838,8 +5847,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_approach_truck",
               "name": "_approach_truck",
-              "line": 1024,
-              "end_line": 1059,
+              "line": 1032,
+              "end_line": 1067,
               "kind": "method",
               "purpose": "Reserve sole aisle and supplier access, then walk the actual worker through the retained ramp to pickup or the authored shelf operating start.",
               "purpose_origin": "reviewed"
@@ -5847,8 +5856,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_sync_workers",
               "name": "_sync_workers",
-              "line": 1062,
-              "end_line": 1086,
+              "line": 1070,
+              "end_line": 1094,
               "kind": "method",
               "purpose": "Retain supported manual shelf operations and active carries through safe handoffs before releasing reassigned workers and their unused claims.",
               "purpose_origin": "reviewed"
@@ -5856,8 +5865,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_sync_workers/<lambda#1>",
               "name": "_sync_workers/<lambda#1>",
-              "line": 1065,
-              "end_line": 1065,
+              "line": 1073,
+              "end_line": 1073,
               "kind": "lambda",
               "purpose": "Provide an inline callback that returns row.duty.",
               "purpose_origin": "implementation_derived"
@@ -5865,8 +5874,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_move_activities",
               "name": "_move_activities",
-              "line": 1089,
-              "end_line": 1113,
+              "line": 1097,
+              "end_line": 1121,
               "kind": "method",
               "purpose": "Advance committed supplier/passenger/worker poses; active shelf workers use the approved root sample without a second visual placement.",
               "purpose_origin": "reviewed"
@@ -5874,8 +5883,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_start_vehicle_motion",
               "name": "_start_vehicle_motion",
-              "line": 1116,
-              "end_line": 1128,
+              "line": 1124,
+              "end_line": 1136,
               "kind": "method",
               "purpose": "Commit a clear route with its actual speed and deadline, or retain the destination and wait for physical clearance without travel.",
               "purpose_origin": "reviewed"
@@ -5883,8 +5892,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_slot_for",
               "name": "_slot_for",
-              "line": 1131,
-              "end_line": 1144,
+              "line": 1139,
+              "end_line": 1152,
               "kind": "method",
               "purpose": "Find a legal service berth, allowing separate material/personnel stops while retaining actual same-kind occupancy.",
               "purpose_origin": "reviewed"
@@ -5892,17 +5901,17 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_freight_finished",
               "name": "_freight_finished",
-              "line": 1147,
-              "end_line": 1153,
+              "line": 1155,
+              "end_line": 1161,
               "kind": "method",
-              "purpose": "Freight finished for receiving simulation. Implementation: calls order.unloaded.get.",
-              "purpose_origin": "implementation_derived"
+              "purpose": "Require actual full cargo receipt and no pending paired/ground timber obligation before normal freight completion.",
+              "purpose_origin": "reviewed"
             },
             {
               "id": "game/procurement/receiving_simulation.gd::_order_blocker",
               "name": "_order_blocker",
-              "line": 1156,
-              "end_line": 1175,
+              "line": 1164,
+              "end_line": 1183,
               "kind": "method",
               "purpose": "Describe the actual delivery or cargo-return state and its staffing, storage, road or handling blocker without advancing work.",
               "purpose_origin": "reviewed"
@@ -5910,8 +5919,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_admitted",
               "name": "_admitted",
-              "line": 1178,
-              "end_line": 1183,
+              "line": 1186,
+              "end_line": 1191,
               "kind": "method",
               "purpose": "Return count for receiving simulation. Implementation: updates count.",
               "purpose_origin": "implementation_derived"
@@ -5919,8 +5928,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_find_order",
               "name": "_find_order",
-              "line": 1186,
-              "end_line": 1190,
+              "line": 1194,
+              "end_line": 1198,
               "kind": "method",
               "purpose": "Find order for receiving simulation.",
               "purpose_origin": "implementation_derived"
@@ -5928,8 +5937,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_set_state",
               "name": "_set_state",
-              "line": 1193,
-              "end_line": 1202,
+              "line": 1201,
+              "end_line": 1210,
               "kind": "method",
               "purpose": "Publish actual supplier state changes, invalidate relevant road reservations and update the handover-dependent ordering gate.",
               "purpose_origin": "reviewed"
@@ -5937,8 +5946,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_update_convoy_gate",
               "name": "_update_convoy_gate",
-              "line": 1205,
-              "end_line": 1211,
+              "line": 1213,
+              "end_line": 1219,
               "kind": "method",
               "purpose": "Resolve only this convoy member after its normal physical handover and departure start, or after actual completed cargo-return exit.",
               "purpose_origin": "reviewed"
@@ -5946,8 +5955,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_gate",
               "name": "_gate",
-              "line": 1214,
-              "end_line": 1217,
+              "line": 1222,
+              "end_line": 1225,
               "kind": "method",
               "purpose": "Choose the actual incoming queue point with safe development convoy spacing.",
               "purpose_origin": "reviewed"
@@ -5955,8 +5964,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_berth",
               "name": "_berth",
-              "line": 1220,
-              "end_line": 1223,
+              "line": 1228,
+              "end_line": 1231,
               "kind": "method",
               "purpose": "Choose the independent actual material or passenger stop, preserving legacy layouts.",
               "purpose_origin": "reviewed"
@@ -5964,8 +5973,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_exit",
               "name": "_exit",
-              "line": 1226,
-              "end_line": 1229,
+              "line": 1234,
+              "end_line": 1237,
               "kind": "method",
               "purpose": "Return the east road exit for development suppliers or the applicable legacy service exit.",
               "purpose_origin": "reviewed"
@@ -5973,8 +5982,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_speed",
               "name": "_speed",
-              "line": 1232,
-              "end_line": 1234,
+              "line": 1240,
+              "end_line": 1242,
               "kind": "method",
               "purpose": "Use a common development convoy lane speed, otherwise retain the existing freight/personnel service speeds.",
               "purpose_origin": "reviewed"
@@ -5982,8 +5991,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_worker_path",
               "name": "_worker_path",
-              "line": 1237,
-              "end_line": 1241,
+              "line": 1245,
+              "end_line": 1249,
               "kind": "method",
               "purpose": "Worker path for receiving simulation. Implementation: calls route.is_valid, route.call, Vector2.",
               "purpose_origin": "implementation_derived"
@@ -5991,8 +6000,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_path_length",
               "name": "_path_length",
-              "line": 1244,
-              "end_line": 1248,
+              "line": 1252,
+              "end_line": 1256,
               "kind": "method",
               "purpose": "Return total for receiving simulation. Implementation: calls range, path.size, (path[index - 1] as Vector2).distance_to; updates total.",
               "purpose_origin": "implementation_derived"
@@ -6000,8 +6009,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_motion_position",
               "name": "_motion_position",
-              "line": 1251,
-              "end_line": 1262,
+              "line": 1259,
+              "end_line": 1270,
               "kind": "method",
               "purpose": "Motion position for receiving simulation. Implementation: calls clampf, _path_length, range, path.size; updates distance.",
               "purpose_origin": "implementation_derived"
@@ -6009,8 +6018,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_event",
               "name": "_event",
-              "line": 1265,
-              "end_line": 1267,
+              "line": 1273,
+              "end_line": 1275,
               "kind": "method",
               "purpose": "Retain a delivery activity event and notify warehouse-aware supplier presentation without changing cargo quantities.",
               "purpose_origin": "reviewed"
@@ -6018,8 +6027,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_must",
               "name": "_must",
-              "line": 1270,
-              "end_line": 1272,
+              "line": 1278,
+              "end_line": 1280,
               "kind": "method",
               "purpose": "Must for receiving simulation. Implementation: calls push_error, str.",
               "purpose_origin": "implementation_derived"
@@ -6027,8 +6036,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_ok",
               "name": "_ok",
-              "line": 1275,
-              "end_line": 1276,
+              "line": 1283,
+              "end_line": 1284,
               "kind": "method",
               "purpose": "Return {\"ok\": true, \"code\": \"OK\", \"message\": message, \"ids\": ids} for receiving simulation.",
               "purpose_origin": "implementation_derived"
@@ -6036,8 +6045,8 @@
             {
               "id": "game/procurement/receiving_simulation.gd::_reject",
               "name": "_reject",
-              "line": 1279,
-              "end_line": 1280,
+              "line": 1287,
+              "end_line": 1288,
               "kind": "method",
               "purpose": "Return {\"ok\": false, \"code\": code, \"message\": message, \"ids\": []} for receiving simulation.",
               "purpose_origin": "implementation_derived"
@@ -21801,7 +21810,7 @@
           "label": "Credit real requisition account",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "credit_objective_income",
-          "line": 495
+          "line": 503
         },
         {
           "id": "n4",
@@ -33055,14 +33064,14 @@
           "label": "Force physical worker delivery exception",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "debug_deliver_people",
-          "line": 331
+          "line": 339
         },
         {
           "id": "n4",
           "label": "Free raw-resource order exception",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "debug_order_raw_resources",
-          "line": 252
+          "line": 257
         }
       ],
       "edges": [
@@ -38413,42 +38422,42 @@
           "label": "Actual12x16 starting warehouse",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "initialize_opening",
-          "line": 43
+          "line": 44
         },
         {
           "id": "reserve",
           "label": "Exact package-space promise",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "reserve",
-          "line": 87
+          "line": 88
         },
         {
           "id": "prepare",
           "label": "Worker reaches clear fixture site",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "begin_preparation",
-          "line": 184
+          "line": 185
         },
         {
           "id": "access",
           "label": "Safe handling access before pickup",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "acquire_access",
-          "line": 237
+          "line": 238
         },
         {
           "id": "commit",
           "label": "Actual stock deposited once",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "commit",
-          "line": 252
+          "line": 253
         },
         {
           "id": "join",
           "label": "Completed full-edge join",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "register_module",
-          "line": 66
+          "line": 67
         },
         {
           "id": "view",
@@ -38469,7 +38478,7 @@
           "label": "Actual selected/connected storage facts",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "summary",
-          "line": 342
+          "line": 344
         },
         {
           "id": "batch",
@@ -39014,14 +39023,14 @@
         },
         {
           "path": "game/warehousing/warehouse_service.gd",
-          "sha256": "995da9f3fb033860c704ce984d38cbf9e6252e6ab0b8ca78837017187c769b7d",
+          "sha256": "6bdf7f5cac429525bdf8166e0cc346f6a0ba20a077340449e225ecdc575818a6",
           "classification": "implementation / presentation / data",
           "functions": [
             {
               "id": "game/warehousing/warehouse_service.gd::_init",
               "name": "_init",
-              "line": 36,
-              "end_line": 41,
+              "line": 37,
+              "end_line": 42,
               "kind": "method",
               "purpose": "Subscribe to actual stock/movement/site events and compose one weakly owned finite bay-recovery coordinator.",
               "purpose_origin": "reviewed"
@@ -39029,8 +39038,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::initialize_opening",
               "name": "initialize_opening",
-              "line": 43,
-              "end_line": 64,
+              "line": 44,
+              "end_line": 65,
               "kind": "method",
               "purpose": "Register one free completed starting warehouse and position the existing500M11 once as21actual packages on two ready fixtures.",
               "purpose_origin": "reviewed"
@@ -39038,8 +39047,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::register_module",
               "name": "register_module",
-              "line": 66,
-              "end_line": 85,
+              "line": 67,
+              "end_line": 86,
               "kind": "method",
               "purpose": "Add eight finite fixture sites and the structural ceiling only after an actual module completes; invalidate topology once.",
               "purpose_origin": "reviewed"
@@ -39047,8 +39056,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::reserve",
               "name": "reserve",
-              "line": 87,
-              "end_line": 146,
+              "line": 88,
+              "end_line": 147,
               "kind": "method",
               "purpose": "Reserve actual finite compatible warehouse receipt and worker access, excluding staging and bays locked by recovery and retaining honest route/preparation/full blockers.",
               "purpose_origin": "reviewed"
@@ -39056,8 +39065,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::probe",
               "name": "probe",
-              "line": 148,
-              "end_line": 163,
+              "line": 149,
+              "end_line": 164,
               "kind": "method",
               "purpose": "Preview the same compatible/new/convertible fixture eligibility as reservation without promising space; already-carried reroutes may require Ready compatibility only.",
               "purpose_origin": "reviewed"
@@ -39065,8 +39074,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays",
               "name": "_candidate_bays",
-              "line": 165,
-              "end_line": 171,
+              "line": 166,
+              "end_line": 172,
               "kind": "method",
               "purpose": "Rank only ordinary unlocked warehouse bays by compatible ready storage, empty fixture site and permissible reconfiguration.",
               "purpose_origin": "reviewed"
@@ -39074,8 +39083,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays/<lambda#1>",
               "name": "_candidate_bays/<lambda#1>",
-              "line": 166,
-              "end_line": 166,
+              "line": 167,
+              "end_line": 167,
               "kind": "lambda",
               "purpose": "Exclude finite staging and source bays currently locked for clearance from ordinary warehouse receipt candidates.",
               "purpose_origin": "reviewed"
@@ -39083,8 +39092,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_candidate_bays/<lambda#2>",
               "name": "_candidate_bays/<lambda#2>",
-              "line": 167,
-              "end_line": 170,
+              "line": 168,
+              "end_line": 171,
               "kind": "lambda",
               "purpose": "Order legal ordinary bays by compatible ready fixture, empty site, then other configuration with stable IDs.",
               "purpose_origin": "reviewed"
@@ -39092,8 +39101,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_can_reconfigure",
               "name": "_can_reconfigure",
-              "line": 173,
-              "end_line": 182,
+              "line": 174,
+              "end_line": 183,
               "kind": "method",
               "purpose": "Allow an empty unused ordinary ready bay to change fixture family, refusing staging, recovery locks, retirement, stock and access/promises.",
               "purpose_origin": "reviewed"
@@ -39101,8 +39110,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::begin_preparation",
               "name": "begin_preparation",
-              "line": 184,
-              "end_line": 201,
+              "line": 185,
+              "end_line": 202,
               "kind": "method",
               "purpose": "Require the promised actual worker at the service point and a clear fixture footprint before shelf preparation starts.",
               "purpose_origin": "reviewed"
@@ -39110,8 +39119,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::finish_preparation",
               "name": "finish_preparation",
-              "line": 203,
-              "end_line": 216,
+              "line": 204,
+              "end_line": 217,
               "kind": "method",
               "purpose": "Commit the new fixture family at the actual Ready activity boundary after final occupancy validation, clearing any prior-fixture rollback metadata.",
               "purpose_origin": "reviewed"
@@ -39119,8 +39128,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::reveal_preparation",
               "name": "reveal_preparation",
-              "line": 218,
-              "end_line": 229,
+              "line": 219,
+              "end_line": 230,
               "kind": "method",
               "purpose": "Expose the prepared fixture at the opaque-smoke midpoint only if its actual footprint is clear.",
               "purpose_origin": "reviewed"
@@ -39128,8 +39137,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::ready",
               "name": "ready",
-              "line": 231,
-              "end_line": 232,
+              "line": 232,
+              "end_line": 233,
               "kind": "method",
               "purpose": "Report whether this live space promise refers to an actually ready fixture.",
               "purpose_origin": "reviewed"
@@ -39137,8 +39146,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::destination_point",
               "name": "destination_point",
-              "line": 234,
-              "end_line": 235,
+              "line": 235,
+              "end_line": 236,
               "kind": "method",
               "purpose": "Return the exact promised shelf handling point, or infinity for a missing reservation.",
               "purpose_origin": "reviewed"
@@ -39146,8 +39155,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::acquire_access",
               "name": "acquire_access",
-              "line": 237,
-              "end_line": 250,
+              "line": 238,
+              "end_line": 251,
               "kind": "method",
               "purpose": "Revalidate the exact ready destination cell and reserve its real worker handling point against the bay's actual warehouse or staging holder.",
               "purpose_origin": "reviewed"
@@ -39155,17 +39164,17 @@
             {
               "id": "game/warehousing/warehouse_service.gd::commit",
               "name": "commit",
-              "line": 252,
-              "end_line": 266,
+              "line": 253,
+              "end_line": 268,
               "kind": "method",
-              "purpose": "Consume only the exact reached matching warehouse/staging cell promise, attach the real deposited stock and schedule safe worker clearance.",
+              "purpose": "Validate exact reserved package and real storage holder, occupy its finite cell, release the promise/access point and emit the actual stored stock identity.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/warehousing/warehouse_service.gd::release",
               "name": "release",
-              "line": 268,
-              "end_line": 284,
+              "line": 270,
+              "end_line": 286,
               "kind": "method",
               "purpose": "Release one package promise and its actual handling position, reverting unfinished fixture preparation when appropriate.",
               "purpose_origin": "reviewed"
@@ -39173,8 +39182,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::free_net_kg",
               "name": "free_net_kg",
-              "line": 286,
-              "end_line": 290,
+              "line": 288,
+              "end_line": 292,
               "kind": "method",
               "purpose": "Subtract actual canonical warehouse stock and outstanding promises from completed non-retiring structural capacity.",
               "purpose_origin": "reviewed"
@@ -39182,8 +39191,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::structural_capacity",
               "name": "structural_capacity",
-              "line": 292,
-              "end_line": 296,
+              "line": 294,
+              "end_line": 298,
               "kind": "method",
               "purpose": "Sum10000kg ceilings of actually completed non-retiring modules; physical package fit can bind sooner.",
               "purpose_origin": "reviewed"
@@ -39191,8 +39200,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::physical_space_status",
               "name": "physical_space_status",
-              "line": 298,
-              "end_line": 315,
+              "line": 300,
+              "end_line": 317,
               "kind": "method",
               "purpose": "Describe actual compatible ordinary receipt capacity and preparation while excluding recovery staging and locked source bays.",
               "purpose_origin": "reviewed"
@@ -39200,8 +39209,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::connected_modules",
               "name": "connected_modules",
-              "line": 317,
-              "end_line": 327,
+              "line": 319,
+              "end_line": 329,
               "kind": "method",
               "purpose": "Traverse only completed full-edge warehouse joins from one actual module and return its connected membership without moving or copying stock.",
               "purpose_origin": "reviewed"
@@ -39209,8 +39218,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_module",
               "name": "stock_module",
-              "line": 329,
-              "end_line": 331,
+              "line": 331,
+              "end_line": 333,
               "kind": "method",
               "purpose": "Resolve an indexed physical package to its owning fixture module, or return empty for legacy/nonwarehouse sources.",
               "purpose_origin": "reviewed"
@@ -39218,8 +39227,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::exterior_doors",
               "name": "exterior_doors",
-              "line": 333,
-              "end_line": 340,
+              "line": 335,
+              "end_line": 342,
               "kind": "method",
               "purpose": "List nonretiring open front portals of one actual connected warehouse, excluding front boundaries removed by completed joins.",
               "purpose_origin": "reviewed"
@@ -39227,8 +39236,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::summary",
               "name": "summary",
-              "line": 342,
-              "end_line": 376,
+              "line": 344,
+              "end_line": 378,
               "kind": "method",
               "purpose": "Cache actual connected/module stock quantities, package counts, fixture readiness and promised capacity from existing cell indexes and the single Ledger inventory.",
               "purpose_origin": "reviewed"
@@ -39236,8 +39245,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::work_point",
               "name": "work_point",
-              "line": 378,
-              "end_line": 379,
+              "line": 380,
+              "end_line": 381,
               "kind": "method",
               "purpose": "Return a worker's currently held warehouse handling point without rescanning stock or geometry.",
               "purpose_origin": "reviewed"
@@ -39245,8 +39254,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_service_point",
               "name": "stock_service_point",
-              "line": 381,
-              "end_line": 385,
+              "line": 383,
+              "end_line": 387,
               "kind": "method",
               "purpose": "Read the exact package cell service coordinate without a path search, stock duplication or handling reservation.",
               "purpose_origin": "reviewed"
@@ -39254,8 +39263,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::stock_point",
               "name": "stock_point",
-              "line": 387,
-              "end_line": 397,
+              "line": 389,
+              "end_line": 399,
               "kind": "method",
               "purpose": "Choose the actual registered package cell face and optionally retain handling access on its real warehouse/staging holder.",
               "purpose_origin": "reviewed"
@@ -39263,8 +39272,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::release_point",
               "name": "release_point",
-              "line": 399,
-              "end_line": 400,
+              "line": 401,
+              "end_line": 402,
               "kind": "method",
               "purpose": "Release one worker's warehouse service face and wake waiting allocations without rebuilding presentation.",
               "purpose_origin": "reviewed"
@@ -39272,8 +39281,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::take_clearance",
               "name": "take_clearance",
-              "line": 402,
-              "end_line": 405,
+              "line": 404,
+              "end_line": 407,
               "kind": "method",
               "purpose": "Consume a finished-deposit access-clearance request once, rather than repeatedly sending idle workers away.",
               "purpose_origin": "reviewed"
@@ -39281,8 +39290,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::watch_clearance",
               "name": "watch_clearance",
-              "line": 407,
-              "end_line": 408,
+              "line": 409,
+              "end_line": 410,
               "kind": "method",
               "purpose": "Watch only this departing worker and former handling position until the access radius is clear.",
               "purpose_origin": "reviewed"
@@ -39290,8 +39299,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path",
               "name": "clearance_path",
-              "line": 410,
-              "end_line": 440,
+              "line": 412,
+              "end_line": 442,
               "kind": "method",
               "purpose": "Choose a distinct reachable end-apron rest point that clears every shelf service face; use the ordinary outside waiting owner only when needed.",
               "purpose_origin": "reviewed"
@@ -39299,8 +39308,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::clearance_path/<lambda#1>",
               "name": "clearance_path/<lambda#1>",
-              "line": 435,
-              "end_line": 435,
+              "line": 437,
+              "end_line": 437,
               "kind": "lambda",
               "purpose": "Prefer the shortest geometric approach to a legal warehouse rest point before actual route validation.",
               "purpose_origin": "reviewed"
@@ -39308,8 +39317,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_slot_body",
               "name": "set_slot_body",
-              "line": 442,
-              "end_line": 448,
+              "line": 444,
+              "end_line": 450,
               "kind": "method",
               "purpose": "Apply Area3D enter/exit occupancy to one fixture site and wake preparation; never poll overlaps per frame.",
               "purpose_origin": "reviewed"
@@ -39317,8 +39326,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::fixture_bounds",
               "name": "fixture_bounds",
-              "line": 450,
-              "end_line": 452,
+              "line": 452,
+              "end_line": 454,
               "kind": "method",
               "purpose": "Return the rotated physical2.6x1m rack footprint for clearance and path ownership.",
               "purpose_origin": "reviewed"
@@ -39326,8 +39335,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::set_module_body",
               "name": "set_module_body",
-              "line": 454,
-              "end_line": 458,
+              "line": 456,
+              "end_line": 460,
               "kind": "method",
               "purpose": "Track player/vehicle presence in one module through Area3D events for safe removal.",
               "purpose_origin": "reviewed"
@@ -39335,8 +39344,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::obstacles",
               "name": "obstacles",
-              "line": 460,
-              "end_line": 468,
+              "line": 462,
+              "end_line": 470,
               "kind": "method",
               "purpose": "Reuse topology/fixture-invalidated actual wall/post/rack routing rectangles; stock quantity changes do not rebuild them.",
               "purpose_origin": "reviewed"
@@ -39344,8 +39353,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::can_remove",
               "name": "can_remove",
-              "line": 470,
-              "end_line": 490,
+              "line": 472,
+              "end_line": 492,
               "kind": "method",
               "purpose": "Require an empty, unreserved, unoccupied non-connecting module before removal; preserve current access conservatively.",
               "purpose_origin": "reviewed"
@@ -39353,8 +39362,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::retire",
               "name": "retire",
-              "line": 492,
-              "end_line": 498,
+              "line": 494,
+              "end_line": 500,
               "kind": "method",
               "purpose": "Stop new admissions to a dismantling module and track actual remaining occupants until removal is safe.",
               "purpose_origin": "reviewed"
@@ -39362,8 +39371,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::joined",
               "name": "joined",
-              "line": 500,
-              "end_line": 502,
+              "line": 502,
+              "end_line": 504,
               "kind": "method",
               "purpose": "Accept only equal-span, full matching cardinal warehouse edges; reject corner, diagonal and partial-edge contact.",
               "purpose_origin": "reviewed"
@@ -39371,8 +39380,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_walls",
               "name": "_walls",
-              "line": 504,
-              "end_line": 510,
+              "line": 506,
+              "end_line": 512,
               "kind": "method",
               "purpose": "Project only actual below-person-height solid wall/post proxies into pedestrian routing; exclude floors and overhead geometry.",
               "purpose_origin": "reviewed"
@@ -39380,8 +39389,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::hidden_boundaries",
               "name": "hidden_boundaries",
-              "line": 512,
-              "end_line": 521,
+              "line": 514,
+              "end_line": 523,
               "kind": "method",
               "purpose": "Derive which complete neighbouring modules remove each local boundary group symmetrically.",
               "purpose_origin": "reviewed"
@@ -39389,8 +39398,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::module_colliders",
               "name": "module_colliders",
-              "line": 523,
-              "end_line": 535,
+              "line": 525,
+              "end_line": 537,
               "kind": "method",
               "purpose": "Transform the Artist-measured collision proxies into world metres, omitting only actual joined boundary groups.",
               "purpose_origin": "reviewed"
@@ -39398,8 +39407,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_make_cells",
               "name": "_make_cells",
-              "line": 537,
-              "end_line": 545,
+              "line": 539,
+              "end_line": 547,
               "kind": "method",
               "purpose": "Create four finite timber positions on the revised 0.60/1.75m supports with explicit wood-base registration, while retaining ordinary sixteen-position crate layouts.",
               "purpose_origin": "reviewed"
@@ -39407,8 +39416,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_free_cells",
               "name": "_free_cells",
-              "line": 547,
-              "end_line": 562,
+              "line": 549,
+              "end_line": 564,
               "kind": "method",
               "purpose": "Return only wholly unoccupied and unpromised cells; a partially filled package still occupies its full envelope.",
               "purpose_origin": "reviewed"
@@ -39416,8 +39425,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_quantity",
               "name": "_cell_quantity",
-              "line": 564,
-              "end_line": 568,
+              "line": 566,
+              "end_line": 570,
               "kind": "method",
               "purpose": "Read current actual Ledger quantity for the stock IDs indexed by one physical package cell.",
               "purpose_origin": "reviewed"
@@ -39425,8 +39434,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_attach_stock",
               "name": "_attach_stock",
-              "line": 570,
-              "end_line": 579,
+              "line": 572,
+              "end_line": 581,
               "kind": "method",
               "purpose": "Register the actual package in its exact bay cell and position it at that cell on the real ordinary or staging holder.",
               "purpose_origin": "reviewed"
@@ -39434,8 +39443,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_cell_service_point",
               "name": "_cell_service_point",
-              "line": 581,
-              "end_line": 583,
+              "line": 583,
+              "end_line": 585,
               "kind": "method",
               "purpose": "Compute the package's own accessible shelf face in world coordinates without any route search.",
               "purpose_origin": "reviewed"
@@ -39443,8 +39452,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_choose_point",
               "name": "_choose_point",
-              "line": 585,
-              "end_line": 602,
+              "line": 587,
+              "end_line": 604,
               "kind": "method",
               "purpose": "Validate distinct person/reservation clearance and real routing for one exact package service face; watch only actual blocking passers-by.",
               "purpose_origin": "reviewed"
@@ -39452,8 +39461,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_clear_for_appearance",
               "name": "_clear_for_appearance",
-              "line": 604,
-              "end_line": 610,
+              "line": 606,
+              "end_line": 612,
               "kind": "method",
               "purpose": "Require the actual future rack volume to be free of tracked bodies and real worker positions.",
               "purpose_origin": "reviewed"
@@ -39461,8 +39470,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_stock_changed",
               "name": "_stock_changed",
-              "line": 612,
-              "end_line": 621,
+              "line": 614,
+              "end_line": 623,
               "kind": "method",
               "purpose": "Refresh the indexed package's bay after quantity changes and detach it only when depleted or physically moved away, notifying event-driven views/quotes.",
               "purpose_origin": "reviewed"
@@ -39470,8 +39479,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_entity_moved",
               "name": "_entity_moved",
-              "line": 623,
-              "end_line": 650,
+              "line": 625,
+              "end_line": 652,
               "kind": "method",
               "purpose": "Wake only watched blocked access, shelf appearance or retiring-module occupancy when a relevant person actually moves clear.",
               "purpose_origin": "reviewed"
@@ -39479,8 +39488,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_site_changed",
               "name": "_site_changed",
-              "line": 652,
-              "end_line": 670,
+              "line": 654,
+              "end_line": 672,
               "kind": "method",
               "purpose": "Register completed warehouse modules or safely retire removed ones; invalidate topology only when actual site state changes.",
               "purpose_origin": "reviewed"
@@ -39488,8 +39497,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_touch",
               "name": "_touch",
-              "line": 672,
-              "end_line": 677,
+              "line": 674,
+              "end_line": 679,
               "kind": "method",
               "purpose": "Increment logical freshness and wake waiting work; emit keyed presentation changes only for a nonempty module ID.",
               "purpose_origin": "reviewed"
@@ -39497,8 +39506,8 @@
             {
               "id": "game/warehousing/warehouse_service.gd::_reject",
               "name": "_reject",
-              "line": 679,
-              "end_line": 680,
+              "line": 681,
+              "end_line": 682,
               "kind": "method",
               "purpose": "Return a structured warehouse blocker with its player-facing explanation without mutating custody.",
               "purpose_origin": "reviewed"
@@ -39671,8 +39680,8 @@
       "id": "supplier_transport",
       "title": "Supplier vehicles, spatial freight and independent service road",
       "group": "Rear economy",
-      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration",
-      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate.",
+      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration; SupplierTimberHandoffs retains pending pair/ground obligations",
+      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate. Approved complete S4 operator motion is connected with a passing scoped check. Revised timber-only truck S1v03 and warehouse v04 fixtures have scoped imported-fit receipts. Pending timber custody survives ground put-down until exact warehouse commit; actual paired motion and ordinary connected pair routing remain unfinished.",
       "nodes": [
         {
           "id": "quote",
@@ -39686,7 +39695,7 @@
           "label": "Actual identities and source stocks",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_dispatch",
-          "line": 743
+          "line": 751
         },
         {
           "id": "road",
@@ -39721,28 +39730,28 @@
           "label": "Existing physical single-worker deposit",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_finish_worker_phase",
-          "line": 903
+          "line": 911
         },
         {
           "id": "pair",
           "label": "Two-worker atomic custody capability",
           "file": "game/staffing/joint_material_carry.gd",
           "function": "begin",
-          "line": 10
+          "line": 11
         },
         {
           "id": "deposit",
           "label": "One finite warehouse cell consumed",
           "file": "game/warehousing/warehouse_service.gd",
           "function": "commit",
-          "line": 252
+          "line": 253
         },
         {
           "id": "gate",
           "label": "Normal handover/departure or actual return exit",
           "file": "game/procurement/receiving_simulation.gd",
           "function": "_update_convoy_gate",
-          "line": 1205
+          "line": 1213
         },
         {
           "id": "view",
@@ -39812,7 +39821,14 @@
           "label": "Actual exit ownership and once-only refund",
           "file": "game/supplier_transport/supplier_returns.gd",
           "function": "complete",
-          "line": 129
+          "line": 130
+        },
+        {
+          "id": "timber_receipt",
+          "label": "Retain paired / ground timber until actual warehouse receipt",
+          "file": "game/supplier_transport/supplier_timber_handoffs.gd",
+          "function": "stock_committed",
+          "line": 45
         }
       ],
       "edges": [
@@ -39930,6 +39946,21 @@
           "from": "return_exit",
           "to": "gate",
           "label": "returned member resolves only after exit"
+        },
+        {
+          "from": "pair",
+          "to": "timber_receipt",
+          "label": "joint pickup, deposit or ground event"
+        },
+        {
+          "from": "deposit",
+          "to": "timber_receipt",
+          "label": "exact committed-stock event"
+        },
+        {
+          "from": "timber_receipt",
+          "to": "gate",
+          "label": "pending physical obligation blocks clearance"
         }
       ],
       "related": [
@@ -40619,7 +40650,7 @@
         },
         {
           "path": "game/supplier_transport/supplier_returns.gd",
-          "sha256": "10fce7aeabceaa517eae89f957d073578b5e0b5bb0b9e9ac148d01a8d724924c",
+          "sha256": "9f55f71576a65dfaa233df4587562b68ad02ebffd825b000cfdfb96f33c88ed9",
           "classification": "implementation / presentation / data",
           "functions": [
             {
@@ -40662,16 +40693,16 @@
               "id": "game/supplier_transport/supplier_returns.gd::ready",
               "name": "ready",
               "line": 122,
-              "end_line": 127,
+              "end_line": 128,
               "kind": "method",
-              "purpose": "Allow closure only after every job for this returning order and its physical aisle users have cleared.",
+              "purpose": "Allow an accepted return to secure/depart only when no actual worker job, aisle user or pending shared/ground timber handoff remains.",
               "purpose_origin": "reviewed"
             },
             {
               "id": "game/supplier_transport/supplier_returns.gd::complete",
               "name": "complete",
-              "line": 129,
-              "end_line": 145,
+              "line": 130,
+              "end_line": 146,
               "kind": "method",
               "purpose": "At actual exit transfer the original reserved cargo through the ledger and award its original paid goods value once, preserving transport fees.",
               "purpose_origin": "reviewed"
@@ -40679,8 +40710,8 @@
             {
               "id": "game/supplier_transport/supplier_returns.gd::abandon_for_debug",
               "name": "abandon_for_debug",
-              "line": 147,
-              "end_line": 152,
+              "line": 148,
+              "end_line": 153,
               "kind": "method",
               "purpose": "Release pending return claims and abandon refund intent before the explicit debug immediate-delivery bypass.",
               "purpose_origin": "reviewed"
@@ -40688,8 +40719,8 @@
             {
               "id": "game/supplier_transport/supplier_returns.gd::_reject",
               "name": "_reject",
-              "line": 154,
-              "end_line": 155,
+              "line": 155,
+              "end_line": 156,
               "kind": "method",
               "purpose": "Return a detached return-command refusal without mutating cargo, workers or money.",
               "purpose_origin": "reviewed"
@@ -41044,6 +41075,58 @@
               "end_line": 117,
               "kind": "method",
               "purpose": "Assign a real available worker a stock-free shelf-securing task through existing supplier access and walking.",
+              "purpose_origin": "reviewed"
+            }
+          ]
+        },
+        {
+          "path": "game/supplier_transport/supplier_timber_handoffs.gd",
+          "sha256": "37638dd11d3e2a47b0b653d5b6bff49e064e2bbe6460999a3b115d63debe588c",
+          "classification": "implementation / presentation / data",
+          "functions": [
+            {
+              "id": "game/supplier_transport/supplier_timber_handoffs.gd::_init",
+              "name": "_init",
+              "line": 6,
+              "end_line": 11,
+              "kind": "method",
+              "purpose": "Retain a weak receiving owner and subscribe to actual ledger joint-custody transitions without a periodic inventory query.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/supplier_transport/supplier_timber_handoffs.gd::_init/<lambda#1>",
+              "name": "_init/<lambda#1>",
+              "line": 9,
+              "end_line": 11,
+              "kind": "lambda",
+              "purpose": "Forward a real joint-custody event only while the receiving-owned handoff tracker still exists.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/supplier_transport/supplier_timber_handoffs.gd::has_pending",
+              "name": "has_pending",
+              "line": 13,
+              "end_line": 16,
+              "kind": "method",
+              "purpose": "Check the small set of outstanding physical handoff references for one supplier order; quantities remain in the ledger.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/supplier_transport/supplier_timber_handoffs.gd::_custody_changed",
+              "name": "_custody_changed",
+              "line": 18,
+              "end_line": 43,
+              "kind": "method",
+              "purpose": "Track actual supplier pickup, shared deposit and recoverable ground stock IDs, transferring only the consumed ground obligation on later real recovery.",
+              "purpose_origin": "reviewed"
+            },
+            {
+              "id": "game/supplier_transport/supplier_timber_handoffs.gd::stock_committed",
+              "name": "stock_committed",
+              "line": 45,
+              "end_line": 58,
+              "kind": "method",
+              "purpose": "Consume exactly one matching actual warehouse timber receipt, increment its original supplier order once and clear that physical handoff obligation.",
               "purpose_origin": "reviewed"
             }
           ]

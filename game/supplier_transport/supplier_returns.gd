@@ -122,6 +122,7 @@ func _withdrawal_path(order: Dictionary, job: Dictionary, origin: Vector2) -> Ar
 func ready(order: Dictionary) -> bool:
 	if not order.get("return_requested",false) or order.get("return_completed",false): return false
 	var service: RefCounted = _owner.get_ref()
+	if service.timber_handoffs.has_pending(str(order.id)): return false
 	for worker: Dictionary in service._workers.values():
 		if worker.job.get("order_id","") == order.id: return false
 	return order.get("aisle_workers",[]).is_empty()

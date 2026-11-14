@@ -28,5 +28,11 @@
   ],
   "local_engine_runs": 0,
   "regression_suites_run": 0,
-  "performance_limits_raised": false
+  "performance_limits_raised": false,
+  "solo_boundary": {
+    "run": 43535306483,
+    "source": "e52238ca3a67bb4b2fe76c8fbeb803cf4e2da2f5",
+    "result": "pass",
+    "scope": "Real lighter M04 demand retained without solo reservation, direct person transfer/carry refused, same real worker takes feasible M11. No paired motion/full-loop acceptance."
+  }
 }

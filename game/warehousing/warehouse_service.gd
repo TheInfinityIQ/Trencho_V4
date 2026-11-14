@@ -2,6 +2,7 @@ extends RefCounted
 ## Finite warehouse fixtures and space promises. IdentityLedger owns all quantities.
 signal changed(module_id: String)
 signal space_changed
+signal stock_committed(stock_id: String)
 const Packages = preload("res://game/warehousing/material_packages.gd")
 const Collision = preload("res://game/warehousing/warehouse_collision.gd")
 const MODULE_SIZE := Vector2(12,16)
@@ -263,6 +264,7 @@ func commit(token: String, stock_id: String) -> Dictionary:
 	reservations.erase(token)
 	_work_points.erase(promise.person)
 	_touch(bay.module)
+	stock_committed.emit(stock_id)
 	return {"ok":true}
 
 func release(token: String) -> void:

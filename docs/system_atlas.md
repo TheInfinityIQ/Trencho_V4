@@ -122,7 +122,7 @@ flowchart TD
 - [Optional review scenes, fixtures and probes](#reviews) — Main.REVIEWS and standalone diagnostic scenes
 - [Worker and soldier model animation](#character_animation) — CharacterVisual with RearWorkers and FieldPersons
 - [Enterable warehouse and physical material storage](#warehousing) — WarehouseService + IdentityLedger; WarehouseView presents actual state + WarehouseRecovery exact batch coordination
-- [Supplier vehicles, spatial freight and independent service road](#supplier_transport) — ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration
+- [Supplier vehicles, spatial freight and independent service road](#supplier_transport) — ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration; SupplierTimberHandoffs retains pending pair/ground obligations
 
 <a id="session"></a>
 ## Session and service composition
@@ -238,7 +238,7 @@ Arrows show possible lifecycle stages, not automatic enlistment. Workers, instru
 **Source anchors:**
 
 - [identity_records.gd](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/identity/identity_records.gd#L1) — Shared Person record and Assignment enum
-- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L373) — Procurement creates arriving people
+- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L381) — Procurement creates arriving people
 - [request_assignment](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/identity/identity_ledger.gd#L1053) — Exclusive assignment transitions
 - [complete_training](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/identity/identity_ledger.gd#L1036) — Training changes same identity
 - [complete_formation_report](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/identity/identity_ledger.gd#L826) — Formation reporting keeps same person
@@ -313,7 +313,7 @@ This diagram is the local rear haul path. Strategic manifests, forward trucks an
 - [_reconcile_store](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/rear_simulation.gd#L299) — Reconcile storage constraints
 - [set_order](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/hauling_policy.gd#L11) — Validate complete category preference
 - [start](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/hauling_policy.gd#L33) — Start highest-priority feasible idle work
-- [start_shared_unload](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L818) — Actual common worker / incoming claim
+- [start_shared_unload](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L826) — Actual common worker / incoming claim
 - [start_shared_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/dispatch/dispatch_service.gd#L501) — Ordinary manifest preparation / common worker
 
 <a id="procurement"></a>
@@ -349,16 +349,16 @@ Resources and people are parallel order types, not mandatory sequential steps. E
 
 **Source anchors:**
 
-- [quote_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L216) — Quote raw-resource purchase
-- [buy_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L224) — Purchase resources / create order
-- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L373) — Purchase real worker cohort
-- [_pump](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L664) — Admit and progress inbound order
-- [_disembark](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L783) — Disembark actual passengers
-- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L903) — Unload via worker phases
-- [quote_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L153) — Quote complete current goods/worker draft
-- [buy_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L172) — Validate and commit one paid convoy
-- [_set_state](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L1193) — Record actual departure and drain member set
-- [convoy_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L136) — Current convoy readiness
+- [quote_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L221) — Quote raw-resource purchase
+- [buy_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L229) — Purchase resources / create order
+- [buy_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L381) — Purchase real worker cohort
+- [_pump](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L672) — Admit and progress inbound order
+- [_disembark](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L791) — Disembark actual passengers
+- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L911) — Unload via worker phases
+- [quote_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L158) — Quote complete current goods/worker draft
+- [buy_delivery](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L177) — Validate and commit one paid convoy
+- [_set_state](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L1201) — Record actual departure and drain member set
+- [convoy_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L141) — Current convoy readiness
 
 <a id="construction"></a>
 ## Rear building placement, completion and dismantling
@@ -1120,7 +1120,7 @@ Capture/ownership/income code exists. The recent3D evidence observed initial neu
 - [register](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/objectives/objective_service.gd#L19) — Register physical objective
 - [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/objectives/objective_service.gd#L120) — Derive eligible physical contributors
 - [advance_to](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/objectives/objective_service.gd#L45) — Advance control/income interval
-- [credit_objective_income](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L495) — Credit real requisition account
+- [credit_objective_income](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L503) — Credit real requisition account
 - [markers](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/battlefield/battlefield_presentation.gd#L4) — Read current public objective presentation
 
 <a id="terrain"></a>
@@ -1582,8 +1582,8 @@ The last three nodes are alternate debug branches. They must not be used to clai
 - [_ready](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/debug/rear_debug_menu.gd#L9) — Build debug action menu
 - [execute](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/debug/rear_debug_actions.gd#L6) — Execute supplied current model action
 - [debug_complete_pending](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/construction/construction_service.gd#L643) — Instantly complete pending construction
-- [debug_deliver_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L331) — Force physical worker delivery exception
-- [debug_order_raw_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L252) — Free raw-resource order exception
+- [debug_deliver_people](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L339) — Force physical worker delivery exception
+- [debug_order_raw_resources](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L257) — Free raw-resource order exception
 
 <a id="diagnostics"></a>
 ## Function-call logging and retained performance tooling
@@ -1740,15 +1740,15 @@ Scoped normal receipt, fixture conversion, native entrance/presentation and100kg
 
 **Source anchors:**
 
-- [initialize_opening](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L43) — Actual12x16 starting warehouse
-- [reserve](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L87) — Exact package-space promise
-- [begin_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L184) — Worker reaches clear fixture site
-- [acquire_access](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L237) — Safe handling access before pickup
-- [commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L252) — Actual stock deposited once
-- [register_module](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L66) — Completed full-edge join
+- [initialize_opening](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L44) — Actual12x16 starting warehouse
+- [reserve](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L88) — Exact package-space promise
+- [begin_preparation](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L185) — Worker reaches clear fixture site
+- [acquire_access](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L238) — Safe handling access before pickup
+- [commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L253) — Actual stock deposited once
+- [register_module](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L67) — Completed full-edge join
 - [_refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_view.gd#L34) — Keyed shelves / labels / lights / cutaway
 - [find](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_paths.gd#L15) — Guarded native pedestrian routing
-- [summary](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L342) — Actual selected/connected storage facts
+- [summary](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L344) — Actual selected/connected storage facts
 - [option](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/construction/construction_truck_service.gd#L134) — Existing utility selects actual connected package batch
 - [_next_load](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/construction/construction_truck_service.gd#L396) — Real worker collects reserved shelf package
 - [_finish](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/construction/construction_truck_service.gd#L430) — Existing truck deposit / site delivery / return
@@ -1768,7 +1768,7 @@ Scoped normal receipt, fixture conversion, native entrance/presentation and100kg
 <a id="supplier_transport"></a>
 ## Supplier vehicles, spatial freight and independent service road
 
-**Owner:** ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration. Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate.
+**Owner:** ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration; SupplierTimberHandoffs retains pending pair/ground obligations. Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate. Approved complete S4 operator motion is connected with a passing scoped check. Revised timber-only truck S1v03 and warehouse v04 fixtures have scoped imported-fit receipts. Pending timber custody survives ground put-down until exact warehouse commit; actual paired motion and ordinary connected pair routing remain unfinished.
 
 ```mermaid
 flowchart TD
@@ -1792,6 +1792,7 @@ flowchart TD
     return_lock["Atomic original-cargo return reservation"]
     return_workers["Safe carried deposits and real withdrawal"]
     return_exit["Actual exit ownership and once-only refund"]
+    timber_receipt["Retain paired / ground timber until actual warehouse receipt"]
     quote -->|"whole order before Confirm"| dispatch
     dispatch -->|"actual truck"| road
     road -->|"blocked destination retained"| hold
@@ -1815,6 +1816,9 @@ flowchart TD
     return_workers -->|"all jobs and aisle users cleared"| mechanism
     road -->|"same carrier actual exit"| return_exit
     return_exit -->|"returned member resolves only after exit"| gate
+    pair -->|"joint pickup, deposit or ground event"| timber_receipt
+    deposit -->|"exact committed-stock event"| timber_receipt
+    timber_receipt -->|"pending physical obligation blocks clearance"| gate
 ```
 
 Draft PR146. Native current-change42959035573 at aec2dae showed approved push-off/flight/land/clearance, slower passing and exact mixed warehouse receipt/all8arrivals. Subsequent hierarchy/resource check42960993401 passed at dbf2ea4. Warehouse scenery/haulers omitted from the native component recording; no full-loop or60FPS acceptance. Timber work resumes on the approved carrying layout and versioned reachable shelves.
@@ -1822,15 +1826,15 @@ Draft PR146. Native current-change42959035573 at aec2dae showed approved push-of
 **Source anchors:**
 
 - [quote](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/cargo_packing.gd#L20) — Cached actual rack/packet quote
-- [_dispatch](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L743) — Actual identities and source stocks
+- [_dispatch](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L751) — Actual identities and source stocks
 - [plan](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_road.gd#L58) — Bounded clear or bypass route
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_road.gd#L35) — Actual obstacle event / safe traffic hold
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_freight.gd#L57) — Stopped shutter / ramp sequence
 - [ingress](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_freight.gd#L117) — Actual rear / ramp pickup route
-- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L903) — Existing physical single-worker deposit
-- [begin](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/joint_material_carry.gd#L10) — Two-worker atomic custody capability
-- [commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L252) — One finite warehouse cell consumed
-- [_update_convoy_gate](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L1205) — Normal handover/departure or actual return exit
+- [_finish_worker_phase](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L911) — Existing physical single-worker deposit
+- [begin](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/staffing/joint_material_carry.gd#L11) — Two-worker atomic custody capability
+- [commit](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/warehousing/warehouse_service.gd#L253) — One finite warehouse cell consumed
+- [_update_convoy_gate](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/procurement/receiving_simulation.gd#L1213) — Normal handover/departure or actual return exit
 - [refresh](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_vehicle_view.gd#L81) — Retained models / actual packets / cosmetic motion
 - [register](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_passengers.gd#L18) — Same eight real seated identities
 - [settle](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_passengers.gd#L30) — Approved supported exit / actual landing
@@ -1840,7 +1844,8 @@ Draft PR146. Native current-change42959035573 at aec2dae showed approved push-of
 - [_confirm_supplier_return](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/rear_base/base_demo.gd#L731) — Same-session confirmation
 - [reserve_supplier_return](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/identity/identity_ledger.gd#L1308) — Atomic original-cargo return reservation
 - [confirm](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_returns.gd#L35) — Safe carried deposits and real withdrawal
-- [complete](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_returns.gd#L129) — Actual exit ownership and once-only refund
+- [complete](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_returns.gd#L130) — Actual exit ownership and once-only refund
+- [stock_committed](https://github.com/TheInfinityIQ/Trencho_V4/blob/supplier e3e357a plus main a1cd2d57 (candidate integration)/game/supplier_transport/supplier_timber_handoffs.gd#L45) — Retain paired / ground timber until actual warehouse receipt
 
 ## Scope and maintenance
 

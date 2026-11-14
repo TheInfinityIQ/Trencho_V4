@@ -30,3 +30,8 @@ flowchart TD
   Safe -->|no| Ground[One recoverable ground-held package; no delivered/returned/refund credit]
   Ground --> Recover[Actual later two-worker recovery route]
   Recover --> Stage
+  Joint --> Custody[Joint custody event retains supplier handoff by real stock ID]
+  Ground --> Custody
+  Custody --> Guard[Pending handoff blocks debug delivery and truck return clearance]
+  Place --> Receipt[Warehouse commit emits exact stock receipt]
+  Receipt --> Account[Only matching actual stored stock counts unloaded and clears pending handoff]

@@ -60,6 +60,7 @@ var freight: RefCounted
 var road: RefCounted
 var passengers: RefCounted
 var returns: RefCounted
+var timber_handoffs: RefCounted
 var _packing_key := ""
 var _packing_quote: Dictionary = {}
 
@@ -69,6 +70,9 @@ func bind_warehouse(owner: RefCounted) -> void:
 	warehouse.space_changed.connect(func() -> void:
 		var service: RefCounted = service_ref.get_ref()
 		if service != null: service._warehouse_changed())
+	warehouse.stock_committed.connect(func(stock_id: String) -> void:
+		var service: RefCounted = service_ref.get_ref()
+		if service != null: service.timber_handoffs.stock_committed(stock_id))
 
 func _warehouse_changed() -> void:
 	# Queue a boundary; never run the simulation inside a Ledger/Area3D signal.
@@ -119,6 +123,7 @@ func _init(shared_ledger: RefCounted = null) -> void:
 	personnel_position = ledger.inspect_entity("personnel").position
 	freight = Freight.new(self)
 	returns = preload("res://game/supplier_transport/supplier_returns.gd").new(self)
+	timber_handoffs = preload("res://game/supplier_transport/supplier_timber_handoffs.gd").new(self)
 	road = preload("res://game/supplier_transport/supplier_road.gd").new(self)
 	passengers = preload("res://game/supplier_transport/supplier_passengers.gd").new(self)
 	_must(ledger.add_place("rear-lane", "Predefined rear access/handling lane", Vector2.ZERO))
@@ -271,6 +276,9 @@ func debug_deliver_resources(destination: String, ids: Array = []) -> Dictionary
 	for order in _orders:
 		if order.kind == "Freight" and order.state not in ["Cancelled","Complete"] and (ids.is_empty() or order.id in ids):
 			pending[order.id] = order
+	for order_id: String in pending:
+		if timber_handoffs.has_pending(order_id):
+			return _reject("JOINT_HANDOFF_REQUIRED","Finish or recover the actual paired timber delivery before this debug delivery; nothing changed.")
 	for person_id: String in _workers:
 		var job: Dictionary = _workers[person_id].job
 		if not job.is_empty() and pending.has(job.order_id) and not str(ledger.inspect_person_status(person_id).get("joint_carry_id","")).is_empty():
@@ -1145,7 +1153,7 @@ func _slot_for(kind: String) -> int:
 
 
 func _freight_finished(order: Dictionary) -> bool:
-	if order.kind != "Freight":
+	if order.kind != "Freight" or timber_handoffs.has_pending(str(order.id)):
 		return false
 	for code in order.cargo:
 		if order.unloaded.get(code, 0) < order.cargo[code]:

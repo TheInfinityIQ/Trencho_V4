@@ -4558,8 +4558,8 @@
       "id": "supplier_transport",
       "title": "Supplier vehicles, spatial freight and independent service road",
       "group": "Rear economy",
-      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration",
-      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate.",
+      "owner": "ReceivingSimulation + CargoPacking + SupplierFreight + SupplierRoad + SupplierPassengers; Ledger owns custody + Receiving-owned SupplierReturns; Lead owns integration; SupplierTimberHandoffs retains pending pair/ground obligations",
+      "summary": "Actual quoted packets use finite truck racks and real non-timber rear-ramp/warehouse handling. Approved passenger v02 uses real seated IDs, supported push-off, landing and independent arrival. Actual road events govern slower passing. Paired timber resumes with the approved2m/50kg/~1.3m layout; measured source/destination contacts remain pending. Remaining original supplier cargo can now be explicitly returned using safe worker withdrawal, original paid-price receipts and actual-exit goods refunds; warehouse reload/staging remain separate. Approved complete S4 operator motion is connected with a passing scoped check. Revised timber-only truck S1v03 and warehouse v04 fixtures have scoped imported-fit receipts. Pending timber custody survives ground put-down until exact warehouse commit; actual paired motion and ordinary connected pair routing remain unfinished.",
       "nodes": [
         {
           "id": "quote",
@@ -4680,6 +4680,12 @@
           "label": "Actual exit ownership and once-only refund",
           "file": "game/supplier_transport/supplier_returns.gd",
           "function": "complete"
+        },
+        {
+          "id": "timber_receipt",
+          "label": "Retain paired / ground timber until actual warehouse receipt",
+          "file": "game/supplier_transport/supplier_timber_handoffs.gd",
+          "function": "stock_committed"
         }
       ],
       "edges": [
@@ -4797,6 +4803,21 @@
           "from": "return_exit",
           "to": "gate",
           "label": "returned member resolves only after exit"
+        },
+        {
+          "from": "pair",
+          "to": "timber_receipt",
+          "label": "joint pickup, deposit or ground event"
+        },
+        {
+          "from": "deposit",
+          "to": "timber_receipt",
+          "label": "exact committed-stock event"
+        },
+        {
+          "from": "timber_receipt",
+          "to": "gate",
+          "label": "pending physical obligation blocks clearance"
         }
       ],
       "related": [
@@ -5126,7 +5147,8 @@
     "game/battlefield/presentation_3d/follow_soldier.gd": "battleview",
     "game/battlefield/selected_engagement.gd": "battleview",
     "game/supplier_transport/supplier_shelves.gd": "supplier_transport",
-    "game/supplier_transport/supplier_shelf_view.gd": "supplier_transport"
+    "game/supplier_transport/supplier_shelf_view.gd": "supplier_transport",
+    "game/supplier_transport/supplier_timber_handoffs.gd": "supplier_transport"
   },
   "reviewed_sources": {
     "game/main/main.gd": "a2b64815d096377616c14d8c4d989eab662fd16f2bb098ce18ae19d92c53ebca",
@@ -5137,7 +5159,7 @@
     "game/staffing/rear_simulation.gd": "578e486978eddee87c2503704ffac464a93a96f2457752981efb1de5c13a7a27",
     "game/staffing/rear_layout.gd": "9813a0caeea2c2a5347768807b905e4a9b1f3b4296f1af03871b36f6d6421851",
     "game/staffing/yard_activity.gd": "6b0937ca19b679feebfc0857dfcb95dc9ec06df7eafdd5f5c6dde7dcb8aee374",
-    "game/procurement/receiving_simulation.gd": "47cf7ed7807e5e35a882fabbf936977c1de3bd1b75335beeaa75f075277abfa7",
+    "game/procurement/receiving_simulation.gd": "ed9c27210f6ccc7b76988371b673de866d26d22f6069bdadbde3357397cf2606",
     "game/procurement/resource_catalog.gd": "0a321e6da496d4b37cc5f5f6f6eec02ae0a24454a10208ca07913771fe395df4",
     "game/construction/construction_service.gd": "a9acc106333c55788f61e152d1b71f03b04c922ab116095510a7d99048b16ac5",
     "game/construction/construction_catalogue.gd": "14d65604b1f126f46913792a97c5043e7faf6504a5c93e80162a7b34a4861c1f",
@@ -5264,19 +5286,19 @@
     "game/warehousing/warehouse_assets.gd": "f58876955d3bf55e41e4cd01745cd819d111ab3b8a395316a22eb5a5c037d205",
     "game/warehousing/warehouse_collision.gd": "dc603f6ba1676c20502a971eced5bcc03f63bd41ae28e671195eb17a65ce9db5",
     "game/warehousing/warehouse_paths.gd": "854f876fee5e890772f5c6f64378a73d3919ba6f18f1386c18569fb6b69d00dc",
-    "game/warehousing/warehouse_service.gd": "995da9f3fb033860c704ce984d38cbf9e6252e6ab0b8ca78837017187c769b7d",
+    "game/warehousing/warehouse_service.gd": "6bdf7f5cac429525bdf8166e0cc346f6a0ba20a077340449e225ecdc575818a6",
     "game/warehousing/warehouse_view.gd": "0a5e62647d85ebe31282360d4d508274606a62b957b7f874da4a2b6e17071916",
     "game/supplier_transport/cargo_packing.gd": "e194a290148dd5b6f89030fe0195f85f844fed4aa00cc8ee81e7f91d687e1f46",
     "game/supplier_transport/supplier_freight.gd": "4133a15838a9a28c85b1e57840e54b5b1305c39401e979ba37fc181036e1591a",
     "game/supplier_transport/supplier_road.gd": "6487237dc067d2b42d7c08bcd3b169f4413509dd5a296e68d3dcdafc724d020b",
     "game/supplier_transport/supplier_vehicle_view.gd": "e62ad963281986b4c033342bb57712038bedea609776321605206bb7dc081a76",
-    "game/staffing/joint_material_carry.gd": "b673a3e0472f92404cdbe6bdfc37a3ce575a29fc96cd4c6ab7fbbca90293536d",
+    "game/staffing/joint_material_carry.gd": "a12d5af072e9d7067d16635ba991424d52947be220df205d948b693940627b83",
     "game/supplier_transport/supplier_seating.gd": "5f91ad61dd84f014bf6b9446e4973a288f586353121141322159c1ce71476f40",
     "game/supplier_transport/supplier_actor_view.gd": "09287d87ff782e9a494b2666f2d4876397bfbb82f045d165f81e9ed3186e0040",
     "game/supplier_transport/supplier_passengers.gd": "4a71de0d3d6d61044113f1a57bfa5c42ebe0428455895f44826167111e372a50",
     "game/supplier_transport/supplier_passengers_view.gd": "b2f9b81f16a530beb91984ab1493080bc459f1a0d930765426e756d6c1ae180f",
     "game/supplier_transport/paired_ground_path.gd": "87975e6e5c5a64bc53b46f343c26687114c3c036509bfc1328f2bd7a7cf1e372",
-    "game/supplier_transport/supplier_returns.gd": "10fce7aeabceaa517eae89f957d073578b5e0b5bb0b9e9ac148d01a8d724924c",
+    "game/supplier_transport/supplier_returns.gd": "9f55f71576a65dfaa233df4587562b68ad02ebffd825b000cfdfb96f33c88ed9",
     "game/warehousing/warehouse_recovery.gd": "d385b2c431fbb7ed1848135464f18425bf29e4cdeddf2d4fb97224138bad1e33",
     "game/battlefield/presentation_3d/field_t03.gd": "14358fcf5d6a42bf6d409bb2de306f703e870f525974bcce6878151639e67233",
     "game/battlefield/presentation_3d/reported_contacts.gd": "ffd26ec6143b12e16c81e34d0c6e9247f1387033302eae73cd248eeb6fe136a4",
@@ -5285,6 +5307,7 @@
     "game/battlefield/presentation_3d/follow_soldier.gd": "8991d5f9bed80b1e4482ed786df4d34417d5354115a192a145ccdcc333199faa",
     "game/battlefield/selected_engagement.gd": "071c825469fbbfd7991b33e2427a9c9ede9b98fd17f97699296247ff8d11e1ad",
     "game/supplier_transport/supplier_shelf_view.gd": "a3071883f19e7e5b3e13f94b904a6dd2d26cfa3bfadf165930b618261f3a943a",
-    "game/supplier_transport/supplier_shelves.gd": "8407bf3b8aba289eda80afd3b0038ce03b36513cb86cdfaae8191879e7ae0450"
+    "game/supplier_transport/supplier_shelves.gd": "8407bf3b8aba289eda80afd3b0038ce03b36513cb86cdfaae8191879e7ae0450",
+    "game/supplier_transport/supplier_timber_handoffs.gd": "37638dd11d3e2a47b0b653d5b6bff49e064e2bbe6460999a3b115d63debe588c"
   }
 }

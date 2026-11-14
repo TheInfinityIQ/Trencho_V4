@@ -104,5 +104,17 @@
     "implementation": "Refuse unsupported solo M04 at ordinary feasible-task selection so other jobs continue; also refuse timber-to-person primitive transfers and outbound admissions needing unimplemented paired handling. JointMaterialCarry remains the only real two-person custody path; no new worker or capacity exception.",
     "check": "A brief current-change ordinary hauling/refusal observation will verify no solo reservation/assignment while another feasible material job proceeds. No broad regression campaign.",
     "prepublication_source_amendment": "Legacy receiving orders can lack packet manifests; identify timber through retained source_codes or a light actual stock identity before single-worker selection. Do not rely on packet metadata alone or let the ledger refusal reach Receiving._must. Reuse the same cached code instead of repeated deep inspection."
+  },
+  "custody_increment_before_edits": {
+    "owner": "Receiving-owned SupplierTimberHandoffs, connected to JointMaterialCarry custody events and WarehouseService committed-stock event",
+    "state": "Pending action references actual stock IDs; no duplicate inventory. Ground put-down retains a pending supplier obligation after personal joint pointers clear. A recovery transfers the obligation to actual new stock without erasing remaining ground quantity.",
+    "completion": "Only a matching real warehouse cell commit counts unloaded. A finish pose, empty hand, shared-carry release or ground put-down does not.",
+    "guards": [
+      "Debug resource delivery preflight refuses every selected order with a pending joint/ground handoff before mutation.",
+      "Normal completion and supplier return readiness retain physical gate until actual warehouse receipt."
+    ],
+    "source": "https://docs.godotengine.org/en/stable/getting_started/step_by_step/signals.html",
+    "rationale": "Godot signals notify owners at actual custody/receipt transitions; no periodic stock scans or animation callbacks.",
+    "acceptance": "One brief current-change normal pickup/put-down/recovery/warehouse-receipt demonstration, without damage injection, suites, animation acceptance or raised limits."
   }
 }
